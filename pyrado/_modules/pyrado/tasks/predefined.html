@@ -227,12 +227,12 @@
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.empty</span> <span class="kn">import</span> <span class="n">EmptySpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.endless_flipping</span> <span class="kn">import</span> <span class="n">EndlessFlippingTask</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.endless_flipping</span> <span class="kn">import</span> <span class="n">FlippingTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.final_reward</span> <span class="kn">import</span> <span class="n">FinalRewTask</span><span class="p">,</span> <span class="n">FinalRewMode</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="p">(</span>
@@ -240,54 +240,11 @@
     <span class="n">ZeroPerStepRewFcn</span><span class="p">,</span>
     <span class="n">AbsErrRewFcn</span><span class="p">,</span>
     <span class="n">CosOfOneEleRewFcn</span><span class="p">,</span>
-    <span class="n">CompoundRewFcn</span><span class="p">,</span>
     <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span>
     <span class="n">QuadrErrRewFcn</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">never_succeeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
-
-
-<div class="viewcode-block" id="create_goal_dist_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">obs_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-
-    <span class="c1"># Get the masked environment specification</span>
-    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">obs_labels</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span>
-        <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Create a desired state task with the goal [0, 0]</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">thold_dist</span><span class="o">=</span><span class="n">succ_thold</span><span class="p">))</span>
-
-    <span class="c1"># Mask selected goal distance</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="create_goal_dist_distvel_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_distvel_task</span><span class="p">(</span>
-    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
-    <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">obs_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s2">d&quot;</span><span class="p">]</span>
-
-    <span class="c1"># Get the masked environment specification</span>
-    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">obs_labels</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span>
-        <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Create a desired state task with the goal [0, 0]</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">thold_dist</span><span class="o">=</span><span class="n">succ_thold</span><span class="p">))</span>
-
-    <span class="c1"># Mask selected goal distance velocities</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_check_all_boundaries_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_check_all_boundaries_task">[docs]</a><span class="k">def</span> <span class="nf">create_check_all_boundaries_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">penalty</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FinalRewTask</span><span class="p">:</span>
@@ -300,7 +257,7 @@
 
 <span class="sd">    :param env_spec: environment specification</span>
 <span class="sd">    :param penalty: scalar cost (positive values) for violating the bounds</span>
-<span class="sd">    :return: masked task</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">FinalRewTask</span><span class="p">(</span>
         <span class="n">DesStateTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">ZeroPerStepRewFcn</span><span class="p">(),</span> <span class="n">never_succeeded</span><span class="p">),</span>
@@ -320,7 +277,7 @@
 
 <span class="sd">    :param env_spec: environment specification</span>
 <span class="sd">    :param rew_fcn: reward function</span>
-<span class="sd">    :return: masked task</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
     <span class="n">obs_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">obs_label</span> <span class="k">for</span> <span class="n">obs_label</span> <span class="ow">in</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="s2">&quot;DiscrepTS&quot;</span> <span class="ow">in</span> <span class="n">obs_label</span><span class="p">]</span>
@@ -335,10 +292,10 @@
     <span class="p">)</span>
 
     <span class="c1"># Create an endlessly running desired state task (no task space discrepancy is desired)</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">never_succeeded</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">never_succeeded</span><span class="p">)</span>
 
     <span class="c1"># Mask selected discrepancy observation</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_collision_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_collision_task">[docs]</a><span class="k">def</span> <span class="nf">create_collision_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
@@ -351,7 +308,7 @@
 
 <span class="sd">    :param env_spec: environment specification</span>
 <span class="sd">    :param factor: cost / reward function scaling factor</span>
-<span class="sd">    :return: masked task</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">factor</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
@@ -369,10 +326,10 @@
     <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">factor</span><span class="p">]),</span> <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
     <span class="c1"># Create an endlessly running desired state task (no collision is desired)</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">never_succeeded</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">never_succeeded</span><span class="p">)</span>
 
     <span class="c1"># Mask selected collision cost observation</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_forcemin_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_forcemin_task">[docs]</a><span class="k">def</span> <span class="nf">create_forcemin_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Q</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
@@ -386,7 +343,7 @@
 <span class="sd">    :param obs_labels: labels for selection, e.g. [&#39;WristLoadCellLBR_R_Fy&#39;]. This needs to match the observations&#39;</span>
 <span class="sd">                       names in RcsPySim</span>
 <span class="sd">    :param Q: weight matrix of dim NxN with N=num_forces for the quadratic force costs</span>
-<span class="sd">    :return: masked task</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get the masked environment specification</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
@@ -397,14 +354,17 @@
 
     <span class="c1"># Create an endlessly running desired state task</span>
     <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">QuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)))</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">never_succeeded</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">never_succeeded</span><span class="p">)</span>
 
     <span class="c1"># Mask selected collision cost observation</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="create_lifting_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_lifting_task">[docs]</a><span class="k">def</span> <span class="nf">create_lifting_task</span><span class="p">(</span>
-    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">des_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+    <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">des_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">succ_thold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task for lifting an object.</span>
@@ -415,7 +375,8 @@
 <span class="sd">    :param env_spec: environment specification</span>
 <span class="sd">    :param obs_labels: labels for selection, e.g. [&#39;Box_Z&#39;]. This needs to match the observations&#39; names in RcsPySim</span>
 <span class="sd">    :param des_height: desired height of the object (depends of the coordinate system). If reached, the task is over.</span>
-<span class="sd">    :return: masked task</span>
+<span class="sd">    :param succ_thold: once the object of interest is closer than this threshold, the task is considered successfully</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get the masked environment specification</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
@@ -426,16 +387,21 @@
 
     <span class="c1"># Create a desired state task</span>
     <span class="n">state_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">des_height</span><span class="p">)</span>
-    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">5e2</span><span class="p">])</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">6e2</span><span class="p">])</span>
     <span class="n">R</span> <span class="o">=</span> <span class="mf">1e-1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
     <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">thold_dist</span><span class="o">=</span><span class="n">succ_thold</span><span class="p">))</span>
 
     <span class="c1"># Return the masked tasks</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_flipping_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_flipping_task">[docs]</a><span class="k">def</span> <span class="nf">create_flipping_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">des_angle_delta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
+<div class="viewcode-block" id="create_flipping_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_flipping_task">[docs]</a><span class="k">def</span> <span class="nf">create_flipping_task</span><span class="p">(</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+    <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">des_angle_delta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">endless</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task for rotating an object.</span>
 
@@ -445,7 +411,9 @@
 <span class="sd">    :param env_spec: environment specification</span>
 <span class="sd">    :param obs_labels: labels for selection, e.g. [&#39;Box_A&#39;]. This needs to match the observations&#39; names in RcsPySim</span>
 <span class="sd">    :param des_angle_delta: desired angle to rotate. If reached, the task is reset, and rotating continues.</span>
-<span class="sd">    :return: masked task</span>
+<span class="sd">    :param endless: if `True`, the task will promote endlessly repeated flipping about the desired angle, else only one</span>
+<span class="sd">                    flip is desired</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get the masked environment specification</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
@@ -455,15 +423,110 @@
     <span class="p">)</span>
 
     <span class="c1"># Create a desired state task</span>
-    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
-    <span class="n">rew_fcn_act</span> <span class="o">=</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
-    <span class="n">rew_fcn_box</span> <span class="o">=</span> <span class="n">CosOfOneEleRewFcn</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">CompoundRewFcn</span><span class="p">([</span><span class="n">rew_fcn_act</span><span class="p">,</span> <span class="n">rew_fcn_box</span><span class="p">])</span>
-    <span class="n">ef_task</span> <span class="o">=</span> <span class="n">EndlessFlippingTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">init_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">des_angle_delta</span><span class="o">=</span><span class="n">des_angle_delta</span><span class="p">)</span>
+    <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">CosOfOneEleRewFcn</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">FlippingTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">des_angle_delta</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">endless</span><span class="o">=</span><span class="n">endless</span><span class="p">)</span>
 
     <span class="c1"># Return the masked tasks</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">ef_task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_home_pos_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_home_pos_task">[docs]</a><span class="k">def</span> <span class="nf">create_home_pos_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">state_des</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a task for moving the robot to safe position.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</span>
+
+<span class="sd">    :param env_spec: environment specification</span>
+<span class="sd">    :param obs_labels: labels for selection, e.g. [&#39;PowerGrasp_R_Y&#39;, &#39;PowerGrasp_R_Z&#39;]. This needs to match the</span>
+<span class="sd">                       observations&#39; names in RcsPySim</span>
+<span class="sd">    :param state_des: desired state (depends of the coordinate system). If reached, the task is over.</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the masked environment specification</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">obs_labels</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create a desired state task</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="mf">1e1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">state_des</span><span class="p">))</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="mf">1e-1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+    <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">)</span>
+
+    <span class="c1"># Return the masked tasks</span>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_goal_dist_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_task</span><span class="p">(</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a task that rewards minimizing the `GoalDistance` of dynamical system movements primitives (see RcsPySim).</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</span>
+
+<span class="sd">    :param env_spec: environment specification</span>
+<span class="sd">    :param ds_label: label of the dynamical system (see RcsPySim)</span>
+<span class="sd">    :param rew_fcn: reward function</span>
+<span class="sd">    :param succ_thold: once the object of interest is closer than this threshold, the task is considered successfully</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
+    <span class="n">obs_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Get the masked environment specification</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">obs_labels</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span>
+        <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create a desired state task with the goal [0, 0]</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">thold_dist</span><span class="o">=</span><span class="n">succ_thold</span><span class="p">))</span>
+
+    <span class="c1"># Mask selected goal distance</span>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_goal_dist_distvel_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_distvel_task</span><span class="p">(</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a task that rewards minimizing the `GoalDistance` as well as its rate of change of dynamical system</span>
+<span class="sd">    movements primitives (see RcsPySim).</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</span>
+
+<span class="sd">    :param env_spec: environment specification</span>
+<span class="sd">    :param ds_label: label of the dynamical system (see RcsPySim)</span>
+<span class="sd">    :param rew_fcn: reward function</span>
+<span class="sd">    :param succ_thold: once the object of interest is closer than this threshold, the task is considered successfully</span>
+<span class="sd">    :return: masked task that only considers a subspace of all observations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
+    <span class="n">obs_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_label</span><span class="si">}</span><span class="s2">d&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Get the masked environment specification</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">obs_labels</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span>
+        <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create a desired state task with the goal [0, 0]</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">thold_dist</span><span class="o">=</span><span class="n">succ_thold</span><span class="p">))</span>
+
+    <span class="c1"># Mask selected goal distance velocities</span>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

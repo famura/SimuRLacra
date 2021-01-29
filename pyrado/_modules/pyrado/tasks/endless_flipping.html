@@ -234,7 +234,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">RewFcn</span>
 
 
-<div class="viewcode-block" id="EndlessFlippingTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask">[docs]</a><span class="k">class</span> <span class="nc">EndlessFlippingTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<div class="viewcode-block" id="FlippingTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.FlippingTask">[docs]</a><span class="k">class</span> <span class="nc">FlippingTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Task class for flipping an object around one axis about a desired angle. Once the new angle is equal to the</span>
 <span class="sd">    old angle plus/minus a given angle delta, the new angle becomes the old one and the flipping continues.</span>
@@ -243,19 +243,19 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-        <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span>
-        <span class="n">init_angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">des_angle_delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span>
         <span class="n">angle_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+        <span class="n">endless</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification of a simulated or real environment</span>
-<span class="sd">        :param rew_fcn: reward function, an instance of a subclass of RewFcn</span>
-<span class="sd">        :param init_angle: initial angle</span>
 <span class="sd">        :param des_angle_delta: desired angle that counts as a flip</span>
+<span class="sd">        :param rew_fcn: reward function, an instance of a subclass of RewFcn</span>
 <span class="sd">        :param angle_tol: tolerance</span>
+<span class="sd">        :param endless: tolerance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">)</span>
@@ -263,12 +263,12 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">rew_fcn</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">RewFcn</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rew_fcn</span> <span class="o">=</span> <span class="n">rew_fcn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_angle</span> <span class="o">=</span> <span class="n">init_angle</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">=</span> <span class="n">init_angle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">des_angle_delta</span> <span class="o">=</span> <span class="n">des_angle_delta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">angle_tol</span> <span class="o">=</span> <span class="n">angle_tol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_held_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_endless</span> <span class="o">=</span> <span class="n">endless</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">env_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
@@ -284,26 +284,25 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">rew_fcn</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">RewFcn</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rew_fcn</span> <span class="o">=</span> <span class="n">rew_fcn</span>
 
-<div class="viewcode-block" id="EndlessFlippingTask.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">init_angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="FlippingTask.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.FlippingTask.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the task.</span>
 
 <span class="sd">        :param env_spec: environment specification</span>
-<span class="sd">        :param init_angle: override initial angle</span>
 <span class="sd">        :param kwargs: keyword arguments forwarded to the reward function, e.g. the initial state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Update the environment specification at every reset of the environment since the spaces could change</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
 
         <span class="c1"># Reset the internal quantities to recognize the flips</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">=</span> <span class="n">init_angle</span> <span class="k">if</span> <span class="n">init_angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_angle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_held_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="c1"># Some reward functions scale with the state and action bounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rew_fcn</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">state_space</span><span class="o">=</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="p">,</span> <span class="n">act_space</span><span class="o">=</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EndlessFlippingTask.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="c1"># We don&#39;t care about the flip direction or the number of revolutions.</span>
+<div class="viewcode-block" id="FlippingTask.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.FlippingTask.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="c1"># We don&#39;t care about the flip direction or the number of revolutions</span>
         <span class="n">des_angles_both</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">des_angle_delta</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">des_angle_delta</span><span class="p">]]</span>
         <span class="p">)</span>
@@ -322,8 +321,18 @@
 
         <span class="k">return</span> <span class="n">rew</span></div>
 
-<div class="viewcode-block" id="EndlessFlippingTask.has_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.has_succeeded">[docs]</a>    <span class="k">def</span> <span class="nf">has_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">never_succeeded</span><span class="p">()</span></div></div>
+<div class="viewcode-block" id="FlippingTask.has_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.endless_flipping.FlippingTask.has_succeeded">[docs]</a>    <span class="k">def</span> <span class="nf">has_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_endless</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">never_succeeded</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># We don&#39;t care about the flip direction or the number of revolutions</span>
+            <span class="n">des_angles_both</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">des_angle_delta</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_angle</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">des_angle_delta</span><span class="p">]]</span>
+            <span class="p">)</span>
+            <span class="n">err_state</span> <span class="o">=</span> <span class="n">des_angles_both</span> <span class="o">-</span> <span class="n">state</span>
+            <span class="n">err_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fmod</span><span class="p">(</span><span class="n">err_state</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>  <span class="c1"># map to [-2pi, 2pi]</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">err_state</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_tol</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

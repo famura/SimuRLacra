@@ -121,8 +121,8 @@ Collaboration diagram for Rcs::OMForceTorque:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a121ee1979515b86fc8a21ff5120dcf5e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMForceTorque.html#a121ee1979515b86fc8a21ff5120dcf5e">OMForceTorque</a> (RcsGraph *graph, const char *sensorName, double maxForce=std::numeric_limits&lt; double &gt;::infinity())</td></tr>
-<tr class="separator:a121ee1979515b86fc8a21ff5120dcf5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad816d3438bf3722b2103da3693d399b7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMForceTorque.html#ad816d3438bf3722b2103da3693d399b7">OMForceTorque</a> (RcsGraph *graph, const char *sensorName, double maxForce=std::numeric_limits&lt; double &gt;::infinity(), bool <a class="el" href="classRcs_1_1OMForceTorque.html#a4397b983c9a2b511c6a46534a93474fa">transformToWorldFrame</a>=false)</td></tr>
+<tr class="separator:ad816d3438bf3722b2103da3693d399b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af01547cccdf782dacf6c849c0ad6a675"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMForceTorque.html#af01547cccdf782dacf6c849c0ad6a675">~OMForceTorque</a> ()</td></tr>
 <tr class="separator:af01547cccdf782dacf6c849c0ad6a675"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f272d8acf6233c9b08cde446286f911"><td class="memItemLeft" align="right" valign="top">virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMForceTorque.html#a2f272d8acf6233c9b08cde446286f911">getStateDim</a> () const</td></tr>
@@ -184,14 +184,16 @@ Private Attributes</h2></td></tr>
 <tr class="separator:ad4496ae0b8552e5919cda22ac96cd732"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a448273e5422aa96a05db9c4c31a27d7b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMForceTorque.html#a448273e5422aa96a05db9c4c31a27d7b">max_torque</a></td></tr>
 <tr class="separator:a448273e5422aa96a05db9c4c31a27d7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4397b983c9a2b511c6a46534a93474fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMForceTorque.html#a4397b983c9a2b511c6a46534a93474fa">transformToWorldFrame</a></td></tr>
+<tr class="separator:a4397b983c9a2b511c6a46534a93474fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Observes measurements of a single force/torque sensor. </p>
 
 <p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00044">44</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a121ee1979515b86fc8a21ff5120dcf5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a121ee1979515b86fc8a21ff5120dcf5e">&#9670;&nbsp;</a></span>OMForceTorque()</h2>
+<a id="ad816d3438bf3722b2103da3693d399b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad816d3438bf3722b2103da3693d399b7">&#9670;&nbsp;</a></span>OMForceTorque()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -212,7 +214,13 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>maxForce</em> = <code>std::numeric_limits&lt;double&gt;::infinity()</code>&#160;</td>
+          <td class="paramname"><em>maxForce</em> = <code>std::numeric_limits&lt;double&gt;::infinity()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>transformToWorldFrame</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -317,7 +325,7 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classRcs_1_1ObservationModel.html#aa4385e8e619d3903a3264014d01d1f06">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00067">67</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00069">69</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
 
 </div>
 </div>
@@ -371,7 +379,7 @@ Private Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1ObservationModel.html#a96bdd1e9044ed6946286e4bc551d60e3">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00072">72</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00093">93</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
 
 </div>
 </div>
@@ -401,7 +409,7 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classRcs_1_1ObservationModel.html#a5d4c684416868080bb29dc740a8db032">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00056">56</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00058">58</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
 
 </div>
 </div>
@@ -431,7 +439,7 @@ Private Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1ObservationModel.html#a2a7404a6dacf22c693bae9de5b2120e5">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00086">86</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00107">107</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
 
 </div>
 </div>
@@ -461,7 +469,7 @@ Private Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1ObservationModel.html#ad76d451a07bdae6a37ace81526e85fd9">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00061">61</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8cpp_source.html#l00063">63</a> of file <a class="el" href="OMForceTorque_8cpp_source.html">OMForceTorque.cpp</a>.</p>
 
 </div>
 </div>
@@ -486,7 +494,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00072">72</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00077">77</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
 
 </div>
 </div>
@@ -510,7 +518,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00073">73</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00078">78</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
 
 </div>
 </div>
@@ -534,7 +542,33 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00070">70</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
+<p>FTS to observe. </p>
+
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00075">75</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
+
+</div>
+</div>
+<a id="a4397b983c9a2b511c6a46534a93474fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4397b983c9a2b511c6a46534a93474fa">&#9670;&nbsp;</a></span>transformToWorldFrame</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Rcs::OMForceTorque::transformToWorldFrame</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="OMForceTorque_8h_source.html#l00079">79</a> of file <a class="el" href="OMForceTorque_8h_source.html">OMForceTorque.h</a>.</p>
 
 </div>
 </div>
@@ -548,7 +582,7 @@ Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1OMForceTorque.html">OMForceTorque</a></li>
-    <li class="footer">Generated on Thu Jan 28 2021 10:49:39 for RcsPySim by
+    <li class="footer">Generated on Fri Jan 29 2021 16:16:56 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

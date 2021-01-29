@@ -411,8 +411,12 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.bootstrapping.bootstrap_ci">bootstrap_ci() (in module pyrado.sampling.bootstrapping)</a>
 </li>
-      <li><a href="spaces.html#pyrado.spaces.base.Space.bound_abs_up">bound_abs_up() (Space property)</a>
+      <li><a href="spaces.html#pyrado.spaces.discrete.DiscreteSpace.bound_abs_up">bound_abs_up() (DiscreteSpace property)</a>
+
+      <ul>
+        <li><a href="spaces.html#pyrado.spaces.base.Space.bound_abs_up">(Space property)</a>
 </li>
+      </ul></li>
       <li><a href="spaces.html#pyrado.spaces.box.BoxSpace.bound_lo">bound_lo (BoxSpace attribute)</a>
 
       <ul>
@@ -680,6 +684,8 @@
       <li><a href="tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">create_goal_dist_distvel_task() (in module pyrado.tasks.predefined)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.predefined.create_goal_dist_task">create_goal_dist_task() (in module pyrado.tasks.predefined)</a>
+</li>
+      <li><a href="tasks.html#pyrado.tasks.predefined.create_home_pos_task">create_home_pos_task() (in module pyrado.tasks.predefined)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.planar_insert.create_insert_task">create_insert_task() (in module pyrado.environments.rcspysim.planar_insert)</a>
 </li>
@@ -975,8 +981,6 @@
 </li>
       <li><a href="spaces.html#pyrado.spaces.empty.EmptySpace">EmptySpace (class in pyrado.spaces.empty)</a>
 </li>
-      <li><a href="tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask">EndlessFlippingTask (class in pyrado.tasks.endless_flipping)</a>
-</li>
       <li><a href="utils.html#pyrado.utils.input_output.ensure_math_mode">ensure_math_mode() (in module pyrado.utils.input_output)</a>
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.ent_coeff">ent_coeff() (SAC property)</a>
@@ -998,7 +1002,7 @@
 </li>
         <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask.env_spec">(DesStateTask property)</a>
 </li>
-        <li><a href="tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.env_spec">(EndlessFlippingTask property)</a>
+        <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask.env_spec">(FlippingTask property)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.goalless.GoallessTask.env_spec">(GoallessTask property)</a>
 </li>
@@ -1037,10 +1041,10 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.eval">eval() (EpsGreedyExplStrat method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_ddp_policy">eval_ddp_policy() (SimOpt static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">eval_domain_params() (in module pyrado.sampling.parallel_evaluation)</a>
@@ -1159,9 +1163,13 @@
         <li><a href="spaces.html#pyrado.spaces.base.Space.flat_dim">(Space property)</a>
 </li>
       </ul></li>
+      <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask">FlippingTask (class in pyrado.tasks.endless_flipping)</a>
+</li>
       <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN">FNN (class in pyrado.policies.feed_forward.fnn)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.fnn_policy">fnn_policy() (DefaultPolicies static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.fnn_policy_cuda">fnn_policy_cuda() (DefaultPolicies static method)</a>
 </li>
       <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNNPolicy">FNNPolicy (class in pyrado.policies.feed_forward.fnn)</a>
 </li>
@@ -1345,10 +1353,10 @@
 </li>
       <li><a href="utils.html#pyrado.utils.order.get_immediate_subdirs">get_immediate_subdirs() (in module pyrado.utils.order)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.special.html#pyrado.policies.special.environment_specific.get_lin_ctrl">get_lin_ctrl() (in module pyrado.policies.special.environment_specific)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="logger.html#pyrado.logger.get_log_prefix_dir">get_log_prefix_dir() (in module pyrado.logger)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim.get_nominal_domain_param">get_nominal_domain_param() (BallInTubeSim class method)</a>
@@ -1365,6 +1373,8 @@
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_shelving.BoxShelvingSim.get_nominal_domain_param">(BoxShelvingSim class method)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.get_nominal_domain_param">(CatapultSim class method)</a>
+</li>
+        <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.get_nominal_domain_param">(EnvWrapper method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.openai_classical_control.GymEnv.get_nominal_domain_param">(GymEnv class method)</a>
 </li>
@@ -1421,6 +1431,8 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.gru_policy">gru_policy() (DefaultPolicies static method)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.gru_policy_cuda">gru_policy_cuda() (DefaultPolicies static method)</a>
+</li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.GRUPolicy">GRUPolicy (class in pyrado.policies.recurrent.rnn)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.optimizers.GSS">GSS (class in pyrado.utils.optimizers)</a>
@@ -1458,7 +1470,7 @@
 </li>
         <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask.has_succeeded">(DesStateTask method)</a>
 </li>
-        <li><a href="tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.has_succeeded">(EndlessFlippingTask method)</a>
+        <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask.has_succeeded">(FlippingTask method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.goalless.GoallessTask.has_succeeded">(GoallessTask method)</a>
 </li>
@@ -1733,6 +1745,8 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.linear_policy">linear_policy() (DefaultPolicies static method)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.linear_policy_cuda">linear_policy_cuda() (DefaultPolicies static method)</a>
+</li>
       <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy">LinearPolicy (class in pyrado.policies.feed_forward.linear)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.list_experiments">list_experiments() (in module pyrado.logger.experiment)</a>
@@ -1774,6 +1788,8 @@
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.predefined_lqr.LQR">LQR (class in pyrado.algorithms.episodic.predefined_lqr)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.lstm_policy">lstm_policy() (DefaultPolicies static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.lstm_policy_cuda">lstm_policy_cuda() (DefaultPolicies static method)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.LSTMPolicy">LSTMPolicy (class in pyrado.policies.recurrent.rnn)</a>
 </li>
@@ -4215,6 +4231,8 @@
       <ul>
         <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.reinit">(ParallelRolloutSampler method)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.reinit">(ParameterExplorationSampler method)</a>
+</li>
         <li><a href="sampling.html#pyrado.sampling.sampler.SamplerBase.reinit">(SamplerBase method)</a>
 </li>
       </ul></li>
@@ -4291,8 +4309,6 @@
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.reset">(DQL method)</a>
 </li>
-        <li><a href="tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.reset">(EndlessFlippingTask method)</a>
-</li>
         <li><a href="environments.html#pyrado.environments.base.Env.reset">(Env method)</a>
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.reset">(EnvWrapper method)</a>
@@ -4302,6 +4318,8 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.epopt.EPOpt.reset">(EPOpt method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewTask.reset">(FinalRewTask method)</a>
+</li>
+        <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask.reset">(FlippingTask method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcn.reset">(ForwardVelocityRewFcn method)</a>
 </li>
@@ -4429,7 +4447,7 @@
 </li>
         <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask.rew_fcn">(DesStateTask property)</a>
 </li>
-        <li><a href="tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.rew_fcn">(EndlessFlippingTask property)</a>
+        <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask.rew_fcn">(FlippingTask property)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.goalless.GoallessTask.rew_fcn">(GoallessTask property)</a>
 </li>
@@ -4457,6 +4475,8 @@
       <li><a href="utils.html#pyrado.utils.math.rmse">rmse() (in module pyrado.utils.math)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.rnn_policy">rnn_policy() (DefaultPolicies static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.rnn_policy_cuda">rnn_policy_cuda() (DefaultPolicies static method)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicy">RNNPolicy (class in pyrado.policies.recurrent.rnn)</a>
 </li>
@@ -4657,6 +4677,8 @@
       <li><a href="sampling.html#pyrado.sampling.cvar_sampler.select_cvar">select_cvar() (in module pyrado.sampling.cvar_sampler)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.select_query">select_query() (in module pyrado.utils.input_output)</a>
+</li>
+      <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.selection">selection() (DomainRandWrapperBuffer property)</a>
 </li>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.sendCommand">sendCommand() (NatNetClient method)</a>
 </li>
@@ -4935,7 +4957,7 @@
 </li>
         <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask.step_rew">(DesStateTask method)</a>
 </li>
-        <li><a href="tasks.html#pyrado.tasks.endless_flipping.EndlessFlippingTask.step_rew">(EndlessFlippingTask method)</a>
+        <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask.step_rew">(FlippingTask method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.goalless.GoallessTask.step_rew">(GoallessTask method)</a>
 </li>
@@ -5172,6 +5194,8 @@
         <li><a href="tests.html#tests.test_domain_randomization.test_domain_param">(in module tests.test_domain_randomization)</a>
 </li>
       </ul></li>
+      <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob">test_dr_wrapper_buffer_bob() (in module tests.environment_wrappers.test_domain_randomization)</a>
+</li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">test_dr_wrapper_live_bob() (in module tests.environment_wrappers.test_domain_randomization)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_ds_spec">test_ds_spec() (in module tests.test_utils)</a>
@@ -5256,6 +5280,8 @@
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">test_order_act_noise_act_norm() (in module tests.environment_wrappers.test_action_noise)</a>
 </li>
+      <li><a href="tests.html#tests.test_sampling.test_parallel_rollout_sampler">test_parallel_rollout_sampler() (in module tests.test_sampling)</a>
+</li>
       <li><a href="tests.html#tests.test_tasks.test_parallel_task_function">test_parallel_task_function() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_param_expl">test_param_expl() (in module tests.algorithms.test_algorithms)</a>
@@ -5263,6 +5289,8 @@
       <li><a href="tests.html#tests.test_sampling.test_param_expl_sampler">test_param_expl_sampler() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_param_grid">test_param_grid() (in module tests.test_domain_randomization)</a>
+</li>
+      <li><a href="tests.html#tests.test_sampling.test_parameter_exploration_sampler">test_parameter_exploration_sampler() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_parameterized_policies_init_param">test_parameterized_policies_init_param() (in module tests.test_policies)</a>
 </li>
@@ -5350,12 +5378,12 @@
 </li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_discrete_space">test_sample_contains_discrete_space() (in module tests.test_spaces)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">test_sample_from_unit_sphere_surface() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect">test_sampler_collect() (in module tests.test_sampling)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect_minrun">test_sampler_collect_minrun() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_pool">test_sampler_pool() (in module tests.test_sampling)</a>

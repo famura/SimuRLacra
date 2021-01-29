@@ -332,13 +332,27 @@
             <span class="k">return</span> <span class="n">param</span>
 
     <span class="nd">@domain_param</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the domain parameters. The changes are only applied at the next call of the reset function. &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_load_domain_param</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="n">param</span>
+    <span class="k">def</span> <span class="nf">domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the environment&#39;s domain parameters. The changes are only applied at the next call of the reset function.</span>
+
+<span class="sd">        :param domain_param: new domain parameter set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_domain_param</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="n">domain_param</span>
+
+<div class="viewcode-block" id="EnvWrapper.get_nominal_domain_param"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.get_nominal_domain_param">[docs]</a>    <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the nominal a.k.a. default domain parameters.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This function is used to check which domain parameters exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">randomizer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DomainRandomizer</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Get the wrapped environment&#39;s domain randomizer. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="p">,</span> <span class="s2">&quot;randomizer&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EnvWrapper.reset"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
