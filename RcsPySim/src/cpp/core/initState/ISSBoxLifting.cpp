@@ -46,6 +46,8 @@ ISSBoxLifting::ISSBoxLifting(RcsGraph* graph, bool fixedInitState) : InitStateSe
     RCHECK(rail);
     link2R = RcsGraph_getBodyByName(graph, "lbr_link_2_R");
     RCHECK(link2R);
+    box = RcsGraph_getBodyByName(graph, "Box");
+    RCHECK(box);
 }
 
 ISSBoxLifting::~ISSBoxLifting()
@@ -55,7 +57,7 @@ ISSBoxLifting::~ISSBoxLifting()
 
 unsigned int ISSBoxLifting::getDim() const
 {
-    return 5;  // 3 base, 1 rail, 1 LBR joints
+    return 6;  // 3 base, 1 rail, 1 LBR joints, 1 box
 }
 
 void ISSBoxLifting::getMinMax(double* min, double* max) const
@@ -68,11 +70,13 @@ void ISSBoxLifting::getMinMax(double* min, double* max) const
     max[3] = 0.9;
     min[4] = RCS_DEG2RAD(-70.); // joint_2_R [rad]
     max[4] = RCS_DEG2RAD(-60.);
+    min[5] = -0.04;  // box_y [m]
+    max[5] = 0.04;
 }
 
 std::vector<std::string> ISSBoxLifting::getNames() const
 {
-    return {"base_x", "base_y", "base_theta", "rail_z", "joint_2_R"};
+    return {"base_x", "base_y", "base_theta", "rail_z", "joint_2_R", "box_y"};
 }
 
 void ISSBoxLifting::applyInitialState(const MatNd* initialState)
@@ -87,6 +91,7 @@ void ISSBoxLifting::applyInitialState(const MatNd* initialState)
 //        b2 = RcsGraph_setJoint(graph, "DofBaseThZ", 0.);
 //        b3 = RcsGraph_setJoint(graph, "DofChestZ", 0.85);
         b4 = RcsGraph_setJoint(graph, "lbr_joint_2_R", RCS_DEG2RAD(-65.));
+        graph->q->ele[box->jnt->jointIndex + 1] = initialState->ele[5];
     }
     else {
 //        b0 = RcsGraph_setJoint(graph, "DofBaseX", initialState->ele[0]);
@@ -94,11 +99,12 @@ void ISSBoxLifting::applyInitialState(const MatNd* initialState)
 //        b2 = RcsGraph_setJoint(graph, "DofBaseThZ", initialState->ele[2]);
 //        b3 = RcsGraph_setJoint(graph, "DofChestZ", initialState->ele[3]);
         b4 = RcsGraph_setJoint(graph, "lbr_joint_2_R", initialState->ele[4]);
+        graph->q->ele[box->jnt->jointIndex + 1] = initialState->ele[5];
     }
     
-//    if (!(b0 && b1 && b2 && b3 && b4)) {
-//        throw std::invalid_argument("Setting graph failed for at least one of the joints!");
-//    }
+    if (!(b4)) {
+        throw std::invalid_argument("Setting graph failed for at least one of the joints!");
+    }
     
     // Update the forward kinematics
     RcsGraph_setState(graph, graph->q, graph->q_dot);

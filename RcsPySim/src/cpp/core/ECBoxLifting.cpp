@@ -94,7 +94,6 @@ protected:
             // Keep nullptr
         }
         else if (refFrameType == "box") {
-            
             refBody = box;
             refFrame = box;
         }
@@ -136,8 +135,6 @@ protected:
             else {
                 // Right
                 tasks.emplace_back(new TaskVelocity1D("Yd", graph, rightGrasp, refBody, refFrame));
-                tasks.emplace_back(new TaskVelocity1D("Yd", graph, rightGrasp, refBody, refFrame));
-                tasks.emplace_back(new TaskVelocity1D("Zd", graph, rightGrasp, refBody, refFrame));
                 tasks.emplace_back(new TaskVelocity1D("Zd", graph, rightGrasp, refBody, refFrame));
             }
             
@@ -146,6 +143,7 @@ protected:
             
             // Add the always active tasks
             amIK->addAlwaysActiveTask(new TaskPosition1D("X", graph, rightGrasp, basket, basket));
+//            amIK->addAlwaysActiveTask(new TaskOmega1D("Cd", graph, rightGrasp, nullptr, nullptr));
             
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
@@ -197,8 +195,8 @@ protected:
                     i++;
                 }
             }
-            
-            // Control effector velocity and orientation
+                
+                // Control effector velocity and orientation
             else {
                 // Right
                 innerAM->addTask(new TaskVelocity1D("Xd", graph, rightGrasp, refBody, refFrame));
@@ -260,24 +258,38 @@ protected:
     
     virtual ObservationModel* createObservationModel()
     {
-        // Observe effector positions (and velocities)
         std::unique_ptr<OMCombined> fullState(new OMCombined());
         
-        auto omRightLin = new OMBodyStateLinear(graph, "PowerGrasp_R"); // in world coordinates
-        omRightLin->setMinState({0.4, -0.8, 0.6});  // [m]
-        omRightLin->setMaxState({1.6, 0.8, 1.4});  // [m]
-        omRightLin->setMaxVelocity(3.); // [m/s]
-        fullState->addPart(OMPartial::fromMask(omRightLin, {false, true, true}));
+        // Observe effector positions (and velocities)
+        if (properties->getPropertyBool("observeVelocities", false)) {
+            auto omRightLin = new OMBodyStateLinear(graph, "PowerGrasp_R"); // in world coordinates
+            omRightLin->setMinState({0.4, -0.8, 0.6});  // [m]
+            omRightLin->setMaxState({1.6, 0.8, 1.4});  // [m]
+            omRightLin->setMaxVelocity(3.); // [m/s]
+            fullState->addPart(OMPartial::fromMask(omRightLin, {false, true, true}));
+        }
+        else {
+            auto omRightLin = new OMBodyStateLinearPositions(graph, "PowerGrasp_R"); // in world coordinates
+            omRightLin->setMinState({0.4, -0.8, 0.6});  // [m]
+            omRightLin->setMaxState({1.6, 0.8, 1.4});  // [m]
+            fullState->addPart(OMPartial::fromMask(omRightLin, {false, true, true}));
+        }
         
         // Observe box positions (and velocities)
+        if (properties->getPropertyBool("observeVelocities", false)) {
 //        auto omBoxLin = new OMBodyStateLinear(graph, "Box", "Table", "Table");  // in relative coordinates
-//        omBoxLin->setMinState({-0.6, -0.8, -0.1});  // [m]
-//        omBoxLin->setMaxState({0.6, 0.8, 1.});  // [m]
-        auto omBoxLin = new OMBodyStateLinear(graph, "Box"); // in world coordinates
-        omBoxLin->setMinState({0.4, -0.8, 0.6});  // [m]
-        omBoxLin->setMaxState({1.6, 0.8, 1.4});  // [m]
-        omBoxLin->setMaxVelocity(3.); // [m/s]
-        fullState->addPart(OMPartial::fromMask(omBoxLin, {false, true, true}));
+            auto omBoxLin = new OMBodyStateLinear(graph, "Box"); // in world coordinates
+            omBoxLin->setMinState({0.4, -0.8, 0.6});  // [m]
+            omBoxLin->setMaxState({1.6, 0.8, 1.4});  // [m]
+            omBoxLin->setMaxVelocity(3.); // [m/s]
+            fullState->addPart(OMPartial::fromMask(omBoxLin, {false, true, true}));
+        }
+        else {
+            auto omBoxLin = new OMBodyStateLinearPositions(graph, "Box"); // in world coordinates
+            omBoxLin->setMinState({0.4, -0.8, 0.6});  // [m]
+            omBoxLin->setMaxState({1.6, 0.8, 1.4});  // [m]
+            fullState->addPart(OMPartial::fromMask(omBoxLin, {false, true, true}));
+        }
         
         // Observe box orientation (and velocities)
         if (properties->getPropertyBool("observeVelocities", false)) {
@@ -301,12 +313,12 @@ protected:
         if (properties->getPropertyBool("observeForceTorque", true)) {
             RcsSensor* ftsL = RcsGraph_getSensorByName(graph, "WristLoadCellLBR_L");
             if (ftsL) {
-                auto omForceTorque = new OMForceTorque(graph, ftsL->name, 1200);
+                auto omForceTorque = new OMForceTorque(graph, ftsL->name, 1200, true);
                 fullState->addPart(OMPartial::fromMask(omForceTorque, {false, true, true, false, false, false}));
             }
             RcsSensor* ftsR = RcsGraph_getSensorByName(graph, "WristLoadCellLBR_R");
             if (ftsR) {
-                auto omForceTorque = new OMForceTorque(graph, ftsR->name, 1200);
+                auto omForceTorque = new OMForceTorque(graph, ftsR->name, 1200, true);
                 fullState->addPart(OMPartial::fromMask(omForceTorque, {false, true, true, false, false, false}));
             }
         }
@@ -414,7 +426,7 @@ public:
             Vec3d_transformSelf(cameraLocation, table->A_BI);
             
             // Move the camera approx where the Kinect would be
-            cameraLocation[0] = railBot->A_BI->org[0] + 2.3 ;
+            cameraLocation[0] = railBot->A_BI->org[0] + 2.3;
             cameraLocation[1] = 0;
             cameraLocation[2] = railBot->A_BI->org[2] + 1.5;
         }
