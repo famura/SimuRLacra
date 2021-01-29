@@ -26,6 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+#added imports
+import math, pathlib
+
 import numpy as np
 from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
@@ -199,81 +202,193 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
     def _init_anim(self):
         import vpython as vp
+        from direct.showbase.ShowBase import ShowBase
+        from direct.task import Task
+        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, AmbientLight, WindowProperties
 
-        l_pole = float(self.domain_param["l_pole"])
-        l_rail = float(self.domain_param["l_rail"])
+        # Configuration for panda3d-window
+        confVars = """
+               win-size 800 600
+               window-title Ball on Beam
+               framebuffer-multisample 1
+               multisamples 2
+               """
+        loadPrcFileData("", confVars)
 
-        # Only for animation
-        l_cart, h_cart = 0.08, 0.08
-        r_pole, r_rail = 0.01, 0.005
+        class PandaVis(ShowBase):
+            def __init__(self, qcp):
+                ShowBase.__init__(self)
 
-        # Get positions
-        x, th, _, _ = self.state
+                mydir = pathlib.Path(__file__).resolve().parent.absolute()
 
-        self._anim["canvas"] = vp.canvas(width=1000, height=600, title="Quanser Cartpole")
-        # Rail
-        self._anim["rail"] = vp.cylinder(
-            pos=vp.vec(-l_rail / 2, -h_cart / 2 - r_rail, 0),  # a VPython's cylinder origin is at the bottom
-            radius=r_rail,
-            length=l_rail,
-            color=vp.color.white,
-            canvas=self._anim["canvas"],
-        )
-        # Cart
-        self._anim["cart"] = vp.box(
-            pos=vp.vec(x, 0, 0),
-            length=l_cart,
-            height=h_cart,
-            width=h_cart / 2,
-            color=vp.color.green,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["joint"] = vp.sphere(
-            pos=vp.vec(x, 0, r_pole + h_cart / 4),
-            radius=r_pole,
-            color=vp.color.white,
-        )
-        # Pole
-        self._anim["pole"] = vp.cylinder(
-            pos=vp.vec(x, 0, r_pole + h_cart / 4),
-            axis=vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0),
-            radius=r_pole,
-            length=2 * l_pole,
-            color=vp.color.blue,
-            canvas=self._anim["canvas"],
-        )
+                self.setBackgroundColor(0, 0, 0, 1)
+                
+                #Accessing variables of outer class
+                self.qcp = qcp
+
+                #setting parameters
+                l_pole = float(self.qcp.domain_param["l_pole"])
+                l_rail = float(self.qcp.domain_param["l_rail"])
+
+                # Only for animation
+                l_cart, h_cart = 0.08, 0.08
+                r_pole, r_rail = 0.01, 0.005
+
+                # Get positions
+                x, th, _, _ = self.qcp.state
+
+                self.setBackgroundColor(0, 0, 0)
+                self.cam.setY(-5)
+                self.render.setAntialias(AntialiasAttrib.MAuto)
+                self.windowProperties = WindowProperties()
+                self.windowProperties.setForeground(True)
+
+                # Set lighting
+                self.directionalLight = DirectionalLight('directionalLight')
+                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
+                self.directionalLightNP.setHpr(0, -8, 0)
+                # self.directionalLightNP.setPos(0, 8, 0)
+                self.render.setLight(self.directionalLightNP)
+
+                self.ambientLight = AmbientLight('ambientLight')
+                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
+                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
+                self.render.setLight(self.ambientLightNP)
+
+                # Text
+                self.text = TextNode('parameters')
+                self.textNodePath = aspect2d.attachNewNode(self.text)
+                self.textNodePath.setScale(0.07)
+                self.textNodePath.setPos(0.3, 0, -0.3)
+
+                #TODO RenderEinstellungen pro Objekt
+
+                #Rail
+                self.rail = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
+                self.rail.setPos(-l_rail/2, 0, -h_cart/2 - r_rail)
+                self.rail.setScale(r_rail, r_rail, l_rail)
+                self.rail.setColor(1, 1, 1) #white
+                self.rail.reparentTo(self.render)
+                self.rail.setR(90)
+
+                #Cart
+                self.cart = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                self.cart.setPos(x, 0, 0)
+                self.cart.setScale(l_cart, h_cart/2, h_cart)
+                self.cart.setColor(0, 1, 0) #green
+                self.cart.reparentTo(self.render)
+
+                #Joint
+                self.joint = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                self.joint.setPos(x, r_pole + h_cart/4, 0)
+                self.joint.setScale(r_pole, r_pole, r_pole)
+                self.joint.setColor(0, 0, 0) #white
+                self.joint.reparentTo(self.render)
+
+                #Pole
+                self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
+                self.pole.setPos(x, r_pole + h_cart/4, -l_pole)
+                self.pole.setHpr(2 * l_pole * np.sin(th), -2 * l_pole * np.cos(th), 0)
+                #H um Z-Achse, P um X-Achse, R um Y-Achse
+                self.pole.setScale(r_pole, r_pole, 2*l_pole)
+                self.pole.setColor(0, 0, 1) #blue
+                self.pole.reparentTo(self.render)
+
+                #Update-Aufruf
+                self.taskMgr.add(self.update, "update")
+
+            def update(self, task):
+
+                g = self.qcp.domain_param["g"]
+                m_cart = self.qcp.domain_param["m_cart"]
+                m_pole = self.qcp.domain_param["m_pole"]
+                l_pole = float(self.qcp.domain_param["l_pole"])
+                l_rail = float(self.qcp.domain_param["l_rail"])
+                eta_m = self.qcp.domain_param["eta_m"]
+                eta_g = self.qcp.domain_param["eta_g"]
+                K_g = self.qcp.domain_param["K_g"]
+                J_m = self.qcp.domain_param["J_m"]
+                R_m = self.qcp.domain_param["R_m"]
+                k_m = self.qcp.domain_param["k_m"]
+                r_mp = self.qcp.domain_param["r_mp"]
+                B_eq = self.qcp.domain_param["B_eq"]
+                B_pole = self.qcp.domain_param["B_pole"]
+
+                # Only for animation
+                l_cart, h_cart = 0.08, 0.08
+                r_pole, r_rail = 0.01, 0.005
+
+                # Get positions
+                x, th, _, _ = self.qcp.state
+
+                # Rail sollte doch eigentlich fest bleiben?!
+                self.rail.setX(-l_rail / 2)
+                self.rail.setSz(l_rail)
+
+                #Cart
+                #self._anim["cart"].pos = vp.vec(x, 0, 0)
+                self.cart.setX(x)
+
+                #Joint
+                #self._anim["joint"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
+                self.joint.setX(x)
+
+                #Pole
+                #self._anim["pole"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
+                self.pole.setX(x)
+                #Original
+                #self._anim["pole"].axis = vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
+
+                #Übersetzung 1:1
+                #self.pole.setHpr(2 * l_pole * np.sin(th) *180/np.pi, 0, -2 * l_pole * vp.cos(th) *180/np.pi)
+
+                self.pole.setR(-th * 180/np.pi )
+
+                #Vertauschte P-R-Achsen
+                #self.pole.setHpr(2 * l_pole * np.sin(th) *180/np.pi, -2 * l_pole * np.cos(th) *180/np.pi, 0)
+                print(th)
+
+                self.text.setText(f"""
+                                    th: {th}
+                                    x: {self.qcp.state[0] : 1.4f}
+                                    theta: {self.qcp.state[1]*180/np.pi : 2.3f}
+                                    dt: {self.qcp._dt :1.4f}
+                                    g: {g : 1.3f}
+                                    m_cart: {m_cart : 1.4f}
+                                    l_rail: {l_rail : 1.3f}
+                                    l_pole: {l_pole : 1.3f} (0.168 is short)
+                                    eta_m: {eta_m : 1.3f}
+                                    eta_g: {eta_g : 1.3f}
+                                    K_g: {K_g : 1.3f}
+                                    J_m: {J_m : 1.8f}
+                                    r_mp: {r_mp : 1.4f}
+                                    R_m: {R_m : 1.3f}
+                                    k_m: {k_m : 1.6f}
+                                    B_eq: {B_eq : 1.2f}
+                                    B_pole: {B_pole : 1.3f}
+                                    m_pole: {m_pole : 1.3f}
+                                    """)
+                self.text.setTextColor(1, 1, 1, 1) #white
+                return Task.cont
+
+            def reset(self):
+                pass
+
+        # Create instance of PandaVis
+        self._visualization = PandaVis(self)
+        # States that visualization is running
+        self._initiated = True
 
     def _update_anim(self):
-        import vpython as vp
+        self._visualization.taskMgr.step()
+        #import vpython as vp
 
-        g = self.domain_param["g"]
-        m_cart = self.domain_param["m_cart"]
-        m_pole = self.domain_param["m_pole"]
-        l_pole = float(self.domain_param["l_pole"])
-        l_rail = float(self.domain_param["l_rail"])
-        eta_m = self.domain_param["eta_m"]
-        eta_g = self.domain_param["eta_g"]
-        K_g = self.domain_param["K_g"]
-        J_m = self.domain_param["J_m"]
-        R_m = self.domain_param["R_m"]
-        k_m = self.domain_param["k_m"]
-        r_mp = self.domain_param["r_mp"]
-        B_eq = self.domain_param["B_eq"]
-        B_pole = self.domain_param["B_pole"]
 
-        # Only for animation
-        l_cart, h_cart = 0.08, 0.08
-        r_pole, r_rail = 0.01, 0.005
-
-        # Get positions
-        x, th, _, _ = self.state
-
-        # Rail
-        self._anim["rail"].pos = vp.vec(-l_rail / 2, -h_cart / 2 - r_rail, 0)
-        self._anim["rail"].length = l_rail
+        '''
         # Cart
         self._anim["cart"].pos = vp.vec(x, 0, 0)
-        self._anim["joint"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
+        self._anim["joint"].pos = vp.vec(x, 0, r_pole + h_cart / 4)'''
+        '''
         # Pole
         self._anim["pole"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
         self._anim["pole"].axis = vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
@@ -299,7 +414,9 @@ class QCartPoleSim(SimPyEnv, Serializable):
                     B_eq: {B_eq : 1.2f}
                     B_pole: {B_pole : 1.3f}
                     m_pole: {m_pole : 1.3f}
-                    """
+                    """'''
+        def _reset_anim(self):
+            self._visualization.reset()
 
 
 class QCartPoleStabSim(QCartPoleSim, Serializable):
