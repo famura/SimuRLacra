@@ -39,7 +39,7 @@ from pyrado.policies.base import Policy
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
-from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler
+from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler, ParameterSamplingResult
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.sampler_pool import *
@@ -411,6 +411,63 @@ def test_param_expl_sampler(
             assert pivot.rollout_info["domain_param"] == other_ro.rollout_info["domain_param"]
             # Compare first observation a.k.a. init state
             assert pivot[0].observation == pytest.approx(other_ro[0].observation)
+
+
+@pytest.mark.parametrize("env", ["default_bob"], indirect=True, ids=["bob"])
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "linear_policy",
+        "fnn_policy",
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thfnn_policy",
+        "thgru_policy",
+    ],
+    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf", "thfnn", "thgru"],
+    indirect=True,
+)
+@pytest.mark.parametrize("num_workers", [1, 4], ids=["1worker", "4workers"])
+def test_parameter_exploration_sampler(env: SimEnv, policy: Policy, num_workers: int):
+    # Use some random parameters
+    num_ps = 7
+    params = to.rand(num_ps, policy.num_param)
+
+    sampler = ParameterExplorationSampler(
+        env, policy, num_init_states_per_domain=1, num_domains=1, num_workers=num_workers
+    )
+    psr = sampler.sample(param_sets=params)
+    assert isinstance(psr, ParameterSamplingResult)
+    assert len(psr.rollouts) >= 1 * 1 * num_ps
+
+
+@pytest.mark.parametrize("env", ["default_bob"], indirect=True, ids=["bob"])
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "linear_policy",
+        "fnn_policy",
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thfnn_policy",
+        "thgru_policy",
+    ],
+    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf", "thfnn", "thgru"],
+    indirect=True,
+)
+@pytest.mark.parametrize("num_workers", [1, 4], ids=["1worker", "4workers"])
+def test_parallel_rollout_sampler(env: SimEnv, policy: Policy, num_workers: int):
+    min_rollouts = num_workers * 2  # make sure every worker samples at least once
+    sampler = ParallelRolloutSampler(env, policy, num_workers, min_rollouts=min_rollouts)
+    ros = sampler.sample()
+    assert isinstance(ros, list)
+    assert len(ros) >= min_rollouts
 
 
 @m_needs_cuda

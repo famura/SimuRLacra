@@ -32,9 +32,6 @@
 #include "PPDSingleVar.h"
 
 #include <Rcs_typedef.h>
-#include <Rcs_body.h>
-#include <Rcs_shape.h>
-#include <Rcs_math.h>
 #include <Rcs_Vec3d.h>
 
 #include <stdexcept>

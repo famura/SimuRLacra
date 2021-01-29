@@ -83,6 +83,10 @@ class DiscreteSpace(Space):
         return self.eles.shape[0]
 
     @property
+    def bound_abs_up(self) -> np.ndarray:
+        return np.max(np.abs(self.eles), axis=1)
+
+    @property
     def labels(self) -> np.ndarray:
         return self._labels
 

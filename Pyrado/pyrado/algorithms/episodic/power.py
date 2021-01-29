@@ -34,9 +34,8 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
-from pyrado.utils.input_output import print_cbt, print_cbt_once
+from pyrado.utils.input_output import print_cbt
 
 
 class PoWER(ParameterExploring):
@@ -87,9 +86,6 @@ class PoWER(ParameterExploring):
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
-        if not isinstance(policy, LinearPolicy):
-            print_cbt_once("PoWER was designed for linear policies.", "y")
-
         # Call ParameterExploring's constructor
         super().__init__(
             save_dir=save_dir,
@@ -119,8 +115,9 @@ class PoWER(ParameterExploring):
             self._expl_strat = SymmParamExplStrat(self._expl_strat)
 
         # Initialize memory for importance sampling
+        self._bound_lo_ret = 1e-3  # the returns must not be negative, clip them to this value if so
         self.num_is_samples = min(pop_size, num_is_samples)
-        self.is_mem_ret = 1e-6 * to.ones(
+        self.is_mem_ret = self._bound_lo_ret * to.ones(
             self.num_is_samples
         )  # has to be initialized > 0 due to first covariance update
         self.is_mem_params = to.zeros(self.num_is_samples, self._policy.num_param)
@@ -131,7 +128,7 @@ class PoWER(ParameterExploring):
         super().reset(seed)
 
         # Reset memory for importance sampling
-        self.is_mem_ret = 1e-6 * to.ones(
+        self.is_mem_ret = self._bound_lo_ret * to.ones(
             self.num_is_samples
         )  # has to be initialized > 0 due to first covariance update
         self.is_mem_params = to.zeros(self.num_is_samples, self._policy.num_param)
@@ -141,8 +138,8 @@ class PoWER(ParameterExploring):
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
         # Average the return values over the rollouts
         rets_avg_ros = to.from_numpy(param_results.mean_returns).to(to.get_default_dtype())
-        if any(rets_avg_ros < 0):
-            rets_avg_ros[rets_avg_ros < 0] = 1e-6
+        if any(rets_avg_ros < self._bound_lo_ret):
+            rets_avg_ros[rets_avg_ros < 0] = self._bound_lo_ret
             print_cbt("PoWER is must use positive reward functions (improper probability distribution)!", "r")
 
         # We do the simplification from the original implementation, which is only valid for the return-based variant

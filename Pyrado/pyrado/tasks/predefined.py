@@ -28,12 +28,12 @@
 
 import functools
 import numpy as np
-from typing import Sequence, Union
+from typing import Sequence, Union, Optional
 
 import pyrado
 from pyrado.spaces.empty import EmptySpace
 from pyrado.tasks.desired_state import DesStateTask
-from pyrado.tasks.endless_flipping import EndlessFlippingTask
+from pyrado.tasks.endless_flipping import FlippingTask
 from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.reward_functions import (
@@ -41,54 +41,11 @@ from pyrado.tasks.reward_functions import (
     ZeroPerStepRewFcn,
     AbsErrRewFcn,
     CosOfOneEleRewFcn,
-    CompoundRewFcn,
     ExpQuadrErrRewFcn,
     QuadrErrRewFcn,
 )
 from pyrado.tasks.utils import proximity_succeeded, never_succeeded
 from pyrado.utils.data_types import EnvSpec
-
-
-def create_goal_dist_task(env_spec: EnvSpec, ds_index: int, rew_fcn: RewFcn, succ_thold: float = 0.01) -> MaskedTask:
-    # Define the indices for selection. This needs to match the observations' names in RcsPySim.
-    obs_labels = [f"GD_DS{ds_index}"]
-
-    # Get the masked environment specification
-    spec = EnvSpec(
-        env_spec.obs_space,
-        env_spec.act_space,
-        env_spec.state_space.subspace(env_spec.state_space.create_mask(obs_labels))
-        if env_spec.state_space is not EmptySpace
-        else EmptySpace,
-    )
-
-    # Create a desired state task with the goal [0, 0]
-    dst = DesStateTask(spec, np.zeros(2), rew_fcn, functools.partial(proximity_succeeded, thold_dist=succ_thold))
-
-    # Mask selected goal distance
-    return MaskedTask(env_spec, dst, obs_labels)
-
-
-def create_goal_dist_distvel_task(
-    env_spec: EnvSpec, ds_index: int, rew_fcn: RewFcn, succ_thold: float = 0.01
-) -> MaskedTask:
-    # Define the indices for selection. This needs to match the observations' names in RcsPySim.
-    obs_labels = [f"GD_DS{ds_index}", f"GD_DS{ds_index}d"]
-
-    # Get the masked environment specification
-    spec = EnvSpec(
-        env_spec.obs_space,
-        env_spec.act_space,
-        env_spec.state_space.subspace(env_spec.state_space.create_mask(obs_labels))
-        if env_spec.state_space is not EmptySpace
-        else EmptySpace,
-    )
-
-    # Create a desired state task with the goal [0, 0]
-    dst = DesStateTask(spec, np.zeros(2), rew_fcn, functools.partial(proximity_succeeded, thold_dist=succ_thold))
-
-    # Mask selected goal distance velocities
-    return MaskedTask(env_spec, dst, obs_labels)
 
 
 def create_check_all_boundaries_task(env_spec: EnvSpec, penalty: float) -> FinalRewTask:
@@ -101,7 +58,7 @@ def create_check_all_boundaries_task(env_spec: EnvSpec, penalty: float) -> Final
 
     :param env_spec: environment specification
     :param penalty: scalar cost (positive values) for violating the bounds
-    :return: masked task
+    :return: masked task that only considers a subspace of all observations
     """
     return FinalRewTask(
         DesStateTask(env_spec, np.zeros(env_spec.state_space.shape), ZeroPerStepRewFcn(), never_succeeded),
@@ -121,7 +78,7 @@ def create_task_space_discrepancy_task(env_spec: EnvSpec, rew_fcn: RewFcn) -> Ma
 
     :param env_spec: environment specification
     :param rew_fcn: reward function
-    :return: masked task
+    :return: masked task that only considers a subspace of all observations
     """
     # Define the indices for selection. This needs to match the observations' names in RcsPySim.
     obs_labels = [obs_label for obs_label in env_spec.state_space.labels if "DiscrepTS" in obs_label]
@@ -136,10 +93,10 @@ def create_task_space_discrepancy_task(env_spec: EnvSpec, rew_fcn: RewFcn) -> Ma
     )
 
     # Create an endlessly running desired state task (no task space discrepancy is desired)
-    dst = DesStateTask(spec, np.zeros(spec.state_space.shape), rew_fcn, never_succeeded)
+    task = DesStateTask(spec, np.zeros(spec.state_space.shape), rew_fcn, never_succeeded)
 
     # Mask selected discrepancy observation
-    return MaskedTask(env_spec, dst, obs_labels)
+    return MaskedTask(env_spec, task, obs_labels)
 
 
 def create_collision_task(env_spec: EnvSpec, factor: float) -> MaskedTask:
@@ -152,7 +109,7 @@ def create_collision_task(env_spec: EnvSpec, factor: float) -> MaskedTask:
 
     :param env_spec: environment specification
     :param factor: cost / reward function scaling factor
-    :return: masked task
+    :return: masked task that only considers a subspace of all observations
     """
     if not factor >= 0:
         raise pyrado.ValueErr(given=factor, ge_constraint="0")
@@ -170,10 +127,10 @@ def create_collision_task(env_spec: EnvSpec, factor: float) -> MaskedTask:
     rew_fcn = AbsErrRewFcn(q=np.array([factor]), r=np.zeros(spec.act_space.shape))
 
     # Create an endlessly running desired state task (no collision is desired)
-    dst = DesStateTask(spec, np.zeros(spec.state_space.shape), rew_fcn, never_succeeded)
+    task = DesStateTask(spec, np.zeros(spec.state_space.shape), rew_fcn, never_succeeded)
 
     # Mask selected collision cost observation
-    return MaskedTask(env_spec, dst, obs_labels)
+    return MaskedTask(env_spec, task, obs_labels)
 
 
 def create_forcemin_task(env_spec: EnvSpec, obs_labels: Sequence[str], Q: np.ndarray) -> MaskedTask:
@@ -187,7 +144,7 @@ def create_forcemin_task(env_spec: EnvSpec, obs_labels: Sequence[str], Q: np.nda
     :param obs_labels: labels for selection, e.g. ['WristLoadCellLBR_R_Fy']. This needs to match the observations'
                        names in RcsPySim
     :param Q: weight matrix of dim NxN with N=num_forces for the quadratic force costs
-    :return: masked task
+    :return: masked task that only considers a subspace of all observations
     """
     # Get the masked environment specification
     spec = EnvSpec(
@@ -198,14 +155,17 @@ def create_forcemin_task(env_spec: EnvSpec, obs_labels: Sequence[str], Q: np.nda
 
     # Create an endlessly running desired state task
     rew_fcn = QuadrErrRewFcn(Q=Q, R=np.zeros((spec.act_space.flat_dim, spec.act_space.flat_dim)))
-    dst = DesStateTask(spec, np.zeros(spec.state_space.shape), rew_fcn, never_succeeded)
+    task = DesStateTask(spec, np.zeros(spec.state_space.shape), rew_fcn, never_succeeded)
 
     # Mask selected collision cost observation
-    return MaskedTask(env_spec, dst, obs_labels)
+    return MaskedTask(env_spec, task, obs_labels)
 
 
 def create_lifting_task(
-    env_spec: EnvSpec, obs_labels: Sequence[str], des_height: Union[float, np.ndarray]
+    env_spec: EnvSpec,
+    obs_labels: Sequence[str],
+    des_height: Union[float, np.ndarray],
+    succ_thold: Optional[float] = 0.01,
 ) -> MaskedTask:
     """
     Create a task for lifting an object.
@@ -216,7 +176,8 @@ def create_lifting_task(
     :param env_spec: environment specification
     :param obs_labels: labels for selection, e.g. ['Box_Z']. This needs to match the observations' names in RcsPySim
     :param des_height: desired height of the object (depends of the coordinate system). If reached, the task is over.
-    :return: masked task
+    :param succ_thold: once the object of interest is closer than this threshold, the task is considered successfully
+    :return: masked task that only considers a subspace of all observations
     """
     # Get the masked environment specification
     spec = EnvSpec(
@@ -227,16 +188,21 @@ def create_lifting_task(
 
     # Create a desired state task
     state_des = np.asarray(des_height)
-    Q = np.diag([5e2])
+    Q = np.diag([6e2])
     R = 1e-1 * np.eye(spec.act_space.flat_dim)
     rew_fcn = ExpQuadrErrRewFcn(Q, R)
-    dst = DesStateTask(spec, state_des, rew_fcn)
+    task = DesStateTask(spec, state_des, rew_fcn, functools.partial(proximity_succeeded, thold_dist=succ_thold))
 
     # Return the masked tasks
-    return MaskedTask(env_spec, dst, obs_labels)
+    return MaskedTask(env_spec, task, obs_labels)
 
 
-def create_flipping_task(env_spec: EnvSpec, obs_labels: Sequence[str], des_angle_delta=np.pi / 2.0) -> MaskedTask:
+def create_flipping_task(
+    env_spec: EnvSpec,
+    obs_labels: Sequence[str],
+    des_angle_delta: Optional[float] = np.pi / 2.0,
+    endless: Optional[bool] = True,
+) -> MaskedTask:
     """
     Create a task for rotating an object.
 
@@ -246,7 +212,9 @@ def create_flipping_task(env_spec: EnvSpec, obs_labels: Sequence[str], des_angle
     :param env_spec: environment specification
     :param obs_labels: labels for selection, e.g. ['Box_A']. This needs to match the observations' names in RcsPySim
     :param des_angle_delta: desired angle to rotate. If reached, the task is reset, and rotating continues.
-    :return: masked task
+    :param endless: if `True`, the task will promote endlessly repeated flipping about the desired angle, else only one
+                    flip is desired
+    :return: masked task that only considers a subspace of all observations
     """
     # Get the masked environment specification
     spec = EnvSpec(
@@ -256,12 +224,107 @@ def create_flipping_task(env_spec: EnvSpec, obs_labels: Sequence[str], des_angle
     )
 
     # Create a desired state task
-    q = np.array([0.0 / np.pi])
-    r = 1e-6 * np.ones(spec.act_space.flat_dim)
-    rew_fcn_act = AbsErrRewFcn(q, r)
-    rew_fcn_box = CosOfOneEleRewFcn(idx=0)
-    rew_fcn = CompoundRewFcn([rew_fcn_act, rew_fcn_box])
-    ef_task = EndlessFlippingTask(spec, rew_fcn, init_angle=0.0, des_angle_delta=des_angle_delta)
+    rew_fcn = CosOfOneEleRewFcn(idx=0)
+    task = FlippingTask(spec, des_angle_delta, rew_fcn, endless=endless)
 
     # Return the masked tasks
-    return MaskedTask(env_spec, ef_task, obs_labels)
+    return MaskedTask(env_spec, task, obs_labels)
+
+
+def create_home_pos_task(env_spec: EnvSpec, obs_labels: Sequence[str], state_des: np.ndarray) -> MaskedTask:
+    """
+    Create a task for moving the robot to safe position.
+
+    .. note::
+        This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.
+
+    :param env_spec: environment specification
+    :param obs_labels: labels for selection, e.g. ['PowerGrasp_R_Y', 'PowerGrasp_R_Z']. This needs to match the
+                       observations' names in RcsPySim
+    :param state_des: desired state (depends of the coordinate system). If reached, the task is over.
+    :return: masked task that only considers a subspace of all observations
+    """
+    # Get the masked environment specification
+    spec = EnvSpec(
+        env_spec.obs_space,
+        env_spec.act_space,
+        env_spec.state_space.subspace(env_spec.state_space.create_mask(obs_labels)),
+    )
+
+    # Create a desired state task
+    Q = 1e1 * np.eye(len(state_des))
+    R = 1e-1 * np.eye(spec.act_space.flat_dim)
+    rew_fcn = ExpQuadrErrRewFcn(Q, R)
+    task = DesStateTask(spec, state_des, rew_fcn)
+
+    # Return the masked tasks
+    return MaskedTask(env_spec, task, obs_labels)
+
+
+def create_goal_dist_task(
+    env_spec: EnvSpec, ds_label: int, rew_fcn: RewFcn, succ_thold: Optional[float] = 0.01
+) -> MaskedTask:
+    """
+    Create a task that rewards minimizing the `GoalDistance` of dynamical system movements primitives (see RcsPySim).
+
+    .. note::
+        This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.
+
+    :param env_spec: environment specification
+    :param ds_label: label of the dynamical system (see RcsPySim)
+    :param rew_fcn: reward function
+    :param succ_thold: once the object of interest is closer than this threshold, the task is considered successfully
+    :return: masked task that only considers a subspace of all observations
+    """
+    # Define the indices for selection. This needs to match the observations' names in RcsPySim.
+    obs_labels = [f"GD_DS{ds_label}"]
+
+    # Get the masked environment specification
+    spec = EnvSpec(
+        env_spec.obs_space,
+        env_spec.act_space,
+        env_spec.state_space.subspace(env_spec.state_space.create_mask(obs_labels))
+        if env_spec.state_space is not EmptySpace
+        else EmptySpace,
+    )
+
+    # Create a desired state task with the goal [0, 0]
+    task = DesStateTask(spec, np.zeros(2), rew_fcn, functools.partial(proximity_succeeded, thold_dist=succ_thold))
+
+    # Mask selected goal distance
+    return MaskedTask(env_spec, task, obs_labels)
+
+
+def create_goal_dist_distvel_task(
+    env_spec: EnvSpec, ds_label: int, rew_fcn: RewFcn, succ_thold: Optional[float] = 0.01
+) -> MaskedTask:
+    """
+    Create a task that rewards minimizing the `GoalDistance` as well as its rate of change of dynamical system
+    movements primitives (see RcsPySim).
+
+    .. note::
+        This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.
+
+    :param env_spec: environment specification
+    :param ds_label: label of the dynamical system (see RcsPySim)
+    :param rew_fcn: reward function
+    :param succ_thold: once the object of interest is closer than this threshold, the task is considered successfully
+    :return: masked task that only considers a subspace of all observations
+    """
+    # Define the indices for selection. This needs to match the observations' names in RcsPySim.
+    obs_labels = [f"GD_DS{ds_label}", f"GD_DS{ds_label}d"]
+
+    # Get the masked environment specification
+    spec = EnvSpec(
+        env_spec.obs_space,
+        env_spec.act_space,
+        env_spec.state_space.subspace(env_spec.state_space.create_mask(obs_labels))
+        if env_spec.state_space is not EmptySpace
+        else EmptySpace,
+    )
+
+    # Create a desired state task with the goal [0, 0]
+    task = DesStateTask(spec, np.zeros(2), rew_fcn, functools.partial(proximity_succeeded, thold_dist=succ_thold))
+
+    # Mask selected goal distance velocities
+    return MaskedTask(env_spec, task, obs_labels)

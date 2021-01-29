@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import functools
 import numpy as np
 import os.path as osp
 from init_args_serializer import Serializable
@@ -35,19 +34,15 @@ from typing import Sequence, Optional
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.tasks.base import Task
-from pyrado.tasks.desired_state import DesStateTask
-from pyrado.tasks.masked import MaskedTask
-from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, AbsErrRewFcn
 from pyrado.tasks.parallel import ParallelTasks
-from pyrado.tasks.utils import proximity_succeeded
 from pyrado.tasks.predefined import (
     create_check_all_boundaries_task,
-    create_task_space_discrepancy_task,
-    create_collision_task,
     create_lifting_task,
     create_forcemin_task,
+    create_flipping_task,
+    create_home_pos_task,
 )
-from pyrado.utils.data_types import EnvSpec
+from pyrado.tasks.sequential import SequentialTasks
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
@@ -96,10 +91,15 @@ class BoxLiftingSim(RcsSim, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # Create the tasks
-        task_box = create_lifting_task(self.spec, ["Box_Z"], des_height=0.78)
+        # task_box_flip = create_flipping_task(self.spec, ["Box_A"], des_angle_delta=np.pi / 2.0, endless=False)
+        task_box_lift = create_lifting_task(self.spec, ["Box_Z"], des_height=0.79, succ_thold=0.05)
+        task_post_lift = create_home_pos_task(
+            self.spec, ["PowerGrasp_R_Y", "PowerGrasp_R_Z"], state_des=np.array([-0.1, 1.1])
+        )
+        tasks_box = SequentialTasks([task_box_lift, task_post_lift], hold_rew_when_done=True, verbose=True)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
         task_force = create_forcemin_task(
-            self.spec, ["WristLoadCellLBR_R_Fy", "WristLoadCellLBR_R_Fz"], Q=np.diag([1e-4, 1e-4])
+            self.spec, ["WristLoadCellLBR_R_Fy", "WristLoadCellLBR_R_Fz"], Q=np.diag([1e-6, 1e-6])
         )
         # task_collision = create_collision_task(self.spec, factor=1.0)
         # task_ts_discrepancy = create_task_space_discrepancy_task(
@@ -108,7 +108,7 @@ class BoxLiftingSim(RcsSim, Serializable):
 
         return ParallelTasks(
             [
-                task_box,
+                tasks_box,
                 task_check_bounds,
                 # task_force,
                 # task_collision,
@@ -120,8 +120,8 @@ class BoxLiftingSim(RcsSim, Serializable):
     @classmethod
     def get_nominal_domain_param(cls):
         return dict(
-            box_length=0.18,
-            box_width=0.14,
+            box_length=0.14,
+            box_width=0.18,
             box_mass=0.3,
             box_friction_coefficient=1.4,
             basket_mass=0.5,
@@ -198,11 +198,10 @@ class BoxLiftingVelIKActivationSim(BoxLiftingSim, Serializable):
 
         dt = kwargs.get("dt", 0.01)  # 100 Hz is the default
         task_spec_ik = [
-            dict(x_des=np.array([+dt * np.array([15 / 180 * np.pi])])),  # Yd right
-            dict(x_des=np.array([-dt * np.array([15 / 180 * np.pi])])),  # Yd right
-            dict(x_des=np.array([+dt * np.array([15 / 180 * np.pi])])),  # Zd right
-            dict(x_des=np.array([-dt * np.array([15 / 180 * np.pi])])),  # Zd right
+            dict(x_des=np.array([+dt * 0.1])),  # Yd right
+            dict(x_des=np.array([+dt * 0.1])),  # Zd right
             dict(x_des=np.array([0.0])),  # X (always active)
+            # dict(x_des=np.array([0.0])),  # Cd (always active)
         ]
 
         # Forward to the BoxLiftingSim's constructor

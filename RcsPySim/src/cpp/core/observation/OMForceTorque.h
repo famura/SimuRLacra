@@ -51,7 +51,12 @@ public:
      * @param sensorName name of sensor to observe
      * @param maxForce maximum force in Newton for all sensed dimensions, e.g. 1200 N for the Kuka iiwa
      */
-    OMForceTorque(RcsGraph* graph, const char* sensorName, double maxForce = std::numeric_limits<double>::infinity());
+    OMForceTorque(
+        RcsGraph* graph,
+        const char* sensorName,
+        double maxForce = std::numeric_limits<double>::infinity(),
+        bool transformToWorldFrame = false
+        );
     
     virtual ~OMForceTorque();
     
@@ -66,11 +71,12 @@ public:
     virtual std::vector<std::string> getStateNames() const;
 
 private:
-    // FTS to observe
+    //! FTS to observe
     RcsSensor* sensor;
     
     double max_force;
     double max_torque;
+    bool transformToWorldFrame;
 };
 
 } /* namespace Rcs */

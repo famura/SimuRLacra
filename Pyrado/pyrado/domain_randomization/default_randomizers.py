@@ -421,21 +421,21 @@ def create_default_randomizer_bl() -> DomainRandomizer:
 
     dp_nom = BoxLiftingSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="box_length", mean=dp_nom["box_length"], std=dp_nom["box_length"] / 10),
-        NormalDomainParam(name="box_width", mean=dp_nom["box_width"], std=dp_nom["box_width"] / 10),
-        NormalDomainParam(name="box_mass", mean=dp_nom["box_mass"], std=dp_nom["box_mass"] / 5),
+        NormalDomainParam(name="box_length", mean=dp_nom["box_length"], std=dp_nom["box_length"] / 10, clip_lo=5e-2),
+        NormalDomainParam(name="box_width", mean=dp_nom["box_width"], std=dp_nom["box_width"] / 10, clip_lo=5e-2),
+        NormalDomainParam(name="box_mass", mean=dp_nom["box_mass"], std=dp_nom["box_mass"] / 10),
         UniformDomainParam(
             name="box_friction_coefficient",
             mean=dp_nom["box_friction_coefficient"],
             halfspan=dp_nom["box_friction_coefficient"] / 5,
-            clip_lo=1e-5,
+            clip_lo=1e-3,
         ),
-        NormalDomainParam(name="basket_mass", mean=dp_nom["basket_mass"], std=dp_nom["basket_mass"] / 5),
+        NormalDomainParam(name="basket_mass", mean=dp_nom["basket_mass"], std=dp_nom["basket_mass"] / 10),
         UniformDomainParam(
             name="basket_friction_coefficient",
             mean=dp_nom["basket_friction_coefficient"],
             halfspan=dp_nom["basket_friction_coefficient"] / 5,
-            clip_lo=1e-5,
+            clip_lo=1e-3,
         ),
     )
 

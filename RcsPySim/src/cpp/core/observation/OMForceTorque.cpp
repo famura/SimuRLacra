@@ -42,7 +42,9 @@
 namespace Rcs
 {
 
-OMForceTorque::OMForceTorque(RcsGraph* graph, const char* sensorName, double max_force) : max_force(max_force)
+OMForceTorque::OMForceTorque(
+    RcsGraph* graph, const char* sensorName, double max_force, bool transformToWorldFrame
+) : max_force(max_force), transformToWorldFrame(transformToWorldFrame)
 {
     sensor = RcsGraph_getSensorByName(graph, sensorName);
     if (!sensor) {
@@ -66,7 +68,26 @@ unsigned int OMForceTorque::getVelocityDim() const
 
 void OMForceTorque::computeObservation(double* state, double* velocity, const MatNd* currentAction, double dt) const
 {
-    VecNd_copy(state, sensor->rawData->ele, getStateDim());
+    if (transformToWorldFrame)
+    {
+        // Sensor frame: A_SI = A_SB * A_BI
+        const HTr* A_SB = sensor->offset; // body -> sensor
+        HTr A_SI;
+        HTr_transform(&A_SI, sensor->body->A_BI, A_SB);
+        
+        // Force / torque in world frame: I_f = (A_SI)^T*S_f
+        double* S_force = &sensor->rawData->ele[0];
+        double* S_torque = &sensor->rawData->ele[getStateDim()/2];
+        double I_force[getStateDim()/2], I_torque[getStateDim()/2];
+        Vec3d_transRotate(I_force, A_SI.rot, S_force);  Vec3d_transRotate(I_torque, A_SI.rot, S_torque);
+        
+        VecNd_copy(state, I_force, getStateDim()/2);
+        VecNd_copy(state + getStateDim()/2, I_torque, getStateDim()/2);
+    }
+    
+    else {
+        VecNd_copy(state, sensor->rawData->ele, getStateDim());
+    }
 }
 
 void OMForceTorque::getLimits(double* minState, double* maxState, double* maxVelocity) const

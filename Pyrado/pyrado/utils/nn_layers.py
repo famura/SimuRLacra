@@ -142,6 +142,9 @@ class MirrConv1d(_ConvNd):
     the first half of the kernel (along the columns). This way we can save (close to) half of the parameters, under
     the assumption that we have a kernel that obeys this kind of symmetry.
     The biases are left unchanged.
+
+    .. seealso::
+        https://pytorch.org/docs/stable/_modules/torch/nn/modules/conv.html#Conv1d
     """
 
     def __init__(
@@ -156,11 +159,13 @@ class MirrConv1d(_ConvNd):
         bias=False,
         padding_mode="zeros",
     ):
-        # Same as in PyTorch 1.4
+        # Same as in PyTorch 1.7
         kernel_size = _single(kernel_size)
         stride = _single(stride)
         padding = _single(padding)
         dilation = _single(dilation)
+
+        # Call _ConvNd's constructor
         super().__init__(
             in_channels,
             out_channels,
@@ -207,15 +212,15 @@ class MirrConv1d(_ConvNd):
                 mirr_weight[:, i, self.half_kernel_size :] = to.flip(self.weight[:, i, :], (1,))
 
         # Run though the same function as the original PyTorch implementation, but with mirrored kernel
-        if self.padding_mode == "circular":
-            expanded_padding = ((self.padding[0] + 1) // 2, self.padding[0] // 2)
+        if self.padding_mode != "zeros":
             return F.conv1d(
-                F.pad(inp, expanded_padding, mode="circular"),
-                mirr_weight,
+                F.pad(inp, self._reversed_padding_repeated_twice, mode=self.padding_mode),
+                self.weight,
                 self.bias,
                 self.stride,
                 _single(0),
                 self.dilation,
                 self.groups,
             )
-        return F.conv1d(inp, mirr_weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
+        else:
+            return F.conv1d(inp, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
