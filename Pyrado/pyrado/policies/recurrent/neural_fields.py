@@ -211,9 +211,9 @@ class NFPolicy(PotentialBasedPolicy):
         b = batch_size if batch_size is not None else 1
         self._stimuli_internal = self.conv_layer(activations_prev.view(b, 1, self._hidden_size))
         self._stimuli_internal = self._stimuli_external.clone()
-        # self._stimuli_internal = to.sum(
-        #     self._stimuli_internal, dim=1
-        # )  # TODO do multiple out channels makes sense if just summed up?
+        self._stimuli_internal = to.sum(
+            self._stimuli_internal, dim=1
+        )  # TODO do multiple out channels makes sense if just summed up?
         self._stimuli_internal = self._stimuli_internal.squeeze()
 
         # Combine the different output channels of the convolution
