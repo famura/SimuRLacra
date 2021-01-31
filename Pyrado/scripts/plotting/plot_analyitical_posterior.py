@@ -62,17 +62,17 @@ if __name__ == "__main__":
         pyrado.load(None, "reference_posterior_samples", "pt", osp.join(reference_dir, f"num_observation_{n}"))
         for n in range(1, num_observation + 1)
     ]
-    reference_samples = to.stack(reference_samples)[:, : args.num_samples, :].squeeze()
+    reference_samples = to.stack(reference_samples)[:, : args.num_samples, :]
     observation = [
         pyrado.load(None, "observation", "pt", osp.join(reference_dir, f"num_observation_{n}"))
         for n in range(1, num_observation + 1)
     ]
-    observation = to.stack(observation).squeeze()
+    observation = to.stack(observation)
     true_params = [
         pyrado.load(None, "true_parameters", "pt", osp.join(reference_dir, f"num_observation_{n}"))
         for n in range(1, num_observation + 1)
     ]
-    true_params = to.stack(true_params).squeeze()
+    true_params = to.stack(true_params)
 
     # read evaluated data
     check_files = ["num_samples", "mmd_mean", "mmd_std", "posterior_samples"]
@@ -93,29 +93,29 @@ if __name__ == "__main__":
     plt.title("Loss")
     plt.show()
 
-    which_obs = 5
+    which_obs = 0
     # plot the first two domain parameter
     dp_idcs = (0, 1)
     # set condition
     condition = posterior_samples[0].mean(dim=0)
     # plot the contourplot for the approximate posterior
     fig, axs = plt.subplots(1, 1, figsize=(14, 7), tight_layout=True)
-    _ = draw_posterior_distr(
-        axs,
-        "joint",
-        posterior,
-        observation[which_obs].unsqueeze(0),
-        algo.dp_mapping,
-        env_real,
-        prior,
-        dp_idcs,
-        condition,
-        show_prior=False,
-        contourf_kwargs=dict(cmap="RdGy"),
-    )
+    # _ = draw_posterior_distr(
+    #     axs,
+    #     "joint",
+    #     posterior,
+    #     observation[which_obs].unsqueeze(0),
+    #     algo.dp_mapping,
+    #     env_real,
+    #     prior,
+    #     dp_idcs,
+    #     condition,
+    #     show_prior=False,
+    #     contourf_kwargs=dict(cmap="RdGy"),
+    # )
     # plot reference posterior samples
     plt.scatter(reference_samples[which_obs, :, 0], reference_samples[which_obs, :, 1], color="black")
-    # plt.scatter(posterior_samples[0, :, 0], posterior_samples[0, :, 1], color="blue")
+    plt.scatter(posterior_samples[which_obs, :, 0], posterior_samples[which_obs, :, 1], color="blue")
     plt.title("True vs. approximate Posterior")
-    plt.savefig(osp.join(ex_dir, "scatter_true_posterior.pdf"))
+    plt.savefig(osp.join(ex_dir, f"scatter_true_posterior_{which_obs}.pdf"))
     plt.show()
