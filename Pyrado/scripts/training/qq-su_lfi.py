@@ -41,30 +41,54 @@ if __name__ == "__main__":
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
     # env_real.fill_buffer(num_real_obs)
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
-
+    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
     # Policy
     behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
+        # low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
+        # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
+        low=to.tensor(
+            [
+                dp_nom["Dr"] * 0,
+                dp_nom["Dp"] * 0,
+                dp_nom["Rm"] * 0.8,
+                dp_nom["km"] * 0.8,
+                dp_nom["Mr"] * 0.9,
+                dp_nom["Mp"] * 0.9,
+                dp_nom["Lr"] * 0.9,
+                dp_nom["Lp"] * 0.9,
+            ]
+        ),
+        high=to.tensor(
+            [
+                dp_nom["Dr"] * 10,
+                dp_nom["Dp"] * 10,
+                dp_nom["Rm"] * 1.2,
+                dp_nom["km"] * 1.2,
+                dp_nom["Mr"] * 1.1,
+                dp_nom["Mp"] * 1.1,
+                dp_nom["Lr"] * 1.1,
+                dp_nom["Lp"] * 1.1,
+            ]
+        ),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=5)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=50, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         summary_statistic="bayessim",
-        max_iter=10,
+        max_iter=5,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=1000,
+        num_sim_per_real_rollout=4000,
         simulation_batch_size=1,
         use_posterior_in_the_loop=False,
         normalize_posterior=False,
-        num_workers=4,
+        num_workers=10,
     )
     algo = LFI(
         ex_dir,

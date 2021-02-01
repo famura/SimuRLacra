@@ -32,13 +32,13 @@ from torch.distributions import Distribution
 from matplotlib import pyplot as plt, patches
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
-from typing import Sequence, Optional, Union, Mapping, Tuple
+from typing import Sequence, Optional, Union, Mapping, Tuple, List, Iterable
 
 import pyrado
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.utils.checks import check_all_types_equal
+from pyrado.utils.checks import check_all_types_equal, is_iterable
 from pyrado.utils.data_types import merge_dicts
 
 
@@ -108,7 +108,7 @@ def render_distr_evo(
 def draw_posterior_distr(
     axs: plt.Axes,
     plot_type: str,
-    posterior: DirectPosterior,
+    posterior: Union[DirectPosterior, List[DirectPosterior]],
     observations_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     env_real: Optional[DomainRandWrapperBuffer] = None,
@@ -128,7 +128,9 @@ def draw_posterior_distr(
 
     :param axs: axis (joint) or axes (separately) of the figure to plot on
     :param plot_type: joint to draw the joint posterior probability probabilities in one plot, or separately to draw
-                      the posterior probabilities, conditioned on the real-world observation, in a separate plot.
+                      the posterior probabilities, conditioned on the real-world observation, in a separate plot. The
+                      modes `joint` and `separate` always use the latest posterior (the only one given), while the mode
+                      `evolution` uses the posterior from the iteration in which the observation was obtained.
     :param posterior: sbi `DirectPosterior` object to evaluate
     :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
@@ -149,19 +151,24 @@ def draw_posterior_distr(
     """
     num_obs_r, dim_obs_r = observations_real.shape
     dim_x, dim_y = dims
+    plot_type = plot_type.lower()
 
-    if plot_type.lower() == "joint":
+    # Check the inputs
+    if plot_type == "joint":
         if not isinstance(axs, plt.Axes):
             raise pyrado.TypeErr(given=axs, expected_type=plt.Axes)
-    elif plot_type.lower() == "separate":
+    elif plot_type in ["separate", "evolution"]:
         axs = np.atleast_2d(axs)
         if not axs.size == num_obs_r:
             raise pyrado.ShapeErr(msg=f"The plotting axes need to be a 2-dim array with {num_obs_r} elements!")
     else:
-        raise pyrado.ValueErr(given=plot_type, eq_constraint="joint or separate")
-
-    if not isinstance(posterior, DirectPosterior):
-        raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="joint, separate, or evolution")
+    if plot_type in ["joint", "separate"]:
+        if not isinstance(posterior, DirectPosterior):
+            raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
+    elif plot_type == "evolution":
+        if not (is_iterable(posterior) and isinstance(posterior[0], DirectPosterior)):
+            raise pyrado.TypeErr(given=posterior, expected_type=Iterable[DirectPosterior])
     if len(dp_mapping) == 1:
         raise NotImplementedError("So far, this function does not support plotting 1-dim posteriors.")
     if len(dp_mapping) > 2 and condition is None:
@@ -218,14 +225,16 @@ def draw_posterior_distr(
     if not grid.shape == (grid_res ** 2, len(dp_mapping)):
         raise pyrado.ShapeErr(given=grid, expected_match=(grid_res ** 2, len(dp_mapping)))
 
-    if plot_type.lower() == "joint":
+    if plot_type == "joint":
         # Compute the posterior probabilities
         log_prob = sum([posterior.log_prob(grid, obs, normalize_posterior) for obs in observations_real])
         prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
         prob = prob.reshape(grid_res, grid_res).numpy()
 
         # Plot the posterior
-        axs.contourf(grid_x, grid_y, prob, **contourf_kwargs)
+        axs.contourf(
+            grid_x, grid_y, prob, extent=[x.min(), x.max(), y.min(), y.max()], origin="lower", **contourf_kwargs
+        )
 
         # Plot the ground truth parameters
         if dp_gt is not None:
@@ -233,31 +242,29 @@ def draw_posterior_distr(
 
         # Plot bounding box for the prior
         if prior is not None and show_prior:
-            x = prior.support.lower_bound[dim_x]
-            y = prior.support.lower_bound[dim_y]
-            dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
-            dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
-            rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
-            axs.add_patch(rect)
+            _draw_prior(axs, prior, dim_x, dim_y)
 
         # Annotate
         axs.set_aspect(1.0 / axs.get_data_ratio(), adjustable="box")
         axs.set_xlabel(f"${dp_mapping[dim_x]}$")
         axs.set_ylabel(f"${dp_mapping[dim_y]}$")
         axs.set_title(f"{num_obs_r} observations")
-        plt.gcf().canvas.set_window_title("Posterior Probabilities for All Real World Observation at Once")
+        plt.gcf().canvas.set_window_title("Joint Probability of the Latest Posterior for All Real World Observation")
 
-    else:
+    elif plot_type in ["separate", "evolution"]:
         for i in range(axs.shape[0]):
             for j in range(axs.shape[1]):
                 # Compute the posterior probabilities
                 idx = j + i * axs.shape[1]  # iterate column-wise
-                log_prob = posterior.log_prob(grid, observations_real[idx, :], normalize_posterior)
+                p = posterior if plot_type == "separate" else posterior[idx]
+                log_prob = p.log_prob(grid, observations_real[idx, :], normalize_posterior)
                 prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
                 prob = prob.reshape(grid_res, grid_res).numpy()
 
                 # Plot the posterior
-                axs[i, j].contourf(grid_x, grid_y, prob, **contourf_kwargs)
+                axs[i, j].contourf(
+                    grid_x, grid_y, prob, extent=[x.min(), x.max(), y.min(), y.max()], origin="lower", **contourf_kwargs
+                )
 
                 # Plot the ground truth parameters
                 if dp_gt is not None:
@@ -265,18 +272,26 @@ def draw_posterior_distr(
 
                 # Plot bounding box for the prior
                 if prior is not None and show_prior:
-                    x = prior.support.lower_bound[dim_x]
-                    y = prior.support.lower_bound[dim_y]
-                    dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[0]
-                    dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[1]
-                    rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
-                    axs[i, j].add_patch(rect)
+                    _draw_prior(axs[i, j], prior, dim_x, dim_y)
 
                 # Annotate
                 axs[i, j].set_aspect(1.0 / axs[i, j].get_data_ratio(), adjustable="box")
                 axs[i, j].set_xlabel(f"${dp_mapping[dim_x]}$")
                 axs[i, j].set_ylabel(f"${dp_mapping[dim_y]}$")
                 axs[i, j].set_title(f"observation {idx}")
-        plt.gcf().canvas.set_window_title("Posterior Probabilities for Every Real World Observation Separately")
+        if plot_type == "separate":
+            plt.gcf().canvas.set_window_title("Probability of the Latest Posterior for Every Real World Observation")
+        else:
+            plt.gcf().canvas.set_window_title("Probability of the Current Posterior for Every Real World Observation")
 
     return plt.gcf()
+
+
+def _draw_prior(ax, prior, dim_x, dim_y):
+    """ Helper function to draw a rectangle for the prior (assuming uniform distribution) """
+    x = prior.support.lower_bound[dim_x]
+    y = prior.support.lower_bound[dim_y]
+    dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
+    dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
+    rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
+    ax.add_patch(rect)

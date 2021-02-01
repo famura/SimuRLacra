@@ -46,8 +46,6 @@ from pyrado.utils.experiments import load_experiment
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    if args.mode not in ["joint", "separate"]:
-        raise pyrado.ValueErr(given=args.mode, given_name="plotting mode", eq_constraint="joint or separate")
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -58,6 +56,17 @@ if __name__ == "__main__":
     prior = kwout["prior"]
     posterior = kwout["posterior"]
     observations_real = kwout["observations_real"]
+
+    # Load the sequence of posteriors if desired
+    if args.mode.lower() == "evolution":
+        # Crawl through the experiment's directory
+        for root, dirs, files in os.walk(ex_dir):
+            dirs.clear()  # prevents walk() from going into subdirectories
+            posterior = [
+                pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
+                for f in files
+                if f.startswith("iter_") and f.endswith("_posterior.pt")
+            ]
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
@@ -74,25 +83,17 @@ if __name__ == "__main__":
     else:
         dp_idcs = (0, 1)
 
-    # Load a specific real-world observation (off, i.e. -1, by default)
-    if args.iter != -1:
-        # Crawl through the experiment's directory
-        for root, dirs, files in os.walk(ex_dir):
-            dirs.clear()  # prevents walk() from going into subdirectories
-            found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
-        load_iter = len(found_observations) - 1
-        observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
-
     # Set the condition if necessary
     if len(algo.dp_mapping) == 1:
         raise NotImplementedError
     elif len(algo.dp_mapping) == 2:
         condition = None  # no condition necessary since dim(posterior) = dim(grid)
     else:
+        # Use the latest posterior to sample domain parameters to obtain a condition
         num_samples = 100 * 2 ** len(algo.dp_mapping) if args.num_samples is None else args.num_samples
+        p = posterior[-1] if args.mode.lower() == "evolution" else posterior
         domain_params = to.stack(
-            [posterior.sample((num_samples,), x=obs, sample_with_mcmc=True) for obs in observations_real],
-            dim=0,
+            [p.sample((num_samples,), x=obs, sample_with_mcmc=False) for obs in observations_real], dim=0
         )
         condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
 
@@ -104,7 +105,7 @@ if __name__ == "__main__":
     fig, axs = plt.subplots(num_rows, num_cols, figsize=(14, 7), tight_layout=True)
     _ = draw_posterior_distr(
         axs,
-        args.mode.lower(),
+        args.mode,
         posterior,
         observations_real,
         algo.dp_mapping,
@@ -112,7 +113,7 @@ if __name__ == "__main__":
         prior,
         dp_idcs,
         condition,
-        show_prior=True,
+        show_prior=False,
         normalize_posterior=False,
     )
     plt.show()

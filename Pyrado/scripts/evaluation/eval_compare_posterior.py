@@ -127,7 +127,12 @@ if __name__ == "__main__":
             print(f"Current Iter:\t{iter}")
             # generate postserior samples
             param_samples, _, _ = LFI.eval_posterior(
-                posterior, observation, args.num_samples, algo.sbi_simulator, simulate_observations=False, calculate_log_probs=False
+                posterior,
+                observation,
+                args.num_samples,
+                algo.sbi_simulator,
+                simulate_observations=False,
+                calculate_log_probs=False,
             )
 
             # calculate mmd-loss
@@ -152,9 +157,7 @@ if __name__ == "__main__":
         pass
     elif args.resume:
         check_files = ["num_samples", "mmd_mean", "mmd_std", "posterior_samples"]
-        num_samples, mmd_mean, mmd_std, posterior_samples = [
-            pyrado.load(None, cf, "pt", ex_dir) for cf in check_files
-        ]
+        num_samples, mmd_mean, mmd_std, posterior_samples = [pyrado.load(None, cf, "pt", ex_dir) for cf in check_files]
         curr_iter = int(num_samples[-1] / num_sim_per_real_rollout / num_real_rollouts) + 1
         eval(
             curr_iter=curr_iter,

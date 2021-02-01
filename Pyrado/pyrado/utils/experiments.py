@@ -175,11 +175,23 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (prior, posterior, observations)
         extra["prior"] = pyrado.load(None, "prior", "pt", ex_dir, None)
-        extra["posterior"] = pyrado.load(None, "posterior", "pt", ex_dir, None)
-        extra["observations_real"] = pyrado.load(None, "observations_real", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'prior.pt')}", "g")
-        print_cbt(f"Loaded {osp.join(ex_dir, f'posterior.pt')}", "g")
-        print_cbt(f"Loaded {osp.join(ex_dir, f'observations_real.pt')}", "g")
+        if args.iter == -1:
+            # Load the complete history
+            extra["posterior"] = pyrado.load(None, "posterior", "pt", ex_dir, None)
+            extra["observations_real"] = pyrado.load(None, "observations_real", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'posterior.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'observations_real.pt')}", "g")
+        else:
+            # Load only one iteration
+            extra["posterior"] = pyrado.load(
+                None, "posterior", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
+            )
+            extra["observations_real"] = pyrado.load(
+                None, f"observations_real", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
+            )
+            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_posterior.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_observations_real.pt')}", "g")
 
     elif isinstance(algo, ActorCritic):
         # Environment
