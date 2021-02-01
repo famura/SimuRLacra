@@ -25,7 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from typing import List
+from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 import pyrado
@@ -36,6 +36,7 @@ from pyrado.domain_randomization.domain_parameter import SelfPacedLearnerParamet
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from scipy.optimize import NonlinearConstraint, minimize, Bounds
+from torch import distributions
 from torch.distributions import MultivariateNormal
 
 
@@ -105,10 +106,8 @@ class SPRL(Algorithm):
         env: DomainRandWrapper,
         subroutine: ActorCritic,
         kl_constraints_ub,
-        alpha_function_offset,
-        alpha_function_percentage,
-        discount_factor: float,
         max_iter: int,
+        performance_lower_bound: float,
         std_lower_bound: float = 0.2,
         kl_threshold: float = 0.1,
     ):
@@ -136,11 +135,11 @@ class SPRL(Algorithm):
         self._env = env
 
         self._kl_constraints_ub = kl_constraints_ub
-        self._alpha_function_offset = alpha_function_offset
-        self._alpha_function_percentage = alpha_function_percentage
-        self._discount_factor = discount_factor
         self._std_lower_bound = std_lower_bound
         self._kl_threshold = kl_threshold
+        self._performance_lower_bound = performance_lower_bound
+
+        self._performance_lower_bound_reached = False
 
         spl_parameters = [
             param for param in env.randomizer.domain_params if isinstance(param, SelfPacedLearnerParameter)
@@ -192,9 +191,7 @@ class SPRL(Algorithm):
         kl_divergence = to.distributions.kl_divergence(
             self._parameter.context_distribution, self._parameter.target_distribution
         )
-        average_reward = np.mean(
-            [ro.discounted_return(gamma=self._discount_factor) for ros in rollouts for ro in ros]
-        ).item()
+
         values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
 
         def kl_constraint_fn(x):
@@ -212,26 +209,32 @@ class SPRL(Algorithm):
             mean_grad, cov_chol_grad = to.autograd.grad(kl_divergence, distribution.parameters())
             return np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
 
-        def objective(x):
+        kl_constraint = NonlinearConstraint(
+            fun=kl_constraint_fn,
+            lb=-np.inf,
+            ub=self._kl_constraints_ub,
+            jac=kl_constraint_fn_prime,
+            keep_feasible=True,
+        )
+
+        def performance_constraint_fn(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
-            alphas = self._calculate_alpha(self.curr_iter, average_reward, kl_divergence)
-            val = self._compute_context_loss(distribution.distribution, contexts, contexts_old_log_prob, values, alphas)
-            mean_grad, cov_chol_flat_grad = to.autograd.grad(val, distribution.parameters())
+            performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
+            return performance.detach().numpy()
 
-            return (
-                -val.detach().numpy(),
-                -np.concatenate([mean_grad.detach().numpy(), cov_chol_flat_grad.detach().numpy()]).astype(np.float64),
-            )
+        def performance_constraint_fn_prime(x):
+            distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+            performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
+            mean_grad, cov_chol_grad = to.autograd.grad(performance, distribution.parameters())
+            return np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
 
-        constraints = [
-            NonlinearConstraint(
-                fun=kl_constraint_fn,
-                lb=-np.inf,
-                ub=self._kl_constraints_ub,
-                jac=kl_constraint_fn_prime,
-                keep_feasible=True,
-            )
-        ]
+        performance_contraint = NonlinearConstraint(
+            performance_constraint_fn,
+            self._performance_lower_bound,
+            np.inf,
+            jac=performance_constraint_fn_prime,
+            keep_feasible=True,
+        )
 
         # optionally clip the bounds of the new variance
         if self._kl_threshold and (self._kl_threshold < kl_divergence):
@@ -244,24 +247,68 @@ class SPRL(Algorithm):
             bounds = None
             x0 = previous_distribution.get_stacked()
 
-        # noinspection PyTypeChecker
-        result = minimize(
-            objective,
-            x0,
-            method="trust-constr",
-            jac=True,
-            constraints=constraints,
-            options={"gtol": 1e-4, "xtol": 1e-6},
-            bounds=bounds,
-        )
+        objective_fn: Optional[Callable[..., Tuple[np.array, np.array]]] = None
+        result = None
+        constraints = None
 
-        if result.success:
+        # check whether we are already above our performance threshold
+        if performance_constraint_fn(x0) >= self._performance_lower_bound:
+            self._performance_lower_bound_reached = True
+            constraints = [kl_constraint, performance_contraint]
+
+            # We now optimize based on the kl-divergence between target and context distribution by minimizing it
+            def objective(x):
+                distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+                kl_divergence = to.distributions.kl_divergence(
+                    distribution.distribution, self._parameter.target_distribution
+                )
+                mean_grad, cov_chol_grad = to.autograd.grad(kl_divergence, distribution.parameters())
+
+                return (
+                    kl_divergence.detach().numpy(),
+                    np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()]),
+                )
+
+            objective_fn = objective
+
+        # If we have never reached the performance threshold we optimize just based on the kl constraint
+        elif not self._performance_lower_bound_reached:
+            constraints = [kl_constraint]
+
+            # now we optimize on the expected performance, meaning maximizing it
+            def objective(x):
+                distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+                performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
+                mean_grad, cov_chol_grad = to.autograd.grad(performance, distribution.parameters())
+
+                return (
+                    -performance.detach().numpy(),
+                    -np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()]),
+                )
+
+            objective_fn = objective
+
+        if objective_fn:
+            result = minimize(
+                objective_fn,
+                x0,
+                method="trust-constr",
+                jac=True,
+                constraints=constraints,
+                options={"gtol": 1e-4, "xtol": 1e-6},
+                bounds=bounds,
+            )
+        if result and result.success:
             self._parameter.adapt("context_mean", to.tensor([result.x[0]]).float())
             self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
-        else:
-            old_f = objective(previous_distribution.get_stacked())[0]
+        # we have a result but the optimization process was not a success
+        elif result:
+            old_f = objective_fn(previous_distribution.get_stacked())[0]
+            constraints_satisfied = all((const.lb <= const.fun(result.x) <= const.ub for const in constraints))
+
             std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
-            if kl_constraint_fn(result.x) <= self._kl_constraints_ub and result.fun < old_f and std_ok:
+
+            if constraints_satisfied and std_ok and result.fun < old_f:
                 self._parameter.adapt("context_mean", to.tensor([result.x[0]]).float())
                 self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
             else:
@@ -282,16 +329,10 @@ class SPRL(Algorithm):
             # This algorithm instance is not a subroutine of another algorithm
             self._subroutine.save_snapshot(meta_info)
 
-    def _calculate_alpha(self, iteration: int, average_reward: float, kl_divergence: float):
-        if iteration < self._alpha_function_offset:
-            alpha = 0.0
-        else:
-            kl_divergence = to.clamp(kl_divergence, min=1e-10)
-            average_reward = 0.0 if average_reward < 0.0 else average_reward
-            alpha = to.clamp(self._alpha_function_percentage * average_reward / kl_divergence, max=1e5)
-        return alpha
-
-    def _compute_context_loss(self, distribution, contexts, contexts_old_log_prob, values, alpha):
-        part1 = (to.exp(distribution.log_prob(contexts) - contexts_old_log_prob) * values).mean()
-        part2 = alpha * to.distributions.kl_divergence(distribution, self._parameter.target_distribution)
-        return part1 - part2
+    # This is the same operation as we do in part1 of the previous computation of the context loss
+    # But since we want to use it as a constraint, we have to calculate it here explicitly
+    def _compute_expected_performance(
+        self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor
+    ) -> to.Tensor:
+        context_ratio = to.exp(distribution.distribution.log_prob(context) - old_log_prop)
+        return to.mean(context_ratio * values)
