@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=100,
+        max_iter=1,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
@@ -113,10 +113,10 @@ if __name__ == "__main__":
     )
 
     sprl_hparam = dict(
-        kl_constraints_ub=0.01,
-        alpha_function_offset=1.6,
-        alpha_function_percentage=70,
-        discount_factor=0.95,
+        kl_constraints_ub=1000,
+        performance_lower_bound=20,
+        std_lower_bound=0.2,
+        kl_threshold=0.1,
         max_iter=50,
     )
     algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
