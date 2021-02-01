@@ -143,6 +143,9 @@ class QQubeSim(SimPyEnv, Serializable):
         # Create instance of PandaVis
         self._visualization = PandaVis()
 
+        self._visualization.windowProperties.setTitle('Quanser Qube')
+        self._visualization.win.requestProperties(self._visualization.windowProperties)
+
         self._visualization.cam.setY(-1.5)
         self._visualization.setBackgroundColor(1, 1, 1) #schwarz
         self._visualization.textNodePath.setPos(0.4, 0, -0.1)
