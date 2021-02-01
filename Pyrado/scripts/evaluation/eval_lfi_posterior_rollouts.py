@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to evaluate a posterior obtained using the sbi package
+Script to evaluate a posterior obtained using the sbi package.
+Plot a rollout for evey initial state using the most likely domain parameter set.
 """
 import numpy as np
 import os
@@ -42,6 +43,7 @@ from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
+from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
@@ -55,6 +57,7 @@ if __name__ == "__main__":
 
     # Load the environments, the policy, and the posterior
     env_sim, policy, kwout = load_experiment(ex_dir, args)
+    env_sim = remove_all_dr_wrappers(env_sim)  # randomize manually later
     env_real = pyrado.load(None, "env_real", "pkl", ex_dir)
     prior = kwout["prior"]
     posterior = kwout["posterior"]
@@ -86,8 +89,8 @@ if __name__ == "__main__":
     # Extract the most likely domain parameter sets for every real-world
     dp_ml = []
     for i in range(domain_params.shape[0]):
-        dp_ml.append(domain_params[i, to.argmax(log_probs[i, :]), :])
-    dp_ml = to.stack(dp_ml)
+        dp_val = domain_params[i, to.argmax(log_probs[i, :]), :].numpy()
+        dp_ml.append(dict(zip(algo.dp_mapping.values(), dp_val)))
 
     # Load the rollouts
     rollouts_real = load_rollouts_from_dir(ex_dir)
@@ -97,25 +100,39 @@ if __name__ == "__main__":
     # Extract init states
     [ro.numpy() for ro in rollouts_real]
     init_states_real = [ro.rollout_info["init_state"] for ro in rollouts_real]
+    if len(init_states_real) > len(dp_ml):
+        print_cbt("Found more init states than sbi observations, truncated the superfluous.", "y")
+        init_states_real = init_states_real[: len(dp_ml), :]
 
-    env_sim = remove_all_dr_wrappers(env_sim)
-    env_sim.domain_param = dict(zip(algo.dp_mapping.values(), dp_ml.numpy()))
-
-    # Sample rollouts
+    # Sample rollouts. The results are listed like (is_0 dp_0), (is_0 dp_1), ..., (is_n, dp_{n-1}), (is_n, dp_n).
     sampler = ParallelRolloutSampler(env_sim, policy, num_workers=1, min_rollouts=1)
-    rollouts_sim = sampler.sample(init_states=init_states_real)
+    rollouts_sim = sampler.sample(init_states=init_states_real, domain_params=dp_ml)
+    assert len(rollouts_sim) == len(init_states_real) * len(dp_ml)
 
-    assert all(
-        [
-            np.allclose(r.rollout_info["init_state"], s.rollout_info["init_state"])
-            for r, s in zip(rollouts_real, rollouts_sim)
-        ]
+    # Sample rollouts using the nominal domain parameters
+    env_sim.domain_param = env_sim.get_nominal_domain_param()
+    sampler_nom = ParallelRolloutSampler(env_sim, policy, num_workers=1, min_rollouts=1)
+    rollouts_nom_sim = sampler.sample(init_states=init_states_real)
+    assert len(rollouts_nom_sim) == len(init_states_real)
+
+    # Plot the different init states along the rows and the different observations along the columns
+    num_rollouts_real = len(init_states_real)
+    dim_obs = rollouts_real[0].observations.shape[1]  # same for all rollouts
+    fig, axs = plt.subplots(
+        nrows=num_rollouts_real, ncols=dim_obs, figsize=(16, 9), tight_layout=True, sharex="col", sharey="col"
     )
+    for idx_r in range(num_rollouts_real):
+        for idx_o in range(dim_obs):
+            # Plot the real rollouts
+            axs[idx_r, idx_o].plot(rollouts_real[idx_r].observations[:, idx_o], label="real")
+            for idx_s in range(idx_r*num_rollouts_real, (idx_r+1)*num_rollouts_real):
+                # Plot the simulated rollouts for every real init state (see the list's layout)
+                axs[idx_r, idx_o].plot(rollouts_sim[idx_s].observations[:, idx_o], ls="--", c="grey", label="sim")
+            # Plot the nominal simulation's rollouts for every real init state
+            axs[idx_r, idx_o].plot(rollouts_nom_sim[idx_r].observations[:, idx_o], label="nom")
 
-    obs_real = [ro.observations for ro in rollouts_real]
-    obs_sim = [ro.observations for ro in rollouts_sim]
-
-    # Plot a rollout for evey inital state using the most likely domain parameter set
-    fig, axs = plt.subplots(num_rows=1, num_cols=1, figsize=(14, 7), tight_layout=True)
-
+    # Only use unique labels for the legend
+    handles, labels = axs[0, 0].get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    axs[0, 0].legend(by_label.values(), by_label.keys())
     plt.show()
