@@ -175,11 +175,27 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (prior, posterior, observations)
         extra["prior"] = pyrado.load(None, "prior", "pt", ex_dir, None)
-        extra["posterior"] = pyrado.load(None, "posterior", "pt", ex_dir, None)
-        extra["observations_real"] = pyrado.load(None, "observations_real", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'prior.pt')}", "g")
-        print_cbt(f"Loaded {osp.join(ex_dir, f'posterior.pt')}", "g")
-        print_cbt(f"Loaded {osp.join(ex_dir, f'observations_real.pt')}", "g")
+        if args.iter == -1:
+            # Load the complete history
+            extra["posterior"] = pyrado.load(None, "posterior", "pt", ex_dir, None)
+            extra["observations_real"] = pyrado.load(None, "observations_real", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'posterior.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'observations_real.pt')}", "g")
+        else:
+            # Crawl through the experiment's directory
+            for root, dirs, files in os.walk(ex_dir):
+                dirs.clear()  # prevents walk() from going into subdirectories
+                found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
+            load_iter = len(found_observations) - 1
+            extra["posterior"] = pyrado.load(
+                None, "posterior", "pt", ex_dir, meta_info=dict(prefix=f"iter_{load_iter}")
+            )
+            extra["observations_real"] = pyrado.load(
+                None, f"observations_real", "pt", ex_dir, meta_info=dict(prefix=f"iter_{load_iter}")
+            )
+            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{load_iter}_posterior.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{load_iter}_observations_real.pt')}", "g")
 
     elif isinstance(algo, ActorCritic):
         # Environment

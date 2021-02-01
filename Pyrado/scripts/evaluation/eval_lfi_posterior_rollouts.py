@@ -67,15 +67,6 @@ if __name__ == "__main__":
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
 
-    # Load a specific real-world observation (off, i.e. -1, by default)
-    if args.iter != -1:
-        # Crawl through the experiment's directory
-        for root, dirs, files in os.walk(ex_dir):
-            dirs.clear()  # prevents walk() from going into subdirectories
-            found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
-        load_iter = len(found_observations) - 1
-        observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
-
     domain_params, log_probs, _ = LFI.eval_posterior(
         posterior,
         observations_real,

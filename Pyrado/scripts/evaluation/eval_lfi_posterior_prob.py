@@ -74,15 +74,6 @@ if __name__ == "__main__":
     else:
         dp_idcs = (0, 1)
 
-    # Load a specific real-world observation (off, i.e. -1, by default)
-    if args.iter != -1:
-        # Crawl through the experiment's directory
-        for root, dirs, files in os.walk(ex_dir):
-            dirs.clear()  # prevents walk() from going into subdirectories
-            found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
-        load_iter = len(found_observations) - 1
-        observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
-
     # Set the condition if necessary
     if len(algo.dp_mapping) == 1:
         raise NotImplementedError
@@ -91,7 +82,7 @@ if __name__ == "__main__":
     else:
         num_samples = 100 * 2 ** len(algo.dp_mapping) if args.num_samples is None else args.num_samples
         domain_params = to.stack(
-            [posterior.sample((num_samples,), x=obs, sample_with_mcmc=True) for obs in observations_real],
+            [posterior.sample((num_samples,), x=obs, sample_with_mcmc=False) for obs in observations_real],
             dim=0,
         )
         condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
@@ -112,7 +103,7 @@ if __name__ == "__main__":
         prior,
         dp_idcs,
         condition,
-        show_prior=True,
-        normalize_posterior=False,
+        show_prior=False,
+        normalize_posterior=True,
     )
     plt.show()

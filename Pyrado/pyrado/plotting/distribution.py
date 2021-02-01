@@ -225,7 +225,9 @@ def draw_posterior_distr(
         prob = prob.reshape(grid_res, grid_res).numpy()
 
         # Plot the posterior
-        axs.contourf(grid_x, grid_y, prob, **contourf_kwargs)
+        axs.contourf(
+            grid_x, grid_y, prob, extent=[x.min(), x.max(), y.min(), y.max()], origin="lower", **contourf_kwargs
+        )
 
         # Plot the ground truth parameters
         if dp_gt is not None:
@@ -233,12 +235,7 @@ def draw_posterior_distr(
 
         # Plot bounding box for the prior
         if prior is not None and show_prior:
-            x = prior.support.lower_bound[dim_x]
-            y = prior.support.lower_bound[dim_y]
-            dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
-            dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
-            rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
-            axs.add_patch(rect)
+            _draw_prior(axs, prior, dim_x, dim_y)
 
         # Annotate
         axs.set_aspect(1.0 / axs.get_data_ratio(), adjustable="box")
@@ -257,7 +254,9 @@ def draw_posterior_distr(
                 prob = prob.reshape(grid_res, grid_res).numpy()
 
                 # Plot the posterior
-                axs[i, j].contourf(grid_x, grid_y, prob, **contourf_kwargs)
+                axs[i, j].contourf(
+                    grid_x, grid_y, prob, extent=[x.min(), x.max(), y.min(), y.max()], origin="lower", **contourf_kwargs
+                )
 
                 # Plot the ground truth parameters
                 if dp_gt is not None:
@@ -265,12 +264,7 @@ def draw_posterior_distr(
 
                 # Plot bounding box for the prior
                 if prior is not None and show_prior:
-                    x = prior.support.lower_bound[dim_x]
-                    y = prior.support.lower_bound[dim_y]
-                    dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[0]
-                    dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[1]
-                    rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
-                    axs[i, j].add_patch(rect)
+                    _draw_prior(axs[i, j], prior, dim_x, dim_y)
 
                 # Annotate
                 axs[i, j].set_aspect(1.0 / axs[i, j].get_data_ratio(), adjustable="box")
@@ -280,3 +274,12 @@ def draw_posterior_distr(
         plt.gcf().canvas.set_window_title("Posterior Probabilities for Every Real World Observation Separately")
 
     return plt.gcf()
+
+
+def _draw_prior(ax, prior, dim_x, dim_y):
+    x = prior.support.lower_bound[dim_x]
+    y = prior.support.lower_bound[dim_y]
+    dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
+    dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
+    rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
+    ax.add_patch(rect)
