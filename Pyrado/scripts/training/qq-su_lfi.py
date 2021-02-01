@@ -49,8 +49,8 @@ if __name__ == "__main__":
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom["Dr"] * 0.5, dp_nom["Dp"] * 0.5, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        high=to.tensor([dp_nom["Dr"] * 1.5, dp_nom["Dp"] * 1.5, dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
+        low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
+        high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
     )
     prior = utils.BoxUniform(**prior_hparam)
     posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=5)

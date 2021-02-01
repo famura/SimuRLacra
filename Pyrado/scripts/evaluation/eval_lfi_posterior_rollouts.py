@@ -116,9 +116,7 @@ if __name__ == "__main__":
     env_sim.domain_param = env_sim.get_nominal_domain_param()
     rollouts_nom_sim = []
     for init_state in init_states_real:
-        rollouts_nom_sim.append(
-            rollout(env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state))
-        )
+        rollouts_nom_sim.append(rollout(env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state)))
     assert len(rollouts_nom_sim) == len(rollouts_sim)
 
     # Plot the different init states in separate figures and the different observations along the columns

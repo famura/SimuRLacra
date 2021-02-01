@@ -65,29 +65,36 @@ if __name__ == "__main__":
     num_real_obs = 3
     env_real = deepcopy(env_sim)
     # randomizer = DomainRandomizer(
+    #     NormalDomainParam(name="m", mean=0.8, std=0.8 / 50),
     #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
-    #     NormalDomainParam(name="d", mean=0.2, std=0.2 / 50),
+    #     NormalDomainParam(name="d", mean=0.3, std=0.3 / 50),
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
     # env_real.fill_buffer(num_real_obs)
-    env_real.domain_param = dict(k=33, d=0.2)
-    dp_mapping = {0: "k", 1: "d"}
+    env_real.domain_param = dict(m=0.8, k=33, d=0.3)
+    dp_mapping = {0: "m", 1: "k", 2: "d"}
 
     # Policy
     behavior_policy = IdlePolicy(env_sim.spec)
 
     # Prior and Posterior (normalizing flow)
-    prior_hparam = dict(low=to.tensor([25.0, 0.05]), high=to.tensor([35, 0.45]))
+    dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
+    prior_hparam = dict(
+        low=to.tensor([dp_nom["m"] * 0.5, dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
+        high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
+    )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=4)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=20,
-        summary_statistic="dtw_distance",  # "bayessim",
+        summary_statistic="bayessim",  # bayessim or dtw_distance
         num_real_rollouts=num_real_obs,
         num_sim_per_real_rollout=200,
-        num_workers=1,
+        use_posterior_in_the_loop=True,
+        normalize_posterior=True,
+        num_workers=4,
     )
     algo = LFI(
         ex_dir,
