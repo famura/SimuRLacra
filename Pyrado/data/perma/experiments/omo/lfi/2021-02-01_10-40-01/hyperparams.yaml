@@ -1,0 +1,25 @@
+env:
+  dt: 0.02
+  max_steps: 200
+seed: None
+prior:
+  high:
+  - 1.5
+  - 45.0
+  - 0.75
+  low:
+  - 0.5
+  - 15.0
+  - 0.25
+posterior_nn:
+  embedding_net: Identity
+  hidden_features: 10
+  model: maf
+  num_transforms: 4
+algo:
+  max_iter: 20
+  num_real_rollouts: 3
+  num_sim_per_real_rollout: 200
+  num_workers: 4
+  summary_statistic: bayessim
+algo_name: lfi

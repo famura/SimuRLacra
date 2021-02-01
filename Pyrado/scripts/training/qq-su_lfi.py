@@ -34,31 +34,37 @@ if __name__ == "__main__":
     # Create a fake ground truth target domain
     num_real_obs = 1
     env_real = deepcopy(env_sim)
-    randomizer = DomainRandomizer(
-        NormalDomainParam(name="g", mean=10.0, std=10.0 / 20),
-        NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 20),
-        NormalDomainParam(name="Mp", mean=0.02, std=0.02 / 20),
-    )
-    env_real = DomainRandWrapperBuffer(env_real, randomizer)
-    env_real.fill_buffer(num_real_obs)
-    dp_mapping = {0: "g", 1: "Rm", 2: "Mp"}
+    # randomizer = DomainRandomizer(
+    #     NormalDomainParam(name="g", mean=10.0, std=10.0 / 20),
+    #     NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 20),
+    #     NormalDomainParam(name="Mp", mean=0.02, std=0.02 / 20),
+    # )
+    # env_real = DomainRandWrapperBuffer(env_real, randomizer)
+    # env_real.fill_buffer(num_real_obs)
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
 
     # Policy
     behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
     # Prior and Posterior (normalizing flow)
-    prior_hparam = dict(low=to.tensor([9.0, 8.0, 0.015]), high=to.tensor([11.0, 10.0, 0.025]))
+    dp_nom = env_sim.get_nominal_domain_param()
+    prior_hparam = dict(
+        low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
+        high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
+    )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         summary_statistic="bayessim",
-        max_iter=20,
+        max_iter=10,
         num_real_rollouts=num_real_obs,
         num_sim_per_real_rollout=1000,
         simulation_batch_size=1,
-        num_workers=8,
+        use_posterior_in_the_loop=False,
+        normalize_posterior=False,
+        num_workers=4,
     )
     algo = LFI(
         ex_dir,

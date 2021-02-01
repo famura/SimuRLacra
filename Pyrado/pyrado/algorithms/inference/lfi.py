@@ -46,7 +46,11 @@ from sbi.utils import posterior_nn
 
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
-from pyrado.algorithms.inference.sbi_rollout_sampler import SimRolloutSamplerForSBI, RealRolloutSamplerForSBI
+from pyrado.algorithms.inference.sbi_rollout_sampler import (
+    SimRolloutSamplerForSBI,
+    RealRolloutSamplerForSBI,
+    MockRealRolloutSamplerForSBI,
+)
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapper
 from pyrado.environment_wrappers.utils import inner_env
@@ -90,6 +94,8 @@ class LFI(InterruptableAlgorithm):
         sbi_training_hparam: Optional[dict] = None,
         sbi_sampling_hparam: Optional[dict] = None,
         simulation_batch_size: Optional[int] = 1,
+        use_posterior_in_the_loop: bool = True,
+        normalize_posterior: bool = True,
         subrtn_policy: Optional[Algorithm] = None,
         subrtn_policy_snapshot_mode: Optional[str] = "latest",
         thold_succ_subrtn: Optional[float] = -pyrado.inf,
@@ -112,7 +118,7 @@ class LFI(InterruptableAlgorithm):
                                   Possible options:
                                  `states` (uses all observed states from rollout),
                                  `final_state` (use the last observed state from the rollout), and
-                                 `bayessim` (summary statistics as proposed in  [1])
+                                 `bayessim` (summary statistics as proposed in [1])
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_real_rollouts: number of real-world observation received by sbi, i.e. from every rollout exactly one
                                   observation is computed
@@ -121,7 +127,11 @@ class LFI(InterruptableAlgorithm):
         :param sbi_training_hparam: `dict` forwarded to sbi't `PosteriorEstimator.train()` function like
                                     `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
         :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
-                                    `sample_with_mcmc`, ect. (we also put `simulation_batch_size` here)
+                                    `sample_with_mcmc`, ect.
+        :param simulation_batch_size: so far, this does not really have an effect since the rollouts are sequential
+        :param use_posterior_in_the_loop: if `True` the latest posterior (after the initial iteration) is used as
+                                          proposal distribution, else the prior is used
+        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
         :param subrtn_policy_snapshot_mode: snapshot mode for saving during training of the subroutine
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
@@ -147,6 +157,8 @@ class LFI(InterruptableAlgorithm):
         self.sbi_training_hparam = sbi_training_hparam if sbi_training_hparam is not None else dict()
         self.sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
         self.simulation_batch_size = simulation_batch_size
+        self.use_posterior_in_the_loop = use_posterior_in_the_loop
+        self.normalize_posterior = normalize_posterior
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
@@ -232,6 +244,7 @@ class LFI(InterruptableAlgorithm):
                 self.summary_statistic,
                 prefix=f"iter_{self._curr_iter}",
                 num_rollouts=self.num_real_rollouts,
+                use_rec_rollouts="qq" in self._env_sim_sbi.name and self._env_sim_sbi.dt == 1 / 250.0,
             )
             if (
                 self._curr_observations_real.ndim != 2
@@ -264,7 +277,7 @@ class LFI(InterruptableAlgorithm):
                     sim_output,
                     proposal=None,  # pass None if the parameters were sampled from the prior
                 )
-                self._cnt_samples += self.num_sim_per_real_rollout
+                self._cnt_samples += self.num_sim_per_real_rollout * self._env_sim_sbi.max_steps
 
                 # Append the first set of observations
                 pyrado.save(self._curr_observations_real, "observations_real", "pt", self._save_dir)
@@ -279,13 +292,13 @@ class LFI(InterruptableAlgorithm):
                     # Sample parameters proposal, and simulate these parameters to obtain the observations
                     domain_param, sim_output = simulate_for_sbi(
                         simulator=self._sbi_simulator,
-                        proposal=posterior,
+                        proposal=posterior if self.use_posterior_in_the_loop else self._sbi_prior,
                         num_simulations=self.num_sim_per_real_rollout,
                         simulation_batch_size=self.simulation_batch_size,
                         num_workers=self.num_workers,  # leave it for now
                     )
                     self._sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)
-                    self._cnt_samples += self.num_sim_per_real_rollout
+                    self._cnt_samples += self.num_sim_per_real_rollout * self._env_sim_sbi.max_steps
 
                 # Append and save all observations
                 prev_observations = pyrado.load(None, "observations_real", "pt", self._save_dir)
@@ -316,6 +329,7 @@ class LFI(InterruptableAlgorithm):
                 self._curr_observations_real,
                 self.num_eval_samples,
                 self._sbi_simulator,
+                normalize_posterior=self.normalize_posterior,
                 simulate_observations=False,
             )
             self.logger.add_value("avg domain param", to.mean(self._curr_domain_param_eval, dim=[0, 1]))
@@ -347,6 +361,7 @@ class LFI(InterruptableAlgorithm):
         summary_statistic: str,
         prefix: str,
         num_rollouts: int,
+        use_rec_rollouts: bool = False,
     ) -> Tuple[to.Tensor, List[StepSequence]]:
         """
         Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the observations
@@ -360,17 +375,38 @@ class LFI(InterruptableAlgorithm):
                                   Possible options:
                                  `states` (uses all observed states from rollout),
                                  `final_state` (use the last observed state from the rollout), and
-                                 `bayessim` (summary statistics as proposed in  [1])
+                                 `bayessim` (summary statistics as proposed in [1])
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
+        :param use_rec_rollouts: switch to use pre-recorded rollouts from the target domain TODO deprecate
         :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
         """
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         # Evaluate sequentially (necessary for sim-to-real experiments)
-        rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
+        if use_rec_rollouts:
+            # TODO deprecate
+            import os
+
+            if "qq" not in env.name:
+                raise NotImplementedError
+            if env.dt != 1 / 250.0:
+                raise NotImplementedError
+
+            for root, dirs, files in os.walk(os.path.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")):
+                dirs.clear()  # prevents walk() from going into subdirectories
+                rollouts_rec = [
+                    pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
+                    for f in files
+                    if f.startswith("rollout")
+                ]
+            rollout_worker = MockRealRolloutSamplerForSBI(None, None, summary_statistic, rollouts_rec)
+            rollout_worker._ring_idx = np.random.randint(0, len(rollouts_rec))  # not always the same rollout
+        else:
+            rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
+
         observations_real = []
         rollouts_real = []
         for _ in tqdm(
@@ -402,6 +438,7 @@ class LFI(InterruptableAlgorithm):
         simulator: Callable = None,
         calculate_log_probs: Optional[bool] = True,
         simulate_observations: Optional[bool] = True,
+        normalize_posterior: Optional[bool] = True,
         sbi_sampling_hparam: Optional[dict] = None,
     ) -> Tuple[to.Tensor, Optional[to.Tensor], Optional[to.Tensor]]:
         r"""
@@ -417,6 +454,7 @@ class LFI(InterruptableAlgorithm):
         :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned
         :param simulate_observations: create simulated observations using the domain parameters sampled from the
                                       posterior and same simulator as used during the sbi training procedure
+        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :return: domain parameters sampled form the posterior, log-probabilities of these domain parameters, and
                  optionally the simulated observations from the rollouts
@@ -426,7 +464,9 @@ class LFI(InterruptableAlgorithm):
             """ Take the variables from the outer scope, and evaluate the posterior for one real-world observation. """
             # Compute the log probability
             if calculate_log_probs:
-                log_prob[idx, :] = posterior.log_prob(domain_params[idx, :, :], x=observations_real[idx, :])
+                log_prob[idx, :] = posterior.log_prob(
+                    domain_params[idx, :, :], observations_real[idx, :], normalize_posterior
+                )
 
             # Simulate trajectories with the domain parameters from the posterior
             if simulate_observations:
@@ -441,8 +481,7 @@ class LFI(InterruptableAlgorithm):
         # Sample domain parameters from the normalizing flow
         sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
         domain_params = to.stack(
-            [posterior.sample((num_samples,), x=obs, **sbi_sampling_hparam) for obs in observations_real],
-            dim=0,
+            [posterior.sample((num_samples,), x=obs, **sbi_sampling_hparam) for obs in observations_real], dim=0
         )
         if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
             raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))

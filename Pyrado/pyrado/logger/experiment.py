@@ -44,10 +44,6 @@ from pyrado.utils import get_class_name
 from pyrado.utils.input_output import select_query, print_cbt
 
 
-timestamp_format = "%Y-%m-%d_%H-%M-%S"
-timestamp_date_format = "%Y-%m-%d"
-
-
 class Experiment:
     """
     Class for defining experiments
@@ -85,14 +81,14 @@ class Experiment:
                 timestr, extra_info = sd
             # Parse time string
             if "_" in timestr:
-                timestamp = datetime.strptime(timestr, timestamp_format)
+                timestamp = datetime.strptime(timestr, pyrado.timestamp_format)
             else:
-                timestamp = datetime.strptime(timestr, timestamp_date_format)
+                timestamp = datetime.strptime(timestr, pyrado.timestamp_date_format)
         else:
             # Create exp id from timestamp and info
             if timestamp is None:
                 timestamp = datetime.now()
-            exp_id = timestamp.strftime(timestamp_format)
+            exp_id = timestamp.strftime(pyrado.timestamp_format)
 
             if extra_info is not None:
                 exp_id = exp_id + "--" + extra_info

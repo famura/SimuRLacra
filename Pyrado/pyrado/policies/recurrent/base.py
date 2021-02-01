@@ -62,9 +62,9 @@ class RecurrentPolicy(Policy, ABC):
         :return: Tensor of batch_size x hidden_size
         """
         if batch_size is None:
-            return to.zeros(self.hidden_size)
+            return to.zeros(self.hidden_size, device=self.device)
         else:
-            return to.zeros(batch_size, self.hidden_size)
+            return to.zeros(batch_size, self.hidden_size, device=self.device)
 
     @abstractmethod
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):

@@ -106,6 +106,7 @@ def rollout(
     act_hist = []
     rew_hist = []
     env_info_hist = []
+    t_hist = []
     if isinstance(policy, Policy):
         if policy.is_recurrent:
             hidden_hist = []
@@ -163,6 +164,8 @@ def rollout(
 
     # Initialize the main loop variables
     done = False
+    t = 0.0  # time starts at zero
+    t_hist.append(t)
     if record_dts:
         t_post_step = time.time()  # first sample of remainder is useless
 
@@ -240,6 +243,10 @@ def rollout(
             dt_policy_hist.append(dt_policy)
             dt_step_hist.append(dt_step)
             dt_remainder_hist.append(dt_remainder)
+            t += dt_policy + dt_step + dt_remainder
+        else:
+            t += env.dt
+        t_hist.append(t)
         if isinstance(policy, Policy):
             if policy.is_recurrent:
                 hidden_hist.append(hidden)
@@ -289,6 +296,7 @@ def rollout(
         observations=obs_hist,
         actions=act_hist,
         rewards=rew_hist,
+        time=t_hist,
         rollout_info=rollout_info,
         env_infos=env_info_hist,
         complete=True,  # the rollout function always returns complete paths

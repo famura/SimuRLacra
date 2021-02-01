@@ -118,6 +118,7 @@ def draw_posterior_distr(
     show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
     grid_res: Optional[int] = 500,
+    normalize_posterior: bool = True,
     contourf_kwargs: Optional[dict] = None,
     scatter_kwargs: Optional[dict] = None,
 ) -> plt.Figure:
@@ -140,6 +141,7 @@ def draw_posterior_distr(
     :param show_prior: display the prior as a box
     :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set
                         arbitrarily, but should contain the prior if `show_prior` is `True`.
+    :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
     :param grid_res: number of elements on one axis of the evaluation gird
     :param contourf_kwargs: keyword arguments forwarded to pyplot's `contourf()` function for the posterior distribution
     :param scatter_kwargs: keyword arguments forwarded to pyplot's `scatter()` function for the true parameter
@@ -218,7 +220,7 @@ def draw_posterior_distr(
 
     if plot_type.lower() == "joint":
         # Compute the posterior probabilities
-        log_prob = sum([posterior.log_prob(grid, x=obs) for obs in observations_real])
+        log_prob = sum([posterior.log_prob(grid, obs, normalize_posterior) for obs in observations_real])
         prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
         prob = prob.reshape(grid_res, grid_res).numpy()
 
@@ -250,7 +252,7 @@ def draw_posterior_distr(
             for j in range(axs.shape[1]):
                 # Compute the posterior probabilities
                 idx = j + i * axs.shape[1]  # iterate column-wise
-                log_prob = posterior.log_prob(grid, x=observations_real[idx, :])  # TODO sum over multiple observations
+                log_prob = posterior.log_prob(grid, observations_real[idx, :], normalize_posterior)
                 prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
                 prob = prob.reshape(grid_res, grid_res).numpy()
 

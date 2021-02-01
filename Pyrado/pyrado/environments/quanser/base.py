@@ -145,7 +145,7 @@ class QuanserReal(RealEnv, ABC):
         return meas
 
     def step(self, act):
-        info = dict(t=self._curr_step * self._dt, act_raw=act)
+        info = dict(act_raw=act)
 
         # Current reward depending on the (measurable) state and the current (unlimited) action
         remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0

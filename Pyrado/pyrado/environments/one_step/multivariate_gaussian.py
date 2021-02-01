@@ -27,7 +27,7 @@ class ToyExample(SimEnv, Serializable):
         Serializable._init(self, locals())
 
         # Initialize basic variables
-        super().__init__(dt=None, max_steps=3)
+        super().__init__(dt=0., max_steps=1)
 
         # Initialize the domain parameters and the derived constants
         self._mean = None
@@ -37,11 +37,11 @@ class ToyExample(SimEnv, Serializable):
         self._calc_constants()
 
         # Set the bounds for the system's states adn actions
-        max_state = np.array([100.0, 100.0])
+        max_state = np.array([100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0])
         max_act = np.array([0])
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=["s_1", "s_2"])
+        self._state_space = BoxSpace(-max_state, max_state, labels=["s_1", "s_2", "s_2", "s_3", "s_5", "s_6", "s_7", "s_8"])
         self._init_space = self._state_space
         self._act_space = BoxSpace(-max_act, max_act, labels=["act_1"])
         self._obs_space = None
@@ -132,7 +132,8 @@ class ToyExample(SimEnv, Serializable):
 
         # Reset the state
         if init_state is None:
-            self.step(act=np.array(0))
+            self.state = np.zeros(self._state_space.shape).squeeze()
+            # self.step(act=np.array(0))
         else:
             if not init_state.shape == self.obs_space.shape:
                 raise pyrado.ShapeErr(given=init_state, expected_match=self.obs_space)
@@ -154,7 +155,7 @@ class ToyExample(SimEnv, Serializable):
 
     def step(self, act):
         # Action equal selection a new state a.k.a. solution of the optimization problem
-        self.state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=1).squeeze()
+        self.state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=4).flatten()
 
         # Current reward depending on the state after the step (since there is only one step)
         # self._curr_rew = self.task.step_rew(self.state)

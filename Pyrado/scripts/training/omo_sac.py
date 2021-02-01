@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     # Environment
     env_hparams = dict(dt=1 / 50.0, max_steps=200)
-    env = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    env = OneMassOscillatorSim(**env_hparams, task_args=dict(state_des=np.array([0.5, 0])))
     env = ActNormWrapper(env)
 
     # Policy
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam, use_cuda=True)
 
     # Critic
-    qfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
+    qfcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.relu)
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
     qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
     qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
@@ -79,17 +79,19 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1000 * env.max_steps,
         memory_size=100 * env.max_steps,
+        num_init_memory_steps=10 * env.max_steps,
         gamma=0.995,
         num_updates_per_step=1,
         tau=0.995,
         ent_coeff_init=0.2,
         learn_ent_coeff=True,
-        target_update_intvl=5,
-        standardize_rew=False,
+        target_update_intvl=1,
+        standardize_rew=True,
+        rew_scale=1.0,
         min_steps=1,
-        batch_size=256,
+        batch_size=512,
         num_workers=1,
-        lr=3e-4,
+        lr=1e-3,
     )
     algo = SAC(ex_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam)
 

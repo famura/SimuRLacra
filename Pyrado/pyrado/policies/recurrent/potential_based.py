@@ -175,7 +175,7 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
             if self.tau_learnable:
                 self._log_tau.data = self._log_tau_init
             if self.potential_init_learnable:
-                self._potentials_init.data = to.randn(self.hidden_size)
+                self._potentials_init.data = to.randn(self.hidden_size, device=self.device)
 
         else:
             self.param_values = init_values

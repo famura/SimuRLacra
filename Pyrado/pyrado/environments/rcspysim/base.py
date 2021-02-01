@@ -263,7 +263,6 @@ class RcsSim(SimEnv, Serializable):
 
         self.state = self._state_from_obs(obs)  # only for the Python side
 
-        info = dict(t=self._curr_step * self._dt)
         self._curr_step += 1
 
         # Check if the task or the environment is done
@@ -275,7 +274,7 @@ class RcsSim(SimEnv, Serializable):
             # Add final reward if done
             self._curr_rew += self._task.final_rew(self.state, remaining_steps)
 
-        return obs, self._curr_rew, done, info
+        return obs, self._curr_rew, done, dict()
 
     def render(self, mode: RenderMode = RenderMode(text=True), render_step: int = 1):
         if self._curr_step % render_step == 0:

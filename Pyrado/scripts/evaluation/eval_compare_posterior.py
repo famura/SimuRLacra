@@ -104,17 +104,17 @@ if __name__ == "__main__":
         pyrado.load(None, "reference_posterior_samples", "pt", osp.join(reference_dir, f"num_observation_{n}"))
         for n in range(1, num_observation + 1)
     ]
-    reference_samples = to.stack(reference_samples)[:, : args.num_samples, :].squeeze()
+    reference_samples = to.stack(reference_samples)[:, : args.num_samples, :]
     observation = [
         pyrado.load(None, "observation", "pt", osp.join(reference_dir, f"num_observation_{n}"))
         for n in range(1, num_observation + 1)
     ]
-    observation = to.stack(observation).squeeze()
+    observation = to.stack(observation)
     true_params = [
         pyrado.load(None, "true_parameters", "pt", osp.join(reference_dir, f"num_observation_{n}"))
         for n in range(1, num_observation + 1)
     ]
-    true_params = to.stack(true_params).squeeze()
+    true_params = to.stack(true_params)
 
     def eval(curr_iter=0, num_samples=None, mmd_mean=None, mmd_std=None, posterior_samples=None):
         num_samples = [] if num_samples is None else num_samples
@@ -127,7 +127,7 @@ if __name__ == "__main__":
             print(f"Current Iter:\t{iter}")
             # generate postserior samples
             param_samples, _, _ = LFI.eval_posterior(
-                posterior, observation, args.num_samples, algo.sbi_simulator, simulate_observations=False
+                posterior, observation, args.num_samples, algo.sbi_simulator, simulate_observations=False, calculate_log_probs=False
             )
 
             # calculate mmd-loss
@@ -147,12 +147,12 @@ if __name__ == "__main__":
             pyrado.save(posterior_samples, "posterior_samples", "pt", ex_dir)
 
     mmd_mean, mmd_std, num_samples, posterior_samples = [], [], [], []
-    check_files = ["num_samples", "mmd_mean", "mmd_std", "true_samples", "posterior_samples"]
+    check_files = ["num_samples", "mmd_mean", "mmd_std", "posterior_samples"]
     if args.load_data:
         pass
     elif args.resume:
-        check_files = ["num_samples", "mmd_mean", "mmd_std", "true_samples", "posterior_samples"]
-        num_samples, mmd_mean, mmd_std, true_samples, posterior_samples = [
+        check_files = ["num_samples", "mmd_mean", "mmd_std", "posterior_samples"]
+        num_samples, mmd_mean, mmd_std, posterior_samples = [
             pyrado.load(None, cf, "pt", ex_dir) for cf in check_files
         ]
         curr_iter = int(num_samples[-1] / num_sim_per_real_rollout / num_real_rollouts) + 1

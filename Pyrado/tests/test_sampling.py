@@ -360,8 +360,14 @@ def test_bootsrapping(data, num_reps, seed):
     ],
     ids=["1rops-randinit", "1rops-fixedinit", "9rops-randinit", "9rops-fixedinit"],
 )
+@pytest.mark.parametrize("num_workers", [1, 4], ids=["1worker", "4workers"])
 def test_param_expl_sampler(
-    env: SimEnv, policy: Policy, num_init_states_per_domain: int, fixed_init_state: bool, num_domains: int
+    env: SimEnv,
+    policy: Policy,
+    num_init_states_per_domain: int,
+    fixed_init_state: bool,
+    num_domains: int,
+    num_workers: int,
 ):
     num_rollouts_per_param = num_init_states_per_domain * num_domains
 
@@ -370,7 +376,7 @@ def test_param_expl_sampler(
     env = DomainRandWrapperLive(env, pert)
 
     # Create the sampler
-    sampler = ParameterExplorationSampler(env, policy, num_init_states_per_domain, num_domains, num_workers=1)
+    sampler = ParameterExplorationSampler(env, policy, num_init_states_per_domain, num_domains, num_workers=num_workers)
 
     # Use some random parameters
     num_ps = 7
@@ -421,16 +427,19 @@ def test_param_expl_sampler(
     "policy",
     [
         "fnn_policy",
+        "fnn_policy_cuda",
         "lstm_policy",
+        "lstm_policy_cuda",
     ],
-    ids=["fnn", "lstm"],
+    ids=["fnn", "fnn_cuda", "lstm", "lstm_cuda"],
     indirect=True,
 )
-def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy):
+@pytest.mark.parametrize("num_workers", [1, 2], ids=["1worker", "4workers"])
+def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
     randomizer = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, randomizer)
 
-    sampler = ParallelRolloutSampler(env, policy, num_workers=2, min_rollouts=10)
+    sampler = ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=4)
     samples = sampler.sample()
 
     assert samples is not None

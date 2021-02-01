@@ -30,6 +30,7 @@ import numpy as np
 from abc import abstractmethod
 from copy import deepcopy
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
@@ -41,7 +42,7 @@ from pyrado.tasks.base import Task
 class SimPyEnv(SimEnv, Serializable):
     """ Base class for simulated environments implemented in pure Python """
 
-    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None):
+    def __init__(self, dt: float, max_steps: Optional[int] = pyrado.inf, task_args: Optional[dict] = None):
         """
         Constructor
 
@@ -219,8 +220,6 @@ class SimPyEnv(SimEnv, Serializable):
 
         # Apply the action and simulate the resulting dynamics
         self._step_dynamics(act)
-
-        info = dict(t=self._curr_step * self._dt)
         self._curr_step += 1
 
         # Check if the task or the environment is done
@@ -232,7 +231,7 @@ class SimPyEnv(SimEnv, Serializable):
             # Add final reward if done
             self._curr_rew += self._task.final_rew(self.state, remaining_steps)
 
-        return self.observe(self.state), self._curr_rew, done, info
+        return self.observe(self.state), self._curr_rew, done, dict()
 
     def render(self, mode: RenderMode, render_step: int = 1):
         if self._curr_step % render_step == 0:

@@ -42,6 +42,7 @@ from pyrado.policies.base import Policy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.discrete import DiscreteSpace
+from pyrado.utils.input_output import print_cbt_once
 
 
 class RolloutSamplerForSBI(ABC):
@@ -61,12 +62,12 @@ class RolloutSamplerForSBI(ABC):
         :param strategy: method with which the observations are computed from the rollouts. Possible options:
                          `dtw_distance` (dynamic time warping using all observations from the rollout),
                          `final_state` (use the last observed state from the rollout), and
-                         `bayessim` (summary statistics as proposed in  [1])
+                         `bayessim` (summary statistics as proposed in [1])
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019
         """
-        if not strategy.lower() in ["states", "dtw_distance", "final_state", "bayessim"]:  # TODO deprecate states
+        if not strategy.lower() in ["dtw_distance", "final_state", "bayessim"]:
             raise pyrado.ValueErr(given=strategy, eq_constraint="dtw_distance, final_state, bayessim")
 
         self._env = env
@@ -91,7 +92,7 @@ class RolloutSamplerForSBI(ABC):
             return self.dtw_distance(rollout_query, rollouts_ref)
         elif self.strategy == "final_state":
             return self.final_state(rollout_query)
-        elif self.strategy == "bayessim" or self.strategy == "states":  # TODO deprecate states
+        elif self.strategy == "bayessim":
             return self.bayessim_statistic(rollout_query)
         else:
             raise pyrado.ValueErr(given=self.strategy)
@@ -195,7 +196,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `dtw_distance` (dynamic time warping using all observations from the rollout),
                          `final_state` (use the last observed state from the rollout), and
-                         `bayessim` (summary statistics as proposed in  [1])
+                         `bayessim` (summary statistics as proposed in [1])
         :param rollouts_real: list of rollouts recorded from the real system, which are used to sync the simulations'
                               initial states
 
@@ -293,7 +294,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `dtw_distance` (dynamic time warping using all observations from the rollout),
                          `final_state` (use the last observed state from the rollout), and
-                         `bayessim` (summary statistics as proposed in  [1])
+                         `bayessim` (summary statistics as proposed in [1])
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019
@@ -309,6 +310,56 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         """
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
         ro = rollout(self._env, self._policy, eval=True)
+
+        # Return the observations used for inference from the rollout data
+        obs_real = self.transform_data(ro, None)
+
+        return obs_real, ro
+
+
+class MockRealRolloutSamplerForSBI(RealRolloutSamplerForSBI):
+    """ Wrapper to make SimuRLacra's real environments similar to the simulators for the sbi package """
+
+    def __init__(
+        self,
+        env: Env,
+        policy: Policy,
+        strategy: str,
+        rollouts_rec: List[StepSequence],
+    ):
+        """
+        Constructor
+
+        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, buy in
+                    a sim-to-sim experiment this can be a (randomized) `SimEnv`. We strip all domain randomization
+                    wrappers from this env since we want to randomize it manually here.
+        :param policy: policy used for sampling the rollout
+        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
+                         `dtw_distance` (dynamic time warping using all observations from the rollout),
+                         `final_state` (use the last observed state from the rollout), and
+                         `bayessim` (summary statistics as proposed in [1])
+        :param rollouts_rec:
+
+        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
+            inference for robotics simulators", arXiv, 2019
+        """
+        super().__init__(env=env, policy=policy, strategy=strategy)
+
+        self.rollouts_rec = rollouts_rec
+        self._ring_idx = 0
+
+    def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:
+        r"""
+        Run one rollout and compute summary statistics.
+
+        :param dp_values: ignored, just here for the interface compatibility
+        :return: observation a.k.a. $x_o$, and initial state of the physical device
+        """
+        print_cbt_once("Using pre-recorded target domain rollouts to generate observations.", "g")
+
+        # Get pre-recoded rollout and advance the index
+        ro = self.rollouts_rec[self._ring_idx]
+        self._ring_idx = (self._ring_idx + 1) % len(self.rollouts_rec)
 
         # Return the observations used for inference from the rollout data
         obs_real = self.transform_data(ro, None)
