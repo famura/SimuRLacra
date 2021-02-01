@@ -183,10 +183,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             print_cbt(f"Loaded {osp.join(ex_dir, f'posterior.pt')}", "g")
             print_cbt(f"Loaded {osp.join(ex_dir, f'observations_real.pt')}", "g")
         else:
-            # Crawl through the experiment's directory
-            for root, dirs, files in os.walk(ex_dir):
-                dirs.clear()  # prevents walk() from going into subdirectories
-                found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
+            # Load only one iteration
             extra["posterior"] = pyrado.load(
                 None, "posterior", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
             )
