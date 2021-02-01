@@ -42,6 +42,7 @@ from pyrado.policies.base import Policy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.discrete import DiscreteSpace
+from pyrado.utils.input_output import print_cbt_once
 
 
 class RolloutSamplerForSBI(ABC):
@@ -354,6 +355,8 @@ class MockRealRolloutSamplerForSBI(RealRolloutSamplerForSBI):
         :param dp_values: ignored, just here for the interface compatibility
         :return: observation a.k.a. $x_o$, and initial state of the physical device
         """
+        print_cbt_once("Using pre-recorded target domain rollouts to generate observations.", "g")
+
         # Get pre-recoded rollout and advance the index
         ro = self.rollouts_rec[self._ring_idx]
         self._ring_idx = (self._ring_idx + 1) % len(self.rollouts_rec)
