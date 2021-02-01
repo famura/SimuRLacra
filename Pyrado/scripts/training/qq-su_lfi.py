@@ -60,11 +60,11 @@ if __name__ == "__main__":
         summary_statistic="bayessim",
         max_iter=10,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=500,
+        num_sim_per_real_rollout=200,
         simulation_batch_size=1,
         use_posterior_in_the_loop=False,
         normalize_posterior=False,
-        num_workers=8,
+        num_workers=1,
     )
     algo = LFI(
         ex_dir,

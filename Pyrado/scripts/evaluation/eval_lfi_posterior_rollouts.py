@@ -37,7 +37,7 @@ from matplotlib import pyplot as plt
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.inference.lfi import LFI
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper, remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
@@ -77,12 +77,17 @@ if __name__ == "__main__":
     domain_params, log_probs, _ = LFI.eval_posterior(
         posterior,
         observations_real,
-        args.num_eval_samples,
+        args.num_samples,
         algo.sbi_simulator,
         normalize_posterior=False,
         simulate_observations=False,
     )
-    dp_ml = domain_params[to.argmax(log_probs)]
+
+    # Extract the most likely domain parameter sets for every real-world
+    dp_ml = []
+    for i in range(domain_params.shape[0]):
+        dp_ml.append(domain_params[i, to.argmax(log_probs[i, :]), :])
+    dp_ml = to.stack(dp_ml)
 
     # Load the rollouts
     rollouts_real = load_rollouts_from_dir(ex_dir)
@@ -93,7 +98,7 @@ if __name__ == "__main__":
     [ro.numpy() for ro in rollouts_real]
     init_states_real = [ro.rollout_info["init_state"] for ro in rollouts_real]
 
-    assert not isinstance(env_sim, DomainRandWrapper)
+    env_sim = remove_all_dr_wrappers(env_sim)
     env_sim.domain_param = dict(zip(algo.dp_mapping.values(), dp_ml.numpy()))
 
     # Sample rollouts
