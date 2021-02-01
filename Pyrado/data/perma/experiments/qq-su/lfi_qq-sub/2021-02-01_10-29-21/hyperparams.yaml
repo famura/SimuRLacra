@@ -1,0 +1,30 @@
+env:
+  dt: 0.004
+  max_steps: 1500
+seed: None
+prior:
+  high:
+  - 7.499999810534064e-06
+  - 1.500000053056283e-06
+  - 12.600000381469727
+  - 0.06300000101327896
+  low:
+  - 2.499999936844688e-06
+  - 4.999999987376214e-07
+  - 4.199999809265137
+  - 0.020999999716877937
+posterior_nn:
+  embedding_net: Identity
+  hidden_features: 20
+  model: maf
+  num_transforms: 5
+algo:
+  max_iter: 10
+  normalize_posterior: false
+  num_real_rollouts: 1
+  num_sim_per_real_rollout: 1000
+  num_workers: 4
+  simulation_batch_size: 1
+  summary_statistic: bayessim
+  use_posterior_in_the_loop: false
+algo_name: lfi
