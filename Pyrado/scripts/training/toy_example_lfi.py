@@ -57,14 +57,12 @@ if __name__ == "__main__":
         num_real_obs = len(which_obs)
         reference_dir = osp.join(ex_dir, f"../../../../perma/environment/{env_sim.name}/reference")
         observations_real = [
-            pyrado.load(None, "observation", "pt", osp.join(reference_dir, f"num_observation_{n}"))
-            for n in which_obs
+            pyrado.load(None, "observation", "pt", osp.join(reference_dir, f"num_observation_{n}")) for n in which_obs
         ]
         observations_real = to.stack(observations_real)
         init_states_real = observations_real[:, :2]
 
-        meta_dict = dict(observations_real=observations_real,
-                         init_states_real=init_states_real)
+        meta_dict = dict(observations_real=observations_real, init_states_real=init_states_real)
 
     # Policy
     behavior_policy = IdlePolicy(env_sim.spec)

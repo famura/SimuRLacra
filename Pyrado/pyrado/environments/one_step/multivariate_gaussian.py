@@ -27,7 +27,7 @@ class ToyExample(SimEnv, Serializable):
         Serializable._init(self, locals())
 
         # Initialize basic variables
-        super().__init__(dt=0., max_steps=1)
+        super().__init__(dt=0.0, max_steps=1)
 
         # Initialize the domain parameters and the derived constants
         self._mean = None
@@ -41,7 +41,9 @@ class ToyExample(SimEnv, Serializable):
         max_act = np.array([0])
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=["s_1", "s_2", "s_2", "s_3", "s_5", "s_6", "s_7", "s_8"])
+        self._state_space = BoxSpace(
+            -max_state, max_state, labels=["s_1", "s_2", "s_2", "s_3", "s_5", "s_6", "s_7", "s_8"]
+        )
         self._init_space = self._state_space
         self._act_space = BoxSpace(-max_act, max_act, labels=["act_1"])
         self._obs_space = None
