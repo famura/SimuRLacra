@@ -194,9 +194,7 @@ class SPRL(Algorithm):
         kl_divergence = to.distributions.kl_divergence(
             previous_distribution.distribution, target_distribution.distribution
         )
-        average_reward = np.mean(
-            [ro.discounted_return(gamma=self._discount_factor) for ros in rollouts for ro in ros]
-        ).item()
+
         values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
 
         values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
