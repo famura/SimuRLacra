@@ -62,8 +62,11 @@ if __name__ == "__main__":
         # Crawl through the experiment's directory
         for root, dirs, files in os.walk(ex_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
-            posterior = [pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
-                         for f in files if f.startswith("iter_") and f.endswith("_posterior.pt")]
+            posterior = [
+                pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
+                for f in files
+                if f.startswith("iter_") and f.endswith("_posterior.pt")
+            ]
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
