@@ -32,7 +32,8 @@ Train an agent to solve the Planar-3-Link task using Activation Dynamics Network
 import torch as to
 
 import pyrado
-from pyrado.algorithms.episodic.hc import HCNormal
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f"{HCNormal.name}_{ADNPolicy.name}")
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f"{CEM.name}_{ADNPolicy.name}", "obsnorm")
     # ex_dir = setup_experiment(Planar3LinkTASim.name, f'{HCNormal.name}_{ADNPolicy.name}', 'obsnorm')
 
     # Set seed if desired
@@ -74,12 +75,12 @@ if __name__ == "__main__":
     )
     env = Planar3LinkTASim(**env_hparams)
     # env = Planar3LinkIKActivationSim(**env_hparams)
-    # eub = {
-    #     'GD_DS0': 2.,
-    #     'GD_DS1': 2.,
-    #     'GD_DS2': 2.,
-    # }
-    # env = ObsNormWrapper(env, explicit_ub=eub)
+    eub = {
+        'GD_DS0': 2.,
+        'GD_DS1': 2.,
+        'GD_DS2': 2.,
+    }
+    env = ObsNormWrapper(env, explicit_ub=eub)
     env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
     # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
 
@@ -97,14 +98,19 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=100,
-        pop_size=10 * policy.num_param,
+        max_iter=50,
+        pop_size=10*policy.num_param,
         num_init_states_per_domain=1,
-        expl_factor=1.05,
+        num_is_samples=policy.num_param * 2,
         expl_std_init=1.0,
-        num_workers=20,
+        expl_std_min=0.02,
+        extra_expl_std_init=1.0,
+        extra_expl_decay_iter=25,
+        full_cov=False,
+        symm_sampling=False,
+        num_workers=18,
     )
-    algo = HCNormal(ex_dir, env, policy, **algo_hparam)
+    algo = CEM(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(

@@ -34,6 +34,7 @@ from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.spaces import ValueFunctionSpace
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkTASim.name, f"{PPO.name}_{FNNPolicy.name}")
+    ex_dir = setup_experiment(Planar3LinkTASim.name, f"{PPO.name}_{FNNPolicy.name}", "obsnorm")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -77,25 +78,25 @@ if __name__ == "__main__":
     )
     env = Planar3LinkTASim(**env_hparams)
     # env = Planar3LinkIKActivationSim(**env_hparams)
-    # eub = {
-    #     'GD_DS0': 2.,
-    #     'GD_DS1': 2.,
-    #     'GD_DS2': 2.,
-    # }
-    # env = ObsNormWrapper(env, explicit_ub=eub)
+    eub = {
+        'GD_DS0': 2.,
+        'GD_DS1': 2.,
+        'GD_DS2': 2.,
+    }
+    env = ObsNormWrapper(env, explicit_ub=eub)
     # env = ObsNormWrapper(env)
     # env = ObsPartialWrapper(env, idcs=['Effector_Xd', 'Effector_Zd'])
-    # env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
-    env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
+    env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
+    # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
+    policy_hparam = dict(hidden_sizes=[64, 64, 64], hidden_nonlin=to.tanh)  # FNN
     # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
     # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
+    vfcn_hparam = dict(hidden_sizes=[32, 32, 32], hidden_nonlin=to.relu)  # FNN
     # vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     # vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
@@ -122,7 +123,7 @@ if __name__ == "__main__":
         std_init=0.7573286998997557,
         lr=6.999956625305722e-04,
         max_grad_norm=1.0,
-        num_workers=20,
+        num_workers=8,
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )

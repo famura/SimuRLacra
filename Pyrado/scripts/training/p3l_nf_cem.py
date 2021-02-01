@@ -33,6 +33,7 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.episodic.cem import CEM
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f"{CEM.name}_{NFPolicy.name}")
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f"{CEM.name}_{NFPolicy.name}", "obsnorm")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -67,18 +68,20 @@ if __name__ == "__main__":
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
-        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
+        observeDynamicalSystemGoalDistance=False,
     )
     env = Planar3LinkTASim(**env_hparams)
     # env = Planar3LinkIKActivationSim(**env_hparams)
-    # eub = {
-    #     'GD_DS0': 2.,
-    #     'GD_DS1': 2.,
-    #     'GD_DS2': 2.,
-    # }
-    # env = ObsNormWrapper(env, explicit_ub=eub)
+    eub = {
+        'GD_DS0': 2.,
+        'GD_DS1': 2.,
+        'GD_DS2': 2.,
+    }
+    env = ObsNormWrapper(env, explicit_ub=eub)
+    # env = ObsNormWrapper(env)
+    # env = ObsPartialWrapper(env, idcs=['Effector_Xd', 'Effector_Zd'])
     env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
     # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
 
