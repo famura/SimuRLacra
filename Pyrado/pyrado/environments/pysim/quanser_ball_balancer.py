@@ -322,50 +322,20 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         self.plate_angs += np.array([a_dot, b_dot]) * self._dt  # just for debugging when simplified dynamics
 
     def _init_anim(self):
-        from direct.showbase.ShowBase import  ShowBase
+        from pyrado.environments.pysim.pandavis import PandaVis
         from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight, TransparencyAttrib
 
-        # Configuration for panda3d-window
-        confVars = """
-            win-size 800 600
-            window-title Quanser Qube
-            framebuffer-multisample 1
-            multisamples 2
-            """
-        loadPrcFileData("", confVars)
-
-        class PandaVis(ShowBase):
+        class PandaVisQbb(PandaVis):
 
             def __init__(self, qbb):
-                ShowBase.__init__(self)
-
-                mydir = pathlib.Path(__file__).resolve().parent.absolute()
+                super().__init__()
 
                 # Accessing variables of outer class
                 self.qbb = qbb
 
                 self.setBackgroundColor(1, 1, 1)
                 self.cam.setY(-1.3)
-                self.render.setAntialias(AntialiasAttrib.MAuto)
-                self.windowProperties = WindowProperties()
-                self.windowProperties.setForeground(True)
 
-                # Set lighting
-                self.directionalLight = DirectionalLight('directionalLight')
-                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
-                self.directionalLightNP.setHpr(0, -8, 0)
-                # self.directionalLightNP.setPos(0, 8, 0)
-                self.render.setLight(self.directionalLightNP)
-
-                self.ambientLight = AmbientLight('ambientLight')
-                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
-                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
-                self.render.setLight(self.ambientLightNP)
-
-                # Text
-                self.text = TextNode('parameters')
-                self.textNodePath = aspect2d.attachNewNode(self.text)
                 self.textNodePath.setScale(0.05)
                 self.textNodePath.setPos(0.4, 0, -0.1)
                 self.text.setTextColor(0, 0, 0, 1)
@@ -379,7 +349,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 # Init render objects on first call
 
                 # Ball
-                self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                self.ball = self.loader.loadModel(pathlib.Path(self.dir, "ball.egg"))
                 self.ball.setPos(self.qbb.state[2],  self.qbb.state[3],  (r_ball + d_plate / 2.0))
                 self.ball.setScale(r_ball)
                 # self.ball.setMass(m_ball)
@@ -387,14 +357,14 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 self.ball.reparentTo(self.render)
 
                 # Plate
-                self.plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                self.plate = self.loader.loadModel(pathlib.Path(self.dir, "box.egg"))
                 self.plate.setPos(0, 0, 0)
                 self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)
                 self.plate.setColor(0, 0, 1, 0)
                 self.plate.reparentTo(self.render)
 
                 # Null_plate
-                self.null_plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "box.egg"))
                 self.null_plate.setPos(0, 0, 0)
                 self.null_plate.setScale(l_plate * 1.1 / 2, l_plate * 1.1 / 2, d_plate / 10 / 2)
                 # self.null_plate.setColor(0, 1, 1, 0)
@@ -496,7 +466,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
             """
 
         # Create instance of PandaVis
-        self._visualization = PandaVis(self)
+        self._visualization = PandaVisQbb(self)
         # States that visualization is running
         self._initiated = True
 
