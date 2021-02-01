@@ -39,7 +39,6 @@ from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
-
 class QQubeSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Qube swing-up and stabilization task """
 
@@ -139,165 +138,106 @@ class QQubeSim(SimPyEnv, Serializable):
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
     def _init_anim(self):
-        from direct.showbase.ShowBase import ShowBase
-        from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
-
-        # Configuration for panda3d-window
-        confVars = """
-        win-size 800 600
-        window-title Quanser Qube
-        framebuffer-multisample 1
-        multisamples 2
-        """
-        loadPrcFileData("", confVars)
-
-        class PandaVis(ShowBase):
-
-            def __init__(self, qq):
-                ShowBase.__init__(self)
-
-                mydir = pathlib.Path(__file__).resolve().parent.absolute()
-
-                # Accessing variables of outer class
-                self.qq = qq
-
-                # Convert to float for VPython
-                Lr = float(qq.domain_param["Lr"])
-                Lp = float(qq.domain_param["Lp"])
-
-                self.setBackgroundColor(1, 1, 1)
-                self.cam.setY(-1.5)
-                self.render.setAntialias(AntialiasAttrib.MAuto)
-                self.windowProperties = WindowProperties()
-                self.windowProperties.setForeground(True)
-
-                # Set lighting
-                self.directionalLight = DirectionalLight('directionalLight')
-                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
-                self.directionalLightNP.setHpr(0, -8, 0)
-                # self.directionalLightNP.setPos(0, 8, 0)
-                self.render.setLight(self.directionalLightNP)
-
-                self.ambientLight = AmbientLight('ambientLight')
-                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
-                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
-                self.render.setLight(self.ambientLightNP)
-
-                # Text
-                self.text = TextNode('parameters')
-                self.textNodePath = aspect2d.attachNewNode(self.text)
-                self.textNodePath.setScale(0.07)
-                self.textNodePath.setPos(0.4, 0, -0.1)
-                self.text.setTextColor(0, 0, 0, 1)
-
-                # Init render objects on first call
-                scene_range = 0.2
-                arm_radius = 0.003
-                pole_radius = 0.0045
-
-                self.box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
-                self.box.setPos(0, 0.07, 0)
-                self.box.setScale(0.09, 0.1, 0.09)
-                self.box.setColor(0.5, 0.5, 0.5)
-                self.box.reparentTo(self.render)
-
-                #zeigt nach oben aus Box raus
-                self.cylinder = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
-                self.cylinder.setScale(0.005, 0.005, 0.03)
-                self.cylinder.setPos(0, 0.07, 0.12)
-                self.cylinder.setColor(0.5, 0.5, 0,5) #gray
-                self.cylinder.reparentTo(self.render)
-
-                # Armself.pole.setPos()
-                self.arm = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
-                self.arm.setScale(arm_radius, arm_radius, Lr)
-                self.arm.setColor(0, 0, 1) #blue
-                self.arm.setP(-90)
-                self.arm.setPos(0, 0.07, 0.15)
-                self.arm.reparentTo(self.render)
-
-                # Pole
-                self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
-                self.pole.setScale(pole_radius, pole_radius, Lp)
-                self.pole.setColor(1, 0, 0) #red
-                self.pole.setPos(0, 0.07+2*Lr, 0.15)
-                self.pole.wrtReparentTo(self.arm)
-
-                # Joints
-                self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.joint1.setScale(0.005)
-                self.joint1.setPos(0.0, 0.07, 0.15)
-                self.joint1.reparentTo(self.render)
-
-                self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.joint2.setScale(pole_radius)
-                self.joint2.setPos(0.0, 0.07+2*Lr, 0.15)
-                self.joint2.setColor(0, 0, 0)
-                self.joint2.wrtReparentTo(self.arm)
-
-                self.taskMgr.add(self.update,"update")
-
-            def reset(self):
-                # clear
-                pass
-
-            def update(self, task):
-                g = self.qq.domain_param["g"]
-                Mr = self.qq.domain_param["Mr"]
-                Mp = self.qq.domain_param["Mp"]
-                Lr = float(self.qq.domain_param["Lr"])
-                Lp = float(self.qq.domain_param["Lp"])
-                km = self.qq.domain_param["km"]
-                Rm = self.qq.domain_param["Rm"]
-                Dr = self.qq.domain_param["Dr"]
-                Dp = self.qq.domain_param["Dp"]
-
-                th, al, _, _ = self.qq.state
-                # arm_pos = (Lr * np.cos(th), 0.0, Lr * np.sin(th))
-                # pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
-
-                self.arm.setH(th*180/np.pi)
-                self.pole.setR(-al*180/np.pi)
-                #self.pole.setPos(Lr * np.cos(th), 0.0, Lr * np.sin(th))
-                # self.arm.setHpr(*arm_ax)
-                # self.arm.setPos(0,-0.15,0.15)
-                # self.pole.setPos(*arm_pos)
-                # self.pole.setHpr(*pole_ax)
-                # self.joint1.setPos(self.arm.getX(),self.arm.getY()+Lr/2+0.005,self.arm.getZ())
-                # self.joint2.setPos(self.pole.getPos())
-                # self.curve.append(self.pole.getPos() + self.pole.getAxis())
-
-                # Displayed text
-                self.text.setText(f"""
-                    theta: {self.qq.state[0]*180/np.pi : 3.1f}
-                    alpha: {self.qq.state[1]*180/np.pi : 3.1f}
-                    dt: {self.qq._dt :1.4f}
-                    g: {g : 1.3f}
-                    Mr: {Mr : 1.4f}
-                    Mp: {Mp : 1.4f}
-                    Lr: {Lr : 1.4f}
-                    Lp: {Lp : 1.4f}
-                    Dr: {Dr : 1.7f}
-                    Dp: {Dp : 1.7f}
-                    Rm: {Rm : 1.3f}
-                    km: {km : 1.4f}
-                    """)
-
-                return Task.cont
+        from pyrado.environments.pysim.pandavis import PandaVis
 
         # Create instance of PandaVis
-        self._visualization = PandaVis(self)
+        self._visualization = PandaVis()
+
+        self._visualization.cam.setY(-1.5)
+        self._visualization.setBackgroundColor(1, 1, 1) #schwarz
+        self._visualization.textNodePath.setPos(0.4, 0, -0.1)
+        self._visualization.text.setTextColor(0, 0, 0, 1)
+
+        # Convert to float for VPython
+        Lr = float(self.domain_param["Lr"])
+        Lp = float(self.domain_param["Lp"])
+
+        # Init render objects on first call
+        scene_range = 0.2
+        arm_radius = 0.003
+        pole_radius = 0.0045
+
+        self._visualization.box = self._visualization.loader.loadModel(pathlib.Path(self._visualization.dir, "box.egg"))
+        self._visualization.box.setPos(0, 0.07, 0)
+        self._visualization.box.setScale(0.09, 0.1, 0.09)
+        self._visualization.box.setColor(0.5, 0.5, 0.5)
+        self._visualization.box.reparentTo(self._visualization.render)
+
+        #zeigt nach oben aus Box raus
+        self._visualization.cylinder = self._visualization.loader.loadModel(pathlib.Path(self._visualization.dir, "cylinder.egg"))
+        self._visualization.cylinder.setScale(0.005, 0.005, 0.03)
+        self._visualization.cylinder.setPos(0, 0.07, 0.12)
+        self._visualization.cylinder.setColor(0.5, 0.5, 0,5) #gray
+        self._visualization.cylinder.reparentTo(self._visualization.render)
+
+        # Armself.pole.setPos()
+        self._visualization.arm = self._visualization.loader.loadModel(pathlib.Path(self._visualization.dir, "cylinder_shifted_center.egg"))
+        self._visualization.arm.setScale(arm_radius, arm_radius, Lr)
+        self._visualization.arm.setColor(0, 0, 1) #blue
+        self._visualization.arm.setP(-90)
+        self._visualization.arm.setPos(0, 0.07, 0.15)
+        self._visualization.arm.reparentTo(self._visualization.render)
+
+        # Pole
+        self._visualization.pole = self._visualization.loader.loadModel(pathlib.Path(self._visualization.dir, "cylinder_shifted_center.egg"))
+        self._visualization.pole.setScale(pole_radius, pole_radius, Lp)
+        self._visualization.pole.setColor(1, 0, 0) #red
+        self._visualization.pole.setPos(0, 0.07+2*Lr, 0.15)
+        self._visualization.pole.wrtReparentTo(self._visualization.arm)
+
+        # Joints
+        self._visualization.joint1 = self._visualization.loader.loadModel(pathlib.Path(self._visualization.dir, "ball.egg"))
+        self._visualization.joint1.setScale(0.005)
+        self._visualization.joint1.setPos(0.0, 0.07, 0.15)
+        self._visualization.joint1.reparentTo(self._visualization.render)
+
+        self._visualization.joint2 = self._visualization.loader.loadModel(pathlib.Path(self._visualization.dir, "ball.egg"))
+        self._visualization.joint2.setScale(pole_radius)
+        self._visualization.joint2.setPos(0.0, 0.07+2*Lr, 0.15)
+        self._visualization.joint2.setColor(0, 0, 0)
+        self._visualization.joint2.wrtReparentTo(self._visualization.arm)
+
+        #self._visualization.taskMgr.add(self._visualization.update, "update")
+
         # States that visualization is running
         self._initiated = True
 
     def _update_anim(self):
-        # Refreshed with every frame
+        g = self.domain_param["g"]
+        Mr = self.domain_param["Mr"]
+        Mp = self.domain_param["Mp"]
+        Lr = float(self.domain_param["Lr"])
+        Lp = float(self.domain_param["Lp"])
+        km = self.domain_param["km"]
+        Rm = self.domain_param["Rm"]
+        Dr = self.domain_param["Dr"]
+        Dp = self.domain_param["Dp"]
+
+        th, al, _, _ = self.state
+
+        self._visualization.arm.setH(th*180/np.pi)
+        self._visualization.pole.setR(-al*180/np.pi)
+
+        # Displayed text
+        self._visualization.text.setText(f"""
+            theta: {self.state[0]*180/np.pi : 3.1f}
+            alpha: {self.state[1]*180/np.pi : 3.1f}
+            dt: {self._dt :1.4f}
+            g: {g : 1.3f}
+            Mr: {Mr : 1.4f}
+            Mp: {Mp : 1.4f}
+            Lr: {Lr : 1.4f}
+            Lp: {Lp : 1.4f}
+            Dr: {Dr : 1.7f}
+            Dp: {Dp : 1.7f}
+            Rm: {Rm : 1.3f}
+            km: {km : 1.4f}
+            """)
+
         self._visualization.taskMgr.step()
 
     def _reset_anim(self):
-        # Calls the reset function within PandasVis-class
-        self._visualization.reset()
+        pass
 
 
 class QQubeSwingUpSim(QQubeSim):
