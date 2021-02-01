@@ -34,7 +34,7 @@ import torch as to
 import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.adn import pd_cubic, ADNPolicy
 from pyrado.utils.argparser import get_argparser
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         task_args=dict(consider_velocities=True),
         max_dist_force=None,
         positionTasks=True,
-        taskCombinationMethod="product",
+        taskCombinationMethod="sum",
         checkJointLimits=True,
         collisionAvoidanceIK=True,
         observeVelocities=True,
@@ -68,21 +68,18 @@ if __name__ == "__main__":
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
-        observeDynamicalSystemGoalDistance=False,
     )
-    # env = Planar3LinkTASim(**env_hparams)
-    env = Planar3LinkIKActivationSim(**env_hparams)
-    # env = ActNormWrapper(env)
+    env = Planar3LinkTASim(**env_hparams)
+    # env = Planar3LinkIKActivationSim(**env_hparams)
     # eub = {
     #     'GD_DS0': 2.,
     #     'GD_DS1': 2.,
     #     'GD_DS2': 2.,
     # }
     # env = ObsNormWrapper(env, explicit_ub=eub)
-    # env = ObsNormWrapper(env)
-    # env = ObsPartialWrapper(env, idcs=['Effector_Xd', 'Effector_Zd'])
     env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
     # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
     print(env)
@@ -95,18 +92,18 @@ if __name__ == "__main__":
         kappa_learnable=True,
         activation_nonlin=to.sigmoid,
         potentials_dyn_fcn=pd_cubic,
-        potential_init_learnable=False,
+        potential_init_learnable=True,
     )
     policy = ADNPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=100,
-        pop_size=5 * policy.num_param,
+        pop_size=10 * policy.num_param,
         num_init_states_per_domain=1,
         expl_factor=1.05,
         expl_std_init=1.0,
-        num_workers=8,
+        num_workers=20,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
