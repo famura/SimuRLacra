@@ -187,15 +187,14 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             for root, dirs, files in os.walk(ex_dir):
                 dirs.clear()  # prevents walk() from going into subdirectories
                 found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
-            load_iter = len(found_observations) - 1
             extra["posterior"] = pyrado.load(
-                None, "posterior", "pt", ex_dir, meta_info=dict(prefix=f"iter_{load_iter}")
+                None, "posterior", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
             )
             extra["observations_real"] = pyrado.load(
-                None, f"observations_real", "pt", ex_dir, meta_info=dict(prefix=f"iter_{load_iter}")
+                None, f"observations_real", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
             )
-            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{load_iter}_posterior.pt')}", "g")
-            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{load_iter}_observations_real.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_posterior.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_observations_real.pt')}", "g")
 
     elif isinstance(algo, ActorCritic):
         # Environment
