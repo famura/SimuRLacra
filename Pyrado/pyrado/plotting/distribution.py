@@ -28,6 +28,7 @@
 
 import numpy as np
 import torch as to
+from matplotlib.lines import Line2D
 from torch.distributions import Distribution
 from matplotlib import pyplot as plt, patches
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
@@ -283,3 +284,95 @@ def _draw_prior(ax, prior, dim_x, dim_y):
     dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
     rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
     ax.add_patch(rect)
+
+
+def draw_pair_plot(
+    axs: plt.Axes,
+    posterior: DirectPosterior,
+    observation_real: to.Tensor,
+    dp_mapping: Mapping[int, str],
+    condition: to.Tensor,
+    prior: Optional[BoxUniform] = None,
+    grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
+    grid_res: Optional[int] = 100,
+    num_samples: Optional[int] = 1000,
+    reference_posterior_samples: to.Tensor = None,
+    true_params: to.Tensor = None,
+    # scatter_kwargs: Optional[dict] = None,
+    # contourf_kwargs: Optional[dict] = None,
+    normalize_posterior: bool = True,
+) -> plt.Figure:
+    num_params = len(dp_mapping)
+    if grid_bounds is not None:
+        grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
+        if not grid_bounds.shape == (num_params, 2):
+            raise pyrado.ShapeErr(given=grid_bounds, expected_match=(num_params, 2))
+    elif isinstance(prior, BoxUniform):
+        grid_bounds = to.tensor(
+            [[prior.support.lower_bound[dim_i], prior.support.upper_bound[dim_i]] for dim_i in range(num_params)]
+        )
+    else:
+        raise NotImplementedError
+
+    #  draw num_samples samples from observation batch:
+    perm = to.randperm(reference_posterior_samples.shape[0])
+    idx = perm[:num_samples]
+    reference_posterior_samples = reference_posterior_samples[idx, :]
+    for i in dp_mapping.keys():
+        for j in dp_mapping.keys():
+            if j == 0:
+                axs[i, j].set_ylabel(r"$\theta_{{{}}}$".format(i + 1), rotation=0)
+            if i != num_params - 1:
+                axs[i, j].set_xticklabels([])
+            if i == j:
+                # generate grid (1D)
+                grid_x = to.linspace(grid_bounds[i, 0], grid_bounds[i, 1], grid_res)  # 1 2 3
+                grid = condition.repeat(grid_res, 1)
+                grid[:, i] = grid_x
+
+                if not grid.shape == (grid_res, len(dp_mapping)):
+                    raise pyrado.ShapeErr(given=grid, expected_match=(grid_res, len(dp_mapping)))
+
+                # calculate log_probs
+                log_prob = posterior.log_prob(grid, observation_real, normalize_posterior)
+                prob = to.exp(log_prob)  # scale the probabilities to [0, 1]
+                prob = prob.numpy()
+                # plot single posterior
+                axs[i, j].plot(grid_x, prob)
+
+                # plot true_params:
+                if true_params is not None:
+                    axs[i, j].vlines(true_params[i].item(), ymin=0.0, ymax=np.max(prob).item(), colors="green")
+
+                axs[i, j].set_title(r"$\theta_{{{}}}$".format(j + 1))
+                axs[i, j].set_ylabel(r"$p(\theta_{{{}}}| \tau)$".format(j + 1), rotation=0)
+                axs[i, j].yaxis.set_label_position("right")
+                axs[i, j].yaxis.tick_right()
+            elif i > j:
+                # sample from posterior
+                samples = posterior.sample((num_samples,), x=observation_real)
+
+                # plot scatter
+                axs[i, j].scatter(samples[:, 0], samples[:, 1], c="blue")
+                if reference_posterior_samples is not None:
+                    axs[i, j].scatter(reference_posterior_samples[:, 0], reference_posterior_samples[:, 1], c="black")
+                if true_params is not None:
+                    axs[i, j].scatter(true_params[i], true_params[j], c="green", marker="x")
+                if j != 0:
+                    axs[i, j].yaxis.tick_right()
+            else:
+                axs[i, j].axis("off")
+
+            # TODO: plot legend in the upper right corner
+            # create legend
+            legend_elements = [
+                Line2D([0], [0], color="blue", lw=2, label="posterior density"),
+                Line2D([0], [0], color="green", lw=2, label="true parameters"),
+                Line2D([0], [0], marker="x", label="true parameters", markerfacecolor="green", markersize=10),
+                Line2D(
+                    [0], [0], marker="o", label="approximate posterior samples", markerfacecolor="blue", markersize=10
+                ),
+                Line2D([0], [0], marker="o", label="true posterior samples", markerfacecolor="black", markersize=10),
+            ]
+            axs[0, num_params - 1].legend(handles=legend_elements)
+    return plt.gcf()

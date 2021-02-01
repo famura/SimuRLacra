@@ -6,23 +6,17 @@ This script will only be successful if the simulator is tractable i.e. its proba
 import os
 import os.path as osp
 import torch as to
-import pandas as pd
 from matplotlib import pyplot as plt
 
 import pyrado
-from matplotlib.colors import DivergingNorm
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.distribution import draw_posterior_distr
-from pyrado.plotting.utils import num_rows_cols_from_length
+from pyrado.plotting.distribution import draw_posterior_distr, draw_pair_plot
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 
-from pyrado.sampling.posterior_sampler import posterior_sampler, rejection_sampler
-
-from geomloss.samples_loss import SamplesLoss
 
 if __name__ == "__main__":
     # Parse command line arguments
@@ -99,23 +93,23 @@ if __name__ == "__main__":
     # set condition
     condition = posterior_samples[0].mean(dim=0)
     # plot the contourplot for the approximate posterior
-    fig, axs = plt.subplots(1, 1, figsize=(14, 7), tight_layout=True)
-    # _ = draw_posterior_distr(
-    #     axs,
-    #     "joint",
-    #     posterior,
-    #     observation[which_obs].unsqueeze(0),
-    #     algo.dp_mapping,
-    #     env_real,
-    #     prior,
-    #     dp_idcs,
-    #     condition,
-    #     show_prior=False,
-    #     contourf_kwargs=dict(cmap="RdGy"),
-    # )
+    fig, axs = plt.subplots(len(algo.dp_mapping), len(algo.dp_mapping), figsize=(14, 10), tight_layout=True)
+    _ = draw_pair_plot(
+        axs,
+        posterior,
+        observation[which_obs],
+        algo.dp_mapping,
+        condition,
+        prior,
+        reference_posterior_samples=reference_samples[which_obs, :, :],
+        true_params=true_params[which_obs]
+        # dp_idcs,
+        # show_prior=False,
+        # contourf_kwargs=dict(cmap="RdGy"),
+    )
     # plot reference posterior samples
-    plt.scatter(reference_samples[which_obs, :, 0], reference_samples[which_obs, :, 1], color="black")
-    plt.scatter(posterior_samples[which_obs, :, 0], posterior_samples[which_obs, :, 1], color="blue")
-    plt.title("True vs. approximate Posterior")
+    # plt.scatter(reference_samples[which_obs, :, 0], reference_samples[which_obs, :, 1], color="black")
+    # plt.scatter(posterior_samples[which_obs, :, 0], posterior_samples[which_obs, :, 1], color="blue")
+    # plt.title("True vs. approximate Posterior")
     plt.savefig(osp.join(ex_dir, f"scatter_true_posterior_{which_obs}.pdf"))
     plt.show()
