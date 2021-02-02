@@ -50,45 +50,46 @@ if __name__ == "__main__":
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
         # low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
+        # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
         low=to.tensor(
             [
                 dp_nom["Dr"] * 0,
                 dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.8,
-                dp_nom["km"] * 0.8,
-                dp_nom["Mr"] * 0.9,
-                dp_nom["Mp"] * 0.9,
-                dp_nom["Lr"] * 0.9,
-                dp_nom["Lp"] * 0.9,
+                dp_nom["Rm"] * 0.5,
+                dp_nom["km"] * 0.5,
+                dp_nom["Mr"] * 0.5,
+                dp_nom["Mp"] * 0.5,
+                dp_nom["Lr"] * 0.5,
+                dp_nom["Lp"] * 0.5,
             ]
         ),
         high=to.tensor(
             [
-                dp_nom["Dr"] * 10,
-                dp_nom["Dp"] * 10,
-                dp_nom["Rm"] * 1.2,
-                dp_nom["km"] * 1.2,
-                dp_nom["Mr"] * 1.1,
-                dp_nom["Mp"] * 1.1,
-                dp_nom["Lr"] * 1.1,
-                dp_nom["Lp"] * 1.1,
+                dp_nom["Dr"] * 100,
+                dp_nom["Dp"] * 100,
+                dp_nom["Rm"] * 2.0,
+                dp_nom["km"] * 2.0,
+                dp_nom["Mr"] * 2.0,
+                dp_nom["Mp"] * 2.0,
+                dp_nom["Lr"] * 2.0,
+                dp_nom["Lp"] * 2.0,
             ]
         ),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=50, num_transforms=5)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         summary_statistic="bayessim",
         max_iter=5,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=4000,
+        num_sim_per_real_rollout=5000,
         simulation_batch_size=1,
         use_posterior_in_the_loop=False,
         normalize_posterior=False,
-        num_workers=10,
+        num_eval_samples=1000,
+        num_workers=8,
     )
     algo = LFI(
         ex_dir,

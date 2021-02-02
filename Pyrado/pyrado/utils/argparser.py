@@ -60,7 +60,10 @@ def get_argparser() -> argparse.ArgumentParser:
         help="path to the (experiment) directory to load from",
     )
     parser.add_argument(
-        "--env_name", type=str, nargs="?", help="name of the environment to use (e.g. 'qbb' or 'qcp-st')",
+        "--env_name",
+        type=str,
+        nargs="?",
+        help="name of the environment to use (e.g. 'qbb' or 'qcp-st')",
     )
     parser.add_argument(
         "--idcs",

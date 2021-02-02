@@ -189,8 +189,8 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         """
         Constructor
 
-        :param env: environment which the policy operates, in any case this will be a (randomized) `SimEnv`. We strip
-                    all domain randomization wrappers from this env since we want to randomize it manually here.
+        :param env: environment which the policy operates, which must not be a randomized environment since we want to
+                    randomize it manually via the domain parameters coming from the sbi package.
         :param policy: policy used for sampling the rollout
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
@@ -230,8 +230,8 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
 
             .. code-block:: python
 
-                    if dp_values.ndim == 2:
-                        raise RuntimeError
+                if dp_values.ndim == 2:
+                    raise RuntimeError
         """
         dp_values = to.atleast_2d(dp_values)
 

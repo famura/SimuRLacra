@@ -90,7 +90,7 @@ class LFI(InterruptableAlgorithm):
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
-        num_eval_samples: Optional[int] = 4000,
+        num_eval_samples: Optional[int] = None,
         sbi_training_hparam: Optional[dict] = None,
         sbi_sampling_hparam: Optional[dict] = None,
         simulation_batch_size: Optional[int] = 1,
@@ -161,7 +161,7 @@ class LFI(InterruptableAlgorithm):
         self.normalize_posterior = normalize_posterior
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
-        self.num_eval_samples = num_eval_samples
+        self.num_eval_samples = num_eval_samples or 10 * 2**len(dp_mapping)
         self.thold_succ_subrtn = float(thold_succ_subrtn)
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
         self.num_workers = num_workers
@@ -295,7 +295,7 @@ class LFI(InterruptableAlgorithm):
                         proposal=posterior if self.use_posterior_in_the_loop else self._sbi_prior,
                         num_simulations=self.num_sim_per_real_rollout,
                         simulation_batch_size=self.simulation_batch_size,
-                        num_workers=self.num_workers,  # leave it for now
+                        num_workers=self.num_workers,
                     )
                     self._sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)
                     self._cnt_samples += self.num_sim_per_real_rollout * self._env_sim_sbi.max_steps

@@ -78,10 +78,12 @@ if __name__ == "__main__":
     )
 
     # Extract the most likely domain parameter sets for every real-world
-    domain_params_ml = []
+    domain_params_sel = []
     for i in range(domain_params.shape[0]):
-        dp_val = domain_params[i, to.argmax(log_probs[i, :]), :].numpy()
-        domain_params_ml.append(dict(zip(algo.dp_mapping.values(), dp_val)))
+        idcs_ml = to.argsort(log_probs[i, :], descending=True)
+        idcs_sel = idcs_ml[:1]  # so far, only select the most likely one; changing this would require re-writing
+        dp_val = domain_params[i, idcs_sel, :].numpy()
+        domain_params_sel.append(dict(zip(algo.dp_mapping.values(), dp_val)))
 
     # Load the rollouts
     rollouts_real = load_rollouts_from_dir(ex_dir)
@@ -92,13 +94,13 @@ if __name__ == "__main__":
     [ro.numpy() for ro in rollouts_real]
     init_states_real = [ro.rollout_info["init_state"] for ro in rollouts_real]
     num_rollouts_real = len(init_states_real)
-    if num_rollouts_real > len(domain_params_ml):
+    if num_rollouts_real > domain_params.shape[0]:
         print_cbt("Found more init states than sbi observations, truncated the superfluous.", "y")
-        init_states_real = init_states_real[: len(domain_params_ml), :]
+        init_states_real = init_states_real[: domain_params.shape[0], :]
 
     # Sample rollouts with the most likely domain parameter set associated to that observation
     rollouts_sim = []
-    for init_state, domain_param in zip(init_states_real, domain_params_ml):
+    for init_state, domain_param in zip(init_states_real, domain_params_sel):
         rollouts_sim.append(
             rollout(env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state, domain_param=domain_param))
         )
