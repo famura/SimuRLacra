@@ -341,7 +341,7 @@
 <span class="k">def</span> <span class="nf">test_cat_discrete_space</span><span class="p">(</span><span class="n">ds_list</span><span class="p">):</span>
     <span class="n">ds_cat</span> <span class="o">=</span> <span class="n">DiscreteSpace</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">ds_list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_cat</span><span class="p">,</span> <span class="n">DiscreteSpace</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">ds_cat</span><span class="o">.</span><span class="n">flat_dim</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">([</span><span class="n">ds</span><span class="o">.</span><span class="n">flat_dim</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">ds_list</span><span class="p">])</span></div>
+    <span class="k">assert</span> <span class="n">ds_cat</span><span class="o">.</span><span class="n">num_ele</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">([</span><span class="n">ds</span><span class="o">.</span><span class="n">num_ele</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">ds_list</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="test_sample_contains_discrete_space"><a class="viewcode-back" href="../../tests.html#tests.test_spaces.test_sample_contains_discrete_space">[docs]</a><span class="k">def</span> <span class="nf">test_sample_contains_discrete_space</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
