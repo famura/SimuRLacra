@@ -54,11 +54,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import pickle
 import functools
 import numpy as np
 import sys
 from tqdm import tqdm
-from typing import List
+from typing import List, Dict, Optional
 
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers, DomainRandWrapperLive
@@ -67,10 +68,11 @@ from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_rollout_sampler import _ps_init, _ps_run_one_domain_param, _ps_run_one_init_state
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.spaces.singular import SingularStateSpace
 
 
 def eval_domain_params(
-    pool: SamplerPool, env: SimEnv, policy: Policy, params: list, init_state: np.ndarray = None
+    pool: SamplerPool, env: SimEnv, policy: Policy, params: List[Dict], init_state: Optional[np.ndarray] = None
 ) -> List[StepSequence]:
     """
     Evaluate a policy on a multidimensional grid of domain parameters.
@@ -84,12 +86,14 @@ def eval_domain_params(
     """
     # Strip all domain randomization wrappers from the environment
     env = remove_all_dr_wrappers(env, verbose=True)
+    if init_state is not None:
+        env.init_space = SingularStateSpace(fixed_state=init_state)
 
-    pool.invoke_all(_ps_init, env, policy)
+    pool.invoke_all(_ps_init, pickle.dumps(env), pickle.dumps(policy))
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(functools.partial(_ps_run_one_domain_param, init_state=init_state), params, pb)
+        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True), params, pb)
 
 
 def eval_nominal_domain(
@@ -101,17 +105,17 @@ def eval_nominal_domain(
     :param pool: parallel sampler
     :param env: environment to evaluate in
     :param policy: policy to evaluate
-    :param init_states: initial states of the environment which will be fixed if not set to None
+    :param init_states: initial states of the environment which will be fixed if not set to `None`
     :return: list of rollouts
     """
     # Strip all domain randomization wrappers from the environment
     env = remove_all_dr_wrappers(env)
 
-    pool.invoke_all(_ps_init, env, policy)
+    pool.invoke_all(_ps_init, pickle.dumps(env), pickle.dumps(policy))
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(_ps_run_one_init_state, init_states, pb)
+        return pool.run_map(functools.partial(_ps_run_one_init_state, eval=True), init_states, pb)
 
 
 def eval_randomized_domain(
@@ -124,15 +128,15 @@ def eval_randomized_domain(
     :param env: environment to evaluate in
     :param randomizer: randomizer used to sample random domain instances, inherited from `DomainRandomizer`
     :param policy: policy to evaluate
-    :param init_states: initial states of the environment which will be fixed if not set to None
+    :param init_states: initial states of the environment which will be fixed if not set to `None`
     :return: list of rollouts
     """
     # Randomize the environments
     env = remove_all_dr_wrappers(env)
     env = DomainRandWrapperLive(env, randomizer)
 
-    pool.invoke_all(_ps_init, env, policy)
+    pool.invoke_all(_ps_init, pickle.dumps(env), pickle.dumps(policy))
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(_ps_run_one_init_state, init_states, pb)
+        return pool.run_map(functools.partial(_ps_run_one_init_state, eval=True), init_states, pb)
