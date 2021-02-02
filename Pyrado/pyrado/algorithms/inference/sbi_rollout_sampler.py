@@ -40,6 +40,7 @@ from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
+from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.discrete import DiscreteSpace
@@ -245,11 +246,18 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
                 )
             self._env.init_space = DiscreteSpace(init_states_real)
 
+            # Create a policy that simply replays the recorded actions
+            policy = PlaybackPolicy(self._env.spec, self.rollouts_real[0].actions)
+
+        else:
+            # If there are no pre-recorded rollouts, use a policy as usual
+            policy = self._policy
+
         # Do the rollouts
         ros = [
             rollout(
                 self._env,
-                self._policy,
+                policy,
                 eval=True,
                 reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dpv))),
             )
