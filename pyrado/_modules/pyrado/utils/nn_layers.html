@@ -414,9 +414,13 @@
 
         <span class="c1"># Run though the same function as the original PyTorch implementation, but with mirrored kernel</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span> <span class="o">!=</span> <span class="s2">&quot;zeros&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span> <span class="o">==</span> <span class="s2">&quot;circular&quot;</span><span class="p">:</span>
+                <span class="n">expanded_padding</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">expanded_padding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reversed_padding_repeated_twice</span>
             <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span>
-                <span class="n">F</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reversed_padding_repeated_twice</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span><span class="p">),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">expanded_padding</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span><span class="p">),</span>
+                <span class="n">mirr_weight</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span>
                 <span class="n">_single</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
@@ -424,7 +428,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">mirr_weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
