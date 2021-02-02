@@ -30,19 +30,33 @@
 Script to evaluate a posterior obtained using the sbi package.
 Plot a rollout for evey initial state using the most likely domain parameter set.
 """
+import numpy as np
 import os
 import torch as to
 from matplotlib import pyplot as plt
+from typing import List
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
+from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
 from pyrado.utils.input_output import print_cbt
+
+
+def check_act_equal(rollout_1: List[StepSequence], rollout_2: List[StepSequence]) -> bool:
+    """ Helper function to check if the actions are approximately the same. """
+    return all(
+        [
+            np.allclose(r1.actions[: min(r1.length, r2.length)], r2.actions[: min(r1.length, r2.length)])
+            for r1, r2 in zip(rollout_1, rollout_2)
+        ]
+    )
 
 
 if __name__ == "__main__":
@@ -90,6 +104,12 @@ if __name__ == "__main__":
     if not rollouts_real:
         raise pyrado.ValueErr(msg="No rollouts have been found!")
 
+    # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
+    if args.use_rec:
+        policies = [PlaybackPolicy(env_sim.spec, ro.actions) for ro in rollouts_real]
+    else:
+        policies = [policy] * len(rollouts_real)  # repeating for convenience
+
     # Extract init states
     [ro.numpy() for ro in rollouts_real]
     init_states_real = [ro.rollout_info["init_state"] for ro in rollouts_real]
@@ -99,19 +119,25 @@ if __name__ == "__main__":
         init_states_real = init_states_real[: domain_params.shape[0], :]
 
     # Sample rollouts with the most likely domain parameter set associated to that observation
-    rollouts_sim = []
-    for init_state, domain_param in zip(init_states_real, domain_params_sel):
-        rollouts_sim.append(
-            rollout(env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state, domain_param=domain_param))
+    rollouts_ml = []
+    for idx, (init_state, domain_param) in enumerate(zip(init_states_real, domain_params_sel)):
+        rollouts_ml.append(
+            rollout(
+                env_sim, policies[idx], eval=True, reset_kwargs=dict(init_state=init_state, domain_param=domain_param)
+            )
         )
-    assert len(rollouts_sim) == len(rollouts_real)
+    assert len(rollouts_ml) == len(rollouts_real)
+    if args.use_rec:
+        assert check_act_equal(rollouts_real, rollouts_ml)
 
     # Sample rollouts using the nominal domain parameters
     env_sim.domain_param = env_sim.get_nominal_domain_param()
-    rollouts_nom_sim = []
-    for init_state in init_states_real:
-        rollouts_nom_sim.append(rollout(env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state)))
-    assert len(rollouts_nom_sim) == len(rollouts_sim)
+    rollouts_nom = []
+    for idx, init_state in enumerate(init_states_real):
+        rollouts_nom.append(rollout(env_sim, policies[idx], eval=True, reset_kwargs=dict(init_state=init_state)))
+    assert len(rollouts_nom) == len(rollouts_ml)
+    if args.use_rec:
+        assert check_act_equal(rollouts_real, rollouts_nom)
 
     # Plot the different init states in separate figures and the different observations along the columns
     dim_obs = rollouts_real[0].observations.shape[1]  # same for all rollouts
@@ -121,9 +147,9 @@ if __name__ == "__main__":
             # Plot the real rollouts
             axs[idx_o].plot(rollouts_real[idx_r].observations[:, idx_o], label="real")
             # Plot the maximum likely simulated rollouts for every real init state
-            axs[idx_o].plot(rollouts_sim[idx_r].observations[:, idx_o], ls="--", label="sim ml")
+            axs[idx_o].plot(rollouts_ml[idx_r].observations[:, idx_o], ls="--", label="sim ml")
             # Plot the nominal simulation's rollouts for every real init state
-            axs[idx_o].plot(rollouts_nom_sim[idx_r].observations[:, idx_o], ls="-.", label="sim nom", c="grey")
+            axs[idx_o].plot(rollouts_nom[idx_r].observations[:, idx_o], ls="-.", label="sim nom", c="grey")
 
         # Set legend and window title
         axs[0].legend(ncol=3)
