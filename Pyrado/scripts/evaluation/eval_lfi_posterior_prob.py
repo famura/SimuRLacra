@@ -45,7 +45,18 @@ from pyrado.utils.experiments import load_experiment
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.add_argument(
+        "--use_mcmc",
+        action="store_true",
+        help="Use Markov Chain Monte-Carlo for sampling from the posterior (default: True)",
+    )
+    parser.add_argument(
+        "--normalize_posterior",
+        action="store_true",
+        help="Normalize the log-probabilities of the posterior (default: False)",
+    )
+    args = parser.parse_args()
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -93,7 +104,7 @@ if __name__ == "__main__":
         num_samples = 100 * 2 ** len(algo.dp_mapping) if args.num_samples is None else args.num_samples
         p = posterior[-1] if args.mode.lower() == "evolution" else posterior
         domain_params = to.stack(
-            [p.sample((num_samples,), x=obs, sample_with_mcmc=False) for obs in observations_real], dim=0
+            [p.sample((num_samples,), x=obs, sample_with_mcmc=args.use_mcmc) for obs in observations_real], dim=0
         )
         condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
 
@@ -114,6 +125,6 @@ if __name__ == "__main__":
         dp_idcs,
         condition,
         show_prior=False,
-        normalize_posterior=False,
+        normalize_posterior=args.normalize_posterior,
     )
     plt.show()

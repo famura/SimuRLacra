@@ -47,7 +47,18 @@ from pyrado.utils.input_output import print_cbt
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.add_argument(
+        "--use_mcmc",
+        action="store_true",
+        help="Use Markov Chain Monte-Carlo for sampling from the posterior (default: True)",
+    )
+    parser.add_argument(
+        "--normalize_posterior",
+        action="store_true",
+        help="Normalize the log-probabilities of the posterior (default: False)",
+    )
+    args = parser.parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 
@@ -72,8 +83,9 @@ if __name__ == "__main__":
         observations_real,
         args.num_samples,
         algo.sbi_simulator,
-        normalize_posterior=False,
+        normalize_posterior=args.normalize_posterior,
         simulate_observations=False,
+        sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
     )
 
     # Extract the most likely domain parameter sets for every real-world
