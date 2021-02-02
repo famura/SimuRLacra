@@ -36,7 +36,6 @@ import pyrado
 from pyrado.utils.data_processing import standardize, scale_min_max
 from pyrado.utils.data_types import TimeSeriesDataPair
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.tensor import atleast_2D
 
 
 def create_sequences(data: to.Tensor, len_seq: int) -> List[Tuple]:
@@ -106,7 +105,7 @@ class TimeSeriesDataSet(Dataset):
         if standardize_data and scale_min_max_data:
             raise pyrado.ValueErr(msg="Scaling and normalizing the data at the same time is not supported!")
 
-        self.data_all_raw = atleast_2D(data).T if data.ndimension() == 1 else data  # samples along rows
+        self.data_all_raw = to.atleast_2d(data).T if data.ndimension() == 1 else data  # samples along rows
         self._ratio_train = ratio_train
         self._window_size = window_size
         self.name = name

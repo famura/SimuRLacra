@@ -26,63 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import pytest
 import torch as to
 
-from pyrado.utils.tensor import stack_tensor_list, stack_tensor_dict_list, insert_tensor_col, atleast_2D, atleast_3D
-
-
-@pytest.mark.parametrize(
-    "x",
-    [
-        to.tensor(3.0),
-        to.rand(
-            1,
-        ),
-        to.rand(
-            2,
-        ),
-        to.rand(1, 2),
-        to.rand(2, 1),
-        to.rand(2, 3),
-        to.rand(2, 3, 4),
-    ],
-    ids=["sclar", "scalar_1D", "vec_1D", "vec_2D", "vec_2D_T", "arr_2D", "arr_3D"],
-)
-def test_atleast_2D(x):
-    x_al2d = atleast_2D(x)
-    assert x_al2d.ndim >= 2
-
-    # We want to mimic the numpy function
-    x_np = np.atleast_2d(x.numpy())
-    assert np.all(x_al2d.numpy() == x_np)
-
-
-@pytest.mark.parametrize(
-    "x",
-    [
-        to.tensor(3.0),
-        to.rand(
-            1,
-        ),
-        to.rand(
-            2,
-        ),
-        to.rand(1, 2),
-        to.rand(2, 1),
-        to.rand(2, 3),
-        to.rand(2, 3, 4),
-    ],
-    ids=["sclar", "scalar_1D", "vec_1D", "vec_2D", "vec_2D_T", "arr_2D", "arr_3D"],
-)
-def test_atleast_3D(x):
-    x_al3d = atleast_3D(x)
-    assert x_al3d.ndim >= 3
-
-    # We want to mimic the numpy function
-    x_np = np.atleast_3d(x.numpy())
-    assert np.all(x_al3d.numpy() == x_np)
+from pyrado.utils.tensor import stack_tensor_list, stack_tensor_dict_list, insert_tensor_col
 
 
 def test_stack_tensors():

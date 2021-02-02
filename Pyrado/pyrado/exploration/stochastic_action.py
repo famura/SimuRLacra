@@ -38,7 +38,6 @@ from pyrado.exploration.normal_noise import DiagNormalNoise
 from pyrado.exploration.uniform_noise import UniformNoise
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.math import clamp
-from pyrado.utils.tensor import atleast_2D
 
 
 class StochasticActionExplStrat(Policy, ABC):
@@ -345,8 +344,8 @@ class SACExplStrat(StochasticActionExplStrat):
         :return: $\log( \pi(a|s) )$
         """
         # Batch dim along the first dim
-        act_expl_ = atleast_2D(act_expl)
-        log_probs_ = atleast_2D(log_probs)
+        act_expl_ = to.atleast_2d(act_expl)
+        log_probs_ = to.atleast_2d(log_probs)
 
         # Sum over action dimensions
         log_probs_ = to.sum(log_probs_ - to.log(to.ones_like(act_expl_) - to.pow(act_expl_, 2) + eps), 1, keepdim=True)

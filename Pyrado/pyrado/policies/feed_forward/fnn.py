@@ -36,7 +36,6 @@ from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
 from pyrado.policies.initialization import init_param
-from pyrado.utils.tensor import atleast_2D
 
 
 class FNN(nn.Module):
@@ -287,7 +286,7 @@ class DiscreteActQValPolicy(Policy):
                  indices, batch size
         """
         # Create batched state-action table
-        obs = atleast_2D(obs)  # batch dim is along first axis
+        obs = to.atleast_2d(obs)  # batch dim is along first axis
         columns_obs = obs.repeat_interleave(repeats=self.env_spec.act_space.flat_dim, dim=0)
         columns_act = to.tensor(self.env_spec.act_space.eles).repeat(obs.shape[0], 1)
 
