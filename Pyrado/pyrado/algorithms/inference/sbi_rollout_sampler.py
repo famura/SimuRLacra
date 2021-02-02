@@ -353,6 +353,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI):
         super().__init__(env=None, policy=None, strategy=strategy)
 
         # Crawl through the directory and load every file that starts with the word rollout
+        rollouts_rec = []
         for root, dirs, files in os.walk(rollouts_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             rollouts_rec = [
@@ -360,6 +361,8 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI):
                 for f in files
                 if f.startswith("rollout")
             ]
+        if not rollouts_rec:
+            raise pyrado.ValueErr(msg="No rollouts have been found!")
 
         self.rollouts_rec = rollouts_rec
         self._ring_idx = np.random.randint(0, len(rollouts_rec)) if rand_init_rollout else 0

@@ -310,7 +310,7 @@ def load_rollouts_from_dir(ex_dir: str, key: Optional[str] = "rollout") -> List[
 
     :param ex_dir: directory, e.g. and experiment folder
     :param key: word or part of a word that needs to the in the name of a file for it to be loaded
-    :return: list of all rollouts
+    :return: list of loaded rollouts
     """
     if not osp.isdir(ex_dir):
         raise pyrado.PathErr(given=ex_dir)
@@ -325,6 +325,9 @@ def load_rollouts_from_dir(ex_dir: str, key: Optional[str] = "rollout") -> List[
             for f in files
             if key in f
         ]
+
+    if not rollouts:
+        raise pyrado.ValueErr(msg="No rollouts have been found!")
 
     if isinstance(rollouts[0], list):
         if not check_all_types_equal(rollouts):

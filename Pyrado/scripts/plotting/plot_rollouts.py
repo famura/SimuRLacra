@@ -50,8 +50,6 @@ if __name__ == "__main__":
 
     # Load the rollouts
     rollouts = load_rollouts_from_dir(ex_dir)
-    if not rollouts:
-        raise pyrado.ValueErr(msg="No rollouts have been found!")
 
     # Extract observations
     data = pd.DataFrame()

@@ -101,8 +101,6 @@ if __name__ == "__main__":
 
     # Load the rollouts
     rollouts_real = load_rollouts_from_dir(ex_dir)
-    if not rollouts_real:
-        raise pyrado.ValueErr(msg="No rollouts have been found!")
 
     # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
     if args.use_rec:
