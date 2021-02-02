@@ -102,7 +102,7 @@ if __name__ == "__main__":
         prior=prior,
         observation_real=observation[which_obs],
         reference_samples=reference_samples[which_obs, :, :],
-        true_params=true_params[which_obs]
+        true_params=true_params[which_obs],
     )
     plt.savefig(osp.join(ex_dir, f"scatter_true_posterior_{which_obs}.png"))
     plt.show()

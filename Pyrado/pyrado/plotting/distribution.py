@@ -316,6 +316,26 @@ def draw_pair_plot(
     # contourf_kwargs: Optional[dict] = None,
     normalize_posterior: bool = True,
 ) -> plt.Figure:
+    r"""
+    Plotting utility which compares all random variables of a multivariate probability distribution with dim > 2.
+
+    :param axs: axis (joint) or axes (separately) of the figure to plot on
+    :param dist: distribution from which should be sampled from.
+    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+                       Here this mapping must not have more than 2 elements since we can't plot more.
+    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions
+    :param observation_real: in case dist is a DirectPosterior, the single observation serves as the condition i.e.
+                             $p(\theta | tau = observation_{real})$
+    :param prior: distribution used by sbi as a prior, should be BoxUniform and hence sets the plot borders
+    :param grid_bounds: manually set the plot borders. Either prior or grid_bounds is required.
+    :param grid_res: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set
+                        arbitrarily, but should contain the prior if `show_prior` is `True`.
+    :param num_samples: Number of samples used for the
+    :param reference_samples: if reference samples are available, plot them as well.
+    :param true_params: if true params are available, plot them as well.
+    :param normalize_posterior: Choose to normalize the posterior. If False the density plots are scaled by a constant.
+    :return:
+    """
     num_params = len(dp_mapping)
     if grid_bounds is not None:
         grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
@@ -331,15 +351,18 @@ def draw_pair_plot(
     log_prob_dict = {}
     if isinstance(dist, DirectPosterior):
         if observation_real is None:
-            raise pyrado.ValueErr(given=None, msg="DirectPosterior requires an observation for sampling "
-                                                  "and evaluating the log-probability")
+            raise pyrado.ValueErr(
+                given=None,
+                msg="DirectPosterior requires an observation for sampling " "and evaluating the log-probability",
+            )
         else:
             dist.set_default_x(observation_real)
             log_prob_dict = {"norm_posterior": normalize_posterior}
     elif isinstance(dist, to.distributions.Distribution):
         if observation_real is not None:
-            warnings.warn(message="Given real observation is not used with the given distribution.\t"
-                                  "Check if this is intended!")
+            warnings.warn(
+                message="Given real observation is not used with the given distribution.\t" "Check if this is intended!"
+            )
 
     #  draw num_samples samples from observation batch:
     if reference_samples is not None:
@@ -387,7 +410,7 @@ def draw_pair_plot(
             elif i > j:
                 axs[i, j].set(xlim=(grid_bounds[j, 0], grid_bounds[j, 1]), ylim=(grid_bounds[i, 0], grid_bounds[i, 1]))
                 # sample from distribution
-                samples = dist.sample((num_samples, ))
+                samples = dist.sample((num_samples,))
 
                 # plot scatter
                 axs[i, j].scatter(samples[:, j], samples[:, i], c="blue")
@@ -417,8 +440,9 @@ def draw_pair_plot(
 if __name__ == "__main__":
     # example of pairplot using a 3D multivariate Normal
     from torch.distributions.multivariate_normal import MultivariateNormal
-    mean = to.tensor([1.,0,1], dtype=to.float32)
-    cov = to.diag(to.tensor([1., 0.1, 0.5], dtype=to.float32))
+
+    mean = to.tensor([1.0, 0, 1], dtype=to.float32)
+    cov = to.diag(to.tensor([1.0, 0.1, 0.5], dtype=to.float32))
     dist = MultivariateNormal(loc=mean, covariance_matrix=cov)
     dp_mapping = {0: "0", 1: "1", 2: "2"}
     grid_bounds = to.tensor([[-2.5, 3.5], [-2.5, 3.5], [-2.5, 3.5]])
