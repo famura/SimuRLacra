@@ -223,29 +223,32 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
-<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> \
+    <span class="n">create_default_randomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> \
+    <span class="n">DomainRandWrapperLive</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.cvar_sampler</span> <span class="kn">import</span> <span class="n">select_cvar</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">to_format</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.hyper_sphere</span> <span class="kn">import</span> <span class="n">sample_from_hyper_sphere_surface</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterExplorationSampler</span><span class="p">,</span> <span class="n">ParameterSamplingResult</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.cvar_sampler</span> <span class="kn">import</span> <span class="n">select_cvar</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_cuda</span><span class="p">,</span> <span class="n">m_needs_bullet</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
+
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_cuda</span>
 
 
 <div class="viewcode-block" id="test_sampler_pool"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_pool">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -668,6 +671,7 @@
 
 
 <div class="viewcode-block" id="test_cuda_sampling_w_dr"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_cuda_sampling_w_dr">[docs]</a><span class="nd">@m_needs_cuda</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;env&quot;</span><span class="p">,</span>
