@@ -46,6 +46,8 @@ from pyrado.utils.experiments import load_experiment
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
+    if not isinstance(args.num_samples, int) or args.num_samples < 1:
+        raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -90,12 +92,17 @@ if __name__ == "__main__":
         condition = None  # no condition necessary since dim(posterior) = dim(grid)
     else:
         # Use the latest posterior to sample domain parameters to obtain a condition
-        num_samples = 100 * 2 ** len(algo.dp_mapping) if args.num_samples is None else args.num_samples
-        p = posterior[-1] if args.mode.lower() == "evolution" else posterior
-        domain_params = to.stack(
-            [p.sample((num_samples,), x=obs, sample_with_mcmc=args.use_mcmc) for obs in observations_real], dim=0
+        domain_params, log_probs, _ = LFI.eval_posterior(
+            posterior,
+            observations_real,
+            args.num_samples,
+            algo.sbi_simulator,
+            normalize_posterior=False,  # not necessary here
+            simulate_observations=False,
+            sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
         )
-        condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
+        condition = to.mean(domain_params[:, to.argmax(log_probs, dim=1), :], dim=[0, 1])
+        # condition = to.mean(domain_params, dim=[0, 1])
 
     # Plot the posterior distribution, the true parameters / their distribution
     if args.mode.lower() == "joint":
