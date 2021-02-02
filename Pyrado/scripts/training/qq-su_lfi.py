@@ -79,19 +79,19 @@ if __name__ == "__main__":
         ),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="bayessim",
-        max_iter=5,
+        summary_statistic="dtw_distance",  # bayessim or dtw_distance
+        max_iter=10,
         num_real_rollouts=num_real_obs,
         num_sim_per_real_rollout=5000,
         simulation_batch_size=1,
         use_posterior_in_the_loop=False,
         normalize_posterior=False,
-        num_eval_samples=1000,
-        num_workers=8,
+        num_eval_samples=100,
+        num_workers=6,
     )
     algo = LFI(
         ex_dir,

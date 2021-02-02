@@ -117,8 +117,8 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=20,
-        summary_statistic="dtw_distance",  # "bayessim",
+        max_iter=10,
+        summary_statistic="dtw_distance",  # bayessim or dtw_distance
         sbi_training_hparam=dict(learning_rate=3e-4),
         num_real_rollouts=num_real_obs,
         num_sim_per_real_rollout=500,
