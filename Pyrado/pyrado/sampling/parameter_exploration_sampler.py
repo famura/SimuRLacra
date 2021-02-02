@@ -185,7 +185,7 @@ class ParameterExplorationSampler(Serializable):
         self.num_domains = num_domains
 
         # Set method to spawn if using cuda
-        if self.policy.device != "cpu":
+        if self.policy.device != "cpu" and mp.get_start_method(allow_none=True) != 'spawn':
             mp.set_start_method("spawn", force=True)
 
         # Create parallel pool. We use one thread per environment because it's easier.
