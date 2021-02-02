@@ -186,6 +186,12 @@ def get_argparser() -> argparse.ArgumentParser:
         help="seed for the random number generators (default: None for no seeding)",
     )
     parser.add_argument(
+        "--use_rec",
+        action="store_true",
+        default=False,
+        help="use pre-recorded data, for example a sequence of actions (default: False)",
+    )
+    parser.add_argument(
         "--use_tex",
         action="store_true",
         default=False,
