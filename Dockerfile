@@ -52,9 +52,8 @@ USER user
 WORKDIR /home/user
 
 # Setup conda
-RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
-
-RUN wget --quiet     https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc \
+    && wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash Miniconda3-latest-Linux-x86_64.sh -b \
     && rm Miniconda3-latest-Linux-x86_64.sh
 
@@ -71,7 +70,7 @@ RUN conda create -n pyrado python=3.7 blas cmake lapack libgcc-ng mkl mkl-includ
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 
 RUN pip install argparse black box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master; \
-    conda init bashL; rm -fr /home/user/.cache
+    conda init bash ; rm -fr /home/user/.cache
 
 # Add env variables
 ENV PATH /home/user/miniconda3/envs/pyrado/bin:$PATH
