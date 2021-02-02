@@ -1,6 +1,7 @@
 """
 Sim-to-sim experiment on the Quanser Qube environment using likelihood-free inference
 """
+import os.path as osp
 import torch as to
 import torch.nn as nn
 from copy import deepcopy
@@ -33,7 +34,8 @@ if __name__ == "__main__":
 
     # Create a fake ground truth target domain
     num_real_obs = 1
-    env_real = deepcopy(env_sim)
+    env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")
+    # env_real = deepcopy(env_sim)
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="g", mean=10.0, std=10.0 / 20),
     #     NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 20),

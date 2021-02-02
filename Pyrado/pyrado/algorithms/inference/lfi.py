@@ -35,7 +35,7 @@ from tabulate import tabulate
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from typing import Optional, Callable, Type, Mapping, Tuple, List
+from typing import Optional, Callable, Type, Mapping, Tuple, List, Union
 
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
@@ -49,7 +49,7 @@ from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.inference.sbi_rollout_sampler import (
     SimRolloutSamplerForSBI,
     RealRolloutSamplerForSBI,
-    MockRealRolloutSamplerForSBI,
+    RecRolloutSamplerForSBI,
 )
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapper
@@ -80,7 +80,7 @@ class LFI(InterruptableAlgorithm):
         self,
         save_dir: str,
         env_sim: SimEnv,
-        env_real: Env,
+        env_real: Union[Env, str],
         policy: Policy,
         dp_mapping: Mapping[int, str],
         prior: Distribution,
@@ -107,7 +107,8 @@ class LFI(InterruptableAlgorithm):
 
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env_sim: randomized simulation environment a.k.a. source domain
-        :param env_real: real-world environment a.k.a. target domain
+        :param env_real: real-world environment a.k.a. target domain, this can be a `RealEnv` (sim-to-real setting), a
+                         `SimEnv` (sim-to-sim setting), or a directory to load a pre-recorded set of rollouts from
         :param policy: policy used for sampling the rollout, if subrtn_policy is not `None` this policy is not oly used
                        for generating the target domain rollouts, but also optimized in simulation
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
@@ -161,7 +162,7 @@ class LFI(InterruptableAlgorithm):
         self.normalize_posterior = normalize_posterior
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
-        self.num_eval_samples = num_eval_samples or 10 * 2**len(dp_mapping)
+        self.num_eval_samples = num_eval_samples or 10 * 2 ** len(dp_mapping)
         self.thold_succ_subrtn = float(thold_succ_subrtn)
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
         self.num_workers = num_workers
@@ -239,12 +240,12 @@ class LFI(InterruptableAlgorithm):
         if self.curr_checkpoint == 0:
             self._curr_observations_real, _ = LFI.collect_real_observations(
                 self.save_dir,
-                self._env_real,
+                self._env_real if not isinstance(self._env_real, str) else self._env_sim_sbi,
                 self._policy,
                 self.summary_statistic,
                 prefix=f"iter_{self._curr_iter}",
                 num_rollouts=self.num_real_rollouts,
-                use_rec_rollouts="qq" in self._env_sim_sbi.name and self._env_sim_sbi.dt == 1 / 250.0,
+                rec_rollouts_dir=self._env_real if isinstance(self._env_real, str) else None,
             )
             if (
                 self._curr_observations_real.ndim != 2
@@ -361,12 +362,14 @@ class LFI(InterruptableAlgorithm):
         summary_statistic: str,
         prefix: str,
         num_rollouts: int,
-        use_rec_rollouts: bool = False,
+        rec_rollouts_dir: Optional[str] = None,
     ) -> Tuple[to.Tensor, List[StepSequence]]:
         """
         Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the observations
         computed from the recorded rollouts.
         This method is static to facilitate evaluation of specific policies in hindsight.
+        When sampling from a real environment should be substituted with loading pre-recorded rollouts, pass the
+        associated simulation environment as `env`, such that some checks can be done.
 
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
         :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance
@@ -379,31 +382,27 @@ class LFI(InterruptableAlgorithm):
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :param use_rec_rollouts: switch to use pre-recorded rollouts from the target domain TODO deprecate
+        :param rec_rollouts_dir: if not `None`, load a set of pre-recorded rollouts from the given directory
         :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
         """
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         # Evaluate sequentially (necessary for sim-to-real experiments)
-        if use_rec_rollouts:
-            # TODO deprecate
-            import os
-
-            if "qq" not in env.name:
-                raise NotImplementedError
-            if env.dt != 1 / 250.0:
-                raise NotImplementedError
-
-            for root, dirs, files in os.walk(os.path.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")):
-                dirs.clear()  # prevents walk() from going into subdirectories
-                rollouts_rec = [
-                    pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
-                    for f in files
-                    if f.startswith("rollout")
-                ]
-            rollout_worker = MockRealRolloutSamplerForSBI(None, None, summary_statistic, rollouts_rec)
-            rollout_worker._ring_idx = np.random.randint(0, len(rollouts_rec))  # not always the same rollout
+        if rec_rollouts_dir is not None:
+            if env.name not in rec_rollouts_dir:
+                print_cbt(
+                    f"Are you really sure that you loaded the correct recorded rollouts? The environment's name "
+                    f"{env.name} does not appear in the directory string {rec_rollouts_dir}.",
+                    "r",
+                )
+            if str(int(1 / env.dt)) not in rec_rollouts_dir:
+                print_cbt(
+                    f"Are you really sure that you loaded the correct recorded rollouts? The environment's "
+                    f"control frequency {1/env.dt} does not appear in the directory string {rec_rollouts_dir}.",
+                    "r",
+                )
+            rollout_worker = RecRolloutSamplerForSBI(summary_statistic, rec_rollouts_dir, rand_init_rollout=False)
         else:
             rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
 

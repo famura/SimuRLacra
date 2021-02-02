@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import numpy as np
 import torch as to
 from abc import ABC, abstractmethod
@@ -190,7 +191,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         Constructor
 
         :param env: environment which the policy operates, which must not be a randomized environment since we want to
-                    randomize it manually via the domain parameters coming from the sbi package.
+                    randomize it manually via the domain parameters coming from the sbi package
         :param policy: policy used for sampling the rollout
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
@@ -287,9 +288,8 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         """
         Constructor
 
-        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, buy in
-                    a sim-to-sim experiment this can be a (randomized) `SimEnv`. We strip all domain randomization
-                    wrappers from this env since we want to randomize it manually here.
+        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, i.e.
+                    `RealEnv`, but in a sim-to-sim experiment this can be a (randomized) `SimEnv`
         :param policy: policy used for sampling the rollout
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `dtw_distance` (dynamic time warping using all observations from the rollout),
@@ -317,36 +317,56 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         return obs_real, ro
 
 
-class MockRealRolloutSamplerForSBI(RealRolloutSamplerForSBI):
-    """ Wrapper to make SimuRLacra's real environments similar to the simulators for the sbi package """
+class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI):
+    """ Wrapper to a set of pre-recorded rollouts similar to the simulators for the sbi package """
 
     def __init__(
         self,
-        env: Env,
-        policy: Policy,
         strategy: str,
-        rollouts_rec: List[StepSequence],
+        rollouts_dir: str,
+        rand_init_rollout: Optional[bool] = True,
     ):
         """
         Constructor
 
-        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, buy in
-                    a sim-to-sim experiment this can be a (randomized) `SimEnv`. We strip all domain randomization
-                    wrappers from this env since we want to randomize it manually here.
-        :param policy: policy used for sampling the rollout
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `dtw_distance` (dynamic time warping using all observations from the rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `bayessim` (summary statistics as proposed in [1])
-        :param rollouts_rec:
+        :param rollouts_dir: directory where to find the of pre-recorded rollouts
+        :param rand_init_rollout: if `True`, chose the first rollout at random, and then cycle through the list
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019
         """
-        super().__init__(env=env, policy=policy, strategy=strategy)
+        if not os.path.isdir(rollouts_dir):
+            raise pyrado.PathErr(given=rollouts_dir)
+
+        super().__init__(env=None, policy=None, strategy=strategy)
+
+        # Crawl through the directory and load every file that starts with the word rollout
+        for root, dirs, files in os.walk(rollouts_dir):
+            dirs.clear()  # prevents walk() from going into subdirectories
+            rollouts_rec = [
+                pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
+                for f in files
+                if f.startswith("rollout")
+            ]
 
         self.rollouts_rec = rollouts_rec
-        self._ring_idx = 0
+        self._ring_idx = np.random.randint(0, len(rollouts_rec)) if rand_init_rollout else 0
+
+    @property
+    def ring_idx(self) -> int:
+        """ Get the buffer's index. """
+        return self._ring_idx
+
+    @ring_idx.setter
+    def ring_idx(self, idx: int):
+        """ Set the buffer's index. """
+        if not (isinstance(idx, int) and 0 <= idx < len(self.rollouts_rec)):
+            raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=len(self.rollouts_rec))
+        self._ring_idx = idx
 
     def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:
         r"""
