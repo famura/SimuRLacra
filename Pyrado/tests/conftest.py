@@ -111,9 +111,8 @@ except (ImportError, Exception):
 # Check if CUDA support is available
 m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason="CUDA is not supported in this setup.")
 
-# Set spawn method to spawn for parallelization
-if to.cuda.is_available():
-    mp.set_start_method("spawn", force=True)
+# Set multiprocessing start method to spawn for tests
+mp.set_start_method("spawn", force=True)
 
 
 # --------------------
