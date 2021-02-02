@@ -31,6 +31,8 @@ import os.path as osp
 from torch import nn as nn
 
 from pyrado.algorithms.timeseries_prediction import TSPred
+from pyrado.environments.base import Env
+from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.policies.base import Policy
@@ -882,3 +884,26 @@ def test_tspred(tsdataset, env, policy, windowed, cascaded):
         assert preds.shape[0] == inp_seq.shape[0]
     assert preds.shape[1] == env.spec.act_space.flat_dim
     assert hidden.numel() == policy.hidden_size
+
+
+@to.no_grad()
+@pytest.mark.parametrize(
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+    ],
+    ids=["bob", "qbb"],
+    indirect=True,
+)
+@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["torch", "numpy"])
+def test_playback_policy(env: Env, dtype):
+    if dtype == "torch":
+        actions = to.randn(10, env.spec.act_space.flat_dim)
+    elif dtype == "numpy":
+        actions = np.random.randn(10, env.spec.act_space.flat_dim)
+    policy = PlaybackPolicy(env.spec, act_buffer=actions)
+
+    ro = rollout(env, policy)
+    assert np.allclose(ro.actions[:10, :], actions)
+    assert np.allclose(ro.actions[10:, :], np.zeros(env.spec.act_space.flat_dim))
