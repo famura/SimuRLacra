@@ -55,37 +55,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+import numpy as np
 import sys
 from tqdm import tqdm
+from typing import List
 
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environments.base import Env
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers, DomainRandWrapperLive
-from pyrado.environment_wrappers.utils import typed_env, remove_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
-from pyrado.sampling.rollout import rollout
+from pyrado.sampling.parallel_rollout_sampler import _ps_init, _ps_run_one_domain_param, _ps_run_one_init_state
 from pyrado.sampling.sampler_pool import SamplerPool
-from pyrado.utils.experiments import load_experiment
-from pyrado.utils.input_output import print_cbt
+from pyrado.sampling.step_sequence import StepSequence
 
 
-def _setup_env_policy(G, env, policy):
-    G.env = env
-    G.policy = policy
-
-
-def _run_rollout_dp(G, domain_param, init_state=None):
-    return rollout(
-        G.env,
-        G.policy,
-        eval=True,  # render_mode=RenderMode(video=True),
-        reset_kwargs={"domain_param": domain_param, "init_state": init_state},
-    )
-
-
-def eval_domain_params(pool: SamplerPool, env: SimEnv, policy: Policy, params: list, init_state=None) -> list:
+def eval_domain_params(
+    pool: SamplerPool, env: SimEnv, policy: Policy, params: list, init_state: np.ndarray = None
+) -> List[StepSequence]:
     """
     Evaluate a policy on a multidimensional grid of domain parameters.
 
@@ -99,18 +85,16 @@ def eval_domain_params(pool: SamplerPool, env: SimEnv, policy: Policy, params: l
     # Strip all domain randomization wrappers from the environment
     env = remove_all_dr_wrappers(env, verbose=True)
 
-    pool.invoke_all(_setup_env_policy, env, policy)
+    pool.invoke_all(_ps_init, env, policy)
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(functools.partial(_run_rollout_dp, init_state=init_state), params, pb)
+        return pool.run_map(functools.partial(_ps_run_one_domain_param, init_state=init_state), params, pb)
 
 
-def _run_rollout_nom(G, init_state):
-    return rollout(G.env, G.policy, eval=True, reset_kwargs={"init_state": init_state})
-
-
-def eval_nominal_domain(pool: SamplerPool, env: SimEnv, policy: Policy, init_states: list) -> list:
+def eval_nominal_domain(
+    pool: SamplerPool, env: SimEnv, policy: Policy, init_states: List[np.ndarray]
+) -> List[StepSequence]:
     """
     Evaluate a policy using the nominal (set in the given environment) domain parameters.
 
@@ -121,18 +105,18 @@ def eval_nominal_domain(pool: SamplerPool, env: SimEnv, policy: Policy, init_sta
     :return: list of rollouts
     """
     # Strip all domain randomization wrappers from the environment
-    env = remove_all_dr_wrappers(env, verbose=True)
+    env = remove_all_dr_wrappers(env)
 
-    pool.invoke_all(_setup_env_policy, env, policy)
+    pool.invoke_all(_ps_init, env, policy)
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(_run_rollout_nom, init_states, pb)
+        return pool.run_map(_ps_run_one_init_state, init_states, pb)
 
 
 def eval_randomized_domain(
-    pool: SamplerPool, env: SimEnv, randomizer: DomainRandomizer, policy: Policy, init_states: list
-) -> list:
+    pool: SamplerPool, env: SimEnv, randomizer: DomainRandomizer, policy: Policy, init_states: List[np.ndarray]
+) -> List[StepSequence]:
     """
     Evaluate a policy in a randomized domain.
 
@@ -144,10 +128,11 @@ def eval_randomized_domain(
     :return: list of rollouts
     """
     # Randomize the environments
+    env = remove_all_dr_wrappers(env)
     env = DomainRandWrapperLive(env, randomizer)
 
-    pool.invoke_all(_setup_env_policy, env, policy)
+    pool.invoke_all(_ps_init, env, policy)
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(_run_rollout_nom, init_states, pb)
+        return pool.run_map(_ps_run_one_init_state, init_states, pb)
