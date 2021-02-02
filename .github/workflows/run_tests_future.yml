@@ -2,9 +2,9 @@ name: Run Tests (future)
 
 on:
   push:
-    branches: [cicd]
+    branches: [cicd_future]
   pull_request:
-    branches: [cicd]
+    branches: [cicd_future]
 
 jobs:
   build-images:
