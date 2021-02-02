@@ -81,7 +81,7 @@ if __name__ == "__main__":
     domain_params_sel = []
     for i in range(domain_params.shape[0]):
         idcs_ml = to.argsort(log_probs[i, :], descending=True)
-        idcs_sel = idcs_ml[:1]  # so far, only select the most likely one; changing this would require re-writing
+        idcs_sel = idcs_ml[0]  # so far, only select the most likely one; changing this would require re-writing
         dp_val = domain_params[i, idcs_sel, :].numpy()
         domain_params_sel.append(dict(zip(algo.dp_mapping.values(), dp_val)))
 
