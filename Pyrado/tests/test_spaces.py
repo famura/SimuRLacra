@@ -144,7 +144,7 @@ def test_cat_box_space(bs_list):
 def test_cat_discrete_space(ds_list):
     ds_cat = DiscreteSpace.cat(ds_list)
     assert isinstance(ds_cat, DiscreteSpace)
-    assert ds_cat.flat_dim == sum([ds.flat_dim for ds in ds_list])
+    assert ds_cat.num_ele == sum([ds.num_ele for ds in ds_list])
 
 
 def test_sample_contains_discrete_space(ds):

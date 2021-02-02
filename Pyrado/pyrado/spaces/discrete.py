@@ -79,12 +79,16 @@ class DiscreteSpace(Space):
         return self.bound_lo.shape  # equivalent to bound_up.shape
 
     @property
-    def flat_dim(self) -> int:
+    def num_ele(self) -> int:
         return self.eles.shape[0]
 
     @property
+    def flat_dim(self) -> int:
+        return self.eles.shape[1]
+
+    @property
     def bound_abs_up(self) -> np.ndarray:
-        return np.max(np.abs(self.eles), axis=1)
+        return np.max(np.abs(self.eles), axis=0)
 
     @property
     def labels(self) -> np.ndarray:
