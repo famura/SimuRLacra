@@ -97,19 +97,12 @@ if __name__ == "__main__":
     _ = draw_pair_plot(
         axs,
         posterior,
-        observation[which_obs],
         algo.dp_mapping,
         condition,
-        prior,
-        reference_posterior_samples=reference_samples[which_obs, :, :],
+        prior=prior,
+        observation_real=observation[which_obs],
+        reference_samples=reference_samples[which_obs, :, :],
         true_params=true_params[which_obs]
-        # dp_idcs,
-        # show_prior=False,
-        # contourf_kwargs=dict(cmap="RdGy"),
     )
-    # plot reference posterior samples
-    # plt.scatter(reference_samples[which_obs, :, 0], reference_samples[which_obs, :, 1], color="black")
-    # plt.scatter(posterior_samples[which_obs, :, 0], posterior_samples[which_obs, :, 1], color="blue")
-    # plt.title("True vs. approximate Posterior")
-    plt.savefig(osp.join(ex_dir, f"scatter_true_posterior_{which_obs}.pdf"))
+    plt.savefig(osp.join(ex_dir, f"scatter_true_posterior_{which_obs}.png"))
     plt.show()

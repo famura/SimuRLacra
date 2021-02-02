@@ -42,6 +42,8 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.utils.checks import check_all_types_equal, is_iterable
 from pyrado.utils.data_types import merge_dicts
 
+import warnings
+
 
 def render_distr_evo(
     ax: plt.Axes,
@@ -300,15 +302,15 @@ def _draw_prior(ax, prior, dim_x, dim_y):
 
 def draw_pair_plot(
     axs: plt.Axes,
-    posterior: DirectPosterior,
-    observation_real: to.Tensor,
+    dist: Union[DirectPosterior, to.distributions.Distribution],
     dp_mapping: Mapping[int, str],
     condition: to.Tensor,
+    observation_real: Optional[to.Tensor] = None,
     prior: Optional[BoxUniform] = None,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
     grid_res: Optional[int] = 100,
     num_samples: Optional[int] = 1000,
-    reference_posterior_samples: to.Tensor = None,
+    reference_samples: to.Tensor = None,
     true_params: to.Tensor = None,
     # scatter_kwargs: Optional[dict] = None,
     # contourf_kwargs: Optional[dict] = None,
@@ -326,16 +328,32 @@ def draw_pair_plot(
     else:
         raise NotImplementedError
 
+    log_prob_dict = {}
+    if isinstance(dist, DirectPosterior):
+        if observation_real is None:
+            raise pyrado.ValueErr(given=None, msg="DirectPosterior requires an observation for sampling "
+                                                  "and evaluating the log-probability")
+        else:
+            dist.set_default_x(observation_real)
+            log_prob_dict = {"norm_posterior": normalize_posterior}
+    elif isinstance(dist, to.distributions.Distribution):
+        if observation_real is not None:
+            warnings.warn(message="Given real observation is not used with the given distribution.\t"
+                                  "Check if this is intended!")
+
     #  draw num_samples samples from observation batch:
-    perm = to.randperm(reference_posterior_samples.shape[0])
-    idx = perm[:num_samples]
-    reference_posterior_samples = reference_posterior_samples[idx, :]
+    if reference_samples is not None:
+        perm = to.randperm(reference_samples.shape[0])
+        idx = perm[:num_samples]
+        reference_samples = reference_samples[idx, :]
     for i in dp_mapping.keys():
         for j in dp_mapping.keys():
             if j == 0:
                 axs[i, j].set_ylabel(r"$\theta_{{{}}}$".format(i + 1), rotation=0)
             if i != num_params - 1:
                 axs[i, j].set_xticklabels([])
+            if j != 0:
+                axs[i, j].set_yticklabels([])
             if i == j:
                 # generate grid (1D)
                 grid_x = to.linspace(grid_bounds[i, 0], grid_bounds[i, 1], grid_res)  # 1 2 3
@@ -346,45 +364,71 @@ def draw_pair_plot(
                     raise pyrado.ShapeErr(given=grid, expected_match=(grid_res, len(dp_mapping)))
 
                 # calculate log_probs
-                log_prob = posterior.log_prob(grid, observation_real, normalize_posterior)
+                log_prob = dist.log_prob(grid, **log_prob_dict)
                 prob = to.exp(log_prob)  # scale the probabilities to [0, 1]
                 prob = prob.numpy()
-                # plot single posterior
+                # plot density of dimension i
                 axs[i, j].plot(grid_x, prob)
 
                 # plot true_params:
                 if true_params is not None:
                     axs[i, j].vlines(true_params[i].item(), ymin=0.0, ymax=np.max(prob).item(), colors="green")
 
+                # plot visualizations
                 axs[i, j].set_title(r"$\theta_{{{}}}$".format(j + 1))
-                axs[i, j].set_ylabel(r"$p(\theta_{{{}}}| \tau)$".format(j + 1), rotation=0)
+                if isinstance(dist, DirectPosterior):
+                    axs[i, j].set_ylabel(r"$p(\theta_{{{}}}| \tau)$".format(j + 1), rotation=0, labelpad=20)
+                else:
+                    axs[i, j].set_ylabel(r"$p(\theta_{{{}}})$".format(j + 1), rotation=0, labelpad=20)
                 axs[i, j].yaxis.set_label_position("right")
                 axs[i, j].yaxis.tick_right()
+                axs[i, j].set(xlim=(grid_bounds[j, 0], grid_bounds[j, 1]))
+                axs[i, j].set_yticklabels([])
             elif i > j:
-                # sample from posterior
-                samples = posterior.sample((num_samples,), x=observation_real)
+                axs[i, j].set(xlim=(grid_bounds[j, 0], grid_bounds[j, 1]), ylim=(grid_bounds[i, 0], grid_bounds[i, 1]))
+                # sample from distribution
+                samples = dist.sample((num_samples, ))
 
                 # plot scatter
-                axs[i, j].scatter(samples[:, 0], samples[:, 1], c="blue")
-                if reference_posterior_samples is not None:
-                    axs[i, j].scatter(reference_posterior_samples[:, 0], reference_posterior_samples[:, 1], c="black")
+                axs[i, j].scatter(samples[:, j], samples[:, i], c="blue")
+                if reference_samples is not None:
+                    axs[i, j].scatter(reference_samples[:, j], reference_samples[:, i], c="black")
                 if true_params is not None:
-                    axs[i, j].scatter(true_params[i], true_params[j], c="green", marker="x")
+                    axs[i, j].scatter(true_params[j], true_params[i], c="green", marker="x")
                 if j != 0:
                     axs[i, j].yaxis.tick_right()
             else:
                 axs[i, j].axis("off")
 
-            # TODO: plot legend in the upper right corner
             # create legend
             legend_elements = [
-                Line2D([0], [0], color="blue", lw=2, label="posterior density"),
+                Line2D([0], [0], color="blue", lw=2, label="density"),
                 Line2D([0], [0], color="green", lw=2, label="true parameters"),
                 Line2D([0], [0], marker="x", label="true parameters", markerfacecolor="green", markersize=10),
                 Line2D(
-                    [0], [0], marker="o", label="approximate posterior samples", markerfacecolor="blue", markersize=10
+                    [0], [0], marker="o", label="approximate density samples", markerfacecolor="blue", markersize=10
                 ),
-                Line2D([0], [0], marker="o", label="true posterior samples", markerfacecolor="black", markersize=10),
+                Line2D([0], [0], marker="o", label="true samples", markerfacecolor="black", markersize=10),
             ]
             axs[0, num_params - 1].legend(handles=legend_elements)
     return plt.gcf()
+
+
+if __name__ == "__main__":
+    # example of pairplot using a 3D multivariate Normal
+    from torch.distributions.multivariate_normal import MultivariateNormal
+    mean = to.tensor([1.,0,1], dtype=to.float32)
+    cov = to.diag(to.tensor([1., 0.1, 0.5], dtype=to.float32))
+    dist = MultivariateNormal(loc=mean, covariance_matrix=cov)
+    dp_mapping = {0: "0", 1: "1", 2: "2"}
+    grid_bounds = to.tensor([[-2.5, 3.5], [-2.5, 3.5], [-2.5, 3.5]])
+    fig, axs = plt.subplots(len(dp_mapping), len(dp_mapping), figsize=(7, 5), tight_layout=True)
+    _ = draw_pair_plot(
+        axs,
+        dist,
+        dp_mapping,
+        mean,
+        true_params=mean,
+        grid_bounds=grid_bounds,
+    )
+    plt.show()
