@@ -213,9 +213,13 @@ class MirrConv1d(_ConvNd):
 
         # Run though the same function as the original PyTorch implementation, but with mirrored kernel
         if self.padding_mode != "zeros":
+            if self.padding_mode == "circular":
+                expanded_padding = ((self.padding[0] + 1) // 2, self.padding[0] // 2)
+            else:
+                expanded_padding = self._reversed_padding_repeated_twice
             return F.conv1d(
-                F.pad(inp, self._reversed_padding_repeated_twice, mode=self.padding_mode),
-                self.weight,
+                F.pad(inp, expanded_padding, mode=self.padding_mode),
+                mirr_weight,
                 self.bias,
                 self.stride,
                 _single(0),
@@ -223,4 +227,4 @@ class MirrConv1d(_ConvNd):
                 self.groups,
             )
         else:
-            return F.conv1d(inp, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
+            return F.conv1d(inp, mirr_weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
