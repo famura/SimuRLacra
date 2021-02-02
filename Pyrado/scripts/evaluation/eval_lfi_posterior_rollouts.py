@@ -47,20 +47,7 @@ from pyrado.utils.input_output import print_cbt
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = get_argparser()
-    parser.add_argument(
-        "--use_mcmc",
-        action="store_true",
-        default=True,
-        help="Use Markov Chain Monte-Carlo for sampling from the posterior (default: True)",
-    )
-    parser.add_argument(
-        "--normalize_posterior",
-        action="store_true",
-        default=False,
-        help="Normalize the log-probabilities of the posterior (default: False)",
-    )
-    args = parser.parse_args()
+    args = get_argparser().parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 

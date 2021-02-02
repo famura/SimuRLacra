@@ -45,20 +45,7 @@ from pyrado.utils.experiments import load_experiment
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = get_argparser()
-    parser.add_argument(
-        "--use_mcmc",
-        action="store_true",
-        default=True,
-        help="Use Markov Chain Monte-Carlo for sampling from the posterior (default: True)",
-    )
-    parser.add_argument(
-        "--normalize_posterior",
-        action="store_true",
-        default=False,
-        help="Normalize the log-probabilities of the posterior (default: False)",
-    )
-    args = parser.parse_args()
+    args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
