@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pathlib      ## added for Panda
 import os
 import os.path as osp
 import numpy as np
@@ -324,6 +323,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
     def _init_anim(self):
         from pyrado.environments.pysim.pandavis import PandaVis
         from direct.task import Task
+        import pathlib
 
         class PandaVisQbb(PandaVis):
 
