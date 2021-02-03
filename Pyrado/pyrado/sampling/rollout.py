@@ -105,7 +105,9 @@ def rollout(
     obs_hist = []
     act_hist = []
     rew_hist = []
+    state_hist = []
     env_info_hist = []
+    t_hist = []
     if isinstance(policy, Policy):
         if policy.is_recurrent:
             hidden_hist = []
@@ -154,7 +156,6 @@ def rollout(
 
     # Setup rollout information
     rollout_info = dict(env_spec=env.spec)
-    rollout_info["init_state"] = env.state.copy()
     if isinstance(inner_env(env), SimEnv):
         rollout_info["domain_param"] = env.domain_param
 
@@ -163,6 +164,8 @@ def rollout(
 
     # Initialize the main loop variables
     done = False
+    t = 0.0  # time starts at zero
+    t_hist.append(t)
     if record_dts:
         t_post_step = time.time()  # first sample of remainder is useless
 
@@ -223,6 +226,7 @@ def rollout(
             t_post_policy = time.time()
 
         # Ask the environment to perform the simulation step
+        state = env.state.copy()
         obs_next, rew, done, env_info = env.step(act)
 
         # Record time after the step i.e. the send and receive is completed
@@ -235,11 +239,16 @@ def rollout(
         obs_hist.append(obs)
         act_hist.append(act)
         rew_hist.append(rew)
+        state_hist.append(state)
         env_info_hist.append(env_info)
         if record_dts:
             dt_policy_hist.append(dt_policy)
             dt_step_hist.append(dt_step)
             dt_remainder_hist.append(dt_remainder)
+            t += dt_policy + dt_step + dt_remainder
+        else:
+            t += env.dt
+        t_hist.append(t)
         if isinstance(policy, Policy):
             if policy.is_recurrent:
                 hidden_hist.append(hidden)
@@ -257,7 +266,6 @@ def rollout(
 
         # Render if wanted (actually renders the next state)
         env.render(render_mode, render_step)
-
         if render_mode.video:
             do_sleep = True
             if pyrado.mujoco_loaded:
@@ -283,12 +291,15 @@ def rollout(
 
     # Add final observation to observations list
     obs_hist.append(obs)
+    state_hist.append(env.state.copy())
 
     # Return result object
     res = StepSequence(
         observations=obs_hist,
         actions=act_hist,
         rewards=rew_hist,
+        states=state_hist,
+        time=t_hist,
         rollout_info=rollout_info,
         env_infos=env_info_hist,
         complete=True,  # the rollout function always returns complete paths

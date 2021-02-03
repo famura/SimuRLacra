@@ -44,19 +44,20 @@ class Env(ABC, Serializable):
 
     name: str = None  # unique identifier
 
-    def __init__(self, dt: Optional[float], max_steps: int = pyrado.inf):
+    def __init__(self, dt: Union[int, float], max_steps: Optional[int] = pyrado.inf):
         """
         Constructor
 
-        :param dt: integration step size in seconds, use `None` for one-step environments
+        :param dt: integration step size in seconds, default value is used for for one-step environments
         :param max_steps: max number of simulation time steps
         """
-        if dt is not None:
-            if dt < 0:
-                raise pyrado.ValueErr(given=dt, eq_constraint="None", ge_constraint="0")
+        if not isinstance(dt, (int, float)):
+            raise pyrado.TypeErr(given=dt, expected_type=(int, float))
+        if dt < 0:
+            raise pyrado.ValueErr(given=dt, ge_constraint="0")
         if max_steps < 1:
             raise pyrado.ValueErr(given=max_steps, ge_constraint="1")
-        self._dt = dt
+        self._dt = float(dt)
         self._max_steps = max_steps
         self._curr_step = 0
         self._curr_rew = -pyrado.inf  # only for initialization

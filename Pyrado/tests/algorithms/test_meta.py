@@ -280,7 +280,7 @@ def test_arpl(ex_dir, env: SimEnv):
 @pytest.mark.parametrize("env, num_eval_rollouts", [("default_bob", 5)], ids=["bob"], indirect=["env"])
 def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
     def eval_ddp_policy(rollouts_real):
-        init_states_real = np.array([ro.rollout_info["init_state"] for ro in rollouts_real])
+        init_states_real = np.array([ro.states[0, :] for ro in rollouts_real])
         rollouts_sim = []
         for i, _ in enumerate(range(num_eval_rollouts)):
             rollouts_sim.append(
@@ -290,12 +290,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
         # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
         ros_real_tr, ros_sim_tr = algo.truncate_rollouts(rollouts_real, rollouts_sim, replicate=False)
         assert len(ros_real_tr) == len(ros_sim_tr)
-        assert all(
-            [
-                np.allclose(r.rollout_info["init_state"], s.rollout_info["init_state"])
-                for r, s in zip(ros_real_tr, ros_sim_tr)
-            ]
-        )
+        assert all([np.allclose(r.states[0, :], s.states[0, :]) for r, s in zip(ros_real_tr, ros_sim_tr)])
 
         # Return the average the loss
         losses = [algo.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
@@ -330,13 +325,12 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
         num_init_states_per_domain=1,
         expl_std_init=5e-2,
         expl_std_min=1e-4,
-        optim_mode="torch",
         num_workers=1,
     )
     subrtn = REPS(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
 
     algo_hparam = dict(
-        metric=None, obs_dim_weight=np.ones(env_sim.obs_space.shape), num_rollouts_per_distr=10, num_workers=1
+        metric=None, obs_dim_weight=np.ones(env_sim.obs_space.shape), num_rollouts_per_distr=5, num_workers=1
     )
 
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
@@ -402,7 +396,7 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
         num_epoch=5,
         batch_size=512,
         standardize_adv=True,
-        lr=8 - 4,
+        lr=8e-4,
         max_grad_norm=5.0,
     )
     critic = GAE(vfcn, **critic_hparam)

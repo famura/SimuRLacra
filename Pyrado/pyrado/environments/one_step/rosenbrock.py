@@ -49,7 +49,7 @@ class RosenSim(SimEnv, Serializable):
         Serializable._init(self, locals())
 
         # Initialize basic variables
-        super().__init__(dt=None, max_steps=1)
+        super().__init__(dt=1, max_steps=1)
 
         # Set the bounds for the system's states adn actions
         max_state = np.array([100.0, 100.0])

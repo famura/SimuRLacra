@@ -55,7 +55,7 @@ class CatapultSim(SimEnv, Serializable):
         """
         Serializable._init(self, locals())
 
-        super().__init__(dt=None, max_steps=max_steps)
+        super().__init__(dt=1, max_steps=max_steps)
 
         self.example_config = example_config
         self._planet = -1

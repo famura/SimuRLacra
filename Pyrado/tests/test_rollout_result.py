@@ -46,7 +46,7 @@ from pyrado.sampling.rollout import rollout
 
 
 rewards = [
-    -200,
+    -200.0,
     -100,
     -50,
     -25,
@@ -54,20 +54,29 @@ rewards = [
 ]
 # Observations has one additional element
 observations = [
-    np.array([3, 2, 7]),
-    np.array([3, 1, 7]),
-    np.array([2, 0, 7]),
-    np.array([3, 1, 3]),
-    np.array([0, 2, 4]),
-    np.array([1, 1, 1]),
+    np.array([3, 2, 7], dtype=np.float64),
+    np.array([3, 1, 7], dtype=np.float64),
+    np.array([2, 0, 7], dtype=np.float64),
+    np.array([3, 1, 3], dtype=np.float64),
+    np.array([0, 2, 4], dtype=np.float64),
+    np.array([1, 1, 1], dtype=np.float64),
+]
+# States has one additional element
+states = [
+    np.array([4, 2, 7], dtype=np.float64),
+    np.array([2, 1, 7], dtype=np.float64),
+    np.array([1, 0, 7], dtype=np.float64),
+    np.array([4, 1, 3], dtype=np.float64),
+    np.array([0, 2, 4], dtype=np.float64),
+    np.array([0, 1, 1], dtype=np.float64),
 ]
 # Actions come from PyTorch
 actions = [
-    to.tensor([0, 1]),
-    to.tensor([0, 3]),
-    to.tensor([2, 4]),
-    to.tensor([3, 1]),
-    to.tensor([0, 0]),
+    to.tensor([0, 1], dtype=to.get_default_dtype()),
+    to.tensor([0, 3], dtype=to.get_default_dtype()),
+    to.tensor([2, 4], dtype=to.get_default_dtype()),
+    to.tensor([3, 1], dtype=to.get_default_dtype()),
+    to.tensor([0, 0], dtype=to.get_default_dtype()),
 ]
 # Policy infos as dict collapse test
 policy_infos = [
@@ -104,6 +113,7 @@ def test_create(data_format, tensor_type):
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
+        states=states,
         actions=actions,
         policy_infos=policy_infos,
         hidden=hidden,
@@ -131,6 +141,7 @@ def test_convert(other_format, tensor_type):
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
+        states=states,
         actions=actions,
         policy_infos=policy_infos,
         hidden=hidden,
@@ -158,6 +169,7 @@ def test_step_iter(data_format):
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
+        states=states,
         actions=actions,
         policy_infos=policy_infos,
         hidden=hidden,
@@ -182,6 +194,7 @@ def test_slice(sls, data_format):
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
+        states=states,
         actions=actions,
         policy_infos=policy_infos,
         hidden=hidden,
@@ -202,6 +215,7 @@ def test_add_data(data_format):
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
+        states=states,
         actions=actions,
         policy_infos=policy_infos,
         hidden=hidden,
@@ -222,6 +236,7 @@ def test_concat(data_format):
         StepSequence(
             rewards=np.random.randn(5),
             observations=np.random.randn(6),
+            states=np.random.randn(6),
             actions=np.random.randn(5),
             policy_infos={"mean": np.random.randn(5)},
             hidden=(np.random.randn(5), np.random.randn(5)),
@@ -230,6 +245,7 @@ def test_concat(data_format):
         StepSequence(
             rewards=np.random.randn(5),
             observations=np.random.randn(6),
+            states=np.random.randn(6),
             actions=np.random.randn(5),
             policy_infos={"mean": np.random.randn(5)},
             hidden=(np.random.randn(5), np.random.randn(5)),
@@ -346,8 +362,8 @@ def test_replay_memory(capacity):
     rm = ReplayMemory(capacity)
 
     # Create fake rollouts (of length 5)
-    ro1 = StepSequence(rewards=rewards, observations=observations, actions=actions, hidden=hidden)
-    ro2 = StepSequence(rewards=rewards, observations=observations, actions=actions, hidden=hidden)
+    ro1 = StepSequence(rewards=rewards, observations=observations, states=states, actions=actions, hidden=hidden)
+    ro2 = StepSequence(rewards=rewards, observations=observations, states=states, actions=actions, hidden=hidden)
     # Concatenate them for testing only
     ros = StepSequence.concat([ro1, ro2], truncate_last=True)  # same truncate_last behavior as push function
 
