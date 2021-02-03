@@ -304,7 +304,9 @@
     <span class="n">obs_hist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">act_hist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">rew_hist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">state_hist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">env_info_hist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">t_hist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
             <span class="n">hidden_hist</span> <span class="o">=</span> <span class="p">[]</span>
@@ -353,7 +355,6 @@
 
     <span class="c1"># Setup rollout information</span>
     <span class="n">rollout_info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">env_spec</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
-    <span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;init_state&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">SimEnv</span><span class="p">):</span>
         <span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span>
 
@@ -362,6 +363,8 @@
 
     <span class="c1"># Initialize the main loop variables</span>
     <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># time starts at zero</span>
+    <span class="n">t_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">record_dts</span><span class="p">:</span>
         <span class="n">t_post_step</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>  <span class="c1"># first sample of remainder is useless</span>
 
@@ -422,6 +425,7 @@
             <span class="n">t_post_policy</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
         <span class="c1"># Ask the environment to perform the simulation step</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">obs_next</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">env_info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
 
         <span class="c1"># Record time after the step i.e. the send and receive is completed</span>
@@ -434,11 +438,16 @@
         <span class="n">obs_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="n">act_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
         <span class="n">rew_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rew</span><span class="p">)</span>
+        <span class="n">state_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="n">env_info_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_info</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">record_dts</span><span class="p">:</span>
             <span class="n">dt_policy_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt_policy</span><span class="p">)</span>
             <span class="n">dt_step_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt_step</span><span class="p">)</span>
             <span class="n">dt_remainder_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt_remainder</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">+=</span> <span class="n">dt_policy</span> <span class="o">+</span> <span class="n">dt_step</span> <span class="o">+</span> <span class="n">dt_remainder</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">+=</span> <span class="n">env</span><span class="o">.</span><span class="n">dt</span>
+        <span class="n">t_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
                 <span class="n">hidden_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
@@ -456,7 +465,6 @@
 
         <span class="c1"># Render if wanted (actually renders the next state)</span>
         <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">render_mode</span><span class="p">,</span> <span class="n">render_step</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">render_mode</span><span class="o">.</span><span class="n">video</span><span class="p">:</span>
             <span class="n">do_sleep</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">mujoco_loaded</span><span class="p">:</span>
@@ -482,12 +490,15 @@
 
     <span class="c1"># Add final observation to observations list</span>
     <span class="n">obs_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="n">state_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
     <span class="c1"># Return result object</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
         <span class="n">observations</span><span class="o">=</span><span class="n">obs_hist</span><span class="p">,</span>
         <span class="n">actions</span><span class="o">=</span><span class="n">act_hist</span><span class="p">,</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">rew_hist</span><span class="p">,</span>
+        <span class="n">states</span><span class="o">=</span><span class="n">state_hist</span><span class="p">,</span>
+        <span class="n">time</span><span class="o">=</span><span class="n">t_hist</span><span class="p">,</span>
         <span class="n">rollout_info</span><span class="o">=</span><span class="n">rollout_info</span><span class="p">,</span>
         <span class="n">env_infos</span><span class="o">=</span><span class="n">env_info_hist</span><span class="p">,</span>
         <span class="n">complete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># the rollout function always returns complete paths</span>
