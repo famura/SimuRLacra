@@ -31,7 +31,7 @@ import torch as to
 from matplotlib import pyplot as plt
 from matplotlib.cm import get_cmap
 from torch.distributions import Distribution
-from typing import Sequence
+from typing import Sequence, Optional
 
 import pyrado
 from pyrado.utils.checks import check_all_types_equal

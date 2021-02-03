@@ -25,8 +25,8 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
 import numpy as np
+from typing import Optional, Union
 
 from pyrado.utils.data_types import EnvSpec
 from pyrado.spaces.empty import EmptySpace
@@ -37,7 +37,13 @@ from pyrado.tasks.reward_functions import RewFcn
 class MaskedTask(Task):
     """ Task using only a subset of state and actions """
 
-    def __init__(self, env_spec: EnvSpec, wrapped_task: Task, state_idcs: [str, int], action_idcs: [str, int] = None):
+    def __init__(
+        self,
+        env_spec: EnvSpec,
+        wrapped_task: Task,
+        state_idcs: Union[str, int],
+        action_idcs: Optional[Union[str, int]] = None,
+    ):
         """
         Constructor
 
@@ -54,7 +60,6 @@ class MaskedTask(Task):
         # Written by reset
         self._state_mask = None
         self._action_mask = None
-
         self.reset(env_spec)
 
     @property
