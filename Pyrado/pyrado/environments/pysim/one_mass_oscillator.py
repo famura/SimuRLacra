@@ -114,84 +114,107 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         self.state = self.state + state_dot * self._dt  # next state
 
     def _init_anim(self):
-        import vpython as vp
+        from pyrado.environments.pysim.pandavis import PandaVis
+        from direct.task import Task
+        import pathlib
 
-        c = 0.1 * self.obs_space.bound_up[0]
+        class PandaVisOmo(PandaVis):
 
-        self._anim["canvas"] = vp.canvas(width=1000, height=400, title="One Mass Oscillator")
-        self._anim["ground"] = vp.box(
-            pos=vp.vec(0, -0.02, 0),
-            length=2.0 * self.obs_space.bound_up[0],
-            height=0.02,
-            width=3 * c,
-            color=vp.color.green,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["mass"] = vp.box(
-            pos=vp.vec(self.state[0], c / 2.0, 0),
-            length=c,
-            height=c,
-            width=c,
-            color=vp.color.blue,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["des"] = vp.box(
-            pos=vp.vec(self._task.state_des[0], 0.8 * c / 2.0, 0),
-            length=0.8 * c,
-            height=0.8 * c,
-            width=0.8 * c,
-            color=vp.color.cyan,
-            opacity=0.5,  # 0 is fully transparent
-            canvas=self._anim["canvas"],
-        )
-        self._anim["force"] = vp.arrow(
-            pos=vp.vec(self.state[0], c / 2.0, 0),
-            axis=vp.vec(0.1 * self._curr_act, 0, 0),
-            color=vp.color.red,
-            shaftwidth=0.2 * c,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["spring"] = vp.helix(
-            pos=vp.vec(0, c / 2.0, 0),
-            axis=vp.vec(self.state[0] - c / 2.0, 0, 0),
-            color=vp.color.blue,
-            radius=c / 3.0,
-            canvas=self._anim["canvas"],
-        )
+            def __init__(self, omo):
+                super().__init__()
+
+                # Accessing variables of outer class
+                self.omo = omo
+
+                self.setBackgroundColor(0, 0, 0)
+                self.cam.setY(-1.3)
+
+                self.text.setTextColor(1, 1, 1, 1)
+
+                # Params
+                c = 0.1 * self.omo.obs_space.bound_up[0]
+
+                # Ground
+                self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+                self.groud.setPos()
+                self.ground.setScale()
+                self.ground.setColor()
+                self.ground.reparentTo(self.render)
+
+                # Mass
+                self.mass = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+                self.mass.setPos()
+                self.mass.setScale()
+                self.mass.setColor()
+                self.mass.reparentTo(self.render)
+
+                # Des
+                self.des = self.loader.loadModel(pathlib.Path(self.dir), "models/box.egg")
+                self.des.setPos()
+                self.des.setScale()
+                self.des.setTransparency()
+                self.des.setColorScale()
+                self.des.reparentTo(self.render)
+
+                # Force
+                self.force = self.loader.loadModel()
+                self.force.setPos()
+                self.force.setScale()
+                self.force.setColor()
+                self.force.reparentTo(self.render)
+
+                # Spring
+                self.spring = self.loader.loadModel()
+                self.spring.setPos()
+                self.spring.setScale()
+                self.spring.setColor()
+                self.spring.reparentTo(self.render)
+
+                self.taskMgr.add(self.update, "update")
+
+            def update(self, task):
+
+                m = self.omo.domain_param["m"]
+                k = self.omo.domain_param["k"]
+                d = self.omo.domain_param["d"]
+                c = 0.1 * self.omo.obs_space.bound_up[0]
+
+                self.mass.setPos()
+                self.force.setPos()
+                capped_act = np.sign(self.omo._curr_act) * max(0.1 * np.abs(self.omo._curr_act), 0.3)
+                self.force.setHpr()
+                self.spring.setHpr()
+
+                # set caption text
+                self.text.setText(f"""
+                    dt: {self.omo.dt :1.4f}
+                    m: {m : 1.3f}
+                    k: {k : 2.2f}
+                    d: {d : 1.3f}
+                    """)
+
+                return Task.cont
+
+            def reset(self):
+                c = 0.1 * self.omo.obs_space.bound_up[0]
+
+                self.mass.setPos()
+                self.des.setPos()
+                self.force.setPos()
+                self.force.setHpr()
+                self.spring.setHpr()
+
+        # Create instance of PandaVis
+        self._visualization = PandaVisOmo(self)
+        # States that visualization is running
+        self._initiated = True
 
     def _update_anim(self):
-        import vpython as vp
-
-        m = self.domain_param["m"]
-        k = self.domain_param["k"]
-        d = self.domain_param["d"]
-        c = 0.1 * self.obs_space.bound_up[0]
-
-        self._anim["mass"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        self._anim["force"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        capped_act = np.sign(self._curr_act) * max(0.1 * np.abs(self._curr_act), 0.3)
-        self._anim["force"].axis = vp.vec(capped_act, 0, 0)
-        self._anim["spring"].axis = vp.vec(self.state[0] - c / 2.0, 0.0, 0)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-            dt: {self.dt :1.4f}
-            m: {m : 1.3f}
-            k: {k : 2.2f}
-            d: {d : 1.3f}
-            """
+        # Refreshed with every frame
+        self._visualization.taskMgr.step()
 
     def _reset_anim(self):
-        import vpython as vp
-
-        c = 0.1 * self.obs_space.bound_up[0]
-        self._anim["mass"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        self._anim["des"].pos = vp.vec(self._task.state_des[0], 0.8 * c / 2.0, 0)
-        self._anim["force"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        self._anim["force"].axis = vp.vec(0.1 * self._curr_act, 0, 0)
-        self._anim["spring"].axis = vp.vec(self.state[0] - c / 2.0, 0.0, 0)
+        self._visualization.reset()
 
 
 class OneMassOscillatorDyn(Serializable):
