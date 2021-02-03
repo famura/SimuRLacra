@@ -232,7 +232,7 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.cm</span> <span class="kn">import</span> <span class="n">get_cmap</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_types_equal</span>
@@ -242,14 +242,14 @@
     <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
     <span class="n">distributions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Distribution</span><span class="p">],</span>
     <span class="n">x_grid_limits</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span>
-    <span class="n">x_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">y_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">distr_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">201</span><span class="p">,</span>
-    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
-    <span class="n">cmap_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;plasma&quot;</span><span class="p">,</span>
-    <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">x_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">y_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">distr_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">grid_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">201</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">cmap_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;plasma&quot;</span><span class="p">,</span>
+    <span class="n">show_legend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the evolution of a sequence of PyTorch probability distributions.</span>
@@ -264,7 +264,7 @@
 <span class="sd">    :param x_label: label for the x-axis</span>
 <span class="sd">    :param y_label: label for the y-axis</span>
 <span class="sd">    :param distr_labels: label for each of the distributions</span>
-<span class="sd">    :param resolution: number of samples for the input (corresponds to x-axis resolution of the plot)</span>
+<span class="sd">    :param grid_res: number of samples for the input (corresponds to x-axis grid_res of the plot)</span>
 <span class="sd">    :param cmap_name: name of the color map, e.g. &#39;inferno&#39;, &#39;RdBu&#39;, or &#39;viridis&#39;</span>
 <span class="sd">    :param alpha: transparency (alpha-value) for the std area</span>
 <span class="sd">    :param show_legend: flag if the legend entry should be printed, set to True when using multiple subplots</span>
@@ -284,7 +284,7 @@
     <span class="n">ax</span><span class="o">.</span><span class="n">set_prop_cycle</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">distributions</span><span class="p">)))))</span>
 
     <span class="c1"># Create evaluation grid</span>
-    <span class="n">x_gird</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_grid_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_grid_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">resolution</span><span class="p">)</span>
+    <span class="n">x_gird</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_grid_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_grid_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">grid_res</span><span class="p">)</span>
 
     <span class="c1"># Plot the data</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">distributions</span><span class="p">):</span>

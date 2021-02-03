@@ -224,8 +224,8 @@
 <span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.empty</span> <span class="kn">import</span> <span class="n">EmptySpace</span>
@@ -236,7 +236,13 @@
 <div class="viewcode-block" id="MaskedTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.masked.MaskedTask">[docs]</a><span class="k">class</span> <span class="nc">MaskedTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Task using only a subset of state and actions &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">state_idcs</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">action_idcs</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+        <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
+        <span class="n">state_idcs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">action_idcs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -253,7 +259,6 @@
         <span class="c1"># Written by reset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state_mask</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_mask</span> <span class="o">=</span> <span class="kc">None</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
 
     <span class="nd">@property</span>
