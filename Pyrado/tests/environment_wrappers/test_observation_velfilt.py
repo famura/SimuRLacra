@@ -38,13 +38,11 @@ from pyrado.utils.math import rmse
 
 
 @pytest.mark.wrapper
-@pytest.mark.parametrize(
-    "plot", [False, pytest.param(True, marks=pytest.mark.visualization)]
-)
+@pytest.mark.parametrize("plot", [False, pytest.param(True, marks=pytest.mark.visualization)])
 def test_velocity_filter(plot: bool):
     # Set up environment
     env_gt = QQubeSwingUpSim(dt=1 / 500.0, max_steps=350)
-    env_gt.init_space = SingularStateSpace(np.array([0.1, np.pi/2, 3.0, 0]))
+    env_gt.init_space = SingularStateSpace(np.array([0.1, np.pi / 2, 3.0, 0]))
     env_filt = ObsVelFiltWrapper(env_gt, idcs_pos=["theta", "alpha"], idcs_vel=["theta_dot", "alpha_dot"])
 
     # Set up policy
@@ -69,6 +67,7 @@ def test_velocity_filter(plot: bool):
 
     if plot:
         from matplotlib import pyplot as plt
+
         # Plot the filtered signals versus the orignal observations
         plt.rc("text", usetex=True)
         fix, axs = plt.subplots(2, figsize=(16, 9))

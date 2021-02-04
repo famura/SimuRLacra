@@ -28,13 +28,21 @@
 
 import numpy as np
 import torch as to
-from matplotlib import pyplot as plt
-from matplotlib.cm import get_cmap
+from matplotlib.lines import Line2D
 from torch.distributions import Distribution
-from typing import Sequence, Optional
+from matplotlib import pyplot as plt, patches
+from sbi.inference.posteriors.direct_posterior import DirectPosterior
+from sbi.utils import BoxUniform
+from typing import Sequence, Optional, Union, Mapping, Tuple, List, Iterable
 
 import pyrado
-from pyrado.utils.checks import check_all_types_equal
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
+from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environments.sim_base import SimEnv
+from pyrado.utils.checks import check_all_types_equal, is_iterable
+from pyrado.utils.data_types import merge_dicts
+
+import warnings
 
 
 def render_distr_evo(
@@ -60,8 +68,8 @@ def render_distr_evo(
     :param ax: axis of the figure to plot on
     :param distributions: iterable with the distributions in the order they should be plotted
     :param x_grid_limits: min and max value for the evaluation grid
-    :param x_label: label for the x-axis
-    :param y_label: label for the y-axis
+    :param x_label: label for the x-axis, no label by default
+    :param y_label: label for the y-axis, no label by default
     :param distr_labels: label for each of the distributions
     :param grid_res: number of samples for the input (corresponds to x-axis grid_res of the plot)
     :param cmap_name: name of the color map, e.g. 'inferno', 'RdBu', or 'viridis'
@@ -79,7 +87,7 @@ def render_distr_evo(
         distr_labels = [rf"iter\_{i}" for i in range(len(distributions))]
 
     # Get the color map customized to the number of distributions to plot
-    cmap = get_cmap(cmap_name)
+    cmap = plt.get_cmap(cmap_name)
     ax.set_prop_cycle(color=cmap(np.linspace(0.0, 1.0, max(2, len(distributions)))))
 
     # Create evaluation grid

@@ -27,11 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import inspect
+import numpy as np
 import torch as to
 from torch.jit import ScriptModule, script, export
 from torch.nn import Module
-from typing import Callable, List, Sequence
+from typing import Callable, List, Sequence, Optional, Union
 
+import pyrado
 from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
 
@@ -70,7 +72,7 @@ class TimePolicy(Policy):
     def reset(self):
         self._curr_time = 0
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
         act = to.tensor(self._fcn_of_time(self._curr_time), dtype=to.get_default_dtype())
         self._curr_time += self._dt
         return act
@@ -130,7 +132,56 @@ class TraceableTimePolicy(Module):
     def reset(self):
         self.current_time = 0.0
 
-    def forward(self, obs_ignore):
+    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
         act = to.tensor(self.fcn_of_time(self.current_time), dtype=to.double)
         self.current_time = self.current_time + self.dt
         return act
+
+
+class PlaybackPolicy(Policy):
+    """ A policy wish simply replays a sequence of actions. If more actions are requested, the policy  """
+
+    name: str = "pb"
+
+    def __init__(self, spec: EnvSpec, act_recs: List[Union[to.Tensor, np.array]], use_cuda: bool = False):
+        """
+        Constructor
+
+        :param spec: environment specification
+        :param act_recs: pre-recorded sequence of actions to be played back later
+        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
+        """
+        if not isinstance(act_recs, list):
+            raise pyrado.TypeErr(given=act_recs, expected_type=list)
+
+        super().__init__(spec, use_cuda)
+
+        self._curr_rec = -1  # is increased before the first use
+        self._curr_step = 0
+        self._num_rec = len(act_recs)
+        self._buffer = [to.atleast_2d(to.as_tensor(ar)) for ar in act_recs]
+        if not all(b.shape[1] == self.env_spec.act_space.flat_dim for b in self._buffer):
+            raise pyrado.ShapeErr(
+                given=(-1, self._buffer[0].shape[1]), expected_match=(-1, self.env_spec.act_space.flat_dim)
+            )
+
+    def init_param(self, init_values: to.Tensor = None, **kwargs):
+        pass
+
+    def reset(self):
+        # Start at the beginning of the next recording
+        self._curr_rec = (self._curr_rec + 1) % self._num_rec
+        self._curr_step = 0
+
+    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
+        if self._curr_step < len(self._buffer[self._curr_rec]):
+            # Asking for something that is available, return the stored action
+            act = self._buffer[self._curr_rec][self._curr_step, :]
+        else:
+            # Asking for more actions than provided, return zeros
+            act = to.zeros(self.env_spec.act_space.shape)
+        self._curr_step += 1
+        return act
+
+    def script(self) -> ScriptModule:
+        raise NotImplementedError

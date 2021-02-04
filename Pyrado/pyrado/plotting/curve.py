@@ -82,7 +82,7 @@ def draw_curve_from_data(
     x_label: Optional[Union[str, Sequence[str]]] = None,
     y_label: Optional[str] = None,
     curve_label: Optional[str] = None,
-    area_label: Optional[str] = None,
+    area_label: Optional[str] = "",
     vline_level: Optional[float] = None,
     vline_label: str = "approx. solved",
     title: Optional[str] = None,
@@ -111,8 +111,8 @@ def draw_curve_from_data(
     :param ax_calc: axis of the data array to calculate the mean, min and max, or std over
     :param x_label: labels for the categories on the x-axis, if `data` is not given as a `DataFrame`
     :param y_label: label for the y-axis, pass `None` to set no label
-    :param curve_label: label of the (1-dim) curve
-    :param area_label: label of the (transparent) area
+    :param curve_label: label of the (1-dim) curve, pass `None` for no label
+    :param area_label: label of the (transparent) area, pass `None` for no label and "" for the default label
     :param vline_level: if not `None` (default) add a vertical line at the given level
     :param vline_label: label for the vertical line
     :param show_legend: if `True` the legend is shown, useful when handling multiple subplots
@@ -195,7 +195,7 @@ def draw_curve(
     x_label: Optional[Union[str, Sequence[str]]] = None,
     y_label: Optional[str] = None,
     curve_label: Optional[str] = None,
-    area_label: Optional[str] = None,
+    area_label: Optional[str] = "",
     vline_level: Optional[float] = None,
     vline_label: str = "approx. solved",
     title: Optional[str] = None,
@@ -222,8 +222,8 @@ def draw_curve(
     :param x_grid: values to plot the data over, e.g. time
     :param x_label: labels for the categories on the x-axis, if `data` is not given as a `DataFrame`
     :param y_label: label for the y-axis, pass `None` to set no label
-    :param curve_label: label of the (1-dim) curve
-    :param area_label: label of the (transparent) area
+    :param curve_label: label of the (1-dim) curve, pass `None` for no label
+    :param area_label: label of the (transparent) area, pass `None` for no label and "" for the default label
     :param vline_level: if not `None` (default) add a vertical line at the given level
     :param vline_label: label for the vertical line
     :param show_legend: if `True` the legend is shown, useful when handling multiple subplots
@@ -258,7 +258,7 @@ def draw_curve(
     if plot_type == "mean_std":
         if not ("mean" in data.columns and "std" in data.columns):
             raise pyrado.KeyErr(keys="'mean' and 'std'", container=data)
-        if area_label is None:
+        if area_label == "":
             area_label = rf"$\pm {num_stds}$ std"
         ax.fill_between(
             x_grid,
@@ -271,14 +271,14 @@ def draw_curve(
     elif plot_type == "min_mean_max":
         if not ("mean" in data.columns and "min" in data.columns and "max" in data.columns):
             raise pyrado.KeyErr(keys="'mean' and 'min' and 'max'", container=data)
-        if area_label is None:
+        if area_label == "":
             area_label = r"min \& max"
         ax.fill_between(x_grid, data["min"], data["max"], label=area_label, **plot_kwargs)
 
     elif plot_type == "ci_on_mean":
         if not ("mean" in data.columns and "ci_lo" in data.columns and "ci_up" in data.columns):
             raise pyrado.KeyErr(keys="'mean' and 'ci_lo' and 'ci_up'", container=data)
-        if area_label is None:
+        if area_label == "":
             area_label = r"conf. intvl."
         ax.fill_between(x_grid, data["ci_lo"], data["ci_up"], label=area_label, **plot_kwargs)
 

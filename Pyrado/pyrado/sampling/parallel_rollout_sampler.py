@@ -66,19 +66,33 @@ def _ps_sample_one(G, eval: bool):
     return ro, len(ro)
 
 
-def _ps_run_one(G, num: int, eval: bool):
-    """ Sample one rollout. This function is used when a minimum number of rollouts was given. """
+def _ps_run_one(G, eval: bool):
+    """
+    Sample one rollout without specifying the initial state or the domain parameters.
+    This function is used when a minimum number of rollouts was given.
+    """
     return rollout(G.env, G.policy, eval=eval)
 
 
 def _ps_run_one_init_state(G, init_state: np.ndarray, eval: bool):
-    """ Sample one rollout with fixed init state. This function is used when a minimum number of rollouts was given. """
+    """
+    Sample one rollout with given init state.
+    This function is used when a minimum number of rollouts was given.
+    """
     return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=init_state))
+
+
+def _ps_run_one_domain_param(G, domain_param: dict, eval: bool):
+    """
+    Sample one rollout with given domain parameters.
+    This function is used when a minimum number of rollouts was given.
+    """
+    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(domain_param=domain_param))
 
 
 def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
     """
-    Sample one rollout with fixed init state and domain parameters, passed as a tuple for simplicity at the other end.
+    Sample one rollout with given init state and domain parameters, passed as a tuple for simplicity at the other end.
     This function is used when a minimum number of rollouts was given.
     """
     if len(reset_kwargs) != 2:
@@ -163,7 +177,10 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
     def sample(
-        self, init_states: List[np.ndarray] = None, domain_params: List[np.ndarray] = None, eval: bool = False
+        self,
+        init_states: Optional[List[np.ndarray]] = None,
+        domain_params: Optional[List[dict]] = None,
+        eval: Optional[bool] = False,
     ) -> List[StepSequence]:
         """
         Do the sampling according to the previously given environment, policy, and number of steps/rollouts.
@@ -196,6 +213,11 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                     func = partial(_ps_run_one_init_state, eval=eval)
                     rep_factor = ceil(self.min_rollouts / len(init_states))
                     arglist = rep_factor * init_states
+                elif init_states is None and domain_params is not None:
+                    # Run every domain parameter set so often that we at least get min_rollouts trajectories
+                    func = partial(_ps_run_one_domain_param, eval=eval)
+                    rep_factor = ceil(self.min_rollouts / len(domain_params))
+                    arglist = rep_factor * domain_params
                 elif init_states is not None and domain_params is not None:
                     # Run every combination of initial state and domain parameter so often that we at least get
                     # min_rollouts trajectories
@@ -203,8 +225,6 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                     allcombs = list(product(init_states, domain_params))
                     rep_factor = ceil(self.min_rollouts / len(allcombs))
                     arglist = rep_factor * allcombs
-                else:
-                    raise NotImplementedError
 
                 # Only minimum number of rollouts given, thus use run_map
                 return self.pool.run_map(func, arglist, pb)

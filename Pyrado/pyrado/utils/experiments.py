@@ -26,10 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import itertools
+import os
 import os.path as osp
 import pandas as pd
 import torch as to
-from typing import Callable, Any, Union
+from typing import Callable, Any, Union, List, Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -59,7 +61,9 @@ from pyrado.policies.recurrent.adn import (
     pd_capacity_32_abs,
 )
 from pyrado.policies.base import Policy
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.checks import check_all_types_equal
 from pyrado.utils.input_output import print_cbt
 
 
@@ -272,3 +276,37 @@ def read_csv_w_replace(path: str) -> pd.DataFrame:
     df.columns = [c.replace("(", "_") for c in df.columns]
     df.columns = [c.replace(")", "_") for c in df.columns]
     return df
+
+
+def load_rollouts_from_dir(ex_dir: str, key: Optional[str] = "rollout") -> List[StepSequence]:
+    """
+    Crawl through the given directory and load all rollouts, i.e. all files that include the key.
+
+    :param ex_dir: directory, e.g. and experiment folder
+    :param key: word or part of a word that needs to the in the name of a file for it to be loaded
+    :return: list of loaded rollouts
+    """
+    if not osp.isdir(ex_dir):
+        raise pyrado.PathErr(given=ex_dir)
+    if not isinstance(key, str):
+        raise pyrado.TypeErr(given=key, expected_type=str)
+
+    rollouts = []
+    for root, dirs, files in os.walk(ex_dir):
+        dirs.clear()  # prevents walk() from going into subdirectories
+        rollouts = [
+            pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
+            for f in files
+            if key in f
+        ]
+
+    if not rollouts:
+        raise pyrado.ValueErr(msg="No rollouts have been found!")
+
+    if isinstance(rollouts[0], list):
+        if not check_all_types_equal(rollouts):
+            raise pyrado.TypeErr(msg="Some rollout savings contain lists of rollouts, others don't!")
+        # The rollout files contain lists of rollouts, flatten them
+        rollouts = list(itertools.chain(*rollouts))
+
+    return rollouts

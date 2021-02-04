@@ -130,7 +130,7 @@ class ObsVelFiltWrapper(EnvWrapperObs, Serializable):
 
         # Initialize the filter with the current simulation state
         self.init_filter(self.state)
-    
+
         # Processed observation again
         return self._process_obs(init_obs)
 

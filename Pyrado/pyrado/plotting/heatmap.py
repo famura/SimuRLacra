@@ -206,10 +206,10 @@ def render_heatmap(
         data,
         cmap=cmap,
         norm=norm,
-        aspect=(x.max() - x.min()) / (y.max() - y.min()),
+        aspect=1.0 / ax_hm.get_data_ratio(),
         origin="lower",
         extent=[x.min(), x.max(), y.min(), y.max()],
-    )  # former: aspect='auto'
+    )
 
     # Set axes limits
     ax_hm.set_xlim(x.min(), x.max())

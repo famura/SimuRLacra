@@ -26,63 +26,50 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
-import torch as to
+"""
+Script to plot the observations from rollouts as well as their mean and std
+"""
+import numpy as np
+from matplotlib import pyplot as plt
+import pandas as pd
 
-from pyrado.utils.tensor import stack_tensor_list, stack_tensor_dict_list, insert_tensor_col
-
-
-def test_stack_tensors():
-    tensors = [
-        to.tensor([1, 2, 3]),
-        to.tensor([2, 3, 4]),
-        to.tensor([4, 5, 6]),
-    ]
-
-    stack = stack_tensor_list(tensors)
-
-    to.testing.assert_allclose(
-        stack,
-        to.tensor(
-            [
-                [1, 2, 3],
-                [2, 3, 4],
-                [4, 5, 6],
-            ]
-        ),
-    )
+import pyrado
+from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.curve import draw_curve
+from pyrado.utils.argparser import get_argparser
+from pyrado.utils.experiments import load_rollouts_from_dir
 
 
-def test_stack_tensors_scalar():
-    tensors = [1, 2, 3]
-    stack = stack_tensor_list(tensors)
-    to.testing.assert_allclose(stack, to.tensor([1, 2, 3]))
+if __name__ == "__main__":
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+    plt.rc("text", usetex=False)
 
+    # Get the experiment's directory to load from
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
-def test_stack_tensor_dicts():
-    tensors = [
-        {"multi": [1, 2], "single": 1},
-        {"multi": [3, 4], "single": 2},
-        {"multi": [5, 6], "single": 3},
-    ]
-    stack = stack_tensor_dict_list(tensors)
-    to.testing.assert_allclose(stack["single"], to.tensor([1, 2, 3]))
-    to.testing.assert_allclose(stack["multi"], to.tensor([[1, 2], [3, 4], [5, 6]]))
+    # Load the rollouts
+    rollouts = load_rollouts_from_dir(ex_dir)
 
+    # Extract observations
+    data = pd.DataFrame()
+    for ro in rollouts:
+        ro.numpy()
+        df = pd.DataFrame(ro.observations, columns=ro.rollout_info["env_spec"].obs_space.labels)
+        data = pd.concat([data, df], axis=1)
+    means = data.groupby(by=data.columns, axis=1).mean()
+    stds = data.groupby(by=data.columns, axis=1).std()
 
-@pytest.mark.parametrize(
-    "orig, col",
-    [
-        (to.rand((1, 1)), to.zeros(1, 1)),
-        (to.rand((3, 3)), to.zeros(3, 1)),
-    ],
-    ids=["1_dim", "3_dim"],
-)
-def test_insert_tensor_col(orig, col):
-    for col_idx in range(orig.shape[1] + 1):  # also check appending case
-        result = insert_tensor_col(orig, col_idx, col)
-        # Check number of rows and columns
-        assert orig.shape[0] == result.shape[0]
-        assert orig.shape[1] == result.shape[1] - 1
-        # Check the values
-        to.testing.assert_allclose(result[:, col_idx], col.squeeze())
+    fig, axs = plt.subplots(nrows=1, ncols=1, figsize=(16, 9))
+    for c in data:
+        draw_curve(
+            "mean_std",
+            axs,
+            pd.DataFrame(dict(mean=means[c], std=stds[c])),
+            np.arange(len(data)),
+            show_legend=False,
+            x_label="steps",
+        )
+    axs.legend(list(means.columns))
+
+    plt.show()

@@ -26,21 +26,52 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import math
 import numpy as np
 from matplotlib import colors as colors
 from typing import Tuple
 
 
-def num_rows_cols_from_length(n: int) -> Tuple[int, int]:
+def num_rows_cols_from_length(n: int, transposed: bool = False) -> Tuple[int, int]:
     """
     Use a heuristic to get the number of rows and columns for a plotting grid, given the total number of plots to draw.
 
     :param n: total number of plots to draw
+    :param transposed: change number of rows and number of columns
     :return: number of rows and columns
     """
-    num_cols = max_prime_factor(n)  # smaller than the other factor
-    num_rows = n // num_cols
-    return num_rows, num_cols
+    # First try to get a somewhat square layout
+    num_rows, num_cols = most_square_product(n)
+    if num_rows == 1:
+        # Resort to prime factor method
+        num_cols = max_prime_factor(n)  # smaller than the other factor
+        num_rows = n // num_cols
+    return (num_cols, num_rows) if transposed else (num_rows, num_cols)
+
+
+def most_square_product(n: int) -> Tuple[int, int]:
+    """
+    Heuristic to get two square-like integers that when multiplied yield the input
+
+    :param n: given number $n$
+    :return: lower and higher integer
+    """
+    o = math.ceil(math.sqrt(n))
+    m = o - 1
+    if o ** 2 == n:
+        return o, o
+    else:
+        i = 0
+        while o * m != n and m != 1:
+            if i % 2 == 0:
+                # Every even iteration
+                o += 1
+            else:
+                # Every odd iteration
+                m -= 1
+            # Increase iteration count
+            i += 1
+        return m, o
 
 
 def max_prime_factor(n: int) -> int:
