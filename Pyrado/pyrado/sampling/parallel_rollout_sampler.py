@@ -66,7 +66,7 @@ def _ps_sample_one(G, eval: bool):
     return ro, len(ro)
 
 
-def _ps_run_one(G, eval: bool):
+def _ps_run_one(G, num: int, eval: bool):
     """
     Sample one rollout without specifying the initial state or the domain parameters.
     This function is used when a minimum number of rollouts was given.
