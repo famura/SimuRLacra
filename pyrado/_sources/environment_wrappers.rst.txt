@@ -95,6 +95,15 @@ observation\_partial
    :show-inheritance:
 
 
+observation\_velfilter
+----------------------
+
+.. automodule:: pyrado.environment_wrappers.observation_velfilter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 state\_augmentation
 -------------------
 

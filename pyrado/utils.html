@@ -875,6 +875,23 @@ why entities should be loaded. If no file was found, we fall back to some heuris
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.utils.experiments.load_rollouts_from_dir">
+<code class="sig-name descname">load_rollouts_from_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'rollout'</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_rollouts_from_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_rollouts_from_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crawl through the given directory and load all rollouts, i.e. all files that include the key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ex_dir</strong> – directory, e.g. and experiment folder</p></li>
+<li><p><strong>key</strong> – word or part of a word that needs to the in the name of a file for it to be loaded</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of loaded rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.utils.experiments.read_csv_w_replace">
 <code class="sig-name descname">read_csv_w_replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/pyrado/utils/experiments.html#read_csv_w_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.read_csv_w_replace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Custom function to read a CSV file. Turns white paces into underscores for accessing the columns as exposed
@@ -1312,10 +1329,6 @@ registered hooks while the latter silently ignores them.</p>
 the first half of the kernel (along the columns). This way we can save (close to) half of the parameters, under
 the assumption that we have a kernel that obeys this kind of symmetry.
 The biases are left unchanged.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://pytorch.org/docs/stable/_modules/torch/nn/modules/conv.html#Conv1d">https://pytorch.org/docs/stable/_modules/torch/nn/modules/conv.html#Conv1d</a></p>
-</div>
 <dl class="py attribute">
 <dt id="pyrado.utils.nn_layers.MirrConv1d.bias">
 <code class="sig-name descname">bias</code><em class="property">: Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.bias" title="Permalink to this definition">¶</a></dt>
@@ -1601,34 +1614,6 @@ PyTorch modules (file_ext = ‘pt’) are saved.</p></li>
 </div>
 <div class="section" id="module-pyrado.utils.tensor">
 <span id="tensor"></span><h2>tensor<a class="headerlink" href="#module-pyrado.utils.tensor" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="pyrado.utils.tensor.atleast_2D">
-<code class="sig-name descname">atleast_2D</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/tensor.html#atleast_2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.tensor.atleast_2D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mimic the numpy function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> – any tensor</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>an at least 2-dim tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.tensor.atleast_3D">
-<code class="sig-name descname">atleast_3D</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/tensor.html#atleast_3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.tensor.atleast_3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mimic the numpy function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> – any tensor</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>an at least 3-dim tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py function">
 <dt id="pyrado.utils.tensor.deepcopy_or_clone">
 <code class="sig-name descname">deepcopy_or_clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">copy_from</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>dict<span class="p">, </span>list<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>dict<span class="p">, </span>list<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/tensor.html#deepcopy_or_clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.tensor.deepcopy_or_clone" title="Permalink to this definition">¶</a></dt>

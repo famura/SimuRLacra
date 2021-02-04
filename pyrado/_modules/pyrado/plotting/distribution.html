@@ -229,13 +229,21 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib.cm</span> <span class="kn">import</span> <span class="n">get_cmap</span>
+<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span><span class="p">,</span> <span class="n">patches</span>
+<span class="kn">from</span> <span class="nn">sbi.inference.posteriors.direct_posterior</span> <span class="kn">import</span> <span class="n">DirectPosterior</span>
+<span class="kn">from</span> <span class="nn">sbi.utils</span> <span class="kn">import</span> <span class="n">BoxUniform</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_types_equal</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperBuffer</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_types_equal</span><span class="p">,</span> <span class="n">is_iterable</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 
 <div class="viewcode-block" id="render_distr_evo"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.render_distr_evo">[docs]</a><span class="k">def</span> <span class="nf">render_distr_evo</span><span class="p">(</span>
@@ -261,8 +269,8 @@
 <span class="sd">    :param ax: axis of the figure to plot on</span>
 <span class="sd">    :param distributions: iterable with the distributions in the order they should be plotted</span>
 <span class="sd">    :param x_grid_limits: min and max value for the evaluation grid</span>
-<span class="sd">    :param x_label: label for the x-axis</span>
-<span class="sd">    :param y_label: label for the y-axis</span>
+<span class="sd">    :param x_label: label for the x-axis, no label by default</span>
+<span class="sd">    :param y_label: label for the y-axis, no label by default</span>
 <span class="sd">    :param distr_labels: label for each of the distributions</span>
 <span class="sd">    :param grid_res: number of samples for the input (corresponds to x-axis grid_res of the plot)</span>
 <span class="sd">    :param cmap_name: name of the color map, e.g. &#39;inferno&#39;, &#39;RdBu&#39;, or &#39;viridis&#39;</span>
@@ -280,7 +288,7 @@
         <span class="n">distr_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">rf</span><span class="s2">&quot;iter\_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distributions</span><span class="p">))]</span>
 
     <span class="c1"># Get the color map customized to the number of distributions to plot</span>
-    <span class="n">cmap</span> <span class="o">=</span> <span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap_name</span><span class="p">)</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap_name</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_prop_cycle</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">distributions</span><span class="p">)))))</span>
 
     <span class="c1"># Create evaluation grid</span>

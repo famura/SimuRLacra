@@ -343,9 +343,6 @@
 <span class="sd">    the first half of the kernel (along the columns). This way we can save (close to) half of the parameters, under</span>
 <span class="sd">    the assumption that we have a kernel that obeys this kind of symmetry.</span>
 <span class="sd">    The biases are left unchanged.</span>
-
-<span class="sd">    .. seealso::</span>
-<span class="sd">        https://pytorch.org/docs/stable/_modules/torch/nn/modules/conv.html#Conv1d</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -360,13 +357,11 @@
         <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">padding_mode</span><span class="o">=</span><span class="s2">&quot;zeros&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="c1"># Same as in PyTorch 1.7</span>
+        <span class="c1"># Same as in PyTorch 1.4</span>
         <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">_single</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">)</span>
         <span class="n">stride</span> <span class="o">=</span> <span class="n">_single</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span>
         <span class="n">padding</span> <span class="o">=</span> <span class="n">_single</span><span class="p">(</span><span class="n">padding</span><span class="p">)</span>
         <span class="n">dilation</span> <span class="o">=</span> <span class="n">_single</span><span class="p">(</span><span class="n">dilation</span><span class="p">)</span>
-
-        <span class="c1"># Call _ConvNd&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">in_channels</span><span class="p">,</span>
             <span class="n">out_channels</span><span class="p">,</span>
@@ -413,13 +408,10 @@
                 <span class="n">mirr_weight</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_kernel_size</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
 
         <span class="c1"># Run though the same function as the original PyTorch implementation, but with mirrored kernel</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span> <span class="o">!=</span> <span class="s2">&quot;zeros&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span> <span class="o">==</span> <span class="s2">&quot;circular&quot;</span><span class="p">:</span>
-                <span class="n">expanded_padding</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">expanded_padding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reversed_padding_repeated_twice</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span> <span class="o">==</span> <span class="s2">&quot;circular&quot;</span><span class="p">:</span>
+            <span class="n">expanded_padding</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span>
-                <span class="n">F</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">expanded_padding</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">padding_mode</span><span class="p">),</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">expanded_padding</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;circular&quot;</span><span class="p">),</span>
                 <span class="n">mirr_weight</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span>
@@ -427,8 +419,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">dilation</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">mirr_weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">conv1d</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">mirr_weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dilation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

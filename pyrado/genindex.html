@@ -355,10 +355,6 @@
 </li>
       <li><a href="policies.html#pyrado.policies.features.ATan2Feat">ATan2Feat (class in pyrado.policies.features)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.tensor.atleast_2D">atleast_2D() (in module pyrado.utils.tensor)</a>
-</li>
-      <li><a href="utils.html#pyrado.utils.tensor.atleast_3D">atleast_3D() (in module pyrado.utils.tensor)</a>
-</li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.attr_env">attr_env() (in module pyrado.environment_wrappers.utils)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.attr_env_get">attr_env_get() (in module pyrado.environment_wrappers.utils)</a>
@@ -1208,6 +1204,8 @@
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.forward">(OneMassOscillatorDomainParamEstimator method)</a>
 </li>
+        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.forward">(PlaybackPolicy method)</a>
+</li>
         <li><a href="policies.html#pyrado.policies.base.Policy.forward">(Policy method)</a>
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.PositiveScaleLayer.forward">(PositiveScaleLayer method)</a>
@@ -1531,6 +1529,8 @@
 </li>
       <li><a href="spaces.html#pyrado.spaces.box.InfBoxSpace">InfBoxSpace (class in pyrado.spaces.box)</a>
 </li>
+      <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.init_filter">init_filter() (ObsVelFiltWrapper method)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.base.Policy.init_hidden">init_hidden() (Policy method)</a>
 
       <ul>
@@ -1572,6 +1572,8 @@
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy.init_param">(NFPolicy method)</a>
 </li>
+        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.init_param">(PlaybackPolicy method)</a>
+</li>
         <li><a href="policies.html#pyrado.policies.base.Policy.init_param">(Policy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_param">(PotentialBasedPolicy method)</a>
@@ -1603,6 +1605,8 @@
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param">(TwoHeadedRNNPolicyBase method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.init_space">init_space() (CatapultSim property)</a>
 
       <ul>
@@ -1621,8 +1625,6 @@
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.init_space">(SimPyEnv property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker.initialized">initialized() (MarkerTracker method)</a>
 
       <ul>
@@ -1762,6 +1764,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils.html#pyrado.utils.experiments.load_experiment">load_experiment() (in module pyrado.utils.experiments)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.experiments.load_rollouts_from_dir">load_rollouts_from_dir() (in module pyrado.utils.experiments)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">load_snapshot() (Algorithm static method)</a>
 </li>
@@ -1958,6 +1962,8 @@
         <li><a href="environment_wrappers.html#module-pyrado.environment_wrappers.observation_normalization">pyrado.environment_wrappers.observation_normalization</a>
 </li>
         <li><a href="environment_wrappers.html#module-pyrado.environment_wrappers.observation_partial">pyrado.environment_wrappers.observation_partial</a>
+</li>
+        <li><a href="environment_wrappers.html#module-pyrado.environment_wrappers.observation_velfilter">pyrado.environment_wrappers.observation_velfilter</a>
 </li>
         <li><a href="environment_wrappers.html#module-pyrado.environment_wrappers.state_augmentation">pyrado.environment_wrappers.state_augmentation</a>
 </li>
@@ -2261,6 +2267,8 @@
 </li>
         <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_observation_partial">tests.environment_wrappers.test_observation_partial</a>
 </li>
+        <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_observation_velfilt">tests.environment_wrappers.test_observation_velfilt</a>
+</li>
         <li><a href="tests.html#module-tests.test_domain_randomization">tests.test_domain_randomization</a>
 </li>
         <li><a href="tests.html#module-tests.test_environments">tests.test_environments</a>
@@ -2290,6 +2298,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="plotting.html#pyrado.plotting.utils.most_square_product">most_square_product() (in module pyrado.plotting.utils)</a>
+</li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.mp_blending.MPBlendingSim">MPBlendingSim (class in pyrado.environments.rcspysim.mp_blending)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.MSDDSSpec">MSDDSSpec (class in pyrado.utils.data_types)</a>
@@ -2406,6 +2416,8 @@
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.planar_insert.PlanarInsertIKActivationSim.name">(PlanarInsertIKActivationSim attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.planar_insert.PlanarInsertTASim.name">(PlanarInsertTASim attribute)</a>
+</li>
+        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.name">(PlaybackPolicy attribute)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.name">(Policy attribute)</a>
 </li>
@@ -2628,6 +2640,8 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsRunningNormWrapper">ObsRunningNormWrapper (class in pyrado.environment_wrappers.observation_normalization)</a>
 </li>
+      <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper">ObsVelFiltWrapper (class in pyrado.environment_wrappers.observation_velfilter)</a>
+</li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.offset">offset() (StateAugmentationWrapper property)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator">OneMassOscillatorDomainParamEstimator (class in pyrado.environments.pysim.one_mass_oscillator)</a>
@@ -2741,6 +2755,8 @@
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.planar_insert.PlanarInsertTASim">PlanarInsertTASim (class in pyrado.environments.rcspysim.planar_insert)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.plate_ang">plate_ang() (QBallBalancerKin method)</a>
+</li>
+      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy">PlaybackPolicy (class in pyrado.policies.special.time)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.PlusOnePerStepRewFcn">PlusOnePerStepRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
@@ -3162,6 +3178,13 @@
 
       <ul>
         <li><a href="environment_wrappers.html#module-pyrado.environment_wrappers.observation_partial">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.environment_wrappers.observation_velfilter
+
+      <ul>
+        <li><a href="environment_wrappers.html#module-pyrado.environment_wrappers.observation_velfilter">module</a>
 </li>
       </ul></li>
       <li>
@@ -4352,11 +4375,15 @@
 </li>
         <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv.reset">(MockEnv method)</a>
 </li>
+        <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.reset">(ObsVelFiltWrapper method)</a>
+</li>
         <li><a href="tasks.html#pyrado.tasks.goalless.OptimProxyTask.reset">(OptimProxyTask method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.parallel.ParallelTasks.reset">(ParallelTasks method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.reset">(ParameterExploring method)</a>
+</li>
+        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.reset">(PlaybackPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.reset">(Policy method)</a>
 </li>
@@ -4677,9 +4704,11 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.schedule_eps">schedule_eps() (EpsGreedyExplStrat method)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.base.Policy.script">script() (Policy method)</a>
+      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.script">script() (PlaybackPolicy method)</a>
 
       <ul>
+        <li><a href="policies.html#pyrado.policies.base.Policy.script">(Policy method)</a>
+</li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.script">(RecurrentPolicy method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy.script">(TimePolicy method)</a>
@@ -5129,10 +5158,6 @@
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_arpl">test_arpl() (in module tests.algorithms.test_meta)</a>
 </li>
-      <li><a href="tests.html#tests.test_tensor_utils.test_atleast_2D">test_atleast_2D() (in module tests.test_tensor_utils)</a>
-</li>
-      <li><a href="tests.html#tests.test_tensor_utils.test_atleast_3D">test_atleast_3D() (in module tests.test_tensor_utils)</a>
-</li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_bayrn_power">test_bayrn_power() (in module tests.algorithms.test_meta)</a>
 </li>
       <li><a href="tests.html#tests.test_tasks.test_best_state_final_rew_task">test_best_state_final_rew_task() (in module tests.test_tasks)</a>
@@ -5309,6 +5334,8 @@
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_pickle">test_pickle() (in module tests.test_rollout_result)</a>
 </li>
+      <li><a href="tests.html#tests.test_policies.test_playback_policy">test_playback_policy() (in module tests.test_policies)</a>
+</li>
       <li><a href="tests.html#tests.test_step_logger.test_prefix">test_prefix() (in module tests.test_step_logger)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_print_cbt_once">test_print_cbt_once() (in module tests.test_utils)</a>
@@ -5391,12 +5418,12 @@
 </li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_discrete_space">test_sample_contains_discrete_space() (in module tests.test_spaces)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">test_sample_from_unit_sphere_surface() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect">test_sampler_collect() (in module tests.test_sampling)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect_minrun">test_sampler_collect_minrun() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_pool">test_sampler_pool() (in module tests.test_sampling)</a>
@@ -5489,6 +5516,8 @@
         <li><a href="tests.html#tests.test_step_logger.test_values">(in module tests.test_step_logger)</a>
 </li>
       </ul></li>
+      <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_observation_velfilt.test_velocity_filter">test_velocity_filter() (in module tests.environment_wrappers.test_observation_velfilt)</a>
+</li>
       <li><a href="tests.html#tests.test_environments.test_vpython_animations">test_vpython_animations() (in module tests.test_environments)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_combination.test_wrap_like_other_env">test_wrap_like_other_env() (in module tests.environment_wrappers.test_combination)</a>
@@ -5603,6 +5632,13 @@
 
       <ul>
         <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_observation_partial">module</a>
+</li>
+      </ul></li>
+      <li>
+    tests.environment_wrappers.test_observation_velfilt
+
+      <ul>
+        <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_observation_velfilt">module</a>
 </li>
       </ul></li>
       <li>

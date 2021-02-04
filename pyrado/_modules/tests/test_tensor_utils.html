@@ -223,63 +223,10 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.utils.tensor</span> <span class="kn">import</span> <span class="n">stack_tensor_list</span><span class="p">,</span> <span class="n">stack_tensor_dict_list</span><span class="p">,</span> <span class="n">insert_tensor_col</span><span class="p">,</span> <span class="n">atleast_2D</span><span class="p">,</span> <span class="n">atleast_3D</span>
-
-
-<div class="viewcode-block" id="test_atleast_2D"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_atleast_2D">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s2">&quot;x&quot;</span><span class="p">,</span>
-    <span class="p">[</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
-            <span class="mi">1</span><span class="p">,</span>
-        <span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
-            <span class="mi">2</span><span class="p">,</span>
-        <span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sclar&quot;</span><span class="p">,</span> <span class="s2">&quot;scalar_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D_T&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_3D&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_atleast_2D</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="n">x_al2d</span> <span class="o">=</span> <span class="n">atleast_2D</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">x_al2d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span>
-
-    <span class="c1"># We want to mimic the numpy function</span>
-    <span class="n">x_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x_al2d</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">==</span> <span class="n">x_np</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_atleast_3D"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_atleast_3D">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s2">&quot;x&quot;</span><span class="p">,</span>
-    <span class="p">[</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
-            <span class="mi">1</span><span class="p">,</span>
-        <span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
-            <span class="mi">2</span><span class="p">,</span>
-        <span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sclar&quot;</span><span class="p">,</span> <span class="s2">&quot;scalar_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D_T&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_3D&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_atleast_3D</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="n">x_al3d</span> <span class="o">=</span> <span class="n">atleast_3D</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">x_al3d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">3</span>
-
-    <span class="c1"># We want to mimic the numpy function</span>
-    <span class="n">x_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x_al3d</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">==</span> <span class="n">x_np</span><span class="p">)</span></div>
+<span class="kn">from</span> <span class="nn">pyrado.utils.tensor</span> <span class="kn">import</span> <span class="n">stack_tensor_list</span><span class="p">,</span> <span class="n">stack_tensor_dict_list</span><span class="p">,</span> <span class="n">insert_tensor_col</span>
 
 
 <div class="viewcode-block" id="test_stack_tensors"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_stack_tensors">[docs]</a><span class="k">def</span> <span class="nf">test_stack_tensors</span><span class="p">():</span>

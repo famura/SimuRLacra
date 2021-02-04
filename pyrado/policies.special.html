@@ -780,13 +780,73 @@ of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
 <div class="section" id="module-pyrado.policies.special.time">
 <span id="time"></span><h2>time<a class="headerlink" href="#module-pyrado.policies.special.time" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
+<dt id="pyrado.policies.special.time.PlaybackPolicy">
+<em class="property">class </em><code class="sig-name descname">PlaybackPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">act_recs</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.array<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
+<p>A policy wish simply replays a sequence of actions. If more actions are requested, the policy</p>
+<dl class="py method">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the action according to the policy and the observations (forward pass).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.init_param">
+<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'pb'</em><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the policy to it’s initial state.
+This should be called at the start of a rollout. Stateful policies should use it to reset the state variables.
+The default implementation does nothing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.script">
+<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a ScriptModule from this policy.
+The returned module will always have the signature <cite>action = tm(observation)</cite>.
+For recurrent networks, it returns a stateful module that keeps the hidden states internally.
+Such modules have a reset() method to reset the hidden states.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="pyrado.policies.special.time.TimePolicy">
 <em class="property">class </em><code class="sig-name descname">TimePolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">fcn_of_time</span><span class="p">:</span> <span class="n">Callable<span class="p">[</span><span class="p">[</span>float<span class="p">]</span><span class="p">, </span>Sequence<span class="p">[</span>float<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dt</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#TimePolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.TimePolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>A purely time-based policy, mainly useful for testing</p>
 <dl class="py method">
 <dt id="pyrado.policies.special.time.TimePolicy.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/special/time.html#TimePolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.TimePolicy.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/special/time.html#TimePolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.TimePolicy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -858,7 +918,7 @@ Better to just write another class.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.special.time.TraceableTimePolicy.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_ignore</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#TraceableTimePolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.TraceableTimePolicy.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/special/time.html#TraceableTimePolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.TraceableTimePolicy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">

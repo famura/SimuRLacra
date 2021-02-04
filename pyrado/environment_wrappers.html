@@ -124,6 +124,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.observation_noise">observation_noise</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.observation_normalization">observation_normalization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.observation_partial">observation_partial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.observation_velfilter">observation_velfilter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.state_augmentation">state_augmentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.utils">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers">Module contents</a></li>
@@ -892,6 +893,45 @@ hard-coded bounds, such that all values are in range [-1, 1]</p>
 <em class="property">class </em><code class="sig-name descname">ObsPartialWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">mask</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">idcs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keep_selected</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_partial.html#ObsPartialWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_partial.ObsPartialWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperObs" title="pyrado.environment_wrappers.base.EnvWrapperObs"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperObs</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which creates a partial observation by masking certain elements</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.observation_velfilter">
+<span id="observation-velfilter"></span><h2>observation_velfilter<a class="headerlink" href="#module-pyrado.environment_wrappers.observation_velfilter" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper">
+<em class="property">class </em><code class="sig-name descname">ObsVelFiltWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">mask_pos</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">idcs_pos</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mask_vel</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">idcs_vel</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Tuple<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">(50, 0)</span></em>, <em class="sig-param"><span class="n">den</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Tuple<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">(1, 50)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_velfilter.html#ObsVelFiltWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperObs" title="pyrado.environment_wrappers.base.EnvWrapperObs"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperObs</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Environment wrapper which computes the velocities from the satets given a linear filter</p>
+<dl class="py method">
+<dt id="pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.init_filter">
+<code class="sig-name descname">init_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_state</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_velfilter.html#ObsVelFiltWrapper.init_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.init_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the initial state of the velocity filter. This is useful when the initial (position) observation has been
+received and it is non-zero. Otherwise the filter would assume a very high initial velocity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>init_state</strong> – initial state to set the filter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_state</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">domain_param</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_velfilter.html#ObsVelFiltWrapper.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> – set explicit initial state if not None</p></li>
+<li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return obs</dt>
+<dd class="field-even"><p>initial observation of the state.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
