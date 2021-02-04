@@ -127,7 +127,9 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.omo = omo
 
                 self.setBackgroundColor(0, 0, 0)
-                self.cam.setY(-2.5)
+                self.cam.setY(-5)
+                self.cam.setZ(1)
+                self.cam.setP(-10)
                 self.textNodePath.setPos(0.4, 0, -0.1)
                 self.text.setTextColor(1, 1, 1, 1)
 
@@ -135,6 +137,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 c = 0.1 * self.omo.obs_space.bound_up[0]
 
                 # Ground
+                #ToDo Mass RoM and Ground_size do not appeal
                 self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
                 self.ground.setPos(0, 0, -0.02)
                 self.ground.setScale(
@@ -185,16 +188,29 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 d = self.omo.domain_param["d"]
                 c = 0.1 * self.omo.obs_space.bound_up[0]
 
+                #ToDo Mass moves too little
                 self.mass.setPos(self.omo.state[0], 0, c / 2.0)
-                self.force.setPos(self.omo.state[0], 0, c / 2.0)
+
+                #ToDo Force does not change at runtime
+                #weil capped_act ändert sich nicht
+                #eventuell nicht richtig gesetzt in der Sandbox, dummyWert = 0
+                #sollte sich da nicht eigentlich die Scale ändern?
+                self.force.setPos(self.mass.getPos())
                 capped_act = np.sign(self.omo._curr_act) * max(0.1 * np.abs(self.omo._curr_act), 0.3)
                 self.force.setHpr(capped_act, 0, 0)
-                #self.spring.setHpr(self.omo.state[0] - c / 2.0, 0, 0.0)
+
+                #ToDo Spring moves too much
+                #sollte anhand mass ausgerichtet werden, siehe nächstes T0D0
                 self.spring.setSx(self.omo.state[0] - c / 2.0)
-                #self.spring.setScale(self.omo.state[0] - c / 2.0, 0, 0.0)
+
+                #ToDo Mass_center and Spring_end do not align
+                #weil spring.setSx() mit Faktoren arbeitet und mass.setPos() mit Koordinaten
+                #brauchen eine Funktion f, für die gilt spring.setSx(f(mass.getPos())), sodass mass_center = spring_end
 
                 # set caption text
                 self.text.setText(f"""
+                    mass_x: {self.mass.getX()}
+                    spring_Sx: {self.spring.getSx()}
                     dt: {self.omo.dt :1.4f}
                     m: {self.omo.m : 1.3f}
                     k: {self.omo.k : 2.2f}
