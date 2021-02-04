@@ -10,8 +10,8 @@ win-size 800 600
 framebuffer-multisample 1
 multisamples 2
 show-frame-rate-meter 1
-sync-video #f
-vsync #f
+sync-video 0
+threading-model Cull/Cull
 """
 loadPrcFileData("", confVars)
 
@@ -19,6 +19,10 @@ class PandaVis(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
         self.dir = pathlib.Path(__file__).resolve().parent.absolute()
+
+        # self.clock = ClockObject.getGlobalClock()
+        # self.clock.setMode(ClockObject.M_limited)
+        # globalClock.setFrameRate(500)
 
         self.render.setAntialias(AntialiasAttrib.MAuto)
         self.windowProperties = WindowProperties()

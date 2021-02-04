@@ -216,7 +216,7 @@ class QQubeSim(SimPyEnv, Serializable):
                 Rm = self.qq.domain_param["Rm"]
                 Dr = self.qq.domain_param["Dr"]
                 Dp = self.qq.domain_param["Dp"]
-
+                print(globalClock.getDt())
                 th, al, _, _ = self.qq.state
 
                 self.arm.setH(th*180/np.pi)
