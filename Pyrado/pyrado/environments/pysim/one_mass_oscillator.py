@@ -161,9 +161,10 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.des.reparentTo(self.render)
 
                 # Force
-                self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/pyramid.egg"))
+                self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/arrow.egg"))
                 self.force.setPos(self.omo.state[0], 0, c / 2.0)
-                self.force.setScale(0.1 * self.omo._curr_act, 0.2 * c, 0.2 * c)
+                #self.force.setScale(0.1 * self.omo._curr_act, 0.2 * c, 0.2 * c)
+                self.force.setScale(0.2, 0.2 * c, 0.2 * c)
                 self.force.setColor(1, 0, 0, 0)
                 self.force.reparentTo(self.render)
 
@@ -171,6 +172,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
                 self.spring.setPos(0, 0, c / 2.0)
                 self.spring.setScale(self.omo.state[0] - c / 2.0, c / 3.0, c / 3.0)
+                #self.spring.setScale(0.1, 0.1, 0.1)
                 self.spring.setColor(0, 0, 1, 0)
                 self.spring.reparentTo(self.render)
 
@@ -187,14 +189,16 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.force.setPos(self.omo.state[0], 0, c / 2.0)
                 capped_act = np.sign(self.omo._curr_act) * max(0.1 * np.abs(self.omo._curr_act), 0.3)
                 self.force.setHpr(capped_act, 0, 0)
-                self.spring.setHpr(self.omo.state[0] - c / 2.0, 0, 0.0)
+                #self.spring.setHpr(self.omo.state[0] - c / 2.0, 0, 0.0)
+                self.spring.setSx(self.omo.state[0] - c / 2.0)
+                #self.spring.setScale(self.omo.state[0] - c / 2.0, 0, 0.0)
 
                 # set caption text
                 self.text.setText(f"""
                     dt: {self.omo.dt :1.4f}
-                    m: {m : 1.3f}
-                    k: {k : 2.2f}
-                    d: {d : 1.3f}
+                    m: {self.omo.m : 1.3f}
+                    k: {self.omo.k : 2.2f}
+                    d: {self.omo.d : 1.3f}
                     """)
 
                 return Task.cont
@@ -206,7 +210,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.des.setPos(self.omo._task.state_des[0], 0, 0.8 * c / 2.0)
                 self.force.setPos(self.omo.state[0], 0, c / 2.0)
                 self.force.setHpr(0.1 * self.omo._curr_act, 0, 0)
-                self.spring.setHpr(self.omo.state[0] - c / 2.0, 0, 0)
+                self.spring.setSx(self.omo.state[0] - c / 2.0)
 
         # Create instance of PandaVis
         self._visualization = PandaVisOmo(self)
