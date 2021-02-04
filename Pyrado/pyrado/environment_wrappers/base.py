@@ -106,17 +106,26 @@ class EnvWrapper(Env, Serializable):
     def max_steps(self, num_steps: int):
         self._wrapped_env.max_steps = num_steps
 
+    @property
+    def state(self) -> np.ndarray:
+        """ Get the state of the wrapped environment. """
+        return self._wrapped_env.state.copy()
+
+    @state.setter
+    def state(self, state: np.ndarray):
+        """ Set the state of the wrapped environment. """
+        if not isinstance(state, np.ndarray):
+            raise pyrado.TypeErr(given=state, expected_type=np.ndarray)
+        if not state.shape == self._wrapped_env.state.shape:
+            raise pyrado.ShapeErr(given=state, expected_match=self._wrapped_env.state)
+        self._wrapped_env.state = state
+
     def _create_task(self, task_args: dict) -> Task:
         return self._wrapped_env._create_task(task_args)
 
     @property
     def task(self) -> Task:
         return self._wrapped_env.task
-
-    @property
-    def state(self) -> np.ndarray:
-        """ Get the state of the wrapped environment. """
-        return self._wrapped_env.state
 
     @property
     def domain_param(self) -> dict:

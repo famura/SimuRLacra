@@ -112,15 +112,14 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
     def step(self, act: np.ndarray):
         obs, reward, done, info = self.wrapped_env.step(act)
         saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
-        state = inner_env(self).state
         nonobserved = to.from_numpy(obs[saw.offset :])
-        adversarial = self.get_arpl_grad(state, nonobserved)
+        adversarial = self.get_arpl_grad(self.state, nonobserved)
         if self.decide_apply():
-            inner_env(self).state += adversarial.view(-1).numpy()
+            self.state += adversarial.view(-1).numpy()
         if saw:
-            obs[: saw.offset] = inner_env(self).observe(inner_env(self).state)
+            obs[: saw.offset] = inner_env(self).observe(self.state)
         else:
-            obs = inner_env(self).observe(inner_env(self).state)
+            obs = inner_env(self).observe(self.state)
         return obs, reward, done, info
 
     def get_arpl_grad(self, state, nonobserved):
