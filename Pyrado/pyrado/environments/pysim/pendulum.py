@@ -93,22 +93,13 @@ class PendulumSim(SimPyEnv, Serializable):
 
     def _init_anim(self):
         #import vpython as vp
-        from direct.showbase.ShowBase import ShowBase
+        from pyrado.environments.pysim.pandavis import PandaVis
         from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
+        from panda3d.core import DirectionalLight, AmbientLight, TextNode
 
-        # Configuration for panda3d-window
-        confVars = """
-        win-size 800 600
-        window-title Ball on Beam
-        framebuffer-multisample 1
-        multisamples 2
-        """
-        loadPrcFileData("", confVars)
-
-        class PandaVis(ShowBase):
+        class PandaVisPend(PandaVis):
             def __init__(self,pend):
-                ShowBase.__init__(self)
+                super().__init__()
 
                 mydir = pathlib.Path(__file__).resolve().parent.absolute()
 
@@ -117,13 +108,18 @@ class PendulumSim(SimPyEnv, Serializable):
                 l_pole = float(self.pend.domain_param["l_pole"])
                 r_pole = 0.05
                 th, _ = self.pend.state
+                
+                self.windowProperties.setTitle('Pendulum')
+                self.win.requestProperties(self.windowProperties)
 
-                self.setBackgroundColor(0, 0, 0)
-                self.cam.setY(-3)
+                self.setBackgroundColor(1, 1, 1)
+                self.cam.setY(-12)
+                self.cam.setZ(-2)
+                """
                 self.render.setAntialias(AntialiasAttrib.MAuto)
                 self.windowProperties = WindowProperties()
                 self.windowProperties.setForeground(True)
-
+                """
                 # Set lighting
                 self.directionalLight = DirectionalLight('directionalLight')
                 self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
@@ -138,19 +134,20 @@ class PendulumSim(SimPyEnv, Serializable):
 
                 self.text = TextNode('parameters')
                 self.textNodePath = aspect2d.attachNewNode(self.text)
-                self.textNodePath.setScale(0.07)
-                self.textNodePath.setPos(0.3, 0, -0.3)
+                self.textNodePath.setColor(0,0,0)
+                self.textNodePath.setScale(0.06)
+                self.textNodePath.setPos(0.45, 0, -0.3)
                 
-                self.joint = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                self.joint = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
                 self.joint.setPos(0,r_pole,0)
                 self.joint.setScale(r_pole,r_pole,r_pole)
                 self.joint.setColor(1,1,1)
                 self.joint.reparentTo(self.render)
                 
-                self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
+                self.pole = self.loader.loadModel(pathlib.Path(mydir, "models/cylinder_center_bottom.egg"))
                 self.pole.setPos(0,r_pole,0)
                 self.pole.setScale(r_pole,r_pole,2*l_pole)
-                self.pole.setHpr(2*l_pole*np.sin(th)*180/np.pi,-2*l_pole*np.cos(th)*180/np.pi,0)
+                self.pole.setR(180*np.pi+180)
                 self.pole.setColor(0,0,1)
                 self.pole.reparentTo(self.render)
                 
@@ -167,15 +164,15 @@ class PendulumSim(SimPyEnv, Serializable):
                 
                 self.joint.setPos(0,r_pole,0)
                 self.pole.setPos(0,r_pole,0)
-                self.pole.setHpr(2*l_pole*np.sin(th)*180/np.pi,-2*l_pole*np.cos(th)*180/np.pi,0)
+                self.pole.setR(th*180/np.pi+180)
                 
                 self.text.setText(f"""
+                    dt: {self.pend._dt :1.4f}
                     theta: {self.pend.state[0]*180/np.pi : 2.3f}
                     sin theta: {np.sin(self.pend.state[0]) : 1.3f}
                     cos theta: {np.cos(self.pend.state[0]) : 1.3f}
                     theta_dot: {self.pend.state[1]*180/np.pi : 2.3f}
                     tau: {self.pend._curr_act[0] : 1.3f}
-                    dt: {self.pend._dt :1.4f}
                     g: {g : 1.3f}
                     m_pole: {m_pole : 1.3f}
                     l_pole: {l_pole : 1.3f}
@@ -191,7 +188,7 @@ class PendulumSim(SimPyEnv, Serializable):
                 self.pole.setPos(0,r_pole,0)
                 self.pole.setHpr(2*l_pole*np.sin(th)*180/np.pi,-2*l_pole*np.cos(th)*180/np.pi,0)
                 
-        self._simulation = PandaVis(self)
+        self._simulation = PandaVisPend(self)
         self._simulation.taskMgr.step()
         self._initiated = True
                 
