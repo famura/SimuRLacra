@@ -127,8 +127,8 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.omo = omo
 
                 self.setBackgroundColor(0, 0, 0)
-                self.cam.setY(-1.3)
-
+                self.cam.setY(-2.5)
+                self.textNodePath.setPos(0.4, 0, -0.1)
                 self.text.setTextColor(1, 1, 1, 1)
 
                 # Params
@@ -136,38 +136,42 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
 
                 # Ground
                 self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-                self.groud.setPos()
-                self.ground.setScale()
-                self.ground.setColor()
+                self.ground.setPos(0, 0, -0.02)
+                self.ground.setScale(
+                    2 * self.omo.obs_space.bound_up[0],
+                    3 * c,
+                    0.02
+                )
+                self.ground.setColor(0, 1, 0, 0)
                 self.ground.reparentTo(self.render)
 
                 # Mass
                 self.mass = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-                self.mass.setPos()
-                self.mass.setScale()
-                self.mass.setColor()
+                self.mass.setPos(self.omo.state[0], 0, c / 2.0)
+                self.mass.setScale(c, c, c)
+                self.mass.setColor(0, 0, 1, 0)
                 self.mass.reparentTo(self.render)
 
                 # Des
-                self.des = self.loader.loadModel(pathlib.Path(self.dir), "models/box.egg")
-                self.des.setPos()
-                self.des.setScale()
-                self.des.setTransparency()
-                self.des.setColorScale()
+                self.des = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+                self.des.setPos(self.omo._task.state_des[0], 0, 0.8 * c / 2.0)
+                self.des.setScale(0.8 * c, 0.8 * c, 0.8 * c)
+                self.des.setTransparency(1)
+                self.des.setColorScale(0, 1, 1, 0.5)
                 self.des.reparentTo(self.render)
 
                 # Force
-                self.force = self.loader.loadModel()
-                self.force.setPos()
-                self.force.setScale()
-                self.force.setColor()
+                self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/pyramid.egg"))
+                self.force.setPos(self.omo.state[0], 0, c / 2.0)
+                self.force.setScale(0.1 * self.omo._curr_act, 0.2 * c, 0.2 * c)
+                self.force.setColor(1, 0, 0, 0)
                 self.force.reparentTo(self.render)
 
                 # Spring
-                self.spring = self.loader.loadModel()
-                self.spring.setPos()
-                self.spring.setScale()
-                self.spring.setColor()
+                self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
+                self.spring.setPos(0, 0, c / 2.0)
+                self.spring.setScale(self.omo.state[0] - c / 2.0, c / 3.0, c / 3.0)
+                self.spring.setColor(0, 0, 1, 0)
                 self.spring.reparentTo(self.render)
 
                 self.taskMgr.add(self.update, "update")
@@ -179,11 +183,11 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 d = self.omo.domain_param["d"]
                 c = 0.1 * self.omo.obs_space.bound_up[0]
 
-                self.mass.setPos()
-                self.force.setPos()
+                self.mass.setPos(self.omo.state[0], 0, c / 2.0)
+                self.force.setPos(self.omo.state[0], 0, c / 2.0)
                 capped_act = np.sign(self.omo._curr_act) * max(0.1 * np.abs(self.omo._curr_act), 0.3)
-                self.force.setHpr()
-                self.spring.setHpr()
+                self.force.setHpr(capped_act, 0, 0)
+                self.spring.setHpr(self.omo.state[0] - c / 2.0, 0, 0.0)
 
                 # set caption text
                 self.text.setText(f"""
@@ -198,11 +202,11 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
             def reset(self):
                 c = 0.1 * self.omo.obs_space.bound_up[0]
 
-                self.mass.setPos()
-                self.des.setPos()
-                self.force.setPos()
-                self.force.setHpr()
-                self.spring.setHpr()
+                self.mass.setPos(self.omo.state[0], 0, c / 2.0)
+                self.des.setPos(self.omo._task.state_des[0], 0, 0.8 * c / 2.0)
+                self.force.setPos(self.omo.state[0], 0, c / 2.0)
+                self.force.setHpr(0.1 * self.omo._curr_act, 0, 0)
+                self.spring.setHpr(self.omo.state[0] - c / 2.0, 0, 0)
 
         # Create instance of PandaVis
         self._visualization = PandaVisOmo(self)
