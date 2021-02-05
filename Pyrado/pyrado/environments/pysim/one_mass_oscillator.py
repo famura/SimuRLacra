@@ -212,9 +212,9 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                     mass_x: {self.mass.getX()}
                     spring_Sx: {self.spring.getSx()}
                     dt: {self.omo.dt :1.4f}
-                    m: {self.m : 1.3f}
-                    k: {self.k : 2.2f}
-                    d: {self.d : 1.3f}
+                    m: {m : 1.3f}
+                    k: {k : 2.2f}
+                    d: {d : 1.3f}
                     """)
 
                 return Task.cont
