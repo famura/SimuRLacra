@@ -202,6 +202,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
     def _init_anim(self):
         from pyrado.environments.pysim.pandavis import PandaVis
+        from direct.task import Task
 
         class PandaVisQcp(PandaVis):
             def __init__(self, qcp):
