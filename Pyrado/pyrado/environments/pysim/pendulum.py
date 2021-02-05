@@ -115,25 +115,7 @@ class PendulumSim(SimPyEnv, Serializable):
                 self.setBackgroundColor(1, 1, 1)
                 self.cam.setY(-12)
                 self.cam.setZ(-2)
-                """
-                self.render.setAntialias(AntialiasAttrib.MAuto)
-                self.windowProperties = WindowProperties()
-                self.windowProperties.setForeground(True)
-                """
-                # Set lighting
-                self.directionalLight = DirectionalLight('directionalLight')
-                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
-                self.directionalLightNP.setHpr(0, -8, 0)
-                #self.directionalLightNP.setPos(0, 8, 0)
-                self.render.setLight(self.directionalLightNP)
 
-                self.ambientLight = AmbientLight('ambientLight')
-                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
-                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
-                self.render.setLight(self.ambientLightNP)
-
-                self.text = TextNode('parameters')
-                self.textNodePath = aspect2d.attachNewNode(self.text)
                 self.textNodePath.setColor(0,0,0)
                 self.textNodePath.setScale(0.06)
                 self.textNodePath.setPos(0.45, 0, -0.3)
