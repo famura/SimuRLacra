@@ -87,7 +87,7 @@ def draw_observations_actions_rewards(ro: StepSequence):
 
         # Observations (without the last time step)
         for i in range(dim_obs):
-            axs[i].plot(t, ro.observations[:-1, i], c=colors[i])
+            axs[i].plot(t, ro.observations[:, i], c=colors[i])
             axs[i].set_ylabel(_get_obs_label(ro, i))
 
         # Actions
@@ -136,14 +136,14 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_obs)))
 
         if len(dim_obs) == 1:
-            axs.plot(t, ro.observations[:-1, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
+            axs.plot(t, ro.observations[:, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
             axs.legend()
         else:
             for i in range(num_rows):
                 for j in range(num_cols):
                     if j + i * num_cols < len(dim_obs):
                         # Omit the last observation for simplicity
-                        axs[i, j].plot(t, ro.observations[:-1, j + i * num_cols], c=colors[j + i * num_cols])
+                        axs[i, j].plot(t, ro.observations[:, j + i * num_cols], c=colors[j + i * num_cols])
                         axs[i, j].set_ylabel(_get_obs_label(ro, j + i * num_cols))
                     else:
                         # We might create more subplots than there are observations
