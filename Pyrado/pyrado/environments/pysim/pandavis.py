@@ -162,3 +162,102 @@ class QQubeVis(PandaVis):
             """)
 
         return Task.cont
+
+
+class PendulumVis(PandaVis):
+    def __init__(self, env: SimEnv):
+        """ 
+        Constructor
+
+        :param env: visualization class
+
+        """
+        super().__init__()
+    
+        mydir = pathlib.Path(__file__).resolve().parent.absolute()
+    
+        # Accessing variables of outer class
+        self._env = env
+        l_pole = float(self._env.domain_param["l_pole"])
+        r_pole = 0.05
+        th, _ = self._env.state
+        
+        # set window title to current Simulation
+        self.windowProperties.setTitle('Pendulum')
+        self.win.requestProperties(self.windowProperties)
+        
+        # window and cam properties
+        self.setBackgroundColor(1, 1, 1)
+        self.cam.setY(-20)
+        self.cam.setZ(-0)
+        
+        # text properties
+        self.textNodePath.setColor(0,0,0)
+        self.textNodePath.setScale(0.06)
+        self.textNodePath.setPos(0.45, 0, -0.3)
+        
+        # creating the joint object of the pendulum
+        self.joint = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
+        self.joint.setPos(0,r_pole,0)
+        self.joint.setScale(r_pole,r_pole,r_pole)
+        self.joint.setColor(1,1,1)
+        self.joint.reparentTo(self.render)
+        
+        # creating the pole object of the pendulum
+        self.pole = self.loader.loadModel(pathlib.Path(mydir, "models/cylinder_center_bottom.egg"))
+        self.pole.setPos(0,r_pole,0)
+        self.pole.setScale(r_pole,r_pole,2*l_pole)
+        self.pole.setR(180*np.pi+180)
+        self.pole.setColor(0,0,1)
+        self.pole.reparentTo(self.render)
+        
+        self.taskMgr.add(self.update,"update")
+        
+    def update(self,task: Task):
+        
+        # accessing the current parameter values
+        g = self._env.domain_param["g"]
+        m_pole = self._env.domain_param["m_pole"]
+        l_pole = float(self._env.domain_param["l_pole"])
+        d_pole = self._env.domain_param["d_pole"]
+        tau_max = self._env.domain_param["tau_max"]
+        r_pole = 0.05
+        th, _ = self._env.state
+        
+        # change the position and rotation
+        self.joint.setPos(0,r_pole,0)
+        self.pole.setPos(0,r_pole,0)
+        self.pole.setR(th*180/np.pi+180)
+        
+        # change the shown text
+        self.text.setText(f"""
+            dt: {self._env._dt :1.4f}
+            theta: {self._env.state[0]*180/np.pi : 2.3f}
+            sin theta: {np.sin(self._env.state[0]) : 1.3f}
+            cos theta: {np.cos(self._env.state[0]) : 1.3f}
+            theta_dot: {self._env.state[1]*180/np.pi : 2.3f}
+            tau: {self._env._curr_act[0] : 1.3f}
+            g: {g : 1.3f}
+            m_pole: {m_pole : 1.3f}
+            l_pole: {l_pole : 1.3f}
+            d_pole: {d_pole : 1.3f}
+            tau_max: {tau_max: 1.3f}
+            """)
+        return Task.cont
+    
+    def reset(self):
+        
+        # accessing the current parameter values
+        l_pole = float(self._env.domain_param["l_pole"])
+        r_pole = 0.05
+        th, _ = self._env.state
+        
+        # change the position and rotation
+        self.joint.setPos(0,r_pole,0)
+        self.joint.setScale(r_pole,r_pole,r_pole)
+        self.joint.setColor(1,1,1)
+        
+        self.pole.setPos(0,r_pole,0)
+        self.pole.setScale(r_pole,r_pole,2*l_pole)
+        self.pole.setR(180*np.pi+180)
+        self.pole.setColor(0,0,1)

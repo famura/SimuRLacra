@@ -36,7 +36,7 @@ from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
-
+from pyrado.environments.pysim.pandavis import PendulumVis
 
 class PendulumSim(SimPyEnv, Serializable):
     """ Under-actuated inverted pendulum environment similar to the one from OpenAI Gym """
@@ -92,148 +92,13 @@ class PendulumSim(SimPyEnv, Serializable):
         self.state[0] += self.state[1] * self._dt  # next position
 
     def _init_anim(self):
-        #import vpython as vp
-        from pyrado.environments.pysim.pandavis import PandaVis
-        from direct.task import Task
-        from panda3d.core import DirectionalLight, AmbientLight, TextNode
 
-        class PandaVisPend(PandaVis):
-            def __init__(self,pend):
-                super().__init__()
-
-                mydir = pathlib.Path(__file__).resolve().parent.absolute()
-
-                # Accessing variables of outer class
-                self.pend = pend
-                l_pole = float(self.pend.domain_param["l_pole"])
-                r_pole = 0.05
-                th, _ = self.pend.state
-                
-                self.windowProperties.setTitle('Pendulum')
-                self.win.requestProperties(self.windowProperties)
-
-                self.setBackgroundColor(1, 1, 1)
-                self.cam.setY(-12)
-                self.cam.setZ(-2)
-
-                self.textNodePath.setColor(0,0,0)
-                self.textNodePath.setScale(0.06)
-                self.textNodePath.setPos(0.45, 0, -0.3)
-                
-                self.joint = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
-                self.joint.setPos(0,r_pole,0)
-                self.joint.setScale(r_pole,r_pole,r_pole)
-                self.joint.setColor(1,1,1)
-                self.joint.reparentTo(self.render)
-                
-                self.pole = self.loader.loadModel(pathlib.Path(mydir, "models/cylinder_center_bottom.egg"))
-                self.pole.setPos(0,r_pole,0)
-                self.pole.setScale(r_pole,r_pole,2*l_pole)
-                self.pole.setR(180*np.pi+180)
-                self.pole.setColor(0,0,1)
-                self.pole.reparentTo(self.render)
-                
-                self.taskMgr.add(self.update,"update")
-                
-            def update(self,task):
-                g = self.pend.domain_param["g"]
-                m_pole = self.pend.domain_param["m_pole"]
-                l_pole = float(self.pend.domain_param["l_pole"])
-                d_pole = self.pend.domain_param["d_pole"]
-                tau_max = self.pend.domain_param["tau_max"]
-                r_pole = 0.05
-                th, _ = self.pend.state
-                
-                self.joint.setPos(0,r_pole,0)
-                self.pole.setPos(0,r_pole,0)
-                self.pole.setR(th*180/np.pi+180)
-                
-                self.text.setText(f"""
-                    dt: {self.pend._dt :1.4f}
-                    theta: {self.pend.state[0]*180/np.pi : 2.3f}
-                    sin theta: {np.sin(self.pend.state[0]) : 1.3f}
-                    cos theta: {np.cos(self.pend.state[0]) : 1.3f}
-                    theta_dot: {self.pend.state[1]*180/np.pi : 2.3f}
-                    tau: {self.pend._curr_act[0] : 1.3f}
-                    g: {g : 1.3f}
-                    m_pole: {m_pole : 1.3f}
-                    l_pole: {l_pole : 1.3f}
-                    d_pole: {d_pole : 1.3f}
-                    tau_max: {tau_max: 1.3f}
-                    """)
-                return Task.cont
-            def reset(self):
-                l_pole = float(self.pend.domain_param["l_pole"])
-                r_pole = 0.05
-                th, _ = self.pend.state
-                self.joint.setPos(0,r_pole,0)
-                self.pole.setPos(0,r_pole,0)
-                self.pole.setHpr(2*l_pole*np.sin(th)*180/np.pi,-2*l_pole*np.cos(th)*180/np.pi,0)
-                
-        self._simulation = PandaVisPend(self)
-        self._simulation.taskMgr.step()
+        self._visualization = PendulumVis(self)
+        self._visualization.taskMgr.step()
         self._initialized = True
-                
-                
-    
-    """    
-    l_pole = float(self.domain_param["l_pole"])
-        r_pole = 0.05
-        th, _ = self.state
-
-        # Init render objects on first call
-        self._anim["canvas"] = vp.canvas(width=1000, height=600, title="Pendulum")
-        # Joint
-        self._anim["joint"] = vp.sphere(
-            pos=vp.vec(0, 0, r_pole),
-            radius=r_pole,
-            color=vp.color.white,
-        )
-        # Pole
-        self._anim["pole"] = vp.cylinder(
-            pos=vp.vec(0, 0, r_pole),
-            axis=vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0),
-            radius=r_pole,
-            length=2 * l_pole,
-            color=vp.color.blue,
-            canvas=self._anim["canvas"],
-        )
-        """
 
     def _update_anim(self):
-        #import vpython as vp
-        self._simulation.taskMgr.step()
-        """
-        g = self.domain_param["g"]
-        m_pole = self.domain_param["m_pole"]
-        l_pole = float(self.domain_param["l_pole"])
-        d_pole = self.domain_param["d_pole"]
-        tau_max = self.domain_param["tau_max"]
-        r_pole = 0.05
-        th, _ = self.state
+        self._visualization.taskMgr.step()
 
-        # Cart
-        self._anim["joint"].pos = vp.vec(0, 0, r_pole)
-
-        # Pole
-        self._anim["pole"].pos = vp.vec(0, 0, r_pole)
-        self._anim["pole"].axis = vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f
-            theta: {self.state[0]*180/np.pi : 2.3f}
-            sin theta: {np.sin(self.state[0]) : 1.3f}
-            cos theta: {np.cos(self.state[0]) : 1.3f}
-            theta_dot: {self.state[1]*180/np.pi : 2.3f}
-            tau: {self._curr_act[0] : 1.3f}
-            dt: {self._dt :1.4f}
-            g: {g : 1.3f}
-            m_pole: {m_pole : 1.3f}
-            l_pole: {l_pole : 1.3f}
-            d_pole: {d_pole : 1.3f}
-            tau_max: {tau_max: 1.3f}
-            """
     def _reset_anim(self):
-        self._simulation.reset()
+        self._visualization.reset()
