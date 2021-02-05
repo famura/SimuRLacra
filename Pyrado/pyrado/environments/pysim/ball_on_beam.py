@@ -133,25 +133,13 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         self._visualization.reset()
 
     def _init_anim(self):
-        from direct.showbase.ShowBase import ShowBase
-        import math, pathlib
+        from pyrado.environments.pysim.pandavis import PandaVis
         from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
+        import pathlib
 
-        # Configuration for panda3d-window
-        confVars = """
-        win-size 800 600
-        window-title Ball on Beam
-        framebuffer-multisample 1
-        multisamples 2
-        """
-        loadPrcFileData("", confVars)
-
-        class PandaVis(ShowBase):
-            def __init__(self,bob):
-                ShowBase.__init__(self)
-
-                mydir = pathlib.Path(__file__).resolve().parent.absolute()
+        class PandaVisBob(PandaVis):
+            def __init__(self, bob):
+                super().__init__()
 
                 # Accessing variables of outer class
                 self.bob = bob
@@ -161,41 +149,21 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])  # angle [rad]
 
-                self.setBackgroundColor(0, 0, 0)
-                self.cam.setY(-3)
-                self.render.setAntialias(AntialiasAttrib.MAuto)
-                self.windowProperties = WindowProperties()
-                self.windowProperties.setForeground(True)
-
-                # Set lighting
-                self.directionalLight = DirectionalLight('directionalLight')
-                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
-                self.directionalLightNP.setHpr(0, -8, 0)
-                #self.directionalLightNP.setPos(0, 8, 0)
-                self.render.setLight(self.directionalLightNP)
-
-                self.ambientLight = AmbientLight('ambientLight')
-                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
-                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
-                self.render.setLight(self.ambientLightNP)
-
-                self.text = TextNode('parameters')
-                self.textNodePath = aspect2d.attachNewNode(self.text)
+                self.cam.setY(-3.0)
                 self.textNodePath.setScale(0.07)
                 self.textNodePath.setPos(0.3, 0, -0.3)
 
-                self.ball = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
+                self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
                 self.ball.setColor(1, 0, 0, 0)
                 self.ball.setScale(r_ball)
                 self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
                 self.ball.reparentTo(self.render)
 
-                self.beam = self.loader.loadModel(pathlib.Path(mydir, "models/box.egg"))
+                self.beam = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
                 self.beam.setColor(0, 1, 0, 0)
                 self.beam.setScale(l_beam / 2, d_beam, d_beam/2)
                 self.beam.setPos(0, 0, 0)
-                self.beam.setR(-a*180/math.pi)
-
+                self.beam.setR(-a * 180 / np.pi)
                 self.beam.reparentTo(self.render)
 
                 self.taskMgr.add(self.update,"update")
@@ -206,9 +174,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0]) # ball position along the beam axis [m]
                 a = float(self.bob.state[1]) # angle [rad]
 
-                self.ball.setPos(x, 0, math.sin(a) * x + math.cos(a) * d_beam / 2.0 + r_ball)
+                self.ball.setPos(x, 0, np.sin(a) * x + np.cos(a) * d_beam / 2.0 + r_ball)
 
-                self.beam.setR(-a*180/math.pi)
+                self.beam.setR(-a * 180 / np.pi)
 
             def update(self,task):
                 g = self.bob.domain_param["g"]
@@ -222,9 +190,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0]) # ball position along the beam axis [m]
                 a = float(self.bob.state[1]) # angle [rad]
 
-                self.ball.setPos(math.cos(a) * x - math.sin(a) * (d_beam / 2.0 + r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
+                self.ball.setPos(np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball), 0, np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball))
 
-                self.beam.setR(-a*180/math.pi)
+                self.beam.setR(-a*180/np.pi)
 
                 # Displayed text
                 self.text.setText(f"""
@@ -242,13 +210,14 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 return Task.cont
 
         # Create instance of PandaVis
-        self._visualization = PandaVis(self)
+        self._visualization = PandaVisBob(self)
         # States that visualization is running
         self._initiated = True
 
     def _update_anim(self):
         # Refreshed with every frame
         self._visualization.taskMgr.step()
+
 
 class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
     """ Ball-on-beam simulation environment with discrete actions """
