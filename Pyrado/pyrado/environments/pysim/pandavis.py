@@ -19,6 +19,7 @@ threading-model Cull/Cull
 """
 loadPrcFileData("", confVars)
 
+
 class PandaVis(ShowBase):
     def __init__(self):
         """
@@ -178,6 +179,7 @@ class QbbVis(PandaVis):
         # Accessing variables of outer class
         self._env = env
 
+        self.windowProperties.setTitle('Quanser Ball Balancer')
         self.setBackgroundColor(1, 1, 1)
         self.cam.setY(-1.3)
 
@@ -297,4 +299,83 @@ class QbbVis(PandaVis):
         return Task.cont
 
 
+class BobVis(PandaVis):
+
+    def __init__(self, env: SimEnv):
+        """
+        Constructor
+
+        :param env: environment to visualize
+        """
+        super().__init__()
+
+        # Accessing variables of outer class
+        self._env = env
+        r_ball = self._env.domain_param["r_ball"]
+        l_beam = self._env.domain_param["l_beam"]
+        d_beam = self._env.domain_param["d_beam"]
+        x = float(self._env.state[0])  # ball position along the beam axis [m]
+        a = float(self._env.state[1])  # angle [rad]
+
+        self.windowProperties.setTitle('Ball on Beam')
+        self.cam.setY(-3.0)
+        self.textNodePath.setScale(0.07)
+        self.textNodePath.setPos(0.3, 0, -0.3)
+
+        self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
+        self.ball.setColor(1, 0, 0, 0)
+        self.ball.setScale(r_ball)
+        self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
+        self.ball.reparentTo(self.render)
+
+        self.beam = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        self.beam.setColor(0, 1, 0, 0)
+        self.beam.setScale(l_beam / 2, d_beam, d_beam / 2)
+        self.beam.setPos(0, 0, 0)
+        self.beam.setR(-a * 180 / np.pi)
+        self.beam.reparentTo(self.render)
+
+        self.taskMgr.add(self.update, "update")
+
+    def reset(self):
+        r_ball = self._env.domain_param["r_ball"]
+        d_beam = self._env.domain_param["d_beam"]
+        x = float(self._env.state[0])  # ball position along the beam axis [m]
+        a = float(self._env.state[1])  # angle [rad]
+
+        self.ball.setPos(x, 0, np.sin(a) * x + np.cos(a) * d_beam / 2.0 + r_ball)
+
+        self.beam.setR(-a * 180 / np.pi)
+
+    def update(self, task):
+        g = self._env.domain_param["g"]
+        m_ball = self._env.domain_param["m_ball"]
+        r_ball = self._env.domain_param["r_ball"]
+        m_beam = self._env.domain_param["m_beam"]
+        l_beam = self._env.domain_param["l_beam"]
+        d_beam = self._env.domain_param["d_beam"]
+        ang_offset = self._env.domain_param["ang_offset"]
+        c_frict = self._env.domain_param["c_frict"]
+        x = float(self._env.state[0])  # ball position along the beam axis [m]
+        a = float(self._env.state[1])  # angle [rad]
+
+        self.ball.setPos(np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball), 0,
+                         np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball))
+
+        self.beam.setR(-a * 180 / np.pi)
+
+        # Displayed text
+        self.text.setText(f"""
+            dt: {self._env._dt : 1.4f}
+            g: {g : 1.3f}
+            m_ball: {m_ball: 1.2f}
+            r_ball: {r_ball : 1.3f}
+            m_beam: {m_beam : 1.2f}
+            l_beam: {l_beam : 1.2f}
+            d_beam: {d_beam : 1.2f}
+            c_frict: {c_frict : 1.3f}
+            ang_offset: {ang_offset : 1.3f}
+            """)
+
+        return Task.cont
 
