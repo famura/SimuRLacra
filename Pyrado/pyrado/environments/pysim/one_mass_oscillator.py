@@ -197,11 +197,12 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 #sollte sich da nicht eigentlich die Scale ändern?
                 self.force.setPos(self.mass.getPos())
                 capped_act = np.sign(self.omo._curr_act) * max(0.1 * np.abs(self.omo._curr_act), 0.3)
-                self.force.setHpr(capped_act, 0, 0)
+                #self.force.setHpr(capped_act, 0, 0)
 
                 #ToDo Spring moves too much
                 #sollte anhand mass ausgerichtet werden, siehe nächstes T0D0
-                self.spring.setSx(self.omo.state[0] - c / 2.0)
+                #self.spring.setSx(self.omo.state[0] - c / 2.0)
+                self.spring.setSx(self.omo.state[0] / 10)
 
                 #ToDo Mass_center and Spring_end do not align
                 #weil spring.setSx() mit Faktoren arbeitet und mass.setPos() mit Koordinaten
