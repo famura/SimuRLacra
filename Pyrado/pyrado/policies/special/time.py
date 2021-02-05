@@ -70,12 +70,12 @@ class TimePolicy(Policy):
         pass
 
     def reset(self):
-        self._curr_time = 0
+        self._curr_time = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
         act = to.tensor(self._fcn_of_time(self._curr_time), dtype=to.get_default_dtype())
         self._curr_time += self._dt
-        return act
+        return to.atleast_1d(act)
 
     def script(self) -> ScriptModule:
         return script(TraceableTimePolicy(self.env_spec, self._fcn_of_time, self._dt))
