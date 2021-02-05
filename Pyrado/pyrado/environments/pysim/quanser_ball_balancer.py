@@ -468,7 +468,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         # Create instance of PandaVis
         self._visualization = PandaVisQbb(self)
         # States that visualization is running
-        self._initiated = True
+        self._initialized = True
 
     def _update_anim(self):
         # Refreshed with every frame

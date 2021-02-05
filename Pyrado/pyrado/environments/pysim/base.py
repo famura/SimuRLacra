@@ -72,7 +72,7 @@ class SimPyEnv(SimEnv, Serializable):
 
         # Animation with Panda3D
         self._curr_act = np.zeros(self.act_space.shape)
-        self._initiated = False
+        self._initialized = False
 
     @property
     def state_space(self) -> Space:
@@ -185,7 +185,7 @@ class SimPyEnv(SimEnv, Serializable):
         self._task.reset(env_spec=self.spec)
 
         # Reset VPython animation
-        if self._initiated:
+        if self._initialized:
             self._reset_anim()
 
         # Return an observation
@@ -244,7 +244,7 @@ class SimPyEnv(SimEnv, Serializable):
 
             # VPython
             if mode.video:
-                if not self._initiated:
+                if not self._initialized:
                     self._init_anim()
 
                 # Update the animation
@@ -253,14 +253,12 @@ class SimPyEnv(SimEnv, Serializable):
     def _init_anim(self):
         """
         Initialize animation. Called by first render call.
-        :return:
         """
         pass
 
     def _update_anim(self):
         """
         Update animation. Called by each render call.
-        :return:
         """
         pass
 

@@ -232,7 +232,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         # Create instance of PandaVis
         self._visualization = PandaVisOmo(self)
         # States that visualization is running
-        self._initiated = True
+        self._initialized = True
 
     def _update_anim(self):
         # Refreshed with every frame

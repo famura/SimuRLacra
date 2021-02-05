@@ -172,7 +172,7 @@ class PendulumSim(SimPyEnv, Serializable):
                 
         self._simulation = PandaVisPend(self)
         self._simulation.taskMgr.step()
-        self._initiated = True
+        self._initialized = True
                 
                 
     

@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 #added imports
-import math, pathlib
+import pathlib
 
 import numpy as np
 from abc import abstractmethod
@@ -328,7 +328,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         # Create instance of PandaVis
         self._visualization = PandaVisQcp(self)
         # States that visualization is running
-        self._initiated = True
+        self._initialized = True
 
     def _update_anim(self):
         self._visualization.taskMgr.step()

@@ -33,6 +33,7 @@ from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.pysim.pandavis import QQubeVis
 from pyrado.environments.quanser import max_act_qq
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
@@ -139,111 +140,10 @@ class QQubeSim(SimPyEnv, Serializable):
 
     def _init_anim(self):
         from pyrado.environments.pysim.pandavis import PandaVis
-        from direct.task import Task
-
-        class PandaVisQq(PandaVis):
-            def __init__(self, qq):
-                super().__init__()
-
-                self.qq = qq
-
-                self.windowProperties.setTitle('Quanser Qube')
-                self.win.requestProperties(self.windowProperties)
-
-                self.cam.setY(-1.5)
-                self.setBackgroundColor(1, 1, 1) #schwarz
-                self.textNodePath.setPos(0.4, 0, -0.1)
-                self.text.setTextColor(0, 0, 0, 1)
-
-                # Convert to float for VPython
-                Lr = float(self.qq.domain_param["Lr"])
-                Lp = float(self.qq.domain_param["Lp"])
-
-                # Init render objects on first call
-                scene_range = 0.2
-                arm_radius = 0.003
-                pole_radius = 0.0045
-
-                self.box = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-                self.box.setPos(0, 0.07, 0)
-                self.box.setScale(0.09, 0.1, 0.09)
-                self.box.setColor(0.5, 0.5, 0.5)
-                self.box.reparentTo(self.render)
-
-                #zeigt nach oben aus Box raus
-                self.cylinder = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
-                self.cylinder.setScale(0.005, 0.005, 0.03)
-                self.cylinder.setPos(0, 0.07, 0.12)
-                self.cylinder.setColor(0.5, 0.5, 0,5) #gray
-                self.cylinder.reparentTo(self.render)
-
-                # Armself.pole.setPos()
-                self.arm = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
-                self.arm.setScale(arm_radius, arm_radius, Lr)
-                self.arm.setColor(0, 0, 1) #blue
-                self.arm.setP(-90)
-                self.arm.setPos(0, 0.07, 0.15)
-                self.arm.reparentTo(self.render)
-
-                # Pole
-                self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
-                self.pole.setScale(pole_radius, pole_radius, Lp)
-                self.pole.setColor(1, 0, 0) #red
-                self.pole.setPos(0, 0.07+2*Lr, 0.15)
-                self.pole.wrtReparentTo(self.arm)
-
-                # Joints
-                self.joint1 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-                self.joint1.setScale(0.005)
-                self.joint1.setPos(0.0, 0.07, 0.15)
-                self.joint1.reparentTo(self.render)
-
-                self.joint2 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-                self.joint2.setScale(pole_radius)
-                self.joint2.setPos(0.0, 0.07+2*Lr, 0.15)
-                self.joint2.setColor(0, 0, 0)
-                self.joint2.wrtReparentTo(self.arm)
-
-                self.taskMgr.add(self.update, "update")
-
-            def update(self, task):
-                g = self.qq.domain_param["g"]
-                Mr = self.qq.domain_param["Mr"]
-                Mp = self.qq.domain_param["Mp"]
-                Lr = float(self.qq.domain_param["Lr"])
-                Lp = float(self.qq.domain_param["Lp"])
-                km = self.qq.domain_param["km"]
-                Rm = self.qq.domain_param["Rm"]
-                Dr = self.qq.domain_param["Dr"]
-                Dp = self.qq.domain_param["Dp"]
-                print(globalClock.getDt())
-                th, al, _, _ = self.qq.state
-
-                self.arm.setH(th*180/np.pi)
-                self.pole.setR(-al*180/np.pi)
-
-                # Displayed text
-                self.text.setText(f"""
-                    theta: {self.qq.state[0]*180/np.pi : 3.1f}
-                    alpha: {self.qq.state[1]*180/np.pi : 3.1f}
-                    dt: {self.qq._dt :1.4f}
-                    g: {g : 1.3f}
-                    Mr: {Mr : 1.4f}
-                    Mp: {Mp : 1.4f}
-                    Lr: {Lr : 1.4f}
-                    Lp: {Lp : 1.4f}
-                    Dr: {Dr : 1.7f}
-                    Dp: {Dp : 1.7f}
-                    Rm: {Rm : 1.3f}
-                    km: {km : 1.4f}
-                    """)
-
-                return Task.cont
-
         # Create instance of PandaVis
-        self._visualization = PandaVisQq(self)
+        self._visualization = QQubeVis(self)
         # States that visualization is running
-        self._initiated = True
+        self._initialized = True
 
     def _update_anim(self):
         # Refreshed with every frame
