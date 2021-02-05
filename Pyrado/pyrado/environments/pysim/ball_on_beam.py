@@ -26,9 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Added stuff
-import math, pathlib
-
 import numpy as np
 from init_args_serializer.serializable import Serializable
 
@@ -39,8 +36,6 @@ from pyrado.spaces.compound import CompoundSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
-
-
 
 
 class BallOnBeamSim(SimPyEnv, Serializable):
@@ -139,6 +134,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
     def _init_anim(self):
         from direct.showbase.ShowBase import ShowBase
+        import math, pathlib
         from direct.task import Task
         from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
 
@@ -188,13 +184,13 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.textNodePath.setScale(0.07)
                 self.textNodePath.setPos(0.3, 0, -0.3)
 
-                self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                self.ball = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
                 self.ball.setColor(1, 0, 0, 0)
                 self.ball.setScale(r_ball)
                 self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
                 self.ball.reparentTo(self.render)
 
-                self.beam = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                self.beam = self.loader.loadModel(pathlib.Path(mydir, "models/box.egg"))
                 self.beam.setColor(0, 1, 0, 0)
                 self.beam.setScale(l_beam / 2, d_beam, d_beam/2)
                 self.beam.setPos(0, 0, 0)
