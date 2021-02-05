@@ -35,6 +35,7 @@ from init_args_serializer.serializable import Serializable
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.pysim.pandavis import QbbVis
 from pyrado.environments.quanser import max_act_qbb
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.polar import Polar2DPosVelSpace
@@ -321,152 +322,8 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         self.plate_angs += np.array([a_dot, b_dot]) * self._dt  # just for debugging when simplified dynamics
 
     def _init_anim(self):
-        from pyrado.environments.pysim.pandavis import PandaVis
-        from direct.task import Task
-        import pathlib
-
-        class PandaVisQbb(PandaVis):
-
-            def __init__(self, qbb):
-                super().__init__()
-
-                # Accessing variables of outer class
-                self.qbb = qbb
-
-                self.setBackgroundColor(1, 1, 1)
-                self.cam.setY(-1.3)
-
-                self.textNodePath.setScale(0.05)
-                self.textNodePath.setPos(0.4, 0, -0.1)
-                self.text.setTextColor(0, 0, 0, 1)
-
-                # Physics params
-                l_plate = self.qbb.domain_param["l_plate"]
-                m_ball = self.qbb.domain_param["m_ball"]
-                r_ball = self.qbb.domain_param["r_ball"]
-                d_plate = 0.01  # only for animation
-
-                # Init render objects on first call
-
-                # Ball
-                self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-                self.ball.setPos(self.qbb.state[2],  self.qbb.state[3],  (r_ball + d_plate / 2.0))
-                self.ball.setScale(r_ball)
-                # self.ball.setMass(m_ball)
-                self.ball.setColor(1, 0, 0, 0)
-                self.ball.reparentTo(self.render)
-
-                # Plate
-                self.plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-                self.plate.setPos(0, 0, 0)
-                self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)
-                self.plate.setColor(0, 0, 1, 0)
-                self.plate.reparentTo(self.render)
-
-                # Null_plate
-                self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-                self.null_plate.setPos(0, 0, 0)
-                self.null_plate.setScale(l_plate * 1.1 / 2, l_plate * 1.1 / 2, d_plate / 10 / 2)
-                # self.null_plate.setColor(0, 1, 1, 0)
-                self.null_plate.setTransparency(1)
-                self.null_plate.setColorScale(0, 1, 1, 0.5)
-                # self.null_plate.setAlphaScale(0.5)
-                self.null_plate.reparentTo(self.render)
-
-                self.taskMgr.add(self.update, "update")
-
-            def update(self, task):
-
-                g = self.qbb.domain_param["g"]
-                l_plate = self.qbb.domain_param["l_plate"]
-                m_ball = self.qbb.domain_param["m_ball"]
-                r_ball = self.qbb.domain_param["r_ball"]
-                eta_g = self.qbb.domain_param["eta_g"]
-                eta_m = self.qbb.domain_param["eta_m"]
-                K_g = self.qbb.domain_param["K_g"]
-                J_m = self.qbb.domain_param["J_m"]
-                J_l = self.qbb.domain_param["J_l"]
-                r_arm = self.qbb.domain_param["r_arm"]
-                k_m = self.qbb.domain_param["k_m"]
-                R_m = self.qbb.domain_param["R_m"]
-                B_eq = self.qbb.domain_param["B_eq"]
-                c_frict = self.qbb.domain_param["c_frict"]
-                V_thold_x_neg = self.qbb.domain_param["V_thold_x_neg"]
-                V_thold_x_pos = self.qbb.domain_param["V_thold_x_pos"]
-                V_thold_y_neg = self.qbb.domain_param["V_thold_y_neg"]
-                V_thold_y_pos = self.qbb.domain_param["V_thold_y_pos"]
-                offset_th_x = self.qbb.domain_param["offset_th_x"]
-                offset_th_y = self.qbb.domain_param["offset_th_y"]
-                d_plate = 0.01  # only for animation
-
-                #  Compute plate orientation
-                a_vp = -self.qbb.plate_angs[0]  # plate's angle around the y axis (alpha) # Roll
-                b_vp = self.qbb.plate_angs[1]  # plate's angle around the x axis (beta) # Pitch
-
-                # Axis runs along the x direction
-                self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)
-
-                # self.plate.setHpr(np.cos(a_vp) * 180 / np.pi * float(l_plate), 0, np.sin(a_vp) * 180 / np.pi * float(l_plate))
-                self.plate.setR(- a_vp * 180 / np.pi)
-                self.plate.setP(b_vp * 180 / np.pi)
-
-                # Get ball position
-                x = self.qbb.state[2]  # along the x axis
-                y = self.qbb.state[3]  # along the y axis
-
-                self.ball.setPos(
-                    x * np.cos(a_vp),
-                    y * np.cos(b_vp),
-                    (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0),
-                )
-                self.ball.setScale(r_ball)
-
-                # Set caption text
-                self.text.setText(f"""
-                    x-axis is pos to the right, y-axis is pos up
-                    Commanded voltage: x servo : {self.qbb._curr_act[0] : 1.2f}, y servo : {self.qbb._curr_act[1] : 1.2f}
-                    Plate angle around x axis: {self.qbb.plate_angs[1]*180/np.pi : 2.2f}
-                    Plate angle around y axis: {self.qbb.plate_angs[0]*180/np.pi : 2.2f}
-                    Shaft angles: {self.qbb.state[0]*180/np.pi : 2.2f}, {self.qbb.state[1]*180/np.pi : 2.2f}
-                    Ball position: {x : 1.3f}, {y : 1.3f}
-                    g: {g : 1.3f}
-                    m_ball: {m_ball : 1.3f}
-                    r_ball: {r_ball : 1.3f}
-                    r_arm: {r_arm : 1.3f}
-                    l_plate: {l_plate : 1.3f}
-                    K_g: {K_g : 2.2f}
-                    J_m: {J_m : 1.7f}
-                    J_l: {J_l : 1.6f}
-                    eta_g: {eta_g : 1.3f}
-                    eta_m: {eta_m : 1.3f}
-                    k_mt: {k_m : 1.3f}
-                    R_m: {R_m : 1.3f}
-                    B_eq: {B_eq : 1.3f}
-                    c_frict: {c_frict : 1.3f}
-                    V_thold_x_pos: {V_thold_x_pos : 2.3f}
-                    V_thold_x_neg: {V_thold_x_neg : 2.3f}
-                    V_thold_y_pos: {V_thold_y_pos : 2.3f}
-                    V_thold_y_neg: {V_thold_y_neg : 2.3f}
-                    offset_th_x: {offset_th_x : 2.3f}
-                    offset_th_y: {offset_th_y : 2.3f}
-                    """)
-
-                return Task.cont
-
-            """
-            def reset(self):
-                # Physics params
-                l_plate = self.qbb.domain_param["l_plate"]
-                m_ball = self.qbb.domain_param["m_ball"]
-                r_ball = self.qbb.domain_param["r_ball"]
-                d_plate = 0.01  # only for animation
-                self.ball.setPos(self.qbb.state[2], - (r_ball + d_plate / 2.0), self.qbb.state[3])
-                self.plate.setPos(0, 0, 0)
-                self.null_plate.setPos(0, 0, 0)
-            """
-
         # Create instance of PandaVis
-        self._visualization = PandaVisQbb(self)
+        self._visualization = QbbVis(self)
         # States that visualization is running
         self._initialized = True
 
