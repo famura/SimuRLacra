@@ -215,15 +215,12 @@ class QCartPoleSim(SimPyEnv, Serializable):
         loadPrcFileData("", confVars)
 
 
-        from pyrado.environments.pysim import pandavis
-        #TypeError: module() takes at most 2 arguments (3 given)
-        class PandaVisQcp(pandavis):
+        from pyrado.environments.pysim.pandavis import PandaVis
+        from direct.task import Task
+        class PandaVisQcp(PandaVis):
             def __init__(self, qcp):
-                pandavis.__init__(self)
+                super().__init__()
 
-                #mydir = pathlib.Path(__file__).resolve().parent.absolute()
-
-                
                 #Accessing variables of outer class
                 self.qcp = qcp
 
@@ -241,32 +238,10 @@ class QCartPoleSim(SimPyEnv, Serializable):
                 self.setBackgroundColor(0, 0, 0)
                 self.cam.setY(-5)
 
-                #self.render.setAntialias(AntialiasAttrib.MAuto)
-                #self.windowProperties = WindowProperties()
-                #self.windowProperties.setForeground(True)
-
-                # Set lighting
-                '''self.directionalLight = DirectionalLight('directionalLight')
-                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
-                self.directionalLightNP.setHpr(0, -8, 0)
-                self.directionalLightNP.setPos(0, 8, 0)
-                self.render.setLight(self.directionalLightNP)
-
-                self.ambientLight = AmbientLight('ambientLight')
-                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
-                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
-                self.render.setLight(self.ambientLightNP)
-
-                # Text
-                self.text = TextNode('parameters')
-                self.textNodePath = aspect2d.attachNewNode(self.text)
-                self.textNodePath.setScale(0.07)
-                self.textNodePath.setPos(0.3, 0, -0.3)'''
-
                 #TODO RenderEinstellungen pro Objekt
 
                 #Rail
-                self.rail = self.loader.loadModel(pathlib.Path(mydir, "models/cylinder_shifted_center.egg"))
+                self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
                 self.rail.setPos(-l_rail/2, 0, -h_cart/2 - r_rail)
                 self.rail.setScale(r_rail, r_rail, l_rail)
                 self.rail.setColor(1, 1, 1) #white
@@ -274,21 +249,21 @@ class QCartPoleSim(SimPyEnv, Serializable):
                 self.rail.setR(90)
 
                 #Cart
-                self.cart = self.loader.loadModel(pathlib.Path(mydir, "models/box.egg"))
+                self.cart = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
                 self.cart.setPos(x, 0, 0)
                 self.cart.setScale(l_cart, h_cart/2, h_cart)
                 self.cart.setColor(0, 1, 0, 0) #green
                 self.cart.reparentTo(self.render)
 
                 #Joint
-                self.joint = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
+                self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
                 self.joint.setPos(x, r_pole + h_cart/4, 0)
                 self.joint.setScale(r_pole, r_pole, r_pole)
                 self.joint.setColor(0, 0, 0, 1) #white
                 self.joint.reparentTo(self.render)
 
                 #Pole
-                self.pole = self.loader.loadModel(pathlib.Path(mydir, "models/cylinder_shifted_center.egg"))
+                self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
                 self.pole.setPos(x, r_pole + h_cart/4, 0)
                 self.pole.setHpr(0, 0, 0)
                 #H um Z-Achse, P um X-Achse, R um Y-Achse
@@ -335,7 +310,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
                 #Pole
                 self.pole.setX(x)
-                self.pole.setR(-th * 180/np.pi +180)
+                self.pole.setR(-th * 180/np.pi)
 
                 self.text.setText(f"""
                                     th: {th}
@@ -371,40 +346,8 @@ class QCartPoleSim(SimPyEnv, Serializable):
     def _update_anim(self):
         self._visualization.taskMgr.step()
 
-
-        '''
-        # Cart
-        self._anim["cart"].pos = vp.vec(x, 0, 0)
-        self._anim["joint"].pos = vp.vec(x, 0, r_pole + h_cart / 4)'''
-        '''
-        # Pole
-        self._anim["pole"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
-        self._anim["pole"].axis = vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-                    x: {self.state[0] : 1.4f}
-                    theta: {self.state[1]*180/np.pi : 2.3f}
-                    dt: {self._dt :1.4f}
-                    g: {g : 1.3f}
-                    m_cart: {m_cart : 1.4f}
-                    l_rail: {l_rail : 1.3f}
-                    l_pole: {l_pole : 1.3f} (0.168 is short)
-                    eta_m: {eta_m : 1.3f}
-                    eta_g: {eta_g : 1.3f}
-                    K_g: {K_g : 1.3f}
-                    J_m: {J_m : 1.8f}
-                    r_mp: {r_mp : 1.4f}
-                    R_m: {R_m : 1.3f}
-                    k_m: {k_m : 1.6f}
-                    B_eq: {B_eq : 1.2f}
-                    B_pole: {B_pole : 1.3f}
-                    m_pole: {m_pole : 1.3f}
-                    """'''
-        def _reset_anim(self):
-            self._visualization.reset()
+    def _reset_anim(self):
+        self._visualization.reset()
 
 
 class QCartPoleStabSim(QCartPoleSim, Serializable):
