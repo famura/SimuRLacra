@@ -201,22 +201,8 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self.state[:2] += self.state[2:] * self._dt  # next position
 
     def _init_anim(self):
-        from direct.showbase.ShowBase import ShowBase
-        from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, AmbientLight, WindowProperties
-
-        # Configuration for panda3d-window
-        confVars = """
-               win-size 800 600
-               window-title Ball on Beam
-               framebuffer-multisample 1
-               multisamples 2
-               """
-        loadPrcFileData("", confVars)
-
-
         from pyrado.environments.pysim.pandavis import PandaVis
-        from direct.task import Task
+
         class PandaVisQcp(PandaVis):
             def __init__(self, qcp):
                 super().__init__()
