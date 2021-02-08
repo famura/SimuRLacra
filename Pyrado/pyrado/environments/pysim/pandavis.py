@@ -167,6 +167,7 @@ class QQubeVis(PandaVis):
 
 
 
+
 class PendulumVis(PandaVis):
     def __init__(self, env: SimEnv):
         """ 
@@ -264,6 +265,7 @@ class PendulumVis(PandaVis):
         self.pole.setScale(r_pole,r_pole,2*l_pole)
         self.pole.setR(180*np.pi+180)
         self.pole.setColor(0,0,1)
+
 
 class QbbVis(PandaVis):
 
@@ -478,5 +480,4 @@ class BobVis(PandaVis):
             """)
 
         return Task.cont
-
 
