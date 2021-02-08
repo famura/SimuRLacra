@@ -166,8 +166,6 @@ class QQubeVis(PandaVis):
         return Task.cont
 
 
-
-
 class PendulumVis(PandaVis):
     def __init__(self, env: SimEnv):
         """ 
@@ -307,14 +305,18 @@ class QbbVis(PandaVis):
         # Plate
         self.plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.plate.setPos(0, 0, 0)
-        self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)
+        self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)  # divided by 2 since Blender object has length of 2
         self.plate.setColor(0, 0, 1, 0)
         self.plate.reparentTo(self.render)
 
         # Null_plate
         self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.null_plate.setPos(0, 0, 0)
-        self.null_plate.setScale(l_plate * 1.1 / 2, l_plate * 1.1 / 2, d_plate / 10 / 2)
+        self.null_plate.setScale(
+            l_plate * 1.1 / 2,
+            l_plate * 1.1 / 2,
+            d_plate / 10 / 2
+        )  # divided by 2 since Blender object has length of 2
         self.null_plate.setTransparency(1)
         self.null_plate.setColorScale(0, 1, 1, 0.5)
         self.null_plate.reparentTo(self.render)
@@ -398,7 +400,6 @@ class QbbVis(PandaVis):
             """)
 
         return Task.cont
-
 
 
 class BobVis(PandaVis):

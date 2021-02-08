@@ -141,9 +141,9 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
                 self.ground.setPos(0, 0, -0.02)
                 self.ground.setScale(
-                    2 * self.omo.obs_space.bound_up[0],
-                    3 * c,
-                    0.02
+                    2 * self.omo.obs_space.bound_up[0] / 2,
+                    3 * c / 2,
+                    0.02 / 2
                 )
                 self.ground.setColor(0, 1, 0, 0)
                 self.ground.reparentTo(self.render)
@@ -151,14 +151,14 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 # Mass
                 self.mass = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
                 self.mass.setPos(self.omo.state[0], 0, c / 2.0)
-                self.mass.setScale(c, c, c)
+                self.mass.setScale(c / 2, c / 2, c / 2)
                 self.mass.setColor(0, 0, 1, 0)
                 self.mass.reparentTo(self.render)
 
                 # Des
                 self.des = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
                 self.des.setPos(self.omo._task.state_des[0], 0, 0.8 * c / 2.0)
-                self.des.setScale(0.8 * c, 0.8 * c, 0.8 * c)
+                self.des.setScale(0.8 * c / 2, 0.8 * c / 2, 0.8 * c / 2)
                 self.des.setTransparency(1)
                 self.des.setColorScale(0, 1, 1, 0.5)
                 self.des.reparentTo(self.render)
@@ -166,15 +166,15 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 # Force
                 self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/arrow.egg"))
                 self.force.setPos(self.omo.state[0], 0, c / 2.0)
-                #self.force.setScale(0.1 * self.omo._curr_act, 0.2 * c, 0.2 * c)
-                self.force.setScale(0.2, 0.2 * c, 0.2 * c)
+                self.force.setScale(0.1 * self.omo._curr_act / 10, 0.2 * c / 2, 0.2 * c / 2)
+                #self.force.setScale(0.2, 0.2 * c, 0.2 * c)
                 self.force.setColor(1, 0, 0, 0)
                 self.force.reparentTo(self.render)
 
                 # Spring
                 self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
                 self.spring.setPos(0, 0, c / 2.0)
-                self.spring.setScale(self.omo.state[0] - c / 2.0, c / 3.0, c / 3.0)
+                self.spring.setScale((self.omo.state[0] - c / 2.0) / 7, c / 3.0 / 2, c / 3.0 / 2)
                 #self.spring.setScale(0.1, 0.1, 0.1)
                 self.spring.setColor(0, 0, 1, 0)
                 self.spring.reparentTo(self.render)
@@ -195,14 +195,14 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 #weil capped_act ändert sich nicht
                 #eventuell nicht richtig gesetzt in der Sandbox, dummyWert = 0
                 #sollte sich da nicht eigentlich die Scale ändern?
-                self.force.setPos(self.mass.getPos())
+                self.force.setPos(self.omo.state[0], 0, c / 2.0)
                 capped_act = np.sign(self.omo._curr_act) * max(0.1 * np.abs(self.omo._curr_act), 0.3)
-                #self.force.setHpr(capped_act, 0, 0)
+                self.force.setSx(capped_act / 10)
 
                 #ToDo Spring moves too much
                 #sollte anhand mass ausgerichtet werden, siehe nächstes T0D0
                 #self.spring.setSx(self.omo.state[0] - c / 2.0)
-                self.spring.setSx(self.omo.state[0] / 10)
+                self.spring.setSx((self.omo.state[0] - c / 2.0) / 7)
 
                 #ToDo Mass_center and Spring_end do not align
                 #weil spring.setSx() mit Faktoren arbeitet und mass.setPos() mit Koordinaten
@@ -226,8 +226,8 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
                 self.mass.setPos(self.omo.state[0], 0, c / 2.0)
                 self.des.setPos(self.omo._task.state_des[0], 0, 0.8 * c / 2.0)
                 self.force.setPos(self.omo.state[0], 0, c / 2.0)
-                self.force.setHpr(0.1 * self.omo._curr_act, 0, 0)
-                self.spring.setSx(self.omo.state[0] - c / 2.0)
+                self.force.setSx((0.1 * self.omo._curr_act) / 10)
+                self.spring.setSx((self.omo.state[0] - c / 2.0) / 7)
 
         # Create instance of PandaVis
         self._visualization = PandaVisOmo(self)
