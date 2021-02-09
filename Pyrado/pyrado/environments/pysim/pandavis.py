@@ -482,3 +482,124 @@ class BobVis(PandaVis):
 
         return Task.cont
 
+
+class QCartPoleVis(PandaVis):
+    def __init__(self, env: SimEnv):
+        super().__init__()
+
+        #Accessing variables of outer class
+        self._env = env
+
+        self.setBackgroundColor(0, 0, 0)
+        self.cam.setY(-5)
+
+        #setting parameters
+        l_pole = float(self._env.domain_param["l_pole"])
+        l_rail = float(self._env.domain_param["l_rail"])
+
+        # Only for animation
+        l_cart, h_cart = 0.08, 0.08
+        r_pole, r_rail = 0.01, 0.005
+
+        # Get positions
+        x, th, _, _ = self._env.state
+
+        #TODO RenderEinstellungen pro Objekt
+
+        #Rail
+        self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
+        self.rail.setPos(-l_rail/2, 0, -h_cart/2 - r_rail)
+        self.rail.setScale(r_rail, r_rail, l_rail)
+        self.rail.setColor(1, 1, 1) #white
+        self.rail.reparentTo(self.render)
+        self.rail.setR(90)
+
+        #Cart
+        self.cart = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        self.cart.setPos(x, 0, 0)
+        self.cart.setScale(l_cart, h_cart/2, h_cart)
+        self.cart.setColor(0, 1, 0, 0) #green
+        self.cart.reparentTo(self.render)
+
+        #Joint
+        self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
+        self.joint.setPos(x, r_pole + h_cart/4, 0)
+        self.joint.setScale(r_pole, r_pole, r_pole)
+        self.joint.setColor(0, 0, 0, 1) #white
+        self.joint.reparentTo(self.render)
+
+        #Pole
+        self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
+        self.pole.setPos(x, r_pole + h_cart/4, 0)
+        self.pole.setHpr(0, 0, 0)
+        #H um Z-Achse, P um X-Achse, R um Y-Achse
+        self.pole.setScale(r_pole, r_pole, 2*l_pole)
+        self.pole.setColor(0, 0, 1) #blue
+        self.pole.reparentTo(self.render)
+
+        #Update-Aufruf
+        self.taskMgr.add(self.update, "update")
+
+    def update(self, task):
+
+        g = self._env.domain_param["g"]
+        m_cart = self._env.domain_param["m_cart"]
+        m_pole = self._env.domain_param["m_pole"]
+        l_pole = float(self._env.domain_param["l_pole"])
+        l_rail = float(self._env.domain_param["l_rail"])
+        eta_m = self._env.domain_param["eta_m"]
+        eta_g = self._env.domain_param["eta_g"]
+        K_g = self._env.domain_param["K_g"]
+        J_m = self._env.domain_param["J_m"]
+        R_m = self._env.domain_param["R_m"]
+        k_m = self._env.domain_param["k_m"]
+        r_mp = self._env.domain_param["r_mp"]
+        B_eq = self._env.domain_param["B_eq"]
+        B_pole = self._env.domain_param["B_pole"]
+
+        # Only for animation
+        l_cart, h_cart = 0.08, 0.08
+        r_pole, r_rail = 0.01, 0.005
+
+        # Get positions
+        x, th, _, _ = self._env.state
+
+        # Rail
+        self.rail.setX(-l_rail / 2)
+        self.rail.setSz(l_rail)
+
+        #Cart
+        self.cart.setX(x)
+
+        #Joint
+        self.joint.setX(x)
+
+        #Pole
+        self.pole.setX(x)
+        self.pole.setR(-th * 180/np.pi)
+
+        self.text.setText(f"""
+                            th: {th}
+                            x: {self._env.state[0] : 1.4f}
+                            theta: {self._env.state[1] * 180 / np.pi : 2.3f}
+                            dt: {self._env._dt :1.4f}
+                            g: {g : 1.3f}
+                            m_cart: {m_cart : 1.4f}
+                            l_rail: {l_rail : 1.3f}
+                            l_pole: {l_pole : 1.3f} (0.168 is short)
+                            eta_m: {eta_m : 1.3f}
+                            eta_g: {eta_g : 1.3f}
+                            K_g: {K_g : 1.3f}
+                            J_m: {J_m : 1.8f}
+                            r_mp: {r_mp : 1.4f}
+                            R_m: {R_m : 1.3f}
+                            k_m: {k_m : 1.6f}
+                            B_eq: {B_eq : 1.2f}
+                            B_pole: {B_pole : 1.3f}
+                            m_pole: {m_pole : 1.3f}
+                            """)
+        self.text.setTextColor(1, 1, 1, 1) #white
+        return Task.cont
+
+    def reset(self):
+        pass
