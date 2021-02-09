@@ -312,6 +312,8 @@ class SPRL(Algorithm):
                 mean_pointer += param.dim
         # we have a result but the optimization process was not a success
         elif result:
+            new_means = result.x.reshape(-1, dim)[::dim]
+            new_covs = result.x.reshape(-1, dim)[1::dim]
             old_f = objective_fn(previous_distribution.get_stacked())[0]
             constraints_satisfied = all((const.lb <= const.fun(result.x) <= const.ub for const in constraints))
 
