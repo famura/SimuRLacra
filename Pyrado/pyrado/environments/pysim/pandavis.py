@@ -616,3 +616,101 @@ class QCartPoleVis(PandaVis):
 
     def reset(self):
         pass
+
+
+class OmoVis(PandaVis):
+
+    def __init__(self, env: SimEnv):
+        super().__init__()
+
+        # Accessing variables of outer class
+        self._env = env
+
+        self.setBackgroundColor(0, 0, 0)
+        self.cam.setY(-5)
+        self.cam.setZ(1)
+        self.cam.setP(-10)
+        self.textNodePath.setPos(0.4, 0, -0.1)
+        self.text.setTextColor(1, 1, 1, 1)
+
+        # Params
+        c = 0.1 * self._env.obs_space.bound_up[0]
+
+        # Ground
+        self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        self.ground.setPos(0, 0, -0.02)
+        self.ground.setScale(
+            2 * self._env.obs_space.bound_up[0] / 2,
+            3 * c / 2,
+            0.02 / 2
+        )
+        self.ground.setColor(0, 1, 0, 0)
+        self.ground.reparentTo(self.render)
+
+        # Mass
+        self.mass = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        self.mass.setPos(self._env.state[0], 0, c / 2.0)
+        self.mass.setScale(c / 2, c / 2, c / 2)
+        self.mass.setColor(0, 0, 1, 0)
+        self.mass.reparentTo(self.render)
+
+        # Des
+        self.des = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        self.des.setPos(self._env._task.state_des[0], 0, 0.8 * c / 2.0)
+        self.des.setScale(0.8 * c / 2, 0.8 * c / 2, 0.8 * c / 2)
+        self.des.setTransparency(1)
+        self.des.setColorScale(0, 1, 1, 0.5)
+        self.des.reparentTo(self.render)
+
+        # Force
+        self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/arrow.egg"))
+        self.force.setPos(self._env.state[0], 0, c / 2.0)
+        self.force.setScale(0.1 * self._env._curr_act / 10, 0.2 * c / 2, 0.2 * c / 2)
+        # self.force.setScale(0.2, 0.2 * c, 0.2 * c)
+        self.force.setColor(1, 0, 0, 0)
+        self.force.reparentTo(self.render)
+
+        # Spring
+        self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
+        self.spring.setPos(0, 0, c / 2.0)
+        self.spring.setScale((self._env.state[0] - c / 2.0) / 7, c / 3.0 / 2, c / 3.0 / 2)
+        # self.spring.setScale(0.1, 0.1, 0.1)
+        self.spring.setColor(0, 0, 1, 0)
+        self.spring.reparentTo(self.render)
+
+        self.taskMgr.add(self.update, "update")
+
+    def update(self, task):
+        m = self._env.domain_param["m"]
+        k = self._env.domain_param["k"]
+        d = self._env.domain_param["d"]
+        c = 0.1 * self._env.obs_space.bound_up[0]
+
+        self.mass.setPos(self._env.state[0], 0, c / 2.0)
+
+        self.force.setPos(self._env.state[0], 0, c / 2.0)
+        capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
+        self.force.setSx(capped_act / 10)
+
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7)
+
+        # set caption text
+        self.text.setText(f"""
+            mass_x: {self.mass.getX()}
+            spring_Sx: {self.spring.getSx()}
+            dt: {self._env.dt :1.4f}
+            m: {m : 1.3f}
+            k: {k : 2.2f}
+            d: {d : 1.3f}
+            """)
+
+        return Task.cont
+
+    def reset(self):
+        c = 0.1 * self._env.obs_space.bound_up[0]
+
+        self.mass.setPos(self._env.state[0], 0, c / 2.0)
+        self.des.setPos(self._env._task.state_des[0], 0, 0.8 * c / 2.0)
+        self.force.setPos(self._env.state[0], 0, c / 2.0)
+        self.force.setSx((0.1 * self._env._curr_act) / 10)
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7)
