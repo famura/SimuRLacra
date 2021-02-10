@@ -187,7 +187,7 @@ class SPRL(Algorithm):
                 ]
             ),
             requires_grad=True,
-        ).reshape(-1, 1)
+        ).T
 
         contexts_old_log_prob = previous_distribution.distribution.log_prob(contexts.double())
         kl_divergence = to.distributions.kl_divergence(
@@ -231,9 +231,9 @@ class SPRL(Algorithm):
             return np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
 
         performance_contraint = NonlinearConstraint(
-            performance_constraint_fn,
-            self._performance_lower_bound,
-            np.inf,
+            fun=performance_constraint_fn,
+            lb=self._performance_lower_bound,
+            ub=np.inf,
             jac=performance_constraint_fn_prime,
             keep_feasible=True,
         )
@@ -301,24 +301,26 @@ class SPRL(Algorithm):
                 bounds=bounds,
             )
         if result and result.success:
-            new_means = result.x.reshape(-1, dim)[::dim]
-            new_covs = result.x.reshape(-1, dim)[1::dim]
-            for i, param in enumerate(self._spl_parameters):
-                param.adapt("context_mean", to.tensor(new_means[i]))
-                param.adapt("context_cov_chol_flat", to.tensor(new_covs[i]))
+            mean_pointer = 0
+            for param in self._spl_parameters:
+                param.adapt("context_mean", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                mean_pointer += param.dim
+                param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                mean_pointer += param.dim
         # we have a result but the optimization process was not a success
         elif result:
-            new_means = result.x.reshape(-1, dim)[::dim]
-            new_covs = result.x.reshape(-1, dim)[1::dim]
             old_f = objective_fn(previous_distribution.get_stacked())[0]
             constraints_satisfied = all((const.lb <= const.fun(result.x) <= const.ub for const in constraints))
 
             std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
 
             if constraints_satisfied and std_ok and result.fun < old_f:
-                for i, param in enumerate(self._spl_parameters):
-                    param.adapt("context_mean", to.tensor(new_means[i]))
-                    param.adapt("context_cov_chol_flat", to.tensor(new_covs[i]))
+                mean_pointer = 0
+                for param in self._spl_parameters:
+                    param.adapt("context_mean", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                    mean_pointer += param.dim
+                    param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                    mean_pointer += param.dim
             else:
                 print(f"Update unsuccessfull, keeping old values spl parameters")
 
