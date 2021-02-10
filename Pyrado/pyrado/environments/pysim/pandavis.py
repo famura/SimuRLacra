@@ -54,10 +54,18 @@ class PandaVis(ShowBase):
 
     def update(self, task):
         """
-        FrameUpdate
+        Updates the visualization with every call.
 
+        :param task: Needed by panda3d task manager.
+        :return: Task.cont indicates that task should be called again next frame.
         """
         return Task.cont
+
+    def reset(self):
+        """
+        Resets the the visualization to a certain state, so that in can be run again.
+        """
+        pass
 
 
 class QQubeVis(PandaVis):

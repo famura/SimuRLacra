@@ -139,6 +139,7 @@ class QQubeSim(SimPyEnv, Serializable):
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
     def _init_anim(self):
+        # Import PandaVis Class
         from pyrado.environments.pysim.pandavis import PandaVis
         # Create instance of PandaVis
         self._visualization = QQubeVis(self)
