@@ -225,37 +225,37 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">botorch.acquisition</span> <span class="kn">import</span> <span class="n">ExpectedImprovement</span><span class="p">,</span> <span class="n">PosteriorMean</span><span class="p">,</span> <span class="n">ProbabilityOfImprovement</span><span class="p">,</span> <span class="n">UpperConfidenceBound</span>
-<span class="kn">from</span> <span class="nn">botorch.fit</span> <span class="kn">import</span> <span class="n">fit_gpytorch_model</span>
 <span class="kn">from</span> <span class="nn">botorch.models</span> <span class="kn">import</span> <span class="n">SingleTaskGP</span>
+<span class="kn">from</span> <span class="nn">botorch.fit</span> <span class="kn">import</span> <span class="n">fit_gpytorch_model</span>
+<span class="kn">from</span> <span class="nn">botorch.acquisition</span> <span class="kn">import</span> <span class="n">UpperConfidenceBound</span><span class="p">,</span> <span class="n">ExpectedImprovement</span><span class="p">,</span> <span class="n">ProbabilityOfImprovement</span><span class="p">,</span> <span class="n">PosteriorMean</span>
 <span class="kn">from</span> <span class="nn">botorch.optim</span> <span class="kn">import</span> <span class="n">optimize_acqf</span>
 <span class="kn">from</span> <span class="nn">gpytorch.constraints</span> <span class="kn">import</span> <span class="n">GreaterThan</span>
 <span class="kn">from</span> <span class="nn">gpytorch.mlls</span> <span class="kn">import</span> <span class="n">ExactMarginalLogLikelihood</span>
+<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span><span class="p">,</span> <span class="n">InterruptableAlgorithm</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">until_thold_exceeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">MetaDomainRandWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">typed_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.real_base</span> <span class="kn">import</span> <span class="n">RealEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
-<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">standardize</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.order</span> <span class="kn">import</span> <span class="n">natural_sort</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">UnitCubeProjector</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.order</span> <span class="kn">import</span> <span class="n">natural_sort</span>
-<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">standardize</span>
 
 
 <div class="viewcode-block" id="BayRn"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn">[docs]</a><span class="k">class</span> <span class="nc">BayRn</span><span class="p">(</span><span class="n">InterruptableAlgorithm</span><span class="p">):</span>
@@ -358,8 +358,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s2">&quot;subrtn&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span> <span class="o">=</span> <span class="n">ddp_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ddp_projector</span> <span class="o">=</span> <span class="n">UnitCubeProjector</span><span class="p">(</span>
-            <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-            <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cands</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># called x in the context of GPs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># called y in the context of GPs</span>
@@ -605,16 +604,13 @@
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acq_fcn_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;UCB&#39;, &#39;EI&#39;, &#39;PI&#39;&quot;</span><span class="p">)</span>
 
             <span class="c1"># Optimize acquisition function and get new candidate point</span>
-            <span class="n">cand_norm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">optimize_acqf</span><span class="p">(</span>
+            <span class="n">cand_norm</span><span class="p">,</span> <span class="n">acq_value</span> <span class="o">=</span> <span class="n">optimize_acqf</span><span class="p">(</span>
                 <span class="n">acq_function</span><span class="o">=</span><span class="n">acq_fcn</span><span class="p">,</span>
-                <span class="n">bounds</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
-                    <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span>
-                <span class="p">),</span>
+                <span class="n">bounds</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)]),</span>
                 <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">num_restarts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acq_restarts</span><span class="p">,</span>
                 <span class="n">raw_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acq_samples</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">cand_norm</span> <span class="o">=</span> <span class="n">cand_norm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
             <span class="n">next_cand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ddp_projector</span><span class="o">.</span><span class="n">project_back</span><span class="p">(</span><span class="n">cand_norm</span><span class="p">)</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found the next candidate: </span><span class="si">{</span><span class="n">next_cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cands</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">,</span> <span class="n">next_cand</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -687,8 +683,7 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ddp_space</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">)</span>
 
         <span class="c1"># Normalize the input data and standardize the output data</span>
-        <span class="n">uc_projector</span> <span class="o">=</span> <span class="n">UnitCubeProjector</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-                                         <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()))</span>
+        <span class="n">uc_projector</span> <span class="o">=</span> <span class="n">UnitCubeProjector</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">))</span>
         <span class="n">cands_norm</span> <span class="o">=</span> <span class="n">uc_projector</span><span class="o">.</span><span class="n">project_to</span><span class="p">(</span><span class="n">cands</span><span class="p">)</span>
         <span class="n">cands_values_stdized</span> <span class="o">=</span> <span class="n">standardize</span><span class="p">(</span><span class="n">cands_values</span><span class="p">)</span>
 
@@ -707,15 +702,14 @@
         <span class="n">fit_gpytorch_model</span><span class="p">(</span><span class="n">mll</span><span class="p">)</span>
 
         <span class="c1"># Find position with maximal posterior mean</span>
-        <span class="n">cand_norm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">optimize_acqf</span><span class="p">(</span>
+        <span class="n">cand_norm</span><span class="p">,</span> <span class="n">acq_value</span> <span class="o">=</span> <span class="n">optimize_acqf</span><span class="p">(</span>
             <span class="n">acq_function</span><span class="o">=</span><span class="n">PosteriorMean</span><span class="p">(</span><span class="n">gp</span><span class="p">),</span>
-            <span class="n">bounds</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ddp_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)]),</span>
             <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">num_restarts</span><span class="o">=</span><span class="n">num_restarts</span><span class="p">,</span>
             <span class="n">raw_samples</span><span class="o">=</span><span class="n">num_samples</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">cand_norm</span> <span class="o">=</span> <span class="n">cand_norm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
         <span class="n">cand</span> <span class="o">=</span> <span class="n">uc_projector</span><span class="o">.</span><span class="n">project_back</span><span class="p">(</span><span class="n">cand_norm</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converged to argmax of the posterior mean: </span><span class="si">{</span><span class="n">cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cand</span></div>

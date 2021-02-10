@@ -224,25 +224,26 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
+
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.sysid_via_episodic_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span><span class="p">,</span> <span class="n">SysIdViaEpisodicRL</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.arpl</span> <span class="kn">import</span> <span class="n">ARPL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.bayrn</span> <span class="kn">import</span> <span class="n">BayRn</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.simopt</span> <span class="kn">import</span> <span class="n">SimOpt</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.arpl</span> <span class="kn">import</span> <span class="n">ARPL</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.ppo</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">create_default_randomizer</span><span class="p">,</span>
-    <span class="n">create_zero_var_randomizer</span><span class="p">,</span>
-    <span class="n">get_default_domain_param_map_qq</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">NormalDomainParam</span><span class="p">,</span> <span class="n">UniformDomainParam</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.sysid_via_episodic_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span><span class="p">,</span> <span class="n">SysIdViaEpisodicRL</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">UniformDomainParam</span><span class="p">,</span> <span class="n">NormalDomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">wrap_like_other_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_default_randomizer</span><span class="p">,</span>
+    <span class="n">get_default_domain_param_map_qq</span><span class="p">,</span>
+    <span class="n">create_zero_var_randomizer</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DomainRandWrapperBuffer</span><span class="p">,</span>
     <span class="n">DomainRandWrapperLive</span><span class="p">,</span>
@@ -253,12 +254,12 @@
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">FNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span><span class="p">,</span> <span class="n">FNN</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.environment_specific</span> <span class="kn">import</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">ValueFunctionSpace</span><span class="p">,</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
 
@@ -379,12 +380,11 @@
             <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">acq_fc</span><span class="o">=</span><span class="s2">&quot;UCB&quot;</span><span class="p">,</span>
             <span class="n">acq_param</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span>
-            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
             <span class="n">num_init_cand</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
             <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">num_eval_rollouts_sim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-            <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
+            <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
         <span class="p">),</span>
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;casual_hparam&quot;</span><span class="p">],</span>
@@ -402,11 +402,13 @@
     <span class="n">policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">energy_gain</span><span class="o">=</span><span class="mf">0.587</span><span class="p">,</span> <span class="n">ref_energy</span><span class="o">=</span><span class="mf">0.827</span><span class="p">,</span> <span class="n">acc_max</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
     <span class="n">policy</span> <span class="o">=</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">policy_hparam</span><span class="p">)</span>
     <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">pop_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-        <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+        <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">expl_std_min</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+        <span class="n">symm_sampling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">subrtn</span> <span class="o">=</span> <span class="n">PoWER</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">)</span>
@@ -420,8 +422,7 @@
 
     <span class="c1"># Create algorithm and train</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">BayRn</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">env_real</span><span class="p">,</span> <span class="n">subrtn</span><span class="p">,</span> <span class="n">ddp_space</span><span class="p">,</span> <span class="o">**</span><span class="n">bayrn_hparam</span><span class="p">)</span>
-    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="test_arpl"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_arpl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_omo&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omo&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
