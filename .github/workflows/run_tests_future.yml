@@ -1,6 +1,10 @@
-name: Run Tests
+name: Run Tests (future)
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [cicd_future]
+  pull_request:
+    branches: [cicd_future]
 
 jobs:
   build-images:
@@ -12,24 +16,34 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - name: Build Image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          outputs: |
+            type=docker
+          tags: |
+            simurlacra:test
+          build-args: |
+            OPTION=${{ matrix.flavor }}
+          cache-from: type=registry,ref=simurlacra/simurlacra:${{ matrix.flavor }}
+      - name: Inspect
         run: |
-          docker pull simurlacra/simurlacra:sacher
-          docker build . -t simurlacra:test --build-arg OPTION=sacher
+
+          docker image inspect simurlacra:test
       - name: Execute tests
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         run: |
           export COVPATH=$(realpath .)
-          docker run --rm -i -v $COVPATH:/cov simurlacra:test bash -c "pytest Pyrado --cov=./Pyrado --cov-report=xml --verbose -n 2 -m 'not visualization'; sudo cp ./coverage.xml /cov"
+          docker run --rm -i -v $COVPATH:/cov simurlacra:test conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -n 4 --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
           sudo mkdir /home/user/
           sudo mkdir /home/user/SimuRLacra
           sudo ln -s $COVPATH /home/user/SimuRLacra
-          echo $COVPATH
-          ls $COVPATH
           cd Pyrado
-          pwd
-          ls
       - name: Send Coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -42,7 +56,5 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          workingDirectory: Pyrado
           coverageLocations: |
-            ${{ github.workspace }}/coverage.xml:cobertura
-          debug: true
+            coverage.xml:cobertura
