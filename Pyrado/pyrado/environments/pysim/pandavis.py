@@ -36,10 +36,15 @@ class PandaVis(ShowBase):
         self.windowProperties = WindowProperties()
         self.windowProperties.setForeground(True)
 
-        self.directionalLight = DirectionalLight('directionalLight')
-        self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
-        self.directionalLightNP.setHpr(0, -8, 0)
-        self.render.setLight(self.directionalLightNP)
+        self.directionalLight1 = DirectionalLight('directionalLight')
+        self.directionalLightNP1 = self.render.attachNewNode(self.directionalLight1)
+        self.directionalLightNP1.setHpr(0, -8, 0)
+        self.render.setLight(self.directionalLightNP1)
+
+        self.directionalLight2 = DirectionalLight('directionalLight')
+        self.directionalLightNP2 = self.render.attachNewNode(self.directionalLight2)
+        self.directionalLightNP2.setHpr(180, -20, 0)
+        self.render.setLight(self.directionalLightNP2)
 
         self.ambientLight = AmbientLight('ambientLight')
         self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
@@ -82,8 +87,8 @@ class QQubeVis(PandaVis):
         self.windowProperties.setTitle('Quanser Qube')
         self.win.requestProperties(self.windowProperties)
 
-        self.cam.setPos(0.6, -1.2, 0.4)
-        self.cam.setHpr(20,-10,0)
+        self.cam.setPos(-0.4, -1.3, 0.4)
+        self.cam.setHpr(-20,-10,0)
         self.setBackgroundColor(1, 1, 1) #schwarz
         self.textNodePath.setPos(0.4, 0, -0.1)
         self.text.setTextColor(0, 0, 0, 1)
@@ -102,7 +107,7 @@ class QQubeVis(PandaVis):
         self.box.setColor(0.5, 0.5, 0.5)
         self.box.reparentTo(self.render)
 
-        #zeigt nach oben aus Box raus
+        # Zeigt nach oben aus Box raus
         self.cylinder = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
         self.cylinder.setScale(0.005, 0.005, 0.03)
         self.cylinder.setPos(0, 0.07, 0.12)
