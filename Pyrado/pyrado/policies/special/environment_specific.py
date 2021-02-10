@@ -277,7 +277,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
 
         # Set up the energy and PD controller
         self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max)
-        self.pd_ctrl = QQubePDCtrl(env_spec, k=pd_gains, al_des=math.pi)
+        self.pd_ctrl = QQubePDCtrl(env_spec, pd_gains, al_des=math.pi)
 
     def pd_enabled(self, cos_al: [float, to.Tensor]) -> bool:
         """
@@ -392,7 +392,7 @@ class QQubePDCtrl(Policy):
     def __init__(
         self,
         env_spec: EnvSpec,
-        k: to.Tensor = to.tensor([4.0, 0, 0.5, 0]),
+        pd_gains: to.Tensor = to.tensor([4.0, 0, 1.0, 0]),
         th_des: float = 0.0,
         al_des: float = 0.0,
         tols: to.Tensor = to.tensor([1.5, 0.5, 0.1, 0.1], dtype=to.float64) / 180.0 * math.pi,
@@ -402,7 +402,7 @@ class QQubePDCtrl(Policy):
         Constructor
 
         :param env_spec: environment specification
-        :param k: controller gains, the default values stabilize the pendulum at the center hanging down
+        :param pd_gains: controller gains, the default values stabilize the pendulum at the center hanging down
         :param th_des: desired rotary pole angle [rad]
         :param al_des: desired pendulum pole angle [rad]
         :param tols: tolerances for the desired angles $\theta$ and $\alpha$ [rad]
@@ -410,7 +410,7 @@ class QQubePDCtrl(Policy):
         """
         super().__init__(env_spec, use_cuda)
 
-        self.k = nn.Parameter(k, requires_grad=True)
+        self.pd_gains = nn.Parameter(pd_gains, requires_grad=True)
         self.state_des = to.tensor([th_des, al_des, 0.0, 0.0])
         self.tols = to.as_tensor(tols)
         self.done = False
@@ -427,9 +427,13 @@ class QQubePDCtrl(Policy):
 
         if all(to.abs(err) <= self.tols):
             self.done = True
+        elif all(to.abs(err) > self.tols) and self.state_des[0] == self.state_des[1] == 0.0:
+            # In case of initializing the Qube, increase the P-gain over time. This is useful since the resistance from
+            # the Qube's cable can be too strong for the PD controller to reach the steady state, like a fake I-gain.
+            self.pd_gains[0] = min(self.pd_gains[0] + 0.01, to.tensor(20.0))
 
         # PD control
-        return self.k.dot(err).unsqueeze(0)
+        return to.atleast_1d(self.pd_gains.dot(err))
 
 
 class QCartPoleGoToLimCtrl:
