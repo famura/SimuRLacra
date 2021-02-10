@@ -28,13 +28,11 @@ class PandaVis(ShowBase):
         ShowBase.__init__(self)
         self.dir = pathlib.Path(__file__).resolve().parent.absolute()
 
-        # self.clock = ClockObject.getGlobalClock()
-        # self.clock.setMode(ClockObject.M_limited)
-        # globalClock.setFrameRate(500)
-
         self.render.setAntialias(AntialiasAttrib.MAuto)
         self.windowProperties = WindowProperties()
         self.windowProperties.setForeground(True)
+        self.windowProperties.setTitle(str(self.__class__))
+        self.setBackgroundColor(1, 1, 1)
 
         self.directionalLight1 = DirectionalLight('directionalLight')
         self.directionalLightNP1 = self.render.attachNewNode(self.directionalLight1)
@@ -53,6 +51,7 @@ class PandaVis(ShowBase):
 
         self.text = TextNode('parameters')
         self.textNodePath = aspect2d.attachNewNode(self.text)
+        self.text.setTextColor(0, 0, 0, 1)
 
         self.textNodePath.setScale(0.07)
 
@@ -89,9 +88,7 @@ class QQubeVis(PandaVis):
 
         self.cam.setPos(-0.4, -1.3, 0.4)
         self.cam.setHpr(-20,-10,0)
-        self.setBackgroundColor(1, 1, 1) #schwarz
         self.textNodePath.setPos(0.4, 0, -0.1)
-        self.text.setTextColor(0, 0, 0, 1)
 
         Lr = self._env.domain_param["Lr"]
         Lp = self._env.domain_param["Lp"]
@@ -201,13 +198,11 @@ class PendulumVis(PandaVis):
         self.windowProperties.setTitle('Pendulum')
         self.win.requestProperties(self.windowProperties)
         
-        # window and cam properties
-        self.setBackgroundColor(1, 1, 1)
+        # cam properties
         self.cam.setY(-20)
         self.cam.setZ(-0)
         
         # text properties
-        self.textNodePath.setColor(0,0,0)
         self.textNodePath.setScale(0.06)
         self.textNodePath.setPos(0.45, 0, -0.3)
         
@@ -215,7 +210,7 @@ class PendulumVis(PandaVis):
         self.joint = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
         self.joint.setPos(0,r_pole,0)
         self.joint.setScale(r_pole,r_pole,r_pole)
-        self.joint.setColor(1,1,1)
+        self.joint.setColor(0,0,0) #black
         self.joint.reparentTo(self.render)
         
         # creating the pole object of the pendulum
@@ -292,12 +287,10 @@ class QbbVis(PandaVis):
         self._env = env
 
         self.windowProperties.setTitle('Quanser Ball Balancer')
-        self.setBackgroundColor(1, 1, 1)
         self.cam.setY(-1.3)
 
         self.textNodePath.setScale(0.05)
         self.textNodePath.setPos(0.4, 0, -0.1)
-        self.text.setTextColor(0, 0, 0, 1)
 
         # Physics params
         l_plate = self._env.domain_param["l_plate"]
@@ -508,7 +501,7 @@ class QCartPoleVis(PandaVis):
         #Accessing variables of outer class
         self._env = env
 
-        self.setBackgroundColor(0, 0, 0)
+        #self.setBackgroundColor(0, 0, 0)
         self.cam.setY(-5)
 
         #setting parameters
@@ -524,7 +517,7 @@ class QCartPoleVis(PandaVis):
 
         #Rail
         self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
-        self.rail.setPos(-l_rail/2, 0, -h_cart/2 - r_rail)
+        self.rail.setPos(0, 0, -h_cart/2 - r_rail)
         self.rail.setScale(r_rail, r_rail, l_rail)
         self.rail.setColor(1, 1, 1) #white
         self.rail.reparentTo(self.render)
@@ -539,14 +532,14 @@ class QCartPoleVis(PandaVis):
 
         #Joint
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint.setPos(x, r_pole + h_cart/4, 0)
-        self.joint.setScale(r_pole, r_pole, r_pole)
-        self.joint.setColor(0, 0, 0, 1) #white
+        self.joint.setPos(x, -r_pole - h_cart/2, 0)
+        self.joint.setScale(r_pole)
+        self.joint.setColor(1, 1, 1, 1) #white
         self.joint.reparentTo(self.render)
 
         #Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
-        self.pole.setPos(x, r_pole + h_cart/4, 0)
+        self.pole.setPos(x, -r_pole - h_cart/2, 0)
         self.pole.setHpr(0, 0, 0)
         #H counterclockwise around Z-axis, P counterclockwise around X-axis, R counterclockwise around Y-axis
         self.pole.setScale(r_pole, r_pole, 2*l_pole)
@@ -581,7 +574,6 @@ class QCartPoleVis(PandaVis):
         x, th, _, _ = self._env.state
 
         # Rail
-        self.rail.setX(-l_rail / 2)
         self.rail.setSz(l_rail)
 
         #Cart
@@ -612,7 +604,6 @@ class QCartPoleVis(PandaVis):
                             B_pole: {B_pole : 1.3f}
                             m_pole: {m_pole : 1.3f}
                             """)
-        self.text.setTextColor(1, 1, 1, 1) #white
         return Task.cont
 
     def reset(self):
@@ -632,12 +623,10 @@ class OmoVis(PandaVis):
         # Accessing variables of outer class
         self._env = env
 
-        self.setBackgroundColor(0, 0, 0)
         self.cam.setY(-5)
         self.cam.setZ(1)
         self.cam.setP(-10)
         self.textNodePath.setPos(0.4, 0, -0.1)
-        self.text.setTextColor(1, 1, 1, 1)
 
         # Params
         c = 0.1 * self._env.obs_space.bound_up[0]
