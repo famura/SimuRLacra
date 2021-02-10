@@ -498,6 +498,11 @@ class BobVis(PandaVis):
 
 class QCartPoleVis(PandaVis):
     def __init__(self, env: SimEnv):
+        """
+        Constructor
+
+        :param env: environment to visualize
+        """
         super().__init__()
 
         #Accessing variables of outer class
@@ -516,8 +521,6 @@ class QCartPoleVis(PandaVis):
 
         # Get positions
         x, th, _, _ = self._env.state
-
-        #TODO RenderEinstellungen pro Objekt
 
         #Rail
         self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
@@ -545,7 +548,7 @@ class QCartPoleVis(PandaVis):
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
         self.pole.setPos(x, r_pole + h_cart/4, 0)
         self.pole.setHpr(0, 0, 0)
-        #H um Z-Achse, P um X-Achse, R um Y-Achse
+        #H counterclockwise around Z-axis, P counterclockwise around X-axis, R counterclockwise around Y-axis
         self.pole.setScale(r_pole, r_pole, 2*l_pole)
         self.pole.setColor(0, 0, 1) #blue
         self.pole.reparentTo(self.render)
@@ -592,8 +595,6 @@ class QCartPoleVis(PandaVis):
         self.pole.setR(-th * 180/np.pi)
 
         self.text.setText(f"""
-                            th: {th}
-                            x: {self._env.state[0] : 1.4f}
                             theta: {self._env.state[1] * 180 / np.pi : 2.3f}
                             dt: {self._env._dt :1.4f}
                             g: {g : 1.3f}
@@ -621,6 +622,11 @@ class QCartPoleVis(PandaVis):
 class OmoVis(PandaVis):
 
     def __init__(self, env: SimEnv):
+        """
+        Constructor
+
+        :param env: environment to visualize
+        """
         super().__init__()
 
         # Accessing variables of outer class
