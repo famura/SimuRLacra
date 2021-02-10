@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Test Linear Policy with RBF Features for the WAM Ball-in-a-cup task.
+Test Linear Policy with RBF Features for the WAM ball-in-the-cup task.
 """
 import torch as to
 import numpy as np
@@ -36,7 +36,7 @@ from mpl_toolkits.mplot3d import Axes3D  # This import registers the 3D projecti
 
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
+from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.data_types import RenderMode
@@ -85,16 +85,16 @@ def compute_trajectory_pyrado(weights, time, width):
     qd_E = vel_feat_E @ weights
 
     # Autograd
-    q1, q2, q3 = q.t()
-    q1.backward(to.ones((1750,)), retain_graph=True)
-    q1d = time.grad.clone()
+    q_1, q_2, q3 = q.t()
+    q_1.backward(to.ones((1750,)), retain_graph=True)
+    q_1d = time.grad.clone()
     time.grad.fill_(0.0)
-    q2.backward(to.ones((1750,)), retain_graph=True)
-    q2d = time.grad.clone()
+    q_2.backward(to.ones((1750,)), retain_graph=True)
+    q_2d = time.grad.clone()
     time.grad.fill_(0.0)
     q3.backward(to.ones((1750,)))
     q3d = time.grad.clone()
-    qd = to.cat([q1d, q2d, q3d], dim=1)
+    qd = to.cat([q_1d, q_2d, q3d], dim=1)
 
     # Check similarity
     assert to.norm(qd_E - qd) < 1e-3  # used to be 1e-6 with double precision
@@ -106,32 +106,35 @@ def check_feat_equality():
     weights = np.random.normal(0, 1, (5, 3))
     time = np.linspace(0, 1, 1750).reshape(-1, 1)
     width = 0.0035
-    q1, qd1 = compute_trajectory_pyrado(weights, time, width)
-    q2, qd2 = compute_trajectory(weights, time, width)
+    q_1, qd_1 = compute_trajectory_pyrado(weights, time, width)
+    q_2, qd_2 = compute_trajectory(weights, time, width)
 
-    assert q1.size() == q2.shape
-    assert qd1.size() == qd2.shape
+    assert q_1.size() == q_2.shape
+    assert qd_1.size() == qd_2.shape
 
-    is_q_equal = np.allclose(q1.detach().cpu().numpy(), q2)
-    is_qd_equal = np.allclose(qd1.detach().cpu().numpy(), qd2)
+    is_q_equal = np.allclose(q_1.detach().cpu().numpy(), q_2, atol=1e-6)
+    is_qd_equal = np.allclose(qd_1.detach().cpu().numpy(), qd_2, atol=1e-5)
 
     correct = is_q_equal and is_qd_equal
 
     if not correct:
         _, axs = plt.subplots(2)
-        axs[0].set_title("positions - solid: pyrado, dashed: reference")
-        axs[0].plot(q1.detach().cpu().numpy())
+        axs[0].set_title("Joint Positions: pyrado and reference")
+        axs[0].plot(q_1.detach().cpu().numpy(), ls="--", label="pyrado")
         axs[0].set_prop_cycle(None)
-        axs[0].plot(q2, ls="--")
+        axs[0].plot(q_2, ls="-.", label="reference")
+        axs[0].legend()
         axs[1].set_title("velocities - solid: pyrado, dashed: reference, dotted: finite difference")
-        axs[1].plot(qd1.detach().cpu().numpy())
+        axs[1].plot(qd_1.detach().cpu().numpy(), ls="--", label="pyrado")
         axs[1].set_prop_cycle(None)
-        axs[1].plot(qd2, ls="--")
-        if is_q_equal:  # q1 and a2 are the same
-            finite_diff = np.diff(np.concatenate([np.zeros((1, 3)), q2], axis=0) * 500.0, axis=0)  # init with 0, 500Hz
-            axs[1].plot(finite_diff, c="k", ls=":")
-        plt.show()
+        axs[1].plot(qd_2, ls="-.", label="reference")
+        axs[1].legend()
 
+        if is_q_equal:  # q_1 and a2 are the same
+            finite_diff = np.diff(np.concatenate([np.zeros((1, 3)), q_2], axis=0) * 500.0, axis=0)  # init with 0, 500Hz
+            axs[1].plot(finite_diff, c="k", ls=":")
+
+        plt.show()
     return correct
 
 
@@ -150,7 +153,7 @@ def eval_damping():
     for d in dampings:
         env.reset(domain_param=dict(joint_damping=d))
         ro = rollout(env, policy, render_mode=RenderMode(video=False), eval=True)
-        t.append(ro.env_infos["t"])
+        t.append(ro.time)
         data.append(ro.env_infos["qpos"])
 
     fig, ax = plt.subplots(3, sharex="all")
@@ -166,7 +169,7 @@ def eval_damping():
     plt.show()
 
 
-def rollout_dummy_rbf_policy():
+def rollout_dummy_rbf_policy_7dof():
     # Environment
     env = WAMBallInCupSim(num_dof=7, max_steps=1750, task_args=dict(sparse_rew_fcn=True))
 
@@ -187,10 +190,10 @@ def rollout_dummy_rbf_policy():
         done, _, param = after_rollout_query(env, policy, ro)
 
     # Retrieve infos from rollout
-    t = ro.env_infos["t"]
-    des_pos_traj = ro.env_infos["qpos_des"]  # (max_steps,7) ndarray
+    t = ro.time
+    des_pos_traj = ro.env_infos["qpos_des"]
     pos_traj = ro.env_infos["qpos"]
-    des_vel_traj = ro.env_infos["qvel_des"]  # (max_steps,7) ndarray
+    des_vel_traj = ro.env_infos["qvel_des"]
     vel_traj = ro.env_infos["qvel"]
     ball_pos = ro.env_infos["ball_pos"]
     cup_pos = ro.env_infos["cup_pos"]
@@ -260,8 +263,8 @@ if __name__ == "__main__":
     # Plot damping coefficient comparison
     # eval_damping()
 
-    # Apply DualRBFLinearPolicy and plot the joint states over the desired ones
-    # rollout_dummy_rbf_policy()
+    # Do a rollout with the 7-dof WAM
+    # rollout_dummy_rbf_policy_7dof()
 
     # Do a rollout with the 4-dof WAM
     rollout_dummy_rbf_policy_4dof()

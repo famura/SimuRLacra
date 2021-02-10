@@ -27,37 +27,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-This is a very basic script to test the functionality of Rcs & RcsPySim & Pyrado using the Quanser Qube setup.
+Test PD controller for driving the WAM to a desired position.
 """
 import numpy as np
 
-from pyrado.environments.rcspysim.quanser_qube import QQubeRcsSim
-from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.plotting.rollout_based import plot_observations_actions_rewards
-from pyrado.policies.special.time import TimePolicy
-from pyrado.sampling.rollout import rollout
+from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 from pyrado.utils.data_types import RenderMode
 
 
 if __name__ == "__main__":
-    # Set up environment
-    dt = 1 / 5000.0
-    max_steps = 5000
-    env = QQubeRcsSim(physicsEngine="Bullet", dt=dt, max_steps=max_steps, max_dist_force=None)  # Bullet or Vortex
-    print_domain_params(env.domain_param)
+    num_dof = 4
+    num_steps = 6000
 
-    # Set up policy
-    policy = TimePolicy(env.spec, lambda t: [1.0], dt)  # constant acceleration with 1. rad/s**2
+    # Create the environment
+    env = WAMJointSpaceCtrlSim(num_dof, frame_skip=4)
+    env.reset()
+    env.render(mode=RenderMode(video=True))
+    # env.viewer._run_speed = 0.5  # slow down
+
+    # Desired configuration
+    q_des_1 = env.act_space.bound_up[:num_dof]  # extract joint positions from action space
+    q_des_2 = env.act_space.bound_lo[:num_dof]  # extract joint positions from action space
+    qd_des = np.zeros(env.num_dof)
 
     # Simulate
-    ro = rollout(
-        env,
-        policy,
-        render_mode=RenderMode(video=True),
-        reset_kwargs=dict(init_state=np.array([0, 3 / 180 * np.pi, 0, 0.0])),
-    )
+    for i in range(num_steps):
+        if i < num_steps / 2:
+            env.step(act=np.concatenate((q_des_1, qd_des)))
+        else:
+            env.step(act=np.concatenate((q_des_2, qd_des)))
+        env.render(mode=RenderMode(video=True))
 
-    # Plot
-    print(f"After {max_steps*dt} s of accelerating with 1. rad/s**2, we should be at {max_steps*dt} rad/s")
-    print(f"Difference: {max_steps*dt - ro.observations[-1][2]} rad/s (mind the swinging pendulum)")
-    plot_observations_actions_rewards(ro)
+    print("desired last pose:", q_des_2)
+    print("actual last pose:", env.state[:7])

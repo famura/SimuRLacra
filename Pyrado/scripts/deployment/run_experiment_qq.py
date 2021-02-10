@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Run separate evaluation for comparing against BayRn
+Script to run experiments on the Quanser Qube
 """
 import os
 import os.path as osp
@@ -37,7 +37,7 @@ from datetime import datetime
 import pyrado
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.environments.quanser.quanser_qube import QQubeReal
-from pyrado.logger.experiment import ask_for_experiment, timestamp_format
+from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.experiments import load_experiment
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
@@ -58,7 +58,6 @@ if __name__ == "__main__":
         print_cbt(f"Loaded {osp.join(ex_dir, 'policy_argmax.pt')}", "g", bright=True)
 
     # Create real-world counterpart
-    # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
     max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
     dt = args.dt if args.dt is not None else env_sim.dt
     env_real = QQubeReal(dt, max_steps)
@@ -67,7 +66,7 @@ if __name__ == "__main__":
     # Finally wrap the env in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
-    ex_ts = datetime.now().strftime(timestamp_format)
+    ex_ts = datetime.now().strftime(pyrado.timestamp_format)
     save_dir = osp.join(ex_dir, "evaluation")
     os.makedirs(save_dir, exist_ok=True)
     num_ro_per_config = args.num_ro_per_config if args.num_ro_per_config is not None else 5

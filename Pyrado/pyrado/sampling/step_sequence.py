@@ -37,7 +37,7 @@ from typing import Sequence, Type
 
 import pyrado
 from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
-from pyrado.sampling.utils import gen_batch_idcs
+from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs
 
 
 def _index_to_int(idx, n):
@@ -606,9 +606,27 @@ class StepSequence(Sequence[Step]):
 
         return steps, next_steps
 
+    def split_ordered_batches(self, batch_size: int):
+        """
+        Batch generation. Split the step collection into ordered mini-batches of size batch_size.
+
+        :param batch_size: number of steps per batch
+
+        .. note::
+            Left out the option to return complete rollouts like for `split_shuffled_batches`.
+        """
+        if batch_size >= self.length:
+            # Yield all at once if there are less steps than the batch size
+            yield self
+
+        else:
+            # Split by steps
+            for b in gen_ordered_batch_idcs(batch_size, self.length, sorted=True):
+                yield self[b]
+
     def split_shuffled_batches(self, batch_size: int, complete_rollouts: bool = False):
         """
-        Batch generation. Split the step collection into mini-batches of size batch_size.
+        Batch generation. Split the step collection into random mini-batches of size batch_size.
 
         :param batch_size: number of steps per batch
         :param complete_rollouts: if `complete_rollouts = True`, the batches will not contain partial rollouts.

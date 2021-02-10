@@ -105,8 +105,7 @@ class QQubeReal(QuanserReal, Serializable):
         meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
         # Correct for offset, and construct the state from the measurements
-        meas = self._correct_sensor_offset(meas)
-        self.state = meas
+        self.state = self._correct_sensor_offset(meas)
 
         # Reset time counter
         self._curr_step = 0

@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Stabilize the ball at a random initial position and then sqitch to the learned policy to stabilize it in the center.
+Script to run experiments on the Quanser Ball-Balancer
 """
 import joblib
 import numpy as np

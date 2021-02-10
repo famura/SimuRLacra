@@ -37,8 +37,8 @@ from datetime import datetime
 import pyrado
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
-from pyrado.logger.experiment import ask_for_experiment, timestamp_format
+from pyrado.environments.barrett_wam.wam_bic import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
+from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.experiments import load_experiment
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # Wrap the environment in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
-    ex_ts = datetime.now().strftime(timestamp_format)
+    ex_ts = datetime.now().strftime(pyrado.timestamp_format)
     save_dir = osp.join(ex_dir, "evaluation")
     os.makedirs(save_dir, exist_ok=True)
 

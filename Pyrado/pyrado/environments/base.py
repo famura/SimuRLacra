@@ -25,12 +25,12 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional, Union
 
 import numpy as np
 from abc import ABC, abstractmethod
 from colorama import Style
 from init_args_serializer import Serializable
+from typing import Optional, Union
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -172,7 +172,7 @@ class Env(ABC, Serializable):
         raise NotImplementedError
 
     @abstractmethod
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
+    def reset(self, init_state: Optional[np.ndarray] = None, domain_param: Optional[dict] = None) -> np.ndarray:
         """
         Reset the environment to its initial state and optionally set different domain parameters.
 
@@ -221,7 +221,7 @@ class Env(ABC, Serializable):
         return self.act_space.project_to(act)
 
     @abstractmethod
-    def render(self, mode: RenderMode, render_step: int = 1):
+    def render(self, mode: RenderMode, render_step: Optional[int] = 1):
         """
         Visualize one time step.
 

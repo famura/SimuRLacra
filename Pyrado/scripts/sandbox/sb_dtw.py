@@ -27,45 +27,32 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Test PD controller for driving the WAM to a desired position.
+Test dynamic time warping implementation from the dtw-python package
 """
 import numpy as np
-
-from pyrado.environments.mujoco.wam import WAMSim
-from pyrado.utils.data_types import RenderMode
-
+from dtw import *
 
 if __name__ == "__main__":
-    # Define the gains and limits for the controller
-    p_gains = np.array([200, 300, 100, 100, 10, 10, 2.5])
-    d_gains = np.array([7, 15, 5, 2.5, 0.3, 0.3, 0.05])
+    # A noisy sine wave as query
+    idx = np.linspace(0, 6.28, num=100)
+    multidim = True
 
-    n = 1500  # Number of steps
-    init_pos = np.array([0.0, -1.986, 0.0, 3.146, 0.0, 0.0, 0.0])
-    zero_vel = np.zeros_like(init_pos)
-    goal_pos = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
+    if multidim:
+        query = np.stack([np.sin(idx), np.sin(idx)], axis=1)
+        template = np.stack([np.cos(idx), np.cos(idx)], axis=1)
+    else:
+        query = np.sin(idx)  # + np.random.uniform(size=100) / 10.0
+        template = np.cos(idx)  # sin and cos are offset by 25 samples
 
-    # constants
-    diff = goal_pos - init_pos
-    c_1 = -2 * diff / n ** 3
-    c_2 = 3 * diff / n ** 2
+    # Find the best match with the canonical recursion formula
+    alignment = dtw(query, template, keep_internals=True)
 
-    # Environment
-    env = WAMSim(frame_skip=4)
-    env.reset(init_state=np.concatenate((init_pos, zero_vel)).ravel())
-    env.render(mode=RenderMode(video=True))
-    env.viewer._run_speed = 0.5
+    # Align and plot with the Rabiner-Juang type VI-c unsmoothed recursion
+    alignment2 = dtw(query, template, keep_internals=True, step_pattern=rabinerJuangStepPattern(6, "c"))
 
-    for i in range(1, n + 1000):
-        if i < n:
-            des_pos = c_1 * i ** 3 + c_2 * i ** 2 + init_pos
-            des_vel = (3 * c_1 * i ** 2 + 2 * c_2 * i) / env.dt
-        else:
-            des_pos = goal_pos
-            des_vel = zero_vel
-        act = p_gains * (des_pos - env.state[:7]) + d_gains * (des_vel - env.state[7:])
-        env.step(act)
-        env.render(mode=RenderMode(video=True))
+    # Display the warping curve, i.e. the alignment curve
+    if not multidim:
+        alignment.plot(type="twoway")
+        alignment2.plot(type="twoway")
 
-    print("Desired Pos:", goal_pos)
-    print("Actual Pos:", env.state[:7])
+    print(f"distance symmetric2: {alignment.distance}\ndistance rabinerJuang: {alignment2.distance}")

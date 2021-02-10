@@ -183,7 +183,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
     @ring_idx.setter
     def ring_idx(self, idx: int):
         """ Set the buffer's index. """
-        if not (isinstance(idx, int) and 0 <= idx < len(self._buffer)):
+        if not (isinstance(idx, int) or not 0 <= idx < len(self._buffer)):
             raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=len(self._buffer))
         self._ring_idx = idx
 
@@ -207,8 +207,8 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         """
         if self._randomizer is None:
             raise pyrado.TypeErr(msg="The randomizer must not be None to call fill_buffer()!")
-        if not (isinstance(num_domains, int) and num_domains >= 0):
-            raise pyrado.ValueErr(given=num_domains, eq_constraint=">= 0 (int)")
+        if not isinstance(num_domains, int) or num_domains < 0:
+            raise pyrado.ValueErr(given=num_domains, g_constraint="0 (int)")
 
         self._randomizer.randomize(num_domains)
         self._buffer = self._randomizer.get_params(-1, fmt="list", dtype="numpy")

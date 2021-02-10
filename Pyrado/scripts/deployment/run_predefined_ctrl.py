@@ -52,7 +52,6 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Set up PD-controller
     if args.env_name in QBallBalancerReal.name:
         env = QBallBalancerReal(args.dt, args.max_steps)
         policy = QBallBalancerPDCtrl(env.spec, kp=to.diag(to.tensor([3.45, 3.45])), kd=to.diag(to.tensor([2.11, 2.11])))

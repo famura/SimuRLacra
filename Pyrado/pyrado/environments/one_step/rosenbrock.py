@@ -155,9 +155,7 @@ class RosenSim(SimEnv, Serializable):
         if mode.text:
             if self._curr_step % render_step == 0 and self._curr_step > 0:  # skip the render before the first step
                 print(
-                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                        self._curr_step, self._curr_rew, self._curr_act, self.state
-                    )
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
         # Render using pyplot

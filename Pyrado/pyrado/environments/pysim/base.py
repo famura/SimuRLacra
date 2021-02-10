@@ -220,8 +220,6 @@ class SimPyEnv(SimEnv, Serializable):
 
         # Apply the action and simulate the resulting dynamics
         self._step_dynamics(act)
-
-        info = dict(t=self._curr_step * self._dt)
         self._curr_step += 1
 
         # Check if the task or the environment is done
@@ -233,7 +231,7 @@ class SimPyEnv(SimEnv, Serializable):
             # Add final reward if done
             self._curr_rew += self._task.final_rew(self.state, remaining_steps)
 
-        return self.observe(self.state), self._curr_rew, done, info
+        return self.observe(self.state), self._curr_rew, done, dict()
 
     def render(self, mode: RenderMode, render_step: int = 1):
         if self._curr_step % render_step == 0:
@@ -243,9 +241,7 @@ class SimPyEnv(SimEnv, Serializable):
             # Print to console
             if mode.text:
                 print(
-                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                        self._curr_step, self._curr_rew, self._curr_act, self.state
-                    )
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
             # VPython

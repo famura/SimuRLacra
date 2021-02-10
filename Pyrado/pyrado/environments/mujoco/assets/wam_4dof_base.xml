@@ -1,0 +1,144 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH,
+ Technical University of Darmstadt, Kai Plöger, Pascal Klink, and Christan Eilers
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<mujoco model="wam_4dof">
+  <option integrator="Euler" timestep="0.0005"/>
+  <compiler coordinate="local" angle="radian" meshdir="[ASSETS_DIR]/meshes/barrett_wam" texturedir="[ASSETS_DIR]/textures"/>
+  <size njmax="500" nconmax="500"/>
+
+  <visual>
+    <rgba fog="1. 1. 1. 1."/>
+    <map fogstart="0.8" fogend="2.8"/>
+    <quality shadowsize="4096"/>
+  </visual>
+<!--  <statistic extent="4"/>-->
+
+  <default>
+    <joint type="hinge" limited="true" pos="0 0 0" axis="0 0 1" frictionloss=".1" damping="[joint_damping]"/>
+    <default class="viz">
+      <geom type="mesh" contype="0" conaffinity="0" group="2" rgba="0.7 0.7 0.7 1" density="0"/>
+    </default>
+    <default class="col">
+      <geom type="mesh" contype="0" conaffinity="1" group="3" rgba="0.5 0.6 0.7 1" density="0"/>
+    </default>
+    <default class="x_axis">
+      <geom contype="0" conaffinity="0" group="1" rgba="1 0 0 1" type="cylinder" size=".01 0.15" pos="0.15 0 0" euler="0 1.57 0"/>
+    </default>
+    <default class="y_axis">
+      <geom contype="0" conaffinity="0" group="1" rgba="0 1 0 1" type="cylinder" size=".01 0.15" pos="0 0.15 0" euler="1.57 0 0"/>
+    </default>
+    <default class="z_axis">
+      <geom contype="0" conaffinity="0" group="1" rgba="0 0 1 1" type="cylinder" size=".01 0.15" pos="0 0 0.15" euler="0 0 0"/>
+    </default>
+  </default>
+
+  <asset>
+<!--    <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2"  width="2048" height="2048"  mark="cross" markrgb=".8 .8 .8"/>-->
+    <texture name="texplane" type="2d" file="IAS_floor.png" width="2048" height="2048"/>
+    <texture name="sky" type="skybox" builtin="flat" rgb2="1. 1. 1." height="2048" width="2048"/>
+    <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="5 5"/>
+
+    <mesh name="base_link_fine" file="base_link_fine.stl"/>
+    <mesh name="base_link_convex" file="base_link_convex.stl"/>
+    <mesh name="shoulder_link_fine" file="shoulder_link_fine.stl"/>
+    <mesh name="shoulder_link_convex_decomposition_p1" file="shoulder_link_convex_decomposition_p1.stl"/>
+    <mesh name="shoulder_link_convex_decomposition_p2" file="shoulder_link_convex_decomposition_p2.stl"/>
+    <mesh name="shoulder_link_convex_decomposition_p3" file="shoulder_link_convex_decomposition_p3.stl"/>
+    <mesh name="shoulder_pitch_link_fine" file="shoulder_pitch_link_fine.stl"/>
+    <mesh name="shoulder_pitch_link_convex" file="shoulder_pitch_link_convex.stl"/>
+    <mesh name="upper_arm_link_fine" file="upper_arm_link_fine.stl"/>
+    <mesh name="upper_arm_link_convex_decomposition_p1" file="upper_arm_link_convex_decomposition_p1.stl"/>
+    <mesh name="upper_arm_link_convex_decomposition_p2" file="upper_arm_link_convex_decomposition_p2.stl"/>
+    <mesh name="elbow_link_fine" file="elbow_link_fine.stl"/>
+    <mesh name="elbow_link_convex" file="elbow_link_convex.stl"/>
+    <mesh name="forearm_link_fine" file="forearm_link_fine.stl" scale="1 1 1.35"/>
+    <mesh name="forearm_link_convex_decomposition_p1" file="forearm_link_convex_decomposition_p1.stl" scale="1 1 1.35"/>
+    <mesh name="forearm_link_convex_decomposition_p2" file="forearm_link_convex_decomposition_p2.stl" scale="1 1 1.35"/>
+  </asset>
+
+  <worldbody>
+    <light mode="fixed" directional="true" diffuse="0.5 0.5 0.5" specular="0 0 0" pos="1 0 4" dir="0 0 -1" castshadow="false"/>
+    <light mode="targetbodycom" target="wam/base_link" directional="false" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
+    <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos="-2 -2 2" dir="1.5 1 -0.5" castshadow="true"/>-->
+    <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos="-2  2 2" dir="1.5 -1 -0.5" castshadow="true"/>-->
+    <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos=" 2 -2 2" dir="-0.5 1 -0.5" castshadow="true"/>-->
+    <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos=" 2  2 2" dir="-0.5 -1 -0.5" castshadow="true"/>-->
+
+    <geom name="floor" pos="0 0 0" size="10 10 .05" type="plane" material="matplane" condim="3" solref="0.001 1."/>
+    <geom class="x_axis"/>
+    <geom class="y_axis"/>
+    <geom class="z_axis"/>
+
+    <body name="wam/base_link" pos="0 0 .84" euler="0 0 1.57">
+      <inertial pos="6.93764e-06 0.0542887 0.076438" quat="0.496481 0.503509 -0.503703 0.496255" mass="27.5544" diaginertia="0.432537 0.318732 0.219528"/>
+      <geom class="viz" mesh="base_link_fine" euler="0 0 -1.57"/>
+      <geom class="col" mesh="base_link_convex" euler="0 0 -1.57"/>
+      <!--<geom class="x_axis"/>-->
+      <!--<geom class="y_axis"/>-->
+      <!--<geom class="z_axis"/>-->
+
+      <body name="wam/shoulder_yaw_link" pos="0 0 0.160" euler="0 0 -1.57">
+        <inertial pos="-0.00443422 -0.00066489 -0.12189039" mass="10.76768767" fullinertia="0.50739925 0.46298222 0.11328369 0.00012485 -0.00213041 0.00068555"/>
+        <joint name="wam/base_yaw_joint" range="-2.6 2.6"/>
+        <geom class="viz" mesh="shoulder_link_fine" pos="0 0 0.186"/>
+        <geom class="col" mesh="shoulder_link_convex_decomposition_p1" pos="0 0 0.186"/>
+        <geom class="col" mesh="shoulder_link_convex_decomposition_p2" pos="0 0 0.186"/>
+        <geom class="col" mesh="shoulder_link_convex_decomposition_p3" pos="0 0 0.186"/>
+
+        <body name="wam/shoulder_pitch_link" pos="0 0 0.184" quat="0.707107 -0.707107 0 0">
+          <inertial pos="-0.00236983 -0.01542114 0.03105614" mass="3.87493756" fullinertia="0.02140958 0.01558906 0.01377875 0.00002461 -0.00027172 -0.00181920"/>
+          <joint name="wam/shoulder_pitch_joint" range="-1.985 1.985" frictionloss="[stiction_1]"/>
+          <geom class="viz" mesh="shoulder_pitch_link_fine"/>
+          <geom class="col" mesh="shoulder_pitch_link_convex"/>
+
+          <body name="wam/upper_arm_link" pos="0 -0.505 0" quat="0.707107 0.707107 0 0">
+            <inertial pos="0.03825858 0.00003309 -0.20750770" mass="1.80228141" fullinertia="0.06276039 0.06656967 0.00689512 -0.00000738 -0.00614574 -0.00001767"/>
+            <joint name="wam/shoulder_yaw_joint" range="-2.8 2.8"/>
+            <geom class="viz" mesh="upper_arm_link_fine" pos="0 0 -0.505"/>
+            <geom class="col" mesh="upper_arm_link_convex_decomposition_p1" pos="0 0 -0.505"/>
+            <geom class="col" mesh="upper_arm_link_convex_decomposition_p2" pos="0 0 -0.505"/>
+
+            <body name="wam/forearm_link" pos="0.045 0 0.045" quat="0.707107 -0.707107 0 0">
+              <!-- The inertial and mass changed compared to 7dof -->
+              <inertial pos="-0.03404529 -0.14053900 -0.00022942" mass="1.06513649" fullinertia="0.01848577 0.0045 0.01968956 -0.00150604 -0.00001741 -0.00002109"/>
+              <joint name="wam/elbow_pitch_joint" range="-0.9 3.14159" frictionloss="[stiction_3]"/>
+              <geom class="viz" mesh="elbow_link_fine"/>
+              <geom class="col" mesh="elbow_link_convex"/>
+              <geom class="viz" mesh="forearm_link_fine" pos="-.045 -0.0730 0" euler="1.57 0 0"/>
+              <geom class="col" mesh="forearm_link_convex_decomposition_p1" pos="-0.045 -0.0730 0" euler="1.57 0 0"/>
+              <geom class="col" mesh="forearm_link_convex_decomposition_p2" pos="-.045 -0.0730 0" euler="1.57 0 0"/>
+
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

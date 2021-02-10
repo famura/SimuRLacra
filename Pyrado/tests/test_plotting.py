@@ -29,17 +29,20 @@
 import pytest
 import numpy as np
 import pandas as pd
-
+import torch as to
 from matplotlib import pyplot as plt
+from torch.distributions.multivariate_normal import MultivariateNormal
+
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts
+from pyrado.plotting.distribution import draw_pair_plot
 from pyrado.plotting.rollout_based import (
-    draw_observations_actions_rewards,
-    draw_observations,
-    draw_actions,
+    plot_observations_actions_rewards,
+    plot_observations,
+    plot_actions,
     draw_rewards,
     draw_potentials,
-    draw_features,
+    plot_features,
 )
 from pyrado.plotting.surface import draw_surface
 from pyrado.policies.feed_forward.linear import LinearPolicy
@@ -222,12 +225,47 @@ def test_rollout_based(env, policy):
     ro = rollout(env, policy, record_dts=True)
 
     if isinstance(policy, LinearPolicy):
-        draw_features(ro, policy)
+        plot_features(ro, policy)
     elif isinstance(policy, PotentialBasedPolicy):
         draw_potentials(ro)
     else:
-        draw_observations_actions_rewards(ro)
-        draw_observations(ro)
-        draw_actions(ro, env)
+        plot_observations_actions_rewards(ro)
+        plot_observations(ro)
+        plot_actions(ro, env)
         draw_rewards(ro)
         draw_dts(ro.dts_policy, ro.dts_step, ro.dts_remainder, y_top_lim=5)
+
+
+@pytest.mark.visualization
+@pytest.mark.parametrize("mode", ["classical", "top-right-posterior"], ids=["classic", "topright"])
+@pytest.mark.parametrize(
+    "x_labels, y_labels", [(None, None), (["foo", "bar", "baz"], ["y_1", "y_2", "y_3"])], ids=["None", "labels"]
+)
+@pytest.mark.parametrize("legend", [False, True], ids=["wolegend", "wlegend"])
+def test_pair_plot(mode, x_labels, y_labels, legend):
+    # Create distribution to sample from
+    mean = to.tensor([3.0, 0.0, -5.0])
+    lower_triang = to.tensor([[0.5, 0.0, 0.0], [0.0, 1.0, -1.0], [-1.0, 4.0, 0.5]])
+    cov = to.matmul(lower_triang, lower_triang.T)
+    print(cov.numpy())
+    dist = MultivariateNormal(loc=mean, covariance_matrix=cov)
+
+    dp_mapping = {0: "a", 1: "b", 2: "c"}
+    grid_bounds = to.tensor([[-2.5, 3.5], [-2.5, 3.5], [-2.5, 3.5]])
+    fig = draw_pair_plot(
+        None,
+        dist,
+        dp_mapping,
+        mean,
+        num_samples=1000,
+        true_params=mean,
+        grid_bounds=grid_bounds,
+        use_sns=False,
+        plot_type=mode,
+        x_labels=x_labels,
+        y_labels=y_labels,
+        legend=legend,
+    )
+
+    assert fig is not None
+    plt.show()

@@ -60,6 +60,7 @@ def get_argparser() -> argparse.ArgumentParser:
         help="path to the (experiment) directory to load from",
     )
     parser.add_argument(
+        "-e",
         "--env_name",
         type=str,
         nargs="?",
@@ -70,7 +71,7 @@ def get_argparser() -> argparse.ArgumentParser:
         nargs="+",
         type=int,
         default=[0, 1],
-        help="list of indices (without commas) casted to integer (default: [0, 1])",
+        help="list of indices without commas casted to integer (default: [0, 1])",
     )
     parser.add_argument(
         "--init_state",
@@ -95,7 +96,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "--max_steps",
         type=int,
         default=float("inf"),
-        help="maximum number of time steps to execute the environment",
+        help="maximum number of time steps to execute the environment (default: infinite)",
     )
     parser.add_argument(
         "-m",
@@ -210,13 +211,13 @@ def get_argparser() -> argparse.ArgumentParser:
         type=str,
         nargs="?",
         default="vfcn",
-        help="(partial) name of the value function to load, e.g. 'argmax_vfcn', or " "'iter_0_vfcn' (default: vfcn)",
+        help="(partial) name of the value function to load, e.g. 'argmax_vfcn', or 'iter_0_vfcn' (default: vfcn)",
     )
     parser.add_argument(
         "--warmstart",
         dest="warmstart",
         action="store_true",
-        help="start a procedure with initialized parameters (e.g. for the policy",
+        help="start a procedure with initialized parameters, e.g. for the policy",
     )
     parser.add_argument(
         "--from_scratch",

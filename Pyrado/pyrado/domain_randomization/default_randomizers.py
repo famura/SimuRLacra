@@ -440,9 +440,10 @@ def create_default_randomizer_bl() -> DomainRandomizer:
     )
 
 
-@default_randomizer("pyrado.environments.mujoco.wam", "WAMBallInCupSim")
+@default_randomizer("pyrado.environments.mujoco.wam_bic", "WAMBallInCupSim")
+@default_randomizer("pyrado.environments.mujoco.wam_jsc", "WAMJointSpaceCtrlSim")
 def create_default_randomizer_wambic() -> DomainRandomizer:
-    from pyrado.environments.mujoco.wam import WAMBallInCupSim
+    from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 
     dp_nom = WAMBallInCupSim.get_nominal_domain_param()
     return DomainRandomizer(

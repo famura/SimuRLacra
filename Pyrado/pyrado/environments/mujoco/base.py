@@ -74,6 +74,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Call SimEnv's constructor
         super().__init__(dt=self.model.opt.timestep * self.frame_skip, max_steps=max_steps)
 
+        # Memorize the initial states of the model from the xml (for fixed init space or later reset)
         self.init_qpos = self.sim.data.qpos.copy()
         self.init_qvel = self.sim.data.qvel.copy()
 
@@ -280,7 +281,6 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
         # Apply the action and simulate the resulting dynamics
         info = self._mujoco_step(act)
-        info["t"] = self._curr_step * self._dt
         self._curr_step += 1
 
         # Check if the environment is done due to a failure within the mujoco simulation (e.g. bad inputs)
@@ -308,9 +308,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             # Print to console
             if mode.text:
                 print(
-                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                        self._curr_step, self._curr_rew, self._curr_act, self.state
-                    )
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
             # Forward to MuJoCo viewer
@@ -324,7 +322,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
                     glfw.make_context_current(self.viewer.window)
                     glfw.set_window_size(self.viewer.window, 1280, 720)
-                    glfw.set_window_pos(self.viewer.window, 100, 100)
+                    glfw.set_window_pos(self.viewer.window, 50, 50)
 
                     self.configure_viewer()
                 self.viewer.render()

@@ -43,12 +43,12 @@ from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.plotting.curve import draw_dts
 from pyrado.plotting.policy_parameters import draw_policy_params
 from pyrado.plotting.rollout_based import (
-    draw_observations_actions_rewards,
-    draw_actions,
-    draw_observations,
+    plot_observations_actions_rewards,
+    plot_actions,
+    plot_observations,
     draw_rewards,
     draw_potentials,
-    draw_features,
+    plot_features,
 )
 from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
@@ -226,7 +226,6 @@ def rollout(
             t_post_policy = time.time()
 
         # Ask the environment to perform the simulation step
-        state = env.state.copy()
         obs_next, rew, done, env_info = env.step(act)
 
         # Record time after the step i.e. the send and receive is completed
@@ -239,7 +238,7 @@ def rollout(
         obs_hist.append(obs)
         act_hist.append(act)
         rew_hist.append(rew)
-        state_hist.append(state)
+        state_hist.append(env.state.copy())
         env_info_hist.append(env_info)
         if record_dts:
             dt_policy_hist.append(dt_policy)
@@ -399,28 +398,28 @@ def after_rollout_query(
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "p":
-        draw_observations_actions_rewards(rollout)
+        plot_observations_actions_rewards(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "pa":
-        draw_actions(rollout, env)
+        plot_actions(rollout, env)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "po":
-        draw_observations(rollout)
+        plot_observations(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif "po" in ans and any(char.isdigit() for char in ans):
         idcs = [int(s) for s in ans.split() if s.isdigit()]
-        draw_observations(rollout, idcs_sel=idcs)
+        plot_observations(rollout, idcs_sel=idcs)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "pf":
-        draw_features(rollout, policy)
+        plot_features(rollout, policy)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 

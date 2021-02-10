@@ -33,7 +33,7 @@ Dependencies:
     https://git.ias.informatik.tu-darmstadt.de/robcom-2/robcom-2.0
 
 Additional reading:
-    Ball-in-a-cup demo:
+    ball-in-the-cup demo:
     https://git.ias.informatik.tu-darmstadt.de/klink/ball-in-a-cup-demo/-/blob/master/bic-new.py
 """
 import os.path as osp
