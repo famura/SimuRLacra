@@ -82,14 +82,14 @@ class QQubeVis(PandaVis):
         self.windowProperties.setTitle('Quanser Qube')
         self.win.requestProperties(self.windowProperties)
 
-        self.cam.setY(-1.5)
+        self.cam.setPos(0.6, -1.2, 0.4)
+        self.cam.setHpr(20,-10,0)
         self.setBackgroundColor(1, 1, 1) #schwarz
         self.textNodePath.setPos(0.4, 0, -0.1)
         self.text.setTextColor(0, 0, 0, 1)
 
-        # Convert to float for VPython
-        Lr = float(self._env.domain_param["Lr"])
-        Lp = float(self._env.domain_param["Lp"])
+        Lr = self._env.domain_param["Lr"]
+        Lp = self._env.domain_param["Lp"]
 
         # Init render objects on first call
         scene_range = 0.2
@@ -152,8 +152,8 @@ class QQubeVis(PandaVis):
         #print(globalClock.getDt())
         th, al, _, _ = self._env.state
 
-        self.arm.setH(th*180/np.pi)
-        self.pole.setR(-al*180/np.pi)
+        self.arm.setH(th*180/np.pi-180)
+        self.pole.setR(al*180/np.pi)
 
         # Displayed text
         self.text.setText(f"""
