@@ -55,7 +55,6 @@ class PandaVis(ShowBase):
 
         self.textNodePath.setScale(0.07)
 
-
     def update(self, task):
         """
         Updates the visualization with every call.
@@ -108,13 +107,13 @@ class QQubeVis(PandaVis):
         self.cylinder = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
         self.cylinder.setScale(0.005, 0.005, 0.03)
         self.cylinder.setPos(0, 0.07, 0.12)
-        self.cylinder.setColor(0.5, 0.5, 0,5) #gray
+        self.cylinder.setColor(0.5, 0.5, 0,5)  # gray
         self.cylinder.reparentTo(self.render)
 
         # Armself.pole.setPos()
         self.arm = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
         self.arm.setScale(arm_radius, arm_radius, Lr)
-        self.arm.setColor(0, 0, 1) #blue
+        self.arm.setColor(0, 0, 1)  # blue
         self.arm.setP(-90)
         self.arm.setPos(0, 0.07, 0.15)
         self.arm.reparentTo(self.render)
@@ -122,7 +121,7 @@ class QQubeVis(PandaVis):
         # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
         self.pole.setScale(pole_radius, pole_radius, Lp)
-        self.pole.setColor(1, 0, 0) #red
+        self.pole.setColor(1, 0, 0)  # red
         self.pole.setPos(0, 0.07+2*Lr, 0.15)
         self.pole.wrtReparentTo(self.arm)
 
@@ -151,7 +150,7 @@ class QQubeVis(PandaVis):
         Rm = self._env.domain_param["Rm"]
         Dr = self._env.domain_param["Dr"]
         Dp = self._env.domain_param["Dp"]
-        #print(globalClock.getDt())
+        # print(globalClock.getDt())
         th, al, _, _ = self._env.state
 
         self.arm.setH(th*180/np.pi-180)
@@ -208,22 +207,22 @@ class PendulumVis(PandaVis):
         
         # creating the joint object of the pendulum
         self.joint = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
-        self.joint.setPos(0,r_pole,0)
-        self.joint.setScale(r_pole,r_pole,r_pole)
-        self.joint.setColor(0,0,0) #black
+        self.joint.setPos(0, r_pole, 0)
+        self.joint.setScale(r_pole, r_pole, r_pole)
+        self.joint.setColor(0, 0, 0)  # black
         self.joint.reparentTo(self.render)
         
         # creating the pole object of the pendulum
         self.pole = self.loader.loadModel(pathlib.Path(mydir, "models/cylinder_center_bottom.egg"))
-        self.pole.setPos(0,r_pole,0)
-        self.pole.setScale(r_pole,r_pole,2*l_pole)
-        self.pole.setR(180*np.pi+180)
-        self.pole.setColor(0,0,1)
+        self.pole.setPos(0, r_pole, 0)
+        self.pole.setScale(r_pole, r_pole, 2*l_pole)
+        self.pole.setR(180 * np.pi + 180)
+        self.pole.setColor(0, 0, 1)
         self.pole.reparentTo(self.render)
         
-        self.taskMgr.add(self.update,"update")
+        self.taskMgr.add(self.update, "update")
         
-    def update(self,task: Task):
+    def update(self, task: Task):
         
         # accessing the current parameter values
         g = self._env.domain_param["g"]
@@ -235,9 +234,9 @@ class PendulumVis(PandaVis):
         th, _ = self._env.state
         
         # change the position and rotation
-        self.joint.setPos(0,r_pole,0)
-        self.pole.setPos(0,r_pole,0)
-        self.pole.setR(th*180/np.pi+180)
+        self.joint.setPos(0, r_pole, 0)
+        self.pole.setPos(0, r_pole, 0)
+        self.pole.setR(th * 180 / np.pi + 180)
         
         # change the shown text
         self.text.setText(f"""
@@ -263,14 +262,14 @@ class PendulumVis(PandaVis):
         th, _ = self._env.state
         
         # change the position and rotation
-        self.joint.setPos(0,r_pole,0)
-        self.joint.setScale(r_pole,r_pole,r_pole)
-        self.joint.setColor(1,1,1)
+        self.joint.setPos(0, r_pole, 0)
+        self.joint.setScale(r_pole, r_pole, r_pole)
+        self.joint.setColor(1, 1, 1)
         
-        self.pole.setPos(0,r_pole,0)
-        self.pole.setScale(r_pole,r_pole,2*l_pole)
-        self.pole.setR(180*np.pi+180)
-        self.pole.setColor(0,0,1)
+        self.pole.setPos(0, r_pole, 0)
+        self.pole.setScale(r_pole, r_pole, 2*l_pole)
+        self.pole.setR(180 * np.pi + 180)
+        self.pole.setColor(0, 0, 1)
 
 
 class QbbVis(PandaVis):
@@ -290,11 +289,11 @@ class QbbVis(PandaVis):
         self.cam.setY(-1.3)
 
         self.textNodePath.setScale(0.05)
-        self.textNodePath.setPos(0.4, 0, -0.1)
+        self.textNodePath.setPos(-1.4, 0, 0.9)
 
         # Physics params
         l_plate = self._env.domain_param["l_plate"]
-        m_ball = self._env.domain_param["m_ball"]
+        m_ball = self._env.domain_param["m_ball"]   # mass of the ball is not needed for panda3d visualization
         r_ball = self._env.domain_param["r_ball"]
         d_plate = 0.01  # only for animation
 
@@ -304,14 +303,13 @@ class QbbVis(PandaVis):
         self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.ball.setPos(self._env.state[2], self._env.state[3], (r_ball + d_plate / 2.0))
         self.ball.setScale(r_ball)
-        # self.ball.setMass(m_ball)
         self.ball.setColor(1, 0, 0, 0)
         self.ball.reparentTo(self.render)
 
         # Plate
         self.plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.plate.setPos(0, 0, 0)
-        self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)  # divided by 2 since Blender object has length of 2
+        self.plate.setScale(l_plate * 0.5, l_plate * 0.5, d_plate * 0.5)  # modified according to Blender object
         self.plate.setColor(0, 0, 1, 0)
         self.plate.reparentTo(self.render)
 
@@ -319,9 +317,9 @@ class QbbVis(PandaVis):
         self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.null_plate.setPos(0, 0, 0)
         self.null_plate.setScale(
-            l_plate * 1.1 / 2,
-            l_plate * 1.1 / 2,
-            d_plate / 10 / 2
+            l_plate * 1.1 * 0.5,
+            l_plate * 1.1 * 0.5,
+            d_plate / 20
         )  # divided by 2 since Blender object has length of 2
         self.null_plate.setTransparency(1)
         self.null_plate.setColorScale(0, 1, 1, 0.5)
@@ -360,9 +358,9 @@ class QbbVis(PandaVis):
         # Axis runs along the x direction
         self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)
 
-        # self.plate.setHpr(np.cos(a_vp) * 180 / np.pi * float(l_plate), 0, np.sin(a_vp) * 180 / np.pi * float(l_plate))
-        self.plate.setR(- a_vp * 180 / np.pi)
-        self.plate.setP(b_vp * 180 / np.pi)
+        # Rotate plate
+        self.plate.setR(- a_vp * 180 / np.pi)  # rotate Roll axis
+        self.plate.setP(b_vp * 180 / np.pi)  # rotate Pitch axis
 
         # Get ball position
         x = self._env.state[2]  # along the x axis
@@ -498,12 +496,12 @@ class QCartPoleVis(PandaVis):
         """
         super().__init__()
 
-        #Accessing variables of outer class
+        # Accessing variables of outer class
         self._env = env
 
         self.cam.setY(-5)
 
-        #setting parameters
+        # setting parameters
         l_pole = float(self._env.domain_param["l_pole"])
         l_rail = float(self._env.domain_param["l_rail"])
 
@@ -514,38 +512,38 @@ class QCartPoleVis(PandaVis):
         # Get positions
         x, th, _, _ = self._env.state
 
-        #Rail
+        # Rail
         self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
         self.rail.setPos(0, 0, -h_cart - r_rail)
         self.rail.setScale(r_rail, r_rail, l_rail)
-        self.rail.setColor(0.85, 0.85, 0.85) #lightGrey
+        self.rail.setColor(0.85, 0.85, 0.85)  # light Grey
         self.rail.reparentTo(self.render)
         self.rail.setR(90)
 
-        #Cart
+        # Cart
         self.cart = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.cart.setPos(x, 0, 0)
         self.cart.setScale(l_cart, h_cart/2, h_cart)
-        self.cart.setColor(0, 1, 0, 0) #green
+        self.cart.setColor(0, 1, 0, 0)  # green
         self.cart.reparentTo(self.render)
 
-        #Joint
+        # Joint
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.joint.setPos(x, -r_pole - h_cart/2, 0)
         self.joint.setScale(r_pole)
-        self.joint.setColor(0.85, 0.85, 0.85) #lightGrey
+        self.joint.setColor(0.85, 0.85, 0.85)  # lightGrey
         self.joint.reparentTo(self.render)
 
-        #Pole
+        # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
         self.pole.setPos(x, -r_pole - h_cart/2, 0)
         self.pole.setHpr(0, 0, 0)
-        #H counterclockwise around Z-axis, P counterclockwise around X-axis, R counterclockwise around Y-axis
+        # H counterclockwise around Z-axis, P counterclockwise around X-axis, R counterclockwise around Y-axis
         self.pole.setScale(r_pole, r_pole, 2*l_pole)
-        self.pole.setColor(0, 0, 1) #blue
+        self.pole.setColor(0, 0, 1)  # blue
         self.pole.reparentTo(self.render)
 
-        #Update-Aufruf
+        # Update
         self.taskMgr.add(self.update, "update")
 
     def update(self, task):
@@ -572,13 +570,13 @@ class QCartPoleVis(PandaVis):
         # Get positions
         x, th, _, _ = self._env.state
 
-        #Cart
+        # Cart
         self.cart.setX(x)
 
-        #Joint
+        # Joint
         self.joint.setX(x)
 
-        #Pole
+        # Pole
         self.pole.setX(x)
         self.pole.setR(-th * 180/np.pi)
 
@@ -620,9 +618,9 @@ class OmoVis(PandaVis):
         self._env = env
 
         self.cam.setY(-5)
-        self.cam.setZ(1)
-        self.cam.setP(-10)
-        self.textNodePath.setPos(0.4, 0, -0.1)
+        # self.cam.setZ(1)
+        # self.cam.setP(-10)
+        self.textNodePath.setPos(-1.4, 0, 0.9)
 
         # Params
         c = 0.1 * self._env.obs_space.bound_up[0]
@@ -631,17 +629,17 @@ class OmoVis(PandaVis):
         self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.ground.setPos(0, 0, -0.02)
         self.ground.setScale(
-            2 * self._env.obs_space.bound_up[0] / 2,
-            3 * c / 2,
-            0.02 / 2
-        )
+            self._env.obs_space.bound_up[0],
+            1.5 * c,
+            0.01
+        )  # Scale modified according to Blender Object
         self.ground.setColor(0, 1, 0, 0)
         self.ground.reparentTo(self.render)
 
         # Mass
         self.mass = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.mass.setPos(self._env.state[0], 0, c / 2.0)
-        self.mass.setScale(c / 2, c / 2, c / 2)
+        self.mass.setScale(c * 0.5, c * 0.5, c * 0.5)  # multiply by 0.5 since Blender object has length of 2
         self.mass.setColor(0, 0, 1, 0)
         self.mass.reparentTo(self.render)
 
@@ -657,7 +655,6 @@ class OmoVis(PandaVis):
         self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/arrow.egg"))
         self.force.setPos(self._env.state[0], 0, c / 2.0)
         self.force.setScale(0.1 * self._env._curr_act / 10, 0.2 * c / 2, 0.2 * c / 2)
-        # self.force.setScale(0.2, 0.2 * c, 0.2 * c)
         self.force.setColor(1, 0, 0, 0)
         self.force.reparentTo(self.render)
 
@@ -665,7 +662,6 @@ class OmoVis(PandaVis):
         self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
         self.spring.setPos(0, 0, c / 2.0)
         self.spring.setScale((self._env.state[0] - c / 2.0) / 7, c / 3.0 / 2, c / 3.0 / 2)
-        # self.spring.setScale(0.1, 0.1, 0.1)
         self.spring.setColor(0, 0, 1, 0)
         self.spring.reparentTo(self.render)
 
