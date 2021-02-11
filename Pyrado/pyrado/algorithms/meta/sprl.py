@@ -164,10 +164,10 @@ class SPRL(Algorithm):
         self.save_snapshot()
 
         context_mean = to.cat([spl_param.context_mean for spl_param in self._spl_parameters]).double()
-        context_cov = to.cat([spl_param.context_cov for spl_param in self._spl_parameters]).flatten().double()
+        context_cov_chol = to.cat([spl_param.context_cov_chol_flat for spl_param in self._spl_parameters]).double()
 
         target_mean = to.cat([spl_param.target_mean for spl_param in self._spl_parameters]).double()
-        target_cov = to.cat([spl_param.target_cov for spl_param in self._spl_parameters]).flatten().double()
+        target_cov_chol = to.cat([spl_param.target_cov_chol_flat for spl_param in self._spl_parameters]).double()
 
         # self.logger.add_value(f"cur context mean for {self._parameter.name}", self._parameter.context_mean.item())
         # self.logger.add_value(f"cur context cov for {self._parameter.name}", self._parameter.context_cov.item())
@@ -176,8 +176,8 @@ class SPRL(Algorithm):
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
 
         # Update distribution
-        previous_distribution = MultivariateNormalWrapper(context_mean, context_cov)
-        target_distribution = MultivariateNormalWrapper(target_mean, target_cov)
+        previous_distribution = MultivariateNormalWrapper(context_mean, context_cov_chol)
+        target_distribution = MultivariateNormalWrapper(target_mean, target_cov_chol)
         rollouts = self._subroutine.rollouts
         contexts = to.tensor(
             np.array(
