@@ -501,7 +501,6 @@ class QCartPoleVis(PandaVis):
         #Accessing variables of outer class
         self._env = env
 
-        #self.setBackgroundColor(0, 0, 0)
         self.cam.setY(-5)
 
         #setting parameters
@@ -517,9 +516,9 @@ class QCartPoleVis(PandaVis):
 
         #Rail
         self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
-        self.rail.setPos(0, 0, -h_cart/2 - r_rail)
+        self.rail.setPos(0, 0, -h_cart - r_rail)
         self.rail.setScale(r_rail, r_rail, l_rail)
-        self.rail.setColor(1, 1, 1) #white
+        self.rail.setColor(0.85, 0.85, 0.85) #lightGrey
         self.rail.reparentTo(self.render)
         self.rail.setR(90)
 
@@ -534,7 +533,7 @@ class QCartPoleVis(PandaVis):
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.joint.setPos(x, -r_pole - h_cart/2, 0)
         self.joint.setScale(r_pole)
-        self.joint.setColor(1, 1, 1, 1) #white
+        self.joint.setColor(0.85, 0.85, 0.85) #lightGrey
         self.joint.reparentTo(self.render)
 
         #Pole
@@ -572,9 +571,6 @@ class QCartPoleVis(PandaVis):
 
         # Get positions
         x, th, _, _ = self._env.state
-
-        # Rail
-        self.rail.setSz(l_rail)
 
         #Cart
         self.cart.setX(x)
