@@ -191,11 +191,11 @@ class PendulumVis(PandaVis):
         r_pole = 0.05
         th, _ = self._env.state
         
-        # set window title to current Simulation
+        # set window title
         self.windowProperties.setTitle('Pendulum')
         self.win.requestProperties(self.windowProperties)
         
-        # set cam properties
+        # set pov properties
         self.cam.setY(-20)
         self.cam.setZ(-0)
         
@@ -203,14 +203,14 @@ class PendulumVis(PandaVis):
         self.textNodePath.setScale(0.06)
         self.textNodePath.setPos(0.45, 0, -0.3)
         
-        # creating the joint of the pendulum
+        # creating the joint of the pendulum with all its properties
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.joint.setPos(0, r_pole, 0)
         self.joint.setScale(r_pole, r_pole, r_pole)
         self.joint.setColor(0, 0, 0)  # black
         self.joint.reparentTo(self.render)
         
-        # creating the pole of the pendulum
+        # creating the pole of the pendulum with all its properties
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
         self.pole.setPos(0, r_pole, 0)
         self.pole.setScale(r_pole, r_pole, 2*l_pole)
@@ -218,6 +218,7 @@ class PendulumVis(PandaVis):
         self.pole.setColor(0, 0, 1)
         self.pole.reparentTo(self.render)
         
+        # adds one instance of the update function to the task-manager and thus initializes the animation
         self.taskMgr.add(self.update, "update")
         
     def update(self, task: Task):
@@ -252,21 +253,9 @@ class PendulumVis(PandaVis):
             d_pole: {d_pole : 1.3f}
             tau_max: {tau_max: 1.3f}
             """)
+            
+        # returning Task.cont adds another instance of the function itself to the task-manager
         return Task.cont
-    
-    def reset(self):
-        
-        # accessing the initial parameter values
-        l_pole = float(self._env.domain_param["l_pole"])
-        r_pole = 0.05
-        th, _ = self._env.state
-        
-        # reset the position of the joint
-        self.joint.setPos(0, r_pole, 0)
-        
-        # reset the position and rotation of the pole
-        self.pole.setPos(0, r_pole, 0)
-        self.pole.setR(180 * np.pi + 180)
 
 
 class QbbVis(PandaVis):

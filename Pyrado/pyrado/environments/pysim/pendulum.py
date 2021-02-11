@@ -100,5 +100,3 @@ class PendulumSim(SimPyEnv, Serializable):
     def _update_anim(self):
         self._visualization.taskMgr.step()
 
-    def _reset_anim(self):
-        self._visualization.reset()
