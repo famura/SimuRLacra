@@ -185,8 +185,6 @@ class PendulumVis(PandaVis):
         """
         super().__init__()
     
-        mydir = pathlib.Path(__file__).resolve().parent.absolute()
-    
         # accessing variables of outer class
         self._env = env
         l_pole = float(self._env.domain_param["l_pole"])
@@ -206,14 +204,14 @@ class PendulumVis(PandaVis):
         self.textNodePath.setPos(0.45, 0, -0.3)
         
         # creating the joint of the pendulum
-        self.joint = self.loader.loadModel(pathlib.Path(mydir, "models/ball.egg"))
+        self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.joint.setPos(0, r_pole, 0)
         self.joint.setScale(r_pole, r_pole, r_pole)
         self.joint.setColor(0, 0, 0)  # black
         self.joint.reparentTo(self.render)
         
         # creating the pole of the pendulum
-        self.pole = self.loader.loadModel(pathlib.Path(mydir, "models/cylinder_center_bottom.egg"))
+        self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
         self.pole.setPos(0, r_pole, 0)
         self.pole.setScale(r_pole, r_pole, 2*l_pole)
         self.pole.setR(180 * np.pi + 180)
@@ -284,6 +282,7 @@ class QbbVis(PandaVis):
         # Accessing variables of outer class
         self._env = env
 
+        self.win.requestProperties(self.windowProperties)
         self.windowProperties.setTitle('Quanser Ball Balancer')
         self.cam.setY(-1.3)
 
@@ -424,6 +423,7 @@ class BobVis(PandaVis):
         a = float(self._env.state[1])  # angle [rad]
 
         self.windowProperties.setTitle('Ball on Beam')
+        self.win.requestProperties(self.windowProperties)
         self.cam.setY(-3.0)
         self.textNodePath.setScale(0.07)
         self.textNodePath.setPos(0.3, 0, -0.3)
@@ -497,6 +497,9 @@ class QCartPoleVis(PandaVis):
 
         # Accessing variables of outer class
         self._env = env
+
+        self.windowProperties.setTitle('Quanser Cartpole')
+        self.win.requestProperties(self.windowProperties)
 
         self.cam.setY(-5)
 
@@ -612,9 +615,11 @@ class OmoVis(PandaVis):
         :param env: environment to visualize
         """
         super().__init__()
-
         # Accessing variables of outer class
         self._env = env
+
+        self.windowProperties.setTitle('One Mass Oscilator')
+        self.win.requestProperties(self.windowProperties)
 
         self.cam.setY(-5)
         # self.cam.setZ(1)
