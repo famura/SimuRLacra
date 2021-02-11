@@ -432,16 +432,6 @@ class BobVis(PandaVis):
 
         self.taskMgr.add(self.update, "update")
 
-    def reset(self):
-        r_ball = self._env.domain_param["r_ball"]
-        d_beam = self._env.domain_param["d_beam"]
-        x = float(self._env.state[0])  # ball position along the beam axis [m]
-        a = float(self._env.state[1])  # angle [rad]
-
-        self.ball.setPos(x, 0, np.sin(a) * x + np.cos(a) * d_beam / 2.0 + r_ball)
-
-        self.beam.setR(-a * 180 / np.pi)
-
     def update(self, task):
         g = self._env.domain_param["g"]
         m_ball = self._env.domain_param["m_ball"]

@@ -130,8 +130,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         self.state[:2] += self.state[2:] * self._dt  # next position
 
     def _reset_anim(self):
-        # Calls the reset function within PandasVis-class
-        self._visualization.reset()
+        pass
 
     def _init_anim(self):
 
