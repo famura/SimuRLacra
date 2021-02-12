@@ -82,22 +82,22 @@ class QQubeVis(PandaVis):
         """
         super().__init__()
 
-        # Accessing variables of outer class
+        # Accessing variables of environment class
         self._env = env
         Lr = self._env.domain_param["Lr"]
         Lp = self._env.domain_param["Lp"]
-                
-        # Init render objects on first call
         arm_radius = 0.003
         pole_radius = 0.0045
         
-        # Set title
+        # Set window title
         self.windowProperties.setTitle('Quanser Qube')
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
         self.cam.setPos(-0.4, -1.3, 0.4)
         self.cam.setHpr(-20,-10,0)
+
+        # Set text properties
         self.textNodePath.setPos(0.4, 0, -0.1)
         
         # Box
@@ -107,12 +107,24 @@ class QQubeVis(PandaVis):
         self.box.setColor(0.5, 0.5, 0.5)
         self.box.reparentTo(self.render)
 
-        # Cylinder on the top of the box
+        # Cylinder
         self.cylinder = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
         self.cylinder.setScale(0.005, 0.005, 0.03)
         self.cylinder.setPos(0, 0.07, 0.12)
         self.cylinder.setColor(0.5, 0.5, 0,5)  # gray
         self.cylinder.reparentTo(self.render)
+
+        # Joints
+        self.joint1 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
+        self.joint1.setScale(0.005)
+        self.joint1.setPos(0.0, 0.07, 0.15)
+        self.joint1.reparentTo(self.render)
+
+        self.joint2 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
+        self.joint2.setScale(pole_radius)
+        self.joint2.setPos(0.0, 0.07 + 2 * Lr, 0.15)
+        self.joint2.setColor(0, 0, 0)
+        self.joint2.wrtReparentTo(self.arm)
 
         # Arm
         self.arm = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
@@ -129,19 +141,9 @@ class QQubeVis(PandaVis):
         self.pole.setPos(0, 0.07+2*Lr, 0.15)
         self.pole.wrtReparentTo(self.arm)
 
-        # Joints
-        self.joint1 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint1.setScale(0.005)
-        self.joint1.setPos(0.0, 0.07, 0.15)
-        self.joint1.reparentTo(self.render)
+        #ToDo Curve
 
-        self.joint2 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint2.setScale(pole_radius)
-        self.joint2.setPos(0.0, 0.07+2*Lr, 0.15)
-        self.joint2.setColor(0, 0, 0)
-        self.joint2.wrtReparentTo(self.arm)
-
-        # Adds one instance of the update function to the task-manager and thus initializes the animation
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
@@ -164,7 +166,7 @@ class QQubeVis(PandaVis):
         # Update rotation of pole
         self.pole.setR(al*180/np.pi)
 
-        # Displayed text
+        # Update displayed text
         self.text.setText(f"""
             theta: {self._env.state[0] * 180 / np.pi : 3.1f}
             alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
@@ -180,7 +182,6 @@ class QQubeVis(PandaVis):
             km: {km : 1.4f}
             """)
 
-        # Returning Task.cont adds another instance of the function itself to the task-manager
         return Task.cont
 
 
@@ -276,23 +277,23 @@ class QbbVis(PandaVis):
         """
         super().__init__()
 
-        # Accessing variables of outer class
+        # Accessing variables of environment class
         self._env = env
+        l_plate = self._env.domain_param["l_plate"]
+        m_ball = self._env.domain_param["m_ball"]  # mass of the ball is not needed for panda3d visualization
+        r_ball = self._env.domain_param["r_ball"]
+        d_plate = 0.01
 
+        # Set window title
         self.win.requestProperties(self.windowProperties)
         self.windowProperties.setTitle('Quanser Ball Balancer')
+
+        # Set pov
         self.cam.setY(-1.3)
 
+        # Set text properties
         self.textNodePath.setScale(0.05)
         self.textNodePath.setPos(-1.4, 0, 0.9)
-
-        # Physics params
-        l_plate = self._env.domain_param["l_plate"]
-        m_ball = self._env.domain_param["m_ball"]   # mass of the ball is not needed for panda3d visualization
-        r_ball = self._env.domain_param["r_ball"]
-        d_plate = 0.01  # only for animation
-
-        # Initiate render objects on first call
 
         # Ball
         self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
@@ -303,14 +304,14 @@ class QbbVis(PandaVis):
 
         # Plate
         self.plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.plate.setPos(0, 0, 0)
+        self.plate.setPos(0, 0, 0)#delete?
         self.plate.setScale(l_plate * 0.5, l_plate * 0.5, d_plate * 0.5)  # modified according to Blender object
         self.plate.setColor(0, 0, 1, 0)
         self.plate.reparentTo(self.render)
 
         # Null_plate
         self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.null_plate.setPos(0, 0, 0)
+        self.null_plate.setPos(0, 0, 0)#delete?
         self.null_plate.setScale(
             l_plate * 1.1 * 0.5,
             l_plate * 1.1 * 0.5,
@@ -320,10 +321,12 @@ class QbbVis(PandaVis):
         self.null_plate.setColorScale(0, 1, 1, 0.5)
         self.null_plate.reparentTo(self.render)
 
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
 
+        # Accessing the current parameter values
         g = self._env.domain_param["g"]
         l_plate = self._env.domain_param["l_plate"]
         m_ball = self._env.domain_param["m_ball"]
@@ -346,29 +349,30 @@ class QbbVis(PandaVis):
         offset_th_y = self._env.domain_param["offset_th_y"]
         d_plate = 0.01  # only for animation
 
+        # Get ball position
+        x = self._env.state[2]  # along the x axis
+        y = self._env.state[3]  # along the y axis
+
         #  Compute plate orientation
         a_vp = -self._env.plate_angs[0]  # plate's angle around the y axis (alpha) # Roll
         b_vp = self._env.plate_angs[1]  # plate's angle around the x axis (beta) # Pitch
 
         # Axis runs along the x direction
-        self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)
+        self.plate.setScale(l_plate / 2, l_plate / 2, d_plate / 2)###delete?
 
-        # Rotate plate
+        # Update rotation of plate
         self.plate.setR(- a_vp * 180 / np.pi)  # rotate Roll axis
         self.plate.setP(b_vp * 180 / np.pi)  # rotate Pitch axis
 
-        # Get ball position
-        x = self._env.state[2]  # along the x axis
-        y = self._env.state[3]  # along the y axis
-
+        # Update position of ball
         self.ball.setPos(
             x * np.cos(a_vp),
             y * np.cos(b_vp),
             (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0),
         )
-        self.ball.setScale(r_ball)
+        self.ball.setScale(r_ball)#delete?
 
-        # Set caption text
+        # Update displayed text
         self.text.setText(f"""
             x-axis is pos to the right, y-axis is pos up
             Commanded voltage: x servo : {self._env._curr_act[0] : 1.2f}, y servo : {self._env._curr_act[1] : 1.2f}
@@ -411,7 +415,7 @@ class BobVis(PandaVis):
         """
         super().__init__()
 
-        # Accessing variables of outer class
+        # Accessing variables of environment class
         self._env = env
         r_ball = self._env.domain_param["r_ball"]
         l_beam = self._env.domain_param["l_beam"]
@@ -419,18 +423,25 @@ class BobVis(PandaVis):
         x = float(self._env.state[0])  # ball position along the beam axis [m]
         a = float(self._env.state[1])  # angle [rad]
 
+        # Set window title
         self.windowProperties.setTitle('Ball on Beam')
         self.win.requestProperties(self.windowProperties)
+
+        # Set pov
         self.cam.setY(-3.0)
+
+        # Set text properties
         self.textNodePath.setScale(0.07)
         self.textNodePath.setPos(0.3, 0, -0.3)
 
+        #Ball
         self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.ball.setColor(1, 0, 0, 0)
         self.ball.setScale(r_ball)
         self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
         self.ball.reparentTo(self.render)
 
+        #Beam
         self.beam = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.beam.setColor(0, 1, 0, 0)
         self.beam.setScale(l_beam / 2, d_beam, d_beam / 2)
@@ -438,9 +449,12 @@ class BobVis(PandaVis):
         self.beam.setR(-a * 180 / np.pi)
         self.beam.reparentTo(self.render)
 
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task):
+
+        # Accessing the current parameter values
         g = self._env.domain_param["g"]
         m_ball = self._env.domain_param["m_ball"]
         r_ball = self._env.domain_param["r_ball"]
@@ -452,12 +466,14 @@ class BobVis(PandaVis):
         x = float(self._env.state[0])  # ball position along the beam axis [m]
         a = float(self._env.state[1])  # angle [rad]
 
+        # Update position of ball
         self.ball.setPos(np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball), 0,
                          np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball))
 
+        # Update rotation of joint
         self.beam.setR(-a * 180 / np.pi)
 
-        # Displayed text
+        # Update displayed text
         self.text.setText(f"""
             dt: {self._env._dt : 1.4f}
             g: {g : 1.3f}
@@ -482,24 +498,21 @@ class QCartPoleVis(PandaVis):
         """
         super().__init__()
 
-        # Accessing variables of outer class
+        # Accessing variables of environment class
         self._env = env
-
-        self.windowProperties.setTitle('Quanser Cartpole')
-        self.win.requestProperties(self.windowProperties)
-
-        self.cam.setY(-5)
-
-        # setting parameters
+        x, th, _, _ = self._env.state
         l_pole = float(self._env.domain_param["l_pole"])
         l_rail = float(self._env.domain_param["l_rail"])
-
         # Only for animation
         l_cart, h_cart = 0.08, 0.08
         r_pole, r_rail = 0.01, 0.005
 
-        # Get positions
-        x, th, _, _ = self._env.state
+        # Set window title
+        self.windowProperties.setTitle('Quanser Cartpole')
+        self.win.requestProperties(self.windowProperties)
+
+        # Set pov
+        self.cam.setY(-5)
 
         # Rail
         self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
@@ -532,11 +545,13 @@ class QCartPoleVis(PandaVis):
         self.pole.setColor(0, 0, 1)  # blue
         self.pole.reparentTo(self.render)
 
-        # Update
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task):
 
+        # Accessing the current parameter values
+        x, th, _, _ = self._env.state
         g = self._env.domain_param["g"]
         m_cart = self._env.domain_param["m_cart"]
         m_pole = self._env.domain_param["m_pole"]
@@ -556,40 +571,38 @@ class QCartPoleVis(PandaVis):
         l_cart, h_cart = 0.08, 0.08
         r_pole, r_rail = 0.01, 0.005
 
-        # Get positions
-        x, th, _, _ = self._env.state
-
-        # Cart
+        # Update position of cart
         self.cart.setX(x)
 
-        # Joint
-        self.joint.setX(x)
+        # Update position of joint
+        self.joint.setX(x) # could be reparented to cart
 
-        # Pole
-        self.pole.setX(x)
+        # Update position of Pole
+        self.pole.setX(x) # could be reparented to cart
         self.pole.setR(-th * 180/np.pi)
 
+        # Update displayed text
         self.text.setText(f"""
-                            theta: {self._env.state[1] * 180 / np.pi : 2.3f}
-                            dt: {self._env._dt :1.4f}
-                            g: {g : 1.3f}
-                            m_cart: {m_cart : 1.4f}
-                            l_rail: {l_rail : 1.3f}
-                            l_pole: {l_pole : 1.3f} (0.168 is short)
-                            eta_m: {eta_m : 1.3f}
-                            eta_g: {eta_g : 1.3f}
-                            K_g: {K_g : 1.3f}
-                            J_m: {J_m : 1.8f}
-                            r_mp: {r_mp : 1.4f}
-                            R_m: {R_m : 1.3f}
-                            k_m: {k_m : 1.6f}
-                            B_eq: {B_eq : 1.2f}
-                            B_pole: {B_pole : 1.3f}
-                            m_pole: {m_pole : 1.3f}
-                            """)
+            theta: {self._env.state[1] * 180 / np.pi : 2.3f}
+            dt: {self._env._dt :1.4f}
+            g: {g : 1.3f}
+            m_cart: {m_cart : 1.4f}
+            l_rail: {l_rail : 1.3f}
+            l_pole: {l_pole : 1.3f} (0.168 is short)
+            eta_m: {eta_m : 1.3f}
+            eta_g: {eta_g : 1.3f}
+            K_g: {K_g : 1.3f}
+            J_m: {J_m : 1.8f}
+            r_mp: {r_mp : 1.4f}
+            R_m: {R_m : 1.3f}
+            k_m: {k_m : 1.6f}
+            B_eq: {B_eq : 1.2f}
+            B_pole: {B_pole : 1.3f}
+            m_pole: {m_pole : 1.3f}
+            """)
         return Task.cont
 
-    def reset(self):
+    def reset(self):#delete?
         pass
 
 
@@ -602,19 +615,22 @@ class OmoVis(PandaVis):
         :param env: environment to visualize
         """
         super().__init__()
-        # Accessing variables of outer class
-        self._env = env
 
+        # Accessing variables of environment class
+        self._env = env
+        c = 0.1 * self._env.obs_space.bound_up[0]
+
+        # Set window title
         self.windowProperties.setTitle('One Mass Oscilator')
         self.win.requestProperties(self.windowProperties)
 
+        # Set pov
         self.cam.setY(-5)
         # self.cam.setZ(1)
         # self.cam.setP(-10)
-        self.textNodePath.setPos(-1.4, 0, 0.9)
 
-        # Params
-        c = 0.1 * self._env.obs_space.bound_up[0]
+        # Set text properties
+        self.textNodePath.setPos(-1.4, 0, 0.9)
 
         # Ground
         self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
@@ -656,23 +672,29 @@ class OmoVis(PandaVis):
         self.spring.setColor(0, 0, 1, 0)
         self.spring.reparentTo(self.render)
 
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task):
+
+        # Accessing the current parameter values
         m = self._env.domain_param["m"]
         k = self._env.domain_param["k"]
         d = self._env.domain_param["d"]
         c = 0.1 * self._env.obs_space.bound_up[0]
 
+        # Update position of mass
         self.mass.setPos(self._env.state[0], 0, c / 2.0)
 
+        # Update position, scale of force
         self.force.setPos(self._env.state[0], 0, c / 2.0)
         capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
         self.force.setSx(capped_act / 10.0)
 
+        # Update scale of spring
         self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3)  # scaling according to Blender object
 
-        # set caption text
+        # Update displayed text
         self.text.setText(f"""
             mass_x: {self.mass.getX()}
             spring_Sx: {self.spring.getSx()}
@@ -684,7 +706,7 @@ class OmoVis(PandaVis):
 
         return Task.cont
 
-    def reset(self):
+    def reset(self): #delete?
         c = 0.1 * self._env.obs_space.bound_up[0]
 
         self.mass.setPos(self._env.state[0], 0, c / 2.0)
