@@ -628,8 +628,8 @@ class OmoVis(PandaVis):
 
         # Des
         self.des = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.des.setPos(self._env._task.state_des[0], 0, 0.8 * c / 2.0)
-        self.des.setScale(0.8 * c / 2, 0.8 * c / 2, 0.8 * c / 2)
+        self.des.setPos(self._env._task.state_des[0], 0, 0.4 * c)
+        self.des.setScale(0.4 * c, 0.4 * c, 0.4 * c)
         self.des.setTransparency(1)
         self.des.setColorScale(0, 1, 1, 0.5)
         self.des.reparentTo(self.render)
@@ -637,14 +637,14 @@ class OmoVis(PandaVis):
         # Force
         self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/arrow.egg"))
         self.force.setPos(self._env.state[0], 0, c / 2.0)
-        self.force.setScale(0.1 * self._env._curr_act / 10, 0.2 * c / 2, 0.2 * c / 2)
+        self.force.setScale(0.1 * self._env._curr_act / 10.0, 0.1 * c, 0.1 * c)
         self.force.setColor(1, 0, 0, 0)
         self.force.reparentTo(self.render)
 
         # Spring
         self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
         self.spring.setPos(0, 0, c / 2.0)
-        self.spring.setScale((self._env.state[0] - c / 2.0) / 7, c / 3.0 / 2, c / 3.0 / 2)
+        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.0, c / 6.0, c / 6.0)
         self.spring.setColor(0, 0, 1, 0)
         self.spring.reparentTo(self.render)
 
@@ -660,9 +660,9 @@ class OmoVis(PandaVis):
 
         self.force.setPos(self._env.state[0], 0, c / 2.0)
         capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
-        self.force.setSx(capped_act / 10)
+        self.force.setSx(capped_act / 10.0)
 
-        self.spring.setSx((self._env.state[0] - c / 2.0) / 7)
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.2)
 
         # set caption text
         self.text.setText(f"""
@@ -680,7 +680,8 @@ class OmoVis(PandaVis):
         c = 0.1 * self._env.obs_space.bound_up[0]
 
         self.mass.setPos(self._env.state[0], 0, c / 2.0)
-        self.des.setPos(self._env._task.state_des[0], 0, 0.8 * c / 2.0)
+        self.des.setPos(self._env._task.state_des[0], 0, 0.4 * c)
         self.force.setPos(self._env.state[0], 0, c / 2.0)
-        self.force.setSx((0.1 * self._env._curr_act) / 10)
-        self.spring.setSx((self._env.state[0] - c / 2.0) / 7)
+        self.force.setSx((0.1 * self._env._curr_act) / 10.0)
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.2)  # TODO
+
