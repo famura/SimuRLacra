@@ -286,10 +286,16 @@ basic template:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+<p>An important part of every simulation is the initial state. Therefore, we create an initial state setter in
+<cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/initState</cite> by inheriting from <cite>InitStateSetter</cite>. Simply start by copying
+one of the existing <cite>ISS&lt;NAME&gt;.h</cite> / <cite>ISS&lt;NAME&gt;.cpp</cite> pairs, and do the necessary changes, e.g. renaming the class,
+setting a custom initial state space, ect.</p>
 <p>We also need to add our new experiment configuration to <cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/CMakeLists.txt</cite></p>
 <div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="s">CORE_SRCS</span>
     <span class="s">...</span>
     <span class="s">ECHelloMichael.cpp</span>
+    <span class="s">...</span>
+    <span class="s">initState/ISSHelloMichael.cpp</span>
     <span class="s">...</span>
     <span class="p">)</span>
 </pre></div>
@@ -298,27 +304,29 @@ basic template:</p>
 <p>You already made the more difficult part of the implementation. Next, we create the counterpart of <cite>ECHelloMichael</cite> in
 <cite>PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/hello_michael.py</cite>, by inheriting from <cite>RcsSim</cite> which can be
 found in <cite>PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/base.py</cite>. Here is a basic template:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rcsenv</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rcsenv</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
-<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 
 
 <span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
-<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;HelloMichael&quot;</span><span class="p">))</span>
-
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;BottleFlip&quot;</span><span class="p">))</span>
 
 <span class="k">class</span> <span class="nc">HelloMichaelSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hm&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">max_dist_force</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_dist_force</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
 
         <span class="c1"># TODO Forward basic arguments as well as custom arguments to RcsSim&#39;s constructor, which will then pass it to the ECHelloMichael.</span>
         <span class="n">RcsSim</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="n">task_args</span><span class="p">,</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
             <span class="n">envType</span><span class="o">=</span><span class="s2">&quot;HelloMichael&quot;</span><span class="p">,</span>
             <span class="n">graphFileName</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;graphFileName&quot;</span><span class="p">,</span> <span class="s2">&quot;gHelloMichael.xml&quot;</span><span class="p">),</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -360,10 +368,10 @@ make
 zero actions all the time. In the following snippet, we chose the physics engine to be Bullet, the time step size as 0.01s
 and the overall time to 10s. Moreover, we are ignoring joint limits, and have no disturbance.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rcsenv</span>
-<span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.hello_michael</span> <span class="kn">import</span> <span class="n">HelloMichaelSim</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.bottle_flip</span> <span class="kn">import</span> <span class="n">BottleFlipSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">IdlePolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span><span class="p">,</span> <span class="n">after_rollout_query</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
 
 
@@ -380,10 +388,18 @@ and the overall time to 10s. Moreover, we are ignoring joint limits, and have no
     <span class="p">)</span>
 
     <span class="c1"># Set up policy</span>
-    <span class="n">policy</span> <span class="o">=</span> <span class="n">IdlePolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">policy_fcn</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+        <span class="n">policy</span> <span class="o">=</span> <span class="n">IdlePolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
 
-    <span class="c1"># Simulate</span>
-    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">stop_on_done</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Simulate</span>
+        <span class="n">done</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span>
+                <span class="n">env</span><span class="p">,</span>
+                <span class="n">policy</span><span class="p">,</span>
+                <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">video</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">init_state</span><span class="o">=</span><span class="n">state</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">done</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">param</span> <span class="o">=</span> <span class="n">after_rollout_query</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">ro</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>(optional) Part 4: Run it from C++</strong></p>
