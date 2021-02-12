@@ -7,6 +7,6 @@ var dir_c510d7e9ec16954944f7b90beffa93a8 =
     [ "PolicyComponent.h", "PolicyComponent_8h.html", [
       [ "PolicyComponent", "classRcs_1_1PolicyComponent.html", "classRcs_1_1PolicyComponent" ]
     ] ],
-    [ "TestBallTracking.cpp", "TestBallTracking_8cpp.html", "TestBallTracking_8cpp" ],
-    [ "TestBotSim.cpp", "TestBotSim_8cpp.html", "TestBotSim_8cpp" ]
+    [ "TestBotSim.cpp", "TestBotSim_8cpp.html", "TestBotSim_8cpp" ],
+    [ "TestTargetTracking.cpp", "TestTargetTracking_8cpp.html", "TestTargetTracking_8cpp" ]
 ];

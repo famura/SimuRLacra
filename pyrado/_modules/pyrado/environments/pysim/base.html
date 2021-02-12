@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -419,8 +420,6 @@
 
         <span class="c1"># Apply the action and simulate the resulting dynamics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_step_dynamics</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-
-        <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># Check if the task or the environment is done</span>
@@ -432,7 +431,7 @@
             <span class="c1"># Add final reward if done</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">final_rew</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SimPyEnv.render"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RenderMode</span><span class="p">,</span> <span class="n">render_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">%</span> <span class="n">render_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -442,9 +441,7 @@
             <span class="c1"># Print to console</span>
             <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;step: </span><span class="si">{:3}</span><span class="s2">  |  r_t: </span><span class="si">{: 1.3f}</span><span class="s2">  |  a_t: </span><span class="si">{}</span><span class="se">\t</span><span class="s2"> |  s_t+1: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
-                    <span class="p">)</span>
+                    <span class="sa">f</span><span class="s2">&quot;step: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">  |  r_t: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2">  |  a_t: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span><span class="si">}</span><span class="s2">  |  s_t+1: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
 
             <span class="c1"># VPython</span>

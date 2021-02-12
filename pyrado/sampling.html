@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul class="current">
@@ -1211,9 +1212,24 @@ Similar to <cite>split_shuffled_batches</cite> with <cite>complete_rollouts=Fals
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">
+<code class="sig-name descname">split_ordered_batches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.split_ordered_batches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Batch generation. Split the step collection into ordered mini-batches of size batch_size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of steps per batch</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Left out the option to return complete rollouts like for <cite>split_shuffled_batches</cite>.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches">
 <code class="sig-name descname">split_shuffled_batches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">complete_rollouts</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.split_shuffled_batches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch generation. Split the step collection into mini-batches of size batch_size.</p>
+<dd><p>Batch generation. Split the step collection into random mini-batches of size batch_size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

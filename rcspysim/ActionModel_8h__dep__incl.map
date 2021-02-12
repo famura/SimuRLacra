@@ -10,8 +10,8 @@
 <area shape="rect" id="node41" href="$AMNormalized_8h.html" title="src/cpp/core/action\l/AMNormalized.h" alt="" coords="4369,95,4503,136"/>
 <area shape="rect" id="node44" href="$OMCollisionCostPrediction_8h.html" title="src/cpp/core/observation\l/OMCollisionCostPrediction.h" alt="" coords="839,184,1033,225"/>
 <area shape="rect" id="node46" href="$RcsPyBot_8cpp.html" title="src/cpp/core/RcsPyBot.cpp" alt="" coords="4527,102,4710,129"/>
-<area shape="rect" id="node47" href="$TestBallTracking_8cpp.html" title="src/cpp/hardware/TestBall\lTracking.cpp" alt="" coords="4734,95,4909,136"/>
-<area shape="rect" id="node48" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4933,95,5105,136"/>
+<area shape="rect" id="node47" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4734,95,4906,136"/>
+<area shape="rect" id="node48" href="$TestTargetTracking_8cpp.html" title="src/cpp/hardware/TestTarget\lTracking.cpp" alt="" coords="4931,95,5120,136"/>
 <area shape="rect" id="node4" href="$ActionModelIK_8cpp.html" title="src/cpp/core/action\l/ActionModelIK.cpp" alt="" coords="2556,184,2692,225"/>
 <area shape="rect" id="node5" href="$AMDynamicalSystemActivation_8cpp.html" title="src/cpp/core/action\l/AMDynamicalSystemActivation.cpp" alt="" coords="1742,184,1978,225"/>
 <area shape="rect" id="node6" href="$AMIKControllerActivation_8h.html" title="src/cpp/core/action\l/AMIKControllerActivation.h" alt="" coords="2348,184,2532,225"/>

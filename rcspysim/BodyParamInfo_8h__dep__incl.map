@@ -15,8 +15,8 @@
 <area shape="rect" id="node13" href="$ExperimentConfig_8cpp.html" title="src/cpp/core/ExperimentConfig.cpp" alt="" coords="3315,370,3542,397"/>
 <area shape="rect" id="node14" href="$PhysicsParameterManager_8cpp.html" title="src/cpp/core/physics\l/PhysicsParameterManager.cpp" alt="" coords="3566,363,3774,404"/>
 <area shape="rect" id="node15" href="$RcsSimEnv_8h.html" title="src/cpp/core/RcsSimEnv.h" alt="" coords="3798,370,3977,397"/>
-<area shape="rect" id="node19" href="$TestBallTracking_8cpp.html" title="src/cpp/hardware/TestBall\lTracking.cpp" alt="" coords="4001,363,4176,404"/>
-<area shape="rect" id="node20" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4200,363,4372,404"/>
+<area shape="rect" id="node19" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4001,363,4173,404"/>
+<area shape="rect" id="node20" href="$TestTargetTracking_8cpp.html" title="src/cpp/hardware/TestTarget\lTracking.cpp" alt="" coords="4198,363,4387,404"/>
 <area shape="rect" id="node16" href="$RcsSimEnv_8cpp.html" title="src/cpp/core/RcsSimEnv.cpp" alt="" coords="3581,459,3775,486"/>
 <area shape="rect" id="node17" href="$module_8cpp.html" title="src/cpp/pyEnv/module.cpp" alt="" coords="3799,459,3976,486"/>
 <area shape="rect" id="node18" href="$test__env__run_8cpp.html" title="src/cpp/tests/test\l_env_run.cpp" alt="" coords="4000,452,4124,493"/>

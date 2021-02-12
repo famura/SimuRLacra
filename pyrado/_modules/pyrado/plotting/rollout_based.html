@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -237,6 +238,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span><span class="p">,</span> <span class="n">inner_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.plotting.utils</span> <span class="kn">import</span> <span class="n">num_rows_cols_from_length</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
@@ -264,7 +266,7 @@
     <span class="k">return</span> <span class="n">label</span>
 
 
-<div class="viewcode-block" id="draw_observations_actions_rewards"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.draw_observations_actions_rewards">[docs]</a><span class="k">def</span> <span class="nf">draw_observations_actions_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_observations_actions_rewards"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_observations_actions_rewards">[docs]</a><span class="k">def</span> <span class="nf">plot_observations_actions_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all observation, action, and reward trajectories of the given rollout.</span>
 
@@ -282,7 +284,7 @@
         <span class="c1"># Use recorded time stamps if possible</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
-        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">dim_obs</span> <span class="o">+</span> <span class="n">dim_act</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="o">*</span><span class="n">num_rows_cols_from_length</span><span class="p">(</span><span class="n">dim_obs</span> <span class="o">+</span> <span class="n">dim_act</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Observations, Actions, and Reward over Time&quot;</span><span class="p">)</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;tab20&quot;</span><span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dim_obs</span> <span class="k">if</span> <span class="n">dim_obs</span> <span class="o">&gt;</span> <span class="n">dim_act</span> <span class="k">else</span> <span class="n">dim_act</span><span class="p">))</span>
 
@@ -304,7 +306,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="draw_observations"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.draw_observations">[docs]</a><span class="k">def</span> <span class="nf">draw_observations</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">idcs_sel</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_observations"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_observations">[docs]</a><span class="k">def</span> <span class="nf">plot_observations</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">idcs_sel</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all observation trajectories of the given rollout.</span>
 
@@ -337,6 +339,8 @@
         <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;tab20&quot;</span><span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dim_obs</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dim_obs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">observations</span><span class="p">[:,</span> <span class="n">dim_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">label</span><span class="o">=</span><span class="n">_get_obs_label</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">dim_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
             <span class="n">axs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">observations</span><span class="p">[:,</span> <span class="n">dim_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">label</span><span class="o">=</span><span class="n">_get_obs_label</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">dim_obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
             <span class="n">axs</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -351,7 +355,7 @@
                         <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="draw_features"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.draw_features">[docs]</a><span class="k">def</span> <span class="nf">draw_features</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_features"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_features">[docs]</a><span class="k">def</span> <span class="nf">plot_features</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all features given the policy and the observation trajectories.</span>
 
@@ -400,7 +404,7 @@
                         <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="draw_actions"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.draw_actions">[docs]</a><span class="k">def</span> <span class="nf">draw_actions</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_actions"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.plot_actions">[docs]</a><span class="k">def</span> <span class="nf">plot_actions</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot all action trajectories of the given rollout.</span>
 
@@ -415,7 +419,7 @@
         <span class="c1"># Use recorded time stamps if possible</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">dim_act</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="o">*</span><span class="n">num_rows_cols_from_length</span><span class="p">(</span><span class="n">dim_act</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Actions over Time&quot;</span><span class="p">)</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;tab20&quot;</span><span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dim_act</span><span class="p">))</span>
 

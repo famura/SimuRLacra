@@ -32,8 +32,8 @@
 <area shape="rect" id="node19" href="$ExperimentConfig_8cpp.html" title="src/cpp/core/ExperimentConfig.cpp" alt="" coords="4999,459,5225,486"/>
 <area shape="rect" id="node20" href="$PhysicsParameterManager_8cpp.html" title="src/cpp/core/physics\l/PhysicsParameterManager.cpp" alt="" coords="5249,452,5457,493"/>
 <area shape="rect" id="node21" href="$RcsSimEnv_8h.html" title="src/cpp/core/RcsSimEnv.h" alt="" coords="4273,459,4452,486"/>
-<area shape="rect" id="node25" href="$TestBallTracking_8cpp.html" title="src/cpp/hardware/TestBall\lTracking.cpp" alt="" coords="4730,541,4905,583"/>
-<area shape="rect" id="node26" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4929,541,5101,583"/>
+<area shape="rect" id="node25" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4730,541,4902,583"/>
+<area shape="rect" id="node26" href="$TestTargetTracking_8cpp.html" title="src/cpp/hardware/TestTarget\lTracking.cpp" alt="" coords="4927,541,5116,583"/>
 <area shape="rect" id="node22" href="$RcsSimEnv_8cpp.html" title="src/cpp/core/RcsSimEnv.cpp" alt="" coords="3975,549,4169,575"/>
 <area shape="rect" id="node23" href="$module_8cpp.html" title="src/cpp/pyEnv/module.cpp" alt="" coords="4193,549,4370,575"/>
 <area shape="rect" id="node24" href="$test__env__run_8cpp.html" title="src/cpp/tests/test\l_env_run.cpp" alt="" coords="4394,541,4518,583"/>
@@ -52,7 +52,7 @@
 <area shape="rect" id="node46" href="$PropertySourceXml_8cpp.html" title="src/cpp/core/config\l/PropertySourceXml.cpp" alt="" coords="4542,541,4706,583"/>
 <area shape="rect" id="node47" href="$ECSRobo_8cpp.html" title="src/cpp/hardware/ECSRobo.cpp" alt="" coords="3740,549,3951,575"/>
 <area shape="rect" id="node50" href="$RcsPyBot_8h.html" title="src/cpp/core/RcsPyBot.h" alt="" coords="4754,459,4923,486"/>
-<area shape="rect" id="node51" href="$RcsPyBot_8cpp.html" title="src/cpp/core/RcsPyBot.cpp" alt="" coords="5125,549,5307,575"/>
+<area shape="rect" id="node51" href="$RcsPyBot_8cpp.html" title="src/cpp/core/RcsPyBot.cpp" alt="" coords="5141,549,5323,575"/>
 <area shape="rect" id="node53" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="1982,549,2237,575"/>
 <area shape="rect" id="node55" href="$OMCollisionCost_8cpp.html" title="src/cpp/core/observation\l/OMCollisionCost.cpp" alt="" coords="645,452,811,493"/>
 <area shape="rect" id="node56" href="$OMCollisionCostPrediction_8cpp.html" title="src/cpp/core/observation\l/OMCollisionCostPrediction.cpp" alt="" coords="835,452,1043,493"/>

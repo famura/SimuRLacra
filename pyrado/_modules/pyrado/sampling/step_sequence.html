@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -236,7 +237,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">stack_to_format</span><span class="p">,</span> <span class="n">to_format</span><span class="p">,</span> <span class="n">cat_to_format</span><span class="p">,</span> <span class="n">new_tuple</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batch_idcs</span>
 
 
 <span class="k">def</span> <span class="nf">_index_to_int</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
@@ -805,9 +806,27 @@
 
         <span class="k">return</span> <span class="n">steps</span><span class="p">,</span> <span class="n">next_steps</span></div>
 
+<div class="viewcode-block" id="StepSequence.split_ordered_batches"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">[docs]</a>    <span class="k">def</span> <span class="nf">split_ordered_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Batch generation. Split the step collection into ordered mini-batches of size batch_size.</span>
+
+<span class="sd">        :param batch_size: number of steps per batch</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Left out the option to return complete rollouts like for `split_shuffled_batches`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+            <span class="c1"># Yield all at once if there are less steps than the batch size</span>
+            <span class="k">yield</span> <span class="bp">self</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Split by steps</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">b</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="StepSequence.split_shuffled_batches"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches">[docs]</a>    <span class="k">def</span> <span class="nf">split_shuffled_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">complete_rollouts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Batch generation. Split the step collection into mini-batches of size batch_size.</span>
+<span class="sd">        Batch generation. Split the step collection into random mini-batches of size batch_size.</span>
 
 <span class="sd">        :param batch_size: number of steps per batch</span>
 <span class="sd">        :param complete_rollouts: if `complete_rollouts = True`, the batches will not contain partial rollouts.</span>

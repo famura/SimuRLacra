@@ -15,8 +15,8 @@
 <area shape="rect" id="node48" href="$ObservationModel_8cpp.html" title="src/cpp/core/observation\l/ObservationModel.cpp" alt="" coords="4044,95,4209,136"/>
 <area shape="rect" id="node49" href="$RcsPyBot_8cpp.html" title="src/cpp/core/RcsPyBot.cpp" alt="" coords="4234,102,4417,129"/>
 <area shape="rect" id="node50" href="$RcsSimEnv_8cpp.html" title="src/cpp/core/RcsSimEnv.cpp" alt="" coords="4441,102,4634,129"/>
-<area shape="rect" id="node51" href="$TestBallTracking_8cpp.html" title="src/cpp/hardware/TestBall\lTracking.cpp" alt="" coords="4658,95,4833,136"/>
-<area shape="rect" id="node52" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4857,95,5029,136"/>
+<area shape="rect" id="node51" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="4658,95,4830,136"/>
+<area shape="rect" id="node52" href="$TestTargetTracking_8cpp.html" title="src/cpp/hardware/TestTarget\lTracking.cpp" alt="" coords="4855,95,5044,136"/>
 <area shape="rect" id="node3" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="4006,281,4210,307"/>
 <area shape="rect" id="node4" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="1013,370,1224,397"/>
 <area shape="rect" id="node5" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="3308,281,3519,307"/>

@@ -23,10 +23,28 @@ trackers
    :show-inheritance:
 
 
-wam
----
+wam\_base
+---------
 
-.. automodule:: pyrado.environments.barrett_wam.wam
+.. automodule:: pyrado.environments.barrett_wam.wam_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+wam\_bic
+--------
+
+.. automodule:: pyrado.environments.barrett_wam.wam_bic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+wam\_jsc
+--------
+
+.. automodule:: pyrado.environments.barrett_wam.wam_jsc
    :members:
    :undoc-members:
    :show-inheritance:

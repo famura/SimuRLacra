@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -226,17 +227,20 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
+
 <span class="kn">from</span> <span class="nn">pyrado.plotting.categorical</span> <span class="kn">import</span> <span class="n">draw_categorical</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.curve</span> <span class="kn">import</span> <span class="n">draw_curve_from_data</span><span class="p">,</span> <span class="n">draw_dts</span>
+<span class="kn">from</span> <span class="nn">pyrado.plotting.distribution</span> <span class="kn">import</span> <span class="n">draw_pair_plot</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.rollout_based</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">draw_observations_actions_rewards</span><span class="p">,</span>
-    <span class="n">draw_observations</span><span class="p">,</span>
-    <span class="n">draw_actions</span><span class="p">,</span>
+    <span class="n">plot_observations_actions_rewards</span><span class="p">,</span>
+    <span class="n">plot_observations</span><span class="p">,</span>
+    <span class="n">plot_actions</span><span class="p">,</span>
     <span class="n">draw_rewards</span><span class="p">,</span>
     <span class="n">draw_potentials</span><span class="p">,</span>
-    <span class="n">draw_features</span><span class="p">,</span>
+    <span class="n">plot_features</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.surface</span> <span class="kn">import</span> <span class="n">draw_surface</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
@@ -419,15 +423,50 @@
     <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">record_dts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">LinearPolicy</span><span class="p">):</span>
-        <span class="n">draw_features</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span>
+        <span class="n">plot_features</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">PotentialBasedPolicy</span><span class="p">):</span>
         <span class="n">draw_potentials</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">draw_observations_actions_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
-        <span class="n">draw_observations</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
-        <span class="n">draw_actions</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="n">plot_observations_actions_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
+        <span class="n">plot_observations</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
+        <span class="n">plot_actions</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
         <span class="n">draw_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
         <span class="n">draw_dts</span><span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">dts_policy</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">dts_step</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">dts_remainder</span><span class="p">,</span> <span class="n">y_top_lim</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_pair_plot"><a class="viewcode-back" href="../../tests.html#tests.test_plotting.test_pair_plot">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;classical&quot;</span><span class="p">,</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;classic&quot;</span><span class="p">,</span> <span class="s2">&quot;topright&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;x_labels, y_labels&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">([</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;y_1&quot;</span><span class="p">,</span> <span class="s2">&quot;y_2&quot;</span><span class="p">,</span> <span class="s2">&quot;y_3&quot;</span><span class="p">])],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;legend&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;wolegend&quot;</span><span class="p">,</span> <span class="s2">&quot;wlegend&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_pair_plot</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">x_labels</span><span class="p">,</span> <span class="n">y_labels</span><span class="p">,</span> <span class="n">legend</span><span class="p">):</span>
+    <span class="c1"># Create distribution to sample from</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">])</span>
+    <span class="n">lower_triang</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">lower_triang</span><span class="p">,</span> <span class="n">lower_triang</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cov</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">covariance_matrix</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
+
+    <span class="n">dp_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">}</span>
+    <span class="n">grid_bounds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">]])</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">draw_pair_plot</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dist</span><span class="p">,</span>
+        <span class="n">dp_mapping</span><span class="p">,</span>
+        <span class="n">mean</span><span class="p">,</span>
+        <span class="n">num_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">true_params</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span>
+        <span class="n">grid_bounds</span><span class="o">=</span><span class="n">grid_bounds</span><span class="p">,</span>
+        <span class="n">use_sns</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">plot_type</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+        <span class="n">x_labels</span><span class="o">=</span><span class="n">x_labels</span><span class="p">,</span>
+        <span class="n">y_labels</span><span class="o">=</span><span class="n">y_labels</span><span class="p">,</span>
+        <span class="n">legend</span><span class="o">=</span><span class="n">legend</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

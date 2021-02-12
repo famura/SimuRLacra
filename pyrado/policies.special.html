@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -781,9 +782,21 @@ of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
 <span id="time"></span><h2>time<a class="headerlink" href="#module-pyrado.policies.special.time" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.special.time.PlaybackPolicy">
-<em class="property">class </em><code class="sig-name descname">PlaybackPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">act_recs</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.array<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">PlaybackPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">act_recordings</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.array<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">no_reset</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>A policy wish simply replays a sequence of actions. If more actions are requested, the policy</p>
+<dl class="py method">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.curr_rec">
+<em class="property">property </em><code class="sig-name descname">curr_rec</code><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.curr_rec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the pointer to the current recording.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.curr_step">
+<em class="property">property </em><code class="sig-name descname">curr_step</code><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.curr_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of the current replay step (0 for the initial step).</p>
+</dd></dl>
+
 <dl class="py method">
 <dt id="pyrado.policies.special.time.PlaybackPolicy.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.forward" title="Permalink to this definition">¶</a></dt>
@@ -826,6 +839,12 @@ of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
 <dd><p>Reset the policy to it’s initial state.
 This should be called at the start of a rollout. Stateful policies should use it to reset the state variables.
 The default implementation does nothing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.special.time.PlaybackPolicy.reset_curr_rec">
+<code class="sig-name descname">reset_curr_rec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/time.html#PlaybackPolicy.reset_curr_rec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.PlaybackPolicy.reset_curr_rec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the pointer to the current recording.</p>
 </dd></dl>
 
 <dl class="py method">

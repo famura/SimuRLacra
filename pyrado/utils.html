@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -266,6 +267,23 @@
 </div>
 <div class="section" id="module-pyrado.utils.checks">
 <span id="checks"></span><h2>checks<a class="headerlink" href="#module-pyrado.utils.checks" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.utils.checks.check_act_equal">
+<code class="sig-name descname">check_act_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout_1</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">, </span>List<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">rollout_2</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">, </span>List<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#check_act_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.check_act_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the actions of two rollouts or pairwise two rollouts in in two lists are approximately the same</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout_1</strong> – rollouts or list of rollouts</p></li>
+<li><p><strong>rollout_2</strong> – rollouts or list of rollouts</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if the actions match</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt id="pyrado.utils.checks.check_all_equal">
 <code class="sig-name descname">check_all_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_equal" title="Permalink to this definition">¶</a></dt>
@@ -876,13 +894,14 @@ why entities should be loaded. If no file was found, we fall back to some heuris
 
 <dl class="py function">
 <dt id="pyrado.utils.experiments.load_rollouts_from_dir">
-<code class="sig-name descname">load_rollouts_from_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'rollout'</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_rollouts_from_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_rollouts_from_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_rollouts_from_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'rollout'</span></em>, <em class="sig-param"><span class="n">file_exts</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">('pt', 'pkl')</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_rollouts_from_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_rollouts_from_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crawl through the given directory and load all rollouts, i.e. all files that include the key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ex_dir</strong> – directory, e.g. and experiment folder</p></li>
 <li><p><strong>key</strong> – word or part of a word that needs to the in the name of a file for it to be loaded</p></li>
+<li><p><strong>file_exts</strong> – file extensions to be considered for loading</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

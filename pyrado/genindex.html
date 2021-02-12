@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -527,6 +528,8 @@
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.cem.CEM">CEM (class in pyrado.algorithms.episodic.cem)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.checks.check_act_equal">check_act_equal() (in module pyrado.utils.checks)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.checks.check_all_equal">check_all_equal() (in module pyrado.utils.checks)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.checks.check_all_lengths_equal">check_all_lengths_equal() (in module pyrado.utils.checks)</a>
@@ -611,10 +614,10 @@
       </ul></li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.convert">convert() (StepSequence method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.convert_step_sequence">convert_step_sequence() (in module pyrado.algorithms.meta.adr)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="spaces.html#pyrado.spaces.base.Space.copy">copy() (Space method)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.features.cos_feat">cos_feat() (in module pyrado.policies.features)</a>
@@ -713,10 +716,14 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.curr_iter">curr_iter() (Algorithm property)</a>
 </li>
+      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.curr_rec">curr_rec() (PlaybackPolicy property)</a>
+</li>
       <li><a href="environments.html#pyrado.environments.base.Env.curr_step">curr_step() (Env property)</a>
 
       <ul>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.curr_step">(EnvWrapper property)</a>
+</li>
+        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.curr_step">(PlaybackPolicy property)</a>
 </li>
       </ul></li>
       <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.current_time">current_time (TraceableTimePolicy attribute)</a>
@@ -841,10 +848,10 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.desired_space.DesSpaceTask">DesSpaceTask (class in pyrado.tasks.desired_space)</a>
 </li>
-      <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask">DesStateTask (class in pyrado.tasks.desired_state)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask">DesStateTask (class in pyrado.tasks.desired_state)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.device">device() (DiagNormalNoise property)</a>
 
       <ul>
@@ -913,8 +920,6 @@
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL">DQL (class in pyrado.algorithms.step_based.dql)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_actions">draw_actions() (in module pyrado.plotting.rollout_based)</a>
-</li>
       <li><a href="plotting.html#pyrado.plotting.categorical.draw_categorical">draw_categorical() (in module pyrado.plotting.categorical)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.curve.draw_curve">draw_curve() (in module pyrado.plotting.curve)</a>
@@ -923,13 +928,11 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.curve.draw_dts">draw_dts() (in module pyrado.plotting.curve)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_features">draw_features() (in module pyrado.plotting.rollout_based)</a>
-</li>
-      <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_observations">draw_observations() (in module pyrado.plotting.rollout_based)</a>
-</li>
-      <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_observations_actions_rewards">draw_observations_actions_rewards() (in module pyrado.plotting.rollout_based)</a>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_pair_plot">draw_pair_plot() (in module pyrado.plotting.distribution)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.policy_parameters.draw_policy_params">draw_policy_params() (in module pyrado.plotting.policy_parameters)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr">draw_posterior_distr() (in module pyrado.plotting.distribution)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_potentials">draw_potentials() (in module pyrado.plotting.rollout_based)</a>
 </li>
@@ -2758,6 +2761,14 @@
 </li>
       <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy">PlaybackPolicy (class in pyrado.policies.special.time)</a>
 </li>
+      <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_actions">plot_actions() (in module pyrado.plotting.rollout_based)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_features">plot_features() (in module pyrado.plotting.rollout_based)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_observations">plot_observations() (in module pyrado.plotting.rollout_based)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_observations_actions_rewards">plot_observations_actions_rewards() (in module pyrado.plotting.rollout_based)</a>
+</li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.PlusOnePerStepRewFcn">PlusOnePerStepRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.polar.Polar2DPosSpace">Polar2DPosSpace (class in pyrado.spaces.polar)</a>
@@ -3355,6 +3366,8 @@
         <li><a href="environments.quanser.html#module-pyrado.environments.quanser.quanser_cartpole">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.quanser.quanser_common
 
@@ -3362,8 +3375,6 @@
         <li><a href="environments.quanser.html#module-pyrado.environments.quanser.quanser_common">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.quanser.quanser_qube
 
@@ -4456,6 +4467,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm.reset_checkpoint">reset_checkpoint() (InterruptableAlgorithm method)</a>
 </li>
+      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.reset_curr_rec">reset_curr_rec() (PlaybackPolicy method)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.reset_expl_params">reset_expl_params() (DiagNormalNoise method)</a>
 
       <ul>
@@ -4839,6 +4852,8 @@
       <li><a href="environments.html#pyrado.environments.base.Env.spec">spec() (Env property)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager.spin">spin() (LiveFigureManager method)</a>
+</li>
+      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">split_ordered_batches() (StepSequence method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.split_path_custom_common">split_path_custom_common() (in module pyrado.logger.experiment)</a>
 </li>
@@ -5317,6 +5332,8 @@
       <li><a href="tests.html#tests.test_utils.test_normalize">test_normalize() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">test_order_act_noise_act_norm() (in module tests.environment_wrappers.test_action_noise)</a>
+</li>
+      <li><a href="tests.html#tests.test_plotting.test_pair_plot">test_pair_plot() (in module tests.test_plotting)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_parallel_rollout_sampler">test_parallel_rollout_sampler() (in module tests.test_sampling)</a>
 </li>

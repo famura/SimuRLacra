@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -225,8 +226,9 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_common</span> <span class="kn">import</span> <span class="n">QSocket</span>
@@ -245,9 +247,9 @@
         <span class="n">ip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">rcv_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">snd_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">500.0</span><span class="p">,</span>
-        <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-        <span class="n">task_args</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">500.0</span><span class="p">,</span>
+        <span class="n">max_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">task_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -344,7 +346,7 @@
         <span class="k">return</span> <span class="n">meas</span>
 
 <div class="viewcode-block" id="QuanserReal.step"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">,</span> <span class="n">act_raw</span><span class="o">=</span><span class="n">act</span><span class="p">)</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">act_raw</span><span class="o">=</span><span class="n">act</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
         <span class="c1"># Current reward depending on the (measurable) state and the current (unlimited) action</span>
         <span class="n">remaining_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span> <span class="k">else</span> <span class="mi">0</span>
@@ -373,22 +375,11 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span></div>
 
-<div class="viewcode-block" id="QuanserReal.render"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RenderMode</span> <span class="o">=</span> <span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">render_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Visualize one time step of the real-world device.</span>
-<span class="sd">        The base version prints to console when the state exceeds its boundaries.</span>
-
-<span class="sd">        :param mode: render mode: console, video, or both</span>
-<span class="sd">        :param render_step: interval for rendering</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="QuanserReal.render"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RenderMode</span> <span class="o">=</span> <span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">render_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">%</span> <span class="n">render_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;step: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">  |  &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;in bounds: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span><span class="si">:</span><span class="s2">1d</span><span class="si">}</span><span class="s2">  |  &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;rew: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="si">:</span><span class="s2">1.3f</span><span class="si">}</span><span class="s2">  |  &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;act: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span><span class="si">}</span><span class="s2">  |  &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;next state: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;step: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">  |  r_t: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2">  |  a_t: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span><span class="si">}</span><span class="s2">  |  s_t+1: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="n">mode</span><span class="p">:</span>
                 <span class="c1"># Print out of bounds to console if the mode is not empty</span>
