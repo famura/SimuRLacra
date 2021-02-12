@@ -55,6 +55,7 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         fixedInitState=False,
         collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod='sum',
     )
 
     # Set up policy
@@ -79,6 +80,7 @@ def create_pos_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame,
         fixedInitState=True,
         collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod='sum',
         collisionAvoidanceIK=True,
         observeVelocities=False,
         observeCollisionCost=True,
@@ -167,6 +169,7 @@ def create_vel_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame,
         fixedInitState=True,
         collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod='sum',
         observeVelocities=True,
         observeCollisionCost=True,
         observePredictedCollisionCost=True,
