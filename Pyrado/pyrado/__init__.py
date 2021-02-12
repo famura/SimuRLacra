@@ -36,7 +36,7 @@ from typing import Union
 
 
 # Pyrado version number
-VERSION = "0.4"
+VERSION = "0.5"
 
 # Provide global data directories
 PERMA_DIR = osp.join(osp.dirname(__file__), "..", "data", "perma")
