@@ -28,12 +28,14 @@ class PandaVis(ShowBase):
         ShowBase.__init__(self)
         self.dir = pathlib.Path(__file__).resolve().parent.absolute()
 
+        # Set title and background color
         self.render.setAntialias(AntialiasAttrib.MAuto)
         self.windowProperties = WindowProperties()
         self.windowProperties.setForeground(True)
         self.windowProperties.setTitle(str(self.__class__))
         self.setBackgroundColor(1, 1, 1)
 
+        # Configuration of the lighting
         self.directionalLight1 = DirectionalLight('directionalLight')
         self.directionalLightNP1 = self.render.attachNewNode(self.directionalLight1)
         self.directionalLightNP1.setHpr(0, -8, 0)
@@ -49,10 +51,10 @@ class PandaVis(ShowBase):
         self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
         self.render.setLight(self.ambientLightNP)
 
+        # Create a text node which displays the parameter on the bottom right of the screen
         self.text = TextNode('parameters')
         self.textNodePath = aspect2d.attachNewNode(self.text)
         self.text.setTextColor(0, 0, 0, 1)
-
         self.textNodePath.setScale(0.07)
 
     def update(self, task):
@@ -80,37 +82,39 @@ class QQubeVis(PandaVis):
         """
         super().__init__()
 
+        # Accessing variables of outer class
         self._env = env
-
+        Lr = self._env.domain_param["Lr"]
+        Lp = self._env.domain_param["Lp"]
+                
+        # Init render objects on first call
+        arm_radius = 0.003
+        pole_radius = 0.0045
+        
+        # Set title
         self.windowProperties.setTitle('Quanser Qube')
         self.win.requestProperties(self.windowProperties)
 
+        # Set pov
         self.cam.setPos(-0.4, -1.3, 0.4)
         self.cam.setHpr(-20,-10,0)
         self.textNodePath.setPos(0.4, 0, -0.1)
-
-        Lr = self._env.domain_param["Lr"]
-        Lp = self._env.domain_param["Lp"]
-
-        # Init render objects on first call
-        scene_range = 0.2
-        arm_radius = 0.003
-        pole_radius = 0.0045
-
+        
+        # Box
         self.box = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.box.setPos(0, 0.07, 0)
         self.box.setScale(0.09, 0.1, 0.09)
         self.box.setColor(0.5, 0.5, 0.5)
         self.box.reparentTo(self.render)
 
-        # Zeigt nach oben aus Box raus
+        # Cylinder on the top of the box
         self.cylinder = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
         self.cylinder.setScale(0.005, 0.005, 0.03)
         self.cylinder.setPos(0, 0.07, 0.12)
         self.cylinder.setColor(0.5, 0.5, 0,5)  # gray
         self.cylinder.reparentTo(self.render)
 
-        # Armself.pole.setPos()
+        # Arm
         self.arm = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
         self.arm.setScale(arm_radius, arm_radius, Lr)
         self.arm.setColor(0, 0, 1)  # blue
@@ -137,10 +141,12 @@ class QQubeVis(PandaVis):
         self.joint2.setColor(0, 0, 0)
         self.joint2.wrtReparentTo(self.arm)
 
+        # Adds one instance of the update function to the task-manager and thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
 
+        # Accessing the current parameter values
         g = self._env.domain_param["g"]
         Mr = self._env.domain_param["Mr"]
         Mp = self._env.domain_param["Mp"]
@@ -150,10 +156,12 @@ class QQubeVis(PandaVis):
         Rm = self._env.domain_param["Rm"]
         Dr = self._env.domain_param["Dr"]
         Dp = self._env.domain_param["Dp"]
-        # print(globalClock.getDt())
         th, al, _, _ = self._env.state
 
+        # Update rotation of arm
         self.arm.setH(th*180/np.pi-180)
+        
+        # Update rotation of pole
         self.pole.setR(al*180/np.pi)
 
         # Displayed text
@@ -172,6 +180,7 @@ class QQubeVis(PandaVis):
             km: {km : 1.4f}
             """)
 
+        # Returning Task.cont adds another instance of the function itself to the task-manager
         return Task.cont
 
 
@@ -185,32 +194,32 @@ class PendulumVis(PandaVis):
         """
         super().__init__()
     
-        # accessing variables of outer class
+        # Accessing variables of outer class
         self._env = env
         l_pole = float(self._env.domain_param["l_pole"])
         r_pole = 0.05
         th, _ = self._env.state
         
-        # set window title
+        # Set window title
         self.windowProperties.setTitle('Pendulum')
         self.win.requestProperties(self.windowProperties)
         
-        # set pov properties
+        # Set pov
         self.cam.setY(-20)
         self.cam.setZ(-0)
         
-        # set text properties
+        # Set text properties
         self.textNodePath.setScale(0.06)
         self.textNodePath.setPos(0.45, 0, -0.3)
         
-        # creating the joint of the pendulum with all its properties
+        # Joint
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.joint.setPos(0, r_pole, 0)
         self.joint.setScale(r_pole, r_pole, r_pole)
         self.joint.setColor(0, 0, 0)  # black
         self.joint.reparentTo(self.render)
         
-        # creating the pole of the pendulum with all its properties
+        # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
         self.pole.setPos(0, r_pole, 0)
         self.pole.setScale(r_pole, r_pole, 2*l_pole)
@@ -218,12 +227,12 @@ class PendulumVis(PandaVis):
         self.pole.setColor(0, 0, 1)
         self.pole.reparentTo(self.render)
         
-        # adds one instance of the update function to the task-manager and thus initializes the animation
+        # Adds one instance of the update function to the task-manager and thus initializes the animation
         self.taskMgr.add(self.update, "update")
         
     def update(self, task: Task):
         
-        # accessing the current parameter values
+        # Accessing the current parameter values
         g = self._env.domain_param["g"]
         m_pole = self._env.domain_param["m_pole"]
         l_pole = float(self._env.domain_param["l_pole"])
@@ -232,14 +241,14 @@ class PendulumVis(PandaVis):
         r_pole = 0.05
         th, _ = self._env.state
         
-        # update the position of the joint
+        # Update the position of the joint
         self.joint.setPos(0, r_pole, 0)
         
-        # update the position and rotation of the pole
+        # Update the position and rotation of the pole
         self.pole.setPos(0, r_pole, 0)
         self.pole.setR(th * 180 / np.pi + 180)
         
-        # update the displayed text
+        # Update the displayed text
         self.text.setText(f"""
             dt: {self._env._dt :1.4f}
             theta: {self._env.state[0]*180/np.pi : 2.3f}
@@ -254,7 +263,7 @@ class PendulumVis(PandaVis):
             tau_max: {tau_max: 1.3f}
             """)
             
-        # returning Task.cont adds another instance of the function itself to the task-manager
+        # Returning Task.cont adds another instance of the function itself to the task-manager
         return Task.cont
 
 
