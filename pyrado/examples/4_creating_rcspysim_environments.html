@@ -286,11 +286,29 @@ basic template:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
+<p>We also need to add our new experiment configuration to <cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/CMakeLists.txt</cite></p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="s">CORE_SRCS</span>
+    <span class="s">...</span>
+    <span class="s">ECHelloMichael.cpp</span>
+    <span class="s">...</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>Part 2: Pyrado</strong></p>
 <p>You already made the more difficult part of the implementation. Next, we create the counterpart of <cite>ECHelloMichael</cite> in
 <cite>PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/hello_michael.py</cite>, by inheriting from <cite>RcsSim</cite> which can be
 found in <cite>PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/base.py</cite>. Here is a basic template:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HelloMichaelSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rcsenv</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+
+
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;HelloMichael&quot;</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">HelloMichaelSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hm&quot;</span>
 
@@ -331,6 +349,12 @@ custom to your environment. On the C++ side, these arguments can be retrieved fr
 for every <cite>ExperimentConfig</cite>. Two examples are <cite>properties-&gt;getPropertyBool()</cite> to pass a Boolean or <cite>properties-&gt;getChildList()</cite>
 to pass a python dictionary.</p>
 <p><strong>Part 3: Run it</strong></p>
+<p>Now it is time to build RcsPySim</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate pyrado
+<span class="nb">cd</span> RcsPySim/build
+make
+</pre></div>
+</div>
 <p>The easiest way to inspect your simulation now is to create a simple script, let’s call it <cite>sb_hm.py</cite>, in
 <cite>PATH_TO/SimuRLacra/Pyrado/scripts/sandbox</cite>, which creates an instance of <cite>HelloMichaelSim</cite> and runs a idle policy sending
 zero actions all the time. In the following snippet, we chose the physics engine to be Bullet, the time step size as 0.01s
@@ -365,8 +389,13 @@ and the overall time to 10s. Moreover, we are ignoring joint limits, and have no
 <p><strong>(optional) Part 4: Run it from C++</strong></p>
 <p>You can also test your environment and policy from C++. This is however a bit more intrigued and still experimental.
 First, we need to create an experiment description xml-file. One possible case is that you ran an experiment, i.e.
-trained a policy. Next you can go to <cite>cd PATH_TO/SimuRLacra/Pyrado/scripts/deployment</cite>, activate the anaconda environment,
-and run <cite>python export_policy_cpp.py</cite>. This will create an <cite>ex_&lt;CUSTOM&gt;_export.xml</cite> as well as an <cite>policy_export.pt</cite> file.
+trained a policy. Next you can go to script’s folder, activate the anaconda environment, and run the script</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> PATH_TO/SimuRLacra/Pyrado/scripts/deployment
+conda activate pyrado
+python export_policy_cpp.py
+</pre></div>
+</div>
+<p>This will create an <cite>ex_&lt;CUSTOM&gt;_export.xml</cite> as well as an <cite>policy_export.pt</cite> file.
 If you want the your trained policy to be played back, you need to insert the line
 <cite>&lt;policy type=”torch” file=”policy_export.pt”/&gt;</cite> into the experiment XML-file. However, this is optional. Actually, you
 don’t really need to run an experiment to use this export script. Feel free to change it, or generate the XML-file

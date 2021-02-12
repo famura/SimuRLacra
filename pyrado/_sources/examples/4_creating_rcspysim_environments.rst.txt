@@ -92,6 +92,16 @@ basic template:
 
     }
 
+We also need to add our new experiment configuration to `PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/CMakeLists.txt`
+
+.. code-block:: cmake
+
+    set(CORE_SRCS
+        ...
+        ECHelloMichael.cpp
+        ...
+        )
+
 **Part 2: Pyrado**
 
 You already made the more difficult part of the implementation. Next, we create the counterpart of `ECHelloMichael` in
@@ -99,6 +109,16 @@ You already made the more difficult part of the implementation. Next, we create 
 found in `PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/base.py`. Here is a basic template:
 
 .. code-block:: python
+
+    import rcsenv
+
+    from pyrado.environments.rcspysim.base import RcsSim
+    from init_args_serializer import Serializable
+
+
+    rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
+    rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "HelloMichael"))
+
 
     class HelloMichaelSim(RcsSim, Serializable):
 
@@ -142,6 +162,14 @@ to pass a python dictionary.
 
 **Part 3: Run it**
 
+Now it is time to build RcsPySim
+
+.. code-block:: bash
+
+    conda activate pyrado
+    cd RcsPySim/build
+    make
+
 The easiest way to inspect your simulation now is to create a simple script, let's call it `sb_hm.py`, in
 `PATH_TO/SimuRLacra/Pyrado/scripts/sandbox`, which creates an instance of `HelloMichaelSim` and runs a idle policy sending
 zero actions all the time. In the following snippet, we chose the physics engine to be Bullet, the time step size as 0.01s
@@ -179,8 +207,15 @@ and the overall time to 10s. Moreover, we are ignoring joint limits, and have no
 
 You can also test your environment and policy from C++. This is however a bit more intrigued and still experimental.
 First, we need to create an experiment description xml-file. One possible case is that you ran an experiment, i.e.
-trained a policy. Next you can go to `cd PATH_TO/SimuRLacra/Pyrado/scripts/deployment`, activate the anaconda environment,
-and run `python export_policy_cpp.py`. This will create an `ex_<CUSTOM>_export.xml` as well as an `policy_export.pt` file.
+trained a policy. Next you can go to script's folder, activate the anaconda environment, and run the script
+
+.. code-block:: bash
+
+    cd PATH_TO/SimuRLacra/Pyrado/scripts/deployment
+    conda activate pyrado
+    python export_policy_cpp.py
+
+This will create an `ex_<CUSTOM>_export.xml` as well as an `policy_export.pt` file.
 If you want the your trained policy to be played back, you need to insert the line
 `<policy type="torch" file="policy_export.pt"/>` into the experiment XML-file. However, this is optional. Actually, you
 don't really need to run an experiment to use this export script. Feel free to change it, or generate the XML-file
