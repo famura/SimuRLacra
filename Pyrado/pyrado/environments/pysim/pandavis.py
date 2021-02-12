@@ -194,12 +194,12 @@ class PendulumVis(PandaVis):
         """
         super().__init__()
     
-        # Accessing variables of outer class
+        # Accessing variables of environment class
         self._env = env
+        th, _ = self._env.state
         l_pole = float(self._env.domain_param["l_pole"])
         r_pole = 0.05
-        th, _ = self._env.state
-        
+
         # Set window title
         self.windowProperties.setTitle('Pendulum')
         self.win.requestProperties(self.windowProperties)
@@ -220,35 +220,35 @@ class PendulumVis(PandaVis):
         self.joint.reparentTo(self.render)
         
         # Pole
-        self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
+        self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
         self.pole.setPos(0, r_pole, 0)
         self.pole.setScale(r_pole, r_pole, 2*l_pole)
         self.pole.setR(180 * np.pi + 180)
         self.pole.setColor(0, 0, 1)
         self.pole.reparentTo(self.render)
         
-        # Adds one instance of the update function to the task-manager and thus initializes the animation
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
         
     def update(self, task: Task):
         
         # Accessing the current parameter values
+        th, _ = self._env.state
         g = self._env.domain_param["g"]
         m_pole = self._env.domain_param["m_pole"]
         l_pole = float(self._env.domain_param["l_pole"])
         d_pole = self._env.domain_param["d_pole"]
         tau_max = self._env.domain_param["tau_max"]
         r_pole = 0.05
-        th, _ = self._env.state
+
+        # Update position of joint
+        self.joint.setPos(0, r_pole, 0)#delete?
         
-        # Update the position of the joint
-        self.joint.setPos(0, r_pole, 0)
+        # Update position and rotation of pole
+        self.pole.setPos(0, r_pole, 0)#delete?
+        self.pole.setR(th * 180 / np.pi)
         
-        # Update the position and rotation of the pole
-        self.pole.setPos(0, r_pole, 0)
-        self.pole.setR(th * 180 / np.pi + 180)
-        
-        # Update the displayed text
+        # Update displayed text
         self.text.setText(f"""
             dt: {self._env._dt :1.4f}
             theta: {self._env.state[0]*180/np.pi : 2.3f}
@@ -262,8 +262,7 @@ class PendulumVis(PandaVis):
             d_pole: {d_pole : 1.3f}
             tau_max: {tau_max: 1.3f}
             """)
-            
-        # Returning Task.cont adds another instance of the function itself to the task-manager
+
         return Task.cont
 
 
@@ -692,5 +691,5 @@ class OmoVis(PandaVis):
         self.des.setPos(self._env._task.state_des[0], 0, 0.4 * c)
         self.force.setPos(self._env.state[0], 0, c / 2.0)
         self.force.setSx((0.1 * self._env._curr_act) / 10.0)
-        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.2)  # TODO
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.2)
 
