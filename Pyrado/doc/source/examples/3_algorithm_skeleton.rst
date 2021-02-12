@@ -21,7 +21,7 @@ Start by creating a new class which inherits from `Algorithm` or `ParameterExplo
 
     class MFA(Algorithm):
         """
-        My Fancy Algorithm (MFO)
+        Michael's Fancy Algorithm (MFA)
 
         TODO a detailed description ...
         """
