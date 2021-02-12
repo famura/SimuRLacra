@@ -652,7 +652,7 @@ class OmoVis(PandaVis):
         # Spring
         self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
         self.spring.setPos(0, 0, c / 2.0)
-        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.0, c / 6.0, c / 6.0)
+        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.3, c / 6.0, c / 6.0)  # scaling according to Blender object
         self.spring.setColor(0, 0, 1, 0)
         self.spring.reparentTo(self.render)
 
@@ -670,7 +670,7 @@ class OmoVis(PandaVis):
         capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
         self.force.setSx(capped_act / 10.0)
 
-        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.2)
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3)  # scaling according to Blender object
 
         # set caption text
         self.text.setText(f"""
@@ -691,5 +691,5 @@ class OmoVis(PandaVis):
         self.des.setPos(self._env._task.state_des[0], 0, 0.4 * c)
         self.force.setPos(self._env.state[0], 0, c / 2.0)
         self.force.setSx((0.1 * self._env._curr_act) / 10.0)
-        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.2)
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3)  # scaling according to Blender object
 
