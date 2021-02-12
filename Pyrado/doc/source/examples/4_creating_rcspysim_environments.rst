@@ -92,6 +92,11 @@ basic template:
 
     }
 
+An important part of every simulation is the initial state. Therefore, we create an initial state setter in
+`PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/initState` by inheriting from `InitStateSetter`. Simply start by copying
+one of the existing `ISS<NAME>.h` / `ISS<NAME>.cpp` pairs, and do the necessary changes, e.g. renaming the class,
+setting a custom initial state space, ect.
+
 We also need to add our new experiment configuration to `PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/CMakeLists.txt`
 
 .. code-block:: cmake
@@ -99,6 +104,8 @@ We also need to add our new experiment configuration to `PATH_TO/SimuRLacra/RcsP
     set(CORE_SRCS
         ...
         ECHelloMichael.cpp
+        ...
+        initState/ISSHelloMichael.cpp
         ...
         )
 
@@ -110,27 +117,29 @@ found in `PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/base.py`. Here 
 
 .. code-block:: python
 
+    import os.path as osp
+    import numpy as np
     import rcsenv
+    from init_args_serializer import Serializable
 
     from pyrado.environments.rcspysim.base import RcsSim
-    from init_args_serializer import Serializable
+    from pyrado.tasks.base import Task
 
 
     rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-    rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "HelloMichael"))
-
+    rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BottleFlip"))
 
     class HelloMichaelSim(RcsSim, Serializable):
 
         name: str = "hm"
 
-        def __init__(self, task_args: dict, max_dist_force: float = None, **kwargs):
+        def __init__(self, task_args: dict = None, max_dist_force: float = None, **kwargs):
             Serializable._init(self, locals())
 
             # TODO Forward basic arguments as well as custom arguments to RcsSim's constructor, which will then pass it to the ECHelloMichael.
             RcsSim.__init__(
                 self,
-                task_args=task_args,
+                task_args=dict() if task_args is None else task_args,
                 envType="HelloMichael",
                 graphFileName=kwargs.pop("graphFileName", "gHelloMichael.xml"),
                 **kwargs,
@@ -178,10 +187,10 @@ and the overall time to 10s. Moreover, we are ignoring joint limits, and have no
 .. code-block:: python
 
     import rcsenv
-    import pyrado
-    from pyrado.environments.rcspysim.hello_michael import HelloMichaelSim
+
+    from pyrado.environments.rcspysim.bottle_flip import BottleFlipSim
     from pyrado.policies.special.dummy import IdlePolicy
-    from pyrado.sampling.rollout import rollout
+    from pyrado.sampling.rollout import rollout, after_rollout_query
     from pyrado.utils.data_types import RenderMode
 
 
@@ -198,10 +207,18 @@ and the overall time to 10s. Moreover, we are ignoring joint limits, and have no
         )
 
         # Set up policy
-        policy = IdlePolicy(env.spec, policy_fcn, dt)
+            policy = IdlePolicy(env.spec)
 
-        # Simulate
-        return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
+            # Simulate
+            done, param, state = False, None, None
+            while not done:
+                ro = rollout(
+                    env,
+                    policy,
+                    render_mode=RenderMode(text=False, video=True),
+                    reset_kwargs=dict(domain_param=param, init_state=state),
+                )
+                done, state, param = after_rollout_query(env, policy, ro)
 
 **(optional) Part 4: Run it from C++**
 
