@@ -169,8 +169,10 @@ class SPRL(Algorithm):
         target_mean = to.cat([spl_param.target_mean for spl_param in self._spl_parameters]).double()
         target_cov_chol = to.cat([spl_param.target_cov_chol_flat for spl_param in self._spl_parameters]).double()
 
-        # self.logger.add_value(f"cur context mean for {self._parameter.name}", self._parameter.context_mean.item())
-        # self.logger.add_value(f"cur context cov for {self._parameter.name}", self._parameter.context_cov.item())
+        for param in self._spl_parameters:
+            self.logger.add_value(f"Cur context mean for {param.name}", param.context_mean.item())
+            self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
+
         dim = context_mean.shape[0]
         # First, train with the initial context distribution
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
