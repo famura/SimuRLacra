@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=1,
+        max_iter=150,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
@@ -105,18 +105,18 @@ if __name__ == "__main__":
             SelfPacedLearnerParameter(
                 name="g",
                 target_mean=to.tensor([9.81]),
-                target_cov_chol_flat=to.tensor([1e-6]),
-                context_mean=to.tensor([0.0]),
-                context_cov_chol_flat=to.tensor([1e-6]),
+                target_cov_chol_flat=to.tensor([0.2]),
+                context_mean=to.tensor([8.0]),
+                context_cov_chol_flat=to.tensor([0.8]),
             )
         ),
     )
 
     sprl_hparam = dict(
-        kl_constraints_ub=1000,
+        kl_constraints_ub=8000,
         performance_lower_bound=20,
-        std_lower_bound=0.2,
-        kl_threshold=0.1,
+        std_lower_bound=0.4,
+        kl_threshold=200,
         max_iter=50,
     )
     algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
