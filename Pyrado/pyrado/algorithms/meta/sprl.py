@@ -305,9 +305,9 @@ class SPRL(Algorithm):
         if result and result.success:
             mean_pointer = 0
             for param in self._spl_parameters:
-                param.adapt("context_mean", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                param.adapt("context_mean", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
                 mean_pointer += param.dim
-                param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
                 mean_pointer += param.dim
         # we have a result but the optimization process was not a success
         elif result:
@@ -319,9 +319,9 @@ class SPRL(Algorithm):
             if constraints_satisfied and std_ok and result.fun < old_f:
                 mean_pointer = 0
                 for param in self._spl_parameters:
-                    param.adapt("context_mean", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                    param.adapt("context_mean", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
                     mean_pointer += param.dim
-                    param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer:mean_pointer+param.dim]))
+                    param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
                     mean_pointer += param.dim
             else:
                 print(f"Update unsuccessfull, keeping old values spl parameters")
