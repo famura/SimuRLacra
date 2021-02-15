@@ -33,7 +33,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -213,24 +212,24 @@
 <span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.policies.base" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.base.Policy">
-<em class="property">class </em><code class="sig-name descname">Policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Policy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for all policies in Pyrado</p>
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.device">
-<em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#pyrado.policies.base.Policy.device" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">device</span></code><a class="headerlink" href="#pyrado.policies.base.Policy.device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the device (CPU or GPU) on which the policy is stored.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.env_spec">
-<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.policies.base.Policy.env_spec" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">env_spec</span></code><a class="headerlink" href="#pyrado.policies.base.Policy.env_spec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the specification of environment the policy acts in.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.evaluate">
-<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">evaluate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_states_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'hidden_states'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-evaluate the given rollout and return a derivable action tensor.
 The default implementation simply calls <cite>forward()</cite>.</p>
 <dl class="field-list simple">
@@ -249,7 +248,7 @@ Defaults to ‘hidden_states’. Change for value functions.</p></li>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.forward">
-<em class="property">abstract </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘torch.Tensor’&gt;, (&lt;class ‘torch.Tensor’&gt;, &lt;class ‘torch.Tensor’&gt;)]<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.forward" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">[&lt;class</span> <span class="pre">‘torch.Tensor’&gt;,</span> <span class="pre">(&lt;class</span> <span class="pre">‘torch.Tensor’&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">‘torch.Tensor’&gt;)]</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -266,7 +265,7 @@ Defaults to ‘hidden_states’. Change for value functions.</p></li>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.init_hidden">
-<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_hidden" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">init_hidden</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_hidden" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.
 The default implementation will raise an error, to enforce override this function for recurrent policies.</p>
 <dl class="field-list simple">
@@ -281,7 +280,7 @@ The default implementation will raise an error, to enforce override this functio
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.init_param">
-<em class="property">abstract </em><code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_param" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">init_param</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -295,24 +294,24 @@ The default implementation will raise an error, to enforce override this functio
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.is_recurrent">
-<em class="property">property </em><code class="sig-name descname">is_recurrent</code><a class="headerlink" href="#pyrado.policies.base.Policy.is_recurrent" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_recurrent</span></code><a class="headerlink" href="#pyrado.policies.base.Policy.is_recurrent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bool to signalise it the policy has a recurrent architecture.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.policies.base.Policy.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#pyrado.policies.base.Policy.name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#pyrado.policies.base.Policy.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.num_param">
-<em class="property">property </em><code class="sig-name descname">num_param</code><a class="headerlink" href="#pyrado.policies.base.Policy.num_param" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">num_param</span></code><a class="headerlink" href="#pyrado.policies.base.Policy.num_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of policy parameters.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.param_grad">
-<em class="property">property </em><code class="sig-name descname">param_grad</code><a class="headerlink" href="#pyrado.policies.base.Policy.param_grad" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">param_grad</span></code><a class="headerlink" href="#pyrado.policies.base.Policy.param_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the gradient of the parameters as 1d array.
 The values are copied, modifying the return value does not propagate to the actual policy parameters.
 However, setting this variable will change the gradient.</p>
@@ -320,7 +319,7 @@ However, setting this variable will change the gradient.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.param_values">
-<em class="property">property </em><code class="sig-name descname">param_values</code><a class="headerlink" href="#pyrado.policies.base.Policy.param_values" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">param_values</span></code><a class="headerlink" href="#pyrado.policies.base.Policy.param_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the parameters of the policy as 1d array.
 The values are copied, modifying the return value does not propagate to the actual policy parameters.
 However, setting this variable will change the parameters.</p>
@@ -328,7 +327,7 @@ However, setting this variable will change the parameters.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the policy to it’s initial state.
 This should be called at the start of a rollout. Stateful policies should use it to reset the state variables.
 The default implementation does nothing.</p>
@@ -336,7 +335,7 @@ The default implementation does nothing.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.script">
-<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.script" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">script</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.jit._script.ScriptModule</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.Policy.script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ScriptModule from this policy.
 The returned module will always have the signature <cite>action = tm(observation)</cite>.
 For recurrent networks, it returns a stateful module that keeps the hidden states internally.
@@ -347,12 +346,12 @@ Such modules have a reset() method to reset the hidden states.</p>
 
 <dl class="py class">
 <dt id="pyrado.policies.base.TracedPolicyWrapper">
-<em class="property">class </em><code class="sig-name descname">TracedPolicyWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">module</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">TracedPolicyWrapper</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Wrapper for a traced policy. Mainly used to add <cite>input_size</cite> and <cite>output_size</cite> attributes.</p>
 <dl class="py method">
 <dt id="pyrado.policies.base.TracedPolicyWrapper.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TracedPolicyWrapper.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
@@ -366,24 +365,24 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py attribute">
 <dt id="pyrado.policies.base.TracedPolicyWrapper.input_size">
-<code class="sig-name descname">input_size</code><em class="property">: int</em><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.input_size" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">input_size</span></code><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.input_size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.policies.base.TracedPolicyWrapper.output_size">
-<code class="sig-name descname">output_size</code><em class="property">: int</em><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.output_size" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">output_size</span></code><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.policies.base.TracedPolicyWrapper.output_size" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="pyrado.policies.base.TwoHeadedPolicy">
-<em class="property">class </em><code class="sig-name descname">TwoHeadedPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">TwoHeadedPolicy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class for policies with a shared body and two separate heads.</p>
 <dl class="py method">
 <dt id="pyrado.policies.base.TwoHeadedPolicy.forward">
-<em class="property">abstract </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘torch.Tensor’&gt;, (&lt;class ‘torch.Tensor’&gt;, &lt;class ‘torch.Tensor’&gt;)]<a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.forward" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">[&lt;class</span> <span class="pre">‘torch.Tensor’&gt;,</span> <span class="pre">(&lt;class</span> <span class="pre">‘torch.Tensor’&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">‘torch.Tensor’&gt;)]</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -400,7 +399,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.TwoHeadedPolicy.init_param">
-<em class="property">abstract </em><code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.init_param" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">init_param</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -414,7 +413,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py attribute">
 <dt id="pyrado.policies.base.TwoHeadedPolicy.training">
-<code class="sig-name descname">training</code><em class="property">: bool</em><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.training" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">training</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.training" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -424,20 +423,20 @@ registered hooks while the latter silently ignores them.</p>
 <span id="features"></span><h2>features<a class="headerlink" href="#module-pyrado.policies.features" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.features.ATan2Feat">
-<em class="property">class </em><code class="sig-name descname">ATan2Feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx_sin</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">idx_cos</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#ATan2Feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.ATan2Feat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ATan2Feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx_sin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_cos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#ATan2Feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.ATan2Feat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Feature that computes the atan2 from two dimensions of the given input / observation.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pyrado.policies.features.FeatureStack">
-<em class="property">class </em><code class="sig-name descname">FeatureStack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat_fcns</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>Callable<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">FeatureStack</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feat_fcns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Features are nonlinear transformations of the inputs.
 .. note:: We only consider 1-dim measurements, i.e. no images.</p>
 <dl class="py method">
 <dt id="pyrado.policies.features.FeatureStack.get_num_feat">
-<code class="sig-name descname">get_num_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp_flat_dim</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack.get_num_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack.get_num_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_num_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_flat_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack.get_num_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack.get_num_feat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the number of features which depends on the dimension of the input and the selected feature functions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -453,19 +452,19 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt id="pyrado.policies.features.MultFeat">
-<em class="property">class </em><code class="sig-name descname">MultFeat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idcs</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#MultFeat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.MultFeat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">MultFeat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#MultFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.MultFeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Feature that multiplies two dimensions of the given input / observation</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pyrado.policies.features.RBFFeat">
-<em class="property">class </em><code class="sig-name descname">RBFFeat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_feat_per_dim</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="p">:</span> <span class="n"><span class="p">[</span>typing.Sequence<span class="p">[</span>list<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>tuple<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>torch.Tensor<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>float<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scale</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>float<span class="p">, </span>torch.Tensor<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">state_wise_norm</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RBFFeat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_feat_per_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="p"><span class="pre">[</span></span><span class="pre">typing.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_wise_norm</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Normalized Gaussian radial basis function features</p>
 <dl class="py method">
 <dt id="pyrado.policies.features.RBFFeat.derivative">
-<code class="sig-name descname">derivative</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat.derivative" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">derivative</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat.derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat.derivative" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the derivative of the features w.r.t. the inputs.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -485,7 +484,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt id="pyrado.policies.features.RandFourierFeat">
-<em class="property">class </em><code class="sig-name descname">RandFourierFeat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp_dim</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_feat_per_dim</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bandwidth</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>float<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RandFourierFeat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.RandFourierFeat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RandFourierFeat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_feat_per_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RandFourierFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.RandFourierFeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Random Fourier features</p>
 <div class="admonition seealso">
@@ -496,62 +495,62 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.abs_feat">
-<code class="sig-name descname">abs_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#abs_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.abs_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">abs_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#abs_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.abs_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.bell_feat">
-<code class="sig-name descname">bell_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">scale</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#bell_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.bell_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bell_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#bell_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.bell_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.const_feat">
-<code class="sig-name descname">const_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#const_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.const_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">const_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#const_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.const_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.cos_feat">
-<code class="sig-name descname">cos_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#cos_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.cos_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">cos_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#cos_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.cos_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.cubic_feat">
-<code class="sig-name descname">cubic_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#cubic_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.cubic_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">cubic_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#cubic_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.cubic_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.identity_feat">
-<code class="sig-name descname">identity_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#identity_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.identity_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">identity_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#identity_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.identity_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.sig_feat">
-<code class="sig-name descname">sig_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">scale</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sig_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.sig_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sig_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sig_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sig_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.sign_feat">
-<code class="sig-name descname">sign_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sign_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.sign_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sign_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sign_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sign_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.sin_feat">
-<code class="sig-name descname">sin_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sin_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.sin_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sin_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sin_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sin_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.sincos_feat">
-<code class="sig-name descname">sincos_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sincos_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.sincos_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sincos_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sincos_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sincos_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.sinsin_feat">
-<code class="sig-name descname">sinsin_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sinsin_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.sinsin_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sinsin_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#sinsin_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.sinsin_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.policies.features.squared_feat">
-<code class="sig-name descname">squared_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#squared_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.squared_feat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">squared_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#squared_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.squared_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -559,7 +558,7 @@ registered hooks while the latter silently ignores them.</p>
 <span id="initialization"></span><h2>initialization<a class="headerlink" href="#module-pyrado.policies.initialization" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.policies.initialization.init_param">
-<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/initialization.html#init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.initialization.init_param" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">init_param</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/initialization.html#init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.initialization.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the parameters of the PyTorch Module / layer / network / cell according to its type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -33,7 +33,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -238,7 +237,7 @@
 <span id="mock-env"></span><h2>mock_env<a class="headerlink" href="#module-tests.environment_wrappers.mock_env" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="tests.environment_wrappers.mock_env.MockEnv">
-<em class="property">class </em><code class="sig-name descname">MockEnv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_space</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">act_space</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">init_space</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">task</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">MockEnv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a></p>
 <p>A mock version of SimEnv, used in env wrapper tests.
 Observation, action, and init spaces as well as the task are passed to the constructor.
@@ -246,13 +245,13 @@ The step() method saves the last action into the last_act attribute. The action 
 ease assertions. step() and reset() return next_obs as observation. If it is None, a random vector is returned.</p>
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.act_space">
-<em class="property">property </em><code class="sig-name descname">act_space</code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.act_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">act_space</span></code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.act_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the actions.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.domain_param">
-<em class="property">property </em><code class="sig-name descname">domain_param</code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.domain_param" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">domain_param</span></code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.domain_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy <cite>dict</cite>.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
@@ -261,7 +260,7 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.get_nominal_domain_param">
-<code class="sig-name descname">get_nominal_domain_param</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.get_nominal_domain_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_nominal_domain_param</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the nominal a.k.a. default domain parameters.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -271,19 +270,19 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.init_space">
-<em class="property">property </em><code class="sig-name descname">init_space</code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.init_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">init_space</span></code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.init_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the initial state space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.obs_space">
-<em class="property">property </em><code class="sig-name descname">obs_space</code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.obs_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">obs_space</span></code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.obs_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the observations (agent’s perception of the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.render">
-<code class="sig-name descname">render</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">RenderMode(text=False, video=False)</span></em>, <em class="sig-param"><span class="n">render_step</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.render"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.render" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">render</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.render" title="Permalink to this definition">¶</a></dt>
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
@@ -298,7 +297,7 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">domain_param</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -315,13 +314,13 @@ The base version prints to console when the state exceeds its boundaries.</p>
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.state_space">
-<em class="property">property </em><code class="sig-name descname">state_space</code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.state_space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">state_space</span></code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.state_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the space of the states (used for describing the environment).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">act</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform one time step of the simulation or on the real-world device.
 When a terminal condition is met, the reset function is called.</p>
 <div class="admonition note">
@@ -349,7 +348,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.task">
-<em class="property">property </em><code class="sig-name descname">task</code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.task" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">task</span></code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>
 </dd></dl>
 
@@ -360,22 +359,22 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-action-delay"></span><h2>test_action_delay<a class="headerlink" href="#module-tests.environment_wrappers.test_action_delay" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_delay.test_act_delay">
-<code class="sig-name descname">test_act_delay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_act_delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_act_delay" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_act_delay</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_act_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_act_delay" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_delay.test_domain_param">
-<code class="sig-name descname">test_domain_param</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_domain_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_domain_param" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_domain_param</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_domain_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_delay.test_no_delay">
-<code class="sig-name descname">test_no_delay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_no_delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_no_delay" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_no_delay</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_no_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_no_delay" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_delay.test_reset">
-<code class="sig-name descname">test_reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -383,33 +382,33 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-action-downsampling"></span><h2>test_action_downsampling<a class="headerlink" href="#module-tests.environment_wrappers.test_action_downsampling" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_downsampling.test_act_downsampling">
-<code class="sig-name descname">test_act_downsampling</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_act_downsampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_act_downsampling" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_act_downsampling</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_act_downsampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_act_downsampling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_downsampling.test_combination_delay_downsampling">
-<code class="sig-name descname">test_combination_delay_downsampling</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_combination_delay_downsampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_combination_delay_downsampling" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_combination_delay_downsampling</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_combination_delay_downsampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_combination_delay_downsampling" title="Permalink to this definition">¶</a></dt>
 <dd><p>After delay number of actions, the actions are downsampled by the factor</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_downsampling.test_combination_downsampling_delay">
-<code class="sig-name descname">test_combination_downsampling_delay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_combination_downsampling_delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_combination_downsampling_delay" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_combination_downsampling_delay</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_combination_downsampling_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_combination_downsampling_delay" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_downsampling.test_domain_param">
-<code class="sig-name descname">test_domain_param</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_domain_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_domain_param" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_domain_param</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_domain_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_downsampling.test_no_downsampling">
-<code class="sig-name descname">test_no_downsampling</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_no_downsampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_no_downsampling" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_no_downsampling</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_no_downsampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_no_downsampling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_downsampling.test_reset">
-<code class="sig-name descname">test_reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -417,12 +416,12 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-action-noise"></span><h2>test_action_noise<a class="headerlink" href="#module-tests.environment_wrappers.test_action_noise" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_noise.test_act_noise_simple">
-<code class="sig-name descname">test_act_noise_simple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_noise.html#test_act_noise_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_noise.test_act_noise_simple" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_act_noise_simple</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_noise.html#test_act_noise_simple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_noise.test_act_noise_simple" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">
-<code class="sig-name descname">test_order_act_noise_act_norm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_noise.html#test_order_act_noise_act_norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_order_act_noise_act_norm</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_noise.html#test_order_act_noise_act_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -430,12 +429,12 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-action-normalization"></span><h2>test_action_normalization<a class="headerlink" href="#module-tests.environment_wrappers.test_action_normalization" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_normalization.test_denormalization">
-<code class="sig-name descname">test_denormalization</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_normalization.html#test_denormalization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_normalization.test_denormalization" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_denormalization</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_normalization.html#test_denormalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_normalization.test_denormalization" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_action_normalization.test_space">
-<code class="sig-name descname">test_space</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_normalization.html#test_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_normalization.test_space" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_space</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_normalization.html#test_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_normalization.test_space" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -443,12 +442,12 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-combination"></span><h2>test_combination<a class="headerlink" href="#module-tests.environment_wrappers.test_combination" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_combination.test_combination">
-<code class="sig-name descname">test_combination</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_combination.html#test_combination"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_combination.test_combination" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_combination</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_combination.html#test_combination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_combination.test_combination" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_combination.test_wrap_like_other_env">
-<code class="sig-name descname">test_wrap_like_other_env</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_combination.html#test_wrap_like_other_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_combination.test_wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_wrap_like_other_env</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_combination.html#test_wrap_like_other_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_combination.test_wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -456,12 +455,12 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-domain-randomization"></span><h2>test_domain_randomization<a class="headerlink" href="#module-tests.environment_wrappers.test_domain_randomization" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob">
-<code class="sig-name descname">test_dr_wrapper_buffer_bob</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">selection</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_domain_randomization.html#test_dr_wrapper_buffer_bob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_dr_wrapper_buffer_bob</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_domain_randomization.html#test_dr_wrapper_buffer_bob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">
-<code class="sig-name descname">test_dr_wrapper_live_bob</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_domain_randomization.html#test_dr_wrapper_live_bob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_dr_wrapper_live_bob</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_domain_randomization.html#test_dr_wrapper_live_bob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -469,17 +468,17 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-observation-normalization"></span><h2>test_observation_normalization<a class="headerlink" href="#module-tests.environment_wrappers.test_observation_normalization" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_normalization.mock_obs_space">
-<code class="sig-name descname">mock_obs_space</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#mock_obs_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.mock_obs_space" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">mock_obs_space</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#mock_obs_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.mock_obs_space" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_normalization.test_denormalization">
-<code class="sig-name descname">test_denormalization</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mock_obs_space</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#test_denormalization"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.test_denormalization" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_denormalization</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_obs_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#test_denormalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.test_denormalization" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_normalization.test_space">
-<code class="sig-name descname">test_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mock_obs_space</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#test_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.test_space" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_space</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_obs_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#test_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.test_space" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -487,27 +486,27 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-observation-partial"></span><h2>test_observation_partial<a class="headerlink" href="#module-tests.environment_wrappers.test_observation_partial" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_partial.test_mask_from_indices">
-<code class="sig-name descname">test_mask_from_indices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_from_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_from_indices" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_mask_from_indices</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_from_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_from_indices" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_partial.test_mask_from_labels">
-<code class="sig-name descname">test_mask_from_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_from_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_from_labels" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_mask_from_labels</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_from_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_from_labels" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_partial.test_mask_invert">
-<code class="sig-name descname">test_mask_invert</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_invert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_invert" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_mask_invert</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_invert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_invert" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_partial.test_spaces">
-<code class="sig-name descname">test_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_spaces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_spaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_spaces</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_spaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_spaces" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_partial.test_values">
-<code class="sig-name descname">test_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_values</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_values" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -515,7 +514,7 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="test-observation-velfilt"></span><h2>test_observation_velfilt<a class="headerlink" href="#module-tests.environment_wrappers.test_observation_velfilt" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tests.environment_wrappers.test_observation_velfilt.test_velocity_filter">
-<code class="sig-name descname">test_velocity_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_velfilt.html#test_velocity_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_velfilt.test_velocity_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">test_velocity_filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_velfilt.html#test_velocity_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_velfilt.test_velocity_filter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

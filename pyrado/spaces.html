@@ -215,34 +215,34 @@
 <span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.spaces.base" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.base.Space">
-<em class="property">class </em><code class="sig-name descname">Space</code><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Space</span></code><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class of all state, action, and init spaces in Pyrado</p>
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.bound_abs_up">
-<em class="property">property </em><code class="sig-name descname">bound_abs_up</code><a class="headerlink" href="#pyrado.spaces.base.Space.bound_abs_up" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">bound_abs_up</span></code><a class="headerlink" href="#pyrado.spaces.base.Space.bound_abs_up" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the upper bound in terms of absolute values.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.base.Space.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.base.Space.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.base.Space.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.base.Space.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.base.Space.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.base.Space.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.bounds">
-<em class="property">property </em><code class="sig-name descname">bounds</code><a class="headerlink" href="#pyrado.spaces.base.Space.bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">bounds</span></code><a class="headerlink" href="#pyrado.spaces.base.Space.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the lower (first element) and upper bound (second element) of the space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.cat">
-<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spaces</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>tuple<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.cat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.cat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenate a sequence of spaces in the given order. This creates a new Space object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -256,7 +256,7 @@
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.contains">
-<em class="property">abstract </em><code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.contains" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a candidate element is in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -273,13 +273,13 @@
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.copy">
-<code class="sig-name descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.copy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">copy</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a deep copy (recursively copy values of a compound object).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.create_mask">
-<code class="sig-name descname">create_mask</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">idcs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.create_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.create_mask" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_mask</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">idcs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.create_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.create_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a mask selecting the given indices from this space.
 Every index should be a number or a name in labels.</p>
 <dl class="field-list simple">
@@ -294,25 +294,25 @@ Every index should be a number or a name in labels.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.ele_dim">
-<em class="property">property </em><code class="sig-name descname">ele_dim</code><a class="headerlink" href="#pyrado.spaces.base.Space.ele_dim" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">ele_dim</span></code><a class="headerlink" href="#pyrado.spaces.base.Space.ele_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the dimension of an element of the space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.flat_dim">
-<em class="property">property </em><code class="sig-name descname">flat_dim</code><a class="headerlink" href="#pyrado.spaces.base.Space.flat_dim" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">flat_dim</span></code><a class="headerlink" href="#pyrado.spaces.base.Space.flat_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the dimension of the flattened space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.labels">
-<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.base.Space.labels" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">labels</span></code><a class="headerlink" href="#pyrado.spaces.base.Space.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.project_to">
-<em class="property">abstract </em><code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.project_to" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">project_to</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ele</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.project_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.project_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -326,7 +326,7 @@ Every index should be a number or a name in labels.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.sample_uniform">
-<em class="property">abstract </em><code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -341,13 +341,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.shape">
-<em class="property">abstract property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.base.Space.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">shape</span></code><a class="headerlink" href="#pyrado.spaces.base.Space.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the full space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.shrink">
-<em class="property">abstract </em><code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.shrink" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">shrink</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_lo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_up</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.shrink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.shrink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a convex subspace of the existing space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -364,7 +364,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.subspace">
-<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idcs</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>int<span class="p">, </span>slice<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.subspace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">subspace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">slice</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.subspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -383,22 +383,22 @@ bounds are replaced with this value.</p>
 <span id="box"></span><h2>box<a class="headerlink" href="#module-pyrado.spaces.box" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.box.BoxSpace">
-<em class="property">class </em><code class="sig-name descname">BoxSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], shape: [&lt;class 'tuple'&gt;, &lt;class 'int'&gt;] = None, labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">BoxSpace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bound_lo:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;],</span> <span class="pre">bound_up:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;],</span> <span class="pre">shape:</span> <span class="pre">[&lt;class</span> <span class="pre">'tuple'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">labels:</span> <span class="pre">Sequence[str]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
 <p>Multidimensional box space. This class can also be used to describe a sphere.</p>
 <dl class="py attribute">
 <dt id="pyrado.spaces.box.BoxSpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.box.BoxSpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.cat">
-<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spaces</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>tuple<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.cat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.cat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenate BoxSpaces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -413,7 +413,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.contains" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a candidate element is in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -430,13 +430,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.labels">
-<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.labels" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">labels</span></code><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.project_to">
-<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.project_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">project_to</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ele</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.project_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.project_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -450,7 +450,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.sample_uniform">
-<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -465,13 +465,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.shape">
-<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">shape</span></code><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the full space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.shrink">
-<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.shrink" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">shrink</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_lo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_up</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.shrink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.shrink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a convex subspace of the existing space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -488,7 +488,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.subspace">
-<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idcs</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>int<span class="p">, </span>slice<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.subspace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">subspace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">slice</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.subspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -504,17 +504,17 @@ bounds are replaced with this value.</p>
 
 <dl class="py class">
 <dt id="pyrado.spaces.box.InfBoxSpace">
-<em class="property">class </em><code class="sig-name descname">InfBoxSpace</code><span class="sig-paren">(</span><em class="sig-param">shape: [&lt;class 'tuple'&gt;, &lt;class 'int'&gt;], labels: Optional[Sequence[str]] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#InfBoxSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.InfBoxSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">InfBoxSpace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">shape:</span> <span class="pre">[&lt;class</span> <span class="pre">'tuple'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;],</span> <span class="pre">labels:</span> <span class="pre">Optional[Sequence[str]]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#InfBoxSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.box.InfBoxSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
 <p>Multidimensional box space where all limits are <span class="math notranslate nohighlight">\(\pm \inf\)</span>.</p>
 <dl class="py attribute">
 <dt id="pyrado.spaces.box.InfBoxSpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.box.InfBoxSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.box.InfBoxSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.box.InfBoxSpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.box.InfBoxSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.box.InfBoxSpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -524,22 +524,22 @@ bounds are replaced with this value.</p>
 <span id="compound"></span><h2>compound<a class="headerlink" href="#module-pyrado.spaces.compound" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.compound.CompoundSpace">
-<em class="property">class </em><code class="sig-name descname">CompoundSpace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spaces</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space">pyrado.spaces.base.Space</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">CompoundSpace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><span class="pre">pyrado.spaces.base.Space</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
 <p>Space consisting of other spaces</p>
 <dl class="py attribute">
 <dt id="pyrado.spaces.compound.CompoundSpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.compound.CompoundSpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.cat">
-<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spaces</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>tuple<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.cat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.cat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenate a sequence of spaces in the given order. This creates a new Space object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -553,7 +553,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.contains" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a candidate element is in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -570,13 +570,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.flat_dim">
-<em class="property">property </em><code class="sig-name descname">flat_dim</code><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.flat_dim" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">flat_dim</span></code><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.flat_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the dimension of the flattened space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.project_to">
-<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.project_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">project_to</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ele</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.project_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.project_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -590,7 +590,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.sample_uniform">
-<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -605,13 +605,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.shape">
-<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">shape</span></code><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the full space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.shrink">
-<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.shrink" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">shrink</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_lo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_up</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.shrink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.shrink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a convex subspace of the existing space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -628,7 +628,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.compound.CompoundSpace.subspace">
-<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idcs</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>slice<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.subspace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">subspace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">slice</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.subspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -647,28 +647,28 @@ bounds are replaced with this value.</p>
 <span id="discrete"></span><h2>discrete<a class="headerlink" href="#module-pyrado.spaces.discrete" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.discrete.DiscreteSpace">
-<em class="property">class </em><code class="sig-name descname">DiscreteSpace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eles</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>list<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">DiscreteSpace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
 <p>Discrete space implemented as a ndarray containing all possible integer-valued elements (unsorted)</p>
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.bound_abs_up">
-<em class="property">property </em><code class="sig-name descname">bound_abs_up</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_abs_up" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">bound_abs_up</span></code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_abs_up" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the upper bound in terms of absolute values.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.cat">
-<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spaces</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>tuple<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.cat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.cat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenate multiple instances of <cite>DiscreteSpace</cite>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -683,7 +683,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.contains" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a candidate element is in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -700,24 +700,24 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.flat_dim">
-<em class="property">property </em><code class="sig-name descname">flat_dim</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.flat_dim" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">flat_dim</span></code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.flat_dim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the dimension of the flattened space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.labels">
-<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.labels" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">labels</span></code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.num_ele">
-<em class="property">property </em><code class="sig-name descname">num_ele</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.num_ele" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">num_ele</span></code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.num_ele" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.project_to">
-<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.project_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">project_to</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ele</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.project_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.project_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -731,7 +731,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.sample_uniform">
-<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -746,13 +746,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.shape">
-<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">shape</span></code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the full space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.shrink">
-<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.shrink" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">shrink</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_lo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_up</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.shrink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.shrink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a convex subspace of the existing space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -774,28 +774,28 @@ bounds are replaced with this value.</p>
 <span id="empty"></span><h2>empty<a class="headerlink" href="#module-pyrado.spaces.empty" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.empty.EmptySpace">
-<em class="property">class </em><code class="sig-name descname">EmptySpace</code><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">EmptySpace</span></code><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
 <p>A space with no content</p>
 <dl class="py attribute">
 <dt id="pyrado.spaces.empty.EmptySpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.empty.EmptySpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.bounds">
-<em class="property">property </em><code class="sig-name descname">bounds</code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">bounds</span></code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the lower (first element) and upper bound (second element) of the space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.cat">
-<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spaces</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>tuple<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.cat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">cat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.cat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenate a sequence of spaces in the given order. This creates a new Space object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -809,7 +809,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.contains" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a candidate element is in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -826,13 +826,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.labels">
-<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.labels" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">labels</span></code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.project_to">
-<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.project_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">project_to</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ele</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.project_to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.project_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -846,7 +846,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.sample_uniform">
-<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -861,13 +861,13 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.shape">
-<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">shape</span></code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the shape of the full space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.shrink">
-<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.shrink" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">shrink</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_lo</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_up</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.shrink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.shrink" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a convex subspace of the existing space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -884,7 +884,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.subspace">
-<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idcs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>int<span class="p">, </span>slice<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.subspace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">subspace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">slice</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.subspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -903,23 +903,23 @@ bounds are replaced with this value.</p>
 <span id="polar"></span><h2>polar<a class="headerlink" href="#module-pyrado.spaces.polar" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.polar.Polar2DPosSpace">
-<em class="property">class </em><code class="sig-name descname">Polar2DPosSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], shape: [&lt;class 'tuple'&gt;, &lt;class 'int'&gt;] = None, labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Polar2DPosSpace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bound_lo:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;],</span> <span class="pre">bound_up:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;],</span> <span class="pre">shape:</span> <span class="pre">[&lt;class</span> <span class="pre">'tuple'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">labels:</span> <span class="pre">Sequence[str]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
 <p>Samples positions on a 2-dim torus, i.e. the area between two concentric circles.
 Can also be a section of a 2-dim torus, i.e. not a full circle.</p>
 <dl class="py attribute">
 <dt id="pyrado.spaces.polar.Polar2DPosSpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.polar.Polar2DPosSpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.polar.Polar2DPosSpace.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.contains" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a candidate element is in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -936,7 +936,7 @@ Can also be a section of a 2-dim torus, i.e. not a full circle.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.polar.Polar2DPosSpace.sample_uniform">
-<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -953,23 +953,23 @@ bounds are replaced with this value.</p>
 
 <dl class="py class">
 <dt id="pyrado.spaces.polar.Polar2DPosVelSpace">
-<em class="property">class </em><code class="sig-name descname">Polar2DPosVelSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], shape: [&lt;class 'tuple'&gt;, &lt;class 'int'&gt;] = None, labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Polar2DPosVelSpace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bound_lo:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;],</span> <span class="pre">bound_up:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;],</span> <span class="pre">shape:</span> <span class="pre">[&lt;class</span> <span class="pre">'tuple'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">labels:</span> <span class="pre">Sequence[str]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
 <p>Samples positions on a 2-dim torus, i.e. the area between 2 circles augmented with cartesian velocities.
 Can also be a section of a 2-dim torus, i.e. not a full circle.</p>
 <dl class="py attribute">
 <dt id="pyrado.spaces.polar.Polar2DPosVelSpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.polar.Polar2DPosVelSpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.polar.Polar2DPosVelSpace.contains">
-<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.contains" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a candidate element is in the state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -986,7 +986,7 @@ Can also be a section of a 2-dim torus, i.e. not a full circle.</p>
 
 <dl class="py method">
 <dt id="pyrado.spaces.polar.Polar2DPosVelSpace.sample_uniform">
-<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1006,22 +1006,22 @@ bounds are replaced with this value.</p>
 <span id="singular"></span><h2>singular<a class="headerlink" href="#module-pyrado.spaces.singular" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.singular.SingularStateSpace">
-<em class="property">class </em><code class="sig-name descname">SingularStateSpace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fixed_state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/singular.html#SingularStateSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">SingularStateSpace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fixed_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/singular.html#SingularStateSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
 <p>Space which always returns the same initial state (trivial space)</p>
 <dl class="py attribute">
 <dt id="pyrado.spaces.singular.SingularStateSpace.bound_lo">
-<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_lo</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.spaces.singular.SingularStateSpace.bound_up">
-<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">bound_up</span></code><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.bound_up" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.spaces.singular.SingularStateSpace.sample_uniform">
-<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/singular.html#SingularStateSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sample_uniform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concrete_inf</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000000.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/singular.html#SingularStateSpace.sample_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample an element of this space using a uniform distribution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
