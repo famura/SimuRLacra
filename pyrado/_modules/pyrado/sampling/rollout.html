@@ -425,6 +425,7 @@
             <span class="n">t_post_policy</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
         <span class="c1"># Ask the environment to perform the simulation step</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">obs_next</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">env_info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
 
         <span class="c1"># Record time after the step i.e. the send and receive is completed</span>
@@ -437,7 +438,7 @@
         <span class="n">obs_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="n">act_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
         <span class="n">rew_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rew</span><span class="p">)</span>
-        <span class="n">state_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">state_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="n">env_info_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env_info</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">record_dts</span><span class="p">:</span>
             <span class="n">dt_policy_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt_policy</span><span class="p">)</span>
