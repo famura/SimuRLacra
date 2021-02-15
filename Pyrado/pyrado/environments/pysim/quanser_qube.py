@@ -145,10 +145,12 @@ class QQubeSim(SimPyEnv, Serializable):
         self._visualization = QQubeVis(self)
         # States that visualization is running
         self._initialized = True
+        # Calculate if and how many frames are dropped
+        self._skipFrames = (1 / 60) / self._dt
 
     def _update_anim(self):
-        # Refreshed with every frame
-        self._visualization.taskMgr.step()
+        # Calls the update_anim function of the base class
+        super(QQubeSim, self)._update_anim()
 
     def _reset_anim(self):
         pass

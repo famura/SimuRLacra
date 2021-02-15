@@ -260,7 +260,12 @@ class SimPyEnv(SimEnv, Serializable):
         """
         Update animation. Called by each render call.
         """
-        pass
+        if self._skipFrames > 1:
+            self._skipFrames -= 1
+        else:
+            # Refreshed with every frame
+            self._visualization.taskMgr.step()
+            self._skipFrames = (1 / 60) / self._dt
 
     def _reset_anim(self):
         """

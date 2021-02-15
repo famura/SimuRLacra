@@ -114,17 +114,11 @@ class QQubeVis(PandaVis):
         self.cylinder.setColor(0.5, 0.5, 0,5)  # gray
         self.cylinder.reparentTo(self.render)
 
-        # Joints
+        # Joint 1
         self.joint1 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.joint1.setScale(0.005)
         self.joint1.setPos(0.0, 0.07, 0.15)
         self.joint1.reparentTo(self.render)
-
-        self.joint2 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint2.setScale(pole_radius)
-        self.joint2.setPos(0.0, 0.07 + 2 * Lr, 0.15)
-        self.joint2.setColor(0, 0, 0)
-        self.joint2.wrtReparentTo(self.arm)
 
         # Arm
         self.arm = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
@@ -133,6 +127,13 @@ class QQubeVis(PandaVis):
         self.arm.setP(-90)
         self.arm.setPos(0, 0.07, 0.15)
         self.arm.reparentTo(self.render)
+
+        # Joint 2
+        self.joint2 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
+        self.joint2.setScale(pole_radius)
+        self.joint2.setPos(0.0, 0.07 + 2 * Lr, 0.15)
+        self.joint2.setColor(0, 0, 0)
+        self.joint2.wrtReparentTo(self.arm)
 
         # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))

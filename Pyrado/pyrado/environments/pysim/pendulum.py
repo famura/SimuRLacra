@@ -92,11 +92,14 @@ class PendulumSim(SimPyEnv, Serializable):
         self.state[0] += self.state[1] * self._dt  # next position
 
     def _init_anim(self):
-
+        # Create instance of PandaVis
         self._visualization = PendulumVis(self)
-        self._visualization.taskMgr.step()
+        # States that visualization is running
         self._initialized = True
+        # Calculate if and how many frames are dropped
+        self._skipFrames = (1 / 60) / self._dt
 
     def _update_anim(self):
-        self._visualization.taskMgr.step()
+        # Calls the update_anim function of the base class
+        super(PendulumSim, self)._update_anim()
 
