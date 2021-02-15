@@ -226,6 +226,7 @@ def rollout(
             t_post_policy = time.time()
 
         # Ask the environment to perform the simulation step
+        state = env.state.copy()
         obs_next, rew, done, env_info = env.step(act)
 
         # Record time after the step i.e. the send and receive is completed
@@ -238,7 +239,7 @@ def rollout(
         obs_hist.append(obs)
         act_hist.append(act)
         rew_hist.append(rew)
-        state_hist.append(env.state.copy())
+        state_hist.append(state)
         env_info_hist.append(env_info)
         if record_dts:
             dt_policy_hist.append(dt_policy)
