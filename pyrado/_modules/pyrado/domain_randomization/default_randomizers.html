@@ -639,28 +639,156 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_wambic"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_wambic">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.mujoco.wam_bic&quot;</span><span class="p">,</span> <span class="s2">&quot;WAMBallInCupSim&quot;</span><span class="p">)</span>
-<span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.mujoco.wam_jsc&quot;</span><span class="p">,</span> <span class="s2">&quot;WAMJointSpaceCtrlSim&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="create_default_randomizer_wamjsc"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_wamjsc">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.mujoco.wam_bic&quot;</span><span class="p">,</span> <span class="s2">&quot;WAMJointSpaceCtrlSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_wamjsc</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.wam_jsc</span> <span class="kn">import</span> <span class="n">WAMJointSpaceCtrlSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">WAMJointSpaceCtrlSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_wambic"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_wambic">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.mujoco.wam_jsc&quot;</span><span class="p">,</span> <span class="s2">&quot;WAMJointSpaceCtrlSim&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">create_default_randomizer_wambic</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.wam_bic</span> <span class="kn">import</span> <span class="n">WAMBallInCupSim</span>
 
     <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">WAMBallInCupSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
         <span class="c1"># Ball needs to fit into the cup</span>
         <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.65</span><span class="p">),</span>
         <span class="c1"># Rope won&#39;t be more than 3cm off</span>
         <span class="n">NormalDomainParam</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rope_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">30</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.27</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mf">0.33</span>
         <span class="p">),</span>
-        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
-        <span class="n">UniformDomainParam</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
-        <span class="p">),</span>
-        <span class="n">UniformDomainParam</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_stiction&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_stiction&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
-        <span class="p">),</span>
         <span class="n">UniformDomainParam</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-6</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span></div>
 
@@ -758,12 +886,36 @@
         <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_length&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
         <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
         <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
-        <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
-        <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
-        <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
-        <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
-        <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">13</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">14</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">16</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">17</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">18</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">19</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">20</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">21</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">22</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">23</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">25</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">26</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">27</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">28</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">29</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">30</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">31</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">32</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">33</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">34</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">35</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_stiction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
     <span class="p">}</span></div>
 </pre></div>
 
