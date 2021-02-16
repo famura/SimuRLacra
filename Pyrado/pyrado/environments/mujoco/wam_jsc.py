@@ -119,11 +119,38 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
         return self._torque_space
 
     @classmethod
-    def get_nominal_domain_param(cls) -> dict:
-        return dict(
-            joint_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-            joint_stiction=0.2,  # dry friction coefficient of motor joints (reasonable values are 0.1 to 0.6)
-        )
+    def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
+        if num_dof == 7:
+            return dict(
+                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_5_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_6_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_7_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
+                joint_5_stiction=0.2,  # dry friction coefficient of motor joint 5 [-]
+                joint_6_stiction=0.2,  # dry friction coefficient of motor joint 6 [-]
+                joint_7_stiction=0.2,  # dry friction coefficient of motor joint 7 [-]
+                rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
+            )
+        elif num_dof == 4:
+            return dict(
+                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
+            )
+        else:
+            raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
     def _create_spaces(self):
         # Torque and action space (running a PD controller on joint positions and velocities)

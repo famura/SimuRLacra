@@ -440,28 +440,156 @@ def create_default_randomizer_bl() -> DomainRandomizer:
     )
 
 
-@default_randomizer("pyrado.environments.mujoco.wam_bic", "WAMBallInCupSim")
+@default_randomizer("pyrado.environments.mujoco.wam_bic", "WAMJointSpaceCtrlSim")
+def create_default_randomizer_wamjsc() -> DomainRandomizer:
+    from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
+
+    dp_nom = WAMJointSpaceCtrlSim.get_nominal_domain_param()
+    return DomainRandomizer(
+        UniformDomainParam(
+            name="joint_1_damping", mean=dp_nom["joint_1_damping"], halfspan=dp_nom["joint_1_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_2_damping", mean=dp_nom["joint_2_damping"], halfspan=dp_nom["joint_2_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_3_damping", mean=dp_nom["joint_3_damping"], halfspan=dp_nom["joint_3_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_4_damping", mean=dp_nom["joint_4_damping"], halfspan=dp_nom["joint_4_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_5_damping", mean=dp_nom["joint_5_damping"], halfspan=dp_nom["joint_5_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_6_damping", mean=dp_nom["joint_6_damping"], halfspan=dp_nom["joint_6_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_7_damping", mean=dp_nom["joint_7_damping"], halfspan=dp_nom["joint_7_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_1_stiction",
+            mean=dp_nom["joint_1_stiction"],
+            halfspan=dp_nom["joint_1_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_2_stiction",
+            mean=dp_nom["joint_2_stiction"],
+            halfspan=dp_nom["joint_2_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_3_stiction",
+            mean=dp_nom["joint_3_stiction"],
+            halfspan=dp_nom["joint_3_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_4_stiction",
+            mean=dp_nom["joint_4_stiction"],
+            halfspan=dp_nom["joint_4_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_5_stiction",
+            mean=dp_nom["joint_5_stiction"],
+            halfspan=dp_nom["joint_5_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_6_stiction",
+            mean=dp_nom["joint_6_stiction"],
+            halfspan=dp_nom["joint_6_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_7_stiction",
+            mean=dp_nom["joint_7_stiction"],
+            halfspan=dp_nom["joint_7_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+    )
+
+
 @default_randomizer("pyrado.environments.mujoco.wam_jsc", "WAMJointSpaceCtrlSim")
 def create_default_randomizer_wambic() -> DomainRandomizer:
     from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 
     dp_nom = WAMBallInCupSim.get_nominal_domain_param()
     return DomainRandomizer(
+        NormalDomainParam(name="ball_mass", mean=dp_nom["ball_mass"], std=dp_nom["ball_mass"] / 10, clip_lo=1e-2),
         # Ball needs to fit into the cup
         NormalDomainParam(name="cup_scale", mean=dp_nom["cup_scale"], std=dp_nom["cup_scale"] / 5, clip_lo=0.65),
         # Rope won't be more than 3cm off
         NormalDomainParam(
             name="rope_length", mean=dp_nom["rope_length"], std=dp_nom["rope_length"] / 30, clip_lo=0.27, clip_up=0.33
         ),
-        NormalDomainParam(name="ball_mass", mean=dp_nom["ball_mass"], std=dp_nom["ball_mass"] / 10, clip_lo=1e-2),
-        UniformDomainParam(
-            name="joint_damping", mean=dp_nom["joint_damping"], halfspan=dp_nom["joint_damping"] / 2, clip_lo=0.0
-        ),
-        UniformDomainParam(
-            name="joint_stiction", mean=dp_nom["joint_stiction"], halfspan=dp_nom["joint_stiction"] / 2, clip_lo=0.0
-        ),
         UniformDomainParam(
             name="rope_damping", mean=dp_nom["rope_damping"], halfspan=dp_nom["rope_damping"] / 2, clip_lo=1e-6
+        ),
+        UniformDomainParam(
+            name="joint_1_damping", mean=dp_nom["joint_1_damping"], halfspan=dp_nom["joint_1_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_2_damping", mean=dp_nom["joint_2_damping"], halfspan=dp_nom["joint_2_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_3_damping", mean=dp_nom["joint_3_damping"], halfspan=dp_nom["joint_3_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_4_damping", mean=dp_nom["joint_4_damping"], halfspan=dp_nom["joint_4_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_5_damping", mean=dp_nom["joint_5_damping"], halfspan=dp_nom["joint_5_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_6_damping", mean=dp_nom["joint_6_damping"], halfspan=dp_nom["joint_6_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_7_damping", mean=dp_nom["joint_7_damping"], halfspan=dp_nom["joint_7_damping"] / 2, clip_lo=0.0
+        ),
+        UniformDomainParam(
+            name="joint_1_stiction",
+            mean=dp_nom["joint_1_stiction"],
+            halfspan=dp_nom["joint_1_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_2_stiction",
+            mean=dp_nom["joint_2_stiction"],
+            halfspan=dp_nom["joint_2_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_3_stiction",
+            mean=dp_nom["joint_3_stiction"],
+            halfspan=dp_nom["joint_3_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_4_stiction",
+            mean=dp_nom["joint_4_stiction"],
+            halfspan=dp_nom["joint_4_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_5_stiction",
+            mean=dp_nom["joint_5_stiction"],
+            halfspan=dp_nom["joint_5_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_6_stiction",
+            mean=dp_nom["joint_6_stiction"],
+            halfspan=dp_nom["joint_6_stiction"] / 2,
+            clip_lo=0.0,
+        ),
+        UniformDomainParam(
+            name="joint_7_stiction",
+            mean=dp_nom["joint_7_stiction"],
+            halfspan=dp_nom["joint_7_stiction"] / 2,
+            clip_lo=0.0,
         ),
     )
 
@@ -559,10 +687,34 @@ def get_default_domain_param_map_wambic() -> Dict[int, Tuple[str, str]]:
         3: ("rope_length", "std"),
         4: ("ball_mass", "mean"),
         5: ("ball_mass", "std"),
-        6: ("joint_damping", "mean"),
-        7: ("joint_damping", "halfspan"),
-        8: ("joint_stiction", "mean"),
-        9: ("joint_stiction", "halfspan"),
-        10: ("rope_damping", "mean"),
-        11: ("rope_damping", "halfspan"),
+        6: ("rope_damping", "mean"),
+        7: ("rope_damping", "halfspan"),
+        8: ("joint_1_damping", "mean"),
+        9: ("joint_1_damping", "halfspan"),
+        10: ("joint_2_damping", "mean"),
+        11: ("joint_2_damping", "halfspan"),
+        12: ("joint_3_damping", "mean"),
+        13: ("joint_3_damping", "halfspan"),
+        14: ("joint_4_damping", "mean"),
+        15: ("joint_4_damping", "halfspan"),
+        16: ("joint_5_damping", "mean"),
+        17: ("joint_5_damping", "halfspan"),
+        18: ("joint_6_damping", "mean"),
+        19: ("joint_6_damping", "halfspan"),
+        20: ("joint_7_damping", "mean"),
+        21: ("joint_7_damping", "halfspan"),
+        22: ("joint_1_stiction", "mean"),
+        23: ("joint_1_stiction", "halfspan"),
+        24: ("joint_2_stiction", "mean"),
+        25: ("joint_2_stiction", "halfspan"),
+        26: ("joint_3_stiction", "mean"),
+        27: ("joint_3_stiction", "halfspan"),
+        28: ("joint_4_stiction", "mean"),
+        29: ("joint_4_stiction", "halfspan"),
+        30: ("joint_5_stiction", "mean"),
+        31: ("joint_5_stiction", "halfspan"),
+        32: ("joint_6_stiction", "mean"),
+        33: ("joint_6_stiction", "halfspan"),
+        34: ("joint_7_stiction", "mean"),
+        35: ("joint_7_stiction", "halfspan"),
     }

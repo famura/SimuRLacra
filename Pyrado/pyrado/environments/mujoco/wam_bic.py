@@ -167,15 +167,45 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         return self._torque_space
 
     @classmethod
-    def get_nominal_domain_param(cls) -> dict:
-        return dict(
-            cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
-            rope_length=0.41,  # length of the rope [m]
-            ball_mass=0.024,  # mass of the ball [kg]
-            joint_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-            joint_stiction=0.2,  # dry friction coefficient of motor joints (reasonable values are 0.1 to 0.6)
-            rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
-        )
+    def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
+        if num_dof == 7:
+            return dict(
+                cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
+                rope_length=0.41,  # length of the rope [m]
+                ball_mass=0.024,  # mass of the ball [kg]
+                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_5_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_6_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_7_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
+                joint_5_stiction=0.2,  # dry friction coefficient of motor joint 5 [-]
+                joint_6_stiction=0.2,  # dry friction coefficient of motor joint 6 [-]
+                joint_7_stiction=0.2,  # dry friction coefficient of motor joint 7 [-]
+                rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
+            )
+        elif num_dof == 4:
+            return dict(
+                cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
+                rope_length=0.41,  # length of the rope [m]
+                ball_mass=0.024,  # mass of the ball [kg]
+                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
+                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
+                rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
+            )
+        else:
+            raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
     def _create_spaces(self):
         # Initial state space
@@ -329,7 +359,6 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         # First replace special domain parameters
         cup_scale = domain_param.pop("cup_scale", None)
         rope_length = domain_param.pop("rope_length", None)
-        joint_stiction = domain_param.pop("joint_stiction", None)
 
         if cup_scale is not None:
             # See [1, l.93-96]
@@ -346,12 +375,6 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             xml_model = xml_model.replace("[pos_capsule_joint]", str(-rope_length / 60))
             # Pure visualization component
             xml_model = xml_model.replace("[size_capsule_geom]", str(rope_length / 72))
-
-        if joint_stiction is not None:
-            # Amplify joint stiction (dry friction) for the stronger motor joints
-            xml_model = xml_model.replace("[stiction_1]", str(4 * joint_stiction))
-            xml_model = xml_model.replace("[stiction_3]", str(2 * joint_stiction))
-            xml_model = xml_model.replace("[stiction_5]", str(joint_stiction))
 
         # Resolve mesh directory and replace the remaining domain parameters
         return super()._adapt_model_file(xml_model, domain_param)
