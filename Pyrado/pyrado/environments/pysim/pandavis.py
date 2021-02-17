@@ -284,6 +284,8 @@ class QbbVis(PandaVis):
         m_ball = self._env.domain_param["m_ball"]  # mass of the ball is not needed for panda3d visualization
         r_ball = self._env.domain_param["r_ball"]
         d_plate = 0.01
+        r_pole = 0.005
+        l_pole = 0.01
 
         # Set window title
         self.win.requestProperties(self.windowProperties)
@@ -311,7 +313,7 @@ class QbbVis(PandaVis):
         self.plate.reparentTo(self.render)
 
         # Null_plate
-        self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        """self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.null_plate.setPos(0, 0, 0)#delete?
         self.null_plate.setScale(
             l_plate * 1.1 * 0.5,
@@ -320,7 +322,21 @@ class QbbVis(PandaVis):
         )  # divided by 2 since Blender object has length of 2
         self.null_plate.setTransparency(1)
         self.null_plate.setColorScale(0, 1, 1, 0.5)
-        self.null_plate.reparentTo(self.render)
+        self.null_plate.reparentTo(self.render)"""
+
+        # Joint
+        self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
+        self.joint.setPos(0, r_pole, - d_plate)
+        self.joint.setScale(r_pole, r_pole, r_pole)
+        self.joint.setColor(1, 1, 1)
+        self.joint.reparentTo(self.render)
+
+        # Pole
+        self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
+        self.pole.setPos(0, r_pole, - d_plate)
+        self.pole.setScale(r_pole, r_pole, 2 * l_pole)
+        self.pole.setColor(0, 0, 0)
+        self.pole.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
