@@ -33,11 +33,12 @@ import scipy.signal as signal
 import torch as to
 from collections.abc import Iterable
 from copy import deepcopy
+from math import ceil
 from typing import Sequence, Type
 
 import pyrado
 from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
-from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs
+from pyrado.sampling.utils import gen_shuffled_batch_idcs, gen_ordered_batch_idcs
 
 
 def _index_to_int(idx, n):
@@ -606,15 +607,27 @@ class StepSequence(Sequence[Step]):
 
         return steps, next_steps
 
-    def split_ordered_batches(self, batch_size: int):
+    def split_ordered_batches(self, batch_size: int = None, num_batches: int = None):
         """
         Batch generation. Split the step collection into ordered mini-batches of size batch_size.
 
-        :param batch_size: number of steps per batch
+        :param batch_size: number of steps per batch, i.e. variable number of batches
+        :param num_batches: number of batches to split the rollout in, i.e. variable batch size
 
         .. note::
             Left out the option to return complete rollouts like for `split_shuffled_batches`.
         """
+        if batch_size is None and num_batches is None or batch_size is not None and num_batches is not None:
+            raise pyrado.ValueErr(msg="Either batch_size or num_batches must not be None, but not both or none!")
+        elif batch_size is not None and batch_size < 1:
+            raise pyrado.ValueErr(given=batch_size, ge_constraint="1 (int)")
+        elif num_batches is not None and num_batches < 1:
+            raise pyrado.ValueErr(given=num_batches, ge_constraint="1 (int)")
+
+        # Switch the splitting mode
+        if num_batches is not None:
+            batch_size = ceil(self.length / num_batches)
+
         if batch_size >= self.length:
             # Yield all at once if there are less steps than the batch size
             yield self
@@ -663,7 +676,7 @@ class StepSequence(Sequence[Step]):
 
         else:
             # Split by steps
-            for b in gen_batch_idcs(batch_size, self.length):
+            for b in gen_shuffled_batch_idcs(batch_size, self.length):
                 yield self[b]
 
     @property

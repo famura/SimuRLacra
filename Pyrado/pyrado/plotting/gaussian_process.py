@@ -41,7 +41,7 @@ from typing import Sequence
 
 import pyrado
 from matplotlib import pyplot as plt
-from pyrado.plotting.heatmap import render_heatmap
+from pyrado.plotting.heatmap import draw_heatmap
 from pyrado.utils.input_output import print_cbt
 
 
@@ -93,7 +93,7 @@ def render_singletask_gp(
     :param alpha: transparency (alpha-value) for the std area
     :param color: color (e.g. 'k' for black), `None` invokes the default behavior
     :param curve_label: label for the mean curve (1D plot only)
-    :param heatmap_cmap: color map forwarded to `render_heatmap()` (2D plot only), `None` to use Pyrado's default
+    :param heatmap_cmap: color map forwarded to `draw_heatmap()` (2D plot only), `None` to use Pyrado's default
     :param show_legend_posterior: flag if the legend entry for the posterior should be printed (affects mean and std)
     :param show_legend_std: flag if a legend entry for the std area should be printed
     :param show_legend_data: flag if a legend entry for the individual data points should be printed
@@ -277,7 +277,7 @@ def render_singletask_gp(
 
             # Plot a 2D image
             df_mean = pd.DataFrame(mean_raw.numpy(), columns=x0_grid_raw.numpy(), index=x1_grid_raw.numpy())
-            render_heatmap(
+            draw_heatmap(
                 df_mean,
                 ax_hm=ax[0],
                 ax_cb=ax[1],
@@ -295,7 +295,7 @@ def render_singletask_gp(
             )
 
             df_std = pd.DataFrame(std_raw.numpy(), columns=x0_grid_raw.numpy(), index=x1_grid_raw.numpy())
-            render_heatmap(
+            draw_heatmap(
                 df_std,
                 ax_hm=ax[2],
                 ax_cb=ax[3],

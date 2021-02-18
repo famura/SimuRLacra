@@ -56,7 +56,7 @@ if __name__ == "__main__":
     # Visualize the parameters
     fig = draw_policy_params(policy, policy.env_spec, annotate=args.verbose)
 
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf", "png"]:
             fig.savefig(osp.join(ex_dir, f"policy-parameters.{fmt}"), dpi=500)
 

@@ -85,20 +85,20 @@ if __name__ == "__main__":
         def fcn_of_time(t: float):
             act = np.array(
                 [
-                    -0.5 * np.sin(2 * np.pi * t * 0.23),
-                    -0.5 * np.sin(2 * np.pi * t * 0.51),
-                    -0.5 * np.sin(2 * np.pi * t * 0.33),
-                    -0.5 * np.sin(2 * np.pi * t * 0.41),
-                    -0.5 * np.sin(2 * np.pi * t * 0.57),
-                    -0.5 * np.sin(2 * np.pi * t * 0.63),
-                    -0.5 * np.sin(2 * np.pi * t * 0.71),
-                    -2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.23),
-                    -2 * np.pi * 0.51 * 0.5 * np.cos(2 * np.pi * t * 0.51),
-                    -2 * np.pi * 0.33 * 0.5 * np.cos(2 * np.pi * t * 0.33),
-                    -2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.41),
-                    -2 * np.pi * 0.57 * 0.5 * np.cos(2 * np.pi * t * 0.57),
-                    -2 * np.pi * 0.63 * 0.5 * np.cos(2 * np.pi * t * 0.63),
-                    -2 * np.pi * 0.71 * 0.5 * np.cos(2 * np.pi * t * 0.71),
+                    0.5 * np.sin(2 * np.pi * t * 0.23),
+                    0.5 * np.sin(2 * np.pi * t * 0.51),
+                    0.5 * np.sin(2 * np.pi * t * 0.33),
+                    0.5 * np.sin(2 * np.pi * t * 0.41),
+                    0.5 * np.sin(2 * np.pi * t * 0.57),
+                    0.5 * np.sin(2 * np.pi * t * 0.63),
+                    0.5 * np.sin(2 * np.pi * t * 0.71),
+                    2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.23),
+                    2 * np.pi * 0.51 * 0.5 * np.cos(2 * np.pi * t * 0.51),
+                    2 * np.pi * 0.33 * 0.5 * np.cos(2 * np.pi * t * 0.33),
+                    2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.41),
+                    2 * np.pi * 0.57 * 0.5 * np.cos(2 * np.pi * t * 0.57),
+                    2 * np.pi * 0.63 * 0.5 * np.cos(2 * np.pi * t * 0.63),
+                    2 * np.pi * 0.71 * 0.5 * np.cos(2 * np.pi * t * 0.71),
                 ]
             )
             return act
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     while not done:
         ro = rollout(env_real, policy, eval=True)
 
-        if args.save_figures:
+        if args.save:
             pyrado.save(
                 ro,
                 "rollout_real",

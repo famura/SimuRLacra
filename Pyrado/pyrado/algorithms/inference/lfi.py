@@ -90,16 +90,17 @@ class LFI(InterruptableAlgorithm):
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
+        num_segments: int = None,
+        len_segments: int = None,
         num_eval_samples: Optional[int] = None,
         sbi_training_hparam: Optional[dict] = None,
         sbi_sampling_hparam: Optional[dict] = None,
         simulation_batch_size: Optional[int] = 1,
-        use_posterior_in_the_loop: bool = True,  # TODO deprecate
         normalize_posterior: bool = True,
         subrtn_policy: Optional[Algorithm] = None,
         subrtn_policy_snapshot_mode: Optional[str] = "latest",
         thold_succ_subrtn: Optional[float] = -pyrado.inf,
-        num_workers: Optional[int] = 1,
+        num_workers: Optional[int] = 4,
         logger: Optional[StepLogger] = None,
     ):
         """
@@ -124,6 +125,12 @@ class LFI(InterruptableAlgorithm):
         :param num_real_rollouts: number of real-world observation received by sbi, i.e. from every rollout exactly one
                                   observation is computed
         :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
+        :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
+                            state of the simulation is reset, and thus for every set the features of the trajectories
+                            are computed separately. Either specify `num_segments` or `len_segments`.
+        :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
+                             state of the simulation is reset, and thus for every set the features of the trajectories
+                             are computed separately. Either specify `num_segments` or `len_segments`.
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
         :param sbi_training_hparam: `dict` forwarded to sbi't `PosteriorEstimator.train()` function like
                                     `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
@@ -144,7 +151,7 @@ class LFI(InterruptableAlgorithm):
             raise pyrado.ShapeErr(given=prior.event_shape, expected_match=dp_mapping)
 
         # Call InterruptableAlgorithm's constructor
-        super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
+        super().__init__(num_checkpoints=3, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
 
         self._env_sim_sbi = env_sim  # will be randomized explicitly by sbi
         self._env_sim_trn = DomainRandWrapperBuffer(deepcopy(env_sim), randomizer=None, selection="random")
@@ -155,6 +162,8 @@ class LFI(InterruptableAlgorithm):
         self.sbi_subrtn_class = sbi_subrtn_class
         self.sbi_training_hparam = sbi_training_hparam if sbi_training_hparam is not None else dict()
         self.sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
+        self.num_segments = num_segments
+        self.len_segments = len_segments
         self.simulation_batch_size = simulation_batch_size
         self.normalize_posterior = normalize_posterior
         self.num_real_rollouts = num_real_rollouts
@@ -165,7 +174,7 @@ class LFI(InterruptableAlgorithm):
         self.num_workers = num_workers
 
         # Temporary containers
-        self._curr_observations_real = None
+        self._curr_obs_real = None
         self._curr_domain_param_eval = None
 
         # Optional policy optimization subroutine
@@ -222,7 +231,13 @@ class LFI(InterruptableAlgorithm):
                               initial states
         """
         rollout_sampler = SimRolloutSamplerForSBI(
-            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic, rollouts_real
+            self._env_sim_sbi,
+            self._policy,
+            self.dp_mapping,
+            self.summary_statistic,
+            self.num_segments,
+            self.len_segments,
+            rollouts_real,
         )
         if prior is None:
             prior = pyrado.load(None, "prior", "pt", self._save_dir)
@@ -235,22 +250,20 @@ class LFI(InterruptableAlgorithm):
         self.save_snapshot()
 
         if self.curr_checkpoint == 0:
-            self._curr_observations_real, _ = LFI.collect_real_observations(
+            self._curr_obs_real, _ = LFI.collect_real_observations(
                 self.save_dir,
-                self._env_real if not isinstance(self._env_real, str) else self._env_sim_sbi,
+                self._env_real,
                 self._policy,
                 self.summary_statistic,
                 prefix=f"iter_{self._curr_iter}",
                 num_rollouts=self.num_real_rollouts,
-                rec_rollouts_dir=self._env_real if isinstance(self._env_real, str) else None,
+                num_segments=self.num_segments,
+                len_segments=self.len_segments,
             )
-            if (
-                self._curr_observations_real.ndim != 2
-                or self._curr_observations_real.shape[0] != self.num_real_rollouts
-            ):
+            if self._curr_obs_real.ndim != 2 or self._curr_obs_real.shape[0] != self.num_real_rollouts:
                 raise pyrado.ShapeErr(
                     msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
-                    f"many entries as there are observations, but the shape is {self._curr_observations_real.shape}!"
+                    f"many entries as there are observations, but the shape is {self._curr_obs_real.shape}!"
                 )
 
             # Initialize sbi simulator and prior, and set the initial state space
@@ -260,6 +273,9 @@ class LFI(InterruptableAlgorithm):
                 )
             )
 
+            self.reached_checkpoint()  # setting counter to 1
+
+        if self.curr_checkpoint == 1:
             # First iteration
             if self._curr_iter == 0:
                 # Sample parameters proposal, and simulate these parameters to obtain the observations
@@ -278,13 +294,13 @@ class LFI(InterruptableAlgorithm):
                 self._cnt_samples += self.num_sim_per_real_rollout * self._env_sim_sbi.max_steps
 
                 # Append the first set of observations
-                pyrado.save(self._curr_observations_real, "observations_real", "pt", self._save_dir)
+                pyrado.save(self._curr_obs_real, "observations_real", "pt", self._save_dir)
 
             # Remaining training iterations
             else:
                 posterior = pyrado.load(None, "posterior", "pt", self._save_dir, meta_info)
 
-                for ro in self._curr_observations_real:
+                for ro in self._curr_obs_real:
                     posterior.set_default_x(ro)
 
                     # Sample parameters proposal, and simulate these parameters to obtain the observations
@@ -300,12 +316,12 @@ class LFI(InterruptableAlgorithm):
 
                 # Append and save all observations
                 prev_observations = pyrado.load(None, "observations_real", "pt", self._save_dir)
-                observations_real_hist = to.cat([prev_observations, self._curr_observations_real], dim=0)
+                observations_real_hist = to.cat([prev_observations, self._curr_obs_real], dim=0)
                 pyrado.save(observations_real_hist, "observations_real", "pt", self._save_dir)
 
-            self.reached_checkpoint()  # setting counter to 1
+            self.reached_checkpoint()  # setting counter to 2
 
-        if self.curr_checkpoint == 1:
+        if self.curr_checkpoint == 2:
             # Train the posterior
             self._sbi_subrtn.train(**self.sbi_training_hparam)
             posterior = self._sbi_subrtn.build_posterior(
@@ -324,7 +340,7 @@ class LFI(InterruptableAlgorithm):
             # Logging
             self._curr_domain_param_eval, log_prob = LFI.eval_posterior(
                 posterior,
-                self._curr_observations_real,
+                self._curr_obs_real,
                 self.num_eval_samples,
                 normalize_posterior=self.normalize_posterior,
             )
@@ -333,9 +349,9 @@ class LFI(InterruptableAlgorithm):
             self.logger.add_value("avg log prob", to.mean(log_prob))
             self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
 
-            self.reached_checkpoint()  # setting counter to 2
+            self.reached_checkpoint()  # setting counter to 3
 
-        if self.curr_checkpoint == 2:
+        if self.curr_checkpoint == 3:
             if self._subrtn_policy is not None:
                 # Train the behavioral policy using the posterior samples obtained before, repeat if the resulting
                 # policy did not exceed the success threshold
@@ -350,24 +366,25 @@ class LFI(InterruptableAlgorithm):
         self.make_snapshot(snapshot_mode, None, meta_info)
 
     @staticmethod
+    @to.no_grad()
     def collect_real_observations(
         save_dir: Optional[str],
-        env: Env,
+        env: Union[Env, str],
         policy: Policy,
         summary_statistic: str,
         prefix: str,
         num_rollouts: int,
-        rec_rollouts_dir: Optional[str] = None,
+        num_segments: int = None,
+        len_segments: int = None,
     ) -> Tuple[to.Tensor, List[StepSequence]]:
         """
         Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the observations
         computed from the recorded rollouts.
         This method is static to facilitate evaluation of specific policies in hindsight.
-        When sampling from a real environment should be substituted with loading pre-recorded rollouts, pass the
-        associated simulation environment as `env`, such that some checks can be done.
 
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
-        :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance
+        :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance,
+                    in case you want to use pre-recorded rollouts pass the path to the parent folder as string
         :param policy: policy to evaluate
         :param summary_statistic: the method with which the observations for LFI are computed from the rollouts.
                                   Possible options:
@@ -376,30 +393,25 @@ class LFI(InterruptableAlgorithm):
                                  `bayessim` (summary statistics as proposed in [1])
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
+        :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
+                             state of the simulation is reset, and thus for every set the features of the trajectories
+                             are computed separately. Either specify `num_segments` or `len_segments`.
+        :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
+                             state of the simulation is reset, and thus for every set the features of the trajectories
+                             are computed separately. Either specify `num_segments` or `len_segments`.
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :param rec_rollouts_dir: if not `None`, load a set of pre-recorded rollouts from the given directory
         :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
         """
-        if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
-            raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
+        if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv) or isinstance(env, str)):
+            raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv, str])
 
         # Evaluate sequentially (necessary for sim-to-real experiments)
-        if rec_rollouts_dir is not None:
-            if env.name not in rec_rollouts_dir:
-                print_cbt(
-                    f"Are you really sure that you loaded the correct recorded rollouts? The environment's name "
-                    f"{env.name} does not appear in the directory string {rec_rollouts_dir}.",
-                    "r",
-                )
-            if str(int(1 / env.dt)) not in rec_rollouts_dir:
-                print_cbt(
-                    f"Are you really sure that you loaded the correct recorded rollouts? The environment's "
-                    f"control frequency {1/env.dt} does not appear in the directory string {rec_rollouts_dir}.",
-                    "r",
-                )
-            rollout_worker = RecRolloutSamplerForSBI(summary_statistic, rec_rollouts_dir, rand_init_rollout=False)
+        if isinstance(env, str):
+            rollout_worker = RecRolloutSamplerForSBI(
+                summary_statistic, env, num_segments, len_segments, rand_init_rollout=False
+            )
         else:
-            rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
+            rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic, num_segments, len_segments)
 
         observations_real = []
         rollouts_real = []
@@ -425,6 +437,7 @@ class LFI(InterruptableAlgorithm):
         return observations_real, rollouts_real
 
     @staticmethod
+    @to.no_grad()
     def eval_posterior(
         posterior: DirectPosterior,
         observations_real: to.Tensor,
@@ -450,7 +463,7 @@ class LFI(InterruptableAlgorithm):
             raise pyrado.ShapeErr(msg="The observations must be a 2-dim PyTorch tensor!")
         num_obs, dim_obs = observations_real.shape
 
-        # Sample domain parameters from the normalizing flow
+        # Sample domain parameters
         sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
         domain_params = to.stack(
             [posterior.sample((num_samples,), x=obs, **sbi_sampling_hparam) for obs in observations_real], dim=0
@@ -458,11 +471,9 @@ class LFI(InterruptableAlgorithm):
         if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
             raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))
 
-        # Init container
-        log_prob = to.empty((num_obs, num_samples)) if calculate_log_probs else None
-
+        # Compute the log probability if desired
+        log_probs = to.empty((num_obs, num_samples)) if calculate_log_probs else None
         if calculate_log_probs:
-            # Compute the log probability
             for idx in tqdm(
                 range(num_obs),
                 total=num_obs,
@@ -471,13 +482,14 @@ class LFI(InterruptableAlgorithm):
                 file=sys.stdout,
                 leave=False,
             ):
-                log_prob[idx, :] = posterior.log_prob(
+                log_probs[idx, :] = posterior.log_prob(
                     domain_params[idx, :, :], observations_real[idx, :], normalize_posterior
                 )
 
-        return domain_params, log_prob
+        return domain_params, log_probs
 
     @staticmethod
+    @to.no_grad()
     def get_ml_posterior_samples(
         dp_mapping: Mapping[int, str],
         posterior: DirectPosterior,
@@ -528,6 +540,7 @@ class LFI(InterruptableAlgorithm):
         return domain_params_ml
 
     @staticmethod
+    @to.no_grad()
     def eval_policy(
         save_dir: Optional[str],
         env: Env,
@@ -624,10 +637,7 @@ class LFI(InterruptableAlgorithm):
 
         # Set the initial state spaces of the simulation environment to match the observed initial states
         rollouts_real = pyrado.load(None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=prefix))
-        try:
-            init_states_real = np.stack([ro.rollout_info["init_state"] for ro in rollouts_real])
-        except Exception:  # TODO deprecate
-            init_states_real = np.stack([ro.states[0, :] for ro in rollouts_real])
+        init_states_real = np.stack([ro.states[0, :] for ro in rollouts_real])
         if not init_states_real.shape == (len(rollouts_real), self._env_sim_trn.state_space.flat_dim):
             raise pyrado.ShapeErr(
                 given=init_states_real, expected_match=(len(rollouts_real), self._env_sim_trn.state_space.flat_dim)
@@ -659,7 +669,6 @@ class LFI(InterruptableAlgorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env_sim_trn, "env_sim", "pkl", self._save_dir)
             if self._subrtn_policy is None:
                 # The policy is not being updated by a policy optimization subroutine
                 pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
@@ -698,11 +707,18 @@ class LFI(InterruptableAlgorithm):
         super().__setstate__(state)
 
         # Reconstruct the simulator for sbi
-        rollout_sampler = SimRolloutSamplerForSBI(
-            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic
-        )
-        sbi_simulator, _ = prepare_for_sbi(rollout_sampler, state["_sbi_prior"])  # sbi_prior is fine as it is
-        self.__dict__["_sbi_simulator"] = sbi_simulator
+        try:
+            rollouts_real = pyrado.load(
+                None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
+            )
+        except FileNotFoundError:
+            try:
+                rollouts_real = pyrado.load(
+                    None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1}")
+                )
+            except (FileNotFoundError, RuntimeError, pyrado.PathErr, pyrado.TypeErr, pyrado.ValueErr):
+                rollouts_real = None
+        self._setup_sbi(state["_sbi_prior"], rollouts_real)  # sbi_prior is fine as it is
 
         # Reconstruct the tensorboard printer with the once from this algorithm
         summary_writer = state["_logger"].printers[2].writer

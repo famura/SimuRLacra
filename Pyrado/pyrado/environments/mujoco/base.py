@@ -239,7 +239,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
                 raise pyrado.TypeErr(given=init_state, expected_type=[np.ndarray, list])
 
         if not self.init_space.contains(init_state, verbose=True):
-            pyrado.ValueErr(msg="The init state must be within init state space!")
+            raise pyrado.ValueErr(msg="The init state must be within init state space!")
 
         # Update the state attribute
         self.state = init_state.copy()

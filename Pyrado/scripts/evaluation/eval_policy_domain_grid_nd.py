@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
     # Create multidimensional results grid and ensure right number of rollouts
     param_list = param_grid(param_spec)
-    param_list *= args.num_ro_per_config
+    param_list *= args.num_rollouts_per_config
 
     # Fix initial state (set to None if it should not be fixed)
     init_state = None
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     save_dicts_to_yaml(
         {"ex_dir": str(ex_dir)},
         {"varied_params": list(param_spec.keys())},
-        {"num_rpp": args.num_ro_per_config, "seed": args.seed},
+        {"num_rpp": args.num_rollouts_per_config, "seed": args.seed},
         {"metrics": dict_arraylike_to_float(metrics)},
         save_dir=save_dir,
         file_name="summary",

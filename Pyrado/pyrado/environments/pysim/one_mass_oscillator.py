@@ -45,7 +45,7 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 from pyrado.sampling.rollout import StepSequence
-from pyrado.sampling.utils import gen_batch_idcs
+from pyrado.sampling.utils import gen_shuffled_batch_idcs
 
 
 class OneMassOscillatorSim(SimPyEnv, Serializable):
@@ -268,7 +268,7 @@ class OneMassOscillatorDomainParamEstimator(nn.Module):
 
             # Mini-batch optimization
             for idcs in tqdm(
-                gen_batch_idcs(self.batch_size, len(targets_cat)),
+                gen_shuffled_batch_idcs(self.batch_size, len(targets_cat)),
                 total=(len(targets_cat) + self.batch_size - 1) // self.batch_size,
                 desc=f"Epoch {e}",
                 unit="batches",

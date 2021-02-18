@@ -52,12 +52,13 @@ def bs(request):
     scope="function",
     params=[
         np.array([1]),
+        np.array([[1]]),
         np.array([1, 2, 3], dtype=np.int32),
         np.array([-2, -1, 0, 1, 2], dtype=np.int64),
         np.array([4, -3, 5, 0, 1, 2, 6, -7], dtype=np.int32),
         np.array([4.0, -3, 5, 0, 1, 2, 6, -7], dtype=np.float),
     ],
-    ids=["1dim", "pos", "pos_neg", "prandom", "prandom_float"],
+    ids=["scalar1dim", "scalar2dim", "pos", "pos_neg", "prandom", "prandom_float"],
 )
 def ds(request):
     return DiscreteSpace(request.param)

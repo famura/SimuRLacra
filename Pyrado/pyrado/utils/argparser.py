@@ -78,13 +78,13 @@ def get_argparser() -> argparse.ArgumentParser:
         nargs="+",
         type=float,
         default=None,
-        help="list of init state values (e.g. '1.2 3 0.9' (without commas); default: None)",
+        help="list of init state values without commas, e.g. '1.2 3 0.9' (default: None)",
     )
     parser.add_argument(
         "--iter",
         type=int,
         default=-1,
-        help="iteration to select for evaluation (default: -1 for last iteration)",
+        help="iteration to select for evaluation (default: -1 for all iterations)",
     )
     parser.add_argument(
         "--load_all",
@@ -118,9 +118,9 @@ def get_argparser() -> argparse.ArgumentParser:
         help="Normalize the log-probabilities of the posterior (default: False)",
     )
     parser.add_argument(
-        "--num_ro_per_config",
+        "--num_rollouts_per_config",
         type=int,
-        help="number of rollouts per environment configuration / domain parameter set",
+        help="number of rollouts per environment configuration, e.g. domain parameter sets or initial states",
     )
     parser.add_argument(
         "--num_workers",
@@ -161,7 +161,7 @@ def get_argparser() -> argparse.ArgumentParser:
         help="don't stop (e.g. continue simulating after done flag was raised)",
     )
     parser.add_argument(
-        "--remove_dr_wrappers",
+        "--no_dr",
         action="store_true",
         default=False,
         help="remove all domain randomization wrappers (default: False)",
@@ -175,7 +175,7 @@ def get_argparser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-s",
-        "--save_figures",
+        "--save",
         action="store_true",
         default=False,
         help="save all generated figures (default: False)",

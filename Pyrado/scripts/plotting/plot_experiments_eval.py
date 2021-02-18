@@ -206,7 +206,7 @@ if __name__ == "__main__":
     )
 
     # Save and show
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig.savefig(osp.join(pyrado.TEMP_DIR, f"returns_{env_name}_{args.mode}plot.{fmt}"), dpi=500, backend="pgf")
     plt.show()

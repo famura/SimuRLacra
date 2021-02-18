@@ -216,14 +216,17 @@ class WAMJointSpaceCtrlRealStepBased(WAMReal):
         # Call WAMReal's constructor
         super().__init__(dt=dt, max_steps=max_steps, num_dof=num_dof, ip=ip)
 
-        self._ram = None  # robot access manager is set in reset()
         self._cnt_too_slow = None
 
     def _create_spaces(self):
         # State space
         lo = np.concatenate([wam_q_limits_lo_7dof[: self._num_dof], wam_qd_limits_lo_7dof[: self._num_dof]])
         up = np.concatenate([wam_q_limits_up_7dof[: self._num_dof], wam_qd_limits_up_7dof[: self._num_dof]])
-        self._state_space = BoxSpace(bound_lo=lo, bound_up=up)
+        self._state_space = BoxSpace(
+            bound_lo=lo,
+            bound_up=up,
+            labels=[f"q_{i}" for i in range(1, 8)] + [f"qd_{i}" for i in range(1, 8)],
+        )
 
         # Action space (running a PD controller on joint positions and velocities)
         self._act_space = act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
@@ -238,9 +241,6 @@ class WAMJointSpaceCtrlRealStepBased(WAMReal):
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Call WAMReal's reset
         super().reset(init_state, domain_param)
-
-        # Get the robot access manager, to control that synchronized data is received
-        self._ram = robcom.RobotAccessManager()
 
         # Reset desired positions and velocities
         self.qpos_des = self._qpos_des_init.copy()
@@ -265,10 +265,8 @@ class WAMJointSpaceCtrlRealStepBased(WAMReal):
 
         :return: joint positions, joint velocities
         """
-        self._ram.lock()
         qpos = self._jg.get(robcom.JointState.POS)
         qvel = self._jg.get(robcom.JointState.VEL)
-        self._ram.unlock()
 
         return qpos, qvel
 

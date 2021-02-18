@@ -85,7 +85,7 @@ if __name__ == "__main__":
     while not done:
         ro = rollout(env, policy, eval=True, render_mode=RenderMode(text=args.verbose))
 
-        if args.save_figures:
+        if args.save:
             pyrado.save(
                 ro,
                 "rollout_real",

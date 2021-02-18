@@ -344,7 +344,7 @@ class StateBasedRewFcn:
     classical optimization problems into Pyrado, thus it is negative of the loss function.
     """
 
-    def __init__(self, fcn: Callable[[np.ndarray], float], flip_sign: bool):
+    def __init__(self, fcn: Callable[[np.ndarray], float], flip_sign: bool = False):
         """
         Constructor
 

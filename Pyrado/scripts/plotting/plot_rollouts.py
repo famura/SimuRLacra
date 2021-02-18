@@ -33,9 +33,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 
-import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.curve import draw_curve
+from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_rollouts_from_dir
 
@@ -60,16 +60,19 @@ if __name__ == "__main__":
     means = data.groupby(by=data.columns, axis=1).mean()
     stds = data.groupby(by=data.columns, axis=1).std()
 
-    fig, axs = plt.subplots(nrows=1, ncols=1, figsize=(16, 9))
-    for c in data:
+    dim_obs = rollouts[0].observations.shape[1]  # assuming same for all rollouts
+    num_rows, num_cols = num_rows_cols_from_length(dim_obs, transposed=True)
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
+
+    for idx_o, c in enumerate(data.columns.unique()):
         draw_curve(
             "mean_std",
-            axs,
+            axs[idx_o // num_cols, idx_o % num_cols],
             pd.DataFrame(dict(mean=means[c], std=stds[c])),
             np.arange(len(data)),
             show_legend=False,
             x_label="steps",
+            y_label=str(c),
         )
-    axs.legend(list(means.columns))
 
     plt.show()

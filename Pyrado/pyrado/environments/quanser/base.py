@@ -145,7 +145,7 @@ class QuanserReal(RealEnv, ABC):
         """
         return meas
 
-    def step(self, act):
+    def step(self, act: np.ndarray) -> tuple:
         info = dict(act_raw=act.copy())
 
         # Current reward depending on the (measurable) state and the current (unlimited) action

@@ -55,7 +55,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{LFI.name}")
 
     # Set seed if desired
-    pyrado.set_seed(args.seed, verbose=True)
+    pyrado.set_seed(11, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1 / 50.0, max_steps=200)
@@ -72,10 +72,12 @@ if __name__ == "__main__":
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
     # env_real.fill_buffer(num_real_obs)
     env_real.domain_param = dict(m=0.8, k=33, d=0.3)
-    dp_mapping = {0: "m", 1: "k", 2: "d"}
 
     # Policy
     behavior_policy = IdlePolicy(env_sim.spec)
+
+    # Define a mapping: index - domain parameter
+    dp_mapping = {0: "m", 1: "k", 2: "d"}
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
@@ -84,18 +86,32 @@ if __name__ == "__main__":
         high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=4)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=10,
+        max_iter=5,
         summary_statistic="bayessim",  # bayessim or dtw_distance
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=200,
+        num_sim_per_real_rollout=1000,
+        simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=None,
-        simulation_batch_size=10,
-        num_workers=4,
+        # num_segments=4,
+        len_segments=50,
+        sbi_training_hparam=dict(
+            num_atoms=10,  # default: 10
+            training_batch_size=50,  # default: 50
+            learning_rate=3e-4,  # default: 5e-4
+            validation_fraction=0.2,  # default: 0.1
+            stop_after_epochs=30,  # default: 20
+            discard_prior_samples=False,  # default: False
+            use_combined_loss=True,  # default: False
+            retrain_from_scratch_each_round=False,  # default: False
+            show_train_summary=False,  # default: False
+        ),
+        sbi_sampling_hparam=dict(sample_with_mcmc=True),
+        num_workers=8,
     )
     algo = LFI(
         ex_dir,

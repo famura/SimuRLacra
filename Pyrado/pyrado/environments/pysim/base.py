@@ -37,6 +37,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.utils.data_types import RenderMode
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
+from pyrado.utils.input_output import print_cbt
 
 
 class SimPyEnv(SimEnv, Serializable):
@@ -179,12 +180,14 @@ class SimPyEnv(SimEnv, Serializable):
         if init_state.shape == self.state_space.shape:
             # Allow setting the complete state space
             if not self.state_space.contains(init_state, verbose=True):
-                pyrado.ValueErr(msg="The full init state must be within the state space!")
+                print_cbt("The full init state is not within the state space.", "r")
+                # raise pyrado.ValueErr(msg="The full init state must be within the state space!")
             self.state = init_state.copy()
         else:
             # Set the initial state determined by an element of the init space
             if not self.init_space.contains(init_state, verbose=True):
-                pyrado.ValueErr(msg="The init state must be within init state space!")
+                print_cbt("The  init state is not within init state space.", "r")
+                # raise pyrado.ValueErr(msg="The init state must be within init state space!")
             self.state = self._state_from_init(init_state)
 
         # Reset the task

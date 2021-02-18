@@ -37,7 +37,7 @@ from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env, all_envs, remove_env
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, completion_context
 
 
 class DomainRandWrapper(EnvWrapper, Serializable):
@@ -261,13 +261,13 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         state_dict["buffer"] = self._buffer
         state_dict["ring_idx"] = self._ring_idx
 
-    def _set_state(self, state_dict: dict, copying: bool = False):
+    def _set_state(self, state_dict: dict, copying: Optional[bool] = False):
         super()._set_state(state_dict, copying)
         self._buffer = state_dict["buffer"]
         self._ring_idx = state_dict["ring_idx"]
 
 
-def remove_all_dr_wrappers(env: Env, verbose: bool = False):
+def remove_all_dr_wrappers(env: Env, verbose: Optional[bool] = False):
     """
     Go through the environment chain and remove all wrappers of type `DomainRandWrapper` (and subclasses).
 
@@ -277,11 +277,12 @@ def remove_all_dr_wrappers(env: Env, verbose: bool = False):
     """
     while any(isinstance(subenv, DomainRandWrapper) for subenv in all_envs(env)):
         if verbose:
-            print_cbt("Found domain randomization wrapper, trying to remove it.", "y", bright=True)
-        try:
+            with completion_context(
+                f"Found domain randomization wrapper of type {type(env).__name__}. Removing it now",
+                color="y",
+                bright=True,
+            ):
+                env = remove_env(env, DomainRandWrapper)
+        else:
             env = remove_env(env, DomainRandWrapper)
-            if verbose:
-                print_cbt("Removed a domain randomization wrapper.", "g", bright=True)
-        except Exception:
-            raise RuntimeError("Could not remove the domain randomization wrapper!")
     return env

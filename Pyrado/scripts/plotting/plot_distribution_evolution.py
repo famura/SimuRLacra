@@ -38,7 +38,7 @@ import pyrado
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
-from pyrado.plotting.distribution import render_distr_evo
+from pyrado.plotting.distribution import draw_distr_evolution
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 
@@ -128,27 +128,27 @@ if __name__ == "__main__":
 
         # Plot the distributions
         if dim_cand // 2 == 1:
-            fig = render_distr_evo(
+            fig = draw_distr_evolution(
                 axs,
                 distributions,
                 x_grid_limits,
-                resolution=301,
+                grid_res=301,
                 x_label=f"$\\xi_{idx_dp}$",
                 y_label=f"$p(\\xi_{idx_dp})$",
                 distr_labels=[rf"iter {i}" for i in range(num_cand)],
             )
         else:
-            fig = render_distr_evo(
+            fig = draw_distr_evolution(
                 axs[idx_dp],
                 distributions,
                 x_grid_limits,
-                resolution=301,
+                grid_res=301,
                 x_label=f"$\\xi_{idx_dp}$",
                 y_label=f"$p(\\xi_{idx_dp})$",
                 distr_labels=[rf"iter {i}" for i in range(num_cand)],
             )
 
-        if args.save_figures:
+        if args.save:
             for fmt in ["pdf", "pgf"]:
                 fig.savefig(osp.join(ex_dir, f"distr_evo.{fmt}"), dpi=500)
 

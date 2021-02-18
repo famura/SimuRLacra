@@ -29,24 +29,19 @@
 """
 Sim-to-sim experiment on the Pendulum environment using likelihood-free inference
 """
-import os.path as osp
+import numpy as np
 import torch as to
 import torch.nn as nn
 from copy import deepcopy
 from sbi.inference import SNPE
 from sbi import utils
-from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.inference.lfi import LFI
-from pyrado.algorithms.step_based.gae import GAE
-from pyrado.algorithms.step_based.ppo import PPO2
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.spaces import ValueFunctionSpace
+from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == "__main__":
@@ -54,77 +49,65 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(PendulumSim.name, f"{LFI.name}-{PPO2.name}_{FNNPolicy.name}")
-    num_workers = 4
+    ex_dir = setup_experiment(PendulumSim.name, f"{LFI.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=1000)
+    env_hparams = dict(dt=1 / 100.0, max_steps=800)
     env_sim = PendulumSim(**env_hparams)
-    # env_sim.domain_param = dict(d_pole=0, tau_max=10.0)
-    env_real = deepcopy(env_sim)
 
     # Create a fake ground truth target domain
-    num_real_obs = 3
-    env_real.domain_param = dict(m_pole=0.25, l_pole=2.0)
+    env_real = deepcopy(env_sim)
+    env_real.domain_param = dict(m_pole=1 / 1.25 ** 2, l_pole=1.25)
+
+    # Define a mapping: index - domain parameter
     dp_mapping = {0: "m_pole", 1: "l_pole"}
 
     # Prior and Posterior (normalizing flow)
-    prior_hparam = dict(low=to.tensor([0.125, 1.0]), high=to.tensor([0.5, 4.0]))
+    dp_nom = env_sim.get_nominal_domain_param()
+    prior_hparam = dict(
+        low=to.tensor([dp_nom["m_pole"] * 0.5, dp_nom["l_pole"] * 0.5]),
+        high=to.tensor([dp_nom["m_pole"] * 1.5, dp_nom["l_pole"] * 1.5]),
+    )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=4)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.relu)
-    policy = FNNPolicy(spec=env_sim.spec, **policy_hparam)
-    pyrado.load(policy, "policy", "pt", osp.join(pyrado.EXP_DIR, "pend", "ppo2_fnn", "2021-01-21_13-49-49--actnorm"))
+    policy_hparam = dict(amp_max=dp_nom["tau_max"], f_sin=0.5)
 
-    # Critic
-    vfcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
-    vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
-    pyrado.load(vfcn, "vfcn", "pt", osp.join(pyrado.EXP_DIR, "pend", "ppo2_fnn", "2021-01-21_13-49-49--actnorm"))
-    critic_hparam = dict(
-        gamma=0.9852477569514027,
-        lamda=0.9729014682749334,
-        num_epoch=5,
-        batch_size=500,
-        lr=2.7189235593899743e-3,
-        max_grad_norm=5.0,
-        lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.999),
-    )
-    critic = GAE(vfcn, **critic_hparam)
+    def fcn_of_time(t: float):
+        act = policy_hparam["amp_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"]) + np.random.randn(1) / 50
+        return act.repeat(env_sim.act_space.flat_dim)
 
-    # Policy optimization subroutine
-    subrtn_policy_hparam = dict(
-        max_iter=250,
-        min_steps=30 * env_sim.max_steps,
-        num_epoch=5,
-        vfcn_coeff=1.190454086194093,
-        entropy_coeff=4.944111681414721e-05,
-        eps_clip=0.09657039413812532,
-        batch_size=500,
-        std_init=0.1,
-        lr=8.775532791215318e-4,
-        max_grad_norm=None,
-        lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.999),
-        num_workers=num_workers,
-    )
-    subrtn_policy = PPO2(ex_dir, env_sim, policy, critic, **subrtn_policy_hparam)
+    act_recordings = [
+        [fcn_of_time(t) for t in np.arange(0, env_sim.max_steps * env_sim.dt, env_sim.dt)] for _ in range(5)
+    ]
+    policy = PlaybackPolicy(env_sim.spec, act_recordings)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=10,
-        summary_statistic="dtw_distance",  # bayessim or dtw_distance
-        sbi_training_hparam=dict(learning_rate=3e-4),
-        num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=500,
+        max_iter=5,
+        summary_statistic="bayessim",  # bayessim or dtw_distance
+        num_real_rollouts=1,
+        num_sim_per_real_rollout=200,
+        simulation_batch_size=5,
         normalize_posterior=False,
         num_eval_samples=100,
-        num_workers=num_workers,
+        num_segments=20,
+        sbi_training_hparam=dict(
+            num_atoms=10,  # default: 10
+            training_batch_size=50,  # default: 50
+            learning_rate=3e-4,  # default: 5e-4
+            validation_fraction=0.2,  # default: 0.1
+            stop_after_epochs=30,  # default: 20
+            discard_prior_samples=False,  # default: False
+            use_combined_loss=True,  # default: False
+            retrain_from_scratch_each_round=False,  # default: False
+            show_train_summary=False,  # default: False
+        ),
+        num_workers=4,
     )
     algo = LFI(
         ex_dir,
@@ -135,7 +118,6 @@ if __name__ == "__main__":
         prior,
         posterior_nn_hparam,
         SNPE,
-        subrtn_policy=subrtn_policy,
         **algo_hparam,
     )
 
@@ -145,8 +127,6 @@ if __name__ == "__main__":
         dict(prior=prior_hparam),
         dict(posterior_nn=posterior_nn_hparam),
         dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

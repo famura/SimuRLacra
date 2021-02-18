@@ -34,6 +34,7 @@ from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
+from pyrado.environment_wrappers.observation_velfilter import ObsVelFiltWrapper
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -57,6 +58,7 @@ if __name__ == "__main__":
     # Environment
     env_hparams = dict(dt=1 / 100.0, max_steps=600)
     env = QQubeSwingUpSim(**env_hparams)
+    # env = ObsVelFiltWrapper(env, idcs_pos=["theta", "alpha"], idcs_vel=["theta_dot", "alpha_dot"])
     env = ActNormWrapper(env)
 
     # Policy

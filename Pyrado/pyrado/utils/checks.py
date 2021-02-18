@@ -29,6 +29,7 @@
 import numpy as np
 from typing import List, Union
 
+import pyrado
 from pyrado.sampling.step_sequence import StepSequence
 
 
@@ -140,7 +141,7 @@ def check_all_equal(iterable) -> bool:
 
 def check_act_equal(
     rollout_1: Union[StepSequence, List[StepSequence]], rollout_2: Union[StepSequence, List[StepSequence]]
-) -> bool:
+):
     """
     Check if the actions of two rollouts or pairwise two rollouts in in two lists are approximately the same
 
@@ -149,18 +150,20 @@ def check_act_equal(
     :return: `True` if the actions match
     """
     if isinstance(rollout_1, StepSequence) and isinstance(rollout_2, StepSequence):
-        return np.allclose(
+        if not np.allclose(
             rollout_1.actions[: min(rollout_1.length, rollout_2.length)],
             rollout_2.actions[: min(rollout_1.length, rollout_2.length)],
-        )
+        ):
+            raise pyrado.ValueErr(msg="The actions in the rollouts to compare are not equal!")
 
     elif is_iterable(rollout_1) and is_iterable(rollout_2):
-        return all(
+        if not all(
             [
                 np.allclose(r1.actions[: min(r1.length, r2.length)], r2.actions[: min(r1.length, r2.length)])
                 for r1, r2 in zip(rollout_1, rollout_2)
             ]
-        )
+        ):
+            raise pyrado.ValueErr(msg="The actions in the rollouts to compare are not equal!")
 
     else:
         raise NotImplementedError

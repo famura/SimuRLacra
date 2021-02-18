@@ -76,7 +76,7 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
         Serializable._init(self, locals())
         AdversarialWrapper.__init__(self, wrapped_env, policy, eps, phi)
 
-    def step(self, act: np.ndarray):
+    def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
         adversarial = self.get_arpl_grad(obs)
         if self.decide_apply():
@@ -109,7 +109,7 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         AdversarialWrapper.__init__(self, wrapped_env, policy, eps, phi)
         self.torch_observation = torch_observation
 
-    def step(self, act: np.ndarray):
+    def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
         saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
         nonobserved = to.from_numpy(obs[saw.offset :])
@@ -170,7 +170,7 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
         self.saw.set_param(to.tensor(self.adv))
         return self.wrapped_env.reset(init_state, domain_param)
 
-    def step(self, act: np.ndarray):
+    def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)
         state = obs.clone()
         adversarial = self.get_arpl_grad(state) * self.nominalT

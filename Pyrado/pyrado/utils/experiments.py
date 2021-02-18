@@ -95,7 +95,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             env.adapt_randomizer(last_cand.numpy())
             print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
         else:
-            print_cbt("Loaded environment has no randomizer.", "r")
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
         # Policy
         policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
@@ -108,13 +108,13 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         # Environment
         env = pyrado.load(None, "env", "pkl", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
-        if hasattr(env, "randomizer"):
+        if getattr(env, "randomizer", None) is not None:
             if not isinstance(env.randomizer, DomainRandWrapperBuffer):
                 raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperBuffer)
             typed_env(env, DomainRandWrapperBuffer).fill_buffer(100)
             print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 100 random instances.", "g")
         else:
-            print_cbt("Loaded environment has no randomizer.", "r")
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
         # Policy
         policy = pyrado.load(algo.subroutine_cand.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
@@ -127,12 +127,12 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         # Environment
         env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", "g")
-        if hasattr(env, "randomizer"):
+        if getattr(env, "randomizer", None) is not None:
             last_cand = to.load(osp.join(ex_dir, "candidates.pt"))[-1, :]
             env.adapt_randomizer(last_cand.numpy())
             print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
         else:
-            print_cbt("Loaded environment has no randomizer.", "r")
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
         # Policy
         policy = pyrado.load(algo.subroutine_policy.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
@@ -142,12 +142,12 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
     elif algo.name in ["epopt", "udr"]:
         # Environment
         env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
-        if hasattr(env, "randomizer"):
+        if getattr(env, "randomizer", None) is not None:
             if not isinstance(env.randomizer, DomainRandWrapperLive):
                 raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperLive)
             print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} with DomainRandWrapperLive randomizer.", "g")
         else:
-            print_cbt("Loaded environment has no randomizer.", "y")
+            print_cbt("Loaded environment has no randomizer, or it is None.", "y")
         # Policy
         policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
@@ -159,6 +159,13 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
     elif algo.name == "lfi":
         # Environment
         env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env.randomizer, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperBuffer)
+            typed_env(env, DomainRandWrapperBuffer).fill_buffer(10)
+            print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 10 random instances.", "g")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "y")
         # Policy
         policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")

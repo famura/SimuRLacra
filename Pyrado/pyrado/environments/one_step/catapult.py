@@ -155,7 +155,8 @@ class CatapultSim(SimEnv, Serializable):
 
         # Reset the state
         if init_state is None:
-            self.state = self._init_space.sample_uniform()  # zero
+            # Sample from the init state space
+            self.state = self._init_space.sample_uniform()
         else:
             if not init_state.shape == self.obs_space.shape:
                 raise pyrado.ShapeErr(given=init_state, expected_match=self.obs_space)
@@ -173,7 +174,7 @@ class CatapultSim(SimEnv, Serializable):
         # Return perfect observation
         return self.observe(self.state)
 
-    def step(self, act):
+    def step(self, act: np.ndarray) -> tuple:
         # Apply actuator limits
         act = self.limit_act(act)  # dummy for CatapultSim
         self._curr_act = act  # just for the render function

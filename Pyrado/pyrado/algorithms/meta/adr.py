@@ -363,7 +363,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
             self.svpg_state = np.random.random_sample(len(self.parameters))
         return self.svpg_state
 
-    def step(self, act: np.ndarray):
+    def step(self, act: np.ndarray) -> tuple:
         # Clip the action according to the maximum step length
         action = np.clip(act, -1, 1) * self.svpg_max_step_length
 

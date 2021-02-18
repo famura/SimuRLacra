@@ -32,6 +32,7 @@ from torch import nn as nn
 
 from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.environments.base import Env
+from pyrado.policies.special.mdn import MDN
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
@@ -928,3 +929,18 @@ def test_playback_policy(env: Env, dtype):
 
     policy.reset_curr_rec()
     assert policy.curr_rec == -1
+
+
+def test_mdn_policy():
+    mdn = MDN(hidden_sizes=[50, 50], hidden_nonlin=to.tanh, dim_in=3, dim_out=2, num_comp=10)
+    coeffs, means, l, l_diag = mdn(to.tensor([[1, 2, 3], [4, 5, 6]], dtype=to.get_default_dtype()))
+    assert isinstance(coeffs, to.Tensor)
+    assert isinstance(means, to.Tensor)
+    assert isinstance(l, to.Tensor)
+    assert isinstance(l_diag, to.Tensor)
+
+    y = to.tensor([[0, 0], [1, 1]])
+    log_probs = mdn.log_prob(y, to.tensor([[1, 2, 3], [4, 5, 6]], dtype=to.get_default_dtype()))
+    samples = mdn.sample((10,), to.tensor([1, 2, 3], dtype=to.get_default_dtype()))
+    assert isinstance(log_probs, to.Tensor)
+    assert isinstance(samples, to.Tensor)

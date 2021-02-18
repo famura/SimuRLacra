@@ -39,15 +39,11 @@ from sbi import utils
 import pyrado
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.time import TimePolicy
 from pyrado.utils.argparser import get_argparser
-
-
-def fcn_of_time(t: float):
-    act = 1.0 * np.sin(2 * np.pi * t * 2.0)  # 2 Hz
-    return act.repeat(env_sim.act_space.flat_dim)
 
 
 if __name__ == "__main__":
@@ -55,8 +51,11 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}_{QQubeSwingUpAndBalanceCtrl.name}")
-    # ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}_{TimePolicy.name}")
+    ectl = False
+    if ectl:
+        ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}_{QQubeSwingUpAndBalanceCtrl.name}", "retrain")
+    else:
+        ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}_{TimePolicy.name}", "retrain")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -67,60 +66,76 @@ if __name__ == "__main__":
 
     # Create a fake ground truth target domain
     num_real_obs = 1
-    env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")
-    # env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_250Hz_1V")
-
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
+    if ectl:
+        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")
+    else:
+        env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
 
     # Policy
-    behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
-    # behavior_policy = TimePolicy(env_sim.spec, fcn_of_time, env_sim.dt)
+    assert osp.isdir(env_real)
+    behavior_policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
+
+    # Define a mapping: index - domain parameter
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
+    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        # low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
-        low=to.tensor(
-            [
-                dp_nom["Dr"] * 0,
-                dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.5,
-                dp_nom["km"] * 0.5,
-                dp_nom["Mr"] * 0.5,
-                dp_nom["Mp"] * 0.5,
-                dp_nom["Lr"] * 0.5,
-                dp_nom["Lp"] * 0.5,
-            ]
-        ),
-        high=to.tensor(
-            [
-                dp_nom["Dr"] * 100,
-                dp_nom["Dp"] * 100,
-                dp_nom["Rm"] * 2.0,
-                dp_nom["km"] * 2.0,
-                dp_nom["Mr"] * 2.0,
-                dp_nom["Mp"] * 2.0,
-                dp_nom["Lr"] * 2.0,
-                dp_nom["Lp"] * 2.0,
-            ]
-        ),
+        low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
+        high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
+        # low=to.tensor(
+        #     [
+        #         dp_nom["Dr"] * 0,
+        #         dp_nom["Dp"] * 0,
+        #         dp_nom["Rm"] * 0.5,
+        #         dp_nom["km"] * 0.5,
+        #         dp_nom["Mr"] * 0.5,
+        #         dp_nom["Mp"] * 0.5,
+        #         dp_nom["Lr"] * 0.5,
+        #         dp_nom["Lp"] * 0.5,
+        #     ]
+        # ),
+        # high=to.tensor(
+        #     [
+        #         dp_nom["Dr"] * 100,
+        #         dp_nom["Dp"] * 100,
+        #         dp_nom["Rm"] * 1.5,
+        #         dp_nom["km"] * 1.5,
+        #         dp_nom["Mr"] * 1.5,
+        #         dp_nom["Mp"] * 1.5,
+        #         dp_nom["Lr"] * 1.5,
+        #         dp_nom["Lp"] * 1.5,
+        #     ]
+        # ),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=50, num_transforms=5)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=50, num_transforms=4)
 
     # Algorithm
     algo_hparam = dict(
+        max_iter=5,
         summary_statistic="bayessim",  # bayessim or dtw_distance
-        max_iter=10,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=4000,
+        num_sim_per_real_rollout=5000,
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=200,
-        num_workers=10,
+        # num_segments=10,
+        len_segments=200,
+        sbi_training_hparam=dict(
+            num_atoms=10,  # default: 10
+            training_batch_size=50,  # default: 50
+            learning_rate=3e-4,  # default: 5e-4
+            validation_fraction=0.2,  # default: 0.1
+            stop_after_epochs=30,  # default: 20
+            discard_prior_samples=False,  # default: False
+            use_combined_loss=True,  # default: False
+            retrain_from_scratch_each_round=True,  # default: False
+            show_train_summary=False,  # default: False
+        ),
         sbi_sampling_hparam=dict(sample_with_mcmc=True),
+        num_workers=6,
     )
     algo = LFI(
         ex_dir,

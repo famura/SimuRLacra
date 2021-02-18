@@ -69,8 +69,8 @@ if __name__ == "__main__":
     ex_ts = datetime.now().strftime(pyrado.timestamp_format)
     save_dir = osp.join(ex_dir, "evaluation")
     os.makedirs(save_dir, exist_ok=True)
-    num_ro_per_config = args.num_ro_per_config if args.num_ro_per_config is not None else 5
+    num_rollouts_per_config = args.num_rollouts_per_config if args.num_rollouts_per_config is not None else 5
     est_ret = BayRn.eval_policy(
-        save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=num_ro_per_config
+        save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=num_rollouts_per_config
     )
     print_cbt(f"Estimated return: {est_ret.item()}", "g")

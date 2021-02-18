@@ -128,7 +128,7 @@ class RosenSim(SimEnv, Serializable):
         # Return perfect observation
         return self.observe(self.state)
 
-    def step(self, act):
+    def step(self, act: np.ndarray) -> tuple:
         # Apply actuator limits
         act = self.limit_act(act)
 

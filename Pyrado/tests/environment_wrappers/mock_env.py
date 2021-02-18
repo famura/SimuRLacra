@@ -128,7 +128,7 @@ class MockEnv(SimEnv):
         # Return next observation
         return self._get_obs()
 
-    def step(self, act):
+    def step(self, act: np.ndarray) -> tuple:
         # Store as last action as list, to simplify asserts
         if self._act_space is not None:
             self.last_act = list(act)

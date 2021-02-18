@@ -261,7 +261,7 @@ def test_pair_plot(mode, x_labels, y_labels, legend):
         true_params=mean,
         grid_bounds=grid_bounds,
         use_sns=False,
-        plot_type=mode,
+        marginal_layout=mode,
         x_labels=x_labels,
         y_labels=y_labels,
         legend=legend,

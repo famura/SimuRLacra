@@ -122,7 +122,7 @@ def train(svi, rollouts, prior, num_epoch=2000, print_iter=100):
     sigma_hist = []
 
     # Train
-    for i in tqdm(range(num_epoch), total=num_epoch, desc="Training", unit="epoch", file=sys.stdout, leave=False):
+    for i in tqdm(range(num_epoch), total=num_epoch, desc="Training", unit="iteration", file=sys.stdout, leave=False):
         # The args of step are forwarded to the model and the guide
         elbo_hist.append(svi.step(states_cat, actions_cat, targets_cat, prior))
 
