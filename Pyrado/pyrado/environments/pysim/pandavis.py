@@ -141,7 +141,10 @@ class QQubeVis(PandaVis):
         self.pole.setPos(0, 0.07+2*Lr, 0.15)
         self.pole.wrtReparentTo(self.arm)
 
-        #ToDo Curve
+        # Trace
+        self.ls = LineSegs()
+        self.ls.setThickness(7)
+        self.ls.setColor(0, 0, 0)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
@@ -165,6 +168,14 @@ class QQubeVis(PandaVis):
         
         # Update rotation of pole
         self.pole.setR(al*180/np.pi)
+
+        # Add dots to trace
+        self.pole_pos = self.pole.getPos(self.render)
+        self.ls.drawTo(self.pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th),
+                       self.pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th),
+                       self.pole_pos[2] - 2 * Lp * np.cos(al))
+        self.ls_node = self.ls.create()
+        self.render.attachNewNode(self.ls_node)
 
         # Update displayed text
         self.text.setText(f"""
@@ -243,6 +254,8 @@ class PendulumVis(PandaVis):
         
         # Update position and rotation of pole
         self.pole.setR(th * 180 / np.pi)
+
+        print(arm.getPos().getRelativePoint())
         
         # Update displayed text
         self.text.setText(f"""
