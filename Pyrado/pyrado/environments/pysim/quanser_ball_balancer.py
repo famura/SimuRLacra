@@ -333,6 +333,9 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         # Calls the update_anim function of the base class
         super(QBallBalancerSim, self)._update_anim()
 
+    def _reset_anim(self):
+        self._visualization.reset()
+
 
 class QBallBalancerKin(Serializable):
     """

@@ -96,52 +96,52 @@ class QQubeVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(-0.4 *self._scale, -1.3*self._scale, 0.4*self._scale)
-        self.cam.setHpr(-20,-10,0)
+        self.cam.setPos(-0.4 * self._scale, -1.3 * self._scale, 0.4 * self._scale)
+        self.cam.setHpr(-20, -10, 0)
 
         # Set text properties
         self.textNodePath.setPos(0.4, 0, -0.1)
         
         # Box
         self.box = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.box.setPos(0, 0.07*self._scale, 0)
-        self.box.setScale(0.09*self._scale, 0.1*self._scale, 0.09*self._scale)
-        self.box.setColor(0.5, 0.5, 0.5) # grey
+        self.box.setPos(0, 0.07 * self._scale, 0)
+        self.box.setScale(0.09 * self._scale, 0.1 * self._scale, 0.09 * self._scale)
+        self.box.setColor(0.5, 0.5, 0.5)  # grey
         self.box.reparentTo(self.render)
 
         # Cylinder
         self.cylinder = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
-        self.cylinder.setScale(0.005*self._scale, 0.005*self._scale, 0.03*self._scale)
-        self.cylinder.setPos(0, 0.07*self._scale, 0.12*self._scale)
+        self.cylinder.setScale(0.005 * self._scale, 0.005 * self._scale, 0.03 * self._scale)
+        self.cylinder.setPos(0, 0.07 * self._scale, 0.12 * self._scale)
         self.cylinder.setColor(0.5, 0.5, 0,5)  # grey
         self.cylinder.reparentTo(self.render)
 
         # Joint 1
         self.joint1 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint1.setScale(0.005*self._scale)
-        self.joint1.setPos(0.0, 0.07*self._scale, 0.15*self._scale)
+        self.joint1.setScale(0.005 * self._scale)
+        self.joint1.setPos(0.0, 0.07 * self._scale, 0.15 * self._scale)
         self.joint1.reparentTo(self.render)
 
         # Arm
         self.arm = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
-        self.arm.setScale(arm_radius*self._scale, arm_radius*self._scale, Lr*self._scale)
+        self.arm.setScale(arm_radius * self._scale, arm_radius * self._scale, Lr * self._scale)
         self.arm.setColor(0, 0, 1)  # blue
         self.arm.setP(90)
-        self.arm.setPos(0, 0.07*self._scale, 0.15*self._scale)
+        self.arm.setPos(0, 0.07 * self._scale, 0.15 * self._scale)
         self.arm.reparentTo(self.render)
 
         # Joint 2
         self.joint2 = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
         self.joint2.setScale(pole_radius*self._scale)
-        self.joint2.setPos(0.0, (0.07 + 2 * Lr)*self._scale, 0.15*self._scale)
-        self.joint2.setColor(0, 0, 0) # black
+        self.joint2.setPos(0.0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
+        self.joint2.setColor(0, 0, 0)  # black
         self.joint2.wrtReparentTo(self.arm)
 
         # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_bottom.egg"))
-        self.pole.setScale(pole_radius*self._scale, pole_radius*self._scale, Lp*self._scale)
+        self.pole.setScale(pole_radius * self._scale, pole_radius * self._scale, Lp * self._scale)
         self.pole.setColor(1, 0, 0)  # red
-        self.pole.setPos(0, (0.07+2*Lr)*self._scale, 0.15*self._scale)
+        self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
         # Configure trace
@@ -167,10 +167,10 @@ class QQubeVis(PandaVis):
         th, al, _, _ = self._env.state
 
         # Update rotation of arm
-        self.arm.setH(th*180/np.pi-180)
+        self.arm.setH(th * 180 / np.pi - 180)
         
         # Update rotation of pole
-        self.pole.setR(al*180/np.pi)
+        self.pole.setR(al * 180 / np.pi)
 
         # Check if trace initialized
         if hasattr(self, 'last_pos'):
@@ -180,9 +180,9 @@ class QQubeVis(PandaVis):
         # Get position of pole
         self.pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        self.current_pos = LVecBase3f(self.pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th)*self._scale,
-                          self.pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th)*self._scale,
-                          self.pole_pos[2] - 2 * Lp * np.cos(al)*self._scale)
+        self.current_pos = LVecBase3f(self.pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
+                          self.pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
+                          self.pole_pos[2] - 2 * Lp * np.cos(al) * self._scale)
         # Draw line to that point
         self.trace.drawTo(self.current_pos)
 
@@ -215,6 +215,7 @@ class QQubeVis(PandaVis):
         # Remove the trace
         self.lines.getChildren().detach()
 
+
 class PendulumVis(PandaVis):
     def __init__(self, env: SimEnv):
         """ 
@@ -232,7 +233,7 @@ class PendulumVis(PandaVis):
         r_pole = 0.05 
         
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1/(l_pole/10)
+        self._scale = 1 / (l_pole / 10)
 
         # Set window title
         self.windowProperties.setTitle('Pendulum')
@@ -247,17 +248,17 @@ class PendulumVis(PandaVis):
         
         # Joint
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint.setPos(0, r_pole*self._scale, 0)
-        self.joint.setScale(r_pole*self._scale, r_pole*self._scale, r_pole*self._scale)
+        self.joint.setPos(0, r_pole * self._scale, 0)
+        self.joint.setScale(r_pole * self._scale, r_pole * self._scale, r_pole * self._scale)
         self.joint.setColor(0, 0, 0)  # black
         self.joint.reparentTo(self.render)
         
         # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
-        self.pole.setPos(0, r_pole*self._scale, 0)
-        self.pole.setScale(r_pole*self._scale, r_pole*self._scale, 2*l_pole*self._scale)
+        self.pole.setPos(0, r_pole * self._scale, 0)
+        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.setR(th * 180 / np.pi)
-        self.pole.setColor(0, 0, 1) # blue
+        self.pole.setColor(0, 0, 1)  # blue
         self.pole.reparentTo(self.render)
         
         # Adds one instance of the update function to the task-manager, thus initializes the animation
@@ -321,7 +322,7 @@ class QbbVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setY(-1.3*self._scale)
+        self.cam.setY(-1.3 * self._scale)
 
         # Set text properties
         self.textNodePath.setScale(0.05)
@@ -329,30 +330,45 @@ class QbbVis(PandaVis):
 
         # Ball
         self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.ball.setPos(self._env.state[2]*self._scale, self._env.state[3]*self._scale, (r_ball + d_plate / 2.0)*self._scale)
-        self.ball.setScale(r_ball*self._scale)
-        self.ball.setColor(1, 0, 0, 0) # red
+        self.ball.setPos(
+            self._env.state[2] * self._scale,
+            self._env.state[3] * self._scale,
+            (r_ball + d_plate / 2.0) * self._scale
+        )
+        self.ball.setScale(r_ball * self._scale)
+        self.ball.setColor(1, 0, 0, 0)  # red
         self.ball.reparentTo(self.render)
 
         # Plate
         self.plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.plate.setScale(l_plate * 0.5*self._scale, l_plate * 0.5*self._scale, d_plate * 0.5*self._scale)  # modified according to Blender object
-        self.plate.setColor(0, 0, 1, 0) # blue
+        self.plate.setScale(
+            l_plate * 0.5 * self._scale,
+            l_plate * 0.5 * self._scale,
+            d_plate * 0.5 * self._scale
+        )  # modified according to Blender object
+        self.plate.setColor(0, 0, 1, 0)  # blue
         self.plate.reparentTo(self.render)
 
         # Joint
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint.setPos(0, r_pole*self._scale, - d_plate*self._scale)
-        self.joint.setScale(r_pole*self._scale, r_pole*self._scale, r_pole*self._scale)
-        self.joint.setColor(1, 1, 1) # white
+        self.joint.setPos(0, r_pole * self._scale, - d_plate * self._scale)
+        self.joint.setScale(r_pole * self._scale, r_pole * self._scale, r_pole * self._scale)
+        self.joint.setColor(1, 1, 1)  # white
         self.joint.reparentTo(self.render)
 
         # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
-        self.pole.setPos(0, r_pole*self._scale, - d_plate*self._scale)
-        self.pole.setScale(r_pole*self._scale, r_pole*self._scale, 2 * l_pole*self._scale)
-        self.pole.setColor(0, 0, 0) # black
+        self.pole.setPos(0, r_pole * self._scale, - d_plate * self._scale)
+        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
+        self.pole.setColor(0, 0, 0)  # black
         self.pole.reparentTo(self.render)
+
+        # Configure trace
+        self.trace = LineSegs()
+        self.trace.setThickness(3)
+        self.trace.setColor(1, 1, 1)  # white
+        self.lines = self.render.attachNewNode("Lines")
+        self.last_pos = None
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
@@ -386,7 +402,7 @@ class QbbVis(PandaVis):
         x = self._env.state[2]  # along the x axis
         y = self._env.state[3]  # along the y axis
 
-        #  Compute plate orientation
+        # Compute plate orientation
         a_vp = -self._env.plate_angs[0]  # plate's angle around the y axis (alpha) # Roll
         b_vp = self._env.plate_angs[1]  # plate's angle around the x axis (beta) # Pitch
 
@@ -395,11 +411,25 @@ class QbbVis(PandaVis):
         self.plate.setP(b_vp * 180 / np.pi)  # rotate Pitch axis
 
         # Update position of ball
-        self.ball.setPos(
-            x * np.cos(a_vp)*self._scale,
-            y * np.cos(b_vp)*self._scale,
-            ((r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0))*self._scale,
+        _current_pos = (
+            x * np.cos(a_vp) * self._scale,
+            y * np.cos(b_vp) * self._scale,
+            (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0) * self._scale,
         )
+        self.ball.setPos(_current_pos)
+
+        if self.last_pos:
+            self.trace.moveTo(self.last_pos)
+
+        # Draw line to that point
+        self.trace.drawTo(_current_pos)
+
+        # Save last position of pen
+        self.last_pos = _current_pos
+
+        # Show drawing
+        self.trace_np = NodePath(self.trace.create())
+        self.trace_np.reparentTo(self.lines)
 
         # Update displayed text
         self.text.setText(f"""
@@ -433,6 +463,11 @@ class QbbVis(PandaVis):
 
         return Task.cont
 
+    def reset(self):
+        # Remove the trace
+        self.lines.getChildren().detach()
+        self.last_pos = None
+
 
 class BobVis(PandaVis):
 
@@ -460,23 +495,23 @@ class BobVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setY(-3.0*self._scale)
+        self.cam.setY(-3.0 * self._scale)
 
         # Set text properties
         self.textNodePath.setScale(0.07)
         self.textNodePath.setPos(0.3, 0, -0.3)
 
-        #Ball
+        # Ball
         self.ball = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.ball.setColor(1, 0, 0, 0) # red
-        self.ball.setScale(r_ball*self._scale)
-        self.ball.setPos(x*self._scale, 0, (d_beam / 2.0 + r_ball)*self._scale)
+        self.ball.setColor(1, 0, 0, 0)  # red
+        self.ball.setScale(r_ball * self._scale)
+        self.ball.setPos(x*self._scale, 0, (d_beam / 2.0 + r_ball) * self._scale)
         self.ball.reparentTo(self.render)
 
-        #Beam
+        # Beam
         self.beam = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.beam.setColor(0, 1, 0, 0) # green
-        self.beam.setScale(l_beam / 2*self._scale, d_beam*self._scale, d_beam / 2*self._scale)
+        self.beam.setColor(0, 1, 0, 0)  # green
+        self.beam.setScale(l_beam / 2 * self._scale, d_beam * self._scale, d_beam / 2 * self._scale)
         self.beam.setR(-a * 180 / np.pi)
         self.beam.reparentTo(self.render)
 
@@ -498,8 +533,11 @@ class BobVis(PandaVis):
         a = float(self._env.state[1])  # angle [rad]
 
         # Update position of ball
-        self.ball.setPos((np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball))*self._scale, 0,
-                        (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball))*self._scale)
+        self.ball.setPos(
+            (np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball)) * self._scale,
+            0,
+            (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball)) * self._scale
+        )
 
         # Update rotation of joint
         self.beam.setR(-a * 180 / np.pi)
@@ -547,34 +585,34 @@ class QCartPoleVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setY(-5*self._scale)
+        self.cam.setY(-5 * self._scale)
 
         # Rail
         self.rail = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_middle.egg"))
-        self.rail.setPos(0, 0, (-h_cart - r_rail)*self._scale)
-        self.rail.setScale(r_rail*self._scale, r_rail*self._scale, l_rail*self._scale)
+        self.rail.setPos(0, 0, (-h_cart - r_rail) * self._scale)
+        self.rail.setScale(r_rail * self._scale, r_rail * self._scale, l_rail * self._scale)
         self.rail.setColor(0.85, 0.85, 0.85)  # light Grey
         self.rail.reparentTo(self.render)
         self.rail.setR(90)
 
         # Cart
         self.cart = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.cart.setX(x*self._scale)
-        self.cart.setScale(l_cart*self._scale, h_cart/2*self._scale, h_cart*self._scale)
+        self.cart.setX(x * self._scale)
+        self.cart.setScale(l_cart * self._scale, h_cart / 2 * self._scale, h_cart * self._scale)
         self.cart.setColor(0, 1, 0, 0)  # green
         self.cart.reparentTo(self.render)
 
         # Joint
         self.joint = self.loader.loadModel(pathlib.Path(self.dir, "models/ball.egg"))
-        self.joint.setPos(x*self._scale, (-r_pole - h_cart/2)*self._scale, 0)
-        self.joint.setScale(r_pole*self._scale)
+        self.joint.setPos(x * self._scale, (-r_pole - h_cart/2) * self._scale, 0)
+        self.joint.setScale(r_pole * self._scale)
         self.joint.setColor(0.85, 0.85, 0.85)  # lightGrey
         self.joint.reparentTo(self.render)
 
         # Pole
         self.pole = self.loader.loadModel(pathlib.Path(self.dir, "models/cylinder_center_top.egg"))
-        self.pole.setPos(x*self._scale, (-r_pole - h_cart/2)*self._scale, 0)
-        self.pole.setScale(r_pole*self._scale, r_pole*self._scale, 2*l_pole*self._scale)
+        self.pole.setPos(x * self._scale, (-r_pole - h_cart / 2) * self._scale, 0)
+        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.setColor(0, 0, 1)  # blue
         self.pole.reparentTo(self.render)
 
@@ -601,11 +639,11 @@ class QCartPoleVis(PandaVis):
         B_pole = self._env.domain_param["B_pole"]
 
         # Update position of Cart, Joint and Pole
-        self.cart.setX(x*self._scale)
-        self.joint.setX(x*self._scale)
-        self.pole.setX(x*self._scale) # could be reparented to cart
+        self.cart.setX(x * self._scale)
+        self.joint.setX(x * self._scale)
+        self.pole.setX(x * self._scale)  # could be reparented to cart
 
-        #Update rotation of Pole
+        # Update rotation of Pole
         self.pole.setR(-th * 180/np.pi)
 
         # Update displayed text
@@ -656,49 +694,53 @@ class OmoVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setY(-5*self._scale)
+        self.cam.setY(-5 * self._scale)
 
         # Set text properties
         self.textNodePath.setPos(-1.4, 0, 0.9)
 
         # Ground
         self.ground = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.ground.setPos(0, 0, -0.02*self._scale)
+        self.ground.setPos(0, 0, -0.02 * self._scale)
         self.ground.setScale(
-            self._env.obs_space.bound_up[0]*self._scale,
-            1.5 * c*self._scale,
-            0.01*self._scale
+            self._env.obs_space.bound_up[0] * self._scale,
+            1.5 * c * self._scale,
+            0.01 * self._scale
         )  # Scale modified according to Blender Object
         self.ground.setColor(0, 1, 0, 0) # green
         self.ground.reparentTo(self.render)
 
         # Mass
         self.mass = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.mass.setPos(self._env.state[0]*self._scale, 0, c / 2.0*self._scale)
-        self.mass.setScale(c * 0.5*self._scale, c * 0.5*self._scale, c * 0.5*self._scale)  # multiply by 0.5 since Blender object has length of 2
-        self.mass.setColor(0, 0, 1, 0) # blue
+        self.mass.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
+        self.mass.setScale(c * 0.5 * self._scale, c * 0.5 * self._scale, c * 0.5 * self._scale)  # multiplied by 0.5 since Blender object has length of 2
+        self.mass.setColor(0, 0, 1, 0)  # blue
         self.mass.reparentTo(self.render)
 
         # Des
         self.des = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
-        self.des.setPos(self._env._task.state_des[0]*self._scale, 0, 0.4 * c*self._scale)
-        self.des.setScale(0.4 * c*self._scale, 0.4 * c*self._scale, 0.4 * c*self._scale)
+        self.des.setPos(self._env._task.state_des[0] * self._scale, 0, 0.4 * c * self._scale)
+        self.des.setScale(0.4 * c * self._scale, 0.4 * c * self._scale, 0.4 * c * self._scale)
         self.des.setTransparency(1)
         self.des.setColorScale(0, 1, 1, 0.5)
         self.des.reparentTo(self.render)
 
         # Force
         self.force = self.loader.loadModel(pathlib.Path(self.dir, "models/arrow.egg"))
-        self.force.setPos(self._env.state[0]*self._scale, 0, c / 2.0*self._scale)
-        self.force.setScale(0.1 * self._env._curr_act / 10.0*self._scale, 0.1 * c*self._scale, 0.1 * c*self._scale)
-        self.force.setColor(1, 0, 0, 0) # red
+        self.force.setPos(self._env.state[0]*self._scale, 0, c / 2.0 * self._scale)
+        self.force.setScale(0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale, 0.1 * c * self._scale)
+        self.force.setColor(1, 0, 0, 0)  # red
         self.force.reparentTo(self.render)
 
         # Spring
         self.spring = self.loader.loadModel(pathlib.Path(self.dir, "models/spring.egg"))
-        self.spring.setPos(0, 0, c / 2.0*self._scale)
-        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.3*self._scale, c / 6.0*self._scale, c / 6.0*self._scale)  # scaling according to Blender object
-        self.spring.setColor(0, 0, 1, 0) # blue
+        self.spring.setPos(0, 0, c / 2.0 * self._scale)
+        self.spring.setScale(
+            (self._env.state[0] - c / 2.0) / 7.3 * self._scale,
+            c / 6.0 * self._scale,
+            c / 6.0 * self._scale
+        )  # scaling according to Blender object
+        self.spring.setColor(0, 0, 1, 0)  # blue
         self.spring.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
@@ -713,15 +755,15 @@ class OmoVis(PandaVis):
         c = 0.1 * self._env.obs_space.bound_up[0]
 
         # Update position of mass and force
-        self.mass.setPos(self._env.state[0]*self._scale, 0, c / 2.0*self._scale)
-        self.force.setPos(self._env.state[0]*self._scale, 0, c / 2.0*self._scale)
+        self.mass.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
+        self.force.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
 
         # Update scale of force
         capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
-        self.force.setSx(capped_act / 10.0*self._scale)
+        self.force.setSx(capped_act / 10.0 * self._scale)
 
         # Update scale of spring
-        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3*self._scale)  # scaling according to Blender object
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3 * self._scale)  # scaling according to Blender object
 
         # Update displayed text
         self.text.setText(f"""
