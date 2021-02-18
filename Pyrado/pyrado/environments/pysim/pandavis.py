@@ -80,7 +80,6 @@ class QQubeVis(PandaVis):
         :param env: environment to visualize
         """
         super().__init__()
-
         
         # Accessing variables of environment class
         self._env = env
@@ -444,8 +443,6 @@ class BobVis(PandaVis):
         :param env: environment to visualize
         """
         super().__init__()
-        
-        
 
         # Accessing variables of environment class
         self._env = env
