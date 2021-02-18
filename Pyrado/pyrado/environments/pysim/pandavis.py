@@ -141,16 +141,15 @@ class QQubeVis(PandaVis):
         self.pole.setPos(0, 0.07+2*Lr, 0.15)
         self.pole.wrtReparentTo(self.arm)
 
-        # Trace
-        self.ls = LineSegs()
-        self.ls.setThickness(7)
-        self.ls.setColor(0, 0, 0)
+        # Configure trace
+        self.trace = LineSegs()
+        self.trace.setThickness(3)
+        self.trace.setColor(0, 0, 0)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
-
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
         Mr = self._env.domain_param["Mr"]
@@ -169,13 +168,26 @@ class QQubeVis(PandaVis):
         # Update rotation of pole
         self.pole.setR(al*180/np.pi)
 
-        # Add dots to trace
+        # Check if trace initialized
+        if hasattr(self, 'last_pos'):
+            # Set starting point of new line
+            self.trace.moveTo(self.last_pos)
+
+        # Get position of pole
         self.pole_pos = self.pole.getPos(self.render)
-        self.ls.drawTo(self.pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th),
-                       self.pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th),
-                       self.pole_pos[2] - 2 * Lp * np.cos(al))
-        self.ls_node = self.ls.create()
-        self.render.attachNewNode(self.ls_node)
+        # Calculate position of new point
+        self.current_pos = LVecBase3f(self.pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th),
+                          self.pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th),
+                          self.pole_pos[2] - 2 * Lp * np.cos(al))
+        # Draw line to that point
+        self.trace.drawTo(self.current_pos)
+
+        # Save last position of pen
+        self.last_pos = self.current_pos
+
+        # Show drawing
+        self.trace_node = self.trace.create()
+        self.render.attachNewNode(self.trace_node)
 
         # Update displayed text
         self.text.setText(f"""
@@ -195,6 +207,8 @@ class QQubeVis(PandaVis):
 
         return Task.cont
 
+    def reset(self):
+        trace.reset()
 
 class PendulumVis(PandaVis):
     def __init__(self, env: SimEnv):
