@@ -153,7 +153,7 @@ class QQubeSim(SimPyEnv, Serializable):
         super(QQubeSim, self)._update_anim()
 
     def _reset_anim(self):
-        pass
+        self._visualization.reset()
 
 
 class QQubeSwingUpSim(QQubeSim):

@@ -145,6 +145,7 @@ class QQubeVis(PandaVis):
         self.trace = LineSegs()
         self.trace.setThickness(3)
         self.trace.setColor(0, 0, 0)
+        self.lines = self.render.attachNewNode("Lines")
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
@@ -186,8 +187,8 @@ class QQubeVis(PandaVis):
         self.last_pos = self.current_pos
 
         # Show drawing
-        self.trace_node = self.trace.create()
-        self.render.attachNewNode(self.trace_node)
+        self.trace_np = NodePath(self.trace.create())
+        self.trace_np.reparentTo(self.lines)
 
         # Update displayed text
         self.text.setText(f"""
@@ -208,7 +209,8 @@ class QQubeVis(PandaVis):
         return Task.cont
 
     def reset(self):
-        trace.reset()
+        # Remove the trace
+        self.lines.getChildren().detach()
 
 class PendulumVis(PandaVis):
     def __init__(self, env: SimEnv):
