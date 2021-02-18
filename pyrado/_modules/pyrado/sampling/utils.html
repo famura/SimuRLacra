@@ -231,7 +231,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
 
 
-<div class="viewcode-block" id="gen_batch_idcs"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.utils.gen_batch_idcs">[docs]</a><span class="k">def</span> <span class="nf">gen_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="gen_shuffled_batch_idcs"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.utils.gen_shuffled_batch_idcs">[docs]</a><span class="k">def</span> <span class="nf">gen_shuffled_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper function for doing SGD on mini-batches that returns the indies for the mini-batch samples</span>
 
@@ -248,7 +248,7 @@
     <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">idx_iter</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)),</span> <span class="p">[])</span></div>
 
 
-<div class="viewcode-block" id="gen_ordered_batch_idcs"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.utils.gen_ordered_batch_idcs">[docs]</a><span class="k">def</span> <span class="nf">gen_ordered_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="gen_ordered_batch_idcs"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.utils.gen_ordered_batch_idcs">[docs]</a><span class="k">def</span> <span class="nf">gen_ordered_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper function for doing SGD on mini-batches that returns the indies for the mini-batch samples</span>
 

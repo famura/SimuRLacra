@@ -236,7 +236,7 @@
     <span class="sd">&quot;&quot;&quot; Base class for exceptions in Pyrado &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="BaseErr.retrieve_var_name"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.BaseErr.retrieve_var_name">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">retrieve_var_name</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">stack_level</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">retrieve_var_name</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">stack_level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the name of the given variable by searching through the locals and globals.</span>
 
@@ -290,7 +290,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">given</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">given</span><span class="o">=</span><span class="s2">&quot;__INVALID__&quot;</span><span class="p">,</span>
         <span class="n">given_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">expected_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -303,14 +303,14 @@
 <span class="sd">        :param expected_type: type or types that should have been passed</span>
 <span class="sd">        :param msg: offers possibility to override the error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">given</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">given</span> <span class="o">==</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-                <span class="s2">&quot;Either specify an input for the error message using the &#39;given&#39; argument, or set a custom&quot;</span>
+                <span class="s2">&quot;Either specify an input for the error message using the &#39;given&#39; argument, or set a custom &quot;</span>
                 <span class="s2">&quot;message via the &#39;msg&#39; argument!&quot;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">given_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="o">!=</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">given_type_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">given</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">given</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;None&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expected_types</span> <span class="o">=</span> <span class="n">expected_type</span>
             <span class="c1"># Default error message</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Expected the type of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">given_name</span><span class="si">}</span><span class="s2"> to be&quot;</span>
@@ -322,7 +322,7 @@
                         <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; or &quot;</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="vm">__name__</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">expected_type</span><span class="o">.</span><span class="vm">__name__</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; but received </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">given_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; but received </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">given_type_name</span><span class="si">}</span><span class="s2">!&quot;</span>
 
         <span class="c1"># Pass to Python Exception</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
@@ -334,7 +334,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">given</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">given</span><span class="o">=</span><span class="s2">&quot;__INVALID__&quot;</span><span class="p">,</span>
         <span class="n">given_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">eq_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">l_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -355,9 +355,9 @@
 <span class="sd">        :param ge_constraint: violated greater or equal than constraint</span>
 <span class="sd">        :param msg: offers possibility to override the error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">given</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">given</span> <span class="o">==</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-                <span class="s2">&quot;Either specify an input for the error message using the &#39;given&#39; argument, or set a custom&quot;</span>
+                <span class="s2">&quot;Either specify an input for the error message using the &#39;given&#39; argument, or set a custom &quot;</span>
                 <span class="s2">&quot;message via the &#39;msg&#39; argument!&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -369,7 +369,7 @@
                 <span class="ow">and</span> <span class="n">g_constraint</span> <span class="ow">is</span> <span class="kc">None</span>
                 <span class="ow">and</span> <span class="n">ge_constraint</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">),</span> <span class="s2">&quot;Specify at least one constraint!&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="o">!=</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">given_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eq_constraint_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">eq_constraint</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l_constraint_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">l_constraint</span><span class="p">)</span>
@@ -410,7 +410,9 @@
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="s2">&quot;length&quot;</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> must have either a shape attribute or support len()!&quot;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">given_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="s2">&quot;__INVALID__&quot;</span><span class="p">,</span> <span class="n">given_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -419,13 +421,13 @@
 <span class="sd">        :param given_name: explicitly pass the name of the variable for the error message</span>
 <span class="sd">        :param msg: offers possibility to override the error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">given</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">given</span> <span class="o">==</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-                <span class="s2">&quot;Either specify an input for the error message using the &#39;given&#39; argument, or set a custom&quot;</span>
+                <span class="s2">&quot;Either specify an input for the error message using the &#39;given&#39; argument, or set a custom &quot;</span>
                 <span class="s2">&quot;message via the &#39;msg&#39; argument!&quot;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="o">!=</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">given_shape</span><span class="p">,</span> <span class="n">gsn</span> <span class="o">=</span> <span class="n">ShapeErr</span><span class="o">.</span><span class="n">get_shape_and_name</span><span class="p">(</span><span class="n">given</span><span class="p">,</span> <span class="s2">&quot;given&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expected_shape</span><span class="p">,</span> <span class="n">esn</span> <span class="o">=</span> <span class="n">ShapeErr</span><span class="o">.</span><span class="n">get_shape_and_name</span><span class="p">(</span><span class="n">expected_match</span><span class="p">,</span> <span class="s2">&quot;expected_match&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="n">gsn</span><span class="p">,</span> <span class="n">esn</span><span class="p">)</span>
@@ -450,7 +452,7 @@
 <span class="sd">        :param given: input which caused the error</span>
 <span class="sd">        :param msg: offers possibility to override the error message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">given</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">given</span> <span class="o">==</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="ow">and</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
                 <span class="s2">&quot;Either specify an input for the error message using the &#39;given&#39; argument, or set a custom&quot;</span>
                 <span class="s2">&quot;message via the &#39;msg&#39; argument!&quot;</span>

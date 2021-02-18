@@ -229,27 +229,25 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
-<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Patch</span>
-<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span><span class="p">,</span> <span class="n">patches</span>
 <span class="kn">from</span> <span class="nn">sbi.inference.posteriors.direct_posterior</span> <span class="kn">import</span> <span class="n">DirectPosterior</span>
 <span class="kn">from</span> <span class="nn">sbi.utils</span> <span class="kn">import</span> <span class="n">BoxUniform</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.uniform</span> <span class="kn">import</span> <span class="n">Uniform</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperBuffer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.plotting.utils</span> <span class="kn">import</span> <span class="n">draw_sep_cbar</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_types_equal</span><span class="p">,</span> <span class="n">is_iterable</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
 
-<div class="viewcode-block" id="render_distr_evo"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.render_distr_evo">[docs]</a><span class="k">def</span> <span class="nf">render_distr_evo</span><span class="p">(</span>
+<div class="viewcode-block" id="draw_distr_evolution"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.draw_distr_evolution">[docs]</a><span class="k">def</span> <span class="nf">draw_distr_evolution</span><span class="p">(</span>
     <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
     <span class="n">distributions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Distribution</span><span class="p">],</span>
     <span class="n">x_grid_limits</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span>
@@ -279,7 +277,8 @@
 <span class="sd">    :param cmap_name: name of the color map, e.g. &#39;inferno&#39;, &#39;RdBu&#39;, or &#39;viridis&#39;</span>
 <span class="sd">    :param alpha: transparency (alpha-value) for the std area</span>
 <span class="sd">    :param show_legend: flag if the legend entry should be printed, set to True when using multiple subplots</span>
-<span class="sd">    :param title: title displayed above the figure, set to None to suppress the title</span>
+<span class="sd">    :param title: title displayed above the (sub)figure, empty string triggers the default title, set to `None` to</span>
+<span class="sd">                  suppress the title</span>
 <span class="sd">    :return: handle to the resulting figure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_all_types_equal</span><span class="p">(</span><span class="n">distributions</span><span class="p">):</span>
@@ -312,25 +311,163 @@
     <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="draw_posterior_distr"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.draw_posterior_distr">[docs]</a><span class="k">def</span> <span class="nf">draw_posterior_distr</span><span class="p">(</span>
+<div class="viewcode-block" id="draw_posterior_distr_1d"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.draw_posterior_distr_1d">[docs]</a><span class="k">def</span> <span class="nf">draw_posterior_distr_1d</span><span class="p">(</span>
+    <span class="n">ax</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
+    <span class="n">posterior</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">]],</span>
+    <span class="n">observations_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">dim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+    <span class="n">prior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoxUniform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">env_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DomainRandWrapperBuffer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">show_prior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">grid_bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">grid_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">normalize_posterior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">rescale_posterior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">x_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">y_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">transposed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate an posterior obtained from the sbi package on a 2-dim grid of domain parameter values.</span>
+<span class="sd">    Draw every posterior, conditioned on the real-world observation, in a separate plot.</span>
+
+<span class="sd">    :param ax: axis of the figure to plot on</span>
+<span class="sd">    :param posterior: sbi `DirectPosterior` object to evaluate</span>
+<span class="sd">    :param observations_real: observations from the real-world rollouts a.k.a. $x_o$</span>
+<span class="sd">    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).</span>
+<span class="sd">                       Here this mapping must not have more than 2 elements since we can&#39;t plot more.</span>
+<span class="sd">    :param dim: selected dimension</span>
+<span class="sd">    :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to</span>
+<span class="sd">                     infer the ground truth domain parameters</span>
+<span class="sd">    :param prior: distribution used by sbi as a prior</span>
+<span class="sd">    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions</span>
+<span class="sd">    :param show_prior: display the prior as a box</span>
+<span class="sd">    :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set</span>
+<span class="sd">                        arbitrarily, but should contain the prior if `show_prior` is `True`.</span>
+<span class="sd">    :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
+<span class="sd">    :param rescale_posterior: if `True` scale the probabilities to [0, 1], also if `True` the `normalize_posterior`</span>
+<span class="sd">                              argument is ignored since it would be a wasted computation</span>
+<span class="sd">    :param grid_res: number of elements on one axis of the evaluation gird</span>
+<span class="sd">    :param x_label: label for the x-axis, use domain parameter name by default</span>
+<span class="sd">    :param y_label: label for the y-axis, use domain parameter name by default</span>
+<span class="sd">    :param plot_kwargs: keyword arguments forwarded to pyplot&#39;s `plot()` function for the posterior distribution</span>
+<span class="sd">    :return: handle to the resulting figure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">condition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;When the posteriors has more than 1 dimension, i.e. there is more than 1 domain &quot;</span>
+            <span class="s2">&quot;parameter, a condition has to be provided.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">condition</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">dp_mapping</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid_res</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">num_obs_r</span><span class="p">,</span> <span class="n">dim_obs_r</span> <span class="o">=</span> <span class="n">observations_real</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Set defaults which can be overwritten by passing plot_kwargs</span>
+    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">plot_kwargs</span><span class="p">])</span>
+
+    <span class="c1"># Reconstruct ground truth domain parameters if they exist</span>
+    <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">):</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">env_real</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">)])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">):</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">dp_gt</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Create the grid</span>
+    <span class="k">if</span> <span class="n">grid_bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grid_bounds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">grid_bounds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">grid_bounds</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid_bounds</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="n">BoxUniform</span><span class="p">):</span>
+        <span class="n">grid_bounds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">prior</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">dim</span><span class="p">],</span> <span class="n">prior</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">upper_bound</span><span class="p">[</span><span class="n">dim</span><span class="p">]]])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="n">grid_x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">grid_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">grid_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">grid_res</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">condition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># No condition is necessary since dim(posterior) = dim(grid) = 1</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">grid_x</span><span class="p">)</span>  <span class="c1"># TODO test</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># A condition is necessary since dim(posterior) &gt; dim(grid) = 1</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">grid</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_x</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)))</span>
+
+    <span class="c1"># Compute the posterior probabilities</span>
+    <span class="k">if</span> <span class="n">rescale_posterior</span><span class="p">:</span>
+        <span class="n">log_prob</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">posterior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observations_real</span><span class="p">])</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_prob</span> <span class="o">-</span> <span class="n">log_prob</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log_prob</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">posterior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">normalize_posterior</span><span class="p">)</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observations_real</span><span class="p">])</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_prob</span><span class="p">)</span>
+
+    <span class="c1"># Plot the posterior</span>
+    <span class="k">if</span> <span class="n">transposed</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">grid_x</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">margins</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>  <span class="c1"># in units of axis span</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid_x</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">prob</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">margins</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>  <span class="c1"># in units of axis span</span>
+
+    <span class="c1"># Plot the ground truth parameters</span>
+    <span class="k">if</span> <span class="n">dp_gt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">transposed</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">dp_gt</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">xmin</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xmax</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;firebrick&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">dp_gt</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">ymin</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ymax</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;firebrick&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot bounding box for the prior</span>
+    <span class="k">if</span> <span class="n">prior</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">show_prior</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>  <span class="c1"># TODO</span>
+        <span class="c1"># _draw_prior(ax, prior, dim, dim)</span>
+
+    <span class="c1"># Annotate</span>
+    <span class="k">if</span> <span class="n">transposed</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">dp_mapping</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">x_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">x_label</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;log $p(</span><span class="si">{</span><span class="n">dp_mapping</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="si">}</span><span class="s2"> | \tau^</span><span class="se">{{</span><span class="s2">obs</span><span class="se">}}</span><span class="s2">_</span><span class="se">{{</span><span class="s2">1:</span><span class="si">{</span><span class="n">num_obs_r</span><span class="si">}</span><span class="se">}}</span><span class="s2">)$&quot;</span> <span class="k">if</span> <span class="n">y_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">y_label</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">dp_mapping</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">x_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">x_label</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;log $p(</span><span class="si">{</span><span class="n">dp_mapping</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="si">}</span><span class="s2"> | \tau^</span><span class="se">{{</span><span class="s2">obs</span><span class="se">}}</span><span class="s2">_</span><span class="se">{{</span><span class="s2">1:</span><span class="si">{</span><span class="n">num_obs_r</span><span class="si">}</span><span class="se">}}</span><span class="s2">)$&quot;</span> <span class="k">if</span> <span class="n">y_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">y_label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_data_ratio</span><span class="p">(),</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="draw_posterior_distr_2d"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.draw_posterior_distr_2d">[docs]</a><span class="k">def</span> <span class="nf">draw_posterior_distr_2d</span><span class="p">(</span>
     <span class="n">axs</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
     <span class="n">plot_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">posterior</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">]],</span>
     <span class="n">observations_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
     <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
-    <span class="n">env_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DomainRandWrapperBuffer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dims</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">prior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoxUniform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">env_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DomainRandWrapperBuffer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">condition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">show_prior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">grid_bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">grid_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">grid_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">normalize_posterior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">rescale_posterior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">x_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">y_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">add_sep_colorbar</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">contourf_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">scatter_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+    <span class="n">colorbar_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]]]:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate an posterior obtained from the sbi package on a 2-dim grid of domain parameter values.</span>
 <span class="sd">    Draw every posterior, conditioned on the real-world observation, in a separate plot.</span>
@@ -344,20 +481,27 @@
 <span class="sd">    :param observations_real: observations from the real-world rollouts a.k.a. $x_o$</span>
 <span class="sd">    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).</span>
 <span class="sd">                       Here this mapping must not have more than 2 elements since we can&#39;t plot more.</span>
+<span class="sd">    :param prior: distribution used by sbi as a prior</span>
 <span class="sd">    :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to</span>
 <span class="sd">                     infer the ground truth domain parameters</span>
-<span class="sd">    :param prior: distribution used by sbi as a prior</span>
 <span class="sd">    :param dims: selected dimensions</span>
 <span class="sd">    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions</span>
 <span class="sd">    :param show_prior: display the prior as a box</span>
 <span class="sd">    :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set</span>
 <span class="sd">                        arbitrarily, but should contain the prior if `show_prior` is `True`.</span>
 <span class="sd">    :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
+<span class="sd">    :param rescale_posterior: if `True` scale the probabilities to [0, 1], also if `True` the `normalize_posterior`</span>
+<span class="sd">                              argument is ignored since it would be a wasted computation</span>
 <span class="sd">    :param grid_res: number of elements on one axis of the evaluation gird</span>
 <span class="sd">    :param x_label: label for the x-axis, use domain parameter name by default</span>
 <span class="sd">    :param y_label: label for the y-axis, use domain parameter name by default</span>
+<span class="sd">    :param title: title displayed above the (sub)figure, empty string triggers the default title, set to `None` to</span>
+<span class="sd">                  suppress the title</span>
+<span class="sd">    :param add_sep_colorbar: if `True`, add a color bar in a separate figure, else no color bar is plotted</span>
 <span class="sd">    :param contourf_kwargs: keyword arguments forwarded to pyplot&#39;s `contourf()` function for the posterior distribution</span>
 <span class="sd">    :param scatter_kwargs: keyword arguments forwarded to pyplot&#39;s `scatter()` function for the true parameter</span>
+<span class="sd">    :param colorbar_kwargs: keyword arguments forwarded to `draw_sep_cbar()` function, possible kwargs: `ax_cb`,</span>
+<span class="sd">                            `colorbar_label`, `colorbar_orientation`, `fig_size`, `cmap`, `norm`, num_major_ticks_cb`</span>
 <span class="sd">    :return: handle to the resulting figure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">num_obs_r</span><span class="p">,</span> <span class="n">dim_obs_r</span> <span class="o">=</span> <span class="n">observations_real</span><span class="o">.</span><span class="n">shape</span>
@@ -379,7 +523,7 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DirectPosterior</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;evolution&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">is_iterable</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">DirectPosterior</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Iterable</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DirectPosterior</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;So far, this function does not support plotting 1-dim posteriors.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">condition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -395,6 +539,7 @@
     <span class="c1"># Set defaults which can be overwritten by passing plot_kwargs</span>
     <span class="n">contourf_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">contourf_kwargs</span><span class="p">])</span>
     <span class="n">scatter_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(</span><span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">scatter_kwargs</span><span class="p">])</span>
+    <span class="n">colorbar_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(</span><span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">colorbar_kwargs</span><span class="p">])</span>
 
     <span class="c1"># Reconstruct ground truth domain parameters if they exist</span>
     <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">):</span>
@@ -436,10 +581,15 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">grid_res</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">grid_res</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)))</span>
 
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;joint&quot;</span><span class="p">:</span>
         <span class="c1"># Compute the posterior probabilities</span>
-        <span class="n">log_prob</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">posterior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">normalize_posterior</span><span class="p">)</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observations_real</span><span class="p">])</span>
-        <span class="n">prob</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_prob</span> <span class="o">-</span> <span class="n">log_prob</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># scale the probabilities to [0, 1]</span>
+        <span class="k">if</span> <span class="n">rescale_posterior</span><span class="p">:</span>
+            <span class="n">log_prob</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">posterior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observations_real</span><span class="p">])</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_prob</span> <span class="o">-</span> <span class="n">log_prob</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log_prob</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">posterior</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">normalize_posterior</span><span class="p">)</span> <span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">observations_real</span><span class="p">])</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_prob</span><span class="p">)</span>
         <span class="n">prob</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
         <span class="c1"># Plot the posterior</span>
@@ -459,8 +609,8 @@
         <span class="n">axs</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">axs</span><span class="o">.</span><span class="n">get_data_ratio</span><span class="p">(),</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
         <span class="n">axs</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">dp_mapping</span><span class="p">[</span><span class="n">dim_x</span><span class="p">]</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">x_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">x_label</span><span class="p">)</span>
         <span class="n">axs</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">dp_mapping</span><span class="p">[</span><span class="n">dim_y</span><span class="p">]</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">y_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">y_label</span><span class="p">)</span>
-        <span class="n">axs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_obs_r</span><span class="si">}</span><span class="s2"> observations&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Joint Probability of the Latest Posterior for All Real World Observation&quot;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_obs_r</span><span class="si">}</span><span class="s2"> observations&quot;</span> <span class="k">if</span> <span class="n">title</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">title</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Joint Probability of the Latest Posterior for All Real World Observation&quot;</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">plot_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;separate&quot;</span><span class="p">,</span> <span class="s2">&quot;evolution&quot;</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">axs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -491,11 +641,14 @@
                 <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">dp_mapping</span><span class="p">[</span><span class="n">dim_y</span><span class="p">]</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">y_label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">y_label</span><span class="p">)</span>
                 <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;observation </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;separate&quot;</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Probability of the Latest Posterior for Every Real World Observation&quot;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Probability of the Latest Posterior for Every Real World Observation&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Probability of the Current Posterior for Every Real World Observation&quot;</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s2">&quot;Probability of the Current Posterior for Every Real World Observation&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span></div>
+    <span class="c1"># Add a separate colorbar if desired</span>
+    <span class="n">fig_cb</span> <span class="o">=</span> <span class="n">draw_sep_cbar</span><span class="p">(</span><span class="o">**</span><span class="n">colorbar_kwargs</span><span class="p">)</span> <span class="k">if</span> <span class="n">add_sep_colorbar</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">fig_cb</span></div>
 
 
 <span class="k">def</span> <span class="nf">_draw_prior</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="n">dim_x</span><span class="p">,</span> <span class="n">dim_y</span><span class="p">):</span>
@@ -508,67 +661,57 @@
     <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="draw_pair_plot"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.draw_pair_plot">[docs]</a><span class="k">def</span> <span class="nf">draw_pair_plot</span><span class="p">(</span>
-    <span class="n">axs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">],</span>
-    <span class="n">dist</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Distribution</span><span class="p">],</span>
+<div class="viewcode-block" id="draw_posterior_distr_pairwise"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.distribution.draw_posterior_distr_pairwise">[docs]</a><span class="k">def</span> <span class="nf">draw_posterior_distr_pairwise</span><span class="p">(</span>
+    <span class="n">axs</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
+    <span class="n">posterior</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Distribution</span><span class="p">],</span>
+    <span class="n">observations_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
     <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">condition</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">observation_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">prior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BoxUniform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">grid_bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">prior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BoxUniform</span><span class="p">,</span> <span class="n">Uniform</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">env_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DomainRandWrapperBuffer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">grid_res</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="n">num_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-    <span class="n">reference_samples</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">true_params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="c1"># density_type: str = &quot;histogram&quot;, # TODO: different plotting possibilities for the marginal plots</span>
-    <span class="n">plot_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;classical&quot;</span><span class="p">,</span>
-    <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">marginal_layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;classical&quot;</span><span class="p">,</span>
+    <span class="n">normalize_posterior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">rescale_posterior</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">x_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">y_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">use_sns</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plotting utility which compares all random variables of a multivariate probability distribution with dim &gt; 2.</span>
-
+    <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param axs: axis (joint) or axes (separately) of the figure to plot on</span>
-<span class="sd">    :param plot_type: Choose between &#39;classical&#39; for plotting the marginals on the diagonal (more dense), and</span>
-<span class="sd">                      &#39;top-right-posterior&#39; plotting the marginals on the side (better comparison)</span>
-<span class="sd">    :param dist: distribution from which should be sampled from.</span>
+<span class="sd">    :param posterior: sbi `DirectPosterior` object to evaluate</span>
+<span class="sd">    :param observations_real: observations from the real-world rollouts a.k.a. $x_o$</span>
 <span class="sd">    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).</span>
 <span class="sd">                       Here this mapping must not have more than 2 elements since we can&#39;t plot more.</span>
 <span class="sd">    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions</span>
-<span class="sd">    :param observation_real: in case dist is a DirectPosterior, the single observation serves as the condition i.e.</span>
-<span class="sd">                             $p(\theta | tau = observation_{real})$</span>
-<span class="sd">    :param prior: distribution used by sbi as a prior, should be BoxUniform and hence sets the plot borders</span>
-<span class="sd">    :param grid_bounds: manually set the plot borders. Either prior or grid_bounds is required.</span>
-<span class="sd">    :param grid_res: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set</span>
-<span class="sd">                        arbitrarily, but should contain the prior if `show_prior` is `True`.</span>
-<span class="sd">    :param num_samples: Number of samples used for the</span>
-<span class="sd">    :param reference_samples: if reference samples are available, plot them as well.</span>
-<span class="sd">    :param true_params: if true params are available, plot them as well.</span>
-<span class="sd">    :param normalize_posterior: Choose to normalize the posterior. If False the density plots are scaled by a constant.</span>
+<span class="sd">    :param prior: distribution used by sbi as a prior</span>
+<span class="sd">    :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to</span>
+<span class="sd">                     infer the ground truth domain parameters</span>
+<span class="sd">    :param dims: selected dimensions</span>
+<span class="sd">    :param grid_res: number of elements on one axis of the evaluation gird</span>
+<span class="sd">    :param marginal_layout: choose between `classical` for plotting the marginals on the diagonal (more dense), and</span>
+<span class="sd">                           `top-right-posterior` plotting the marginals on the side (better comparison)</span>
+<span class="sd">    :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
+<span class="sd">    :param rescale_posterior: if `True` scale the probabilities to [0, 1], also if `True` the `normalize_posterior`</span>
+<span class="sd">                              argument is ignored since it would be a wasted computation</span>
 <span class="sd">    :param x_labels: list of labels for the x-axis, use domain parameter name by default</span>
 <span class="sd">    :param y_labels: list of labels for the y-axis, use domain parameter name by default</span>
-<span class="sd">    :param use_sns: use the default pair plot from seaborn. Only for reference and will be removed later</span>
-<span class="sd">    :param legend: if true a legend will be plotted.</span>
 <span class="sd">    :return: figure containing the pair plot</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: check if given axis size is appropriate. Otherwise send message and generate your own size</span>
-    <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;classical&quot;</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;classical&quot;</span><span class="p">:</span>
         <span class="n">plot_size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
         <span class="n">plot_size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;classical or top-right-corner&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">marginal_layout</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;classical or top-right-corner&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">axs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">plot_size</span>
 
-    <span class="k">if</span> <span class="n">axs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generated new plot with </span><span class="si">{</span><span class="n">plot_size</span><span class="si">}</span><span class="s2"> shaped sub-plots.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
-        <span class="n">tight_layout</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">legend</span> <span class="k">else</span> <span class="kc">True</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="o">*</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="n">tight_layout</span><span class="p">)</span>
+    <span class="n">c_palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">()</span>  <span class="c1"># TODO</span>
 
-    <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;classical&quot;</span><span class="p">:</span>
+    <span class="c1"># Generate the indices for the subplots</span>
+    <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;classical&quot;</span><span class="p">:</span>
         <span class="n">plot_size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">))</span>
         <span class="c1"># Set the indices for the marginal plots</span>
         <span class="n">idcs_marginal</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">plot_size</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
@@ -594,269 +737,84 @@
             <span class="k">if</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">idcs_skipp</span>
         <span class="p">]</span>
 
-    <span class="n">c_palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">()</span>
-
-    <span class="c1"># Set the grid boundaries</span>
-    <span class="n">num_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">grid_bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">grid_bounds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">grid_bounds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">grid_bounds</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_params</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid_bounds</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">num_params</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="n">BoxUniform</span><span class="p">):</span>
-        <span class="n">grid_bounds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-            <span class="p">[[</span><span class="n">prior</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">dim_i</span><span class="p">],</span> <span class="n">prior</span><span class="o">.</span><span class="n">support</span><span class="o">.</span><span class="n">upper_bound</span><span class="p">[</span><span class="n">dim_i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">dim_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_params</span><span class="p">)]</span>
-        <span class="p">)</span>
+    <span class="c1"># Reconstruct ground truth domain parameters if they exist</span>
+    <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">):</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">env_real</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">)])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">):</span>
+        <span class="c1"># TODO test (not urgent)</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">dp_gt</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="n">dp_gt</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">log_prob_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">observation_real</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
-                <span class="n">given</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DirectPosterior requires an observation for sampling &quot;</span> <span class="s2">&quot;and evaluating the log-probability&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dist</span><span class="o">.</span><span class="n">set_default_x</span><span class="p">(</span><span class="n">observation_real</span><span class="p">)</span>
-            <span class="n">log_prob_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;norm_posterior&quot;</span><span class="p">:</span> <span class="n">normalize_posterior</span><span class="p">}</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Distribution</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">observation_real</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Given real observation is not used with the given distribution.</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="s2">&quot;Check if this is intended!&quot;</span>
-            <span class="p">)</span>
-
-    <span class="c1">#  Draw num_samples samples from observation batch</span>
-    <span class="k">if</span> <span class="n">reference_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">perm</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">reference_samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">perm</span><span class="p">[:</span><span class="n">num_samples</span><span class="p">]</span>
-        <span class="n">reference_samples</span> <span class="o">=</span> <span class="n">reference_samples</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
-
-    <span class="c1"># Sample from the distribution</span>
-    <span class="n">samples</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span>
-
-    <span class="n">given_refernce</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">reference_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
-    <span class="n">given_true_params</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">true_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
-
-    <span class="c1"># Yehaa plot everything</span>
-    <span class="k">if</span> <span class="n">use_sns</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">samples</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_pair</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
-                <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
-                <span class="n">sam_j</span> <span class="o">=</span> <span class="n">j</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span>
-                <span class="n">sam_j</span> <span class="o">=</span> <span class="n">j</span>
-            <span class="c1"># Plot the points</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
-            <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span> <span class="n">sam_j</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span> <span class="n">sam_i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="c1"># axs[i, j].scatter(samples[:, j], samples[:, i], c=&quot;blue&quot;)</span>
-            <span class="k">if</span> <span class="n">reference_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">reference_samples</span><span class="p">[:,</span> <span class="n">sam_j</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">reference_samples</span><span class="p">[:,</span> <span class="n">sam_i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                <span class="c1"># axs[i, j].scatter(reference_samples[:, j], reference_samples[:, i], c=&quot;black&quot;)</span>
-            <span class="k">if</span> <span class="n">true_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">true_params</span><span class="p">[</span><span class="n">sam_j</span><span class="p">],</span> <span class="n">true_params</span><span class="p">[</span><span class="n">sam_i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
-
-        <span class="n">rotate</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># initialize invalid</span>
-        <span class="n">sam_i</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># initialize invalid</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_marginal</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">sam_i</span> <span class="o">=</span> <span class="n">j</span>
-                    <span class="n">rotate</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">):</span>
-                    <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
-                    <span class="n">rotate</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span>
-                <span class="n">rotate</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
-
-            <span class="c1"># Generate 1-dim grid</span>
-            <span class="n">grid_x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">grid_bounds</span><span class="p">[</span><span class="n">sam_i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">grid_bounds</span><span class="p">[</span><span class="n">sam_i</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">grid_res</span><span class="p">)</span>  <span class="c1"># 1 2 3</span>
-            <span class="n">grid</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">grid</span><span class="p">[:,</span> <span class="n">sam_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_x</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)))</span>
-
-            <span class="c1"># TODO: add possibility to plot the density instead of the histogram</span>
-            <span class="c1"># calculate log_probs</span>
-            <span class="c1"># log_prob = dist.log_prob(grid, **log_prob_dict)</span>
-            <span class="c1"># prob = to.exp(log_prob)  # scale the probabilities to [0, 1]</span>
-            <span class="c1"># prob = prob.numpy()</span>
-            <span class="c1">#</span>
-            <span class="c1"># data = np.stack([grid_x.numpy(), prob])</span>
-            <span class="c1"># density plot of dimension i</span>
-            <span class="c1"># axs[i, j].plot(grid_x, prob)</span>
-            <span class="c1"># sns.kdeplot(data=data)</span>
-            <span class="c1"># num_bins = 100</span>
-            <span class="c1"># binwidth = (grid_bounds[i, 1] - grid_bounds[i, 0]) / num_bins</span>
-            <span class="c1"># bins = np.arange(-grid_bounds[i, 0], grid_bounds[i, 1] + binwidth, binwidth)</span>
-
-            <span class="k">if</span> <span class="n">rotate</span><span class="p">:</span>
-                <span class="c1"># Rotate the sub-plot</span>
-                <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span> <span class="n">sam_i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">given_refernce</span><span class="p">:</span>
-                    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">reference_samples</span><span class="p">[:,</span> <span class="n">sam_i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">given_true_params</span><span class="p">:</span>
-                    <span class="n">plt</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span>
-                        <span class="n">true_params</span><span class="p">[</span><span class="n">sam_i</span><span class="p">],</span>
-                        <span class="n">xmin</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
-                        <span class="n">xmax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
-                        <span class="n">colors</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                    <span class="p">)</span>
-                <span class="c1">#     axs[i, j].hlines(y=true_params[sam_i].item(), ymin=0.0, ymax=np.max(prob).item(), colors=&quot;green&quot;)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span> <span class="n">sam_i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="c1"># sns.distplot(samples[:, sam_i], rug=True, kde=False, color=c_palette[0], vertical=rotate)</span>
-                <span class="k">if</span> <span class="n">given_refernce</span><span class="p">:</span>
-                    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">reference_samples</span><span class="p">[:,</span> <span class="n">sam_i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-                <span class="c1"># Plot the true parameters if given:</span>
-                <span class="k">if</span> <span class="n">given_true_params</span><span class="p">:</span>
-                    <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span>
-                        <span class="n">true_params</span><span class="p">[</span><span class="n">sam_i</span><span class="p">],</span>
-                        <span class="n">ymin</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
-                        <span class="n">ymax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
-                        <span class="n">colors</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                    <span class="p">)</span>
-
-    <span class="c1"># Label all axis</span>
-    <span class="n">_labeling_pair_plot</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">plot_type</span><span class="p">,</span> <span class="n">dp_mapping</span><span class="p">,</span> <span class="n">plot_size</span><span class="p">,</span> <span class="n">idcs_pair</span><span class="p">,</span> <span class="n">idcs_skipp</span><span class="p">,</span> <span class="n">idcs_marginal</span><span class="p">,</span> <span class="n">x_labels</span><span class="p">,</span> <span class="n">y_labels</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">legend</span><span class="p">:</span>
-        <span class="n">_legend_pair_plot</span><span class="p">(</span>
-            <span class="n">axs</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="n">c_palette</span><span class="p">,</span> <span class="n">given_refernce</span><span class="o">=</span><span class="n">given_refernce</span><span class="p">,</span> <span class="n">given_true_samples</span><span class="o">=</span><span class="n">given_true_params</span>
-        <span class="p">)</span>
-    <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span></div>
-
-
-<span class="k">def</span> <span class="nf">_labeling_pair_plot</span><span class="p">(</span>
-    <span class="n">axs</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
-    <span class="n">plot_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>  <span class="c1"># TODO use values from dp_mapping as labels, and make the overridable using x_label</span>
-    <span class="n">plot_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="n">idcs_pair</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
-    <span class="n">idcs_skipp</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">idcs_marginal</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
-    <span class="n">x_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">y_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Helper function for labeling the pair plot &quot;&quot;&quot;</span>
+    <span class="c1"># Plot everything</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_pair</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
             <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">sam_j</span> <span class="o">=</span> <span class="n">j</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span>
-        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\xi_</span><span class="se">{{</span><span class="si">{</span><span class="n">sam_i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">y_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_labels</span><span class="p">[</span><span class="n">sam_i</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">plot_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\xi_</span><span class="se">{{</span><span class="si">{</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">x_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x_labels</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">plot_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">sam_j</span> <span class="o">=</span> <span class="n">j</span>
+        <span class="c1"># Plot the points</span>
+        <span class="n">draw_posterior_distr_2d</span><span class="p">(</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>
+            <span class="s2">&quot;joint&quot;</span><span class="p">,</span>
+            <span class="n">posterior</span><span class="p">,</span>
+            <span class="n">observations_real</span><span class="p">,</span>
+            <span class="n">dp_mapping</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">sam_j</span><span class="p">,</span> <span class="n">sam_i</span><span class="p">),</span>  <span class="c1"># TODO @Theo double-check (i think you got it wrong in the first place, check with labels)</span>
+            <span class="n">prior</span><span class="p">,</span>
+            <span class="n">env_real</span><span class="p">,</span>
+            <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">,</span>
+            <span class="n">grid_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="o">=</span><span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">show_prior</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">normalize_posterior</span><span class="o">=</span><span class="n">normalize_posterior</span><span class="p">,</span>
+            <span class="n">rescale_posterior</span><span class="o">=</span><span class="n">rescale_posterior</span><span class="p">,</span>
+            <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">y_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">add_sep_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="c1"># axs[i, j].set(xlim=(grid_bounds[j, 0], grid_bounds[j, 1]), ylim=(grid_bounds[i, 0], grid_bounds[i, 1]))</span>
-
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_skipp</span><span class="p">:</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">frame_on</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
-        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\xi_</span><span class="se">{{</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">y_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_labels</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="n">plot_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\xi_</span><span class="se">{{</span><span class="si">{</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">x_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x_labels</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
+    <span class="n">rotate</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># initialize invalid</span>
+    <span class="n">sam_i</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># initialize invalid</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_marginal</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">plot_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
-            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">!=</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\xi_</span><span class="se">{{</span><span class="si">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">y_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">y_labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">plot_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\xi_</span><span class="se">{{</span><span class="si">{</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="se">}}</span><span class="s2">$&quot;</span> <span class="k">if</span> <span class="n">x_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x_labels</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;top-right-posterior&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sam_i</span> <span class="o">=</span> <span class="n">j</span>
+                <span class="n">rotate</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">):</span>
+                <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">rotate</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$p(\xi_</span><span class="se">{{</span><span class="s2">i</span><span class="se">}}</span><span class="s2"> | \tau^</span><span class="se">{{</span><span class="s2">obs</span><span class="se">}}</span><span class="s2">)$&quot;</span><span class="p">)</span>
-                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
-            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="n">plot_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="n">plot_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$p(\xi_</span><span class="se">{{</span><span class="s2">i</span><span class="se">}}</span><span class="s2"> | \tau^</span><span class="se">{{</span><span class="s2">obs</span><span class="se">}}</span><span class="s2">)$&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+            <span class="n">sam_i</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="n">rotate</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">align_xlabels</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">plot_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">align_ylabels</span><span class="p">(</span><span class="n">axs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># Plot the marginal distribution</span>
+        <span class="n">draw_posterior_distr_1d</span><span class="p">(</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>
+            <span class="n">posterior</span><span class="p">,</span>
+            <span class="n">observations_real</span><span class="p">,</span>
+            <span class="n">dp_mapping</span><span class="p">,</span>
+            <span class="n">sam_i</span><span class="p">,</span>  <span class="c1"># TODO @Theo double-check</span>
+            <span class="n">prior</span><span class="p">,</span>
+            <span class="n">env_real</span><span class="p">,</span>
+            <span class="n">condition</span><span class="p">,</span>
+            <span class="n">show_prior</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">grid_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">grid_res</span><span class="o">=</span><span class="n">grid_res</span><span class="p">,</span>
+            <span class="n">x_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># TODO do labeling here</span>
+            <span class="n">y_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># TODO do labeling here</span>
+            <span class="n">normalize_posterior</span><span class="o">=</span><span class="n">normalize_posterior</span><span class="p">,</span>
+            <span class="n">transposed</span><span class="o">=</span><span class="n">rotate</span><span class="p">,</span>
+        <span class="p">)</span>
 
-
-<span class="k">def</span> <span class="nf">_legend_pair_plot</span><span class="p">(</span>
-    <span class="n">axs</span><span class="p">,</span>
-    <span class="n">handles</span><span class="p">,</span>
-    <span class="n">colormap</span><span class="p">,</span>
-    <span class="n">given_refernce</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">given_true_samples</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Helper function to plot the legend. This solution is copied from seaborn pairplot&quot;&quot;&quot;</span>
-    <span class="c1"># design handles</span>
-    <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="c1"># Line2D([0], [0], color=colormap[0], lw=4, label=&#39;approx. posterior&#39;),</span>
-        <span class="c1"># Line2D([0], [0], markerfacecolor=colormap[0], color=&#39;w&#39;, marker=&#39;o&#39;, label=&#39;approx. posterior&#39;)</span>
-        <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colormap</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx. posterior&quot;</span><span class="p">)</span>
-    <span class="p">]</span>
-    <span class="k">if</span> <span class="n">given_refernce</span><span class="p">:</span>
-        <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colormap</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ref. samples&quot;</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">given_true_samples</span><span class="p">:</span>
-        <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colormap</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ground truth&quot;</span><span class="p">))</span>
-
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
-    <span class="n">figlegend</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;center right&quot;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-    <span class="c1"># Draw the plot to set the bounding boxes correctly</span>
-    <span class="n">_draw_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
-
-    <span class="c1"># Calculate and set the new width of the figure so the legend fits</span>
-    <span class="n">legend_width</span> <span class="o">=</span> <span class="n">figlegend</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">()</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">fig</span><span class="o">.</span><span class="n">dpi</span>
-    <span class="n">fig_width</span><span class="p">,</span> <span class="n">fig_height</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_size_inches</span><span class="p">()</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">fig_width</span> <span class="o">+</span> <span class="n">legend_width</span><span class="p">,</span> <span class="n">fig_height</span><span class="p">)</span>
-
-    <span class="c1"># Draw the plot again to get the new transformations</span>
-    <span class="n">_draw_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
-
-    <span class="c1"># # Now calculate how much space we need on the right side</span>
-    <span class="n">legend_width</span> <span class="o">=</span> <span class="n">figlegend</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">()</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">fig</span><span class="o">.</span><span class="n">dpi</span>
-    <span class="n">space_needed</span> <span class="o">=</span> <span class="n">legend_width</span> <span class="o">/</span> <span class="p">(</span><span class="n">fig_width</span> <span class="o">+</span> <span class="n">legend_width</span><span class="p">)</span>
-
-    <span class="n">margin</span> <span class="o">=</span> <span class="mf">0.01</span>
-    <span class="c1"># # margin = .04 if self._margin_titles else .01</span>
-    <span class="n">space_needed</span> <span class="o">=</span> <span class="n">margin</span> <span class="o">+</span> <span class="n">space_needed</span>
-    <span class="n">right</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">space_needed</span>
-
-    <span class="c1"># Place the subplot axes to give space for the legend</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">right</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">rect</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">_draw_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Force draw of a matplotlib figure, accounting for back-compat. Also drawn from seaborn pairplot&quot;&quot;&quot;</span>
-    <span class="c1"># See https://github.com/matplotlib/matplotlib/issues/19197 for context</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">fig</span><span class="o">.</span><span class="n">stale</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">())</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
+    <span class="c1"># Label all axis</span>
+    <span class="c1"># _labeling_pair_plot(</span>
+    <span class="c1">#     axs, marginal_layout, dp_mapping, plot_size, idcs_pair, idcs_skipp, idcs_marginal, x_labels, y_labels</span>
+    <span class="c1"># )</span>
+    <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

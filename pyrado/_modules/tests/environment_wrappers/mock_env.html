@@ -325,7 +325,7 @@
         <span class="c1"># Return next observation</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="MockEnv.step"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
+<div class="viewcode-block" id="MockEnv.step"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="c1"># Store as last action as list, to simplify asserts</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">last_act</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>

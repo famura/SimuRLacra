@@ -293,11 +293,16 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="test_create_rew_only"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_create_rew_only">[docs]</a><span class="k">def</span> <span class="nf">test_create_rew_only</span><span class="p">():</span>
-    <span class="c1"># Don&#39;t require additional fields for this test</span>
-    <span class="n">StepSequence</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="viewcode-block" id="test_additional_required"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_additional_required">[docs]</a><span class="k">def</span> <span class="nf">test_additional_required</span><span class="p">():</span>
+    <span class="c1"># Require the states as additional field for this test</span>
+    <span class="n">StepSequence</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;states&quot;</span><span class="p">}</span>
 
-    <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span><span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span> <span class="n">data_format</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="c1"># This should fail</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span><span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span>
+
+    <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span><span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
     <span class="k">assert</span> <span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">rewards</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewards</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
@@ -468,7 +473,13 @@
     <span class="c1"># Don&#39;t require additional fields for this test</span>
     <span class="n">StepSequence</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span><span class="n">rewards</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">rollout_bounds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">data_format</span><span class="o">=</span><span class="n">data_format</span><span class="p">)</span>
+    <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
+        <span class="n">rewards</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+        <span class="n">rollout_bounds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+        <span class="n">observations</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">21</span><span class="p">),</span>
+        <span class="n">actions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+        <span class="n">data_format</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># There should be four parts</span>
     <span class="k">assert</span> <span class="n">ro</span><span class="o">.</span><span class="n">rollout_count</span> <span class="o">==</span> <span class="mi">4</span>
@@ -587,7 +598,9 @@
 <span class="k">def</span> <span class="nf">test_namedtuple</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
     <span class="n">hid_nt</span> <span class="o">=</span> <span class="p">[</span><span class="n">DummyNT</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">)</span> <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">]</span>
 
-    <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span><span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="n">hid_nt</span><span class="p">,</span> <span class="n">data_format</span><span class="o">=</span><span class="n">data_format</span><span class="p">)</span>
+    <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
+        <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="n">hid_nt</span><span class="p">,</span> <span class="n">data_format</span><span class="o">=</span><span class="n">data_format</span>
+    <span class="p">)</span>
 
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">hidden</span><span class="p">,</span> <span class="n">DummyNT</span><span class="p">)</span>
 

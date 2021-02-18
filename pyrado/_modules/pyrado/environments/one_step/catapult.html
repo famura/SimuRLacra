@@ -354,7 +354,8 @@
 
         <span class="c1"># Reset the state</span>
         <span class="k">if</span> <span class="n">init_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># zero</span>
+            <span class="c1"># Sample from the init state space</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">init_state</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span><span class="p">)</span>
@@ -372,7 +373,7 @@
         <span class="c1"># Return perfect observation</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CatapultSim.step"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
+<div class="viewcode-block" id="CatapultSim.step"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="c1"># Apply actuator limits</span>
         <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit_act</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>  <span class="c1"># dummy for CatapultSim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span> <span class="o">=</span> <span class="n">act</span>  <span class="c1"># just for the render function</span>

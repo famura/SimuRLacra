@@ -327,7 +327,7 @@
         <span class="c1"># Return perfect observation</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RosenSim.step"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.rosenbrock.RosenSim.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
+<div class="viewcode-block" id="RosenSim.step"><a class="viewcode-back" href="../../../../environments.one_step.html#pyrado.environments.one_step.rosenbrock.RosenSim.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="c1"># Apply actuator limits</span>
         <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit_act</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
 

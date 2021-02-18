@@ -295,6 +295,7 @@
         <span class="n">rewards</span><span class="o">=</span><span class="n">ro_policy</span><span class="o">.</span><span class="n">rewards</span><span class="p">,</span>  <span class="c1"># don&#39;t care but necessary</span>
         <span class="n">hidden_states</span><span class="o">=</span><span class="n">hidden_states</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">ro_expl</span><span class="o">.</span><span class="n">torch</span><span class="p">()</span>
 
     <span class="c1"># Compute action statistics and the ground truth</span>
     <span class="n">actstats</span> <span class="o">=</span> <span class="n">compute_action_statistics</span><span class="p">(</span><span class="n">ro_expl</span><span class="p">,</span> <span class="n">explstrat</span><span class="p">)</span>
@@ -354,8 +355,8 @@
 
 
 <div class="viewcode-block" id="test_get_grad_via_torch"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_utils.test_get_grad_via_torch">[docs]</a><span class="k">def</span> <span class="nf">test_get_grad_via_torch</span><span class="p">():</span>
-    <span class="k">def</span> <span class="nf">to_fcn</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="k">def</span> <span class="nf">to_fcn</span><span class="p">(</span><span class="n">x_np</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x_np</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">3</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">grad_np</span> <span class="o">=</span> <span class="n">get_grad_via_torch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">to_fcn</span><span class="p">)</span>

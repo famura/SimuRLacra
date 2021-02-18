@@ -242,7 +242,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">pyrado.plotting.heatmap</span> <span class="kn">import</span> <span class="n">render_heatmap</span>
+<span class="kn">from</span> <span class="nn">pyrado.plotting.heatmap</span> <span class="kn">import</span> <span class="n">draw_heatmap</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
 
@@ -294,7 +294,7 @@
 <span class="sd">    :param alpha: transparency (alpha-value) for the std area</span>
 <span class="sd">    :param color: color (e.g. &#39;k&#39; for black), `None` invokes the default behavior</span>
 <span class="sd">    :param curve_label: label for the mean curve (1D plot only)</span>
-<span class="sd">    :param heatmap_cmap: color map forwarded to `render_heatmap()` (2D plot only), `None` to use Pyrado&#39;s default</span>
+<span class="sd">    :param heatmap_cmap: color map forwarded to `draw_heatmap()` (2D plot only), `None` to use Pyrado&#39;s default</span>
 <span class="sd">    :param show_legend_posterior: flag if the legend entry for the posterior should be printed (affects mean and std)</span>
 <span class="sd">    :param show_legend_std: flag if a legend entry for the std area should be printed</span>
 <span class="sd">    :param show_legend_data: flag if a legend entry for the individual data points should be printed</span>
@@ -478,7 +478,7 @@
 
             <span class="c1"># Plot a 2D image</span>
             <span class="n">df_mean</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">mean_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">x0_grid_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">x1_grid_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-            <span class="n">render_heatmap</span><span class="p">(</span>
+            <span class="n">draw_heatmap</span><span class="p">(</span>
                 <span class="n">df_mean</span><span class="p">,</span>
                 <span class="n">ax_hm</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">ax_cb</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -496,7 +496,7 @@
             <span class="p">)</span>
 
             <span class="n">df_std</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">std_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">x0_grid_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">x1_grid_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-            <span class="n">render_heatmap</span><span class="p">(</span>
+            <span class="n">draw_heatmap</span><span class="p">(</span>
                 <span class="n">df_std</span><span class="p">,</span>
                 <span class="n">ax_hm</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                 <span class="n">ax_cb</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>

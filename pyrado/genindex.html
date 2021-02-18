@@ -277,6 +277,8 @@
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.action_dist_at">(UniformActNoiseExplStrat method)</a>
 </li>
       </ul></li>
+      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.actions">actions (StepSequence attribute)</a>
+</li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.ActionStatistics">ActionStatistics (class in pyrado.algorithms.utils)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.action_normalization.ActNormWrapper">ActNormWrapper (class in pyrado.environment_wrappers.action_normalization)</a>
@@ -849,8 +851,6 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.desired_space.DesSpaceTask">DesSpaceTask (class in pyrado.tasks.desired_space)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask">DesStateTask (class in pyrado.tasks.desired_state)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.device">device() (DiagNormalNoise property)</a>
@@ -865,6 +865,8 @@
         <li><a href="exploration.html#pyrado.exploration.uniform_noise.UniformNoise.device">(UniformNoise property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise">DiagNormalNoise (class in pyrado.exploration.normal_noise)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.dict_arraylike_to_float">dict_arraylike_to_float() (in module pyrado.utils.data_types)</a>
@@ -927,17 +929,25 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.curve.draw_curve_from_data">draw_curve_from_data() (in module pyrado.plotting.curve)</a>
 </li>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_distr_evolution">draw_distr_evolution() (in module pyrado.plotting.distribution)</a>
+</li>
       <li><a href="plotting.html#pyrado.plotting.curve.draw_dts">draw_dts() (in module pyrado.plotting.curve)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_pair_plot">draw_pair_plot() (in module pyrado.plotting.distribution)</a>
+      <li><a href="plotting.html#pyrado.plotting.heatmap.draw_heatmap">draw_heatmap() (in module pyrado.plotting.heatmap)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.policy_parameters.draw_policy_params">draw_policy_params() (in module pyrado.plotting.policy_parameters)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr">draw_posterior_distr() (in module pyrado.plotting.distribution)</a>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_1d">draw_posterior_distr_1d() (in module pyrado.plotting.distribution)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_2d">draw_posterior_distr_2d() (in module pyrado.plotting.distribution)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_pairwise">draw_posterior_distr_pairwise() (in module pyrado.plotting.distribution)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_potentials">draw_potentials() (in module pyrado.plotting.rollout_based)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_rewards">draw_rewards() (in module pyrado.plotting.rollout_based)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.utils.draw_sep_cbar">draw_sep_cbar() (in module pyrado.plotting.utils)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.rollout_based.draw_statistic_across_rollouts">draw_statistic_across_rollouts() (in module pyrado.plotting.rollout_based)</a>
 </li>
@@ -1279,11 +1289,11 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_noise.GaussianObsNoiseWrapper">GaussianObsNoiseWrapper (class in pyrado.environment_wrappers.observation_noise)</a>
 </li>
-      <li><a href="sampling.html#pyrado.sampling.utils.gen_batch_idcs">gen_batch_idcs() (in module pyrado.sampling.utils)</a>
-</li>
       <li><a href="sampling.html#pyrado.sampling.utils.gen_ordered_batch_idcs">gen_ordered_batch_idcs() (in module pyrado.sampling.utils)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.utils.gen_ordered_batches">gen_ordered_batches() (in module pyrado.sampling.utils)</a>
+</li>
+      <li><a href="sampling.html#pyrado.sampling.utils.gen_shuffled_batch_idcs">gen_shuffled_batch_idcs() (in module pyrado.sampling.utils)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.get">get() (IterationTracker method)</a>
 </li>
@@ -2620,6 +2630,8 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.obs_space">(SVPGAdapter property)</a>
 </li>
       </ul></li>
+      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.observations">observations (StepSequence attribute)</a>
+</li>
       <li><a href="environments.html#pyrado.environments.base.Env.observe">observe() (Env method)</a>
 
       <ul>
@@ -4310,10 +4322,6 @@
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.render">(SimPyEnv method)</a>
 </li>
       </ul></li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.render_distr_evo">render_distr_evo() (in module pyrado.plotting.distribution)</a>
-</li>
-      <li><a href="plotting.html#pyrado.plotting.heatmap.render_heatmap">render_heatmap() (in module pyrado.plotting.heatmap)</a>
-</li>
       <li><a href="plotting.html#pyrado.plotting.gaussian_process.render_singletask_gp">render_singletask_gp() (in module pyrado.plotting.gaussian_process)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.RenderMode">RenderMode (class in pyrado.utils.data_types)</a>
@@ -4519,6 +4527,8 @@
 </li>
       </ul></li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator">RewardGenerator (class in pyrado.algorithms.meta.adr)</a>
+</li>
+      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.rewards">rewards (StepSequence attribute)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.RewFcn">RewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
@@ -5168,6 +5178,8 @@
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_add_data">test_add_data() (in module tests.test_rollout_result)</a>
 </li>
+      <li><a href="tests.html#tests.test_rollout_result.test_additional_required">test_additional_required() (in module tests.test_rollout_result)</a>
+</li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_adr_reward_generator">test_adr_reward_generator() (in module tests.algorithms.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_advantage_calculation">test_advantage_calculation() (in module tests.test_rollout_result)</a>
@@ -5225,8 +5237,6 @@
       <li><a href="tests.html#tests.test_utils.test_cov">test_cov() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_create">test_create() (in module tests.test_rollout_result)</a>
-</li>
-      <li><a href="tests.html#tests.test_rollout_result.test_create_rew_only">test_create_rew_only() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_step_logger.test_csv_logger_serializer">test_csv_logger_serializer() (in module tests.test_step_logger)</a>
 </li>
@@ -5333,8 +5343,6 @@
       <li><a href="tests.html#tests.test_utils.test_normalize">test_normalize() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">test_order_act_noise_act_norm() (in module tests.environment_wrappers.test_action_noise)</a>
-</li>
-      <li><a href="tests.html#tests.test_plotting.test_pair_plot">test_pair_plot() (in module tests.test_plotting)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_parallel_rollout_sampler">test_parallel_rollout_sampler() (in module tests.test_sampling)</a>
 </li>

@@ -344,7 +344,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">meas</span>
 
-<div class="viewcode-block" id="QuanserReal.step"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
+<div class="viewcode-block" id="QuanserReal.step"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">act_raw</span><span class="o">=</span><span class="n">act</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
         <span class="c1"># Current reward depending on the (measurable) state and the current (unlimited) action</span>

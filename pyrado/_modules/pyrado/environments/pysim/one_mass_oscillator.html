@@ -244,7 +244,7 @@
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">StepSequence</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_shuffled_batch_idcs</span>
 
 
 <div class="viewcode-block" id="OneMassOscillatorSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim">[docs]</a><span class="k">class</span> <span class="nc">OneMassOscillatorSim</span><span class="p">(</span><span class="n">SimPyEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
@@ -467,7 +467,7 @@
 
             <span class="c1"># Mini-batch optimization</span>
             <span class="k">for</span> <span class="n">idcs</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-                <span class="n">gen_batch_idcs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets_cat</span><span class="p">)),</span>
+                <span class="n">gen_shuffled_batch_idcs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets_cat</span><span class="p">)),</span>
                 <span class="n">total</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">targets_cat</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
                 <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;batches&quot;</span><span class="p">,</span>
