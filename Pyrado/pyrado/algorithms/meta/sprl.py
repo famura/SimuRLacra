@@ -117,7 +117,6 @@ class SPRL(Algorithm):
         :param env: Environment wrapped in a DomainRandWrapper.
         :param subroutine: Algorithm which performs the policy/value-function optimization.
         :param kl_constraints_ub: Upper bound for the KL-divergence
-        :param alpha_function_offset: Alpha function offset
         """
         if not isinstance(subroutine, Algorithm):
             raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
