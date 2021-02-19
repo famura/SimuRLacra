@@ -355,7 +355,7 @@ class PendulumVis(PandaVis):
         return Task.cont
 
 
-class QbbVis(PandaVis):
+class QuanserBallBalancerVis(PandaVis):
     def __init__(self, env: SimEnv):
         """
         Constructor
@@ -373,7 +373,7 @@ class QbbVis(PandaVis):
         r_ball = self._env.domain_param["r_ball"]
         d_plate = 0.01
         r_pole = 0.005
-        l_pole = 0.01
+        l_pole = 0.02
 
         # Scaling of the animation so the camera can move smoothly
         self._scale = 1 / l_pole
@@ -411,14 +411,14 @@ class QbbVis(PandaVis):
             l_plate * 0.5 * self._scale,
             d_plate * 0.5 * self._scale,
         )  # modified according to Blender object
-        self.plate.setColor(0, 0, 1, 0)  # blue
+        self.plate.setColor(0, 1, 1, 0)  # blue
         self.plate.reparentTo(self.render)
 
         # Joint
         self.joint = self.loader.loadModel(
             pathlib.Path(self.dir, "models/ball.egg")
         )
-        self.joint.setPos(0, r_pole * self._scale, -d_plate * self._scale)
+        self.joint.setPos(0, 0, -d_plate * self._scale)
         self.joint.setScale(
             r_pole * self._scale,
             r_pole * self._scale,
@@ -431,14 +431,22 @@ class QbbVis(PandaVis):
         self.pole = self.loader.loadModel(
             pathlib.Path(self.dir, "models/cylinder_center_top.egg")
         )
-        self.pole.setPos(0, r_pole * self._scale, -d_plate * self._scale)
+        self.pole.setPos(0, 0, -d_plate * self._scale)
         self.pole.setScale(
             r_pole * self._scale,
             r_pole * self._scale,
-            2 * l_pole * self._scale,
+            l_pole * self._scale,
         )
         self.pole.setColor(0, 0, 0)  # black
         self.pole.reparentTo(self.render)
+
+        # Null_plate
+        self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        self.null_plate.setPos(0, 0, - 2.5 * l_pole * self._scale)
+        self.null_plate.setScale(l_plate * 1.1 * 0.5 * self._scale, l_plate * 1.1 * 0.5 * self._scale, d_plate / 20.0 * self._scale)
+        self.null_plate.setTransparency(1)
+        self.null_plate.setColorScale(0, 0, 0, 0.5)
+        self.null_plate.reparentTo(self.render)
 
         # Configure trace
         self.trace = LineSegs()
