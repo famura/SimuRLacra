@@ -217,7 +217,7 @@ def load_experiment(
         # Policy
         policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
 
-    elif algo.name == 'sprl': 
+    elif algo.name == "sprl":
         # Environment
         env = pyrado.load(None, "env", "pkl", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
