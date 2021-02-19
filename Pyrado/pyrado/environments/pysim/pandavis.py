@@ -189,6 +189,7 @@ class QQubeVis(PandaVis):
         self.trace.setThickness(3)
         self.trace.setColor(0, 0, 0)
         self.lines = self.render.attachNewNode("Lines")
+        self.last_pos = None
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
@@ -213,7 +214,7 @@ class QQubeVis(PandaVis):
         self.pole.setR(al * 180 / np.pi)
 
         # Check if trace initialized
-        if hasattr(self, "last_pos"):
+        if self.last_pos:
             # Set starting point of new line
             self.trace.moveTo(self.last_pos)
 
@@ -258,6 +259,7 @@ class QQubeVis(PandaVis):
     def reset(self):
         # Remove the trace
         self.lines.getChildren().detach()
+        self.last_pos = None
 
 
 class PendulumVis(PandaVis):
