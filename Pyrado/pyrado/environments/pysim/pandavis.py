@@ -93,7 +93,7 @@ class QQubeVis(PandaVis):
         pole_radius = 0.0045
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / (Lp / 20)
+        self._scale = 20/Lp
 
         # Set window title
         self.windowProperties.setTitle("Quanser Qube")
@@ -279,7 +279,7 @@ class PendulumVis(PandaVis):
         r_pole = 0.05
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / (l_pole / 10)
+        self._scale = 10 / l_pole 
 
         # Set window title
         self.windowProperties.setTitle("Pendulum")
@@ -376,7 +376,7 @@ class QuanserBallBalancerVis(PandaVis):
         l_pole = 0.02
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / l_pole
+        self._scale = 1 / l_plate
 
         # Set window title
         self.windowProperties.setTitle("Quanser Ball Balancer")
@@ -566,7 +566,7 @@ class QuanserBallBalancerVis(PandaVis):
         self.last_pos = None
 
 
-class BobVis(PandaVis):
+class BallOnBeamVis(PandaVis):
     def __init__(self, env: SimEnv):
         """
         Constructor
@@ -669,6 +669,10 @@ class BobVis(PandaVis):
 
 
 class QCartPoleVis(PandaVis):
+    """
+    Visualization for QCartPoleSim
+    """
+    
     def __init__(self, env: SimEnv):
         """
         Constructor
@@ -688,7 +692,7 @@ class QCartPoleVis(PandaVis):
         r_pole, r_rail = 0.01, 0.005
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / (l_cart / 10)
+        self._scale = 10 / l_pole
 
         # Set window title
         self.windowProperties.setTitle("Quanser Cartpole")
@@ -826,7 +830,7 @@ class OmoVis(PandaVis):
         c = 0.1 * self._env.obs_space.bound_up[0]
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / (c / 5)
+        self._scale = 5/c 
 
         # Set window title
         self.windowProperties.setTitle("One Mass Oscilator")
@@ -851,7 +855,7 @@ class OmoVis(PandaVis):
         self.ground.setColor(0, 1, 0, 0)  # green
         self.ground.reparentTo(self.render)
 
-        # Mass
+        # Object
         self.mass = self.loader.loadModel(
             pathlib.Path(self.dir, "models/box.egg")
         )
@@ -868,7 +872,7 @@ class OmoVis(PandaVis):
         self.mass.setColor(0, 0, 1, 0)  # blue
         self.mass.reparentTo(self.render)
 
-        # Des
+        # Desired state
         self.des = self.loader.loadModel(
             pathlib.Path(self.dir, "models/box.egg")
         )
@@ -940,9 +944,7 @@ class OmoVis(PandaVis):
         )
 
         # Update scale of force
-        capped_act = np.sign(self._env._curr_act) * max(
-            0.1 * np.abs(self._env._curr_act), 0.3
-        )
+        capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
         self.force.setSx(capped_act / 10.0 * self._scale)
 
         # Update scale of spring
@@ -964,14 +966,10 @@ class OmoVis(PandaVis):
 
         return Task.cont
 
-    def reset(self):  # delete?
+    def reset(self):
         c = 0.1 * self._env.obs_space.bound_up[0]
 
-        self.mass.setPos(
-            self._env.state[0] * self._scale,
-            0,
-            c / 2.0 * self._scale,
-        )
+        self.mass.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
         self.des.setPos(
             self._env._task.state_des[0] * self._scale,
             0,
