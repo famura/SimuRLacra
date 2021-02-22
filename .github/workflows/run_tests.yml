@@ -46,3 +46,4 @@ jobs:
           coverageLocations: |
             ${{ github.workspace }}/coverage.xml:cobertura
           debug: true
+          prefix: /home/user/SimuRLacra/

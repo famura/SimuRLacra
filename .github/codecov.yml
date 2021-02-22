@@ -16,3 +16,8 @@ comment:
     - "master"
 github_checks:
   annotations: false
+coverage:
+  status:
+    project:
+      default:
+        informational: true
