@@ -6,7 +6,6 @@ var classRcs_1_1ISSBoxLifting =
     [ "getDim", "classRcs_1_1ISSBoxLifting.html#add2602a6bd601f8457963e7565a7d1c9", null ],
     [ "getMinMax", "classRcs_1_1ISSBoxLifting.html#a15d59a36c08186a533f88f9479961936", null ],
     [ "getNames", "classRcs_1_1ISSBoxLifting.html#aaed0af042c48994d50ecf5caf6a31fba", null ],
-    [ "box", "classRcs_1_1ISSBoxLifting.html#a972b1096940c71afd182ed850444a6bf", null ],
     [ "fixedInitState", "classRcs_1_1ISSBoxLifting.html#ac0307844b0ea1d18d05f903813d5c13c", null ],
     [ "link2R", "classRcs_1_1ISSBoxLifting.html#a17db243b8af45d135685789e0144abef", null ],
     [ "platform", "classRcs_1_1ISSBoxLifting.html#a15a44c84807812f410f6fc3e0820f3b4", null ],

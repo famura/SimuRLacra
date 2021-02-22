@@ -1,6 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"classRcs_1_1ECQuanserQube.html#ad0ce4cd60e99d85cfdd2e0b4e430b9f6":[2,0,0,35,4],
 "classRcs_1_1ECQuanserQube.html#ad980ceb8dd951b7d2f399b3f1a22697e":[2,0,0,35,6],
 "classRcs_1_1ECQuanserQube.html#af6d6b21c46bee19d497f0266865b763f":[2,0,0,35,0],
 "classRcs_1_1ECTargetTracking.html":[2,0,0,36],
@@ -90,15 +89,14 @@ var NAVTREEINDEX3 =
 "classRcs_1_1ISSBoxFlipping.html#abd48a076c58cc9c13089238c614532ff":[2,0,0,44,6],
 "classRcs_1_1ISSBoxLifting.html":[2,0,0,45],
 "classRcs_1_1ISSBoxLifting.html#a0cc79dfb103e3baf3b379dcbd7541120":[2,0,0,45,1],
-"classRcs_1_1ISSBoxLifting.html#a15a44c84807812f410f6fc3e0820f3b4":[2,0,0,45,9],
+"classRcs_1_1ISSBoxLifting.html#a15a44c84807812f410f6fc3e0820f3b4":[2,0,0,45,8],
 "classRcs_1_1ISSBoxLifting.html#a15d59a36c08186a533f88f9479961936":[2,0,0,45,4],
-"classRcs_1_1ISSBoxLifting.html#a17db243b8af45d135685789e0144abef":[2,0,0,45,8],
+"classRcs_1_1ISSBoxLifting.html#a17db243b8af45d135685789e0144abef":[2,0,0,45,7],
 "classRcs_1_1ISSBoxLifting.html#a34a06cc964f0392e06034aee8ddf5ce5":[2,0,0,45,2],
-"classRcs_1_1ISSBoxLifting.html#a69808f7bec2369f151461250f05adfa2":[2,0,0,45,10],
+"classRcs_1_1ISSBoxLifting.html#a69808f7bec2369f151461250f05adfa2":[2,0,0,45,9],
 "classRcs_1_1ISSBoxLifting.html#a8a8ff46579a101739479f9dccdf2b5c0":[2,0,0,45,0],
-"classRcs_1_1ISSBoxLifting.html#a972b1096940c71afd182ed850444a6bf":[2,0,0,45,6],
 "classRcs_1_1ISSBoxLifting.html#aaed0af042c48994d50ecf5caf6a31fba":[2,0,0,45,5],
-"classRcs_1_1ISSBoxLifting.html#ac0307844b0ea1d18d05f903813d5c13c":[2,0,0,45,7],
+"classRcs_1_1ISSBoxLifting.html#ac0307844b0ea1d18d05f903813d5c13c":[2,0,0,45,6],
 "classRcs_1_1ISSBoxLifting.html#add2602a6bd601f8457963e7565a7d1c9":[2,0,0,45,3],
 "classRcs_1_1ISSBoxShelving.html":[2,0,0,46],
 "classRcs_1_1ISSBoxShelving.html#a081e7b898e86753802a7ba6c564dafb4":[2,0,0,46,0],
@@ -249,5 +247,7 @@ var NAVTREEINDEX3 =
 "classRcs_1_1OMDynamicalSystemGoalDistance.html":[2,0,0,65],
 "classRcs_1_1OMDynamicalSystemGoalDistance.html#a028f25f383159dfc806a1856edebfbac":[2,0,0,65,1],
 "classRcs_1_1OMDynamicalSystemGoalDistance.html#a1a35f0688b52e8ee36843cddc80a11b6":[2,0,0,65,9],
-"classRcs_1_1OMDynamicalSystemGoalDistance.html#a207b9c3c1be05c3acc5695bcde93aebc":[2,0,0,65,5]
+"classRcs_1_1OMDynamicalSystemGoalDistance.html#a207b9c3c1be05c3acc5695bcde93aebc":[2,0,0,65,5],
+"classRcs_1_1OMDynamicalSystemGoalDistance.html#a2e6c80b29a246949a6bbb45a465430fd":[2,0,0,65,8],
+"classRcs_1_1OMDynamicalSystemGoalDistance.html#a3feb9f539e814b7778ec9adc34b2319b":[2,0,0,65,3]
 };

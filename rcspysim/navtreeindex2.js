@@ -1,6 +1,5 @@
 var NAVTREEINDEX2 =
 {
-"classRcs_1_1AMPlateAngPos.html#a1fe7820c6bb39af188f3495179186569":[2,0,0,11,4],
 "classRcs_1_1AMPlateAngPos.html#a4489afda03c87c74bbae0fba067f94df":[2,0,0,11,3],
 "classRcs_1_1AMPlateAngPos.html#a5d0fc34e589dc55b2808ef3f3fe919fa":[2,0,0,11,7],
 "classRcs_1_1AMPlateAngPos.html#a63e656873447e2990e8534d7a844616e":[2,0,0,11,1],
@@ -249,5 +248,6 @@ var NAVTREEINDEX2 =
 "classRcs_1_1ECQuanserQube.html#a068e77383c453c43f3a8f547ddb94e3e":[2,0,0,35,1],
 "classRcs_1_1ECQuanserQube.html#a4a1d5e8077c10b8f3a163155c0cefa08":[2,0,0,35,2],
 "classRcs_1_1ECQuanserQube.html#a672c8aff2858ef1f26fc484f4dcafb87":[2,0,0,35,5],
-"classRcs_1_1ECQuanserQube.html#a6aa91d93786683a99b2cbcaab81849f9":[2,0,0,35,3]
+"classRcs_1_1ECQuanserQube.html#a6aa91d93786683a99b2cbcaab81849f9":[2,0,0,35,3],
+"classRcs_1_1ECQuanserQube.html#ad0ce4cd60e99d85cfdd2e0b4e430b9f6":[2,0,0,35,4]
 };
