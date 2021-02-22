@@ -36,7 +36,6 @@ from typing import Optional
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.pysim.pandavis import QCartPoleVis
 from pyrado.environments.quanser import max_act_qcp
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
@@ -202,19 +201,14 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self.state[:2] += self.state[2:] * self._dt  # next position
 
     def _init_anim(self):
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import QCartPoleVis
         # Create instance of PandaVis
         self._visualization = QCartPoleVis(self)
         # States that visualization is running
         self._initialized = True
         # Calculate if and how many frames are dropped
-        self._skipFrames = (1 / 60) / self._dt
-
-    def _update_anim(self):
-        # Calls the update_anim function of the base class
-        super(QCartPoleSim, self)._update_anim()
-
-    def _reset_anim(self):
-        self._visualization.reset()
+        self._skip_frames = 1 / 60 / self._dt
 
 
 class QCartPoleStabSim(QCartPoleSim, Serializable):

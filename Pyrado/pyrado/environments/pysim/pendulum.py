@@ -36,7 +36,6 @@ from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
-from pyrado.environments.pysim.pandavis import PendulumVis
 
 class PendulumSim(SimPyEnv, Serializable):
     """ Under-actuated inverted pendulum environment similar to the one from OpenAI Gym """
@@ -92,14 +91,12 @@ class PendulumSim(SimPyEnv, Serializable):
         self.state[0] += self.state[1] * self._dt  # next position
 
     def _init_anim(self):
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import PendulumVis
         # Create instance of PandaVis
         self._visualization = PendulumVis(self)
         # States that visualization is running
         self._initialized = True
         # Calculate if and how many frames are dropped
-        self._skipFrames = (1 / 60) / self._dt
-
-    def _update_anim(self):
-        # Calls the update_anim function of the base class
-        super(PendulumSim, self)._update_anim()
+        self._skip_frames = 1 / 60 / self._dt
 

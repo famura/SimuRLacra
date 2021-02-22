@@ -31,7 +31,6 @@ import numpy as np
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.pysim.pandavis import OmoVis
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
@@ -115,19 +114,14 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         self.state = self.state + state_dot * self._dt  # next state
 
     def _init_anim(self):
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import OneMassOscillatorVis
         # Create instance of PandaVis
-        self._visualization = OmoVis(self)
+        self._visualization = OneMassOscillatorVis(self)
         # States that visualization is running
         self._initialized = True
         # Calculate if and how many frames are dropped
-        self._skipFrames = (1 / 60) / self._dt
-
-    def _update_anim(self):
-        # Calls the update_anim function of the base class
-        super(OneMassOscillatorSim, self)._update_anim()
-
-    def _reset_anim(self):
-        self._visualization.reset()
+        self._skip_frames = 1 / 60 / self._dt
 
 
 class OneMassOscillatorDyn(Serializable):

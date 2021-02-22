@@ -30,7 +30,6 @@ import numpy as np
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.pysim.pandavis import BobVis
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.spaces.compound import CompoundSpace
@@ -129,20 +128,15 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         self.state[2:] += np.array([x_ddot, a_ddot]) * self._dt  # next velocity
         self.state[:2] += self.state[2:] * self._dt  # next position
 
-    def _reset_anim(self):
-        pass
-
     def _init_anim(self):
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import BallOnBeamVis
         # Create instance of PandaVis
-        self._visualization = BobVis(self)
+        self._visualization = BallOnBeamVis(self)
         # States that visualization is running
         self._initialized = True
         # Calculate if and how many frames are dropped
-        self._skipFrames = (1 / 60) / self._dt
-
-    def _update_anim(self):
-        # Calls the update_anim function of the base class
-        super(BallOnBeamSim, self)._update_anim()
+        self._skip_frames = 1 / 60 / self._dt
 
 
 class BallOnBeamDiscSim(BallOnBeamSim, Serializable):

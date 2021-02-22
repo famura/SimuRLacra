@@ -60,6 +60,13 @@ class PandaVis(ShowBase):
         self.text.setTextColor(0, 0, 0, 1)
         self.textNodePath.setScale(0.07)
 
+        # Configure trace
+        self.trace = LineSegs()
+        self.trace.setThickness(3)
+        self.trace.setColor(0, 0, 0)
+        self.lines = self.render.attachNewNode("Lines")
+        self.last_pos = None
+
     def update(self, task):
         """
         Updates the visualization with every call.
@@ -74,6 +81,22 @@ class PandaVis(ShowBase):
         Resets the the visualization to a certain state, so that in can be run again.
         """
         pass
+
+    def draw_trace(self, point):
+        # Check if trace initialized
+        if self.last_pos:
+            # Set starting point of new line
+            self.trace.moveTo(self.last_pos)
+
+        # Draw line to that point
+        self.trace.drawTo(point)
+
+        # Save last position of pen
+        self.last_pos = point
+
+        # Show drawing
+        self.trace_np = NodePath(self.trace.create())
+        self.trace_np.reparentTo(self.lines)
 
 
 class QQubeVis(PandaVis):
@@ -184,13 +207,6 @@ class QQubeVis(PandaVis):
         self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
-        # Configure trace
-        self.trace = LineSegs()
-        self.trace.setThickness(3)
-        self.trace.setColor(0, 0, 0)
-        self.lines = self.render.attachNewNode("Lines")
-        self.last_pos = None
-
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
@@ -213,28 +229,16 @@ class QQubeVis(PandaVis):
         # Update rotation of pole
         self.pole.setR(al * 180 / np.pi)
 
-        # Check if trace initialized
-        if self.last_pos:
-            # Set starting point of new line
-            self.trace.moveTo(self.last_pos)
-
         # Get position of pole
         self.pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
         self.current_pos = LVecBase3f(
             self.pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
             self.pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
-            self.pole_pos[2] - 2 * Lp * np.cos(al) * self._scale,
-        )
+            self.pole_pos[2] - 2 * Lp * np.cos(al) * self._scale)
+
         # Draw line to that point
-        self.trace.drawTo(self.current_pos)
-
-        # Save last position of pen
-        self.last_pos = self.current_pos
-
-        # Show drawing
-        self.trace_np = NodePath(self.trace.create())
-        self.trace_np.reparentTo(self.lines)
+        self.draw_trace(self.current_pos)
 
         # Update displayed text
         self.text.setText(
@@ -355,7 +359,7 @@ class PendulumVis(PandaVis):
         return Task.cont
 
 
-class QuanserBallBalancerVis(PandaVis):
+class QBallBalancerVis(PandaVis):
     def __init__(self, env: SimEnv):
         """
         Constructor
@@ -448,13 +452,6 @@ class QuanserBallBalancerVis(PandaVis):
         self.null_plate.setColorScale(0, 0, 0, 0.5)
         self.null_plate.reparentTo(self.render)
 
-        # Configure trace
-        self.trace = LineSegs()
-        self.trace.setThickness(3)
-        self.trace.setColor(1, 1, 1)  # white
-        self.lines = self.render.attachNewNode("Lines")
-        self.last_pos = None
-
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
@@ -513,18 +510,8 @@ class QuanserBallBalancerVis(PandaVis):
         )
         self.ball.setPos(_current_pos)
 
-        if self.last_pos:
-            self.trace.moveTo(self.last_pos)
-
         # Draw line to that point
-        self.trace.drawTo(_current_pos)
-
-        # Save last position of pen
-        self.last_pos = _current_pos
-
-        # Show drawing
-        self.trace_np = NodePath(self.trace.create())
-        self.trace_np.reparentTo(self.lines)
+        self.draw_trace(_current_pos)
 
         # Update displayed text
         self.text.setText(
@@ -816,7 +803,7 @@ class QCartPoleVis(PandaVis):
         pass
 
 
-class OmoVis(PandaVis):
+class OneMassOscillatorVis(PandaVis):
     def __init__(self, env: SimEnv):
         """
         Constructor

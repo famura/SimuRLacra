@@ -35,7 +35,6 @@ from init_args_serializer.serializable import Serializable
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.pysim.pandavis import QbbVis
 from pyrado.environments.quanser import max_act_qbb
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.polar import Polar2DPosVelSpace
@@ -322,19 +321,14 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         self.plate_angs += np.array([a_dot, b_dot]) * self._dt  # just for debugging when simplified dynamics
 
     def _init_anim(self):
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import QBallBalancerVis
         # Create instance of PandaVis
-        self._visualization = QbbVis(self)
+        self._visualization = QBallBalancerVis(self)
         # States that visualization is running
         self._initialized = True
         # Calculate if and how many frames are dropped
-        self._skipFrames = (1 / 60) / self._dt
-
-    def _update_anim(self):
-        # Calls the update_anim function of the base class
-        super(QBallBalancerSim, self)._update_anim()
-
-    def _reset_anim(self):
-        self._visualization.reset()
+        self._skip_frames = 1 / 60.0 / self._dt  # 60 Hz
 
 
 class QBallBalancerKin(Serializable):
