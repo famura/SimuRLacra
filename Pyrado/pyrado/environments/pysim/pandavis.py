@@ -78,11 +78,17 @@ class PandaVis(ShowBase):
 
     def reset(self):
         """
-        Resets the the visualization to a certain state, so that in can be run again.
+        Resets the the visualization to a certain state, so that in can be run again. Removes the trace.
         """
-        pass
+        self.lines.getChildren().detach()
+        self.last_pos = None
 
     def draw_trace(self, point):
+        """
+        Draws a line from the last point to the current point
+
+        :param point: Current position of pen. Needs 3 values.
+        """
         # Check if trace initialized
         if self.last_pos:
             # Set starting point of new line
@@ -99,7 +105,7 @@ class PandaVis(ShowBase):
         self.trace_np.reparentTo(self.lines)
 
 
-class QQubeVis(PandaVis):
+class BallOnBeamVis(PandaVis):
     def __init__(self, env: SimEnv):
         """
         Constructor
@@ -110,160 +116,245 @@ class QQubeVis(PandaVis):
 
         # Accessing variables of environment class
         self._env = env
-        Lr = self._env.domain_param["Lr"]
-        Lp = self._env.domain_param["Lp"]
-        arm_radius = 0.003
-        pole_radius = 0.0045
+        r_ball = self._env.domain_param["r_ball"]
+        l_beam = self._env.domain_param["l_beam"]
+        d_beam = self._env.domain_param["d_beam"]
+        x = float(self._env.state[0])  # ball position along the beam axis [m]
+        a = float(self._env.state[1])  # angle [rad]
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 20/Lp
+        self._scale = 1 / l_beam
 
         # Set window title
-        self.windowProperties.setTitle("Quanser Qube")
+        self.windowProperties.setTitle("Ball on Beam")
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(
-            -0.4 * self._scale,
-            -1.3 * self._scale,
-            0.4 * self._scale,
-        )
-        self.cam.setHpr(-20, -10, 0)
+        self.cam.setY(-3.0 * self._scale)
 
         # Set text properties
-        self.textNodePath.setPos(0.4, 0, -0.1)
+        self.textNodePath.setScale(0.07)
+        self.textNodePath.setPos(0.3, 0, -0.3)
 
-        # Box
-        self.box = self.loader.loadModel(
+        # Ball
+        self.ball = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/ball.egg")
+        )
+        self.ball.setColor(1, 0, 0, 0)  # red
+        self.ball.setScale(r_ball * self._scale)
+        self.ball.setPos(
+            x * self._scale,
+            0,
+            (d_beam / 2.0 + r_ball) * self._scale,
+        )
+        self.ball.reparentTo(self.render)
+
+        # Beam
+        self.beam = self.loader.loadModel(
             pathlib.Path(self.dir, "models/box.egg")
         )
-        self.box.setPos(0, 0.07 * self._scale, 0)
-        self.box.setScale(
-            0.09 * self._scale,
-            0.1 * self._scale,
-            0.09 * self._scale,
+        self.beam.setColor(0, 1, 0, 0)  # green
+        self.beam.setScale(
+            l_beam / 2 * self._scale,
+            d_beam * self._scale,
+            d_beam / 2 * self._scale,
         )
-        self.box.setColor(0.5, 0.5, 0.5)  # grey
-        self.box.reparentTo(self.render)
-
-        # Cylinder
-        self.cylinder = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_middle.egg")
-        )
-        self.cylinder.setScale(
-            0.005 * self._scale,
-            0.005 * self._scale,
-            0.03 * self._scale,
-        )
-        self.cylinder.setPos(0, 0.07 * self._scale, 0.12 * self._scale)
-        self.cylinder.setColor(0.5, 0.5, 0, 5)  # grey
-        self.cylinder.reparentTo(self.render)
-
-        # Joint 1
-        self.joint1 = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
-        )
-        self.joint1.setScale(0.005 * self._scale)
-        self.joint1.setPos(0.0, 0.07 * self._scale, 0.15 * self._scale)
-        self.joint1.reparentTo(self.render)
-
-        # Arm
-        self.arm = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_top.egg")
-        )
-        self.arm.setScale(
-            arm_radius * self._scale,
-            arm_radius * self._scale,
-            Lr * self._scale,
-        )
-        self.arm.setColor(0, 0, 1)  # blue
-        self.arm.setP(90)
-        self.arm.setPos(0, 0.07 * self._scale, 0.15 * self._scale)
-        self.arm.reparentTo(self.render)
-
-        # Joint 2
-        self.joint2 = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
-        )
-        self.joint2.setScale(pole_radius * self._scale)
-        self.joint2.setPos(
-            0.0,
-            (0.07 + 2 * Lr) * self._scale,
-            0.15 * self._scale,
-        )
-        self.joint2.setColor(0, 0, 0)  # black
-        self.joint2.wrtReparentTo(self.arm)
-
-        # Pole
-        self.pole = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_bottom.egg")
-        )
-        self.pole.setScale(
-            pole_radius * self._scale,
-            pole_radius * self._scale,
-            Lp * self._scale,
-        )
-        self.pole.setColor(1, 0, 0)  # red
-        self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
-        self.pole.wrtReparentTo(self.arm)
+        self.beam.setR(-a * 180 / np.pi)
+        self.beam.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
-    def update(self, task: Task):
+    def update(self, task):
+
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
-        Mr = self._env.domain_param["Mr"]
-        Mp = self._env.domain_param["Mp"]
-        Lr = float(self._env.domain_param["Lr"])
-        Lp = float(self._env.domain_param["Lp"])
-        km = self._env.domain_param["km"]
-        Rm = self._env.domain_param["Rm"]
-        Dr = self._env.domain_param["Dr"]
-        Dp = self._env.domain_param["Dp"]
-        th, al, _, _ = self._env.state
+        m_ball = self._env.domain_param["m_ball"]
+        r_ball = self._env.domain_param["r_ball"]
+        m_beam = self._env.domain_param["m_beam"]
+        l_beam = self._env.domain_param["l_beam"]
+        d_beam = self._env.domain_param["d_beam"]
+        ang_offset = self._env.domain_param["ang_offset"]
+        c_frict = self._env.domain_param["c_frict"]
+        x = float(self._env.state[0])  # ball position along the beam axis [m]
+        a = float(self._env.state[1])  # angle [rad]
 
-        # Update rotation of arm
-        self.arm.setH(th * 180 / np.pi - 180)
+        ball_pos = ((np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball)) * self._scale,
+                            0,
+                            (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball)) * self._scale)
+        # Update position of ball
+        self.ball.setPos(ball_pos)
 
-        # Update rotation of pole
-        self.pole.setR(al * 180 / np.pi)
+        # Draw trace
+        self.draw_trace(ball_pos)
 
-        # Get position of pole
-        self.pole_pos = self.pole.getPos(self.render)
-        # Calculate position of new point
-        self.current_pos = LVecBase3f(
-            self.pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
-            self.pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
-            self.pole_pos[2] - 2 * Lp * np.cos(al) * self._scale)
-
-        # Draw line to that point
-        self.draw_trace(self.current_pos)
+        # Update rotation of joint
+        self.beam.setR(-a * 180 / np.pi)
 
         # Update displayed text
         self.text.setText(
             f"""
-            theta: {self._env.state[0] * 180 / np.pi : 3.1f}
-            alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
-            dt: {self._env._dt :1.4f}
+            dt: {self._env._dt : 1.4f}
             g: {g : 1.3f}
-            Mr: {Mr : 1.4f}
-            Mp: {Mp : 1.4f}
-            Lr: {Lr : 1.4f}
-            Lp: {Lp : 1.4f}
-            Dr: {Dr : 1.7f}
-            Dp: {Dp : 1.7f}
-            Rm: {Rm : 1.3f}
-            km: {km : 1.4f}
+            m_ball: {m_ball: 1.2f}
+            r_ball: {r_ball : 1.3f}
+            m_beam: {m_beam : 1.2f}
+            l_beam: {l_beam : 1.2f}
+            d_beam: {d_beam : 1.2f}
+            c_frict: {c_frict : 1.3f}
+            ang_offset: {ang_offset : 1.3f}
             """
         )
 
         return Task.cont
 
-    def reset(self):
-        # Remove the trace
-        self.lines.getChildren().detach()
-        self.last_pos = None
+
+class OneMassOscillatorVis(PandaVis):
+    def __init__(self, env: SimEnv):
+        """
+        Constructor
+
+        :param env: environment to visualize
+        """
+        super().__init__()
+
+        # Accessing variables of environment class
+        self._env = env
+        c = 0.1 * self._env.obs_space.bound_up[0]
+
+        # Scaling of the animation so the camera can move smoothly
+        self._scale = 5/c
+
+        # Set window title
+        self.windowProperties.setTitle("One Mass Oscilator")
+        self.win.requestProperties(self.windowProperties)
+
+        # Set pov
+        self.cam.setY(-5 * self._scale)
+
+        # Set text properties
+        self.textNodePath.setPos(-1.4, 0, 0.9)
+
+        # Ground
+        self.ground = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/box.egg")
+        )
+        self.ground.setPos(0, 0, -0.02 * self._scale)
+        self.ground.setScale(
+            self._env.obs_space.bound_up[0] * self._scale,
+            1.5 * c * self._scale,
+            0.01 * self._scale,
+        )  # Scale modified according to Blender Object
+        self.ground.setColor(0, 1, 0, 0)  # green
+        self.ground.reparentTo(self.render)
+
+        # Object
+        self.mass = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/box.egg")
+        )
+        self.mass.setPos(
+            self._env.state[0] * self._scale,
+            0,
+            c / 2.0 * self._scale,
+        )
+        self.mass.setScale(
+            c * 0.5 * self._scale,
+            c * 0.5 * self._scale,
+            c * 0.5 * self._scale,
+        )  # multiplied by 0.5 since Blender object has length of 2
+        self.mass.setColor(0, 0, 1, 0)  # blue
+        self.mass.reparentTo(self.render)
+
+        # Desired state
+        self.des = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/box.egg")
+        )
+        self.des.setPos(
+            self._env._task.state_des[0] * self._scale,
+            0,
+            0.4 * c * self._scale,
+        )
+        self.des.setScale(
+            0.4 * c * self._scale,
+            0.4 * c * self._scale,
+            0.4 * c * self._scale,
+        )
+        self.des.setTransparency(1)
+        self.des.setColorScale(0, 1, 1, 0.5)
+        self.des.reparentTo(self.render)
+
+        # Force
+        self.force = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/arrow.egg")
+        )
+        self.force.setPos(
+            self._env.state[0] * self._scale,
+            0,
+            c / 2.0 * self._scale,
+        )
+        self.force.setScale(
+            0.1 * self._env._curr_act / 10.0 * self._scale,
+            0.1 * c * self._scale,
+            0.1 * c * self._scale,
+        )
+        self.force.setColor(1, 0, 0, 0)  # red
+        self.force.reparentTo(self.render)
+
+        # Spring
+        self.spring = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/spring.egg")
+        )
+        self.spring.setPos(0, 0, c / 2.0 * self._scale)
+        self.spring.setScale(
+            (self._env.state[0] - c / 2.0) / 7.3 * self._scale,
+            c / 6.0 * self._scale,
+            c / 6.0 * self._scale,
+        )  # scaling according to Blender object
+        self.spring.setColor(0, 0, 1, 0)  # blue
+        self.spring.reparentTo(self.render)
+
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
+        self.taskMgr.add(self.update, "update")
+
+    def update(self, task):
+
+        # Accessing the current parameter values
+        m = self._env.domain_param["m"]
+        k = self._env.domain_param["k"]
+        d = self._env.domain_param["d"]
+        c = 0.1 * self._env.obs_space.bound_up[0]
+
+        # Update position of mass
+        pos_mass = (self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
+        self.mass.setPos(pos_mass)
+        # And force
+        self.force.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
+
+        # Draw trace
+        self.draw_trace(pos_mass)
+
+        # Update scale of force
+        capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
+        self.force.setSx(capped_act / 10.0 * self._scale)
+
+        # Update scale of spring
+        self.spring.setSx(
+            (self._env.state[0] - c / 2.0) / 7.3 * self._scale
+        )  # scaling according to Blender object
+
+        # Update displayed text
+        self.text.setText(
+            f"""
+            mass_x: {self.mass.getX()}
+            spring_Sx: {self.spring.getSx()}
+            dt: {self._env.dt :1.4f}
+            m: {m : 1.3f}
+            k: {k : 2.2f}
+            d: {d : 1.3f}
+            """
+        )
+
+        return Task.cont
 
 
 class PendulumVis(PandaVis):
@@ -283,7 +374,7 @@ class PendulumVis(PandaVis):
         r_pole = 0.05
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 10 / l_pole 
+        self._scale = 10 / l_pole
 
         # Set window title
         self.windowProperties.setTitle("Pendulum")
@@ -338,6 +429,9 @@ class PendulumVis(PandaVis):
 
         # Update position and rotation of pole
         self.pole.setR(th * 180 / np.pi)
+
+        pen_pos = (2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
+        self.draw_trace(pen_pos)
 
         # Update displayed text
         self.text.setText(
@@ -497,21 +591,12 @@ class QBallBalancerVis(PandaVis):
         self.plate.setP(b_vp * 180 / np.pi)  # rotate Pitch axis
 
         # Update position of ball
-        _current_pos = (
-            x * np.cos(a_vp) * self._scale,
-            y * np.cos(b_vp) * self._scale,
-            (
-                r_ball
-                + x * np.sin(a_vp)
-                + y * np.sin(b_vp)
-                + np.cos(a_vp) * d_plate / 2.0
-            )
-            * self._scale,
-        )
-        self.ball.setPos(_current_pos)
+        ball_pos = (x * np.cos(a_vp) * self._scale, y * np.cos(b_vp) * self._scale,
+            (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0) * self._scale)
+        self.ball.setPos(ball_pos)
 
         # Draw line to that point
-        self.draw_trace(_current_pos)
+        self.draw_trace(ball_pos)
 
         # Update displayed text
         self.text.setText(
@@ -542,113 +627,6 @@ class QBallBalancerVis(PandaVis):
             V_thold_y_neg: {V_thold_y_neg : 2.3f}
             offset_th_x: {offset_th_x : 2.3f}
             offset_th_y: {offset_th_y : 2.3f}
-            """
-        )
-
-        return Task.cont
-
-    def reset(self):
-        # Remove the trace
-        self.lines.getChildren().detach()
-        self.last_pos = None
-
-
-class BallOnBeamVis(PandaVis):
-    def __init__(self, env: SimEnv):
-        """
-        Constructor
-
-        :param env: environment to visualize
-        """
-        super().__init__()
-
-        # Accessing variables of environment class
-        self._env = env
-        r_ball = self._env.domain_param["r_ball"]
-        l_beam = self._env.domain_param["l_beam"]
-        d_beam = self._env.domain_param["d_beam"]
-        x = float(self._env.state[0])  # ball position along the beam axis [m]
-        a = float(self._env.state[1])  # angle [rad]
-
-        # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / l_beam
-
-        # Set window title
-        self.windowProperties.setTitle("Ball on Beam")
-        self.win.requestProperties(self.windowProperties)
-
-        # Set pov
-        self.cam.setY(-3.0 * self._scale)
-
-        # Set text properties
-        self.textNodePath.setScale(0.07)
-        self.textNodePath.setPos(0.3, 0, -0.3)
-
-        # Ball
-        self.ball = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
-        )
-        self.ball.setColor(1, 0, 0, 0)  # red
-        self.ball.setScale(r_ball * self._scale)
-        self.ball.setPos(
-            x * self._scale,
-            0,
-            (d_beam / 2.0 + r_ball) * self._scale,
-        )
-        self.ball.reparentTo(self.render)
-
-        # Beam
-        self.beam = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
-        )
-        self.beam.setColor(0, 1, 0, 0)  # green
-        self.beam.setScale(
-            l_beam / 2 * self._scale,
-            d_beam * self._scale,
-            d_beam / 2 * self._scale,
-        )
-        self.beam.setR(-a * 180 / np.pi)
-        self.beam.reparentTo(self.render)
-
-        # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update")
-
-    def update(self, task):
-
-        # Accessing the current parameter values
-        g = self._env.domain_param["g"]
-        m_ball = self._env.domain_param["m_ball"]
-        r_ball = self._env.domain_param["r_ball"]
-        m_beam = self._env.domain_param["m_beam"]
-        l_beam = self._env.domain_param["l_beam"]
-        d_beam = self._env.domain_param["d_beam"]
-        ang_offset = self._env.domain_param["ang_offset"]
-        c_frict = self._env.domain_param["c_frict"]
-        x = float(self._env.state[0])  # ball position along the beam axis [m]
-        a = float(self._env.state[1])  # angle [rad]
-
-        # Update position of ball
-        self.ball.setPos(
-            (np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball)) * self._scale,
-            0,
-            (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball)) * self._scale,
-        )
-
-        # Update rotation of joint
-        self.beam.setR(-a * 180 / np.pi)
-
-        # Update displayed text
-        self.text.setText(
-            f"""
-            dt: {self._env._dt : 1.4f}
-            g: {g : 1.3f}
-            m_ball: {m_ball: 1.2f}
-            r_ball: {r_ball : 1.3f}
-            m_beam: {m_beam : 1.2f}
-            l_beam: {l_beam : 1.2f}
-            d_beam: {d_beam : 1.2f}
-            c_frict: {c_frict : 1.3f}
-            ang_offset: {ang_offset : 1.3f}
             """
         )
 
@@ -775,6 +753,16 @@ class QCartPoleVis(PandaVis):
         # Update rotation of Pole
         self.pole.setR(-th * 180 / np.pi)
 
+        # Get position of pole
+        pole_pos = self.pole.getPos(self.render)
+        # Calculate position of new point
+        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
+                       pole_pos[1],
+                       pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
+
+        # Draw line to that point
+        self.draw_trace(current_pos)
+
         # Update displayed text
         self.text.setText(
             f"""
@@ -799,11 +787,8 @@ class QCartPoleVis(PandaVis):
 
         return Task.cont
 
-    def reset(self):  # delete?
-        pass
 
-
-class OneMassOscillatorVis(PandaVis):
+class QQubeVis(PandaVis):
     def __init__(self, env: SimEnv):
         """
         Constructor
@@ -814,160 +799,152 @@ class OneMassOscillatorVis(PandaVis):
 
         # Accessing variables of environment class
         self._env = env
-        c = 0.1 * self._env.obs_space.bound_up[0]
+        Lr = self._env.domain_param["Lr"]
+        Lp = self._env.domain_param["Lp"]
+        arm_radius = 0.003
+        pole_radius = 0.0045
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 5/c 
+        self._scale = 20/Lp
 
         # Set window title
-        self.windowProperties.setTitle("One Mass Oscilator")
+        self.windowProperties.setTitle("Quanser Qube")
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setY(-5 * self._scale)
+        self.cam.setPos(
+            -0.4 * self._scale,
+            -1.3 * self._scale,
+            0.4 * self._scale,
+        )
+        self.cam.setHpr(-20, -10, 0)
 
         # Set text properties
-        self.textNodePath.setPos(-1.4, 0, 0.9)
+        self.textNodePath.setPos(0.4, 0, -0.1)
 
-        # Ground
-        self.ground = self.loader.loadModel(
+        # Box
+        self.box = self.loader.loadModel(
             pathlib.Path(self.dir, "models/box.egg")
         )
-        self.ground.setPos(0, 0, -0.02 * self._scale)
-        self.ground.setScale(
-            self._env.obs_space.bound_up[0] * self._scale,
-            1.5 * c * self._scale,
-            0.01 * self._scale,
-        )  # Scale modified according to Blender Object
-        self.ground.setColor(0, 1, 0, 0)  # green
-        self.ground.reparentTo(self.render)
+        self.box.setPos(0, 0.07 * self._scale, 0)
+        self.box.setScale(
+            0.09 * self._scale,
+            0.1 * self._scale,
+            0.09 * self._scale,
+        )
+        self.box.setColor(0.5, 0.5, 0.5)  # grey
+        self.box.reparentTo(self.render)
 
-        # Object
-        self.mass = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+        # Cylinder
+        self.cylinder = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/cylinder_center_middle.egg")
         )
-        self.mass.setPos(
-            self._env.state[0] * self._scale,
-            0,
-            c / 2.0 * self._scale,
+        self.cylinder.setScale(
+            0.005 * self._scale,
+            0.005 * self._scale,
+            0.03 * self._scale,
         )
-        self.mass.setScale(
-            c * 0.5 * self._scale,
-            c * 0.5 * self._scale,
-            c * 0.5 * self._scale,
-        )  # multiplied by 0.5 since Blender object has length of 2
-        self.mass.setColor(0, 0, 1, 0)  # blue
-        self.mass.reparentTo(self.render)
+        self.cylinder.setPos(0, 0.07 * self._scale, 0.12 * self._scale)
+        self.cylinder.setColor(0.5, 0.5, 0, 5)  # grey
+        self.cylinder.reparentTo(self.render)
 
-        # Desired state
-        self.des = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+        # Joint 1
+        self.joint1 = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/ball.egg")
         )
-        self.des.setPos(
-            self._env._task.state_des[0] * self._scale,
-            0,
-            0.4 * c * self._scale,
-        )
-        self.des.setScale(
-            0.4 * c * self._scale,
-            0.4 * c * self._scale,
-            0.4 * c * self._scale,
-        )
-        self.des.setTransparency(1)
-        self.des.setColorScale(0, 1, 1, 0.5)
-        self.des.reparentTo(self.render)
+        self.joint1.setScale(0.005 * self._scale)
+        self.joint1.setPos(0.0, 0.07 * self._scale, 0.15 * self._scale)
+        self.joint1.reparentTo(self.render)
 
-        # Force
-        self.force = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/arrow.egg")
+        # Arm
+        self.arm = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/cylinder_center_top.egg")
         )
-        self.force.setPos(
-            self._env.state[0] * self._scale,
-            0,
-            c / 2.0 * self._scale,
+        self.arm.setScale(
+            arm_radius * self._scale,
+            arm_radius * self._scale,
+            Lr * self._scale,
         )
-        self.force.setScale(
-            0.1 * self._env._curr_act / 10.0 * self._scale,
-            0.1 * c * self._scale,
-            0.1 * c * self._scale,
-        )
-        self.force.setColor(1, 0, 0, 0)  # red
-        self.force.reparentTo(self.render)
+        self.arm.setColor(0, 0, 1)  # blue
+        self.arm.setP(90)
+        self.arm.setPos(0, 0.07 * self._scale, 0.15 * self._scale)
+        self.arm.reparentTo(self.render)
 
-        # Spring
-        self.spring = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/spring.egg")
+        # Joint 2
+        self.joint2 = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/ball.egg")
         )
-        self.spring.setPos(0, 0, c / 2.0 * self._scale)
-        self.spring.setScale(
-            (self._env.state[0] - c / 2.0) / 7.3 * self._scale,
-            c / 6.0 * self._scale,
-            c / 6.0 * self._scale,
-        )  # scaling according to Blender object
-        self.spring.setColor(0, 0, 1, 0)  # blue
-        self.spring.reparentTo(self.render)
+        self.joint2.setScale(pole_radius * self._scale)
+        self.joint2.setPos(
+            0.0,
+            (0.07 + 2 * Lr) * self._scale,
+            0.15 * self._scale,
+        )
+        self.joint2.setColor(0, 0, 0)  # black
+        self.joint2.wrtReparentTo(self.arm)
+
+        # Pole
+        self.pole = self.loader.loadModel(
+            pathlib.Path(self.dir, "models/cylinder_center_bottom.egg")
+        )
+        self.pole.setScale(
+            pole_radius * self._scale,
+            pole_radius * self._scale,
+            Lp * self._scale,
+        )
+        self.pole.setColor(1, 0, 0)  # red
+        self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
+        self.pole.wrtReparentTo(self.arm)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
-    def update(self, task):
-
+    def update(self, task: Task):
         # Accessing the current parameter values
-        m = self._env.domain_param["m"]
-        k = self._env.domain_param["k"]
-        d = self._env.domain_param["d"]
-        c = 0.1 * self._env.obs_space.bound_up[0]
+        g = self._env.domain_param["g"]
+        Mr = self._env.domain_param["Mr"]
+        Mp = self._env.domain_param["Mp"]
+        Lr = float(self._env.domain_param["Lr"])
+        Lp = float(self._env.domain_param["Lp"])
+        km = self._env.domain_param["km"]
+        Rm = self._env.domain_param["Rm"]
+        Dr = self._env.domain_param["Dr"]
+        Dp = self._env.domain_param["Dp"]
+        th, al, _, _ = self._env.state
 
-        # Update position of mass and force
-        self.mass.setPos(
-            self._env.state[0] * self._scale,
-            0,
-            c / 2.0 * self._scale,
-        )
-        self.force.setPos(
-            self._env.state[0] * self._scale,
-            0,
-            c / 2.0 * self._scale,
-        )
+        # Update rotation of arm
+        self.arm.setH(th * 180 / np.pi - 180)
 
-        # Update scale of force
-        capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
-        self.force.setSx(capped_act / 10.0 * self._scale)
+        # Update rotation of pole
+        self.pole.setR(al * 180 / np.pi)
 
-        # Update scale of spring
-        self.spring.setSx(
-            (self._env.state[0] - c / 2.0) / 7.3 * self._scale
-        )  # scaling according to Blender object
+        # Get position of pole
+        pole_pos = self.pole.getPos(self.render)
+        # Calculate position of new point
+        current_pos = (
+            pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
+            pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
+            pole_pos[2] - 2 * Lp * np.cos(al) * self._scale)
+
+        # Draw line to that point
+        self.draw_trace(current_pos)
 
         # Update displayed text
         self.text.setText(
             f"""
-            mass_x: {self.mass.getX()}
-            spring_Sx: {self.spring.getSx()}
-            dt: {self._env.dt :1.4f}
-            m: {m : 1.3f}
-            k: {k : 2.2f}
-            d: {d : 1.3f}
+            theta: {self._env.state[0] * 180 / np.pi : 3.1f}
+            alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
+            dt: {self._env._dt :1.4f}
+            g: {g : 1.3f}
+            Mr: {Mr : 1.4f}
+            Mp: {Mp : 1.4f}
+            Lr: {Lr : 1.4f}
+            Lp: {Lp : 1.4f}
+            Dr: {Dr : 1.7f}
+            Dp: {Dp : 1.7f}
+            Rm: {Rm : 1.3f}
+            km: {km : 1.4f}
             """
         )
 
         return Task.cont
-
-    def reset(self):
-        c = 0.1 * self._env.obs_space.bound_up[0]
-
-        self.mass.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.des.setPos(
-            self._env._task.state_des[0] * self._scale,
-            0,
-            0.4 * c * self._scale,
-        )
-        self.force.setPos(
-            self._env.state[0] * self._scale,
-            0,
-            c / 2.0 * self._scale,
-        )
-        self.force.setSx((0.1 * self._env._curr_act) / 10.0 * self._scale)
-        self.spring.setSx(
-            (self._env.state[0] - c / 2.0) / 7.3 * self._scale
-        )  # scaling according to Blender object

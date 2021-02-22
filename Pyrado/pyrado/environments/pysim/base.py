@@ -265,7 +265,7 @@ class SimPyEnv(SimEnv, Serializable):
         else:
             # Refreshed with every frame
             self._visualization.taskMgr.step()
-            self._skip_frames = 1 / 60 / self._dt
+            self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
     def _reset_anim(self):
         """
