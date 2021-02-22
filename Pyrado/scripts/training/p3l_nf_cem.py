@@ -75,9 +75,9 @@ if __name__ == "__main__":
     env = Planar3LinkTASim(**env_hparams)
     # env = Planar3LinkIKActivationSim(**env_hparams)
     eub = {
-        'GD_DS0': 2.,
-        'GD_DS1': 2.,
-        'GD_DS2': 2.,
+        "GD_DS0": 2.0,
+        "GD_DS1": 2.0,
+        "GD_DS2": 2.0,
     }
     env = ObsNormWrapper(env, explicit_ub=eub)
     # env = ObsNormWrapper(env)
