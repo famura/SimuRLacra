@@ -27,14 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Planar-3-Link task using Activation Dynamics Networks and Hill Climbing.
+Train an agent to solve the box-lifting task using Activation Dynamics Networks and Hill Climbing.
 """
 import torch as to
 
 import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
+from pyrado.environments.rcspysim.box_lifting import BoxLiftingVelIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.adn import pd_cubic, ADNPolicy
 from pyrado.utils.argparser import get_argparser
@@ -45,51 +47,49 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f"{HCNormal.name}_{ADNPolicy.name}")
-    # ex_dir = setup_experiment(Planar3LinkTASim.name, f'{HCNormal.name}_{ADNPolicy.name}', 'obsnorm')
+    ex_dir = setup_experiment(BoxLiftingVelIKActivationSim.name, f"{HCNormal.name}_{ADNPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(
-        physicsEngine="Bullet",  # Bullet or Vortex
-        dt=1 / 50.0,
+        physicsEngine="Bullet",
+        graphFileName="gBoxLifting_trqCtrl.xml",
+        dt=0.01,
         max_steps=1200,
-        task_args=dict(consider_velocities=True),
-        max_dist_force=None,
-        positionTasks=True,
-        taskCombinationMethod="sum",
+        ref_frame="basket",
+        collisionConfig={"file": "collisionModel.xml"},
+        fixedInitState=True,
         checkJointLimits=True,
-        collisionAvoidanceIK=True,
-        observeVelocities=True,
-        observeForceTorque=True,
+        taskCombinationMethod="sum",
+        collisionAvoidanceIK=False,
+        observeVelocity=False,
         observeCollisionCost=False,
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
-        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=False,
-        observeTaskSpaceDiscrepancy=True,
+        observeTaskSpaceDiscrepancy=False,
+        observeForceTorque=True,
+        observeDynamicalSystemGoalDistance=False,
     )
-    env = Planar3LinkTASim(**env_hparams)
-    # env = Planar3LinkIKActivationSim(**env_hparams)
-    # eub = {
-    #     'GD_DS0': 2.,
-    #     'GD_DS1': 2.,
-    #     'GD_DS2': 2.,
-    # }
-    # env = ObsNormWrapper(env, explicit_ub=eub)
-    env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
-    # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
+    env = BoxLiftingVelIKActivationSim(**env_hparams)
+
+    env = ObsPartialWrapper(env, idcs=["Box_Y", "Box_Z", "Box_A"])
+
+    # Domain randomizer
+    dp_nom = env.get_nominal_domain_param()
+    randomizer = create_default_randomizer(env)
+    env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
     policy_hparam = dict(
-        tau_init=10.0,
+        tau_init=50.0,
         tau_learnable=True,
-        kappa_init=1e-2,
+        kappa_init=1e-3,
         kappa_learnable=True,
-        activation_nonlin=to.sigmoid,
+        activation_nonlin=to.tanh,
         potentials_dyn_fcn=pd_cubic,
         potential_init_learnable=False,
     )
@@ -97,11 +97,12 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=100,
-        pop_size=5 * policy.num_param,
-        num_init_states_per_domain=1,
+        max_iter=50,
+        pop_size=policy.num_param,
+        num_init_states_per_domain=4,
+        num_domains=6,
         expl_factor=1.05,
-        expl_std_init=1.0,
+        expl_std_init=0.8,
         num_workers=8,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)

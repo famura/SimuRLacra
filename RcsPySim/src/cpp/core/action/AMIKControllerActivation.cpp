@@ -34,19 +34,37 @@
 #include <Rcs_macros.h>
 #include <Rcs_basicMath.h>
 
-#include <limits>
 #include <sstream>
-//#include <Eigen/src/Core/arch/Default/Half.h>
 
 namespace Rcs
 {
 
-void MatNd_clipEleSelf(MatNd* self, double lower, double upper)
+void MatNd_fabsClipEleSelf(MatNd* self, double negUpperBound, double posLowerBound)
 {
     unsigned int i, mn = self->m*self->n;
     for (i = 0; i < mn; i++) {
-        self->ele[i] = Math_clip(self->ele[i], lower, upper);
+        if (self->ele[i] < 0){
+            self->ele[i] = std::min(self->ele[i], negUpperBound);
+        }
+        else if (self->ele[i] > 0){
+            self->ele[i] = std::max(self->ele[i], posLowerBound);
+        }
+        else{
+            self->ele[i] = posLowerBound; // arbitrary choice
+        }
     }
+}
+
+MatNd* MatNd_signs(const MatNd* src)
+{
+    MatNd* signs = MatNd_createLike(src);
+    for (unsigned int i = 0; i < src->m; i++) {
+        for (unsigned int j = 0; j < src->n; j++) {
+            double val = (MatNd_get(src, i, j) >= 0) ? 1.0 : -1.0;
+            MatNd_set(signs, i, j, val);
+        }
+    }
+    return signs;
 }
 
 
@@ -79,7 +97,7 @@ void AMIKControllerActivation::getMinMax(double* min, double* max) const
 {
     // All activations are between 0 and 1
     for (unsigned int i = 0; i < getDim(); i++) {
-        min[i] = 0;
+        min[i] = -1;
         max[i] = 1;
     }
 }
@@ -109,26 +127,31 @@ void AMIKControllerActivation::computeCommand(
     RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, nullptr);
     
     // Combine the individual activations of every controller task
-    MatNd* acti;
-    acti = MatNd_clone(action);
+    MatNd* action_tmp; // working copy
+    MatNd* action_abs; // workaround for negative actions
+//    MatNd* action_signs; // workaround for negative actions
+    action_tmp = MatNd_clone(action);
+    action_abs = MatNd_clone(action);
+    MatNd_fabsEleSelf(action_abs);
+//    action_signs = MatNd_signs(action);
     switch (taskCombinationMethod) {
         case TaskCombinationMethod::Sum:
             break; // no weighting
         
         case TaskCombinationMethod::Mean: {
-            MatNd_constMulSelf(acti, 1./MatNd_sumEle(acti));
+            MatNd_constMulSelf(action_tmp, 1./MatNd_sumEle(action_abs));
             break;
         }
         
         case TaskCombinationMethod::SoftMax: {
-            MatNd_softMax(acti, action, action->m);  // action->m is a neat heuristic for beta
+            MatNd_softMax(action_tmp, action, action->m);  // action->m is a neat heuristic for beta
             break;
         }
         
         case TaskCombinationMethod::Product: {
-            for (unsigned int i; i < action->m; i++) {
+            for (unsigned int i = 0; i < action->m; i++) {
                 // Create temp matrix
-                MatNd* otherActions = nullptr; // other actions are all actions without the current
+                MatNd* otherActions; // other actions are all actions without the current
                 MatNd_clone2(otherActions, action);
                 MatNd_deleteRow(otherActions, i);
                 
@@ -142,32 +165,32 @@ void AMIKControllerActivation::computeCommand(
                     prod *= (1 - otherActions->ele[idx]);
                 }
                 MatNd_destroy(otherActions);
-    
+                
                 REXEC(7) {
                     std::cout << "prod " << prod << std::endl;
                 }
-    
-                MatNd_set(acti, i, 0, action->ele[i]*prod);
+                
+                MatNd_set(action_tmp, i, 0, action->ele[i]*prod);
             }
-    
+            
             break;
         }
     }
     
     // Stabilize actions. If an action is exactly zero, computeDX will discard that task, leading to a shape error.
-    if (MatNd_minEle(acti) < 1e-6) {
-        MatNd_clipEleSelf(acti, 1e-6, std::numeric_limits<double>::infinity());
+    if (MatNd_minEle(action_abs) < 1e-6) {
+        MatNd_fabsClipEleSelf(action_tmp, -1e6, 1e6);
         REXEC(5) {
-            std::cout << "Clipped the activations to [1e-6, inf[" << std::endl;
+            std::cout << "Clipped the activations to ]-inf, -1e-6] u [1e-6, inf[" << std::endl;
         }
     }
     
     // Fill the first rows with the variable activations and the remaining rows with ones for the always active tasks
-    MatNd_copyRows(activation, 0, acti, 0, acti->m);
-    for (unsigned int i = acti->m; i < activation->m; i++ ){
+    MatNd_copyRows(activation, 0, action_tmp, 0, action_tmp->m);
+    for (unsigned int i = action_tmp->m; i < activation->m; i++) {
         activation->ele[i] = 1.;
     }
-    delete acti;
+    delete action_tmp;
     
     // Compute the differences in task space and weight them
     getController()->computeDX(dx_des, x_des, activation);
