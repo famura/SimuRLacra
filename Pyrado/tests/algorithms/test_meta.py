@@ -32,6 +32,8 @@ from copy import deepcopy
 from sbi import utils
 from sbi.inference import SNPE
 
+from numpy import pi
+
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
@@ -39,24 +41,31 @@ from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPol
 from pyrado.algorithms.inference.npdr import NPDR
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayrn import BayRn
+from pyrado.algorithms.meta.epopt import EPOpt
 from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.meta.spota import SPOTA
+from pyrado.algorithms.meta.udr import UDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import (
     create_default_randomizer,
     create_zero_var_randomizer,
     create_default_domain_param_map_qq,
+    get_default_domain_param_map_qq,
+    get_uniform_masses_lengths_randomizer_qq,
+    create_default_randomizer_qbb,
 )
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
+from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,
     DomainRandWrapperLive,
     MetaDomainRandWrapper,
 )
+from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
@@ -452,6 +461,76 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
         warmstart=True,
     )
     algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam)
+    algo.train()
+
+    assert algo.curr_iter == algo.max_iter
+
+
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "linear_policy",
+    ],
+    ids=["lin"],
+    indirect=True,
+)
+@pytest.mark.parametrize(
+    "algo, algo_hparam",
+    [(UDR, {}), (EPOpt, dict(skip_iter=100, epsilon=0.2, gamma=0.9995))],
+    ids=["udr", "EPOpt"],
+)
+def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
+    # Policy and subroutine
+    env = GaussianObsNoiseWrapper(
+        env,
+        noise_std=[
+            1 / 180 * pi,
+            1 / 180 * pi,
+            0.0025,
+            0.0025,
+            2 / 180 * pi,
+            2 / 180 * pi,
+            0.05,
+            0.05,
+        ],
+    )
+    env = ActNormWrapper(env)
+    env = ActDelayWrapper(env)
+    randomizer = create_default_randomizer_qbb()
+    randomizer.add_domain_params(UniformDomainParam(name="act_delay", mean=15, halfspan=15, clip_lo=0, roundint=True))
+    env = DomainRandWrapperLive(env, randomizer)
+
+    # Policy
+    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
+    policy = FNNPolicy(spec=env.spec, **policy_hparam)
+
+    # Critic
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic_hparam = dict(
+        gamma=0.9995,
+        lamda=0.98,
+        num_epoch=2,
+        batch_size=100,
+        lr=5e-4,
+        standardize_adv=False,
+    )
+    critic = GAE(vfcn, **critic_hparam)
+
+    subrtn_hparam = dict(
+        max_iter=2,
+        min_steps=2 * env.max_steps,
+        num_workers=1,
+        num_epoch=2,
+        eps_clip=0.1,
+        batch_size=100,
+        std_init=0.8,
+        lr=2e-4,
+    )
+    subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
+    algo = algo(env, subrtn, **algo_hparam)
+
     algo.train()
 
     assert algo.curr_iter == algo.max_iter
