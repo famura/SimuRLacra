@@ -410,7 +410,6 @@ class PendulumVis(PandaVis):
             r_pole * self._scale,
             2 * l_pole * self._scale,
         )
-        self.pole.setR(th * 180 / np.pi)
         self.pole.setColor(0, 0, 1)  # blue
         self.pole.reparentTo(self.render)
 
@@ -428,10 +427,17 @@ class PendulumVis(PandaVis):
         tau_max = self._env.domain_param["tau_max"]
 
         # Update position and rotation of pole
-        self.pole.setR(th * 180 / np.pi)
+        self.pole.setR(-th * 180 / np.pi)
 
-        pen_pos = (2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
-        self.draw_trace(pen_pos)
+        # Get position of pole
+        pole_pos = self.pole.getPos(self.render)
+        # Calculate position of new point
+        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
+                       pole_pos[1],
+                       pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
+
+        # Draw line to that point
+        self.draw_trace(current_pos)
 
         # Update displayed text
         self.text.setText(
