@@ -319,8 +319,10 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a76adf1eba11f5c329ae1400bf468316f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a76adf1eba11f5c329ae1400bf468316f">MatNd_clipEleSelf</a> (MatNd *self, double lower, double upper)</td></tr>
-<tr class="separator:a76adf1eba11f5c329ae1400bf468316f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacac45efa2c8a06cf4bd7f81e73a54da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#aacac45efa2c8a06cf4bd7f81e73a54da">MatNd_fabsClipEleSelf</a> (MatNd *self, double negUpperBound, double posLowerBound)</td></tr>
+<tr class="separator:aacac45efa2c8a06cf4bd7f81e73a54da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a729ce82995b65a0c8a0b5f131942ae27"><td class="memItemLeft" align="right" valign="top">MatNd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a729ce82995b65a0c8a0b5f131942ae27">MatNd_signs</a> (const MatNd *src)</td></tr>
+<tr class="separator:a729ce82995b65a0c8a0b5f131942ae27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ed2077f43feb737be0ff3becba8ffd2"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a8ed2077f43feb737be0ff3becba8ffd2">getMatrixProperty</a> (Eigen::MatrixXd &amp;out, <a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *ps, const char *property, unsigned int expectedRows, unsigned int expectedCols)</td></tr>
 <tr class="separator:a8ed2077f43feb737be0ff3becba8ffd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e9ffc58299d60abd2ffcb72aafc94a8"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a1e9ffc58299d60abd2ffcb72aafc94a8">getVectorProperty</a> (Eigen::VectorXd &amp;out, <a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *ps, const char *property, unsigned int expectedSize)</td></tr>
@@ -1335,14 +1337,14 @@ template&lt;typename M &gt; </div>
 
 </div>
 </div>
-<a id="a76adf1eba11f5c329ae1400bf468316f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76adf1eba11f5c329ae1400bf468316f">&#9670;&nbsp;</a></span>MatNd_clipEleSelf()</h2>
+<a id="aacac45efa2c8a06cf4bd7f81e73a54da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacac45efa2c8a06cf4bd7f81e73a54da">&#9670;&nbsp;</a></span>MatNd_fabsClipEleSelf()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Rcs::MatNd_clipEleSelf </td>
+          <td class="memname">void Rcs::MatNd_fabsClipEleSelf </td>
           <td>(</td>
           <td class="paramtype">MatNd *&#160;</td>
           <td class="paramname"><em>self</em>, </td>
@@ -1351,13 +1353,13 @@ template&lt;typename M &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>lower</em>, </td>
+          <td class="paramname"><em>negUpperBound</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>upper</em>&#160;</td>
+          <td class="paramname"><em>posLowerBound</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1367,7 +1369,27 @@ template&lt;typename M &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AMIKControllerActivation_8cpp_source.html#l00044">44</a> of file <a class="el" href="AMIKControllerActivation_8cpp_source.html">AMIKControllerActivation.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AMIKControllerActivation_8cpp_source.html#l00042">42</a> of file <a class="el" href="AMIKControllerActivation_8cpp_source.html">AMIKControllerActivation.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a729ce82995b65a0c8a0b5f131942ae27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a729ce82995b65a0c8a0b5f131942ae27">&#9670;&nbsp;</a></span>MatNd_signs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">MatNd* Rcs::MatNd_signs </td>
+          <td>(</td>
+          <td class="paramtype">const MatNd *&#160;</td>
+          <td class="paramname"><em>src</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="AMIKControllerActivation_8cpp_source.html#l00058">58</a> of file <a class="el" href="AMIKControllerActivation_8cpp_source.html">AMIKControllerActivation.cpp</a>.</p>
 
 </div>
 </div>
@@ -1964,7 +1986,7 @@ template&lt;typename M  = Eigen::MatrixXd&gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li>
-    <li class="footer">Generated on Mon Feb 22 2021 08:49:28 for RcsPySim by
+    <li class="footer">Generated on Mon Feb 22 2021 10:29:13 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>
