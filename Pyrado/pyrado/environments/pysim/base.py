@@ -72,7 +72,6 @@ class SimPyEnv(SimEnv, Serializable):
 
         # Animation with Panda3D
         self._curr_act = np.zeros(self.act_space.shape)
-        self._initialized = False
 
     @property
     def state_space(self) -> Space:
@@ -185,7 +184,7 @@ class SimPyEnv(SimEnv, Serializable):
         self._task.reset(env_spec=self.spec)
 
         # Reset VPython animation
-        if self._initialized:
+        if hasattr(self, "_visualization"):
             self._reset_anim()
 
         # Return an observation
@@ -244,10 +243,8 @@ class SimPyEnv(SimEnv, Serializable):
 
             # VPython
             if mode.video:
-                if not self._initialized:
+                if not hasattr(self, "_visualization"):
                     self._init_anim()
-                    # States that visualization is running
-                    self._initialized = True
                     # Calculate if and how many frames are dropped
                     self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
