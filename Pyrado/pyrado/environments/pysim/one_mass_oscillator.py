@@ -118,10 +118,6 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         from pyrado.environments.pysim.pandavis import OneMassOscillatorVis
         # Create instance of PandaVis
         self._visualization = OneMassOscillatorVis(self)
-        # States that visualization is running
-        self._initialized = True
-        # Calculate if and how many frames are dropped
-        self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
 
 class OneMassOscillatorDyn(Serializable):

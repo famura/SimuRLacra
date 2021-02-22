@@ -246,6 +246,10 @@ class SimPyEnv(SimEnv, Serializable):
             if mode.video:
                 if not self._initialized:
                     self._init_anim()
+                    # States that visualization is running
+                    self._initialized = True
+                    # Calculate if and how many frames are dropped
+                    self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
                 # Update the animation
                 self._update_anim()
@@ -259,16 +263,20 @@ class SimPyEnv(SimEnv, Serializable):
     def _update_anim(self):
         """
         Update animation. Called by each render call.
+        Skips certain number of simulation steps per frame to achieve 60 Hz output.
         """
+        # Do not render while _skip_frames is bigger than 1
         if self._skip_frames > 1:
+            # Decrease _skip_frames by one
             self._skip_frames -= 1
         else:
-            # Refreshed with every frame
+            # Render frame
             self._visualization.taskMgr.step()
+            # Calculate number of frames that need to be skipped
             self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
     def _reset_anim(self):
         """
-        Reset animation to initial state. Called by reset() if needed. Removes trace.
+        Removes trace. Called by reset() if needed. Calls reset of pandavis-class.
         """
         self._visualization.reset()

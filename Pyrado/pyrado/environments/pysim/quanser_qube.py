@@ -143,10 +143,6 @@ class QQubeSim(SimPyEnv, Serializable):
         from pyrado.environments.pysim.pandavis import PandaVis
         # Create instance of PandaVis
         self._visualization = QQubeVis(self)
-        # States that visualization is running
-        self._initialized = True
-        # Calculate if and how many frames are dropped
-        self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
 
 class QQubeSwingUpSim(QQubeSim):

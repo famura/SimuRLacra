@@ -918,6 +918,8 @@ class QQubeVis(PandaVis):
         Dp = self._env.domain_param["Dp"]
         th, al, _, _ = self._env.state
 
+        print('\u0398')
+
         # Update rotation of arm
         self.arm.setH(th * 180 / np.pi - 180)
 
@@ -938,7 +940,7 @@ class QQubeVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            theta: {self._env.state[0] * 180 / np.pi : 3.1f}
+            \u0398: {self._env.state[0] * 180 / np.pi : 3.1f}
             alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
             dt: {self._env._dt :1.4f}
             g: {g : 1.3f}
