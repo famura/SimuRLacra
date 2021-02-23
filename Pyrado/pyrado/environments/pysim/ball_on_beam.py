@@ -26,6 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Added stuff
+import math, pathlib, platform
+
 import numpy as np
 from init_args_serializer.serializable import Serializable
 
@@ -36,6 +39,8 @@ from pyrado.spaces.compound import CompoundSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
+
+
 
 
 class BallOnBeamSim(SimPyEnv, Serializable):
@@ -127,6 +132,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         # Integration step (symplectic Euler)
         self.state[2:] += np.array([x_ddot, a_ddot]) * self._dt  # next velocity
         self.state[:2] += self.state[2:] * self._dt  # next position
+
 
     def _init_anim(self):
         # Import PandaVis Class
