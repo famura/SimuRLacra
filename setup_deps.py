@@ -406,12 +406,12 @@ def setup_pytorch():
     env = os.environ.copy()
     env.update(env_vars)
     # CUDA is disabled by default
-    env["USE_CUDA"] = "1" if args.usecuda else "0"
+    env["USE_CUDA"] = "ON" if args.usecuda else "OFF"
     # CUDA is disabled by default
-    env["USE_CUDNN"] = "1" if args.usecuda else "0"
+    env["USE_CUDNN"] = "ON" if args.usecuda else "OFF"
     # disable MKLDNN; mkl/blas deprecated error https://github.com/pytorch/pytorch/issues/17874
-    env["USE_MKLDNN"] = "0"
-    env["_GLIBCXX_USE_CXX11_ABI"] = "1"
+    env["USE_MKLDNN"] = "OFF"
+    env["_GLIBCXX_USE_CXX11_ABI"] = "ON"
     sp.check_call([sys.executable, "setup.py", "install"], cwd=pytorch_src_dir, env=env)
 
 

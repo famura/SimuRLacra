@@ -108,7 +108,7 @@ if __name__ == "__main__":
         policy_list.append(policy)
 
     # Fix initial state (set to None if it should not be fixed)
-    init_state_list = [None] * args.num_ro_per_config
+    init_state_list = [None] * args.num_rollouts_per_config
 
     # Crate empty data frame
     df = pd.DataFrame(columns=["policy", "ret", "len"])
@@ -151,7 +151,7 @@ if __name__ == "__main__":
 
     save_dicts_to_yaml(
         {"ex_dirs": ex_dirs},
-        {"num_rpp": args.num_ro_per_config, "seed": args.seed},
+        {"num_rpp": args.num_rollouts_per_config, "seed": args.seed},
         {"metrics": dict_arraylike_to_float(metrics)},
         save_dir=save_dir,
         file_name="summary",

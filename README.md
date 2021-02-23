@@ -416,6 +416,17 @@ If you dont have a MuJoCo license, or MuJoCo is not installed on zour machine, m
 mkdir /$HOME/.mujoco/mujoco200 -p && touch /$HOME/.mujoco/mjkey.txt
 ```
 
+### Ubuntu 20.04 and mujoco-py > 2.0.2.5
+Uninstall mujoco-py
+```
+pip uninstall mujoco_py
+```
+Install mujoco-py version 2.0.2.5 (this time not using the setup.py)
+```
+pip install mujoco_py==2.0.2.5
+```
+There might be an error saying `Failed building wheel for mujoco-py` at first, but in the end it should install lockfile and mujoco-py.
+
 ### libstdc++.so.6: version `GLIBCXX_3.4.22' not found
 This error might come from the scipy.signal.lfilter command (eventually including scipy's fft function). For scipy versions > 1.5.2, this requires GLIBCXX_3.4.22. If your computer is out -of-date and you have no sudo rights, your best option is to set scipy pack to version 1.5.2.
 ```

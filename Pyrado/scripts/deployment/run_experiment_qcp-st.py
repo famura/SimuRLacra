@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to run the Quanser Car-Pole experiments reported in the journal paper
+Script to run experiments on the Quanser Cart-Pole
 """
 import joblib
 import numpy as np

@@ -253,8 +253,8 @@ class ADNPolicy(PotentialBasedPolicy):
                 )
             else:
                 raise pyrado.TypeErr(
-                    msg="Only output nonlinearities of type torch.sigmoid and torch.tanh are supported"
-                    "for capacity-based potential dynamics."
+                    msg="Only output nonlinearities of type torch.sigmoid and torch.tanh are supported "
+                    "for capacity-based potential dynamics!"
                 )
         else:
             self._log_capacity = None
@@ -273,7 +273,7 @@ class ADNPolicy(PotentialBasedPolicy):
         return None if self._log_capacity is None else to.exp(self._log_capacity)
 
     def potentials_dot(self, potentials: to.Tensor, stimuli: to.Tensor) -> to.Tensor:
-        """
+        r"""
         Compute the derivative of the neurons' potentials per time step.
         $/tau /dot{u} = f(u, s, h)$
 
@@ -316,9 +316,7 @@ class ADNPolicy(PotentialBasedPolicy):
         elif len(obs.shape) == 2:
             batch_size = obs.shape[0]
         else:
-            raise pyrado.ShapeErr(
-                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1- or 2-dim"
-            )
+            raise pyrado.ShapeErr(msg=f"Expected 1- or 2-dim observations, but the shape is {obs.shape}!")
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
         if hidden is not None:

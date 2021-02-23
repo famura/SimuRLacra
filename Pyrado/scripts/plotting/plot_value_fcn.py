@@ -125,7 +125,7 @@ if __name__ == "__main__":
         data_format="torch",
     )
 
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig.savefig(osp.join(ex_dir, f"valuefcn-{state_labels[0]}-{state_labels[1]}.{fmt}"), dpi=500)
 

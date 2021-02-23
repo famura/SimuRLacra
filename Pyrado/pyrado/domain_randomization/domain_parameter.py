@@ -212,8 +212,8 @@ class MultivariateNormalDomainParam(DomainParam):
         """
         super().__init__(**kwargs)
 
-        self.mean = to.as_tensor(mean).view(-1)
-        self.cov = to.as_tensor(cov)
+        self.mean = to.as_tensor(mean, dtype=to.get_default_dtype()).view(-1)
+        self.cov = to.as_tensor(cov, dtype=to.get_default_dtype())
         if not self.cov.ndim == 2:
             raise pyrado.ShapeErr(msg="The covariance needs to be given as a matrix!")
         self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)

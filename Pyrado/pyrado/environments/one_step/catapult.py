@@ -55,7 +55,7 @@ class CatapultSim(SimEnv, Serializable):
         """
         Serializable._init(self, locals())
 
-        super().__init__(dt=None, max_steps=max_steps)
+        super().__init__(dt=1, max_steps=max_steps)
 
         self.example_config = example_config
         self._planet = -1
@@ -113,33 +113,33 @@ class CatapultSim(SimEnv, Serializable):
             return dict(g=self._g, k=self._k, x=self._x)
 
     @domain_param.setter
-    def domain_param(self, param: dict):
-        assert isinstance(param, dict)
+    def domain_param(self, domain_param: dict):
+        assert isinstance(domain_param, dict)
         # Set the new domain params if given, else the default value
         if self.example_config:
-            if param["planet"] == 0:
+            if domain_param["planet"] == 0:
                 # Mars
                 self._g = 3.71
                 self._k = 1e3
                 self._x = 0.5
-            elif param["planet"] == 1:
+            elif domain_param["planet"] == 1:
                 # Venus
                 self._g = 8.87
                 self._k = 3e3
                 self._x = 1.5
-            elif param["planet"] == -1:
+            elif domain_param["planet"] == -1:
                 # Default value which should make the computation invalid
                 self._g = None
                 self._k = None
                 self._x = None
             else:
-                raise ValueError("Domain parameter planet was {}, but must be either 0 or 1!".format(param["planet"]))
+                raise pyrado.ValueErr(given=domain_param["planet"], eq_constraint="0 or 1")
 
         else:
             assert self._g > 0 and self._k > 0 and self._x > 0
-            self._g = param.get("g", self._g)
-            self._k = param.get("k", self._k)
-            self._x = param.get("x", self._x)
+            self._g = domain_param.get("g", self._g)
+            self._k = domain_param.get("k", self._k)
+            self._x = domain_param.get("x", self._x)
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
@@ -155,7 +155,8 @@ class CatapultSim(SimEnv, Serializable):
 
         # Reset the state
         if init_state is None:
-            self.state = self._init_space.sample_uniform()  # zero
+            # Sample from the init state space
+            self.state = self._init_space.sample_uniform()
         else:
             if not init_state.shape == self.obs_space.shape:
                 raise pyrado.ShapeErr(given=init_state, expected_match=self.obs_space)
@@ -173,7 +174,7 @@ class CatapultSim(SimEnv, Serializable):
         # Return perfect observation
         return self.observe(self.state)
 
-    def step(self, act):
+    def step(self, act: np.ndarray) -> tuple:
         # Apply actuator limits
         act = self.limit_act(act)  # dummy for CatapultSim
         self._curr_act = act  # just for the render function
@@ -206,9 +207,7 @@ class CatapultSim(SimEnv, Serializable):
         if mode.text:
             if self._curr_step % render_step == 0 and self._curr_step > 0:  # skip the render before the first step
                 print(
-                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                        self._curr_step, self._curr_rew, self._curr_act, self.state
-                    )
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
 
@@ -218,13 +217,11 @@ class CatapultExample:
 
     .. seealso::
         [1] F. Muratore, M. Gienger, J. Peters, "Assessing Transferability from Simulation to Reality for Reinforcement
-        Learning", PAMI, 2019
+            Learning", PAMI, 2019
     """
 
     def __init__(self, m, g_M, k_M, x_M, g_V, k_V, x_V):
-        """
-        Constructor
-        """
+        """ Constructor """
         # Store parameters
         self.m = m
         self.g_M, self.k_M, self.x_M = g_M, k_M, x_M

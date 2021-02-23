@@ -27,45 +27,52 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Test PD controller for driving the WAM to a desired position.
+Script to plot the observations from rollouts as well as their mean and std
 """
 import numpy as np
+from matplotlib import pyplot as plt
+import pandas as pd
 
-from pyrado.environments.mujoco.wam import WAMSim
-from pyrado.utils.data_types import RenderMode
+from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.curve import draw_curve
+from pyrado.plotting.utils import num_rows_cols_from_length
+from pyrado.utils.argparser import get_argparser
+from pyrado.utils.experiments import load_rollouts_from_dir
 
 
 if __name__ == "__main__":
-    # Define the gains and limits for the controller
-    p_gains = np.array([200, 300, 100, 100, 10, 10, 2.5])
-    d_gains = np.array([7, 15, 5, 2.5, 0.3, 0.3, 0.05])
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+    plt.rc("text", usetex=False)
 
-    n = 1500  # Number of steps
-    init_pos = np.array([0.0, -1.986, 0.0, 3.146, 0.0, 0.0, 0.0])
-    zero_vel = np.zeros_like(init_pos)
-    goal_pos = np.array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9])
+    # Get the experiment's directory to load from
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
-    # constants
-    diff = goal_pos - init_pos
-    c_1 = -2 * diff / n ** 3
-    c_2 = 3 * diff / n ** 2
+    # Load the rollouts
+    rollouts = load_rollouts_from_dir(ex_dir)
 
-    # Environment
-    env = WAMSim(frame_skip=4)
-    env.reset(init_state=np.concatenate((init_pos, zero_vel)).ravel())
-    env.render(mode=RenderMode(video=True))
-    env.viewer._run_speed = 0.5
+    # Extract observations
+    data = pd.DataFrame()
+    for ro in rollouts:
+        ro.numpy()
+        df = pd.DataFrame(ro.observations, columns=ro.rollout_info["env_spec"].obs_space.labels)
+        data = pd.concat([data, df], axis=1)
+    means = data.groupby(by=data.columns, axis=1).mean()
+    stds = data.groupby(by=data.columns, axis=1).std()
 
-    for i in range(1, n + 1000):
-        if i < n:
-            des_pos = c_1 * i ** 3 + c_2 * i ** 2 + init_pos
-            des_vel = (3 * c_1 * i ** 2 + 2 * c_2 * i) / env.dt
-        else:
-            des_pos = goal_pos
-            des_vel = zero_vel
-        act = p_gains * (des_pos - env.state[:7]) + d_gains * (des_vel - env.state[7:])
-        env.step(act)
-        env.render(mode=RenderMode(video=True))
+    dim_obs = rollouts[0].observations.shape[1]  # assuming same for all rollouts
+    num_rows, num_cols = num_rows_cols_from_length(dim_obs, transposed=True)
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
 
-    print("Desired Pos:", goal_pos)
-    print("Actual Pos:", env.state[:7])
+    for idx_o, c in enumerate(data.columns.unique()):
+        draw_curve(
+            "mean_std",
+            axs[idx_o // num_cols, idx_o % num_cols],
+            pd.DataFrame(dict(mean=means[c], std=stds[c])),
+            np.arange(len(data)),
+            show_legend=False,
+            x_label="steps",
+            y_label=str(c),
+        )
+
+    plt.show()

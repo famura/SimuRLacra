@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Load and run a policy on the associated real-world Quanser environment.
+Load and run a policy on the associated real-world Quanser environment
 """
 import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal

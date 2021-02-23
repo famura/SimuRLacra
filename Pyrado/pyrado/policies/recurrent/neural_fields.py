@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import multiprocessing as mp
 import torch as to
 import torch.nn as nn
 from typing import Callable
@@ -104,6 +105,10 @@ class NFPolicy(PotentialBasedPolicy):
         if not callable(activation_nonlin):
             raise pyrado.TypeErr(given=activation_nonlin, expected_type=Callable)
 
+        # Set the multiprocessing start method to spawn, since PyTorch is using the GPU for convolutions if it can
+        if to.cuda.is_available() and mp.get_start_method(allow_none=True) != "spawn":
+            mp.set_start_method("spawn", force=True)
+
         super().__init__(
             spec,
             obs_layer,
@@ -178,9 +183,7 @@ class NFPolicy(PotentialBasedPolicy):
         elif len(obs.shape) == 2:
             batch_size = obs.shape[0]
         else:
-            raise pyrado.ShapeErr(
-                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1- or 2-dim"
-            )
+            raise pyrado.ShapeErr(msg=f"Expected 1- or 2-dim observations, but the shape is {obs.shape}!")
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
         if hidden is not None:

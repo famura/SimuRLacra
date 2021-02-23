@@ -1,0 +1,60 @@
+name: Run Tests (future)
+
+on:
+  push:
+    branches: [cicd_future]
+  pull_request:
+    branches: [cicd_future]
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flavor: [sacher]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          outputs: |
+            type=docker
+          tags: |
+            simurlacra:test
+          build-args: |
+            OPTION=${{ matrix.flavor }}
+          cache-from: type=registry,ref=simurlacra/simurlacra:${{ matrix.flavor }}
+      - name: Inspect
+        run: |
+
+          docker image inspect simurlacra:test
+      - name: Execute tests
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        run: |
+          export COVPATH=$(realpath .)
+          docker run --rm -i -v $COVPATH:/cov simurlacra:test conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -n 4 --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
+          sudo mkdir /home/user/
+          sudo mkdir /home/user/SimuRLacra
+          sudo ln -s $COVPATH /home/user/SimuRLacra
+          cd Pyrado
+      - name: Send Coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: coverage.xml # optional
+          flags: unittests # optional
+          name: codecov-umbrella # optional
+          fail_ci_if_error: true
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: |
+            coverage.xml:cobertura

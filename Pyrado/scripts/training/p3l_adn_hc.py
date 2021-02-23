@@ -34,7 +34,7 @@ import torch as to
 import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.adn import pd_cubic, ADNPolicy
 from pyrado.utils.argparser import get_argparser
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         task_args=dict(consider_velocities=True),
         max_dist_force=None,
         positionTasks=True,
-        taskCombinationMethod="product",
+        taskCombinationMethod="sum",
         checkJointLimits=True,
         collisionAvoidanceIK=True,
         observeVelocities=True,
@@ -68,29 +68,25 @@ if __name__ == "__main__":
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
-        observeDynamicalSystemGoalDistance=False,
     )
-    # env = Planar3LinkTASim(**env_hparams)
-    env = Planar3LinkIKActivationSim(**env_hparams)
-    # env = ActNormWrapper(env)
+    env = Planar3LinkTASim(**env_hparams)
+    # env = Planar3LinkIKActivationSim(**env_hparams)
     # eub = {
     #     'GD_DS0': 2.,
     #     'GD_DS1': 2.,
     #     'GD_DS2': 2.,
     # }
     # env = ObsNormWrapper(env, explicit_ub=eub)
-    # env = ObsNormWrapper(env)
-    # env = ObsPartialWrapper(env, idcs=['Effector_Xd', 'Effector_Zd'])
     env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
     # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
-    print(env)
 
     # Policy
     policy_hparam = dict(
         tau_init=10.0,
-        tau_learnable=False,
+        tau_learnable=True,
         kappa_init=1e-2,
         kappa_learnable=True,
         activation_nonlin=to.sigmoid,

@@ -34,7 +34,7 @@ import numpy as np
 
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
+from pyrado.environments.barrett_wam.wam_bic import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.experiments import load_experiment

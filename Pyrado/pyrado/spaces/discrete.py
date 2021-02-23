@@ -79,8 +79,16 @@ class DiscreteSpace(Space):
         return self.bound_lo.shape  # equivalent to bound_up.shape
 
     @property
-    def flat_dim(self) -> int:
+    def num_ele(self) -> int:
         return self.eles.shape[0]
+
+    @property
+    def flat_dim(self) -> int:
+        return self.eles.shape[1]
+
+    @property
+    def bound_abs_up(self) -> np.ndarray:
+        return np.max(np.abs(self.eles), axis=0)
 
     @property
     def labels(self) -> np.ndarray:
@@ -107,7 +115,7 @@ class DiscreteSpace(Space):
         return np.any(np.isclose(self.eles, cand.astype(self.eles.dtype)))
 
     def sample_uniform(self, concrete_inf: float = 1e6) -> np.ndarray:
-        idx = np.random.randint(self.flat_dim, size=1)
+        idx = np.random.randint(self.num_ele, size=1)
         # Return randomly selected column
         return self.eles[idx, :].flatten()
 

@@ -31,7 +31,7 @@ import time
 import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
-from typing import Callable
+from typing import Callable, Tuple, Optional, Union
 from tabulate import tabulate
 
 import pyrado
@@ -43,12 +43,12 @@ from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.plotting.curve import draw_dts
 from pyrado.plotting.policy_parameters import draw_policy_params
 from pyrado.plotting.rollout_based import (
-    draw_observations_actions_rewards,
-    draw_actions,
-    draw_observations,
+    plot_observations_actions_rewards,
+    plot_actions,
+    plot_observations,
     draw_rewards,
     draw_potentials,
-    draw_features,
+    plot_features,
 )
 from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
@@ -59,17 +59,17 @@ from pyrado.utils.input_output import print_cbt, color_validity
 
 def rollout(
     env: Env,
-    policy: [nn.Module, Policy, Callable],
-    eval: bool = False,
-    max_steps: int = None,
-    reset_kwargs: dict = None,
-    render_mode: RenderMode = RenderMode(),
-    render_step: int = 1,
-    no_reset: bool = False,
-    no_close: bool = False,
-    record_dts: bool = False,
-    stop_on_done: bool = True,
-    seed: int = None,
+    policy: Union[nn.Module, Policy, Callable],
+    eval: Optional[bool] = False,
+    max_steps: Optional[int] = None,
+    reset_kwargs: Optional[dict] = None,
+    render_mode: Optional[RenderMode] = RenderMode(),
+    render_step: Optional[int] = 1,
+    no_reset: Optional[bool] = False,
+    no_close: Optional[bool] = False,
+    record_dts: Optional[bool] = False,
+    stop_on_done: Optional[bool] = True,
+    seed: Optional[int] = None,
 ) -> StepSequence:
     """
     Perform a rollout (i.e. sample a trajectory) in the given environment using given policy.
@@ -105,7 +105,9 @@ def rollout(
     obs_hist = []
     act_hist = []
     rew_hist = []
+    state_hist = []
     env_info_hist = []
+    t_hist = []
     if isinstance(policy, Policy):
         if policy.is_recurrent:
             hidden_hist = []
@@ -154,7 +156,6 @@ def rollout(
 
     # Setup rollout information
     rollout_info = dict(env_spec=env.spec)
-    rollout_info["init_state"] = env.state.copy()
     if isinstance(inner_env(env), SimEnv):
         rollout_info["domain_param"] = env.domain_param
 
@@ -163,6 +164,8 @@ def rollout(
 
     # Initialize the main loop variables
     done = False
+    t = 0.0  # time starts at zero
+    t_hist.append(t)
     if record_dts:
         t_post_step = time.time()  # first sample of remainder is useless
 
@@ -223,6 +226,7 @@ def rollout(
             t_post_policy = time.time()
 
         # Ask the environment to perform the simulation step
+        state = env.state.copy()
         obs_next, rew, done, env_info = env.step(act)
 
         # Record time after the step i.e. the send and receive is completed
@@ -235,11 +239,16 @@ def rollout(
         obs_hist.append(obs)
         act_hist.append(act)
         rew_hist.append(rew)
+        state_hist.append(state)
         env_info_hist.append(env_info)
         if record_dts:
             dt_policy_hist.append(dt_policy)
             dt_step_hist.append(dt_step)
             dt_remainder_hist.append(dt_remainder)
+            t += dt_policy + dt_step + dt_remainder
+        else:
+            t += env.dt
+        t_hist.append(t)
         if isinstance(policy, Policy):
             if policy.is_recurrent:
                 hidden_hist.append(hidden)
@@ -257,7 +266,6 @@ def rollout(
 
         # Render if wanted (actually renders the next state)
         env.render(render_mode, render_step)
-
         if render_mode.video:
             do_sleep = True
             if pyrado.mujoco_loaded:
@@ -283,12 +291,15 @@ def rollout(
 
     # Add final observation to observations list
     obs_hist.append(obs)
+    state_hist.append(env.state.copy())
 
     # Return result object
     res = StepSequence(
         observations=obs_hist,
         actions=act_hist,
         rewards=rew_hist,
+        states=state_hist,
+        time=t_hist,
         rollout_info=rollout_info,
         env_infos=env_info_hist,
         complete=True,  # the rollout function always returns complete paths
@@ -312,7 +323,9 @@ def rollout(
     return res
 
 
-def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tuple:
+def after_rollout_query(
+    env: Env, policy: Policy, rollout: StepSequence
+) -> Tuple[bool, Optional[np.ndarray], Optional[dict]]:
     """
     Ask the user what to do after a rollout has been animated.
 
@@ -352,7 +365,7 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
             elif isinstance(inner_env(env), SimEnv):
                 # Get the user input
                 usr_inp = input(
-                    f"Enter the {env.obs_space.flat_dim}-dim initial state"
+                    f"Enter the {env.obs_space.flat_dim}-dim initial state "
                     f"(format: each dim separated by a whitespace):\n"
                 )
                 state = list(map(float, usr_inp.split()))
@@ -386,28 +399,28 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "p":
-        draw_observations_actions_rewards(rollout)
+        plot_observations_actions_rewards(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "pa":
-        draw_actions(rollout, env)
+        plot_actions(rollout, env)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "po":
-        draw_observations(rollout)
+        plot_observations(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif "po" in ans and any(char.isdigit() for char in ans):
         idcs = [int(s) for s in ans.split() if s.isdigit()]
-        draw_observations(rollout, idcs_sel=idcs)
+        plot_observations(rollout, idcs_sel=idcs)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "pf":
-        draw_features(rollout, policy)
+        plot_features(rollout, policy)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 

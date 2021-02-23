@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     # Create one-dim results grid and ensure right number of rollouts
     param_list = param_grid(param_spec)
-    param_list *= args.num_ro_per_config
+    param_list *= args.num_rollouts_per_config
 
     # Fix initial state (set to None if it should not be fixed)
     init_state = None
@@ -241,7 +241,7 @@ if __name__ == "__main__":
         {"ex_dirs": ex_dirs},
         {
             "varied_param": varied_param_key,
-            "num_rpp": args.num_ro_per_config,
+            "num_rpp": args.num_rollouts_per_config,
             "seed": args.seed,
             "dt": args.dt,
             "max_steps": args.max_steps,

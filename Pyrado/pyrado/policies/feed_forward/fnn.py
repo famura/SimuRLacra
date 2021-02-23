@@ -36,7 +36,6 @@ from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
 from pyrado.policies.initialization import init_param
-from pyrado.utils.tensor import atleast_2D
 
 
 class FNN(nn.Module):
@@ -286,22 +285,31 @@ class DiscreteActQValPolicy(Policy):
         :return: Q-values for all state-action combinations of dimension batch_size x act_space_flat_sim,
                  indices, batch size
         """
+        # We assume flattened observations, if they are 2d, they're batched.
+        if len(obs.shape) == 1:
+            batch_size = 1
+        elif len(obs.shape) == 2:
+            batch_size = obs.shape[0]
+        else:
+            raise pyrado.ShapeErr(msg=f"Expected 1- or 2-dim observations, but the shape is {obs.shape}!")
+
         # Create batched state-action table
-        obs = atleast_2D(obs)  # batch dim is along first axis
-        columns_obs = obs.repeat_interleave(repeats=self.env_spec.act_space.flat_dim, dim=0)
-        columns_act = to.tensor(self.env_spec.act_space.eles).repeat(obs.shape[0], 1)
+        obs = to.atleast_2d(obs)  # batch dim is along first axis, then transposed
+        columns_obs = obs.repeat_interleave(repeats=self.env_spec.act_space.num_ele, dim=0)
+        columns_act = to.from_numpy(self.env_spec.act_space.eles).to(dtype=to.get_default_dtype())
+        columns_act = columns_act.repeat(batch_size, 1)
 
         # Batch process via PyTorch Module class
         table = to.cat([columns_obs.to(self.device), columns_act.to(self.device)], dim=1)
         q_vals = self.net(table)
 
         # Reshaped (different actions are over columns)
-        q_vals = q_vals.reshape(-1, self.env_spec.act_space.flat_dim)
+        q_vals = q_vals.reshape(-1, self.env_spec.act_space.num_ele)
 
         # Select the action that maximizes the Q-value
         argmax_act_idcs = to.argmax(q_vals, dim=1)
 
-        return q_vals, argmax_act_idcs, obs.shape[0]
+        return q_vals, argmax_act_idcs, batch_size
 
     def q_values_argmax(self, obs: to.Tensor) -> to.Tensor:
         """
@@ -311,6 +319,8 @@ class DiscreteActQValPolicy(Policy):
         :param obs: current observations
         :return: Q-values for state-action combinations where the argmax actions, dimension equals flat action space dimension
         """
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+
         # Get the Q-values from the owned net
         q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
 

@@ -31,7 +31,7 @@ import numpy as np
 import torch as to
 from copy import deepcopy
 from torch.distributions import Distribution
-from typing import NamedTuple, Union, Sequence, Callable
+from typing import NamedTuple, Union, Sequence, Callable, Optional
 
 import pyrado
 from pyrado.sampling.step_sequence import StepSequence
@@ -145,7 +145,7 @@ class ReplayMemory:
             return sum(self._memory.rewards) / self._memory.length
 
 
-def until_thold_exceeded(thold: float, max_iter: int = None):
+def until_thold_exceeded(thold: float, max_iter: Optional[int] = None):
     """
     Designed to wrap a function and repeat it until the return value exceeds a threshold.
 
@@ -156,7 +156,7 @@ def until_thold_exceeded(thold: float, max_iter: int = None):
 
     def actual_decorator(trn_eval_fcn):
         """
-        Designed to wrap a training + evaluation function and repeat it  it until the return value exceeds a threshold.
+        Designed to wrap a training + evaluation function and repeat it until the return value exceeds a threshold.
 
         :param trn_eval_fcn: function to wrap
         :return: wrapped function
@@ -173,18 +173,16 @@ def until_thold_exceeded(thold: float, max_iter: int = None):
 
                 # Break if done
                 if ret >= thold:
-                    print_cbt(f"The policy exceeded the threshold {thold}.", "g", True)
+                    print_cbt(f"The threshold {thold} has been exceeded.", "g", True)
                     break
 
                 # Break if max_iter is reached
                 if max_iter is not None and cnt_iter == max_iter:
-                    print_cbt(f"Exiting the training and evaluation loop after {max_iter} iterations.", "y", True)
+                    print_cbt(f"Exiting the until_thold_exceeded loop after {max_iter} iterations.", "y", True)
                     break
 
                 # Else repeat training
-                print_cbt(
-                    f"The policy did not exceed the threshold {thold}. Repeating training and evaluation ...", "w", True
-                )
+                print_cbt(f"The threshold {thold} has not been exceeded. Repeating ...", "w", True)
             return ret
 
         return wrapper_trn_eval_fcn

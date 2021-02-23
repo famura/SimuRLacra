@@ -26,9 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
-import os.path as osp
 import torch as to
 from tabulate import tabulate
 from typing import Sequence, Optional, Union
@@ -229,18 +227,13 @@ class SimOpt(InterruptableAlgorithm):
         """
         # Run rollouts in simulation with the same initial states as the real-world rollouts
         assert env_sim.randomizer is subrtn_distr.subrtn.env.randomizer
-        init_states_real = np.array([ro.rollout_info["init_state"] for ro in rollouts_real])
+        init_states_real = np.array([ro.states[0, :] for ro in rollouts_real])
         rollouts_sim = SimOpt.eval_behav_policy(None, env_sim, subrtn_policy.policy, "", num_rollouts, init_states_real)
 
         # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
         ros_real_tr, ros_sim_tr = SysIdViaEpisodicRL.truncate_rollouts(rollouts_real, rollouts_sim, replicate=False)
         assert len(ros_real_tr) == len(ros_sim_tr)
-        assert all(
-            [
-                np.allclose(r.rollout_info["init_state"], s.rollout_info["init_state"])
-                for r, s in zip(ros_real_tr, ros_sim_tr)
-            ]
-        )
+        assert all([np.allclose(r.states[0, :], s.states[0, :]) for r, s in zip(ros_real_tr, ros_sim_tr)])
 
         # Return the average the loss
         losses = [subrtn_distr.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]

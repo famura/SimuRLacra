@@ -30,14 +30,13 @@
 Train an agent to solve the WAM Ball-in-cup environment using Bayesian Domain Randomization.
 """
 import numpy as np
-import torch as to
 
 import pyrado
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.domain_randomization.default_randomizers import create_zero_var_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
-from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
+from pyrado.environments.barrett_wam.wam_bic import WAMBallInCupRealEpisodic
+from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
@@ -70,10 +69,10 @@ if __name__ == "__main__":
         3: ("rope_damping", "halfspan"),
         4: ("ball_mass", "mean"),
         5: ("ball_mass", "std"),
-        6: ("joint_stiction", "mean"),
-        7: ("joint_stiction", "halfspan"),
-        8: ("joint_damping", "mean"),
-        9: ("joint_damping", "halfspan"),
+        6: ("joint_2_stiction", "mean"),
+        7: ("joint_2_stiction", "halfspan"),
+        8: ("joint_2_damping", "mean"),
+        9: ("joint_2_damping", "halfspan"),
     }
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
@@ -88,10 +87,10 @@ if __name__ == "__main__":
                 dp_nom["rope_damping"] / 100,
                 0.85 * dp_nom["ball_mass"],
                 dp_nom["ball_mass"] / 1000,
-                0.0 * dp_nom["joint_stiction"],
-                dp_nom["joint_stiction"] / 100,
-                0.0 * dp_nom["joint_damping"],
-                dp_nom["joint_damping"] / 100,
+                0.0 * dp_nom["joint_2_stiction"],
+                dp_nom["joint_2_stiction"] / 100,
+                0.0 * dp_nom["joint_2_damping"],
+                dp_nom["joint_2_damping"] / 100,
             ]
         ),
         bound_up=np.array(
@@ -102,10 +101,10 @@ if __name__ == "__main__":
                 dp_nom["rope_damping"] / 2,
                 1.15 * dp_nom["ball_mass"],
                 dp_nom["ball_mass"] / 10,
-                2 * dp_nom["joint_stiction"],
-                dp_nom["joint_stiction"] / 2,
-                2 * dp_nom["joint_damping"],
-                dp_nom["joint_damping"] / 2,
+                2 * dp_nom["joint_2_stiction"],
+                dp_nom["joint_2_stiction"] / 2,
+                2 * dp_nom["joint_2_damping"],
+                dp_nom["joint_2_damping"] / 2,
             ]
         ),
     )

@@ -35,7 +35,7 @@ class BaseErr(Exception):
     """ Base class for exceptions in Pyrado """
 
     @staticmethod
-    def retrieve_var_name(var, stack_level=2) -> str:
+    def retrieve_var_name(var, stack_level: Optional[int] = 2) -> str:
         """
         Get the name of the given variable by searching through the locals and globals.
 
@@ -89,7 +89,7 @@ class TypeErr(BaseErr):
     def __init__(
         self,
         *,
-        given=None,
+        given="__INVALID__",
         given_name: Optional[str] = None,
         expected_type: Union[type, list, tuple] = None,
         msg: Optional[str] = None,
@@ -102,14 +102,14 @@ class TypeErr(BaseErr):
         :param expected_type: type or types that should have been passed
         :param msg: offers possibility to override the error message
         """
-        if given is None and msg is None:
+        if given == "__INVALID__" and msg is None:
             super().__init__(
-                "Either specify an input for the error message using the 'given' argument, or set a custom"
+                "Either specify an input for the error message using the 'given' argument, or set a custom "
                 "message via the 'msg' argument!"
             )
         elif msg is None:
-            self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
-            self.given_type = type(given)
+            self.given_name = given_name if given_name != "__INVALID__" else BaseErr.retrieve_var_name(given)
+            self.given_type_name = type(given).__name__ if given is not None else "None"
             self.expected_types = expected_type
             # Default error message
             msg = f"Expected the type of {self.given_name} to be"
@@ -121,7 +121,7 @@ class TypeErr(BaseErr):
                         msg += " or " + t.__name__
             else:
                 msg += " " + expected_type.__name__
-            msg += f" but received {self.given_type.__name__}!"
+            msg += f" but received {self.given_type_name}!"
 
         # Pass to Python Exception
         super().__init__(msg)
@@ -133,7 +133,7 @@ class ValueErr(BaseErr):
     def __init__(
         self,
         *,
-        given=None,
+        given="__INVALID__",
         given_name: Optional[str] = None,
         eq_constraint=None,
         l_constraint=None,
@@ -154,9 +154,9 @@ class ValueErr(BaseErr):
         :param ge_constraint: violated greater or equal than constraint
         :param msg: offers possibility to override the error message
         """
-        if given is None and msg is None:
+        if given == "__INVALID__" and msg is None:
             super().__init__(
-                "Either specify an input for the error message using the 'given' argument, or set a custom"
+                "Either specify an input for the error message using the 'given' argument, or set a custom "
                 "message via the 'msg' argument!"
             )
         if msg is None:
@@ -168,7 +168,7 @@ class ValueErr(BaseErr):
                 and g_constraint is None
                 and ge_constraint is None
             ), "Specify at least one constraint!"
-        self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
+        self.given_name = given_name if given_name != "__INVALID__" else BaseErr.retrieve_var_name(given)
         self.given_str = str(given)
         self.eq_constraint_str = str(eq_constraint)
         self.l_constraint_str = str(l_constraint)
@@ -209,7 +209,9 @@ class ShapeErr(BaseErr):
             return len(obj), "length"
         raise AttributeError(f"{var} must have either a shape attribute or support len()!")
 
-    def __init__(self, *, given=None, given_name: Optional[str] = None, expected_match=None, msg: Optional[str] = None):
+    def __init__(
+        self, *, given="__INVALID__", given_name: Optional[str] = None, expected_match=None, msg: Optional[str] = None
+    ):
         """
         Constructor
 
@@ -218,13 +220,13 @@ class ShapeErr(BaseErr):
         :param given_name: explicitly pass the name of the variable for the error message
         :param msg: offers possibility to override the error message
         """
-        if given is None and msg is None:
+        if given == "__INVALID__" and msg is None:
             super().__init__(
-                "Either specify an input for the error message using the 'given' argument, or set a custom"
+                "Either specify an input for the error message using the 'given' argument, or set a custom "
                 "message via the 'msg' argument!"
             )
         elif msg is None:
-            self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
+            self.given_name = given_name if given_name != "__INVALID__" else BaseErr.retrieve_var_name(given)
             self.given_shape, gsn = ShapeErr.get_shape_and_name(given, "given")
             self.expected_shape, esn = ShapeErr.get_shape_and_name(expected_match, "expected_match")
             self.attributes = (gsn, esn)
@@ -249,7 +251,7 @@ class PathErr(BaseErr):
         :param given: input which caused the error
         :param msg: offers possibility to override the error message
         """
-        if given is None and msg is None:
+        if given == "__INVALID__" and msg is None:
             super().__init__(
                 "Either specify an input for the error message using the 'given' argument, or set a custom"
                 "message via the 'msg' argument!"

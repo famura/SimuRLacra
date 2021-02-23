@@ -25,12 +25,12 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from typing import Optional, Union
 
 import numpy as np
 from abc import ABC, abstractmethod
 from colorama import Style
 from init_args_serializer import Serializable
+from typing import Optional, Union
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -44,19 +44,20 @@ class Env(ABC, Serializable):
 
     name: str = None  # unique identifier
 
-    def __init__(self, dt: Optional[float], max_steps: int = pyrado.inf):
+    def __init__(self, dt: Union[int, float], max_steps: Optional[int] = pyrado.inf):
         """
         Constructor
 
-        :param dt: integration step size in seconds, use `None` for one-step environments
+        :param dt: integration step size in seconds, default value is used for for one-step environments
         :param max_steps: max number of simulation time steps
         """
-        if dt is not None:
-            if dt < 0:
-                raise pyrado.ValueErr(given=dt, eq_constraint="None", ge_constraint="0")
+        if not isinstance(dt, (int, float)):
+            raise pyrado.TypeErr(given=dt, expected_type=(int, float))
+        if dt < 0:
+            raise pyrado.ValueErr(given=dt, ge_constraint="0")
         if max_steps < 1:
             raise pyrado.ValueErr(given=max_steps, ge_constraint="1")
-        self._dt = dt
+        self._dt = float(dt)
         self._max_steps = max_steps
         self._curr_step = 0
         self._curr_rew = -pyrado.inf  # only for initialization
@@ -171,7 +172,7 @@ class Env(ABC, Serializable):
         raise NotImplementedError
 
     @abstractmethod
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
+    def reset(self, init_state: Optional[np.ndarray] = None, domain_param: Optional[dict] = None) -> np.ndarray:
         """
         Reset the environment to its initial state and optionally set different domain parameters.
 
@@ -220,7 +221,7 @@ class Env(ABC, Serializable):
         return self.act_space.project_to(act)
 
     @abstractmethod
-    def render(self, mode: RenderMode, render_step: int = 1):
+    def render(self, mode: RenderMode, render_step: Optional[int] = 1):
         """
         Visualize one time step.
 

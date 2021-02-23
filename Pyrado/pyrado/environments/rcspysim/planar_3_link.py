@@ -132,7 +132,7 @@ class Planar3LinkSim(RcsSim, Serializable):
         state_des2 = np.array([p2[0], p2[2], 0, 0])
         state_des3 = np.array([p3[0], p3[2], 0, 0])
         if task_args.get("consider_velocities", False):
-            Q = np.diag([5e-1, 5e-1, 2e-1, 2e-1])
+            Q = np.diag([5e-1, 5e-1, 5e-3, 5e-3])
         else:
             Q = np.diag([1e0, 1e0])
             state_des1 = state_des1[:2]
