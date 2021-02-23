@@ -135,7 +135,7 @@ if __name__ == "__main__":
     else:
         raise pyrado.ValueErr(given=args, eq_constraint="'1D', '2D', '3D'")
 
-    if args.save_figures:
+    if args.save:
         if args.mode in ["1D", "3D"]:
             for fmt in ["pdf", "pgf"]:
                 fig.savefig(osp.join(ex_dir, f"gp_posterior_ret.{fmt}"), dpi=500)

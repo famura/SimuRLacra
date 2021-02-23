@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
+from typing import Optional
+
 import numpy as np
 from init_args_serializer import Serializable
 
@@ -142,19 +144,22 @@ class BallOnPlate2DSim(BallOnPlateSim, Serializable):
 
     name: str = "bop2d"
 
-    def __init__(self, init_ball_vel: np.ndarray = None, state_des: np.ndarray = None, **kwargs):
+    def __init__(self, task_args: Optional[dict] = None, init_ball_vel: np.ndarray = None, **kwargs):
         """
         Constructor
 
+        :param task_args: arguments for the task construction
         :param init_ball_vel: initial ball velocity applied to ball on `reset()`
-        :param state_des: desired state for the task
         :param kwargs: keyword arguments forwarded to the `BallOnPlateSim` constructor
         """
         Serializable._init(self, locals())
 
         # Forward to the BallOnPlateSim's constructor, specifying the characteristic action model
         super().__init__(
-            task_args=dict(state_des=state_des), initBallVel=init_ball_vel, actionModelType="plate_angacc", **kwargs
+            task_args=dict() if task_args is None else task_args,
+            initBallVel=init_ball_vel,
+            actionModelType="plate_angacc",
+            **kwargs,
         )
 
     def _create_task(self, task_args: dict) -> Task:
@@ -174,19 +179,22 @@ class BallOnPlate5DSim(BallOnPlateSim, Serializable):
 
     name: str = "bop5d"
 
-    def __init__(self, init_ball_vel: np.ndarray = None, state_des: np.ndarray = None, **kwargs):
+    def __init__(self, task_args: Optional[dict] = None, init_ball_vel: np.ndarray = None, **kwargs):
         """
         Constructor
 
+        :param task_args: arguments for the task construction
         :param init_ball_vel: initial ball velocity applied to ball on `reset()`
-        :param state_des: desired state for the task
         :param kwargs: keyword arguments forwarded to the `RcsSim` constructor
         """
         Serializable._init(self, locals())
 
         # Forward to the BallOnPlateSim's constructor, specifying the characteristic action model
         super().__init__(
-            task_args=dict(state_des=state_des), initBallVel=init_ball_vel, actionModelType="plate_acc5d", **kwargs
+            task_args=dict() if task_args is None else task_args,
+            initBallVel=init_ball_vel,
+            actionModelType="plate_acc5d",
+            **kwargs,
         )
 
     def _create_task(self, task_args: dict) -> Task:

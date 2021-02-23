@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     Rcs::KeyCatcherBase::registerKey("q", "Quit");
     
     RMSG("Starting Rcs...");
-    char xmlFileName[128] = "exBotKuka.xml", directory[128] = "config/BallOnPlate";
+    char xmlFileName[128] = "exTargetTracking.xml", directory[128] = "config/TargetTracking";
     
     // Ctrl-C callback handler
     signal(SIGINT, quit);
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     LIBXML_TEST_VERSION;
     
     // Initialize as ros node
-    ros::init(argc, argv, "TestBallTracking", ros::init_options::AnonymousName | ros::init_options::NoSigintHandler);
+    ros::init(argc, argv, "TestTargetTracking", ros::init_options::AnonymousName | ros::init_options::NoSigintHandler);
     
     // Parse command line arguments
     Rcs::CmdLineParser argP(argc, argv);
@@ -159,7 +159,6 @@ int main(int argc, char** argv)
         }
         
         if (hud) {
-            // TODO obtain reward
             bot.getConfig()->updateHUD(hud, NULL, NULL, 0.0, -1);
         }
         // wait a bit till next update

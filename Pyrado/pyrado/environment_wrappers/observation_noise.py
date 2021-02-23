@@ -30,7 +30,8 @@ import numpy as np
 from init_args_serializer.serializable import Serializable
 from typing import Optional, Union
 
-from pyrado.environment_wrappers.base import EnvWrapperObs
+import pyrado
+from pyrado.environment_wrappers.base import EnvWrapperObs, EnvWrapper
 from pyrado.environments.sim_base import SimEnv
 
 
@@ -39,35 +40,33 @@ class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
 
     def __init__(
         self,
-        wrapped_env: SimEnv,
+        wrapped_env: Union[SimEnv, EnvWrapper],
+        noise_std: Union[list, np.ndarray],
         noise_mean: Optional[Union[list, np.ndarray]] = None,
-        noise_std: Optional[Union[list, np.ndarray]] = None,
     ):
         """
         :param wrapped_env: environment to wrap
-
-        :param noise_mean: list or narray for the mean of the noise (mostly all zeros)
-        :param noise_std: list or ndarray for the standard deviation of the noise (no default value!)
+        :param noise_std: list or numpy array for the standard deviation of the noise
+        :param noise_mean: list or numpy array for the mean of the noise, by default all zeros, i.e. no bias
         """
         Serializable._init(self, locals())
 
         super().__init__(wrapped_env)
 
         # Parse noise specification
+        self._std = np.array(noise_std)
+        if not self._std.shape == self.obs_space.shape:
+            raise pyrado.ShapeErr(given=self._std, expected_match=self.obs_space)
         if noise_mean is not None:
             self._mean = np.array(noise_mean)
-            assert self._mean.shape == self.obs_space.shape
+            if not self._mean.shape == self.obs_space.shape:
+                raise pyrado.ShapeErr(given=self._mean, expected_match=self.obs_space)
         else:
             self._mean = np.zeros(self.obs_space.shape)
-        if noise_std is not None:
-            self._std = np.array(noise_std)
-            assert self._std.shape == self.obs_space.shape
-        else:
-            self._std = np.zeros(self.obs_space.shape)
 
     def _process_obs(self, obs: np.ndarray) -> np.ndarray:
-        # Generate gaussian noise sample
-        noise = np.random.randn(*self.obs_space.shape) * self._std + self._mean  # * to unsqueeze the tuple
+        # Generate Gaussian noise sample
+        noise = np.random.randn(*self.obs_space.shape) * self._std + self._mean
 
         # Add it to the observation
         return obs + noise

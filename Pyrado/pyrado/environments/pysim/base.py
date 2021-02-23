@@ -30,18 +30,20 @@ import numpy as np
 from abc import abstractmethod
 from copy import deepcopy
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
 from pyrado.utils.data_types import RenderMode
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
+from pyrado.utils.input_output import print_cbt
 
 
 class SimPyEnv(SimEnv, Serializable):
     """ Base class for simulated environments implemented in pure Python """
 
-    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None):
+    def __init__(self, dt: float, max_steps: Optional[int] = pyrado.inf, task_args: Optional[dict] = None):
         """
         Constructor
 
@@ -69,9 +71,8 @@ class SimPyEnv(SimEnv, Serializable):
             raise pyrado.TypeErr(given=task_args, expected_type=dict)
         self._task = self._create_task(task_args=dict() if task_args is None else task_args)
 
-        # Animation with VPython
+        # Animation with Panda3D
         self._curr_act = np.zeros(self.act_space.shape)
-        self._anim = dict(canvas=None)
 
     @property
     def state_space(self) -> Space:
@@ -84,6 +85,12 @@ class SimPyEnv(SimEnv, Serializable):
     @property
     def init_space(self) -> Space:
         return self._init_space
+
+    @init_space.setter
+    def init_space(self, space: Space):
+        if not isinstance(space, Space):
+            raise pyrado.TypeErr(given=space, expected_type=Space)
+        self._init_space = space
 
     @property
     def act_space(self) -> Space:
@@ -98,11 +105,11 @@ class SimPyEnv(SimEnv, Serializable):
         return deepcopy(self._domain_param)
 
     @domain_param.setter
-    def domain_param(self, param: dict):
-        if not isinstance(param, dict):
-            raise pyrado.TypeErr(given=param, expected_type=dict)
+    def domain_param(self, domain_param: dict):
+        if not isinstance(domain_param, dict):
+            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
         # Update the parameters
-        self._domain_param.update(param)
+        self._domain_param.update(domain_param)
         self._calc_constants()
 
         # Update spaces
@@ -131,7 +138,7 @@ class SimPyEnv(SimEnv, Serializable):
         """
         raise NotImplementedError
 
-    def _calc_constants(self):
+    def _calc_constants(self, *args, **kwargs):
         """
         Called to calculate the physics constants that depend on the domain parameters. Override in subclasses.
 
@@ -172,19 +179,21 @@ class SimPyEnv(SimEnv, Serializable):
         if init_state.shape == self.state_space.shape:
             # Allow setting the complete state space
             if not self.state_space.contains(init_state, verbose=True):
-                pyrado.ValueErr(msg="The full init state must be within the state space!")
+                print_cbt("The full init state is not within the state space.", "r")
+                # raise pyrado.ValueErr(msg="The full init state must be within the state space!")
             self.state = init_state.copy()
         else:
             # Set the initial state determined by an element of the init space
             if not self.init_space.contains(init_state, verbose=True):
-                pyrado.ValueErr(msg="The init state must be within init state space!")
+                print_cbt("The  init state is not within init state space.", "r")
+                # raise pyrado.ValueErr(msg="The init state must be within init state space!")
             self.state = self._state_from_init(init_state)
 
         # Reset the task
         self._task.reset(env_spec=self.spec)
 
         # Reset VPython animation
-        if self._anim["canvas"] is not None:
+        if hasattr(self, "_visualization"):
             self._reset_anim()
 
         # Return an observation
@@ -213,8 +222,6 @@ class SimPyEnv(SimEnv, Serializable):
 
         # Apply the action and simulate the resulting dynamics
         self._step_dynamics(act)
-
-        info = dict(t=self._curr_step * self._dt)
         self._curr_step += 1
 
         # Check if the task or the environment is done
@@ -226,7 +233,7 @@ class SimPyEnv(SimEnv, Serializable):
             # Add final reward if done
             self._curr_rew += self._task.final_rew(self.state, remaining_steps)
 
-        return self.observe(self.state), self._curr_rew, done, info
+        return self.observe(self.state), self._curr_rew, done, dict()
 
     def render(self, mode: RenderMode, render_step: int = 1):
         if self._curr_step % render_step == 0:
@@ -236,15 +243,15 @@ class SimPyEnv(SimEnv, Serializable):
             # Print to console
             if mode.text:
                 print(
-                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                        self._curr_step, self._curr_rew, self._curr_act, self.state
-                    )
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
             # VPython
             if mode.video:
-                if self._anim["canvas"] is None:
+                if not hasattr(self, "_visualization"):
                     self._init_anim()
+                    # Calculate if and how many frames are dropped
+                    self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
                 # Update the animation
                 self._update_anim()
@@ -252,20 +259,26 @@ class SimPyEnv(SimEnv, Serializable):
     def _init_anim(self):
         """
         Initialize animation. Called by first render call.
-        :return:
         """
         pass
 
     def _update_anim(self):
         """
         Update animation. Called by each render call.
-        :return:
+        Skips certain number of simulation steps per frame to achieve 60 Hz output.
         """
-        pass
+        # Do not render while _skip_frames is bigger than 1
+        if self._skip_frames > 1:
+            # Decrease _skip_frames by one
+            self._skip_frames -= 1
+        else:
+            # Render frame
+            self._visualization.taskMgr.step()
+            # Calculate number of frames that need to be skipped
+            self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
     def _reset_anim(self):
         """
-        Reset animation to initial state. Called by reset() if needed.
-        The default implementation does nothing.
+        Removes trace. Called by reset() if needed. Calls reset of pandavis-class.
         """
-        pass
+        self._visualization.reset()

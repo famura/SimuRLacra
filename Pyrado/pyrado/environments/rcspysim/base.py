@@ -150,11 +150,11 @@ class RcsSim(SimEnv, Serializable):
         return self._unadapt_domain_param(self._sim.domainParam)
 
     @domain_param.setter
-    def domain_param(self, param: dict):
-        if not isinstance(param, dict):
-            raise pyrado.TypeErr(given=param, expected_type=dict)
+    def domain_param(self, domain_param: dict):
+        if not isinstance(domain_param, dict):
+            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
         # Update the internal parameters. The New domain parameters will be applied on reset().
-        self._domain_param.update(param)
+        self._domain_param.update(domain_param)
 
         # Update task
         self._task = self._create_task(self.task_args)
@@ -263,7 +263,6 @@ class RcsSim(SimEnv, Serializable):
 
         self.state = self._state_from_obs(obs)  # only for the Python side
 
-        info = dict(t=self._curr_step * self._dt)
         self._curr_step += 1
 
         # Check if the task or the environment is done
@@ -275,7 +274,7 @@ class RcsSim(SimEnv, Serializable):
             # Add final reward if done
             self._curr_rew += self._task.final_rew(self.state, remaining_steps)
 
-        return obs, self._curr_rew, done, info
+        return obs, self._curr_rew, done, dict()
 
     def render(self, mode: RenderMode = RenderMode(text=True), render_step: int = 1):
         if self._curr_step % render_step == 0:

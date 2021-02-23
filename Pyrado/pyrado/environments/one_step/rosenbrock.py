@@ -49,7 +49,7 @@ class RosenSim(SimEnv, Serializable):
         Serializable._init(self, locals())
 
         # Initialize basic variables
-        super().__init__(dt=None, max_steps=1)
+        super().__init__(dt=1, max_steps=1)
 
         # Set the bounds for the system's states adn actions
         max_state = np.array([100.0, 100.0])
@@ -90,11 +90,11 @@ class RosenSim(SimEnv, Serializable):
         return self._task
 
     @property
-    def domain_param(self):
+    def domain_param(self) -> dict:
         return {}
 
     @domain_param.setter
-    def domain_param(self, param):
+    def domain_param(self, domain_param):
         pass
 
     @classmethod
@@ -128,7 +128,7 @@ class RosenSim(SimEnv, Serializable):
         # Return perfect observation
         return self.observe(self.state)
 
-    def step(self, act):
+    def step(self, act: np.ndarray) -> tuple:
         # Apply actuator limits
         act = self.limit_act(act)
 
@@ -155,9 +155,7 @@ class RosenSim(SimEnv, Serializable):
         if mode.text:
             if self._curr_step % render_step == 0 and self._curr_step > 0:  # skip the render before the first step
                 print(
-                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                        self._curr_step, self._curr_rew, self._curr_act, self.state
-                    )
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
         # Render using pyplot

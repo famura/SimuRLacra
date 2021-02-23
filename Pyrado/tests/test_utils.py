@@ -34,7 +34,7 @@ from math import ceil
 from tqdm import tqdm
 
 from pyrado.spaces import BoxSpace
-from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
+from pyrado.sampling.utils import gen_shuffled_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.checks import is_iterator, check_all_types_equal, check_all_lengths_equal, check_all_shapes_equal
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn, skyline
@@ -146,7 +146,7 @@ def test_merge_lod_var_dtype(x, y):
 )
 @pytest.mark.parametrize("sorted", [True, False], ids=["sorted", "unsorted"])
 def test_gen_batch_idcs(batch_size, data_size, sorted):
-    generator = gen_batch_idcs(batch_size, data_size)
+    generator = gen_shuffled_batch_idcs(batch_size, data_size)
     unordered_batches = list(generator)
     assert len(unordered_batches) == ceil(data_size / batch_size)
     assert all(len(uob) <= batch_size for uob in unordered_batches)

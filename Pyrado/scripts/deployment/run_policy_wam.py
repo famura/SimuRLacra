@@ -34,7 +34,7 @@ import numpy as np
 
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
+from pyrado.environments.barrett_wam.wam_bic import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.experiments import load_experiment
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        mode = ""
+        mode = args.mode if args.mode is not None else ""
         while mode not in ["ep", "sb"]:
             mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
         if mode == "sb":

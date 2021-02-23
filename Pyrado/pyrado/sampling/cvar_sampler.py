@@ -27,9 +27,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from typing import List
+from typing import List, Optional
 
+from pyrado.environments.base import Env
 from pyrado.logger.step import LoggerAware
+from pyrado.policies.base import Policy
 from pyrado.sampling.sampler import SamplerBase
 from pyrado.sampling.step_sequence import StepSequence
 
@@ -95,7 +97,7 @@ class CVaRSampler(SamplerBase, LoggerAware):
             min_steps = int(min_steps / self.epsilon)
         self._wrapped_sampler.set_min_count(min_rollouts=min_rollouts, min_steps=min_steps)
 
-    def reinit(self, env=None, policy=None):
+    def reinit(self, env: Optional[Env] = None, policy: Optional[Policy] = None):
         # Delegate to inner sampler
         self._wrapped_sampler.reinit(env=env, policy=policy)
 

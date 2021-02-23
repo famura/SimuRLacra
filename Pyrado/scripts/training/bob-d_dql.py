@@ -37,7 +37,7 @@ import torch as to
 import pyrado
 from pyrado.algorithms.step_based.dql import DQL
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.feed_forward.fnn import DiscreteActQValPolicy, FNN
 from pyrado.utils.argparser import get_argparser
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         eps_schedule_gamma=0.9955,
         gamma=0.998,
         target_update_intvl=5,
-        num_batch_updates=20,
+        num_updates_per_step=20,
         max_grad_norm=0.5,
         min_steps=10,
         batch_size=256,
@@ -83,13 +83,11 @@ if __name__ == "__main__":
     algo = DQL(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

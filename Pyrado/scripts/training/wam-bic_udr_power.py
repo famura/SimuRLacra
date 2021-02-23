@@ -37,8 +37,8 @@ from pyrado.algorithms.meta.udr import UDR
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.argparser import get_argparser
 
@@ -64,8 +64,8 @@ if __name__ == "__main__":
         UniformDomainParam(name="cup_scale", mean=0.95, halfspan=0.05),
         NormalDomainParam(name="rope_length", mean=0.3, std=0.005),
         NormalDomainParam(name="ball_mass", mean=0.021, std=0.001),
-        UniformDomainParam(name="joint_damping", mean=0.05, halfspan=0.05),
-        UniformDomainParam(name="joint_stiction", mean=0.1, halfspan=0.1),
+        UniformDomainParam(name="joint_2_damping", mean=0.05, halfspan=0.05),
+        UniformDomainParam(name="joint_2_stiction", mean=0.1, halfspan=0.1),
     )
     env = DomainRandWrapperLive(env, randomizer)
 
@@ -76,9 +76,10 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=50,
-        pop_size=200,
+        pop_size=100,
         num_is_samples=10,
-        num_rollouts=8,
+        num_init_states_per_domain=4,
+        num_domains=10,
         expl_std_init=np.pi / 12,
         expl_std_min=0.02,
         num_workers=8,
@@ -86,13 +87,11 @@ if __name__ == "__main__":
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

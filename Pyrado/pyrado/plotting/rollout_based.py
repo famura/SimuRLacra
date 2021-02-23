@@ -36,6 +36,7 @@ import pyrado
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.utils import typed_env, inner_env
 from pyrado.environments.base import Env
+from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.step_sequence import StepSequence
@@ -47,9 +48,9 @@ def _get_obs_label(rollout: StepSequence, idx: int):
     try:
         label = f"{rollout.rollout_info['env_spec'].obs_space.labels[idx]}"
         if label == "None":
-            label = f"o_{idx}"
+            label = f"o_{{{idx}}}"
     except (AttributeError, KeyError):
-        label = f"o_{idx}"
+        label = f"o_{{{idx}}}"
     return label
 
 
@@ -57,13 +58,13 @@ def _get_act_label(rollout: StepSequence, idx: int):
     try:
         label = f"{rollout.rollout_info['env_spec'].act_space.labels[idx]}"
         if label == "None":
-            label = f"a_{idx}"
+            label = f"a_{{{idx}}}"
     except (AttributeError, KeyError):
-        label = f"a_{idx}"
+        label = f"a_{{{idx}}}"
     return label
 
 
-def draw_observations_actions_rewards(ro: StepSequence):
+def plot_observations_actions_rewards(ro: StepSequence):
     """
     Plot all observation, action, and reward trajectories of the given rollout.
 
@@ -79,31 +80,31 @@ def draw_observations_actions_rewards(ro: StepSequence):
         dim_act = ro.actions.shape[1]
 
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length + 1))
 
-        fig, axs = plt.subplots(dim_obs + dim_act + 1, 1, figsize=(8, 12), tight_layout=True)
+        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_obs + dim_act + 1), figsize=(8, 12), tight_layout=True)
         fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
         # Observations (without the last time step)
         for i in range(dim_obs):
-            axs[i].plot(t, ro.observations[:-1, i], c=colors[i])
+            axs[i].plot(t, ro.observations[:, i], c=colors[i])
             axs[i].set_ylabel(_get_obs_label(ro, i))
 
         # Actions
         for i in range(dim_act):
-            axs[i + dim_obs].plot(t, ro.actions[:, i], c=colors[i])
+            axs[i + dim_obs].plot(t[:-1], ro.actions[:, i], c=colors[i])
             axs[i + dim_obs].set_ylabel(_get_act_label(ro, i))
         # action_labels = env.unwrapped.action_space.labels; label=action_labels[0]
 
         # Rewards
-        axs[-1].plot(t, ro.rewards, c="k")
+        axs[-1].plot(t[:-1], ro.rewards, c="k")
         axs[-1].set_ylabel("reward")
         axs[-1].set_xlabel("time")
         plt.subplots_adjust(hspace=0.5)
 
 
-def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
+def plot_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
     """
     Plot all observation trajectories of the given rollout.
 
@@ -118,7 +119,7 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
         dim_obs = range(ro.observations.shape[1]) if idcs_sel is None else idcs_sel
 
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length + 1))
 
         if len(dim_obs) <= 6:
             divisor = 2
@@ -136,21 +137,23 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_obs)))
 
         if len(dim_obs) == 1:
-            axs.plot(t, ro.observations[:-1, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
+            axs[0, 0].plot(t, ro.observations[:, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
+            axs[0, 0].legend()
+            axs.plot(t, ro.observations[:, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
             axs.legend()
         else:
             for i in range(num_rows):
                 for j in range(num_cols):
                     if j + i * num_cols < len(dim_obs):
                         # Omit the last observation for simplicity
-                        axs[i, j].plot(t, ro.observations[:-1, j + i * num_cols], c=colors[j + i * num_cols])
+                        axs[i, j].plot(t, ro.observations[:, j + i * num_cols], c=colors[j + i * num_cols])
                         axs[i, j].set_ylabel(_get_obs_label(ro, j + i * num_cols))
                     else:
                         # We might create more subplots than there are observations
                         axs[i, j].remove()
 
 
-def draw_features(ro: StepSequence, policy: Policy):
+def plot_features(ro: StepSequence, policy: Policy):
     """
     Plot all features given the policy and the observation trajectories.
 
@@ -163,7 +166,7 @@ def draw_features(ro: StepSequence, policy: Policy):
 
     if hasattr(ro, "observations"):
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
         # Recover the features from the observations
         feat_vals = policy.eval_feats(to.from_numpy(ro.observations))
@@ -193,13 +196,13 @@ def draw_features(ro: StepSequence, policy: Policy):
                     if j + i * num_cols < len(dim_feat):
                         # Omit the last observation for simplicity
                         axs[i, j].plot(t, feat_vals[:-1, j + i * num_cols], c=colors[j + i * num_cols])
-                        axs[i, j].set_ylabel(rf"$\phi_{j + i*num_cols}$")
+                        axs[i, j].set_ylabel(rf"$\phi_{{{j + i*num_cols}}}$")
                     else:
                         # We might create more subplots than there are observations
                         axs[i, j].remove()
 
 
-def draw_actions(ro: StepSequence, env: Env):
+def plot_actions(ro: StepSequence, env: Env):
     """
     Plot all action trajectories of the given rollout.
 
@@ -212,9 +215,9 @@ def draw_actions(ro: StepSequence, env: Env):
 
         dim_act = ro.actions.shape[1]
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
-        fig, axs = plt.subplots(dim_act, figsize=(8, 12), tight_layout=True)
+        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_act), figsize=(8, 12), tight_layout=True)
         fig.canvas.set_window_title("Actions over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
@@ -255,7 +258,7 @@ def draw_rewards(ro: StepSequence):
     """
     if hasattr(ro, "rewards"):
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
         fig, ax = plt.subplots(1, tight_layout=True)
         fig.canvas.set_window_title("Reward over Time")
@@ -278,7 +281,8 @@ def draw_potentials(ro: StepSequence, layout: str = "joint"):
         and hasattr(ro, "stimuli_internal")
     ):
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
+
         dim_pot = ro.potentials.shape[1]  # number of neurons with potential
         num_act = ro.actions.shape[1]
         colors_pot = plt.get_cmap("tab20")(np.linspace(0, 1, dim_pot))

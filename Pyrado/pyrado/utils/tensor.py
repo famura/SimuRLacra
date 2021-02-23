@@ -33,46 +33,6 @@ from typing import Union
 import pyrado
 
 
-def atleast_2D(x: to.Tensor) -> to.Tensor:
-    """
-    Mimic the numpy function.
-
-    :param x: any tensor
-    :return: an at least 2-dim tensor
-    """
-    if x.ndim >= 2:
-        return x
-    elif x.ndim == 1:
-        # First dim is the batch size (1 in this case)
-        return x.unsqueeze(0)
-    else:
-        return x.view(1, 1)
-
-
-def atleast_3D(x: to.Tensor) -> to.Tensor:
-    """
-    Mimic the numpy function.
-
-    :param x: any tensor
-    :return: an at least 3-dim tensor
-    """
-    if x.ndim >= 3:
-        return x
-    elif x.ndim == 2:
-        # First dim is the batch size (1 in this case). We add dimensions at the end.
-        return x.unsqueeze(-1)
-    elif x.ndim == 1:
-        if x.size() == to.Size([1]):
-            # First dim is the batch size (1 in this case).
-            # We add dimensions at the end, but could also do it at the beginning.
-            return x.unsqueeze(-1).unsqueeze(-1)
-        else:
-            # First dim is the batch size (1 in this case). We add one dim at the end and at the beginning.
-            return x.unsqueeze(-1).unsqueeze(0)
-    else:
-        return x.view(1, 1, 1)
-
-
 def stack_tensor_list(tensor_list: list) -> to.Tensor:
     """
     Convenience function for stacking a list of tensors

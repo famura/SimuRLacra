@@ -42,7 +42,7 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
@@ -142,7 +142,7 @@ def create_cem_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: D
     subrtn_hparam = dict(
         max_iter=20,
         pop_size=200,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         num_is_samples=10,
         expl_std_init=5e-1,
         expl_std_min=1e-4,
@@ -159,7 +159,7 @@ def create_reps_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: 
         max_iter=20,
         eps=1.0,
         pop_size=500,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_std_init=5e-2,
         expl_std_min=1e-4,
         num_epoch_dual=1000,
@@ -176,7 +176,7 @@ def create_nes_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: D
     subrtn_hparam = dict(
         max_iter=100,
         pop_size=None,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_std_init=2e-2,
         expl_std_min=1e-4,
         num_workers=8,
@@ -218,13 +218,11 @@ if __name__ == "__main__":
     )
 
     # Save the environments and the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams),
-            dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
-            dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams),
+        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+        dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map),
+        save_dir=ex_dir,
     )
 
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)

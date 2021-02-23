@@ -35,7 +35,7 @@ import pyrado
 from pyrado.algorithms.episodic.pepg import PEPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, const_feat, identity_feat
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # Environment
     env_hparams = dict(dt=1 / 50.0, max_steps=200)
-    env = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    env = OneMassOscillatorSim(**env_hparams, task_args=dict(state_des=np.array([0.5, 0])))
     env = ActNormWrapper(env)
 
     # Policy
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=100,
-        num_rollouts=8,
+        num_init_states_per_domain=8,
         pop_size=60,
         expl_std_init=1.0,
         clip_ratio_std=0.05,
@@ -75,13 +75,11 @@ if __name__ == "__main__":
     algo = PEPG(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

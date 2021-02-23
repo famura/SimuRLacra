@@ -32,6 +32,7 @@ import torch as to
 import torch.nn as nn
 from copy import deepcopy
 from tqdm import tqdm
+from typing import Optional
 
 import pyrado
 from pyrado.algorithms.step_based.value_based import ValueBased
@@ -62,20 +63,21 @@ class DQL(ValueBased):
         eps_schedule_gamma: float,
         gamma: float,
         max_iter: int,
-        num_batch_updates: int,
-        target_update_intvl: int = 5,
-        num_init_memory_steps: int = None,
-        min_rollouts: int = None,
-        min_steps: int = None,
-        batch_size: int = 256,
-        num_workers: int = 4,
-        max_grad_norm: float = 0.5,
-        lr: float = 5e-4,
+        num_updates_per_step: int,
+        target_update_intvl: Optional[int] = 5,
+        num_init_memory_steps: Optional[int] = None,
+        min_rollouts: Optional[int] = None,
+        min_steps: Optional[int] = None,
+        batch_size: Optional[int] = 256,
+        eval_intvl: Optional[int] = 100,
+        max_grad_norm: Optional[float] = 0.5,
+        lr: Optional[float] = 5e-4,
         lr_scheduler=None,
-        lr_scheduler_hparam: [dict, None] = None,
-        logger: StepLogger = None,
+        lr_scheduler_hparam: Optional[dict] = None,
+        num_workers: Optional[int] = 4,
+        logger: Optional[StepLogger] = None,
     ):
-        """
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
@@ -85,20 +87,22 @@ class DQL(ValueBased):
         :param eps_init: initial value for the probability of taking a random action, constant if `eps_schedule_gamma=1`
         :param eps_schedule_gamma: temporal discount factor for the exponential decay of epsilon
         :param gamma: temporal discount factor for the state values
-        :param max_iter: number of iterations (policy updates)
-        :param num_batch_updates: number of batch updates per algorithm steps
-        :param target_update_intvl: number of iterations that pass before updating the qfcn_targ network
+        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
+        :param num_updates_per_step: number of (batched) updates per algorithm steps
+        :param target_update_intvl: number of iterations that pass before updating the `qfcn_targ` network
         :param num_init_memory_steps: number of samples used to initially fill the replay buffer with, pass `None` to
                                       fill the buffer completely
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param batch_size: number of samples per policy update batch
-        :param num_workers: number of environments for parallel sampling
+        :param eval_intvl: interval in which the evaluation rollouts are collected, also the interval in which the
+                           logger prints the summary statistics
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                    By default, the learning rate is constant.
         :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)
         :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(policy, DiscreteActQValPolicy):
@@ -106,21 +110,22 @@ class DQL(ValueBased):
 
         # Call ValueBased's constructor
         super().__init__(
-            save_dir,
-            env,
-            policy,
-            memory_size,
-            gamma,
-            max_iter,
-            num_batch_updates,
-            target_update_intvl,
-            num_init_memory_steps,
-            min_rollouts,
-            min_steps,
-            batch_size,
-            num_workers,
-            max_grad_norm,
-            logger,
+            save_dir=save_dir,
+            env=env,
+            policy=policy,
+            memory_size=memory_size,
+            gamma=gamma,
+            max_iter=max_iter,
+            num_updates_per_step=num_updates_per_step,
+            target_update_intvl=target_update_intvl,
+            num_init_memory_steps=num_init_memory_steps,
+            min_rollouts=min_rollouts,
+            min_steps=min_steps,
+            batch_size=batch_size,
+            eval_intvl=eval_intvl,
+            max_grad_norm=max_grad_norm,
+            num_workers=num_workers,
+            logger=logger,
         )
 
         self.qfcn_targ = deepcopy(self._policy).eval()  # will not be trained using the optimizer
@@ -128,7 +133,7 @@ class DQL(ValueBased):
 
         # Create sampler for exploration during training
         self._expl_strat = EpsGreedyExplStrat(self._policy, eps_init, eps_schedule_gamma)
-        self.sampler_trn = ParallelRolloutSampler(
+        self.sampler = ParallelRolloutSampler(
             self._env,
             self._expl_strat,
             num_workers=num_workers if min_steps != 1 else 1,
@@ -213,7 +218,7 @@ class DQL(ValueBased):
         if self._lr_scheduler is not None:
             self.logger.add_value("avg lr", np.mean(self._lr_scheduler.get_last_lr()), 6)
 
-    def reset(self, seed: int = None):
+    def reset(self, seed: Optional[int] = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds
         super().reset(seed)
 

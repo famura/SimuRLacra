@@ -26,6 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+#added imports
+import pathlib
+
 import numpy as np
 from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
@@ -99,7 +102,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         return super().reset(init_state, domain_param)
 
-    def observe(self, state):
+    def observe(self, state) -> np.ndarray:
         return np.array([state[0], np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     @classmethod
@@ -198,108 +201,10 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self.state[:2] += self.state[2:] * self._dt  # next position
 
     def _init_anim(self):
-        import vpython as vp
-
-        l_pole = float(self.domain_param["l_pole"])
-        l_rail = float(self.domain_param["l_rail"])
-
-        # Only for animation
-        l_cart, h_cart = 0.08, 0.08
-        r_pole, r_rail = 0.01, 0.005
-
-        # Get positions
-        x, th, _, _ = self.state
-
-        self._anim["canvas"] = vp.canvas(width=1000, height=600, title="Quanser Cartpole")
-        # Rail
-        self._anim["rail"] = vp.cylinder(
-            pos=vp.vec(-l_rail / 2, -h_cart / 2 - r_rail, 0),  # a VPython's cylinder origin is at the bottom
-            radius=r_rail,
-            length=l_rail,
-            color=vp.color.white,
-            canvas=self._anim["canvas"],
-        )
-        # Cart
-        self._anim["cart"] = vp.box(
-            pos=vp.vec(x, 0, 0),
-            length=l_cart,
-            height=h_cart,
-            width=h_cart / 2,
-            color=vp.color.green,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["joint"] = vp.sphere(
-            pos=vp.vec(x, 0, r_pole + h_cart / 4),
-            radius=r_pole,
-            color=vp.color.white,
-        )
-        # Pole
-        self._anim["pole"] = vp.cylinder(
-            pos=vp.vec(x, 0, r_pole + h_cart / 4),
-            axis=vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0),
-            radius=r_pole,
-            length=2 * l_pole,
-            color=vp.color.blue,
-            canvas=self._anim["canvas"],
-        )
-
-    def _update_anim(self):
-        import vpython as vp
-
-        g = self.domain_param["g"]
-        m_cart = self.domain_param["m_cart"]
-        m_pole = self.domain_param["m_pole"]
-        l_pole = float(self.domain_param["l_pole"])
-        l_rail = float(self.domain_param["l_rail"])
-        eta_m = self.domain_param["eta_m"]
-        eta_g = self.domain_param["eta_g"]
-        K_g = self.domain_param["K_g"]
-        J_m = self.domain_param["J_m"]
-        R_m = self.domain_param["R_m"]
-        k_m = self.domain_param["k_m"]
-        r_mp = self.domain_param["r_mp"]
-        B_eq = self.domain_param["B_eq"]
-        B_pole = self.domain_param["B_pole"]
-
-        # Only for animation
-        l_cart, h_cart = 0.08, 0.08
-        r_pole, r_rail = 0.01, 0.005
-
-        # Get positions
-        x, th, _, _ = self.state
-
-        # Rail
-        self._anim["rail"].pos = vp.vec(-l_rail / 2, -h_cart / 2 - r_rail, 0)
-        self._anim["rail"].length = l_rail
-        # Cart
-        self._anim["cart"].pos = vp.vec(x, 0, 0)
-        self._anim["joint"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
-        # Pole
-        self._anim["pole"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
-        self._anim["pole"].axis = vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-                    x: {self.state[0] : 1.4f}
-                    theta: {self.state[1]*180/np.pi : 2.3f}
-                    dt: {self._dt :1.4f}
-                    g: {g : 1.3f}
-                    m_cart: {m_cart : 1.4f}
-                    l_rail: {l_rail : 1.3f}
-                    l_pole: {l_pole : 1.3f} (0.168 is short)
-                    eta_m: {eta_m : 1.3f}
-                    eta_g: {eta_g : 1.3f}
-                    K_g: {K_g : 1.3f}
-                    J_m: {J_m : 1.8f}
-                    r_mp: {r_mp : 1.4f}
-                    R_m: {R_m : 1.3f}
-                    k_m: {k_m : 1.6f}
-                    B_eq: {B_eq : 1.2f}
-                    B_pole: {B_pole : 1.3f}
-                    m_pole: {m_pole : 1.3f}
-                    """
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import QCartPoleVis
+        # Create instance of PandaVis
+        self._visualization = QCartPoleVis(self)
 
 
 class QCartPoleStabSim(QCartPoleSim, Serializable):

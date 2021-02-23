@@ -97,14 +97,14 @@ class SysIdViaEpisodicRL(Algorithm):
             raise pyrado.TypeErr(given=subrtn.policy, expected_type=DomainDistrParamPolicy)
         if not isinstance(behavior_policy, Policy):
             raise pyrado.TypeErr(given=behavior_policy, expected_type=Policy)
-        if subrtn.policy.num_param != len(subrtn.env.mapping):
+        if subrtn.policy.num_param != len(subrtn.env.dp_mapping):
             raise pyrado.ShapeErr(
                 msg=f"Number of policy parameters {subrtn.policy.num_param} does not match the"
-                f"number of domain distribution parameters {len(subrtn.env.mapping)}!"
+                f"number of domain distribution parameters {len(subrtn.env.dp_mapping)}!"
             )
-        if subrtn.sampler.num_rollouts_per_param != 1:
+        if subrtn.sampler.num_init_states_per_domain != 1:
             # Only sample one rollout in every domain. This is possible since we are synchronizing the init state.
-            raise pyrado.ValueErr(given=subrtn.sampler.num_rollouts_per_param, eq_constraint="1")
+            raise pyrado.ValueErr(given=subrtn.sampler.num_init_states_per_domain, eq_constraint="1")
         if num_rollouts_per_distr < 2:
             raise pyrado.ValueErr(given=num_rollouts_per_distr, g_constraint="1")
         if len(obs_dim_weight) != subrtn.env.obs_space.flat_dim:
@@ -154,12 +154,10 @@ class SysIdViaEpisodicRL(Algorithm):
     def step(self, snapshot_mode: str, meta_info: dict = None):
         if "rollouts_real" not in meta_info:
             raise pyrado.KeyErr(keys="rollouts_real", container=meta_info)
-        if "init_state" not in meta_info["rollouts_real"][0].rollout_info:  # checking the first element is sufficient
-            raise pyrado.KeyErr(keys="init_state", container=meta_info["rollouts_real"][0].rollout_info)
 
         # Extract the initial states from the real rollouts
         rollouts_real = meta_info["rollouts_real"]
-        init_states_real = [ro.rollout_info["init_state"] for ro in rollouts_real]
+        init_states_real = [ro.states[0, :] for ro in rollouts_real]
 
         # Sample new policy parameters a.k.a domain distribution parameters
         param_sets = self._subrtn.expl_strat.sample_param_sets(
@@ -194,14 +192,9 @@ class SysIdViaEpisodicRL(Algorithm):
 
                 # Check the validity of the initial states. The domain parameters will be different.
                 assert len(ros_real_tr) == len(ros_sim_tr) == len(idcs_sim)
-                assert check_all_equal([r.rollout_info["init_state"] for r in ros_real_tr])
-                assert check_all_equal([r.rollout_info["init_state"] for r in ros_sim_tr])
-                assert all(
-                    [
-                        np.allclose(r.rollout_info["init_state"], s.rollout_info["init_state"])
-                        for r, s in zip(ros_real_tr, ros_sim_tr)
-                    ]
-                )
+                assert check_all_equal([ro.states[0, :] for ro in ros_real_tr])
+                assert check_all_equal([ro.states[0, :] for ro in ros_sim_tr])
+                assert all([np.allclose(r.states[0, :], s.states[0, :]) for r, s in zip(ros_real_tr, ros_sim_tr)])
 
                 # Compute the losses
                 losses = np.asarray([self.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)])

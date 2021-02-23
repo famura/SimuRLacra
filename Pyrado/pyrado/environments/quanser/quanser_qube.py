@@ -29,6 +29,7 @@
 import numpy as np
 import torch as to
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.quanser import max_act_qq
@@ -48,10 +49,10 @@ class QQubeReal(QuanserReal, Serializable):
 
     def __init__(
         self,
-        dt: float = 1 / 500.0,
-        max_steps: int = pyrado.inf,
-        task_args: [dict, None] = None,
-        ip: str = "192.168.2.40",
+        dt: Optional[float] = 1 / 500.0,
+        max_steps: Optional[int] = pyrado.inf,
+        task_args: Optional[dict] = None,
+        ip: str = "192.168.2.17",
     ):
         """
         Constructor
@@ -90,7 +91,7 @@ class QQubeReal(QuanserReal, Serializable):
     def task(self) -> Task:
         return self._task
 
-    def observe(self, state):
+    def observe(self, state) -> np.ndarray:
         return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def reset(self, *args, **kwargs) -> np.ndarray:
@@ -104,8 +105,7 @@ class QQubeReal(QuanserReal, Serializable):
         meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
         # Correct for offset, and construct the state from the measurements
-        meas = self._correct_sensor_offset(meas)
-        self.state = meas
+        self.state = self._correct_sensor_offset(meas)
 
         # Reset time counter
         self._curr_step = 0
@@ -115,7 +115,7 @@ class QQubeReal(QuanserReal, Serializable):
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         return meas - self._sens_offset
 
-    def _wait_for_pole_at_rest(self, thold_ang_vel: float = 0.1 / 180.0 * np.pi):
+    def _wait_for_pole_at_rest(self, thold_ang_vel: Optional[float] = 0.1 / 180.0 * np.pi):
         """ Wait until the Qube's rotating pole is at rest """
         cnt = 0
         while cnt < 1.5 / self._dt:

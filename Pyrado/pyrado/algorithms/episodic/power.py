@@ -34,9 +34,8 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
-from pyrado.utils.input_output import print_cbt, print_cbt_once
+from pyrado.utils.input_output import print_cbt
 
 
 class PoWER(ParameterExploring):
@@ -61,10 +60,11 @@ class PoWER(ParameterExploring):
         policy: Policy,
         max_iter: int,
         pop_size: Optional[int],
-        num_rollouts: int,
+        num_init_states_per_domain: int,
         num_is_samples: int,
         expl_std_init: float,
         expl_std_min: float = 0.01,
+        num_domains: Optional[int] = 1,
         symm_sampling: bool = False,
         num_workers: int = 4,
         logger: Optional[StepLogger] = None,
@@ -77,7 +77,8 @@ class PoWER(ParameterExploring):
         :param policy: policy to be updated
         :param pop_size: number of solutions in the population
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_rollouts: number of rollouts per policy sample
+        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states
+        :param num_domains: number of rollouts due to the variance over domain parameters
         :param num_is_samples: number of samples (policy parameter sets & returns) for importance sampling
         :param expl_std_init: initial standard deviation for the exploration strategy
         :param expl_std_min: minimal standard deviation for the exploration strategy
@@ -85,16 +86,14 @@ class PoWER(ParameterExploring):
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
-        if not isinstance(policy, LinearPolicy):
-            print_cbt_once("PoWER was designed for linear policies.", "y")
-
         # Call ParameterExploring's constructor
         super().__init__(
-            save_dir,
-            env,
-            policy,
-            max_iter,
-            num_rollouts,
+            save_dir=save_dir,
+            env=env,
+            policy=policy,
+            max_iter=max_iter,
+            num_init_states_per_domain=num_init_states_per_domain,
+            num_domains=num_domains,
             pop_size=pop_size,
             num_workers=num_workers,
             logger=logger,
@@ -116,8 +115,9 @@ class PoWER(ParameterExploring):
             self._expl_strat = SymmParamExplStrat(self._expl_strat)
 
         # Initialize memory for importance sampling
+        self._bound_lo_ret = 1e-3  # the returns must not be negative, clip them to this value if so
         self.num_is_samples = min(pop_size, num_is_samples)
-        self.is_mem_ret = 1e-6 * to.ones(
+        self.is_mem_ret = self._bound_lo_ret * to.ones(
             self.num_is_samples
         )  # has to be initialized > 0 due to first covariance update
         self.is_mem_params = to.zeros(self.num_is_samples, self._policy.num_param)
@@ -128,7 +128,7 @@ class PoWER(ParameterExploring):
         super().reset(seed)
 
         # Reset memory for importance sampling
-        self.is_mem_ret = 1e-6 * to.ones(
+        self.is_mem_ret = self._bound_lo_ret * to.ones(
             self.num_is_samples
         )  # has to be initialized > 0 due to first covariance update
         self.is_mem_params = to.zeros(self.num_is_samples, self._policy.num_param)
@@ -138,8 +138,8 @@ class PoWER(ParameterExploring):
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
         # Average the return values over the rollouts
         rets_avg_ros = to.from_numpy(param_results.mean_returns).to(to.get_default_dtype())
-        if any(rets_avg_ros < 0):
-            rets_avg_ros[rets_avg_ros < 0] = 1e-6
+        if any(rets_avg_ros < self._bound_lo_ret):
+            rets_avg_ros[rets_avg_ros < 0] = self._bound_lo_ret
             print_cbt("PoWER is must use positive reward functions (improper probability distribution)!", "r")
 
         # We do the simplification from the original implementation, which is only valid for the return-based variant

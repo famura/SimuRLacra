@@ -60,7 +60,7 @@ if __name__ == "__main__":
         print("Hyper-parameters of the experiment")
         pprint(kwout.get("hparams", "No hyper-parameters found!"))
 
-    if args.remove_dr_wrappers:
+    if args.no_dr:
         env = remove_all_dr_wrappers(env, verbose=True)
 
     # Use the environments number of steps in case of the default argument (inf)

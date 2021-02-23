@@ -39,7 +39,7 @@ from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNNPolicy, FNN
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
@@ -155,4 +155,9 @@ if __name__ == "__main__":
     study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, "best_hyperparams")
+    save_dicts_to_yaml(
+        study.best_params,
+        dict(seed=args.seed),
+        save_dir=study_dir,
+        file_name="best_hyperparams",
+    )

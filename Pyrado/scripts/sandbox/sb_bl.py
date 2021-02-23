@@ -44,7 +44,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.setLogLevel(4)
+rcsenv.setLogLevel(5)
 
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
@@ -137,15 +137,15 @@ def create_vel_ika_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame,
     # Set up policy
     def policy(t: float):
         if t < 2:
-            return [0.0, 0.0, 0.0, 0.4]
+            return [0.0, -0.2]
         if t < 5.0:
-            return [0.8, 0.0, 0.0, 0.05]
+            return [0.3, -0.05]
         if t < 8:
-            return [0.3, 0.0, 0.6, 0]
+            return [0.15, 0.3]
         elif t < 10:
-            return [0.2, 0.0, 0.9, 0.0]
+            return [0.1, 0.45]
         else:
-            return [0.0, 0.0, 0.0, 0.0]
+            return [0.0, 0.0]
 
     policy = TimePolicy(env.spec, policy, dt)
 

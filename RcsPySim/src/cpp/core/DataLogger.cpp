@@ -132,9 +132,7 @@ void DataLogger::stop()
     RLOG(0, "Logging stopped!");
 }
 
-void DataLogger::record(
-    const MatNd* observation, const MatNd* action,
-    double reward)
+void DataLogger::record(const MatNd* observation, const MatNd* action, double reward)
 {
     // try to obtain lock. If it's blocked, it's blocked by start or stop, so we don't want to lock anyways
     std::unique_lock<std::recursive_mutex> lock(mutex, std::try_to_lock);

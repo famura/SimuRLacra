@@ -52,12 +52,13 @@ def bs(request):
     scope="function",
     params=[
         np.array([1]),
+        np.array([[1]]),
         np.array([1, 2, 3], dtype=np.int32),
         np.array([-2, -1, 0, 1, 2], dtype=np.int64),
         np.array([4, -3, 5, 0, 1, 2, 6, -7], dtype=np.int32),
         np.array([4.0, -3, 5, 0, 1, 2, 6, -7], dtype=np.float),
     ],
-    ids=["1dim", "pos", "pos_neg", "prandom", "prandom_float"],
+    ids=["scalar1dim", "scalar2dim", "pos", "pos_neg", "prandom", "prandom_float"],
 )
 def ds(request):
     return DiscreteSpace(request.param)
@@ -144,7 +145,7 @@ def test_cat_box_space(bs_list):
 def test_cat_discrete_space(ds_list):
     ds_cat = DiscreteSpace.cat(ds_list)
     assert isinstance(ds_cat, DiscreteSpace)
-    assert ds_cat.flat_dim == sum([ds.flat_dim for ds in ds_list])
+    assert ds_cat.num_ele == sum([ds.num_ele for ds in ds_list])
 
 
 def test_sample_contains_discrete_space(ds):

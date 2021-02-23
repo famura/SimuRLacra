@@ -45,7 +45,7 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 from pyrado.sampling.rollout import StepSequence
-from pyrado.sampling.utils import gen_batch_idcs
+from pyrado.sampling.utils import gen_shuffled_batch_idcs
 
 
 class OneMassOscillatorSim(SimPyEnv, Serializable):
@@ -108,92 +108,16 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         # Linear Dynamics
         A = np.array([[0, 1], [-self.omega ** 2, -2.0 * self.zeta * self.omega]])
         B = np.array([[0], [1.0 / m]])
-        state_dot = A.dot(self.state) + B.dot(act).reshape(
-            2,
-        )
+        state_dot = A.dot(self.state) + B.dot(act).reshape(2)
 
         # Integration Step (forward Euler)
         self.state = self.state + state_dot * self._dt  # next state
 
     def _init_anim(self):
-        import vpython as vp
-
-        c = 0.1 * self.obs_space.bound_up[0]
-
-        self._anim["canvas"] = vp.canvas(width=1000, height=400, title="One Mass Oscillator")
-        self._anim["ground"] = vp.box(
-            pos=vp.vec(0, -0.02, 0),
-            length=2.0 * self.obs_space.bound_up[0],
-            height=0.02,
-            width=3 * c,
-            color=vp.color.green,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["mass"] = vp.box(
-            pos=vp.vec(self.state[0], c / 2.0, 0),
-            length=c,
-            height=c,
-            width=c,
-            color=vp.color.blue,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["des"] = vp.box(
-            pos=vp.vec(self._task.state_des[0], 0.8 * c / 2.0, 0),
-            length=0.8 * c,
-            height=0.8 * c,
-            width=0.8 * c,
-            color=vp.color.cyan,
-            opacity=0.5,  # 0 is fully transparent
-            canvas=self._anim["canvas"],
-        )
-        self._anim["force"] = vp.arrow(
-            pos=vp.vec(self.state[0], c / 2.0, 0),
-            axis=vp.vec(0.1 * self._curr_act, 0, 0),
-            color=vp.color.red,
-            shaftwidth=0.2 * c,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["spring"] = vp.helix(
-            pos=vp.vec(0, c / 2.0, 0),
-            axis=vp.vec(self.state[0] - c / 2.0, 0, 0),
-            color=vp.color.blue,
-            radius=c / 3.0,
-            canvas=self._anim["canvas"],
-        )
-
-    def _update_anim(self):
-        import vpython as vp
-
-        m = self.domain_param["m"]
-        k = self.domain_param["k"]
-        d = self.domain_param["d"]
-        c = 0.1 * self.obs_space.bound_up[0]
-
-        self._anim["mass"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        self._anim["force"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        capped_act = np.sign(self._curr_act) * np.max((0.1 * np.abs(self._curr_act), 0.3))
-        self._anim["force"].axis = vp.vec(capped_act, 0, 0)
-        self._anim["spring"].axis = vp.vec(self.state[0] - c / 2.0, 0.0, 0)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-            dt: {self.dt :1.4f}
-            m: {m : 1.3f}
-            k: {k : 2.2f}
-            d: {d : 1.3f}
-            """
-
-    def _reset_anim(self):
-        import vpython as vp
-
-        c = 0.1 * self.obs_space.bound_up[0]
-        self._anim["mass"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        self._anim["des"].pos = vp.vec(self._task.state_des[0], 0.8 * c / 2.0, 0)
-        self._anim["force"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        self._anim["force"].axis = vp.vec(0.1 * self._curr_act, 0, 0)
-        self._anim["spring"].axis = vp.vec(self.state[0] - c / 2.0, 0.0, 0)
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import OneMassOscillatorVis
+        # Create instance of PandaVis
+        self._visualization = OneMassOscillatorVis(self)
 
 
 class OneMassOscillatorDyn(Serializable):
@@ -211,17 +135,12 @@ class OneMassOscillatorDyn(Serializable):
         self.A = None
         self.B = None
 
-    def _calc_constants(self, dp: dict):
-        """
-        Calculate the physics constants that depend on the domain parameters.
-
-        :param dp: current domain parameter estimate
-        """
-        self.omega = to.sqrt(dp["k"] / dp["m"])
-        self.zeta = dp["d"] / (2.0 * to.sqrt(dp["m"] * dp["k"]))
+    def _calc_constants(self, domain_param: dict):
+        self.omega = to.sqrt(domain_param["k"] / domain_param["m"])
+        self.zeta = domain_param["d"] / (2.0 * to.sqrt(domain_param["m"] * domain_param["k"]))
 
         self.A = to.stack([to.tensor([0.0, 1.0]), to.stack([-self.omega ** 2, -2.0 * self.zeta * self.omega])])
-        self.B = to.stack([to.tensor(0.0), 1.0 / dp["m"]]).view(-1, 1)
+        self.B = to.stack([to.tensor(0.0), 1.0 / domain_param["m"]]).view(-1, 1)
 
     def __call__(self, state: to.Tensor, act: to.Tensor, domain_param: dict) -> to.Tensor:
         """
@@ -275,7 +194,7 @@ class OneMassOscillatorDomainParamEstimator(nn.Module):
 
             # Mini-batch optimization
             for idcs in tqdm(
-                gen_batch_idcs(self.batch_size, len(targets_cat)),
+                gen_shuffled_batch_idcs(self.batch_size, len(targets_cat)),
                 total=(len(targets_cat) + self.batch_size - 1) // self.batch_size,
                 desc=f"Epoch {e}",
                 unit="batches",

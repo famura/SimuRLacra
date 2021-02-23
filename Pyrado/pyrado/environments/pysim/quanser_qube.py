@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import pathlib
 
 import numpy as np
 import torch as to
@@ -32,12 +33,12 @@ from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.pysim.pandavis import QQubeVis
 from pyrado.environments.quanser import max_act_qq
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
-
 
 class QQubeSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Qube swing-up and stabilization task """
@@ -65,16 +66,23 @@ class QQubeSim(SimPyEnv, Serializable):
         )  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
 
     def _calc_constants(self):
-        m_r = self.domain_param["Mr"]
-        m_p = self.domain_param["Mp"]
-        l_r = self.domain_param["Lr"]
-        l_p = self.domain_param["Lp"]
+        Mr = self.domain_param["Mr"]
+        Mp = self.domain_param["Mp"]
+        Lr = self.domain_param["Lr"]
+        Lp = self.domain_param["Lp"]
+        g = self.domain_param["g"]
 
         # Moments of inertia
-        self._J_r = m_r * l_r ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
-        self._J_p = m_p * l_p ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
-        self._J_p2 = m_p * l_p ** 2 / 4  # Steiner term of the pendulum pole [kg*m^2]
-        self._J_pr = m_p * l_p * l_r / 2  # coupled inertia term [kg*m^2]
+        Jr = Mr * Lr ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
+        Jp = Mp * Lp ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
+
+        # Constants for equations of motion
+        self._c = np.zeros(5)
+        self._c[0] = Jr + Mp * Lr ** 2
+        self._c[1] = 0.25 * Mp * Lp ** 2
+        self._c[2] = 0.5 * Mp * Lp * Lr
+        self._c[3] = Jp + self._c[1]
+        self._c[4] = 0.5 * Mp * Lp * g
 
     def _dyn(self, t, x, u):
         r"""
@@ -85,39 +93,32 @@ class QQubeSim(SimPyEnv, Serializable):
         :param u: control command
         :return: time derivative of the state
         """
-        k_m = self.domain_param["km"]
-        R_m = self.domain_param["Rm"]
-        d_r = self.domain_param["Dr"]
-        d_p = self.domain_param["Dp"]
-        m_p = self.domain_param["Mp"]
-        l_r = self.domain_param["Lr"]
-        l_p = self.domain_param["Lp"]
-        g = self.domain_param["g"]
+        km = self.domain_param["km"]
+        Rm = self.domain_param["Rm"]
+        Dr = self.domain_param["Dr"]
+        Dp = self.domain_param["Dp"]
 
         # Decompose state
         th, al, thd, ald = x
         sin_al = np.sin(al)
-        cos_al = np.cos(al)
+        sin_2al = np.sin(2 * al)
+
+        # Define mass matrix M = [[a, b], [b, c]]
+        a = self._c[0] + self._c[1] * sin_al ** 2
+        b = self._c[2] * np.cos(al)
+        c = self._c[3]
+        det = a * c - b * b
 
         # Calculate vector [x, y] = tau - C(q, qd)
-        trq_motor = float(k_m * (u - k_m * thd) / R_m)
-        trq_rhs_th = self._J_p2 * np.sin(2 * al) * thd * ald - self._J_pr * sin_al * ald ** 2
-        trq_rhs_al = -0.5 * self._J_p2 * np.sin(2 * al) * thd ** 2 + 0.5 * m_p * l_p * g * sin_al
+        trq = km * (u - km * thd) / Rm
+        c0 = self._c[1] * sin_2al * thd * ald - self._c[2] * sin_al * ald * ald
+        c1 = -0.5 * self._c[1] * sin_2al * thd * thd + self._c[4] * sin_al
+        x = trq - Dr * thd - c0
+        y = -Dp * ald - c1
 
-        # Compute acceleration from linear system of equations: M * x_ddot = rhs
-        M = np.array(
-            [
-                [self._J_r + m_p * l_r ** 2 + self._J_p2 * sin_al ** 2, self._J_pr * cos_al],
-                [self._J_pr * cos_al, self._J_p + 0.25 * m_p * l_p ** 2],
-            ]
-        )
-        rhs = np.array(
-            [
-                trq_motor - d_r * thd - trq_rhs_th,
-                -d_p * ald - trq_rhs_al,
-            ]
-        )
-        thdd, aldd = np.linalg.solve(M, rhs)
+        # Compute qdd = M^{-1} @ [x, y]
+        thdd = (c * x - b * y) / det
+        aldd = (a * y - b * x) / det
 
         return np.array([thd, ald, thdd, aldd], dtype=np.float64)
 
@@ -138,82 +139,10 @@ class QQubeSim(SimPyEnv, Serializable):
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
     def _init_anim(self):
-        import vpython as vp
-
-        # Convert to float for VPython
-        Lr = float(self.domain_param["Lr"])
-        Lp = float(self.domain_param["Lp"])
-
-        # Init render objects on first call
-        self._anim["canvas"] = vp.canvas(width=800, height=600, title="Quanser Qube")
-        scene_range = 0.2
-        arm_radius = 0.003
-        pole_radius = 0.0045
-        self._anim["canvas"].background = vp.color.white
-        self._anim["canvas"].lights = []
-        vp.distant_light(direction=vp.vec(0.2, 0.2, 0.5), color=vp.color.white)
-        self._anim["canvas"].up = vp.vec(0, 0, 1)
-        self._anim["canvas"].range = scene_range
-        self._anim["canvas"].center = vp.vec(0.04, 0, 0)
-        self._anim["canvas"].forward = vp.vec(-2, 1.2, -1)
-        vp.box(pos=vp.vec(0, 0, -0.07), length=0.09, width=0.1, height=0.09, color=vp.color.gray(0.5))
-        vp.cylinder(axis=vp.vec(0, 0, -1), radius=0.005, length=0.03, color=vp.color.gray(0.5))
-        # Joints
-        self._anim["joint1"] = vp.sphere(radius=0.005, color=vp.color.white)
-        self._anim["joint2"] = vp.sphere(radius=pole_radius, color=vp.color.white)
-        # Arm
-        self._anim["arm"] = vp.cylinder(radius=arm_radius, length=Lr, color=vp.color.blue)
-        # Pole
-        self._anim["pole"] = vp.cylinder(radius=pole_radius, length=Lp, color=vp.color.red)
-        # Curve
-        self._anim["curve"] = vp.curve(color=vp.color.white, radius=0.0005, retain=2000)
-
-    def _update_anim(self):
-        import vpython as vp
-
-        # Convert to float for VPython
-        g = self.domain_param["g"]
-        Mr = self.domain_param["Mr"]
-        Mp = self.domain_param["Mp"]
-        Lr = float(self.domain_param["Lr"])
-        Lp = float(self.domain_param["Lp"])
-        km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
-        Dr = self.domain_param["Dr"]
-        Dp = self.domain_param["Dp"]
-
-        th, al, _, _ = self.state
-        arm_pos = (Lr * np.cos(th), Lr * np.sin(th), 0.0)
-        pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
-        self._anim["arm"].axis = vp.vec(*arm_pos)
-        self._anim["pole"].pos = vp.vec(*arm_pos)
-        self._anim["pole"].axis = vp.vec(*pole_ax)
-        self._anim["joint1"].pos = self._anim["arm"].pos
-        self._anim["joint2"].pos = self._anim["pole"].pos
-        self._anim["curve"].append(self._anim["pole"].pos + self._anim["pole"].axis)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-            theta: {self.state[0]*180/np.pi : 3.1f}
-            alpha: {self.state[1]*180/np.pi : 3.1f}
-            dt: {self._dt :1.4f}
-            g: {g : 1.3f}
-            Mr: {Mr : 1.4f}
-            Mp: {Mp : 1.4f}
-            Lr: {Lr : 1.4f}
-            Lp: {Lp : 1.4f}
-            Dr: {Dr : 1.7f}
-            Dp: {Dp : 1.7f}
-            Rm: {Rm : 1.3f}
-            km: {km : 1.4f}
-            """
-
-    def _reset_anim(self):
-        # Reset VPython animation
-        if self._anim["curve"] is not None:
-            self._anim["curve"].clear()
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import PandaVis
+        # Create instance of PandaVis
+        self._visualization = QQubeVis(self)
 
 
 class QQubeSwingUpSim(QQubeSim):

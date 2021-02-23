@@ -132,7 +132,7 @@ class Planar3LinkSim(RcsSim, Serializable):
         state_des2 = np.array([p2[0], p2[2], 0, 0])
         state_des3 = np.array([p3[0], p3[2], 0, 0])
         if task_args.get("consider_velocities", False):
-            Q = np.diag([5e-1, 5e-1, 2e-1, 2e-1])
+            Q = np.diag([5e-1, 5e-1, 5e-3, 5e-3])
         else:
             Q = np.diag([1e0, 1e0])
             state_des1 = state_des1[:2]
@@ -194,6 +194,7 @@ class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
         """
         Constructor
 
+        :param task_args: arguments for the task construction
         :param kwargs: keyword arguments forwarded to `RcsSim`
         """
         Serializable._init(self, locals())
@@ -216,6 +217,7 @@ class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
         """
         Constructor
 
+        :param task_args: arguments for the task construction
         :param kwargs: keyword arguments forwarded to `RcsSim`
                        positionTasks: bool = True,
                        checkJointLimits: bool = False,
@@ -254,6 +256,7 @@ class Planar3LinkTASim(Planar3LinkSim, Serializable):
         """
         Constructor
 
+        :param task_args: arguments for the task construction
         :param mps: movement primitives holding the dynamical systems and the goal states
         :param position_mps: if `True` use movement primitives specified on position-level, if `False` velocity-level
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`

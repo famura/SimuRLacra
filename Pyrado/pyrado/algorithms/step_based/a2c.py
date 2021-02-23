@@ -78,7 +78,7 @@ class A2C(ActorCritic):
         :param env: the environment which the policy operates
         :param policy: policy to be updated
         :param critic: advantage estimation function $A(s,a) = Q(s,a) - V(s)$
-        :param max_iter: number of iterations (policy updates)
+        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param vfcn_coeff: weighting factor of the value function term in the combined loss, specific to PPO2

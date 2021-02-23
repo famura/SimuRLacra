@@ -98,6 +98,7 @@ def test_action_statistics(env: SimEnv, policy: Policy):
         rewards=ro_policy.rewards,  # don't care but necessary
         hidden_states=hidden_states,
     )
+    ro_expl.torch()
 
     # Compute action statistics and the ground truth
     actstats = compute_action_statistics(ro_expl, explstrat)
@@ -157,8 +158,8 @@ def test_until_thold_exceeded(thold, max_iter):
 
 
 def test_get_grad_via_torch():
-    def to_fcn(x: np.ndarray):
-        return (x + 2) ** 2 * 3
+    def to_fcn(x_np: np.ndarray):
+        return (x_np + 2) ** 2 * 3
 
     x = np.ones((2, 2))
     grad_np = get_grad_via_torch(x, to_fcn)

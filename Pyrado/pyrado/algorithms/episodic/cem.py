@@ -62,12 +62,13 @@ class CEM(ParameterExploring):
         policy: Policy,
         max_iter: int,
         pop_size: Optional[int],
-        num_rollouts: int,
+        num_init_states_per_domain: int,
         num_is_samples: int,
         expl_std_init: float,
         expl_std_min: float = 0.01,
         extra_expl_std_init: float = 0.0,
         extra_expl_decay_iter: int = 10,
+        num_domains: Optional[int] = 1,
         full_cov: bool = False,
         symm_sampling: bool = False,
         num_workers: int = 4,
@@ -81,7 +82,8 @@ class CEM(ParameterExploring):
         :param policy: policy to be updated
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param pop_size: number of solutions in the population
-        :param num_rollouts: number of rollouts per policy sample
+        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states
+        :param num_domains: number of rollouts due to the variance over domain parameters
         :param num_is_samples: number of samples (policy parameter sets & returns) for importance sampling,
                                indirectly specifies the performance quantile $1 - \rho$ [1]
         :param expl_std_init: initial standard deviation for the exploration strategy
@@ -103,11 +105,12 @@ class CEM(ParameterExploring):
 
         # Call ParameterExploring's constructor
         super().__init__(
-            save_dir,
-            env,
-            policy,
-            max_iter,
-            num_rollouts,
+            save_dir=save_dir,
+            env=env,
+            policy=policy,
+            max_iter=max_iter,
+            num_init_states_per_domain=num_init_states_per_domain,
+            num_domains=num_domains,
             pop_size=pop_size,
             num_workers=num_workers,
             logger=logger,

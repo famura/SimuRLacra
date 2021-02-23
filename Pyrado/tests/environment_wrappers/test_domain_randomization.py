@@ -30,6 +30,7 @@ import pytest
 
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, DomainRandWrapperBuffer
+from pyrado.environments.sim_base import SimEnv
 
 
 @pytest.mark.wrapper
@@ -64,10 +65,11 @@ def test_dr_wrapper_live_bob(env):
     ],
     indirect=True,
 )
-def test_dr_wrapper_live_bob(env):
+@pytest.mark.parametrize("selection", ["cyclic", "random"])
+def test_dr_wrapper_buffer_bob(env: SimEnv, selection: str):
     param_init = env.domain_param
     randomizer = create_default_randomizer(env)
-    wrapper = DomainRandWrapperBuffer(env, randomizer)
+    wrapper = DomainRandWrapperBuffer(env, randomizer, selection)
     # So far no randomization happened, thus the parameter should be equal
     assert env.domain_param == param_init
     assert wrapper._buffer is None
@@ -77,6 +79,10 @@ def test_dr_wrapper_live_bob(env):
         wrapper.fill_buffer(10)
         for i in range(10):
             param_old = wrapper.domain_param
-            assert wrapper._ring_idx == i
+            if selection == "cyclic":
+                assert wrapper._ring_idx == i
+            else:
+                assert 0 <= wrapper._ring_idx < len(wrapper.buffer)
             wrapper.reset()
-            assert param_old != wrapper.domain_param
+            if selection == "cyclic":
+                assert param_old != wrapper.domain_param

@@ -132,7 +132,7 @@ class SVPG(Algorithm):
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env: the environment which the policy operates
         :param particle_hparam: hyper-parameters for particle template construction
-        :param max_iter: number of iterations
+        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_particles: number of distinct particles
         :param temperature: the temperature of the SVGD determines how jointly the training takes place
         :param lr: the learning rate for the update of the particles

@@ -37,7 +37,7 @@ import pyrado
 from pyrado.algorithms.step_based.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
-from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
@@ -103,7 +103,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         standardize_rew=trial.suggest_categorical("standardize_rew_algo", [False]),
         gamma=trial.suggest_uniform("gamma_algo", 0.99, 1.0),
         target_update_intvl=trial.suggest_categorical("target_update_intvl_algo", [1, 5]),
-        num_batch_updates=trial.suggest_categorical("num_batch_updates_algo", [1, 5]),
+        num_updates_per_step=trial.suggest_categorical("num_batch_updates_algo", [1, 5]),
         batch_size=trial.suggest_categorical("batch_size_algo", [128, 256, 512]),
         lr=trial.suggest_loguniform("lr_algo", 1e-5, 1e-3),
     )
@@ -150,4 +150,9 @@ if __name__ == "__main__":
     study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, "best_hyperparams")
+    save_dicts_to_yaml(
+        study.best_params,
+        dict(seed=args.seed),
+        save_dir=study_dir,
+        file_name="best_hyperparams",
+    )

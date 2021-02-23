@@ -157,22 +157,22 @@ void RcsPyBot::updateControl()
         config->actionModel->computeCommand(q_ctrl, qd_ctrl, T_ctrl, action, getCallbackUpdatePeriod());
     }
     
-    //Inverse dynamics in joint space (compliance control)
+    // Inverse dynamics in joint space (compliance control)
     if (!allJointsPosCtrl) {
         Rcs::ControllerBase::computeInvDynJointSpace(T_ctrl, config->graph, q_ctrl, 1000.);
     }
     
-    // update desired state graph
+    // Update desired state graph
     
     // TODO if(writeCommands), but seriously, shouldn't the component handle that stuff itself?
-    // command action to hardware (and update desiredGraph)
+    // Command action to hardware (and update desiredGraph)
     setMotorCommand(q_ctrl, qd_ctrl, T_ctrl);
     
-    // can unlock now, lock only guards controlPolicy and ctrl vectors
+    // Can unlock now, lock only guards controlPolicy and ctrl vectors
     lock.unlock();
     
-    // log data
-    double reward = 0.0; // TODO compute
+    // Log data
+    double reward = 0.0; // so far, the reward is only computed on the python side
     logger.record(observation, action, reward);
 }
 

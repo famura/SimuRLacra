@@ -34,7 +34,7 @@ import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -99,7 +99,7 @@ algorithm has different hyper-parameters. However, they all use the same `rollou
 algo_hparam = dict(
     max_iter=8,
     pop_size=20,
-    num_rollouts=10,
+    num_init_states_per_domain=10,
     expl_factor=1.1,
     expl_std_init=1.0,
     num_workers=4,
@@ -110,8 +110,11 @@ algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 Save the hyper-parameters before staring the training in a YAML-file. This step is not strictly necessary, but it helps
 you to later see which hyper-parameters you used, i.e. which setting leads to a successfully trained policy.
 """
-save_list_of_dicts_to_yaml(
-    [dict(env=env_hparams, seed=0), dict(policy=policy_hparam), dict(algo=algo_hparam, algo_name=algo.name)], ex_dir
+save_dicts_to_yaml(
+    dict(env=env_hparams, seed=0),
+    dict(policy=policy_hparam),
+    dict(algo=algo_hparam, algo_name=algo.name),
+    save_dir=ex_dir,
 )
 
 """

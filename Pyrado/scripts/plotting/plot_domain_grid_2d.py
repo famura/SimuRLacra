@@ -38,7 +38,7 @@ from matplotlib import pyplot as plt
 
 import pyrado
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.heatmap import render_heatmap
+from pyrado.plotting.heatmap import draw_heatmap
 from pyrado.plotting.utils import AccNorm
 from pyrado.utils.argparser import get_argparser
 
@@ -60,7 +60,7 @@ def _plot_and_save(
         df_pivot = df.pivot_table(index=index, columns=column, values=values)
 
         # Generate the plot
-        fig_hm, fig_cb = render_heatmap(
+        fig_hm, fig_cb = draw_heatmap(
             df_pivot, add_sep_colorbar=add_sep_colorbar, norm=norm, y_label=index_label, x_label=column_label
         )
 
@@ -113,7 +113,7 @@ if __name__ == "__main__":
             r"$r_{\mathrm{ball}}$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -125,7 +125,7 @@ if __name__ == "__main__":
             r"$r_{\mathrm{ball}}$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -137,7 +137,7 @@ if __name__ == "__main__":
             "$J_m$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
             r"$\eta_m$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -161,7 +161,7 @@ if __name__ == "__main__":
             "$R_m$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -173,7 +173,7 @@ if __name__ == "__main__":
             r"$c_{\mathrm{frict}}$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -185,7 +185,7 @@ if __name__ == "__main__":
             r"$V_{\mathrm{thold,x+}}$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -197,7 +197,7 @@ if __name__ == "__main__":
             r"$V_{\mathrm{thold,y+}}$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 
@@ -209,7 +209,7 @@ if __name__ == "__main__":
             r"$a_{\mathrm{delay}}$",
             add_sep_colorbar=True,
             norm=accnorm,
-            save_figure=args.save_figures,
+            save_figure=args.save,
             save_dir=eval_dir,
         )
 

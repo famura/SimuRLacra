@@ -38,7 +38,7 @@ from pyrado.domain_randomization.default_randomizers import create_conservative_
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCartPoleStabSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.sampling.parallel_evaluation import eval_randomized_domain
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         policy_list.append(policy)
 
     # Fix initial state (set to None if it should not be fixed)
-    init_state_list = [None] * args.num_ro_per_config
+    init_state_list = [None] * args.num_rollouts_per_config
 
     # Crate empty data frame
     df = pd.DataFrame(columns=["policy", "ret", "len"])
@@ -156,13 +156,11 @@ if __name__ == "__main__":
     # Create subfolder and save
     save_dir = setup_experiment("multiple_policies", args.env_name, "randomized", base_dir=pyrado.EVAL_DIR)
 
-    save_list_of_dicts_to_yaml(
-        [
-            {"ex_dirs": ex_dirs},
-            {"num_rpp": args.num_ro_per_config, "seed": args.seed},
-            dict_arraylike_to_float(metrics),
-        ],
-        save_dir,
+    save_dicts_to_yaml(
+        {"ex_dirs": ex_dirs},
+        {"num_rpp": args.num_rollouts_per_config, "seed": args.seed},
+        {"metrics": dict_arraylike_to_float(metrics)},
+        save_dir=save_dir,
         file_name="summary",
     )
     df.to_pickle(osp.join(save_dir, "df_dr_mp.pkl"))

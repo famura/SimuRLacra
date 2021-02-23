@@ -44,10 +44,6 @@ from pyrado.utils import get_class_name
 from pyrado.utils.input_output import select_query, print_cbt
 
 
-timestamp_format = "%Y-%m-%d_%H-%M-%S"
-timestamp_date_format = "%Y-%m-%d"
-
-
 class Experiment:
     """
     Class for defining experiments
@@ -85,14 +81,14 @@ class Experiment:
                 timestr, extra_info = sd
             # Parse time string
             if "_" in timestr:
-                timestamp = datetime.strptime(timestr, timestamp_format)
+                timestamp = datetime.strptime(timestr, pyrado.timestamp_format)
             else:
-                timestamp = datetime.strptime(timestr, timestamp_date_format)
+                timestamp = datetime.strptime(timestr, pyrado.timestamp_date_format)
         else:
             # Create exp id from timestamp and info
             if timestamp is None:
                 timestamp = datetime.now()
-            exp_id = timestamp.strftime(timestamp_format)
+            exp_id = timestamp.strftime(pyrado.timestamp_format)
 
             if extra_info is not None:
                 exp_id = exp_id + "--" + extra_info
@@ -415,17 +411,17 @@ class AugmentedSafeLoader(yaml.SafeLoader):
 AugmentedSafeLoader.add_constructor("tag:yaml.org,2002:python/tuple", AugmentedSafeLoader.construct_python_tuple)
 
 
-def save_list_of_dicts_to_yaml(lod: Sequence[dict], save_dir: str, file_name: str = "hyperparams"):
+def save_dicts_to_yaml(*dicts: dict, save_dir: str, file_name: str = "hyperparams"):
     """
     Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.
 
-    :param lod: list of dicts each containing 1 key (name) and 1 value (a dict with the hyper-parameters)
+    :param dicts: dicts each containing a key (name) and a value (hyper-parameter)
     :param save_dir: directory to save the results in
     :param file_name: name of the YAML-file without suffix
     """
     with open(osp.join(save_dir, file_name + ".yaml"), "w") as yaml_file:
-        for d in lod:
-            # For every dict in the list
+        # Iterate over tuple generated from *dicts
+        for d in dicts:
             d = _process_dict_for_saving(d)
             yaml.dump(d, yaml_file, default_flow_style=False, allow_unicode=True)
 

@@ -37,7 +37,6 @@ import pyrado
 from pyrado.utils import get_class_name
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_processing import normalize
-from pyrado.utils.tensor import atleast_2D
 
 
 class FeatureStack:
@@ -53,7 +52,7 @@ class FeatureStack:
         :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output
                           (e.g. identity_feat, squared_feat, exception: const_feat)
         """
-        self.feat_fcns = feat_fcns
+        self.feat_fcns = set(feat_fcns)
 
     def __str__(self):
         """ Get an information string. """
@@ -270,7 +269,7 @@ class RandFourierFeat:
         # Scale the frequency matrix with the bandwidth factor
         if not isinstance(bandwidth, to.Tensor):
             bandwidth = to.from_numpy(np.asanyarray(bandwidth))
-        self.freq *= to.sqrt(to.tensor(2.0) / atleast_2D(bandwidth))
+        self.freq *= to.sqrt(to.tensor(2.0) / to.atleast_2d(bandwidth))
 
         # Sample b from a uniform distribution [0, 2pi]
         self.shift = 2 * np.pi * to.rand(num_feat_per_dim)
@@ -301,7 +300,7 @@ class RandFourierFeat:
 
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
-        inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
+        inp = to.atleast_2d(inp)  # first dim is the batch size, the second dim it the actual input dimension
 
         # Resize if batched and return the feature value
         shift = self.shift.repeat(inp.shape[0], 1)
@@ -409,7 +408,7 @@ class RBFFeat:
 
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
-        inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
+        inp = to.atleast_2d(inp)  # first dim is the batch size, the second dim it the actual input dimension
         inp = inp.reshape(inp.shape[0], 1, inp.shape[1]).repeat(1, self.centers.shape[0], 1)  # reshape explicitly
 
         # Exponentiate the squared distances
@@ -431,7 +430,7 @@ class RBFFeat:
 
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
-        inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
+        inp = to.atleast_2d(inp)  # first dim is the batch size, the second dim it the actual input dimension
         inp = inp.reshape(inp.shape[0], 1, inp.shape[1]).repeat(1, self.centers.shape[0], 1)  # reshape explicitly
 
         exp_sq_dist = to.exp(-self.scale * to.pow(inp - self.centers, 2))

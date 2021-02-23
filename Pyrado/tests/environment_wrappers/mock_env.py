@@ -28,8 +28,10 @@
 
 import numpy as np
 import random
+from copy import deepcopy
 
 from pyrado.environments.pysim.base import SimEnv
+from pyrado.spaces.base import Space
 from pyrado.utils.data_types import RenderMode
 
 
@@ -66,10 +68,16 @@ class MockEnv(SimEnv):
 
     @property
     def state_space(self):
-        # Just use observation space here for now.
+        # Just use observation space here for now
         if self._obs_space is None:
             raise NotImplementedError
         return self._obs_space
+
+    @property
+    def act_space(self):
+        if self._act_space is None:
+            raise NotImplementedError
+        return self._act_space
 
     @property
     def init_space(self):
@@ -77,11 +85,10 @@ class MockEnv(SimEnv):
             raise NotImplementedError
         return self._init_space
 
-    @property
-    def act_space(self):
-        if self._act_space is None:
-            raise NotImplementedError
-        return self._act_space
+    @init_space.setter
+    def init_space(self, space: Space):
+        # No checks for MockEnv
+        self._init_space = space
 
     @property
     def task(self):
@@ -91,13 +98,13 @@ class MockEnv(SimEnv):
         pass  # unused
 
     @property
-    def domain_param(self):
-        return self._domain_param.copy()
+    def domain_param(self) -> dict:
+        return deepcopy(self._domain_param)
 
     @domain_param.setter
-    def domain_param(self, param):
+    def domain_param(self, domain_param):
         self._domain_param.clear()
-        self._domain_param.update(param)
+        self._domain_param.update(domain_param)
 
     def get_nominal_domain_param(self):
         return {}
@@ -121,7 +128,7 @@ class MockEnv(SimEnv):
         # Return next observation
         return self._get_obs()
 
-    def step(self, act):
+    def step(self, act: np.ndarray) -> tuple:
         # Store as last action as list, to simplify asserts
         if self._act_space is not None:
             self.last_act = list(act)

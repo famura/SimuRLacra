@@ -41,7 +41,7 @@ from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCar
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     # Create one-dim results grid and ensure right number of rollouts
     param_list = param_grid(param_spec)
-    param_list *= args.num_ro_per_config
+    param_list *= args.num_rollouts_per_config
 
     # Fix initial state (set to None if it should not be fixed)
     init_state = None
@@ -237,19 +237,17 @@ if __name__ == "__main__":
     # Create subfolder and save
     save_dir = setup_experiment("multiple_policies", args.env_name, varied_param_key, base_dir=pyrado.EVAL_DIR)
 
-    save_list_of_dicts_to_yaml(
-        [
-            {"ex_dirs": ex_dirs},
-            {
-                "varied_param": varied_param_key,
-                "num_rpp": args.num_ro_per_config,
-                "seed": args.seed,
-                "dt": args.dt,
-                "max_steps": args.max_steps,
-            },
-            dict_arraylike_to_float(metrics),
-        ],
-        save_dir,
+    save_dicts_to_yaml(
+        {"ex_dirs": ex_dirs},
+        {
+            "varied_param": varied_param_key,
+            "num_rpp": args.num_rollouts_per_config,
+            "seed": args.seed,
+            "dt": args.dt,
+            "max_steps": args.max_steps,
+        },
+        {"metircs": dict_arraylike_to_float(metrics)},
+        save_dir=save_dir,
         file_name="summary",
     )
     df.to_pickle(osp.join(save_dir, "df_mp_grid_1d.pkl"))

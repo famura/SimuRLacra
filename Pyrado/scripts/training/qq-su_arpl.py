@@ -10,7 +10,7 @@ from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
@@ -85,15 +85,13 @@ if __name__ == "__main__":
     algo = ARPL(ex_dir, env, subrtn, policy, subrtn.expl_strat, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(critic=critic_hparam, vfcn=vfcn_hparam),
-            dict(subrtn_hparam=subrtn_hparam, subrtn_name=subrtn.name),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
+        dict(subrtn_hparam=subrtn_hparam, subrtn_name=subrtn.name),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

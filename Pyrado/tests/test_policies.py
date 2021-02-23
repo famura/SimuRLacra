@@ -31,6 +31,8 @@ import os.path as osp
 from torch import nn as nn
 
 from pyrado.algorithms.timeseries_prediction import TSPred
+from pyrado.environments.base import Env
+from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.policies.base import Policy
@@ -90,9 +92,7 @@ def tsdataset(request):
 )
 def test_simple_feature_stack(feat_list):
     fs = FeatureStack(feat_list)
-    obs = to.randn(
-        1,
-    )
+    obs = to.randn(1)
     feats_val = fs(obs)
     assert feats_val is not None
 
@@ -102,9 +102,7 @@ def test_simple_feature_stack(feat_list):
 def test_mul_feat(obs_dim, idcs):
     mf = MultFeat(idcs=idcs)
     fs = FeatureStack([identity_feat, mf])
-    obs = to.randn(
-        obs_dim,
-    )
+    obs = to.randn(obs_dim)
     feats_val = fs(obs)
     assert len(feats_val) == obs_dim + 1
 
@@ -117,15 +115,11 @@ def test_rff_feat_serial(obs_dim, num_feat_per_dim):
     rff = RandFourierFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
-        bandwidth=np.ones(
-            obs_dim,
-        ),
+        bandwidth=np.ones(obs_dim),
     )
     fs = FeatureStack([rff])
     for _ in range(10):
-        obs = to.randn(
-            obs_dim,
-        )
+        obs = to.randn(obs_dim)
         feats_val = fs(obs)
         assert feats_val.shape == (1, num_feat_per_dim)
 
@@ -139,9 +133,7 @@ def test_rff_feat_batched(batch_size, obs_dim, num_feat_per_dim):
     rff = RandFourierFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
-        bandwidth=np.ones(
-            obs_dim,
-        ),
+        bandwidth=np.ones(obs_dim),
     )
     fs = FeatureStack([rff])
     for _ in range(10):
@@ -165,9 +157,7 @@ def test_rbf_serial(obs_dim, num_feat_per_dim, bounds):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
     fs = FeatureStack([rbf])
     for _ in range(10):
-        obs = to.randn(
-            obs_dim,
-        )  # 1-dim obs vector
+        obs = to.randn(obs_dim)  # 1-dim obs vector
         feats_val = fs(obs)
         assert feats_val.shape == (1, obs_dim * num_feat_per_dim)
 
@@ -894,3 +884,47 @@ def test_tspred(tsdataset, env, policy, windowed, cascaded):
         assert preds.shape[0] == inp_seq.shape[0]
     assert preds.shape[1] == env.spec.act_space.flat_dim
     assert hidden.numel() == policy.hidden_size
+
+
+@to.no_grad()
+@pytest.mark.parametrize(
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+    ],
+    ids=["bob", "qbb"],
+    indirect=True,
+)
+@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["torch", "numpy"])
+def test_playback_policy(env: Env, dtype):
+    # Create 2 recordings of different length
+    if dtype == "torch":
+        actions = [to.randn(10, env.spec.act_space.flat_dim), to.randn(7, env.spec.act_space.flat_dim)]
+    else:
+        actions = [np.random.randn(10, env.spec.act_space.flat_dim), np.random.randn(7, env.spec.act_space.flat_dim)]
+    policy = PlaybackPolicy(env.spec, act_recordings=actions)
+
+    if dtype == "torch":
+        actions = [a.numpy() for a in actions]
+
+    # Sample one rollout and check the actions
+    ro = rollout(env, policy)
+    assert policy.curr_rec == 0
+    assert np.allclose(ro.actions[:10, :], actions[0])
+    assert np.allclose(ro.actions[10:, :], np.zeros(env.spec.act_space.flat_dim))
+
+    # Sample another rollout and check the actions
+    ro2 = rollout(env, policy)
+    assert policy.curr_rec == 1
+    assert np.allclose(ro2.actions[:7, :], actions[1])
+    assert np.allclose(ro2.actions[7:, :], np.zeros(env.spec.act_space.flat_dim))
+
+    # Check the properties
+    policy.curr_step = 3
+    assert policy.curr_step == 3
+    policy.curr_rec = 0
+    assert policy.curr_rec == 0
+
+    policy.reset_curr_rec()
+    assert policy.curr_rec == -1

@@ -26,29 +26,30 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
 import random
 import time
-from torch.distributions.multivariate_normal import MultivariateNormal
 
 import pyrado
+import pytest
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
+from pyrado.policies.features import *
+from pyrado.sampling.bootstrapping import bootstrap_ci
+from pyrado.sampling.cvar_sampler import select_cvar
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
-from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler
+from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler, ParameterSamplingResult
 from pyrado.sampling.rollout import rollout
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.sampler_pool import *
 from pyrado.sampling.sequences import *
-from pyrado.sampling.bootstrapping import bootstrap_ci
-from pyrado.policies.features import *
-from pyrado.sampling.cvar_sampler import select_cvar
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
-from tests.conftest import m_needs_cuda, m_needs_bullet
+from torch.distributions.multivariate_normal import MultivariateNormal
+
+from tests.conftest import m_needs_bullet, m_needs_cuda
 
 
 @pytest.mark.parametrize(
@@ -351,22 +352,32 @@ def test_bootsrapping(data, num_reps, seed):
     indirect=True,
 )
 @pytest.mark.parametrize(
-    ["num_rollouts_per_param", "fixed_init_state"],
+    ["num_init_states_per_domain", "fixed_init_state", "num_domains"],
     [
-        (1, False),
-        (1, True),
-        (9, False),
-        (9, True),
+        (1, False, 1),
+        (1, True, 1),
+        (9, False, 1),
+        (9, True, 1),
     ],
     ids=["1rops-randinit", "1rops-fixedinit", "9rops-randinit", "9rops-fixedinit"],
 )
-def test_param_expl_sampler(env: SimEnv, policy: Policy, num_rollouts_per_param: int, fixed_init_state: bool):
+@pytest.mark.parametrize("num_workers", [1, 4], ids=["1worker", "4workers"])
+def test_param_expl_sampler(
+    env: SimEnv,
+    policy: Policy,
+    num_init_states_per_domain: int,
+    fixed_init_state: bool,
+    num_domains: int,
+    num_workers: int,
+):
+    num_rollouts_per_param = num_init_states_per_domain * num_domains
+
     # Add randomizer
     pert = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, pert)
 
     # Create the sampler
-    sampler = ParameterExplorationSampler(env, policy, num_rollouts_per_param, num_workers=1)
+    sampler = ParameterExplorationSampler(env, policy, num_init_states_per_domain, num_domains, num_workers=num_workers)
 
     # Use some random parameters
     num_ps = 7
@@ -374,7 +385,7 @@ def test_param_expl_sampler(env: SimEnv, policy: Policy, num_rollouts_per_param:
 
     if fixed_init_state:
         # Sample a custom init state
-        init_states = [env.init_space.sample_uniform()] * num_rollouts_per_param
+        init_states = [env.init_space.sample_uniform()] * num_init_states_per_domain
     else:
         # Let the sampler forward to the env to randomly sample an init state
         init_states = None
@@ -403,7 +414,65 @@ def test_param_expl_sampler(env: SimEnv, policy: Policy, num_rollouts_per_param:
             assert pivot[0].observation == pytest.approx(other_ro[0].observation)
 
 
+@pytest.mark.parametrize("env", ["default_bob"], indirect=True, ids=["bob"])
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "linear_policy",
+        "fnn_policy",
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thfnn_policy",
+        "thgru_policy",
+    ],
+    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf", "thfnn", "thgru"],
+    indirect=True,
+)
+@pytest.mark.parametrize("num_workers", [1, 4], ids=["1worker", "4workers"])
+def test_parameter_exploration_sampler(env: SimEnv, policy: Policy, num_workers: int):
+    # Use some random parameters
+    num_ps = 7
+    params = to.rand(num_ps, policy.num_param)
+
+    sampler = ParameterExplorationSampler(
+        env, policy, num_init_states_per_domain=1, num_domains=1, num_workers=num_workers
+    )
+    psr = sampler.sample(param_sets=params)
+    assert isinstance(psr, ParameterSamplingResult)
+    assert len(psr.rollouts) >= 1 * 1 * num_ps
+
+
+@pytest.mark.parametrize("env", ["default_bob"], indirect=True, ids=["bob"])
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "linear_policy",
+        "fnn_policy",
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thfnn_policy",
+        "thgru_policy",
+    ],
+    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf", "thfnn", "thgru"],
+    indirect=True,
+)
+@pytest.mark.parametrize("num_workers", [1, 4], ids=["1worker", "4workers"])
+def test_parallel_rollout_sampler(env: SimEnv, policy: Policy, num_workers: int):
+    min_rollouts = num_workers * 2  # make sure every worker samples at least once
+    sampler = ParallelRolloutSampler(env, policy, num_workers, min_rollouts=min_rollouts)
+    ros = sampler.sample()
+    assert isinstance(ros, list)
+    assert len(ros) >= min_rollouts
+
+
 @m_needs_cuda
+@pytest.mark.skip
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
     "env",
@@ -417,16 +486,19 @@ def test_param_expl_sampler(env: SimEnv, policy: Policy, num_rollouts_per_param:
     "policy",
     [
         "fnn_policy",
+        "fnn_policy_cuda",
         "lstm_policy",
+        "lstm_policy_cuda",
     ],
-    ids=["fnn", "lstm"],
+    ids=["fnn", "fnn_cuda", "lstm", "lstm_cuda"],
     indirect=True,
 )
-def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy):
+@pytest.mark.parametrize("num_workers", [1, 2], ids=["1worker", "4workers"])
+def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
     randomizer = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, randomizer)
 
-    sampler = ParallelRolloutSampler(env, policy, num_workers=2, min_rollouts=10)
+    sampler = ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=4)
     samples = sampler.sample()
 
     assert samples is not None

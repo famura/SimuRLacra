@@ -84,15 +84,21 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
         elif isinstance(domain_params, dict):
             dp = deepcopy(domain_params)
             for k, v in dp.items():
-                # Check if the values of the dirct are iterable
-                if isinstance(v, (int, float, bool)):
-                    dp[k] = [v]  # cast float to list of one element to make it iterable for tabulate
-                if isinstance(v, np.ndarray) and v.size == 1:
-                    dp[k] = [v.item()]  # cast scalar array to list of one element to make it iterable for tabulate
-                elif isinstance(v, list):
-                    pass
+                if isinstance(v, list):
+                    for i in v:
+                        v[i] = float(i)
                 else:
-                    pyrado.TypeErr(given=v, expected_type=[int, float, bool, list])
+                    try:
+                        dp[k] = [float(v)]
+                    except (ValueError, TypeError):
+                        try:
+                            dp[k] = v.tolist()  # numpy arrays and PyTorch tensors have a tolist() method
+                        except Exception:
+                            pyrado.TypeErr(
+                                msg="The domain param entries need to either be a float, a numpy array or a"
+                                "PyTorch tensor, such that they can be converted to a list!"
+                            )
+            # Taubulate is iterating through the lists in the dp dict
             print(tabulate(dp, headers="keys", tablefmt="simple"))
 
         else:

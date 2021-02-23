@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Stabilize the ball at a random initial position and then sqitch to the learned policy to stabilize it in the center.
+Script to run experiments on the Quanser Ball-Balancer
 """
 import joblib
 import numpy as np
@@ -37,7 +37,7 @@ import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.policies.special.environment_specific import QBallBalancerPDCtrl
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.logger.experiment import ask_for_experiment, save_list_of_dicts_to_yaml, setup_experiment
+from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml, setup_experiment
 from pyrado.sampling.rollout import rollout
 from pyrado.spaces.polar import Polar2DPosSpace
 from pyrado.utils.data_types import RenderMode
@@ -108,9 +108,9 @@ if __name__ == "__main__":
     print_cbt(f"Average return: {avg_return}", "g", bright=True)
     save_dir = setup_experiment("evaluation", "qbb_experiment", ex_tag, base_dir=pyrado.TEMP_DIR)
     joblib.dump(ros, osp.join(save_dir, "experiment_rollouts.pkl"))
-    save_list_of_dicts_to_yaml(
-        [dict(ex_dir=ex_dir, init_state=init_state, avg_return=avg_return, num_runs=len(ros))],
-        save_dir,
+    save_dicts_to_yaml(
+        dict(ex_dir=ex_dir, init_state=init_state, avg_return=avg_return, num_runs=len(ros)),
+        save_dir=save_dir,
         file_name="experiment_summary",
     )
 

@@ -157,17 +157,17 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         self.pd_activated = False
         self.dp_nom = QCartPoleSim.get_nominal_domain_param(self.long)
 
-        self._log_u_max = nn.Parameter(to.log(to.tensor(59.5)), requires_grad=True)  # former: 18
+        self._log_u_max = nn.Parameter(to.log(to.tensor(18.0)), requires_grad=True)  # former: 18, 59.5
         if long:
             self._log_K_pd = nn.Parameter(
                 to.log(to.tensor([41.833, 189.8393, 47.8483, 28.0941])), requires_grad=True
             )  # former: [-41.833, 189.8393, -47.8483, 28.0941]
         else:
-            self._log_k_e = nn.Parameter(to.log(to.tensor(36.5)), requires_grad=True)  # former: 24.5
-            self._log_k_p = nn.Parameter(to.log(to.tensor(2.25)), requires_grad=True)  # former: 8.5
+            self._log_k_e = nn.Parameter(to.log(to.tensor(17.0)), requires_grad=True)  # former: 24.5, 36.5, 19.5
+            self._log_k_p = nn.Parameter(to.log(to.tensor(4.0)), requires_grad=True)  # former: 8.5, 2.25
             self._log_K_pd = nn.Parameter(
-                to.log(to.tensor([34.1, 118.0, 43.4, 18.1])), requires_grad=True
-            )  # former: [+41.8, -173.4, +46.1, -16.2]
+                to.log(to.tensor([41.0, 200.0, 55.0, 16.0])), requires_grad=True
+            )  # former: [+41.8, 173.4, +46.1, 16.2], [34.1, 118.0, 43.4, 18.1]
 
     @property
     def u_max(self):
@@ -277,7 +277,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
 
         # Set up the energy and PD controller
         self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max)
-        self.pd_ctrl = QQubePDCtrl(env_spec, k=pd_gains, al_des=math.pi)
+        self.pd_ctrl = QQubePDCtrl(env_spec, pd_gains, al_des=math.pi)
 
     def pd_enabled(self, cos_al: [float, to.Tensor]) -> bool:
         """
@@ -392,7 +392,7 @@ class QQubePDCtrl(Policy):
     def __init__(
         self,
         env_spec: EnvSpec,
-        k: to.Tensor = to.tensor([4.0, 0, 0.5, 0]),
+        pd_gains: to.Tensor = to.tensor([4.0, 0, 1.0, 0]),
         th_des: float = 0.0,
         al_des: float = 0.0,
         tols: to.Tensor = to.tensor([1.5, 0.5, 0.1, 0.1], dtype=to.float64) / 180.0 * math.pi,
@@ -402,7 +402,7 @@ class QQubePDCtrl(Policy):
         Constructor
 
         :param env_spec: environment specification
-        :param k: controller gains, the default values stabilize the pendulum at the center hanging down
+        :param pd_gains: controller gains, the default values stabilize the pendulum at the center hanging down
         :param th_des: desired rotary pole angle [rad]
         :param al_des: desired pendulum pole angle [rad]
         :param tols: tolerances for the desired angles $\theta$ and $\alpha$ [rad]
@@ -410,9 +410,9 @@ class QQubePDCtrl(Policy):
         """
         super().__init__(env_spec, use_cuda)
 
-        self.k = nn.Parameter(k, requires_grad=True)
+        self.pd_gains = nn.Parameter(pd_gains, requires_grad=True)
         self.state_des = to.tensor([th_des, al_des, 0.0, 0.0])
-        self.tols = tols
+        self.tols = to.as_tensor(tols)
         self.done = False
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -420,14 +420,20 @@ class QQubePDCtrl(Policy):
             self.param_values = init_values
 
     def forward(self, meas: to.Tensor) -> to.Tensor:
+        meas = meas.to(dtype=to.get_default_dtype())
+
         # Unpack the raw measurement (is not an observation)
         err = self.state_des - meas  # th, al, thd, ald
 
         if all(to.abs(err) <= self.tols):
             self.done = True
+        elif all(to.abs(err) > self.tols) and self.state_des[0] == self.state_des[1] == 0.0:
+            # In case of initializing the Qube, increase the P-gain over time. This is useful since the resistance from
+            # the Qube's cable can be too strong for the PD controller to reach the steady state, like a fake I-gain.
+            self.pd_gains[0] = min(self.pd_gains[0] + 0.01, to.tensor(20.0))
 
         # PD control
-        return self.k.dot(err).unsqueeze(0)
+        return to.atleast_1d(self.pd_gains.dot(err))
 
 
 class QCartPoleGoToLimCtrl:
@@ -508,6 +514,8 @@ class QQubeGoToLimCtrl:
         :param meas: sensor measurement
         :return: action
         """
+        meas = meas.to(dtype=to.get_default_dtype())
+
         # Unpack the raw measurement (is not an observation)
         th = meas[0].item()
 

@@ -74,6 +74,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Call SimEnv's constructor
         super().__init__(dt=self.model.opt.timestep * self.frame_skip, max_steps=max_steps)
 
+        # Memorize the initial states of the model from the xml (for fixed init space or later reset)
         self.init_qpos = self.sim.data.qpos.copy()
         self.init_qvel = self.sim.data.qvel.copy()
 
@@ -107,6 +108,12 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
     def init_space(self) -> Space:
         return self._init_space
 
+    @init_space.setter
+    def init_space(self, space: Space):
+        if not isinstance(space, Space):
+            raise pyrado.TypeErr(given=space, expected_type=Space)
+        self._init_space = space
+
     @property
     def act_space(self) -> Space:
         return self._act_space
@@ -135,11 +142,11 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         return deepcopy(self._domain_param)
 
     @domain_param.setter
-    def domain_param(self, param: dict):
-        if not isinstance(param, dict):
-            raise pyrado.TypeErr(given=param, expected_type=dict)
+    def domain_param(self, domain_param: dict):
+        if not isinstance(domain_param, dict):
+            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
         # Update the parameters
-        self._domain_param.update(param)
+        self._domain_param.update(domain_param)
 
         # Update MuJoCo model
         self._create_mujoco_model()
@@ -232,7 +239,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
                 raise pyrado.TypeErr(given=init_state, expected_type=[np.ndarray, list])
 
         if not self.init_space.contains(init_state, verbose=True):
-            pyrado.ValueErr(msg="The init state must be within init state space!")
+            raise pyrado.ValueErr(msg="The init state must be within init state space!")
 
         # Update the state attribute
         self.state = init_state.copy()
@@ -274,7 +281,6 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
         # Apply the action and simulate the resulting dynamics
         info = self._mujoco_step(act)
-        info["t"] = self._curr_step * self._dt
         self._curr_step += 1
 
         # Check if the environment is done due to a failure within the mujoco simulation (e.g. bad inputs)
@@ -302,9 +308,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             # Print to console
             if mode.text:
                 print(
-                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                        self._curr_step, self._curr_rew, self._curr_act, self.state
-                    )
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
             # Forward to MuJoCo viewer
@@ -312,5 +316,13 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
                 if self.viewer is None:
                     # Create viewer if not existent (see 'human' mode of OpenAI Gym's MujocoEnv)
                     self.viewer = mujoco_py.MjViewer(self.sim)
+
+                    # Adjust window size and position to custom values
+                    import glfw
+
+                    glfw.make_context_current(self.viewer.window)
+                    glfw.set_window_size(self.viewer.window, 1280, 720)
+                    glfw.set_window_pos(self.viewer.window, 50, 50)
+
                     self.configure_viewer()
                 self.viewer.render()

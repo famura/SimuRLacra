@@ -106,7 +106,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         # Define the task including the reward function
         state_des = task_args.get("state_des", np.zeros(4))
         Q = task_args.get("Q", np.diag([1e5, 1e3, 1e3, 1e2]))
-        R = task_args.get("R", np.eye(1))
+        R = task_args.get("R", np.eye(self.spec.act_space.flat_dim))
 
         return DesStateTask(
             self.spec, state_des, ScaledExpQuadrErrRewFcn(Q, R, self.state_space, self.act_space, min_rew=1e-4)
@@ -133,161 +133,12 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         self.state[2:] += np.array([x_ddot, a_ddot]) * self._dt  # next velocity
         self.state[:2] += self.state[2:] * self._dt  # next position
 
-    def _reset_anim(self):
-        self._visualization.reset()
-
     def _init_anim(self):
-        from direct.showbase.ShowBase import ShowBase
-        from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight,AmbientLight,Vec4, AntialiasAttrib, TextNode, WindowProperties
-        import os
-        import sys
-        from panda3d.core import Vec3, load_prc_file_data
-        
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        pipeline_path = "C:/Users/Marvin/render_pipeline"
-        if not os.path.isfile(os.path.join(pipeline_path, "setup.py")):
-            pipeline_path = "../../RenderPipeline/"
-        
-        sys.path.insert(0, pipeline_path)
-        
-        from rpcore import RenderPipeline
-        
-        from rpcore.util.movement_controller import MovementController
-        
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import BallOnBeamVis
+        # Create instance of PandaVis
+        self._visualization = BallOnBeamVis(self)
 
-        # Configuration for panda3d-window
-        confVars = """
-        win-size 800 600
-        window-title Ball on Beam
-        framebuffer-multisample 1
-        multisamples 2
-        """
-        loadPrcFileData("", confVars)
-
-        class PandaVis(ShowBase):
-            def __init__(self,bob):
-                ShowBase.__init__(self)
-                
-                load_prc_file_data("", """
-                    # win-size 1600 900
-                    window-title Render Pipeline - Material Sample
-                """)
-
-                mydir = pathlib.Path(__file__).resolve().parent.absolute()
-                from rpcore import SpotLight
-                
-                
-                self.render_pipeline = RenderPipeline()
-                self.render_pipeline.pre_showbase_init()
-                self.render_pipeline.create(self)
-                self.render_pipeline.daytime_mgr.time = "12:00"
-                
-                light = SpotLight()
-                # set desired properties, see below
-                self.render_pipeline.add_light(light)
-                light.pos = (-5,0,10)
-                light.direction= (5,0,-10)
-                light.color = (0.2, 0.6, 1.0)
-                light.energy = 1000.0
-                light.ies_profile = self.render_pipeline.load_ies_profile("x_arrow.ies")
-                light.casts_shadows = True
-                light.shadow_map_resolution = 512
-                light.near_plane = 0.2
-                self.render_pipeline.set_effect(render,"C:/Users/Marvin/Thigit/SimuRLacra/Pyrado/pyrado/environments/pysim/scene-effect.yaml", {}, sort=250)
-
-                
-                self.bob = bob
-
-                r_ball = self.bob.domain_param["r_ball"]
-                l_beam = self.bob.domain_param["l_beam"]
-                d_beam = self.bob.domain_param["d_beam"]
-                x = float(self.bob.state[0])  # ball position along the beam axis [m]
-                a = float(self.bob.state[1])  # angle [rad]
-                
-
-                self.cam.setY(-7)
-                self.render.setAntialias(AntialiasAttrib.MAuto)
-                self.windowProperties = WindowProperties()
-                self.windowProperties.setForeground(True)
-
-                self.directionalLight = DirectionalLight('directionalLight')
-                #directionalLight.setColor((0.2, 0.2, 0.8, 1))
-                self.directionalLightNP = render.attachNewNode(self.directionalLight)
-                # This light is facing forwards, away from the camera.
-                self.directionalLightNP.setHpr(0, -8, 0)
-                self.render.setLight(self.directionalLightNP)
-                self.ambientLight = AmbientLight("ambientLight")
-                self.ambientLight.setColor(Vec4(.3, .3, .3, 1))
-                self.render.setLight(render.attachNewNode(self.ambientLight))
-
-                self.text = TextNode('parameters')
-                self.textNodePath = aspect2d.attachNewNode(self.text)
-                self.textNodePath.setScale(0.07)
-                self.textNodePath.setPos(0.3, 0, -0.3)
-
-                self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.ball.setColor(1, 0, 0, 0)
-                self.ball.setScale(r_ball)
-                self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
-                self.ball.reparentTo(self.render)
-                
-                
-
-                self.box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
-                self.box.setColor(0, 1, 0, 0)
-                self.box.setScale(l_beam / 2, d_beam, d_beam/2)
-                self.box.setPos(0, 0, 0)
-                self.box.setR(-a*180/math.pi)
-
-                self.box.reparentTo(self.render)
-
-                self.taskMgr.add(self.update,"update")
-
-            def reset(self):
-                r_ball = self.bob.domain_param["r_ball"]
-                d_beam = self.bob.domain_param["d_beam"]
-                x = float(self.bob.state[0])  # ball position along the beam axis [m]
-                a = float(self.bob.state[1])  # angle [rad]
-
-                self.ball.setPos(x, 0, math.sin(a) * x + math.cos(a) * d_beam / 2.0 + r_ball)
-
-                self.box.setR(-a*180/math.pi)
-
-            def update(self,task):
-                g = self.bob.domain_param["g"]
-                m_ball = self.bob.domain_param["m_ball"]
-                r_ball = self.bob.domain_param["r_ball"]
-                m_beam = self.bob.domain_param["m_beam"]
-                l_beam = self.bob.domain_param["l_beam"]
-                d_beam = self.bob.domain_param["d_beam"]
-                ang_offset = self.bob.domain_param["ang_offset"]
-                c_frict = self.bob.domain_param["c_frict"]
-                x = float(self.bob.state[0])  # ball position along the beam axis [m]
-                a = float(self.bob.state[1])
-
-                self.ball.setPos(math.cos(a) * x - math.sin(a) * (d_beam / 2.0 + r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
-
-                self.box.setR(-a*180/math.pi)
-                self.text.setText(f"""
-                    dt: {self.bob._dt : 1.4f}
-                    g: {g : 1.3f}
-                    m_ball: {m_ball: 1.2f}
-                    r_ball: {r_ball : 1.3f}
-                    m_beam: {m_beam : 1.2f}
-                    l_beam: {l_beam : 1.2f}
-                    d_beam: {d_beam : 1.2f}
-                    c_frict: {c_frict : 1.3f}
-                    ang_offset: {ang_offset : 1.3f}
-                    """)
-
-                return Task.cont
-
-        self._visualization = PandaVis(self)
-        self._initiated = True
-
-    def _update_anim(self):
-        self._visualization.taskMgr.step()
 
 class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
     """ Ball-on-beam simulation environment with discrete actions """

@@ -250,9 +250,11 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
     ):
         """
         Constructor
-        .. note:: This reward function type depends on environment specific parameters. Due to the domain randomization,
-        have to re-init the reward function after every randomization of the env, since obs_max and act_max can change
-        when randomizing the domain parameters.
+
+        .. note::
+            This reward function type depends on environment specific parameters. Due to the domain randomization,
+            have to re-init the reward function after every randomization of the env, since obs_max and act_max can
+            change when randomizing the domain parameters.
 
         :param Q: weight matrix for the state errors (positive semi-definite)
         :param R: weight matrix for the action errors (positive definite)
@@ -342,7 +344,7 @@ class StateBasedRewFcn:
     classical optimization problems into Pyrado, thus it is negative of the loss function.
     """
 
-    def __init__(self, fcn: Callable[[np.ndarray], float], flip_sign: bool):
+    def __init__(self, fcn: Callable[[np.ndarray], float], flip_sign: bool = False):
         """
         Constructor
 
@@ -408,3 +410,24 @@ class ForwardVelocityRewFcn(RewFcn):
         self.last_x_pos = state[self._idx_x_pos]
 
         return float(fwd_vel_rew - ctrl_cost)
+
+
+class QCartPoleSwingUpRewFcn(RewFcn):
+    """ Custom reward function for QCartPoleSwingUpSim. """
+
+    def __init__(self, factor: float = 0.9):
+        """
+        Constructor
+
+        :param factor: weighting factor of rotation error to position error
+        """
+        self.factor = factor
+
+    def __call__(self, err_s: np.ndarray, err_a: np.ndarray, remaining_steps: int = None) -> float:
+        if not isinstance(err_s, np.ndarray):
+            raise pyrado.TypeErr(given=err_s, expected_type=np.ndarray)
+        if not isinstance(err_a, np.ndarray):
+            raise pyrado.TypeErr(given=err_a, expected_type=np.ndarray)
+
+        # Reward should be roughly between [0, 1]
+        return float(self.factor * (1 - np.abs(err_s[1] / np.pi) ** 2) + (1 - self.factor) * (np.abs(err_s[0])))

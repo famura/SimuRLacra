@@ -26,38 +26,37 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
-import numpy as np
 import os
 import os.path as osp
+from typing import Optional, Union
+
+import numpy as np
+import pyrado
 import torch as to
-from botorch.models import SingleTaskGP
+from botorch.acquisition import ExpectedImprovement, PosteriorMean, ProbabilityOfImprovement, UpperConfidenceBound
 from botorch.fit import fit_gpytorch_model
-from botorch.acquisition import UpperConfidenceBound, ExpectedImprovement, ProbabilityOfImprovement, PosteriorMean
+from botorch.models import SingleTaskGP
 from botorch.optim import optimize_acqf
 from gpytorch.constraints import GreaterThan
 from gpytorch.mlls import ExactMarginalLogLikelihood
-from tabulate import tabulate
-from typing import Optional
-
-import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.utils import until_thold_exceeded
-from pyrado.logger.step import StepLogger
-from pyrado.spaces import BoxSpace
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
+from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
-from pyrado.utils.order import natural_sort
+from pyrado.spaces import BoxSpace
+from pyrado.utils.data_processing import standardize
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import UnitCubeProjector
-from pyrado.utils.data_processing import standardize
+from pyrado.utils.order import natural_sort
+from tabulate import tabulate
 
 
 class BayRn(InterruptableAlgorithm):
@@ -80,7 +79,7 @@ class BayRn(InterruptableAlgorithm):
         self,
         save_dir: str,
         env_sim: MetaDomainRandWrapper,
-        env_real: [RealEnv, EnvWrapper],
+        env_real: Union[RealEnv, EnvWrapper],
         subrtn: Algorithm,
         ddp_space: BoxSpace,
         max_iter: int,
@@ -160,7 +159,8 @@ class BayRn(InterruptableAlgorithm):
         self._subrtn.save_name = "subrtn"
         self.ddp_space = ddp_space
         self.ddp_projector = UnitCubeProjector(
-            to.from_numpy(self.ddp_space.bound_lo), to.from_numpy(self.ddp_space.bound_up)
+            to.from_numpy(self.ddp_space.bound_lo).to(dtype=to.get_default_dtype()),
+            to.from_numpy(self.ddp_space.bound_up).to(dtype=to.get_default_dtype()),
         )
         self.cands = None  # called x in the context of GPs
         self.cands_values = None  # called y in the context of GPs
@@ -218,7 +218,7 @@ class BayRn(InterruptableAlgorithm):
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
-        # Reset the subroutine's algorithm which includes resetting the exploration
+        # Reset the subroutine algorithm which includes resetting the exploration
         self._cnt_samples += self._subrtn.sample_count
         self._subrtn.reset()
 
@@ -301,16 +301,16 @@ class BayRn(InterruptableAlgorithm):
 
     @staticmethod
     def eval_policy(
-        save_dir: [str, None],
+        save_dir: Optional[str],
         env: [RealEnv, SimEnv, MetaDomainRandWrapper],
         policy: Policy,
         mc_estimator: bool,
         prefix: str,
         num_rollouts: int,
-        num_parallel_envs: int = 1,
+        num_workers: int = 4,
     ) -> to.Tensor:
         """
-        Evaluate a policy on the target system (real-world platform).
+        Evaluate a policy either in the source or in the target domain.
         This method is static to facilitate evaluation of specific policies in hindsight.
 
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
@@ -321,7 +321,7 @@ class BayRn(InterruptableAlgorithm):
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)
+        :param num_workers: number of environments for the parallel sampler (only used for a `SimEnv`)
         :return: estimated return in the target domain
         """
         if save_dir is not None:
@@ -339,7 +339,7 @@ class BayRn(InterruptableAlgorithm):
                     break
         elif isinstance(inner_env(env), SimEnv):
             # Create a parallel sampler when conducting a sim-to-sim experiment
-            sampler = ParallelRolloutSampler(env, policy, num_workers=num_parallel_envs, min_rollouts=num_rollouts)
+            sampler = ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=num_rollouts)
             ros = sampler.sample()
             for i in range(num_rollouts):
                 rets_real[i] = ros[i].undiscounted_return()
@@ -347,9 +347,8 @@ class BayRn(InterruptableAlgorithm):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         if save_dir is not None:
-            # Save the evaluation results
-            to.save(rets_real, osp.join(save_dir, f"{prefix}_returns_real.pt"))
-
+            # Save and print the evaluation results
+            pyrado.save(rets_real, "returns_real", "pt", save_dir, meta_info=dict(prefix=prefix))
             print_cbt("Target domain performance", bright=True)
             print(
                 tabulate(
@@ -407,13 +406,16 @@ class BayRn(InterruptableAlgorithm):
                 raise pyrado.ValueErr(given=self.acq_fcn_type, eq_constraint="'UCB', 'EI', 'PI'")
 
             # Optimize acquisition function and get new candidate point
-            cand_norm, acq_value = optimize_acqf(
+            cand_norm, _ = optimize_acqf(
                 acq_function=acq_fcn,
-                bounds=to.stack([to.zeros(self.ddp_space.flat_dim), to.ones(self.ddp_space.flat_dim)]),
+                bounds=to.stack([to.zeros(self.ddp_space.flat_dim), to.ones(self.ddp_space.flat_dim)]).to(
+                    dtype=to.float32
+                ),
                 q=1,
                 num_restarts=self.acq_restarts,
                 raw_samples=self.acq_samples,
             )
+            cand_norm = cand_norm.to(dtype=to.get_default_dtype())
             next_cand = self.ddp_projector.project_back(cand_norm)
             print_cbt(f"Found the next candidate: {next_cand.numpy()}", "g")
             self.cands = to.cat([self.cands, next_cand], dim=0)
@@ -458,8 +460,8 @@ class BayRn(InterruptableAlgorithm):
         # Policies of every iteration are saved by the subroutine in train_policy_sim()
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env_sim, osp.join(self.save_dir, "env_sim.pkl"))
-            joblib.dump(self._env_real, osp.join(self.save_dir, "env_real.pkl"))
+            pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
+            pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
             pyrado.save(self.policy, "policy", "pt", self.save_dir, None)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
@@ -486,7 +488,10 @@ class BayRn(InterruptableAlgorithm):
             raise pyrado.TypeErr(given=ddp_space, expected_type=BoxSpace)
 
         # Normalize the input data and standardize the output data
-        uc_projector = UnitCubeProjector(to.from_numpy(ddp_space.bound_lo), to.from_numpy(ddp_space.bound_up))
+        uc_projector = UnitCubeProjector(
+            to.from_numpy(ddp_space.bound_lo).to(dtype=to.get_default_dtype()),
+            to.from_numpy(ddp_space.bound_up).to(dtype=to.get_default_dtype()),
+        )
         cands_norm = uc_projector.project_to(cands)
         cands_values_stdized = standardize(cands_values)
 
@@ -505,14 +510,15 @@ class BayRn(InterruptableAlgorithm):
         fit_gpytorch_model(mll)
 
         # Find position with maximal posterior mean
-        cand_norm, acq_value = optimize_acqf(
+        cand_norm, _ = optimize_acqf(
             acq_function=PosteriorMean(gp),
-            bounds=to.stack([to.zeros(ddp_space.flat_dim), to.ones(ddp_space.flat_dim)]),
+            bounds=to.stack([to.zeros(ddp_space.flat_dim), to.ones(ddp_space.flat_dim)]).to(dtype=to.float32),
             q=1,
             num_restarts=num_restarts,
             raw_samples=num_samples,
         )
 
+        cand_norm = cand_norm.to(dtype=to.get_default_dtype())
         cand = uc_projector.project_back(cand_norm.detach())
         print_cbt(f"Converged to argmax of the posterior mean: {cand.numpy()}", "g", bright=True)
         return cand
@@ -560,7 +566,7 @@ class BayRn(InterruptableAlgorithm):
         # Set the domain randomizer
         env_sim.adapt_randomizer(argmax_cand.numpy())
 
-        # Reset the subroutine's algorithm which includes resetting the exploration
+        # Reset the subroutine algorithm which includes resetting the exploration
         subrtn.reset()
 
         # Do a warm start
