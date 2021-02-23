@@ -16,3 +16,9 @@ comment:
     - "master"
 github_checks:
   annotations: false
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 10%
