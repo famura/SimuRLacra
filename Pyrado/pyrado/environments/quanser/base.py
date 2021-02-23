@@ -26,8 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from abc import ABC, abstractmethod
 import numpy as np
+from abc import ABC, abstractmethod
+from typing import Optional
 
 import pyrado
 from pyrado.environments.quanser.quanser_common import QSocket
@@ -46,9 +47,9 @@ class QuanserReal(RealEnv, ABC):
         ip: str,
         rcv_dim: int,
         snd_dim: int,
-        dt: float = 1 / 500.0,
-        max_steps: int = pyrado.inf,
-        task_args: [dict, None] = None,
+        dt: Optional[float] = 1 / 500.0,
+        max_steps: Optional[int] = pyrado.inf,
+        task_args: Optional[dict] = None,
     ):
         """
         Constructor
@@ -144,8 +145,8 @@ class QuanserReal(RealEnv, ABC):
         """
         return meas
 
-    def step(self, act):
-        info = dict(t=self._curr_step * self._dt, act_raw=act)
+    def step(self, act: np.ndarray) -> tuple:
+        info = dict(act_raw=act.copy())
 
         # Current reward depending on the (measurable) state and the current (unlimited) action
         remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
@@ -174,22 +175,11 @@ class QuanserReal(RealEnv, ABC):
 
         return self.observe(self.state), self._curr_rew, done, info
 
-    def render(self, mode: RenderMode = RenderMode(text=True), render_step: int = 1):
-        """
-        Visualize one time step of the real-world device.
-        The base version prints to console when the state exceeds its boundaries.
-
-        :param mode: render mode: console, video, or both
-        :param render_step: interval for rendering
-        """
+    def render(self, mode: RenderMode = RenderMode(text=True), render_step: Optional[int] = 1):
         if self._curr_step % render_step == 0:
             if mode.text:
                 print(
-                    f"step: {self._curr_step:4d}  |  "
-                    f"in bounds: {self._state_space.contains(self.state):1d}  |  "
-                    f"rew: {self._curr_rew:1.3f}  |  "
-                    f"act: {self._curr_act}  |  "
-                    f"next state: {self.state}"
+                    f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
             if mode:
                 # Print out of bounds to console if the mode is not empty

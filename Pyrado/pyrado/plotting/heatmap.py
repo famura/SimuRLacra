@@ -29,18 +29,19 @@
 import numpy as np
 import pandas as pd
 from math import floor, ceil
-from matplotlib import colorbar
 from matplotlib import colors
 from matplotlib import pyplot as plt
 from matplotlib import ticker
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from pandas.core.indexes.numeric import NumericIndex
-from typing import Any
+from typing import Any, Optional
 
 import pyrado
+from pyrado.plotting.utils import draw_sep_cbar
 
 
-def _setup_index_axis(ax: plt.Axes, index: pd.Index, use_index_labels: bool = False, tick_label_precision: int = 3):
+def _setup_index_axis(
+    ax: plt.Axes, index: pd.Index, use_index_labels: Optional[bool] = False, tick_label_precision: Optional[int] = 3
+):
     """
     Prepare the index axis for `plot_heatmap`.
     Sets axis label to index name, and axis tick labels to index values.
@@ -87,7 +88,12 @@ def _setup_index_axis(ax: plt.Axes, index: pd.Index, use_index_labels: bool = Fa
 
 
 def _annotate_heatmap(
-    img, data=None, valfmt: str = "{x:.2f}", textcolors: tuple = ("black", "white"), thold: float = None, **textkw: Any
+    img,
+    data=None,
+    valfmt: Optional[str] = "{x:.2f}",
+    textcolors: Optional[tuple] = ("black", "white"),
+    thold: float = None,
+    **textkw: Any,
 ):
     """
     Annotate a given heat map.
@@ -126,27 +132,27 @@ def _annotate_heatmap(
             texts.append(text)
 
 
-def render_heatmap(
+def draw_heatmap(
     data: pd.DataFrame,
-    ax_hm: plt.Axes = None,
-    cmap: colors.Colormap = None,
-    norm: colors.Normalize = colors.Normalize(),
-    annotate: bool = True,
-    annotation_valfmt: str = "{x:.0f}",
-    add_sep_colorbar: bool = False,
-    ax_cb: plt.Axes = None,
-    colorbar_label: str = None,
-    colorbar_orientation: str = "vertical",
-    use_index_labels: bool = False,
-    x_label: str = None,
-    y_label: str = None,
-    fig_canvas_title: str = None,
-    fig_size: tuple = (8, 6),
-    tick_label_prec: int = 3,
-    xtick_label_prec: int = None,
-    ytick_label_prec: int = None,
-    num_major_ticks_hm: int = None,
-    num_major_ticks_cb: int = None,
+    ax_hm: Optional[plt.Axes] = None,
+    cmap: Optional[colors.Colormap] = None,
+    norm: Optional[colors.Normalize] = colors.Normalize(),
+    annotate: Optional[bool] = True,
+    annotation_valfmt: Optional[str] = "{x:.0f}",
+    add_sep_colorbar: Optional[bool] = False,
+    ax_cb: Optional[plt.Axes] = None,
+    colorbar_label: Optional[str] = None,
+    colorbar_orientation: Optional[str] = "vertical",
+    use_index_labels: Optional[bool] = False,
+    x_label: Optional[str] = None,
+    y_label: Optional[str] = None,
+    fig_canvas_title: Optional[str] = None,
+    fig_size: Optional[tuple] = (8, 6),
+    tick_label_prec: Optional[int] = 3,
+    xtick_label_prec: Optional[int] = None,
+    ytick_label_prec: Optional[int] = None,
+    num_major_ticks_hm: Optional[int] = None,
+    num_major_ticks_cb: Optional[int] = None,
 ) -> (plt.Figure, plt.Figure):
     """
     Plot a 2D heat map from a 2D `pandas.DataFrame` using pyplot.
@@ -163,8 +169,7 @@ def render_heatmap(
     :param norm: colormap normalizer passed to `imshow()`
     :param annotate: select if the heat map should be annotated
     :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False
-    :param add_sep_colorbar: flag if a separate color bar is added automatically
-    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
+    :param add_sep_colorbar: if `True`, add a color bar in a separate figure, else no color bar is plotted    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
     :param colorbar_label: label for the color bar
     :param colorbar_orientation: orientation of the color bar
     :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.
@@ -179,7 +184,7 @@ def render_heatmap(
     :param ytick_label_prec: floating point precision of the y-axis labels, set `None` for default behavior
     :param num_major_ticks_hm: number of major axis ticks for the heat map, set `None` for default behavior
     :param num_major_ticks_cb: number of major axis ticks for the color bar, set `None` for default behavior
-    :return: handles to the heat map and the color bar figures (None if not existent)
+    :return: handles to the heat map and the color bar figures (`None` if not existent)
     """
     if isinstance(data, pd.DataFrame):
         if not isinstance(data.index, NumericIndex):
@@ -242,25 +247,7 @@ def render_heatmap(
 
     # Add color bar if requested
     if add_sep_colorbar:
-        # Draw a new figure and re-plot the color bar there
-        if ax_cb is None:
-            fig_cb, ax_cb = plt.subplots(1, figsize=fig_size)
-        else:
-            fig_cb = plt.gcf()
-
-        if colorbar_label is not None:
-            colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=colorbar_label, orientation=colorbar_orientation)
-        else:
-            colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, orientation=colorbar_orientation)
-
-        if num_major_ticks_cb is not None:
-            if colorbar_orientation == "horizontal":
-                ax_cb.xaxis.set_label_position("top")
-                ax_cb.xaxis.set_ticks_position("top")
-                ax_cb.xaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
-            elif colorbar_orientation == "vertical":
-                ax_cb.yaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
-
+        fig_cb = draw_sep_cbar(ax_cb, colorbar_label, colorbar_orientation, fig_size, cmap, norm, num_major_ticks_cb)
         return fig_hm, fig_cb
 
     else:

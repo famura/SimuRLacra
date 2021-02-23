@@ -32,7 +32,7 @@ from math import ceil
 from typing import Iterable
 
 
-def gen_batch_idcs(batch_size: int, data_size: int):
+def gen_shuffled_batch_idcs(batch_size: int, data_size: int):
     """
     Helper function for doing SGD on mini-batches that returns the indies for the mini-batch samples
 
@@ -49,7 +49,7 @@ def gen_batch_idcs(batch_size: int, data_size: int):
     return iter(lambda: list(islice(idx_iter, batch_size)), [])
 
 
-def gen_ordered_batch_idcs(batch_size: int, data_size: int, sorted: bool = False):
+def gen_ordered_batch_idcs(batch_size: int, data_size: int, sorted: bool = True):
     """
     Helper function for doing SGD on mini-batches that returns the indies for the mini-batch samples
 

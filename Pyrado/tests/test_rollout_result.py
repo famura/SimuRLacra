@@ -96,11 +96,16 @@ hidden = [
 ]
 
 
-def test_create_rew_only():
-    # Don't require additional fields for this test
-    StepSequence.required_fields = {}
+def test_additional_required():
+    # Require the states as additional field for this test
+    StepSequence.required_fields = {"states"}
 
-    ro = StepSequence(rewards=rewards, data_format="numpy")
+    with pytest.raises(Exception) as err:
+        # This should fail
+        _ = StepSequence(rewards=rewards, observations=observations, actions=actions)
+        assert isinstance(err, ValueError)
+
+    ro = StepSequence(rewards=rewards, observations=observations, actions=actions, states=states)
     assert len(ro) == 5
     assert (ro.rewards == np.array(rewards)).all()
 
@@ -271,7 +276,13 @@ def test_split_multi(data_format):
     # Don't require additional fields for this test
     StepSequence.required_fields = {}
 
-    ro = StepSequence(rewards=np.arange(20), rollout_bounds=[0, 4, 11, 17, 20], data_format=data_format)
+    ro = StepSequence(
+        rewards=np.arange(20),
+        rollout_bounds=[0, 4, 11, 17, 20],
+        observations=np.empty(21),
+        actions=np.empty(20),
+        data_format=data_format,
+    )
 
     # There should be four parts
     assert ro.rollout_count == 4
@@ -390,7 +401,9 @@ class DummyNT(NamedTuple):
 def test_namedtuple(data_format):
     hid_nt = [DummyNT(*it) for it in hidden]
 
-    ro = StepSequence(rewards=rewards, hidden=hid_nt, data_format=data_format)
+    ro = StepSequence(
+        rewards=rewards, actions=actions, observations=observations, hidden=hid_nt, data_format=data_format
+    )
 
     assert isinstance(ro.hidden, DummyNT)
 

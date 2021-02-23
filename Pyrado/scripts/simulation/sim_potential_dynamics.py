@@ -107,7 +107,7 @@ if __name__ == "__main__":
         )
 
     # Save
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig.savefig(osp.join(ex_dir, f"potdyn-kappa.{fmt}"), dpi=500)
 

@@ -37,12 +37,13 @@ import numpy as np
 import pandas as pd
 from prettyprinter import pprint
 
+import pyrado
 from pyrado.domain_randomization.utils import param_grid
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
-from pyrado.logger.experiment import save_dicts_to_yaml, ask_for_experiment, timestamp_format
+from pyrado.logger.experiment import save_dicts_to_yaml, ask_for_experiment
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
@@ -101,7 +102,7 @@ if __name__ == "__main__":
 
     # Create multidimensional results grid and ensure right number of rollouts
     param_list = param_grid(param_spec)
-    param_list *= args.num_ro_per_config
+    param_list *= args.num_rollouts_per_config
 
     # Fix initial state (set to None if it should not be fixed)
     init_state = None
@@ -142,14 +143,14 @@ if __name__ == "__main__":
 
     # Create subfolder and save
     timestamp = datetime.datetime.now()
-    add_info = timestamp.strftime(timestamp_format) + "--" + add_info
+    add_info = timestamp.strftime(pyrado.timestamp_format) + "--" + add_info
     save_dir = osp.join(ex_dir, "eval_domain_grid", add_info)
     os.makedirs(save_dir, exist_ok=True)
 
     save_dicts_to_yaml(
         {"ex_dir": str(ex_dir)},
         {"varied_params": list(param_spec.keys())},
-        {"num_rpp": args.num_ro_per_config, "seed": args.seed},
+        {"num_rpp": args.num_rollouts_per_config, "seed": args.seed},
         {"metrics": dict_arraylike_to_float(metrics)},
         save_dir=save_dir,
         file_name="summary",

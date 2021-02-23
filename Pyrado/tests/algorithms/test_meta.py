@@ -27,26 +27,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pytest
-
+from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
+from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
+from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.simopt import SimOpt
-from pyrado.algorithms.step_based.gae import GAE
-from pyrado.algorithms.meta.arpl import ARPL
-from pyrado.algorithms.episodic.cem import CEM
-from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.meta.spota import SPOTA
-from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.domain_randomization.default_randomizers import (
+    create_default_randomizer,
+    create_zero_var_randomizer,
+    get_default_domain_param_map_qq,
+)
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.domain_randomization.default_randomizers import (
-    create_default_randomizer,
-    get_default_domain_param_map_qq,
-    create_zero_var_randomizer,
-)
 from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,
     DomainRandWrapperLive,
@@ -57,12 +56,12 @@ from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNNPolicy, FNN
+from pyrado.policies.feed_forward.fnn import FNN, FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
-from pyrado.spaces import ValueFunctionSpace, BoxSpace
+from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -183,11 +182,12 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
             max_iter=2,
             acq_fc="UCB",
             acq_param=dict(beta=0.25),
-            acq_restarts=500,
-            acq_samples=1000,
+            acq_restarts=100,
+            acq_samples=100,
             num_init_cand=3,
             warmstart=True,
-            num_eval_rollouts_real=10,  # sim-2-sim
+            num_eval_rollouts_sim=10,
+            num_eval_rollouts_real=2,  # sim-2-sim
         ),
     ],
     ids=["casual_hparam"],
@@ -205,13 +205,11 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.0)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
-        max_iter=5,
-        pop_size=40,
-        num_init_states_per_domain=8,
-        num_is_samples=10,
-        expl_std_init=2.0,
-        expl_std_min=0.02,
-        symm_sampling=False,
+        max_iter=1,
+        pop_size=20,
+        num_init_states_per_domain=1,
+        num_is_samples=20,
+        expl_std_init=1.0,
         num_workers=1,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
@@ -226,6 +224,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     # Create algorithm and train
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
     algo.train()
+    assert algo.curr_iter == algo.max_iter
 
 
 @pytest.mark.parametrize("env", ["default_omo"], ids=["omo"], indirect=True)

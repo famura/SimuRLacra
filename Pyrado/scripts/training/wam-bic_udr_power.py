@@ -37,7 +37,7 @@ from pyrado.algorithms.meta.udr import UDR
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
+from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.argparser import get_argparser
@@ -64,8 +64,8 @@ if __name__ == "__main__":
         UniformDomainParam(name="cup_scale", mean=0.95, halfspan=0.05),
         NormalDomainParam(name="rope_length", mean=0.3, std=0.005),
         NormalDomainParam(name="ball_mass", mean=0.021, std=0.001),
-        UniformDomainParam(name="joint_damping", mean=0.05, halfspan=0.05),
-        UniformDomainParam(name="joint_stiction", mean=0.1, halfspan=0.1),
+        UniformDomainParam(name="joint_2_damping", mean=0.05, halfspan=0.05),
+        UniformDomainParam(name="joint_2_stiction", mean=0.1, halfspan=0.1),
     )
     env = DomainRandWrapperLive(env, randomizer)
 

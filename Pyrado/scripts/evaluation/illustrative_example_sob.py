@@ -244,7 +244,7 @@ if __name__ == "__main__":
     plt.ylim(top=42)
 
     # Save
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig_n.savefig(osp.join(ex_dir, f"n.{fmt}"), dpi=500)
             fig_theta.savefig(osp.join(ex_dir, f"theta.{fmt}"), dpi=500)

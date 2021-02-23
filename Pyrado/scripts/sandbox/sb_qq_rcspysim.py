@@ -33,7 +33,7 @@ import numpy as np
 
 from pyrado.environments.rcspysim.quanser_qube import QQubeRcsSim
 from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.plotting.rollout_based import draw_observations_actions_rewards
+from pyrado.plotting.rollout_based import plot_observations_actions_rewards
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
@@ -60,4 +60,4 @@ if __name__ == "__main__":
     # Plot
     print(f"After {max_steps*dt} s of accelerating with 1. rad/s**2, we should be at {max_steps*dt} rad/s")
     print(f"Difference: {max_steps*dt - ro.observations[-1][2]} rad/s (mind the swinging pendulum)")
-    draw_observations_actions_rewards(ro)
+    plot_observations_actions_rewards(ro)

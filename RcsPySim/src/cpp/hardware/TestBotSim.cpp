@@ -93,8 +93,8 @@ int main(int argc, char** argv)
     
     // Parse command line arguments
     Rcs::CmdLineParser argP(argc, argv);
-    char xmlFileName[128] = "ex_p3l-ika_export.xml";
-    char directory[128] = "../config/ENVIRONMENT_FOLDER";
+    char xmlFileName[128] = "ex_<ENVIRONMENT-NAME>_export.xml";
+    char directory[128] = "../config/<ENVIRONMENT-FOLDER>";
     argP.getArgument("-dl", &RcsLogLevel, "Debug level (default is 0)");
     argP.getArgument("-f", xmlFileName, "Configuration file name");
     argP.getArgument("-dir", directory, "Configuration file directory");

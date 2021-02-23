@@ -33,11 +33,12 @@ import scipy.signal as signal
 import torch as to
 from collections.abc import Iterable
 from copy import deepcopy
-from typing import Sequence, Type
+from math import ceil
+from typing import Sequence, Type, Optional, Union
 
 import pyrado
 from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
-from pyrado.sampling.utils import gen_batch_idcs
+from pyrado.sampling.utils import gen_shuffled_batch_idcs, gen_ordered_batch_idcs
 
 
 def _index_to_int(idx, n):
@@ -57,7 +58,7 @@ class DictIndexProxy:
 
     __slots__ = ("__dict__", "_obj", "_index", "_prefix")
 
-    def __init__(self, obj: dict, index: int, path: str = None):
+    def __init__(self, obj: dict, index: int, path: Optional[str] = None):
         super().__init__()
 
         self._obj = obj
@@ -73,12 +74,13 @@ class DictIndexProxy:
     def _get_keyed_value(self, key, error_type: Type[Exception] = RuntimeError):
         # Obtain keyed value from obj dict
         value = self._obj.get(key, None)
+
         if value is None:
             # Try pluralized keys
             value = self._obj.get(key + "s", None)
-
             if value is None:
                 raise error_type(f"No entry named {self._prefix}{key}")
+
         return value
 
     def _index_value(self, key, value, index, error_type: Type[Exception] = RuntimeError):
@@ -105,6 +107,7 @@ class DictIndexProxy:
 
     def _get_indexed_value(self, key, error_type: Type[Exception] = RuntimeError):
         real_key, index = self._process_key(key, self._index, error_type)
+
         # Obtain keyed value list from obj dict
         value = self._get_keyed_value(real_key, error_type=error_type)
 
@@ -112,8 +115,10 @@ class DictIndexProxy:
 
     def _set_indexed_value(self, key, new_value, error_type: Type[Exception] = RuntimeError):
         real_key, index = self._process_key(key, self._index, error_type)
+
         # Obtain keyed value list from obj dict
         value = self._get_keyed_value(real_key, error_type=error_type)
+
         # Set value to data
         if isinstance(value, (to.Tensor, np.ndarray)):
             # Set slice of ndarray/tensor
@@ -147,7 +152,7 @@ class DictIndexProxy:
         # List dict items not starting with _
         return [k for k in self._obj if not k.startswith("_")]
 
-    # Define getitem and setitem too, helps with ie return attr which is a keyword
+    # Define getitem and setitem too, helps when return attr is a keyword
     def __getitem__(self, key):
         result = self._get_indexed_value(key, error_type=KeyError)
         self.__dict__[key] = result
@@ -192,7 +197,7 @@ class Step(DictIndexProxy):
     def _process_key(self, key: str, index: int, error_type: Type[Exception]):
         if key.startswith("next_"):
             if not self._rollout.continuous:
-                raise error_type("Access to next element is not supported for non-continuous rollouts.")
+                raise error_type("Access to next element is not supported for non-continuous rollouts!")
             key = key[5:]
             index += 1
         if key not in self._rollout.data_names and key + "s" not in self._rollout.data_names and key != "done":
@@ -221,29 +226,35 @@ class StepSequence(Sequence[Step]):
     last step. Additionally, the step entries may be dicts to support keyed storage. A list of dicts is converted to
     a dict of lists, each of which will be regularly stacked. Apart from the variable-based view, the rollout can also
     be seen as a sequence of steps. Each Step object is a proxy, it's attributes refer to the respective slice of the
-    corresponding variable. The only required result variable is rewards. All other variables are optional.
-    Common are observations, actions, policy_infos and env_infos.
+    corresponding variable. The only required result variable are `rewards`, observations`, and `actions`.
+    All other variables are optional. Common optional ones are `states` and `rollout_info`.
 
-    Storing PyTorch tensors with gradient tracing is NOT supported. The rationale behind this is eager error avoidance.
-    The only reason you would add them is to profit from the optimized slicing, but using that with gradient tracking
-    risks lingering incomplete graphs. Thus, just don't.
+    .. note::
+        Storing PyTorch tensors with gradient tracing is NOT supported. The rationale behind this is eager error
+        avoidance. The only reason you would add them is to profit from the optimized slicing, but using that with
+        gradient tracking risks lingering incomplete graphs.
     """
 
-    # Set of required rollout fields IN ADDITION to the rewards.
-    # Putting this into a class field instead of using the constructor arguments reduces duplicate code and allows to
-    # override it during unit tests.
-    required_fields = {"observations", "actions"}
+    rewards: Union[np.ndarray, to.Tensor]
+    observations: Union[np.ndarray, to.Tensor]
+    actions: Union[np.ndarray, to.Tensor]
+
+    # Set of required rollout fields in addition to rewards, observations, actions. Putting this into a class field
+    # instead of using the constructor arguments reduces duplicate code and allows to override it during unit tests.
+    required_fields = {}
 
     def __init__(
         self,
         *,
-        complete: bool = True,
+        complete: Optional[bool] = True,
         rollout_info=None,
-        data_format: str = None,
+        data_format: Optional[str] = None,
         done=None,
-        continuous: bool = True,
+        continuous: Optional[bool] = True,
         rollout_bounds=None,
-        rewards,
+        rewards: Sequence,
+        observations: Sequence,
+        actions: Sequence,
         **data,
     ):
         """
@@ -256,7 +267,9 @@ class StepSequence(Sequence[Step]):
         :param done: boolean ndarray, specifying for each step whether it led to termination.
                      The last step of continuous rollouts, i.e. not mini-batches, is done if `complete` is `True`.
         :param continuous: true if the steps form one continuous sequence.
-        :param rewards: list of reward values, required, determines sequence length
+        :param rewards: sequence of reward values, determines sequence length
+        :param observations: sequence of observation values, the length must be `len(rewards) + 1`
+        :param actions: sequence of action values, the length must be `len(rewards)`
         :param data: additional data lists, their length must be `len(rewards)` or `len(rewards) + 1`
         """
         # Set singular attributes
@@ -288,6 +301,8 @@ class StepSequence(Sequence[Step]):
 
         # Set mandatory data fields
         self.add_data("rewards", rewards)
+        self.add_data("observations", observations)
+        self.add_data("actions", actions)
 
         # Set other data fields and verify their length
         for name, value in data.items():
@@ -367,7 +382,7 @@ class StepSequence(Sequence[Step]):
                     msg=f"The data list {name} must have {self.length} elements," f"but has {vlen} elements."
                 )
 
-    def add_data(self, name: str, value=None, item_shape: tuple = None, with_after_last: bool = False):
+    def add_data(self, name: str, value=None, item_shape: tuple = None, with_after_last: Optional[bool] = False):
         """
         Add a new data field to the step sequence. Can also be used to replace data in an existing field.
 
@@ -465,7 +480,7 @@ class StepSequence(Sequence[Step]):
         # No truncation
         return entry
 
-    def get_data_values(self, name: str, truncate_last: bool = False):
+    def get_data_values(self, name: str, truncate_last: Optional[bool] = False):
         """
         Return the data tensor stored under the given name.
 
@@ -606,9 +621,39 @@ class StepSequence(Sequence[Step]):
 
         return steps, next_steps
 
-    def split_shuffled_batches(self, batch_size: int, complete_rollouts: bool = False):
+    def split_ordered_batches(self, batch_size: int = None, num_batches: int = None):
         """
-        Batch generation. Split the step collection into mini-batches of size batch_size.
+        Batch generation. Split the step collection into ordered mini-batches of size batch_size.
+
+        :param batch_size: number of steps per batch, i.e. variable number of batches
+        :param num_batches: number of batches to split the rollout in, i.e. variable batch size
+
+        .. note::
+            Left out the option to return complete rollouts like for `split_shuffled_batches`.
+        """
+        if batch_size is None and num_batches is None or batch_size is not None and num_batches is not None:
+            raise pyrado.ValueErr(msg="Either batch_size or num_batches must not be None, but not both or none!")
+        elif batch_size is not None and batch_size < 1:
+            raise pyrado.ValueErr(given=batch_size, ge_constraint="1 (int)")
+        elif num_batches is not None and num_batches < 1:
+            raise pyrado.ValueErr(given=num_batches, ge_constraint="1 (int)")
+
+        # Switch the splitting mode
+        if num_batches is not None:
+            batch_size = ceil(self.length / num_batches)
+
+        if batch_size >= self.length:
+            # Yield all at once if there are less steps than the batch size
+            yield self
+
+        else:
+            # Split by steps
+            for b in gen_ordered_batch_idcs(batch_size, self.length, sorted=True):
+                yield self[b]
+
+    def split_shuffled_batches(self, batch_size: int, complete_rollouts: Optional[bool] = False):
+        """
+        Batch generation. Split the step collection into random mini-batches of size batch_size.
 
         :param batch_size: number of steps per batch
         :param complete_rollouts: if `complete_rollouts = True`, the batches will not contain partial rollouts.
@@ -645,7 +690,7 @@ class StepSequence(Sequence[Step]):
 
         else:
             # Split by steps
-            for b in gen_batch_idcs(batch_size, self.length):
+            for b in gen_shuffled_batch_idcs(batch_size, self.length):
                 yield self[b]
 
     @property
@@ -687,7 +732,9 @@ class StepSequence(Sequence[Step]):
             return np.dot(self.rewards, (gamma ** np.arange(self.length)))
 
     @classmethod
-    def concat(cls, parts: Sequence["StepSequence"], data_format: str = None, truncate_last: bool = True):
+    def concat(
+        cls, parts: Sequence["StepSequence"], data_format: Optional[str] = None, truncate_last: Optional[bool] = True
+    ):
         """
         Concatenate multiple step sequences into one, truncating the last observation.
 
@@ -754,7 +801,7 @@ def discounted_value(rollout: StepSequence, gamma: float):
     return discounted_reverse_cumsum(rewards, gamma)
 
 
-def discounted_values(rollouts: Sequence[StepSequence], gamma: float, data_format: str = "torch"):
+def discounted_values(rollouts: Sequence[StepSequence], gamma: float, data_format: Optional[str] = "torch"):
     """
     Compute the discounted state values for multiple rollouts.
 

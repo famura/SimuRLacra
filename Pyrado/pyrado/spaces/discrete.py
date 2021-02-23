@@ -115,7 +115,7 @@ class DiscreteSpace(Space):
         return np.any(np.isclose(self.eles, cand.astype(self.eles.dtype)))
 
     def sample_uniform(self, concrete_inf: float = 1e6) -> np.ndarray:
-        idx = np.random.randint(self.flat_dim, size=1)
+        idx = np.random.randint(self.num_ele, size=1)
         # Return randomly selected column
         return self.eles[idx, :].flatten()
 

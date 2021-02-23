@@ -154,7 +154,7 @@ if __name__ == "__main__":
         ax_hm_mean.scatter(gt_val_x, gt_val_y, c="firebrick", marker="*", s=60)  # forestgreen
         ax_hm_std.scatter(gt_val_x, gt_val_y, c="firebrick", marker="*", s=60)  # forestgreen
 
-    if args.save_figures:
+    if args.save:
         os.makedirs(osp.join(ex_dir, "plots"), exist_ok=True)
         for fmt in ["pdf", "pgf", "png"]:
             if len(args.idcs) == 1 or args.render3D:

@@ -316,9 +316,7 @@ class ADNPolicy(PotentialBasedPolicy):
         elif len(obs.shape) == 2:
             batch_size = obs.shape[0]
         else:
-            raise pyrado.ShapeErr(
-                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1- or 2-dim"
-            )
+            raise pyrado.ShapeErr(msg=f"Expected 1- or 2-dim observations, but the shape is {obs.shape}!")
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
         if hidden is not None:

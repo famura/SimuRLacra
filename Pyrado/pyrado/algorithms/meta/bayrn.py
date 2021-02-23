@@ -26,37 +26,37 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import os
 import os.path as osp
+from typing import Optional, Union
+
+import numpy as np
+import pyrado
 import torch as to
-from botorch.models import SingleTaskGP
+from botorch.acquisition import ExpectedImprovement, PosteriorMean, ProbabilityOfImprovement, UpperConfidenceBound
 from botorch.fit import fit_gpytorch_model
-from botorch.acquisition import UpperConfidenceBound, ExpectedImprovement, ProbabilityOfImprovement, PosteriorMean
+from botorch.models import SingleTaskGP
 from botorch.optim import optimize_acqf
 from gpytorch.constraints import GreaterThan
 from gpytorch.mlls import ExactMarginalLogLikelihood
-from tabulate import tabulate
-from typing import Optional, Union
-
-import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.utils import until_thold_exceeded
-from pyrado.logger.step import StepLogger
-from pyrado.spaces import BoxSpace
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
+from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
-from pyrado.utils.order import natural_sort
+from pyrado.spaces import BoxSpace
+from pyrado.utils.data_processing import standardize
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import UnitCubeProjector
-from pyrado.utils.data_processing import standardize
+from pyrado.utils.order import natural_sort
+from tabulate import tabulate
 
 
 class BayRn(InterruptableAlgorithm):
@@ -159,7 +159,8 @@ class BayRn(InterruptableAlgorithm):
         self._subrtn.save_name = "subrtn"
         self.ddp_space = ddp_space
         self.ddp_projector = UnitCubeProjector(
-            to.from_numpy(self.ddp_space.bound_lo), to.from_numpy(self.ddp_space.bound_up)
+            to.from_numpy(self.ddp_space.bound_lo).to(dtype=to.get_default_dtype()),
+            to.from_numpy(self.ddp_space.bound_up).to(dtype=to.get_default_dtype()),
         )
         self.cands = None  # called x in the context of GPs
         self.cands_values = None  # called y in the context of GPs
@@ -405,13 +406,16 @@ class BayRn(InterruptableAlgorithm):
                 raise pyrado.ValueErr(given=self.acq_fcn_type, eq_constraint="'UCB', 'EI', 'PI'")
 
             # Optimize acquisition function and get new candidate point
-            cand_norm, acq_value = optimize_acqf(
+            cand_norm, _ = optimize_acqf(
                 acq_function=acq_fcn,
-                bounds=to.stack([to.zeros(self.ddp_space.flat_dim), to.ones(self.ddp_space.flat_dim)]),
+                bounds=to.stack([to.zeros(self.ddp_space.flat_dim), to.ones(self.ddp_space.flat_dim)]).to(
+                    dtype=to.float32
+                ),
                 q=1,
                 num_restarts=self.acq_restarts,
                 raw_samples=self.acq_samples,
             )
+            cand_norm = cand_norm.to(dtype=to.get_default_dtype())
             next_cand = self.ddp_projector.project_back(cand_norm)
             print_cbt(f"Found the next candidate: {next_cand.numpy()}", "g")
             self.cands = to.cat([self.cands, next_cand], dim=0)
@@ -484,7 +488,10 @@ class BayRn(InterruptableAlgorithm):
             raise pyrado.TypeErr(given=ddp_space, expected_type=BoxSpace)
 
         # Normalize the input data and standardize the output data
-        uc_projector = UnitCubeProjector(to.from_numpy(ddp_space.bound_lo), to.from_numpy(ddp_space.bound_up))
+        uc_projector = UnitCubeProjector(
+            to.from_numpy(ddp_space.bound_lo).to(dtype=to.get_default_dtype()),
+            to.from_numpy(ddp_space.bound_up).to(dtype=to.get_default_dtype()),
+        )
         cands_norm = uc_projector.project_to(cands)
         cands_values_stdized = standardize(cands_values)
 
@@ -503,14 +510,15 @@ class BayRn(InterruptableAlgorithm):
         fit_gpytorch_model(mll)
 
         # Find position with maximal posterior mean
-        cand_norm, acq_value = optimize_acqf(
+        cand_norm, _ = optimize_acqf(
             acq_function=PosteriorMean(gp),
-            bounds=to.stack([to.zeros(ddp_space.flat_dim), to.ones(ddp_space.flat_dim)]),
+            bounds=to.stack([to.zeros(ddp_space.flat_dim), to.ones(ddp_space.flat_dim)]).to(dtype=to.float32),
             q=1,
             num_restarts=num_restarts,
             raw_samples=num_samples,
         )
 
+        cand_norm = cand_norm.to(dtype=to.get_default_dtype())
         cand = uc_projector.project_back(cand_norm.detach())
         print_cbt(f"Converged to argmax of the posterior mean: {cand.numpy()}", "g", bright=True)
         return cand

@@ -66,6 +66,7 @@ private:
     RcsBody* platform;
     RcsBody* rail;
     RcsBody* link2R;
+    RcsBody* box;
 };
 
 } /* namespace Rcs */

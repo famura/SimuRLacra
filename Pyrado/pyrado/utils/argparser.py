@@ -60,6 +60,7 @@ def get_argparser() -> argparse.ArgumentParser:
         help="path to the (experiment) directory to load from",
     )
     parser.add_argument(
+        "-e",
         "--env_name",
         type=str,
         nargs="?",
@@ -70,20 +71,20 @@ def get_argparser() -> argparse.ArgumentParser:
         nargs="+",
         type=int,
         default=[0, 1],
-        help="list of indices (without commas) casted to integer (default: [0, 1])",
+        help="list of indices without commas casted to integer (default: [0, 1])",
     )
     parser.add_argument(
         "--init_state",
         nargs="+",
         type=float,
         default=None,
-        help="list of init state values (e.g. '1.2 3 0.9' (without commas); default: None)",
+        help="list of init state values without commas, e.g. '1.2 3 0.9' (default: None)",
     )
     parser.add_argument(
         "--iter",
         type=int,
         default=-1,
-        help="iteration to select for evaluation (default: -1 for last iteration)",
+        help="iteration to select for evaluation (default: -1 for all iterations)",
     )
     parser.add_argument(
         "--load_all",
@@ -95,7 +96,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "--max_steps",
         type=int,
         default=float("inf"),
-        help="maximum number of time steps to execute the environment",
+        help="maximum number of time steps to execute the environment (default: infinite)",
     )
     parser.add_argument(
         "-m",
@@ -117,9 +118,9 @@ def get_argparser() -> argparse.ArgumentParser:
         help="Normalize the log-probabilities of the posterior (default: False)",
     )
     parser.add_argument(
-        "--num_ro_per_config",
+        "--num_rollouts_per_config",
         type=int,
-        help="number of rollouts per environment configuration / domain parameter set",
+        help="number of rollouts per environment configuration, e.g. domain parameter sets or initial states",
     )
     parser.add_argument(
         "--num_workers",
@@ -160,7 +161,7 @@ def get_argparser() -> argparse.ArgumentParser:
         help="don't stop (e.g. continue simulating after done flag was raised)",
     )
     parser.add_argument(
-        "--remove_dr_wrappers",
+        "--no_dr",
         action="store_true",
         default=False,
         help="remove all domain randomization wrappers (default: False)",
@@ -174,7 +175,7 @@ def get_argparser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-s",
-        "--save_figures",
+        "--save",
         action="store_true",
         default=False,
         help="save all generated figures (default: False)",
@@ -210,13 +211,13 @@ def get_argparser() -> argparse.ArgumentParser:
         type=str,
         nargs="?",
         default="vfcn",
-        help="(partial) name of the value function to load, e.g. 'argmax_vfcn', or " "'iter_0_vfcn' (default: vfcn)",
+        help="(partial) name of the value function to load, e.g. 'argmax_vfcn', or 'iter_0_vfcn' (default: vfcn)",
     )
     parser.add_argument(
         "--warmstart",
         dest="warmstart",
         action="store_true",
-        help="start a procedure with initialized parameters (e.g. for the policy",
+        help="start a procedure with initialized parameters, e.g. for the policy",
     )
     parser.add_argument(
         "--from_scratch",

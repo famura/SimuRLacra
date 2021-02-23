@@ -73,7 +73,7 @@ if __name__ == "__main__":
     df_c = pd.DataFrame(columns=["p_dot", "p", "s", "h", "tau", "c", "kappa"])
     df_kappa = pd.DataFrame(columns=["p_dot", "p", "s", "h", "tau", "c", "kappa"])
 
-    if args.save_figures:
+    if args.save:
         save_dir = osp.join(pyrado.EVAL_DIR, "dynamical_systems")
         os.makedirs(osp.dirname(save_dir), exist_ok=True)
 
@@ -209,7 +209,7 @@ if __name__ == "__main__":
     ax.grid()
 
     # Save
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig.savefig(osp.join(save_dir, f"potdyn-tau.{fmt}"), dpi=500)
 
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     ax.grid()
 
     # Save
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig.savefig(osp.join(save_dir, f"potdyn-s.{fmt}"), dpi=500)
 
@@ -309,7 +309,7 @@ if __name__ == "__main__":
     ax.grid()
 
     # Save
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig.savefig(osp.join(save_dir, f"potdyn-C.{fmt}"), dpi=500)
 
@@ -344,7 +344,7 @@ if __name__ == "__main__":
     ax.grid()
 
     # Save
-    if args.save_figures:
+    if args.save:
         for fmt in ["pdf", "pgf"]:
             fig.savefig(osp.join(save_dir, f"potdyn-kappa.{fmt}"), dpi=500)
 
