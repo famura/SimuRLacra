@@ -1,5 +1,7 @@
 import numpy as np
+import os
 import pathlib
+import sys
 
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase.ShowBaseGlobal import aspect2d
@@ -27,6 +29,25 @@ class PandaVis(ShowBase):
         """
         ShowBase.__init__(self)
         self.dir = pathlib.Path(__file__).resolve().parent.absolute()
+        
+        self._render = True
+        if(self._render):
+            os.chdir(os.path.realpath(os.path.dirname(__file__)))
+            # Insert the pipeline path to the system path, this is required to be
+            # able to import the pipeline classes
+            pipeline_path = "C:/Users/Marvin/Thigit/SimuRLacra/thirdParty/render_pipeline"
+    
+            # Just a special case for my development setup, so I don't accidentally
+            # commit a wrong path. You can remove this in your own programs.
+            if not os.path.isfile(os.path.join(pipeline_path, "setup.py")):
+                pipeline_path = "../../RenderPipeline/"
+    
+            sys.path.insert(0, pipeline_path)
+    
+            from rpcore import RenderPipeline, SpotLight
+            self.render_pipeline = RenderPipeline()
+            self.render_pipeline.pre_showbase_init()
+            self.render_pipeline.create(self)
 
         # Set title and background color
         self.render.setAntialias(AntialiasAttrib.MAuto)
