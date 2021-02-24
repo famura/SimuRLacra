@@ -236,10 +236,11 @@ class SVPG(Algorithm):
         self.logger.add_value("std return", np.mean(std_rets_all_prtcls), 4)
         self.logger.record_step()  # TODO @Robin necessary?
 
-        self.update(ros_all_particles)
-
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(np.mean(avg_rets_all_prtcls)), meta_info)
+
+        # Update the particles
+        self.update(ros_all_particles)
 
     def kernel(self, X: to.Tensor) -> (to.Tensor, to.Tensor):
         """

@@ -189,11 +189,11 @@ class ValueBased(Algorithm, ABC):
         self.logger.add_value("avg rollout length", np.mean([ro.length for ro in ros]), 4)
         self.logger.add_value("num total samples", self._cnt_samples)
 
-        # Use data in the memory to update the policy and the Q-functions
-        self.update()
-
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(ret_avg), meta_info)
+
+        # Use data in the memory to update the policy and the Q-functions
+        self.update()
 
     @abstractmethod
     def update(self):

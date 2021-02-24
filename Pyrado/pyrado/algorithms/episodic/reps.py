@@ -65,7 +65,7 @@ class REPS(ParameterExploring):
             https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py
     """
 
-    name: str = "reps"
+    name: Optional[str] = "reps"
 
     def __init__(
         self,
@@ -77,15 +77,15 @@ class REPS(ParameterExploring):
         num_init_states_per_domain: int,
         pop_size: Optional[int],
         expl_std_init: float,
-        expl_std_min: float = 0.01,
+        expl_std_min: Optional[float] = 0.01,
         num_domains: Optional[int] = 1,
-        symm_sampling: bool = False,
-        num_epoch_dual: int = 1000,
-        softmax_transform: bool = False,
-        use_map: bool = True,
-        optim_mode: str = "scipy",
-        lr_dual: float = 5e-4,
-        num_workers: int = 4,
+        symm_sampling: Optional[bool] = False,
+        softmax_transform: Optional[bool] = False,
+        use_map: Optional[bool] = True,
+        optim_mode: Optional[str] = "scipy",
+        num_epoch_dual: Optional[int] = 1000,
+        lr_dual: Optional[float] = 5e-4,
+        num_workers: Optional[int] = 4,
         logger: Optional[StepLogger] = None,
     ):
         r"""
@@ -102,12 +102,13 @@ class REPS(ParameterExploring):
         :param expl_std_init: initial standard deviation for the exploration strategy
         :param expl_std_min: minimal standard deviation for the exploration strategy
         :param symm_sampling: use an exploration strategy which samples symmetric populations
-        :param num_epoch_dual: number of epochs for the minimization of the dual function
         :param softmax_transform: pass `True` to use a softmax to transform the returns, else use a shifted exponential
         :param use_map: use maximum a-posteriori likelihood (`True`) or maximum likelihood (`False`) update rule
-        :param optim_mode: choose the type of optimizer: 'torch' for a SGD-based optimizer or 'scipy' for optimizers
-                           from scipy (here SLSQP)
-        :param lr_dual: learning rate for the dual's optimizer, ignored for `optim_mode` `'scipy'`
+        :param optim_mode: choose the type of optimizer: 'torch' for a SGD-based optimizer or 'scipy' for the SLSQP
+                           optimizer from scipy (recommended)
+        :param num_epoch_dual: number of epochs for the minimization of the dual functions, ignored if
+                               `optim_mode = 'scipy'`
+        :param lr_dual: learning rate for the dual's optimizer, ignored if `optim_mode = 'scipy'`
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
@@ -235,7 +236,8 @@ class REPS(ParameterExploring):
         self, loss_fcn: Callable, rets: to.Tensor = None, param_samples: to.Tensor = None, w: to.Tensor = None
     ):
         """
-        Minimize the given dual function. Iterate `num_epoch_dual` times.
+        Minimize the given dual function. This function can be called for the dual evaluation loss or the dual
+        improvement loss.
 
         :param loss_fcn: function to minimize, different for `wml()` and `wmap()`
         :param rets: return values per policy sample after averaging over multiple rollouts using the same policy
@@ -330,7 +332,7 @@ class REPS(ParameterExploring):
         # Update the policy's and exploration strategy's parameters
         self.wml(self.eta, param_samples, w.detach())
 
-    def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
+    def update(self, param_results: ParameterSamplingResult, ret_avg_curr: Optional[float] = None):
         # Average the return values over the rollouts
         rets_avg_ros = param_results.mean_returns
         rets_avg_ros = to.from_numpy(rets_avg_ros).to(to.get_default_dtype())

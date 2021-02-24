@@ -105,11 +105,11 @@ class ActorCritic(Algorithm, ABC):
         self.logger.add_value("avg rollout len", np.mean(all_lengths), 4)
         self.logger.add_value("num total samples", self._cnt_samples)
 
-        # Update the advantage estimator and the policy
-        self.update(ros)
-
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
+
+        # Update the advantage estimator and the policy
+        self.update(ros)
 
     @abstractmethod
     def update(self, rollouts: Sequence[StepSequence]):
