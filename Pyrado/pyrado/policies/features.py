@@ -28,9 +28,8 @@
 
 import numpy as np
 import torch as to
-from copy import deepcopy
 from functools import reduce
-from typing import Sequence, Callable, Union
+from typing import Sequence, Callable, Union, Tuple
 from warnings import warn
 
 import pyrado
@@ -42,7 +41,9 @@ from pyrado.utils.data_processing import normalize
 class FeatureStack:
     """
     Features are nonlinear transformations of the inputs.
-    .. note:: We only consider 1-dim measurements, i.e. no images.
+
+    .. note::
+        We only consider 1-dim inputs.
     """
 
     def __init__(self, feat_fcns: Sequence[Callable]):
@@ -52,7 +53,7 @@ class FeatureStack:
         :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output
                           (e.g. identity_feat, squared_feat, exception: const_feat)
         """
-        self.feat_fcns = set(feat_fcns)
+        self.feat_fcns = tuple(feat_fcns)  # TODO concat var number of input args
 
     def __str__(self):
         """ Get an information string. """
@@ -177,15 +178,18 @@ def sincos_feat(inp: to.Tensor):
 class MultFeat:
     """ Feature that multiplies two dimensions of the given input / observation """
 
-    def __init__(self, idcs: Sequence[int]):
+    def __init__(self, idcs: Tuple):
         """
         Constructor
 
         :param idcs: indices of the dimensions to multiply
         """
+        if not isinstance(idcs, tuple):
+            raise pyrado.TypeErr(given=idcs, expected_type=tuple)
         if not len(idcs) >= 2:
             raise pyrado.ShapeErr(msg="Provide at least provide two indices.")
-        self._idcs = deepcopy(idcs)
+
+        self._idcs = idcs
 
     def __str__(self):
         """ Get an information string. """

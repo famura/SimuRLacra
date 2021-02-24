@@ -81,7 +81,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     # Policy
     policy_hparam = dict(
         feats=FeatureStack(
-            [identity_feat, sign_feat, abs_feat, squared_feat, cubic_feat, ATan2Feat(1, 2), MultFeat([4, 5])]
+            [identity_feat, sign_feat, abs_feat, squared_feat, cubic_feat, ATan2Feat(1, 2), MultFeat((4, 5))]
         )
     )
     policy = LinearPolicy(spec=env.spec, **policy_hparam)

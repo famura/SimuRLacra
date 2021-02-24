@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     # Policy
     policy_hparam = dict(
-        # feats=FeatureStack([RandFourierFeat(env.obs_space.flat_dim, num_feat=20, bandwidth=env.obs_space.bound_up)])
+        # feats=FeatureStack([RandFourierFeat(env.obs_space.flat_dim, num_feat_per_dim=20, bandwidth=env.obs_space.bound_up)])
         feats=FeatureStack(
             [
                 const_feat,
@@ -76,7 +76,7 @@ if __name__ == "__main__":
                 squared_feat,
                 cubic_feat,
                 ATan2Feat(1, 2),
-                MultFeat([3, 4]),
+                MultFeat((3, 4)),
             ]
         )
     )
