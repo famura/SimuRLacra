@@ -432,8 +432,11 @@ registered hooks while the latter silently ignores them.</p>
 <dt id="pyrado.policies.features.FeatureStack">
 <em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">FeatureStack</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feat_fcns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Features are nonlinear transformations of the inputs.
-.. note:: We only consider 1-dim measurements, i.e. no images.</p>
+<p>Features are nonlinear transformations of the inputs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We only consider 1-dim inputs.</p>
+</div>
 <dl class="py method">
 <dt id="pyrado.policies.features.FeatureStack.get_num_feat">
 <code class="sig-name descname"><span class="pre">get_num_feat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_flat_dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack.get_num_feat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack.get_num_feat" title="Permalink to this definition">¶</a></dt>
@@ -452,7 +455,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt id="pyrado.policies.features.MultFeat">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">MultFeat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#MultFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.MultFeat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">MultFeat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idcs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#MultFeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.features.MultFeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Feature that multiplies two dimensions of the given input / observation</p>
 </dd></dl>

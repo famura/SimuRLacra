@@ -435,10 +435,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;std return&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">std_rets_all_prtcls</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>  <span class="c1"># TODO @Robin necessary?</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ros_all_particles</span><span class="p">)</span>
-
         <span class="c1"># Save snapshot data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_rets_all_prtcls</span><span class="p">)),</span> <span class="n">meta_info</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_rets_all_prtcls</span><span class="p">)),</span> <span class="n">meta_info</span><span class="p">)</span>
+
+        <span class="c1"># Update the particles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ros_all_particles</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SVPG.kernel"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.kernel">[docs]</a>    <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

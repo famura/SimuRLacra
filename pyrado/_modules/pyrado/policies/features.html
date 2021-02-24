@@ -227,9 +227,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
@@ -241,7 +240,9 @@
 <div class="viewcode-block" id="FeatureStack"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.FeatureStack">[docs]</a><span class="k">class</span> <span class="nc">FeatureStack</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Features are nonlinear transformations of the inputs.</span>
-<span class="sd">    .. note:: We only consider 1-dim measurements, i.e. no images.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        We only consider 1-dim inputs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feat_fcns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Callable</span><span class="p">]):</span>
@@ -251,7 +252,7 @@
 <span class="sd">        :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output</span>
 <span class="sd">                          (e.g. identity_feat, squared_feat, exception: const_feat)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">feat_fcns</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">feat_fcns</span><span class="p">)</span>  <span class="c1"># TODO concat var number of input args</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
@@ -376,15 +377,18 @@
 <div class="viewcode-block" id="MultFeat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.MultFeat">[docs]</a><span class="k">class</span> <span class="nc">MultFeat</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Feature that multiplies two dimensions of the given input / observation &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idcs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idcs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param idcs: indices of the dimensions to multiply</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idcs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idcs</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">tuple</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">idcs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Provide at least provide two indices.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_idcs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">idcs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idcs</span> <span class="o">=</span> <span class="n">idcs</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>

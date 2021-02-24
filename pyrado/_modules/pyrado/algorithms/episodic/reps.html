@@ -264,7 +264,7 @@
 <span class="sd">            https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;reps&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;reps&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -276,15 +276,15 @@
         <span class="n">num_init_states_per_domain</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">pop_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">expl_std_init</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">expl_std_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">expl_std_min</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="n">num_domains</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">symm_sampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">num_epoch_dual</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-        <span class="n">softmax_transform</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">use_map</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">optim_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;scipy&quot;</span><span class="p">,</span>
-        <span class="n">lr_dual</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-4</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">symm_sampling</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">softmax_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">optim_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;scipy&quot;</span><span class="p">,</span>
+        <span class="n">num_epoch_dual</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">lr_dual</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">5e-4</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -301,12 +301,13 @@
 <span class="sd">        :param expl_std_init: initial standard deviation for the exploration strategy</span>
 <span class="sd">        :param expl_std_min: minimal standard deviation for the exploration strategy</span>
 <span class="sd">        :param symm_sampling: use an exploration strategy which samples symmetric populations</span>
-<span class="sd">        :param num_epoch_dual: number of epochs for the minimization of the dual function</span>
 <span class="sd">        :param softmax_transform: pass `True` to use a softmax to transform the returns, else use a shifted exponential</span>
 <span class="sd">        :param use_map: use maximum a-posteriori likelihood (`True`) or maximum likelihood (`False`) update rule</span>
-<span class="sd">        :param optim_mode: choose the type of optimizer: &#39;torch&#39; for a SGD-based optimizer or &#39;scipy&#39; for optimizers</span>
-<span class="sd">                           from scipy (here SLSQP)</span>
-<span class="sd">        :param lr_dual: learning rate for the dual&#39;s optimizer, ignored for `optim_mode` `&#39;scipy&#39;`</span>
+<span class="sd">        :param optim_mode: choose the type of optimizer: &#39;torch&#39; for a SGD-based optimizer or &#39;scipy&#39; for the SLSQP</span>
+<span class="sd">                           optimizer from scipy (recommended)</span>
+<span class="sd">        :param num_epoch_dual: number of epochs for the minimization of the dual functions, ignored if</span>
+<span class="sd">                               `optim_mode = &#39;scipy&#39;`</span>
+<span class="sd">        :param lr_dual: learning rate for the dual&#39;s optimizer, ignored if `optim_mode = &#39;scipy&#39;`</span>
 <span class="sd">        :param num_workers: number of environments for parallel sampling</span>
 <span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -434,7 +435,8 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">loss_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">rets</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">param_samples</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Minimize the given dual function. Iterate `num_epoch_dual` times.</span>
+<span class="sd">        Minimize the given dual function. This function can be called for the dual evaluation loss or the dual</span>
+<span class="sd">        improvement loss.</span>
 
 <span class="sd">        :param loss_fcn: function to minimize, different for `wml()` and `wmap()`</span>
 <span class="sd">        :param rets: return values per policy sample after averaging over multiple rollouts using the same policy</span>
@@ -529,7 +531,7 @@
         <span class="c1"># Update the policy&#39;s and exploration strategy&#39;s parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="n">param_samples</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="REPS.update"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_results</span><span class="p">:</span> <span class="n">ParameterSamplingResult</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="REPS.update"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_results</span><span class="p">:</span> <span class="n">ParameterSamplingResult</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Average the return values over the rollouts</span>
         <span class="n">rets_avg_ros</span> <span class="o">=</span> <span class="n">param_results</span><span class="o">.</span><span class="n">mean_returns</span>
         <span class="n">rets_avg_ros</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">rets_avg_ros</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
