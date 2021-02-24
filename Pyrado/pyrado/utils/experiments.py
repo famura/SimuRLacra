@@ -109,8 +109,8 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         env = pyrado.load(None, "env", "pkl", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
         if getattr(env, "randomizer", None) is not None:
-            if not isinstance(env.randomizer, DomainRandWrapperBuffer):
-                raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperBuffer)
+            if not isinstance(env, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
             typed_env(env, DomainRandWrapperBuffer).fill_buffer(100)
             print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 100 random instances.", "g")
         else:
@@ -143,8 +143,8 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         # Environment
         env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
         if getattr(env, "randomizer", None) is not None:
-            if not isinstance(env.randomizer, DomainRandWrapperLive):
-                raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperLive)
+            if not isinstance(env, DomainRandWrapperLive):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperLive)
             print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} with DomainRandWrapperLive randomizer.", "g")
         else:
             print_cbt("Loaded environment has no randomizer, or it is None.", "y")
@@ -160,8 +160,8 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         # Environment
         env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
         if getattr(env, "randomizer", None) is not None:
-            if not isinstance(env.randomizer, DomainRandWrapperBuffer):
-                raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperBuffer)
+            if not isinstance(env, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
             typed_env(env, DomainRandWrapperBuffer).fill_buffer(10)
             print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 10 random instances.", "g")
         else:
