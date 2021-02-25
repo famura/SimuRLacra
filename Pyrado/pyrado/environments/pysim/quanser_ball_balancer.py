@@ -62,6 +62,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
 
     def __init__(
         self,
+        render:bool,
         dt: float,
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
@@ -83,7 +84,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         self.plate_angs = np.zeros(2)  # plate's angles alpha and beta [rad] (unused for simple_dynamics = True)
 
         # Call SimPyEnv's constructor
-        super().__init__(dt, max_steps, task_args)
+        super().__init__(render, dt, max_steps, task_args)
 
         if not simple_dynamics:
             self._kin = QBallBalancerKin(self)
@@ -324,7 +325,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         # Import PandaVis Class
         from pyrado.environments.pysim.pandavis import QBallBalancerVis
         # Create instance of PandaVis
-        self._visualization = QBallBalancerVis(self)
+        self._visualization = QBallBalancerVis(self, self._render)
 
 
 class QBallBalancerKin(Serializable):

@@ -53,6 +53,12 @@ def get_argparser() -> argparse.ArgumentParser:
         help="environments time step size in seconds (no default)",
     )
     parser.add_argument(
+        "--render",
+        type=bool,
+        help="additional rendering option",
+        default=False,
+    )
+    parser.add_argument(
         "-d",
         "--dir",
         type=str,

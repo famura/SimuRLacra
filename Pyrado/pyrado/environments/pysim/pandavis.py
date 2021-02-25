@@ -23,25 +23,16 @@ loadPrcFileData("", confVars)
 
 
 class PandaVis(ShowBase):
-    def __init__(self):
+    def __init__(self, render):
         """
         Constructor
         """
         ShowBase.__init__(self)
         self.dir = pathlib.Path(__file__).resolve().parent.absolute()
         
-        self._render = True
+        self._render = render
+        
         if(self._render):
-            # os.chdir(os.path.realpath(os.path.dirname(__file__)))
-            # Insert the pipeline path to the system path, this is required to be
-            # able to import the pipeline classes
-            # pipeline_path = "C:/Users/Marvin/Thigit/SimuRLacra/thirdParty/render_pipeline"
-    
-            # Just a special case for my development setup, so I don't accidentally
-            # commit a wrong path. You can remove this in your own programs.
-            # if not os.path.isfile(os.path.join(pipeline_path, "setup.py")):
-            #   pipeline_path = "../../RenderPipeline/"
-            # sys.path.insert(0,"../../")
             sys.path.insert(0, os.path.join(os.path.relpath(__file__ + "/../../../../.."), 'thirdParty', 'render_pipeline'))
 
             from rpcore import RenderPipeline, SpotLight
@@ -127,13 +118,13 @@ class PandaVis(ShowBase):
 
 
 class BallOnBeamVis(PandaVis):
-    def __init__(self, env: SimEnv):
+    def __init__(self, env: SimEnv, render):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__()
+        super().__init__(render)
 
         # Accessing variables of environment class
         self._env = env
@@ -231,13 +222,13 @@ class BallOnBeamVis(PandaVis):
 
 
 class OneMassOscillatorVis(PandaVis):
-    def __init__(self, env: SimEnv):
+    def __init__(self, env: SimEnv, render):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__()
+        super().__init__(render)
 
         # Accessing variables of environment class
         self._env = env
@@ -379,14 +370,14 @@ class OneMassOscillatorVis(PandaVis):
 
 
 class PendulumVis(PandaVis):
-    def __init__(self, env: SimEnv):
+    def __init__(self, env: SimEnv, render):
         """
         Constructor
 
         :param env: environment to visualize
 
         """
-        super().__init__()
+        super().__init__(render)
 
         # Accessing variables of environment class
         self._env = env
@@ -481,13 +472,13 @@ class PendulumVis(PandaVis):
 
 
 class QBallBalancerVis(PandaVis):
-    def __init__(self, env: SimEnv):
+    def __init__(self, env: SimEnv, render):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__()
+        super().__init__(render)
 
         # Accessing variables of environment class
         self._env = env
@@ -665,13 +656,13 @@ class QCartPoleVis(PandaVis):
     Visualization for QCartPoleSim
     """
     
-    def __init__(self, env: SimEnv):
+    def __init__(self, env: SimEnv, render):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__()
+        super().__init__(render)
 
         # Accessing variables of environment class
         self._env = env
@@ -816,13 +807,13 @@ class QCartPoleVis(PandaVis):
 
 
 class QQubeVis(PandaVis):
-    def __init__(self, env: SimEnv):
+    def __init__(self, env: SimEnv, render):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__()
+        super().__init__(render)
 
         # Accessing variables of environment class
         self._env = env

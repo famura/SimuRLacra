@@ -48,25 +48,27 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
     dt = args.dt if args.dt is not None else 0.01
+    
+    render = args.render
 
     if args.env_name == QCartPoleSwingUpSim.name:
-        env = QCartPoleSwingUpSim(dt=dt, max_steps=int(10 / dt), wild_init=False)
+        env = QCartPoleSwingUpSim(render=render,dt=dt, max_steps=int(10 / dt), wild_init=False)
         state = np.array([0, 87 / 180 * np.pi, 0, 0])
 
     elif args.env_name == QQubeSwingUpSim.name:
-        env = QQubeSwingUpSim(dt=dt, max_steps=int(10 / dt))
+        env = QQubeSwingUpSim(render=render,dt=dt, max_steps=int(10 / dt))
         state = np.array([5 / 180 * np.pi, 87 / 180 * np.pi, 0, 0])
 
     elif args.env_name == QBallBalancerSim.name:
-        env = QBallBalancerSim(dt=dt, max_steps=int(10 / dt))
+        env = QBallBalancerSim(render=render,dt=dt, max_steps=int(10 / dt))
         state = np.array([2 / 180 * np.pi, 2 / 180 * np.pi, 0.1, -0.08, 0, 0, 0, 0])
 
     elif args.env_name == OneMassOscillatorSim.name:
-        env = OneMassOscillatorSim(dt=dt, max_steps=int(10 / dt))
+        env = OneMassOscillatorSim(render=render,dt=dt, max_steps=int(10 / dt))
         state = np.array([-0.7, 0])
 
     elif args.env_name == PendulumSim.name:
-        env = PendulumSim(dt=dt, max_steps=int(10 / dt))
+        env = PendulumSim(render=render,dt=dt, max_steps=int(10 / dt))
         state = np.array([87 / 180 * np.pi, 0])
 
     else:

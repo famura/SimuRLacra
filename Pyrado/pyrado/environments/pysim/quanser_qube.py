@@ -142,7 +142,7 @@ class QQubeSim(SimPyEnv, Serializable):
         # Import PandaVis Class
         from pyrado.environments.pysim.pandavis import PandaVis
         # Create instance of PandaVis
-        self._visualization = QQubeVis(self)
+        self._visualization = QQubeVis(self, self._render)
 
 
 class QQubeSwingUpSim(QQubeSim):
