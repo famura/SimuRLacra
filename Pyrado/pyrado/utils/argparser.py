@@ -112,10 +112,16 @@ def get_argparser() -> argparse.ArgumentParser:
         help="Use Markov Chain Monte-Carlo for sampling from the posterior (default: False)",
     )
     parser.add_argument(
-        "--normalize_posterior",
+        "--no_dr",
         action="store_true",
         default=False,
-        help="Normalize the log-probabilities of the posterior (default: False)",
+        help="remove all domain randomization wrappers (default: False)",
+    )
+    parser.add_argument(
+        "--normalize",
+        action="store_true",
+        default=False,
+        help="normalize sth (depending on the script), e.g. the log-probabilities of the posterior (default: False)",
     )
     parser.add_argument(
         "--num_rollouts_per_config",
@@ -161,10 +167,10 @@ def get_argparser() -> argparse.ArgumentParser:
         help="don't stop (e.g. continue simulating after done flag was raised)",
     )
     parser.add_argument(
-        "--no_dr",
+        "--rescale",
         action="store_true",
         default=False,
-        help="remove all domain randomization wrappers (default: False)",
+        help="rescale sth (depending on the script), e.g. the posterior probabilities to be in ]0, 1] (default: False)",
     )
     parser.add_argument(
         "--policy_name",

@@ -37,7 +37,11 @@ import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapperLive
+from pyrado.environment_wrappers.domain_randomization import (
+    DomainRandWrapperBuffer,
+    DomainRandWrapperLive,
+    remove_all_dr_wrappers,
+)
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_dict_from_yaml
@@ -156,7 +160,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             extra["vfcn"] = pyrado.load(algo.subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
             print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
 
-    elif algo.name == "lfi":
+    elif algo.name in ["lfi", "bayessim", "npdr"]:
         # Environment
         env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
         if getattr(env, "randomizer", None) is not None:
@@ -166,6 +170,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 10 random instances.", "g")
         else:
             print_cbt("Loaded environment has no randomizer, or it is None.", "y")
+            env = remove_all_dr_wrappers(env, verbose=True)
         # Policy
         policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
@@ -302,14 +307,14 @@ def read_csv_w_replace(path: str) -> pd.DataFrame:
 
 def load_rollouts_from_dir(
     ex_dir: str, key: Optional[str] = "rollout", file_exts: Tuple[str] = ("pt", "pkl")
-) -> List[StepSequence]:
+) -> Tuple[List[StepSequence], List[str]]:
     """
     Crawl through the given directory and load all rollouts, i.e. all files that include the key.
 
     :param ex_dir: directory, e.g. and experiment folder
     :param key: word or part of a word that needs to the in the name of a file for it to be loaded
     :param file_exts: file extensions to be considered for loading
-    :return: list of loaded rollouts
+    :return: list of loaded rollouts, and list of file names without extension
     """
     if not osp.isdir(ex_dir):
         raise pyrado.PathErr(given=ex_dir)
@@ -319,13 +324,15 @@ def load_rollouts_from_dir(
         raise pyrado.TypeErr(given=file_exts, expected_type=Iterable)
 
     rollouts = []
+    names = []
     for root, dirs, files in os.walk(ex_dir):
         dirs.clear()  # prevents walk() from going into subdirectories
-        rollouts = []
         for f in files:
             f_ext = f[f.rfind(".") + 1 :]
             if key in f and f_ext in file_exts:
-                rollouts.append(pyrado.load(None, name=f[: f.rfind(".")], file_ext=f_ext, load_dir=root))
+                name = f[: f.rfind(".")]
+                rollouts.append(pyrado.load(None, name=name, file_ext=f_ext, load_dir=root))
+                names.append(name)
 
     if not rollouts:
         raise pyrado.ValueErr(msg="No rollouts have been found!")
@@ -336,4 +343,4 @@ def load_rollouts_from_dir(
         # The rollout files contain lists of rollouts, flatten them
         rollouts = list(itertools.chain(*rollouts))
 
-    return rollouts
+    return rollouts, names

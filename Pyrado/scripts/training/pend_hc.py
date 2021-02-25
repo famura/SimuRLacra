@@ -27,27 +27,57 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to plot the observations from rollouts as well as their mean and std
+Train an agent to solve the Pendulum environment and Hill Climbing.
 """
-from matplotlib import pyplot as plt
-
-from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.rollout_based import plot_mean_std_across_rollouts
+import pyrado
+from pyrado.algorithms.episodic.hc import HCNormal
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.pysim.pendulum import PendulumSim
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.policies.features import FeatureStack, const_feat, identity_feat, squared_feat, MultFeat, sign_feat
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import load_rollouts_from_dir
 
 
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    plt.rc("text", usetex=False)
 
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.dir is None else args.dir
+    # Experiment (set seed before creating the modules)
+    ex_dir = setup_experiment(PendulumSim.name, f"{HCNormal.name}_{LinearPolicy.name}")
 
-    # Load the rollouts
-    rollouts, _ = load_rollouts_from_dir(ex_dir)
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
-    # Plot
-    plot_mean_std_across_rollouts(rollouts, idcs_obs=None, idcs_act=None)
-    plt.show()
+    # Environment
+    env_hparams = dict(dt=1 / 100.0, max_steps=800)
+    env = PendulumSim(**env_hparams)
+    env = ActNormWrapper(env)
+
+    # Policy
+    policy_hparam = dict(
+        feats=FeatureStack([const_feat, identity_feat, sign_feat, squared_feat, MultFeat((0, 2)), MultFeat((1, 2))])
+    )
+    policy = LinearPolicy(spec=env.spec, **policy_hparam)
+
+    # Algorithm
+    algo_hparam = dict(
+        max_iter=10,
+        pop_size=10 * policy.num_param,
+        num_init_states_per_domain=1,
+        expl_factor=1.05,
+        expl_std_init=1.0,
+        num_workers=8,
+    )
+    algo = HCNormal(ex_dir, env, policy, **algo_hparam)
+
+    # Save the hyper-parameters
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
+    )
+
+    # Jeeeha
+    algo.train(seed=args.seed)

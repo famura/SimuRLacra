@@ -167,16 +167,16 @@ class SimPyEnv(SimEnv, Serializable):
         if domain_param is not None:
             self.domain_param = domain_param
 
+        # Sample or set the initial simulation state
         if init_state is None:
             # Sample init state from init state space
             init_state = self.init_space.sample_uniform()
         elif not isinstance(init_state, np.ndarray):
             # Make sure init state is a numpy array
             try:
-                init_state = np.array(init_state)
+                init_state = np.asarray(init_state)
             except Exception:
-                raise pyrado.TypeErr(given=init_state, expected_type=[np.ndarray, list])
-
+                raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
         if init_state.shape == self.state_space.shape:
             # Allow setting the complete state space
             if not self.state_space.contains(init_state, verbose=True):

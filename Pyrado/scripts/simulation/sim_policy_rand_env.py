@@ -30,11 +30,17 @@
 Simulate (with animation) a rollout in a live perturbed environment.
 """
 import pyrado
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.inference.npdr import NPDR
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
+from pyrado.environment_wrappers.domain_randomization import (
+    DomainRandWrapperLive,
+    DomainRandWrapper,
+    DomainRandWrapperBuffer,
+)
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.data_types import RenderMode
@@ -46,6 +52,8 @@ from pyrado.utils.argparser import get_argparser
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
+    if not isinstance(args.num_samples, int) or args.num_samples < 1:
+        raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -57,13 +65,31 @@ if __name__ == "__main__":
     if args.dt is not None:
         env.dt = args.dt
 
-    if not isinstance(env, DomainRandWrapperLive):
+    # Check which algorithm was used in the experiment
+    algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name="algo")
+
+    if algo.name in ["npdr", "bayessim"]:
+        # Sample domain parameters from the posterior, and
+        domain_params, _ = NPDR.eval_posterior(
+            kwout["posterior"],
+            kwout["observations_real"],
+            num_samples=args.num_samples,
+            calculate_log_probs=False,
+            normalize_posterior=False,
+            sbi_sampling_hparam=None,
+        )
+        env = DomainRandWrapperBuffer(env, randomizer=None, selection="random")
+        NPDR.fill_domain_param_buffer(env, algo.dp_mapping, domain_params.squeeze(0))
+        print_cbt("Using loaded randomizer obtained from posterior.", "c")
+
+    elif not isinstance(env, DomainRandWrapper):
         # Add default domain randomization wrapper with action delay
         randomizer = create_default_randomizer(env)
         env = ActDelayWrapper(env)
         randomizer.add_domain_params(UniformDomainParam(name="act_delay", mean=5, halfspan=5, clip_lo=0, roundint=True))
         env = DomainRandWrapperLive(env, randomizer)
         print_cbt("Using default randomizer with additional action delay.", "c")
+
     else:
         print_cbt("Using loaded randomizer.", "c")
 

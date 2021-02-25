@@ -133,32 +133,50 @@ class RolloutSamplerForSBI(ABC, Serializable):
 
         return d * self.num_segments if self.num_segments is not None else d
 
-    def compute_observations(self, rollout: StepSequence) -> to.Tensor:
+    def compute_observations(
+        self, rollout_query: StepSequence, rollouts_ref: Optional[Union[StepSequence, List[StepSequence]]]
+    ) -> to.Tensor:
         """
         Compute the observations from a given rollout, depending on the transformation and the way to segment the
         rollout. In that process, the last segment might be ignored to get rid off too short segments.
 
-        :param rollout: input rollout data
+        :param rollout_query: rollout or segment thereof containing the data to be transformed for inference
+        :param rollouts_ref: reference rollout(s) from the target domain, if `None` the reference is set to the the
+                             query. The latter case is true for computing the statistics for the target domain rollouts
         :return: feature values
         """
-        if self.num_segments is not None:
-            segments = list(rollout.split_ordered_batches(num_batches=self.num_segments + 1))
-            segments = segments[:-1]
+        if self.num_segments is not None and self.num_segments == 1:
+            # Use the complete rollout without spitting it
+            obs_real = self.transform_data(rollout_query, rollouts_ref)
+
+        elif self.num_segments is not None and self.num_segments > 1:
+            segs_sim = list(rollout_query.split_ordered_batches(num_batches=self.num_segments + 1))
+            segs_sim = segs_sim[:-1]
+            if rollouts_ref is not None:
+                segs_real = list(rollouts_ref.split_ordered_batches(num_batches=self.num_segments + 1))
+                segs_real = segs_real[: len(segs_sim)]
+            else:
+                segs_real = [None] * len(segs_sim)
 
             # Transform the data to torch and compute the observations used for inference from the rollout data.
             # This is done for all segments separately, and since we know how many segments there will be, we can
             # concatenate them, and use them individually
-            obs_real = to.cat([self.transform_data(seg, None) for seg in segments], dim=0)
+            obs_real = to.cat([self.transform_data(ss, sr) for ss, sr in zip(segs_sim, segs_real)], dim=0)
 
         else:
-            segments = list(rollout.split_ordered_batches(batch_size=self.len_segments))
-            if segments[-1].length < 2:
-                segments = segments[:-1]
+            segs_sim = list(rollout_query.split_ordered_batches(batch_size=self.len_segments))
+            if segs_sim[-1].length < 2:
+                segs_sim = segs_sim[:-1]
+            if rollouts_ref is not None:
+                segs_real = list(rollouts_ref.split_ordered_batches(batch_size=self.len_segments))
+                segs_real = segs_real[: len(segs_sim)]
+            else:
+                segs_real = [None] * len(segs_sim)
 
             # Transform the data to torch and compute the observations used for inference from the rollout data.
             # This is done for all segments separately, and since we know don't how many segments there will be,
             # we can only average them
-            obs_real = to.mean(to.stack([self.transform_data(seg, None) for seg in segments]), dim=0)
+            obs_real = to.mean(to.stack([self.transform_data(ss, sr) for ss, sr in zip(segs_sim, segs_real)]), dim=0)
 
         return obs_real
 
@@ -347,8 +365,10 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                 # Iterate over target domain rollouts
                 for idx_r, ro_real in enumerate(self.rollouts_real):
                     ro_real.numpy()
-                    # Split the target domain rollout, see compute_observations()
-                    if self.num_segments is not None:
+                    # Split the target domain rollout if desired, see compute_observations()
+                    if self.num_segments is not None and self.num_segments == 1:
+                        segs_real = [ro_real]
+                    elif self.num_segments is not None and self.num_segments > 1:
                         segs_real = list(ro_real.split_ordered_batches(num_batches=self.num_segments + 1))
                         segs_real = segs_real[:-1]
                     else:
@@ -415,7 +435,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dpv))),
                 )
                 # Get the observations from the simulated rollout
-                obs_real_segs = self.compute_observations(ro_sim)
+                obs_real_segs = self.compute_observations(ro_sim, None)
                 obs_real_all.append(obs_real_segs)
 
         # Stack and check
@@ -474,7 +494,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
         ro = rollout(self._env, self._policy, eval=True)
 
-        obs_real = self.compute_observations(ro)
+        obs_real = self.compute_observations(ro, None)
 
         return obs_real, ro
 
@@ -557,6 +577,6 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         ro = self.rollouts_rec[self._ring_idx]
         self._ring_idx = (self._ring_idx + 1) % len(self.rollouts_rec)
 
-        obs_real = self.compute_observations(ro)
+        obs_real = self.compute_observations(ro, None)
 
         return obs_real, ro

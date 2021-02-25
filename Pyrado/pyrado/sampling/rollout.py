@@ -46,8 +46,8 @@ from pyrado.plotting.rollout_based import (
     plot_observations_actions_rewards,
     plot_actions,
     plot_observations,
-    draw_rewards,
-    draw_potentials,
+    plot_rewards,
+    plot_potentials,
     plot_features,
 )
 from pyrado.policies.base import Policy, TwoHeadedPolicy
@@ -155,7 +155,7 @@ def rollout(
             hidden = policy.init_hidden()
 
     # Setup rollout information
-    rollout_info = dict(env_spec=env.spec)
+    rollout_info = dict(env_name=env.name, env_spec=env.spec)
     if isinstance(inner_env(env), SimEnv):
         rollout_info["domain_param"] = env.domain_param
 
@@ -430,7 +430,7 @@ def after_rollout_query(
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "pr":
-        draw_rewards(rollout)
+        plot_rewards(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
@@ -440,7 +440,7 @@ def after_rollout_query(
         return (after_rollout_query(env, policy, rollout),)
 
     elif ans == "ppot":
-        draw_potentials(rollout)
+        plot_potentials(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 

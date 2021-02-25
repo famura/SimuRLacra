@@ -30,23 +30,27 @@ import pytest
 import numpy as np
 import pandas as pd
 import torch as to
+from copy import deepcopy
 from matplotlib import pyplot as plt
-from torch.distributions.multivariate_normal import MultivariateNormal
 
+from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts
+from pyrado.plotting.distribution import draw_posterior_distr_pairwise
 from pyrado.plotting.rollout_based import (
     plot_observations_actions_rewards,
     plot_observations,
     plot_actions,
-    draw_rewards,
-    draw_potentials,
+    plot_rewards,
+    plot_potentials,
     plot_features,
 )
 from pyrado.plotting.surface import draw_surface
+from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.spaces.singular import SingularStateSpace
 from pyrado.utils.functions import rosenbrock
 
 
@@ -226,10 +230,75 @@ def test_rollout_based(env, policy):
     if isinstance(policy, LinearPolicy):
         plot_features(ro, policy)
     elif isinstance(policy, PotentialBasedPolicy):
-        draw_potentials(ro)
+        plot_potentials(ro)
     else:
         plot_observations_actions_rewards(ro)
         plot_observations(ro)
         plot_actions(ro, env)
-        draw_rewards(ro)
+        plot_rewards(ro)
         draw_dts(ro.dts_policy, ro.dts_step, ro.dts_remainder, y_top_lim=5)
+
+
+@pytest.mark.parametrize(
+    "env, policy",
+    [("default_omo", "idle_policy")],
+    indirect=True,
+)
+@pytest.mark.parametrize("layout", ["inside", "outside"], ids=["inside", "outside"])
+@pytest.mark.parametrize("x_labels, y_labels, prob_labels", [(None, None, None), ("", "", "")], ids=["None", "default"])
+def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels, prob_labels):
+    from sbi import utils
+    from sbi.inference.base import infer
+
+    def _simulator(dp: to.Tensor) -> to.Tensor:
+        """ The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope """
+        ro = rollout(env, policy, eval=True, reset_kwargs=dict(domain_param=dict(m=dp[0], k=dp[1], d=dp[2])))
+        observation_sim = to.from_numpy(ro.observations[-1]).to(dtype=to.float32)
+        return to.atleast_2d(observation_sim)
+
+    # Fix the init state
+    env.init_space = SingularStateSpace(env.init_space.sample_uniform())
+    env_real = deepcopy(env)
+    env_real.domain_param = {"m": 0.8, "k": 35, "d": 0.7}
+
+    # Domain parameter mapping and prior
+    dp_mapping = {0: "m", 1: "k", 2: "d"}
+    prior = utils.BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
+
+    # Learn a likelihood from the simulator
+    posterior = infer(_simulator, prior, method="SNPE", num_simulations=100, num_workers=4)
+
+    # Create a fake (noisy) true distribution
+    num_observations_real = 1
+    domain_param_gt = to.tensor([env_real.domain_param[key] for _, key in dp_mapping.items()])
+    domain_param_gt = domain_param_gt.repeat((num_observations_real, 1))
+    domain_param_gt += domain_param_gt * to.randn(num_observations_real, len(dp_mapping)) / 5
+    observations_real = to.cat([_simulator(dp) for dp in domain_param_gt], dim=0)
+
+    # Get a condition
+    condition = posterior.sample((1,), x=observations_real)
+
+    if layout == "inside":
+        num_rows, num_cols = len(dp_mapping), len(dp_mapping)
+    else:
+        num_rows, num_cols = len(dp_mapping) + 1, len(dp_mapping) + 1
+
+    _, axs = plt.subplots(num_rows, num_cols, figsize=(14, 14), tight_layout=True)
+    fig = draw_posterior_distr_pairwise(
+        axs,
+        posterior,
+        observations_real,
+        dp_mapping,
+        condition,
+        prior,
+        env_real,
+        marginal_layout=layout,
+        grid_res=100,
+        normalize_posterior=False,
+        rescale_posterior=True,
+        x_labels=x_labels,
+        y_labels=y_labels,
+        prob_labels=prob_labels,
+    )
+
+    assert fig is not None

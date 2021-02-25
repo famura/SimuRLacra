@@ -34,7 +34,10 @@ import numpy as np
 import pyrado
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.meta.bayrn import BayRn
-from pyrado.domain_randomization.default_randomizers import create_zero_var_randomizer, get_default_domain_param_map_qq
+from pyrado.domain_randomization.default_randomizers import (
+    create_zero_var_randomizer,
+    create_default_domain_param_map_qq,
+)
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
@@ -62,7 +65,7 @@ if __name__ == "__main__":
     env_sim_hparams = dict(dt=1 / 100.0, max_steps=600)
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
     env_sim = DomainRandWrapperLive(env_sim, create_zero_var_randomizer(env_sim))
-    dp_map = get_default_domain_param_map_qq()
+    dp_map = create_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     env_real = QQubeSwingUpSim(**env_sim_hparams)

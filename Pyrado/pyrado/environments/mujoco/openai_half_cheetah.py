@@ -33,6 +33,7 @@ from typing import Optional
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
+from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.goalless import GoallessTask
@@ -49,40 +50,27 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
 
     name: str = "cth"
 
-    def __init__(self, frame_skip: int = 5, max_steps: int = 1000, task_args: Optional[dict] = None):
+    def __init__(
+        self,
+        frame_skip: Optional[int] = 5,
+        dt: Optional[float] = None,
+        max_steps: Optional[int] = 1000,
+        task_args: Optional[dict] = None,
+    ):
         """
         Constructor
 
-        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size,
-                           directly passed to `self.sim`
+        :param frame_skip: number of simulation frames for which the same action is held, results in a multiplier of
+                           the time step size `dt`
+        :param dt: by default the time step size is the one from the mujoco config file multiplied by the number of
+                   frame skips (legacy from OpenAI environments). By passing an explicit `dt` value, this can be
+                   overwritten. Possible use case if if you know that you recorded a trajectory with a specific `dt`.
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
         # Call MujocoSimEnv's constructor
         model_path = osp.join(osp.dirname(__file__), "assets", "openai_half_cheetah.xml")
-        super().__init__(model_path, frame_skip, max_steps, task_args)
-
-        self.camera_config = dict(distance=5.0)
-
-    @classmethod
-    def get_nominal_domain_param(cls) -> dict:
-        return dict(
-            total_mass=14,
-            tangential_friction_coeff=0.4,
-            torsional_friction_coeff=0.1,
-            rolling_friction_coeff=0.1,
-            reset_noise_halfspan=0.1,
-        )
-
-    def _create_spaces(self):
-        # Action
-        act_bounds = self.model.actuator_ctrlrange.copy().T
-        self._act_space = BoxSpace(*act_bounds, labels=["bthigh", "bshin", "bfoot", "fthigh", "fshin", "ffoot"])
-
-        # State
-        state_shape = np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).shape
-        max_state = np.full(state_shape, pyrado.inf)
-        self._state_space = BoxSpace(-max_state, max_state)
+        super().__init__(model_path, frame_skip, dt, max_steps, task_args)
 
         # Initial state
         noise_halfspan = self.domain_param["reset_noise_halfspan"]
@@ -94,10 +82,32 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
         max_init_state = np.concatenate([max_init_qpos, max_init_qvel]).ravel()
         self._init_space = BoxSpace(min_init_state, max_init_state)
 
-        # Observation
-        obs_shape = self.observe(max_state).shape
-        max_obs = np.full(obs_shape, pyrado.inf)
-        self._obs_space = BoxSpace(-max_obs, max_obs)
+        self.camera_config = dict(distance=5.0)
+
+    @property
+    def state_space(self) -> Space:
+        state_shape = np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).shape
+        return BoxSpace(-pyrado.inf, pyrado.inf, shape=state_shape)
+
+    @property
+    def obs_space(self) -> Space:
+        obs_shape = self.observe(self.state_space.bound_up).shape
+        return BoxSpace(-pyrado.inf, pyrado.inf, shape=obs_shape)
+
+    @property
+    def act_space(self) -> Space:
+        act_bounds = self.model.actuator_ctrlrange.copy().T
+        return BoxSpace(*act_bounds, labels=["bthigh", "bshin", "bfoot", "fthigh", "fshin", "ffoot"])
+
+    @classmethod
+    def get_nominal_domain_param(cls) -> dict:
+        return dict(
+            total_mass=14,
+            tangential_friction_coeff=0.4,
+            torsional_friction_coeff=0.1,
+            rolling_friction_coeff=0.1,
+            reset_noise_halfspan=0.1,
+        )
 
     def _create_task(self, task_args: dict) -> Task:
         if "fwd_rew_weight" not in task_args:

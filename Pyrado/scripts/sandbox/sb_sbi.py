@@ -27,97 +27,78 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Testing the simulation-based inference (SBI) toolbox
-
-.. seealso::
-    https://astroautomata.com/blog/simulation-based-inference/
+Testing the simulation-based inference (SBI) toolbox using a very basic example
 """
+import functools
 import numpy as np
 import sbi.utils as utils
-import seaborn as sns
 import torch as to
 from matplotlib import pyplot as plt
 from sbi.inference.base import infer
 
 import pyrado
+from pyrado.algorithms.inference.sbi_rollout_sampler import SimRolloutSamplerForSBI
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.policies.dummy import IdlePolicy
+from pyrado.environments.sim_base import SimEnv
+from pyrado.plotting.distribution import draw_posterior_distr_2d
+from pyrado.plotting.utils import num_rows_cols_from_length
+from pyrado.policies.base import Policy
+from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.spaces.singular import SingularStateSpace
 
 
-plt.rcParams.update({"text.usetex": True})
-
-
-def simulator(mu):
-    # In the end, the output of this could be a distance measure over trajectories instead of just the final state
-    ro = rollout(
-        env,
-        policy,
-        eval=True,
-        reset_kwargs=dict(
-            # domain_param=dict(k=mu[0], d=mu[1]), init_state=np.array([-0.7, 0.])  # no variance over the init state
-            domain_param=dict(k=mu[0], d=mu[1])  # no variance over the parameters
-        ),
-    )
-    return to.from_numpy(ro.observations[-1]).to(dtype=to.float32)
+def simple_omo_sim(mu: to.Tensor, env: SimEnv, policy: Policy) -> to.Tensor:
+    """ The most simple interface of a simulation to sbi, see `SimRolloutSamplerForSBI` """
+    ro = rollout(env, policy, eval=True, reset_kwargs=dict(domain_param=dict(k=mu[0], d=mu[1])))
+    observation_sim = to.from_numpy(ro.observations[-1]).to(dtype=to.float32)
+    return to.atleast_2d(observation_sim)
 
 
 if __name__ == "__main__":
+    # Config
+    plt.rcParams.update({"text.usetex": True})
+    basic_wrapper = False
     pyrado.set_seed(0)
 
-    env = OneMassOscillatorSim(dt=0.005, max_steps=200)
+    # Environment and policy
+    env = OneMassOscillatorSim(dt=1 / 200, max_steps=200)
+    env.init_space = SingularStateSpace(np.array([-0.7, 0]))  # no variance over the initial state
     policy = IdlePolicy(env.spec)
 
-    prior = utils.BoxUniform(low=to.tensor([25.0, 0.05]), high=to.tensor([35.0, 0.15]))
+    # Domain parameter mapping and prior, oly use 2 domain parameters here to simplify the plotting later
+    dp_mapping = {0: "k", 1: "d"}
+    prior = utils.BoxUniform(low=to.tensor([20.0, 0.0]), high=to.tensor([40.0, 0.3]))
 
-    # Let’s learn a likelihood from the simulator
+    # Create the simulator compatible with sbi
+    if basic_wrapper:
+        simulator = functools.partial(simple_omo_sim, env=env, policy=policy)
+    else:
+        simulator = SimRolloutSamplerForSBI(env, policy, dp_mapping, strategy="final_state", num_segments=1)
+
+    # Learn a likelihood from the simulator
     num_sim = 500
-    method = "SNRE"  # SNPE or SNLE or SNRE
-    posterior = infer(
-        simulator, prior, method=method, num_workers=-1, num_simulations=num_sim  # SNRE newer than SNLE newer than SNPE
+    method = "SNPE"
+    posterior = infer(simulator, prior, method=method, num_simulations=num_sim, num_workers=1)
+
+    # Create a fake (noisy) true distribution
+    num_observations = 6
+    dp_gt = {"k": 30, "d": 0.1}
+    domain_param_gt = to.tensor([dp_gt[key] for _, key in dp_mapping.items()])
+    domain_param_gt = domain_param_gt.repeat((num_observations, 1))
+    domain_param_gt += domain_param_gt * to.randn(num_observations, 2) / 5
+    observations_real = to.cat([simulator(dp) for dp in domain_param_gt], dim=0)
+
+    # Plot the posterior
+    _, axs = plt.subplots(*num_rows_cols_from_length(num_observations), figsize=(14, 14), tight_layout=True)
+    draw_posterior_distr_2d(
+        axs, "separate", posterior, observations_real, dp_mapping, dims=(0, 1), condition=to.zeros(2), prior=prior
     )
 
-    # Let’s record our “observations” of the true distribution
-    n_observations = 5
-    # noisy_true_params = to.tensor([30, 0.1]) + to.tensor([30, 0.1])*to.randn(n_observations, 2)/10  # no variance over the init state
-    noisy_true_params = to.tensor([30, 0.1]).repeat((n_observations, 1))  # no variance over the parameters
-    observation = to.stack([simulator(dp) for dp in noisy_true_params])
+    # Plot the ground truth domain parameters
+    for idx, dp_gt in enumerate(domain_param_gt):
+        axs[idx // axs.shape[1], idx % axs.shape[1]].scatter(
+            x=dp_gt[0], y=dp_gt[1], marker="o", s=30, zorder=3, color="white", edgecolors="black"
+        )
 
-    # Inference
-    # samples = posterior.sample((200,), x=observation[0])  # sample the posterior for a single data point
-    samples = to.cat([posterior.sample((200,), x=obs) for obs in observation], dim=0)
-
-    # Computing the log-probability
-    bounds = [20, 40, 0.0, 0.2]
-    mu_1, mu_2 = to.tensor(np.mgrid[bounds[0] : bounds[1] : 20 / 50.0, bounds[2] : bounds[3] : 0.2 / 50.0]).float()
-    grids = to.cat((mu_1.reshape(-1, 1), mu_2.reshape(-1, 1)), dim=1)
-    if method == "SNPE":
-        log_prob = sum([posterior.log_prob(grids, observation[i]) for i in range(len(observation))])
-    else:
-        log_prob = sum(
-            [
-                posterior.net(to.cat([grids, observation[i].repeat((grids.shape[0], 1))], dim=1))[:, 0]
-                + posterior._prior.log_prob(grids)
-                for i in range(len(observation))
-            ]
-        ).detach()
-    prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
-
-    # log_probability = posterior.log_prob(samples, x=observation[0])  # log_probability seems to be unused
-
-    # Plot
-    sns.scatterplot(x=observation[:, 0], y=observation[:, 1])
-    plt.xlabel(r"$x_0$")
-    plt.ylabel(r"$x_1$")
-
-    out = utils.pairplot(samples, limits=[[20.0, 40.0], [0.0, 0.2]], fig_size=(6, 6), upper="kde", diag="kde")
-
-    plt.figure(dpi=200)
-    plt.plot([20.0, 40.0], [0.1, 0.1], color="w", ls="--")
-    plt.plot([30.0, 30.0], [0.0, 0.2], color="w", ls="--")
-    plt.contourf(mu_1.numpy(), mu_2.numpy(), prob.reshape(*mu_1.shape).numpy())
-    # plt.contourf(prob.reshape(*mu_1.shape), extent=bounds, origin='lower')
-    plt.title(f"Posterior with learned likelihood \n from {num_sim} examples of the true distribution")
-    plt.xlabel(r"$k$")
-    plt.ylabel(r"$d$")
     plt.show()

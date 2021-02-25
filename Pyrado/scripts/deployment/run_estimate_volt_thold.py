@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to determine the voltage offsets on the Qunaser Ball-Balancer device
+Script to determine the voltage offsets on the Quanser Ball-Balancer or Cart-pole device
+
 .. note::
     Make sure that the cylinders are tightly connected to the plate.
     If the state is immediately out of bounds, stop the Simulink model, disconnect and connect again.
@@ -155,11 +156,11 @@ def estimate_one_thold_qcp(dir_multiplier: int, dact: float, thold_x: float):
 if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument("--dact", type=float, default=2e-5, help="Step size for the action")
+    parser.add_argument("--dact", type=float, default=2e-5, help="step size for the action")
     parser.add_argument(
-        "--thold_theta_deg", type=float, default=0.1, help="Threshold for the servo shafts to rotate in degree"
+        "--thold_theta_deg", type=float, default=0.1, help="threshold for the servo shafts to rotate in degree"
     )
-    parser.add_argument("--thold_x", type=float, default=5e-4, help="Threshold for the cart to move in meter")
+    parser.add_argument("--thold_x", type=float, default=5e-4, help="threshold for the cart to move in meter")
     args = parser.parse_args()
 
     if args.env_name == QBallBalancerReal.name:

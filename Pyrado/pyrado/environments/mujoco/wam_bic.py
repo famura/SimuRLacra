@@ -81,8 +81,9 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
     def __init__(
         self,
-        num_dof: int = 7,
+        num_dof: int,
         frame_skip: int = 4,
+        dt: Optional[float] = None,
         max_steps: int = pyrado.inf,
         fixed_init_state: bool = True,
         stop_on_collision: bool = True,
@@ -94,7 +95,11 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         Constructor
 
         :param num_dof: number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used
-        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size
+        :param frame_skip: number of simulation frames for which the same action is held, results in a multiplier of
+                           the time step size `dt`
+        :param dt: by default the time step size is the one from the mujoco config file multiplied by the number of
+                   frame skips (legacy from OpenAI environments). By passing an explicit `dt` value, this can be
+                   overwritten. Possible use case if if you know that you recorded a trajectory with a specific `dt`.
         :param max_steps: max number of simulation time steps
         :param fixed_init_state: enables/disables deterministic, fixed initial state
         :param stop_on_collision: set the `failed` flag in the `dict` returned by `_mujoco_step()` to true, if the ball
@@ -118,16 +123,38 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             self.qpos_des_init = init_qpos_des_4dof
             self.p_gains = wam_pgains_4dof
             self.d_gains = wam_dgains_4dof
+            self.init_qpos[:4] = np.array([0.0, 0.63, 0.0, 1.27])
+            self.init_qpos[4] = -0.34  # angle of the first rope segment relative to the cup bottom plate
+            init_ball_pos = np.array([0.723, 0.0, 1.168])
+            init_cup_goal = goal_pos_init_sim_4dof
         elif num_dof == 7:
             graph_file_name = "wam_7dof_bic.xml"
             self.qpos_des_init = init_qpos_des_7dof
             self.p_gains = wam_pgains_7dof
             self.d_gains = wam_dgains_7dof
+            self.init_qpos[:7] = np.array([0.0, 0.65, 0.0, 1.41, 0.0, -0.28, -1.57])
+            self.init_qpos[7] = -0.21  # angle of the first rope segment relative to the cup bottom plate
+            init_ball_pos = np.array([0.828, 0.0, 1.131])
+            init_cup_goal = goal_pos_init_sim_7dof
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
         model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, graph_file_name)
-        super().__init__(model_path, frame_skip, max_steps, task_args)
+        super().__init__(model_path, frame_skip, dt, max_steps, task_args)
+
+        # Set the actual stable initial position. This position would be reached after some time using the internal
+        # PD controller to stabilize at self._qpos_des_init.
+        # The initial position of the ball in cartesian coordinates
+        self._init_state = np.concatenate([self.init_qpos, self.init_qvel, init_ball_pos, init_cup_goal])
+        if self.fixed_init_state:
+            self._init_space = SingularStateSpace(self._init_state)
+        else:
+            # Add plus/minus one degree to each motor joint and the first rope segment joint
+            init_state_up = self._init_state.copy()
+            init_state_up[: self._num_dof] += np.pi / 180 * np.array([0.1, 1, 0.5, 1.0, 0.1, 1.0, 1.0])[: self._num_dof]
+            init_state_lo = self._init_state.copy()
+            init_state_lo[: self._num_dof] -= np.pi / 180 * np.array([0.1, 1, 0.5, 1.0, 0.1, 1.0, 1.0])[: self._num_dof]
+            self._init_space = BoxSpace(init_state_lo, init_state_up)
 
         # Bodies to check fo collision
         self._collision_bodies = [
@@ -164,7 +191,35 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
     @property
     def torque_space(self) -> Space:
         """ Get the space of joint torques. """
-        return self._torque_space
+        return torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
+
+    @property
+    def state_space(self) -> Space:
+        state_shape = self._init_state.shape
+        state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
+        # Ensure that joint limits of the arm are not reached (5 deg safety margin)
+        state_lo[: self._num_dof] = wam_q_limits_lo_7dof[: self._num_dof]
+        state_up[: self._num_dof] = wam_q_limits_up_7dof[: self._num_dof]
+        return BoxSpace(state_lo, state_up)
+
+    @property
+    def obs_space(self) -> Space:
+        # Observing the normalized time and optionally the cup and ball position
+        obs_lo, obs_up, labels = [0.0], [1.0], ["t"]
+        if self.observe_ball:
+            obs_lo.extend([-3.0, -3.0])
+            obs_up.extend([3.0, 3.0])
+            labels.extend(["ball_x", "ball_z"])
+        if self.observe_cup:
+            obs_lo.extend([-3.0, -3.0])
+            obs_up.extend([3.0, 3.0])
+            labels.extend(["cup_x", "cup_z"])
+        return BoxSpace(obs_lo, obs_up, labels=labels)
+
+    @property
+    def act_space(self) -> Space:
+        # Running a PD controller on joint positions and velocities
+        return act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
 
     @classmethod
     def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
@@ -206,58 +261,6 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             )
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
-
-    def _create_spaces(self):
-        # Initial state space
-        # Set the actual stable initial position. This position would be reached after some time using the internal
-        # PD controller to stabilize at self._qpos_des_init
-        if self._num_dof == 7:
-            self.init_qpos[:7] = np.array([0.0, 0.65, 0.0, 1.41, 0.0, -0.28, -1.57])
-            self.init_qpos[7] = -0.21  # angle of the first rope segment relative to the cup bottom plate
-            init_ball_pos = np.array([0.828, 0.0, 1.131])
-            init_cup_goal = goal_pos_init_sim_7dof
-        elif self._num_dof == 4:
-            self.init_qpos[:4] = np.array([0.0, 0.63, 0.0, 1.27])
-            self.init_qpos[4] = -0.34  # angle of the first rope segment relative to the cup bottom plate
-            init_ball_pos = np.array([0.723, 0.0, 1.168])
-            init_cup_goal = goal_pos_init_sim_4dof
-
-        # The initial position of the ball in cartesian coordinates
-        init_state = np.concatenate([self.init_qpos, self.init_qvel, init_ball_pos, init_cup_goal])
-        if self.fixed_init_state:
-            self._init_space = SingularStateSpace(init_state)
-        else:
-            # Add plus/minus one degree to each motor joint and the first rope segment joint
-            init_state_up = init_state.copy()
-            init_state_up[: self._num_dof] += np.pi / 180 * np.array([0.1, 1, 0.5, 1.0, 0.1, 1.0, 1.0])[: self._num_dof]
-            init_state_lo = init_state.copy()
-            init_state_lo[: self._num_dof] -= np.pi / 180 * np.array([0.1, 1, 0.5, 1.0, 0.1, 1.0, 1.0])[: self._num_dof]
-            self._init_space = BoxSpace(init_state_lo, init_state_up)
-
-        # State space
-        state_shape = init_state.shape
-        state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
-        # Ensure that joint limits of the arm are not reached (5 deg safety margin)
-        state_lo[: self._num_dof] = wam_q_limits_lo_7dof[: self._num_dof]
-        state_up[: self._num_dof] = wam_q_limits_up_7dof[: self._num_dof]
-
-        self._state_space = BoxSpace(state_lo, state_up)
-
-        # Torque and action space (running a PD controller on joint positions and velocities)
-        self._torque_space = torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
-        self._act_space = act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
-
-        # Observation space (normalized time and optionally cup and ball position)
-        obs_lo, obs_up, labels = [0.0], [1.0], ["t"]
-        if self.observe_ball:
-            obs_lo.extend([-3.0, -3.0])
-            obs_up.extend([3.0, 3.0])
-            labels.extend(["ball_x", "ball_z"])
-        if self.observe_cup:
-            obs_lo.extend([-3.0, -3.0])
-            obs_up.extend([3.0, 3.0])
-            labels.extend(["cup_x", "cup_z"])
-        self._obs_space = BoxSpace(obs_lo, obs_up, labels=labels)
 
     def _create_task(self, task_args: dict) -> Task:
         if task_args.get("sparse_rew_fcn", False):
@@ -380,6 +383,8 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         return super()._adapt_model_file(xml_model, domain_param)
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
+        assert self.act_space.contains(act, verbose=True)
+
         # Get the desired positions and velocities for the selected joints
         qpos_des = self.qpos_des_init.copy()  # the desired trajectory is relative to self._qpos_des_init
         qvel_des = np.zeros_like(qpos_des)
@@ -396,7 +401,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
         # Compute the torques for the PD controller and clip them to their max values
         torque = self.p_gains * err_pos + self.d_gains * err_vel
-        torque = self._torque_space.project_to(torque)
+        torque = self.torque_space.project_to(torque)
 
         # Apply the torques to the robot
         self.sim.data.qfrc_applied[: self._num_dof] = torque

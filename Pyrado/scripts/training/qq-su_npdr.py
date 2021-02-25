@@ -27,20 +27,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Sim-to-sim experiment on the Pendulum environment using likelihood-free inference
+Domain parameter identification experiment on the Quanser Qube environment using Neural Posterior Domain Randomization
 """
-import numpy as np
+import os.path as osp
 import torch as to
 import torch.nn as nn
-from copy import deepcopy
 from sbi.inference import SNPE
 from sbi import utils
 
 import pyrado
-from pyrado.algorithms.inference.lfi import LFI
-from pyrado.environments.pysim.pendulum import PendulumSim
+from pyrado.algorithms.inference.lfi import NPDR
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.policies.special.dummy import DummyPolicy
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.special.time import PlaybackPolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.utils.argparser import get_argparser
 
 
@@ -49,53 +50,81 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(PendulumSim.name, f"{LFI.name}")
+    ectl = True
+    if ectl:
+        ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}")
+        t_end = 6  # s
+    else:
+        ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{NPDR.name}_{TimePolicy.name}", "sin_2Hz_1V_250Hz")
+        t_end = 10  # s
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=800)
-    env_sim = PendulumSim(**env_hparams)
+    env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
+    env_sim = QQubeSwingUpSim(**env_sim_hparams)
 
-    # Create a fake ground truth target domain
-    env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(m_pole=1 / 1.25 ** 2, l_pole=1.25)
+    # Create the ground truth target domain
+    if ectl:
+        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")
+    else:
+        # env_real = osp.join(pyrado.EVAL_DIR, "qq_chrip_5to0Hz_05V_250Hz_neg")
+        env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
+
+    # Policy
+    assert osp.isdir(env_real)
+    behavior_policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "m_pole", 1: "l_pole"}
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
+    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m_pole"] * 0.5, dp_nom["l_pole"] * 0.5]),
-        high=to.tensor([dp_nom["m_pole"] * 1.5, dp_nom["l_pole"] * 1.5]),
+        # low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
+        # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
+        low=to.tensor(
+            [
+                dp_nom["Dr"] * 0,
+                dp_nom["Dp"] * 0,
+                dp_nom["Rm"] * 0.7,
+                dp_nom["km"] * 0.7,
+                # dp_nom["Mr"] * 0.7,
+                # dp_nom["Mp"] * 0.7,
+                # dp_nom["Lr"] * 0.7,
+                # dp_nom["Lp"] * 0.7,
+            ]
+        ),
+        high=to.tensor(
+            [
+                dp_nom["Dr"] * 1000,
+                dp_nom["Dp"] * 1000,
+                dp_nom["Rm"] * 1.3,
+                dp_nom["km"] * 1.3,
+                # dp_nom["Mr"] * 1.3,
+                # dp_nom["Mp"] * 1.3,
+                # dp_nom["Lr"] * 1.3,
+                # dp_nom["Lp"] * 1.3,
+            ]
+        ),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=4)
-
-    # Policy
-    policy_hparam = dict(amp_max=dp_nom["tau_max"], f_sin=0.5)
-
-    def fcn_of_time(t: float):
-        act = policy_hparam["amp_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"]) + np.random.randn(1) / 50
-        return act.repeat(env_sim.act_space.flat_dim)
-
-    act_recordings = [
-        [fcn_of_time(t) for t in np.arange(0, env_sim.max_steps * env_sim.dt, env_sim.dt)] for _ in range(5)
-    ]
-    policy = PlaybackPolicy(env_sim.spec, act_recordings)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=50, num_transforms=10)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=5,
+        max_iter=1,
         summary_statistic="bayessim",  # bayessim or dtw_distance
         num_real_rollouts=1,
-        num_sim_per_real_rollout=200,
-        simulation_batch_size=5,
+        num_sim_per_round=2000,
+        num_sbi_rounds=1,
+        simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=100,
-        num_segments=20,
+        # num_segments=10,
+        len_segments=250,
         sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
@@ -104,16 +133,17 @@ if __name__ == "__main__":
             stop_after_epochs=30,  # default: 20
             discard_prior_samples=False,  # default: False
             use_combined_loss=True,  # default: False
-            retrain_from_scratch_each_round=False,  # default: False
+            retrain_from_scratch_each_round=True,  # default: False
             show_train_summary=False,  # default: False
         ),
+        sbi_sampling_hparam=dict(sample_with_mcmc=True),
         num_workers=4,
     )
-    algo = LFI(
+    algo = NPDR(
         ex_dir,
         env_sim,
         env_real,
-        policy,
+        behavior_policy,
         dp_mapping,
         prior,
         posterior_nn_hparam,
@@ -123,13 +153,11 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_sim_hparams, seed=args.seed),
         dict(prior=prior_hparam),
         dict(posterior_nn=posterior_nn_hparam),
-        dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )
 
-    # Jeeeha
     algo.train(seed=args.seed)

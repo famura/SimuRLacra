@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import functools
 import numpy as np
 import operator
 import random
@@ -34,7 +35,7 @@ import torch as to
 from collections.abc import Iterable
 from copy import deepcopy
 from math import ceil
-from typing import Sequence, Type, Optional, Union
+from typing import Sequence, Type, Optional, Union, Callable, Tuple
 
 import pyrado
 from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
@@ -249,7 +250,7 @@ class StepSequence(Sequence[Step]):
         complete: Optional[bool] = True,
         rollout_info=None,
         data_format: Optional[str] = None,
-        done=None,
+        done: Optional[np.ndarray] = None,
         continuous: Optional[bool] = True,
         rollout_bounds=None,
         rewards: Sequence,
@@ -272,17 +273,16 @@ class StepSequence(Sequence[Step]):
         :param actions: sequence of action values, the length must be `len(rewards)`
         :param data: additional data lists, their length must be `len(rewards)` or `len(rewards) + 1`
         """
+        # Obtain rollout length from reward list
+        self.length = len(rewards)
+        if self.length == 0:
+            raise pyrado.ShapeErr(msg="StepSequence cannot be empty!")
+
         # Set singular attributes
         self.rollout_info = rollout_info
         self.continuous = continuous
 
-        # Obtain rollout length from reward list
-        self.length = len(rewards)
-        if self.length == 0:
-            raise ValueError("StepSequence cannot be empty!")
-        self._data_names = []
-
-        # Infer if this instance is using ndarrays or PyTorch tensors
+        # Infer if this instance is using numpy arrays or PyTorch tensors
         if data_format is None:
             # We ignore rewards here since it's probably scalar
             for value in data.values():
@@ -300,6 +300,7 @@ class StepSequence(Sequence[Step]):
             raise ValueError(f"Missing required data fields: {missing_fields}")
 
         # Set mandatory data fields
+        self._data_names = []
         self.add_data("rewards", rewards)
         self.add_data("observations", observations)
         self.add_data("actions", actions)
@@ -338,103 +339,37 @@ class StepSequence(Sequence[Step]):
             self._rollout_bounds = None
 
     @property
+    def data_format(self) -> str:
+        """ Get the name of data format ('torch' or 'numpy'). """
+        return self._data_format
+
+    @property
+    def data_names(self) -> Sequence[str]:
+        """ Get the list of data attribute names. """
+        return self._data_names
+
+    @property
     def rollout_bounds(self) -> np.ndarray:
         return self._rollout_bounds
 
-    def _validate_data_size(self, name, value):
-        # In torch case: check that we don't mess with gradients
-        if isinstance(value, to.Tensor):
-            assert not value.requires_grad, (
-                "Do not add gradient-sensitive tensors to SampleCollections."
-                "This is a fast road to weird retain_graph errors!"
-            )
+    @property
+    def rollout_count(self):
+        """ Count the number of sub-rollouts inside this step sequence. """
+        if not self.continuous:
+            raise pyrado.ValueErr(msg="Sub-rollouts are only supported on continuous data.")
+        return len(self._rollout_bounds) - 1
 
-        # Check type of data
-        if isinstance(value, dict):
-            # Validate dict entries
-            for k, v in value.items():
-                self._validate_data_size(f"{name}.{k}", v)
-            return
-        if isinstance(value, tuple):
-            # Validate dict entries
-            for i, v in enumerate(value):
-                self._validate_data_size(f"{name}[{i}]", v)
-            return
-
-        if isinstance(value, (np.ndarray, to.Tensor)):
-            # A single array. The first dimension must match
-            vlen = value.shape[0]
-        else:
-            # Should be a sequence
-            assert isinstance(value, Sequence)
-            vlen = len(value)
-
-        if self.continuous:
-            if not (vlen == self.length or vlen == self.length + 1):
-                raise pyrado.ShapeErr(
-                    msg=f"The data list {name} must have {self.length} or {self.length}+1 elements,"
-                    f"but has {vlen} elements."
-                )
-        else:
-            # Disallow +1 tensors
-            if not vlen == self.length:
-                raise pyrado.ShapeErr(
-                    msg=f"The data list {name} must have {self.length} elements," f"but has {vlen} elements."
-                )
-
-    def add_data(self, name: str, value=None, item_shape: tuple = None, with_after_last: Optional[bool] = False):
-        """
-        Add a new data field to the step sequence. Can also be used to replace data in an existing field.
-
-        :param name: sting for the name
-        :param value: the data
-        :param item_shape: shape to store the data in
-        :param with_after_last: `True` if there is one more element than the length (e.g. last observation)
-        """
-        if name in self._data_names:
-            raise pyrado.ValueErr(msg=f"Trying to add a duplicate data field for {name}")
-
-        if value is None:
-            # Compute desired step length
-            ro_length = self.length
-            if with_after_last:
-                ro_length += 1
-
-            # Create zero-filled
-            if self._data_format == "torch":
-                value = to.zeros(to.Size([ro_length]) + to.Size(item_shape))
-            else:
-                value = np.array((ro_length,) + item_shape)
-
-        else:
-            # Check type of data
-            self._validate_data_size(name, value)
-
-            if not isinstance(value, (np.ndarray, to.Tensor)):
-                # Stack into one array/tensor
-                value = stack_to_format(value, self._data_format)
-            else:
-                # Ensure right array format
-                value = to_format(value, self._data_format)
-
-        # Store in dict
-        self._data_names.append(name)
-        self.__dict__[name] = value
+    @property
+    def rollout_lengths(self):
+        """ Lengths of sub-rollouts. """
+        if not self.continuous:
+            raise pyrado.ValueErr(msg="Sub-rollouts are only supported on continuous data.")
+        bounds = self._rollout_bounds
+        return bounds[1:] - bounds[:-1]
 
     def __len__(self):
+        """ Get the step sequence's length. """
         return self.length
-
-    def _slice_entry(self, entry, index: slice):
-        if isinstance(entry, dict):
-            return {k: self._slice_entry(v, index) for k, v in entry.items()}
-        if isinstance(entry, tuple):
-            return new_tuple(type(entry), (self._slice_entry(e, index) for e in entry))
-        elif isinstance(entry, (to.Tensor, np.ndarray)):
-            return entry[index, ...]
-        elif isinstance(entry, list):
-            return entry[index]
-        else:
-            return None  # unsupported
 
     def __getitem__(self, index):
         if isinstance(index, slice) or isinstance(index, Iterable):
@@ -466,6 +401,71 @@ class StepSequence(Sequence[Step]):
         # Should be a singular element index. Return step proxy.
         return Step(self, _index_to_int(index, self.length))
 
+    def __map_tensors(self, mapper, elem):
+        if isinstance(elem, dict):
+            # Modify dict in-place
+            for k in elem.keys():
+                elem[k] = self.__map_tensors(mapper, elem[k])
+            return elem
+        if isinstance(elem, tuple):
+            # Can't modify in place since it's a tuple
+            return new_tuple(type(elem), (self.__map_tensors(mapper, part) for part in elem))
+
+        # Tensor element
+        return mapper(elem)
+
+    def _validate_data_size(self, name, value):
+        # In torch case: check that we don't mess with gradients
+        if isinstance(value, to.Tensor):
+            assert not value.requires_grad, (
+                "Do not add gradient-sensitive tensors to SampleCollections. "
+                "This is a fast road to weird retain_graph errors!"
+            )
+
+        # Check type of data
+        if isinstance(value, dict):
+            # Validate dict entries
+            for k, v in value.items():
+                self._validate_data_size(f"{name}.{k}", v)
+            return
+        if isinstance(value, tuple):
+            # Validate dict entries
+            for i, v in enumerate(value):
+                self._validate_data_size(f"{name}[{i}]", v)
+            return
+        if isinstance(value, (np.ndarray, to.Tensor)):
+            # A single array. The first dimension must match
+            vlen = value.shape[0]
+        else:
+            # Should be a sequence
+            assert isinstance(value, Sequence)
+            vlen = len(value)
+
+        if self.continuous:
+            if not (vlen == self.length or vlen == self.length + 1):
+                raise pyrado.ShapeErr(
+                    msg=f"The data list {name} must have {self.length} or {self.length}+1 elements,"
+                    f"but has {vlen} elements."
+                )
+        else:
+            # Disallow +1 tensors
+            if not vlen == self.length:
+                raise pyrado.ShapeErr(
+                    msg=f"The data list {name} must have {self.length} elements," f"but has {vlen} elements."
+                )
+
+    def _slice_entry(self, entry, index: slice):
+        if isinstance(entry, dict):
+            return {k: self._slice_entry(v, index) for k, v in entry.items()}
+        if isinstance(entry, tuple):
+            return new_tuple(type(entry), (self._slice_entry(e, index) for e in entry))
+        elif isinstance(entry, (to.Tensor, np.ndarray)):
+            return entry[index, ...]
+        elif isinstance(entry, list):
+            return entry[index]
+        else:
+            return None  # unsupported
+
     def _truncate_after_last(self, entry):
         if isinstance(entry, dict):
             return {k: self._truncate_after_last(v) for k, v in entry.items()}
@@ -479,6 +479,45 @@ class StepSequence(Sequence[Step]):
                 return entry[:-1]
         # No truncation
         return entry
+
+    def add_data(self, name: str, value=None, item_shape: tuple = None, with_after_last: Optional[bool] = False):
+        """
+        Add a new data field to the step sequence.
+
+        :param name: string for the name
+        :param value: the data
+        :param item_shape: shape to store the data in
+        :param with_after_last: `True` if there is one more element than the length (e.g. last observation)
+        """
+        if name in self._data_names:
+            raise pyrado.KeyErr(msg=f"Trying to add a duplicate data field for {name}!")
+
+        if value is None:
+            # Compute desired step length
+            ro_length = self.length
+            if with_after_last:
+                ro_length += 1
+
+            # Create zero-filled
+            if self._data_format == "torch":
+                value = to.zeros(to.Size([ro_length]) + to.Size(item_shape))
+            else:
+                value = np.array((ro_length,) + item_shape)
+
+        else:
+            # Check the data
+            self._validate_data_size(name, value)
+
+            if not isinstance(value, (np.ndarray, to.Tensor)):
+                # Stack into one array/tensor
+                value = stack_to_format(value, self._data_format)
+            else:
+                # Ensure right array format
+                value = to_format(value, self._data_format)
+
+        # Store in dict
+        self._data_names.append(name)
+        self.__dict__[name] = value
 
     def get_data_values(self, name: str, truncate_last: Optional[bool] = False):
         """
@@ -495,19 +534,6 @@ class StepSequence(Sequence[Step]):
             # Check length
             entry = self._truncate_after_last(entry)
         return entry
-
-    def __map_tensors(self, mapper, elem):
-        if isinstance(elem, dict):
-            # Modify dict in-place
-            for k in elem.keys():
-                elem[k] = self.__map_tensors(mapper, elem[k])
-            return elem
-        if isinstance(elem, tuple):
-            # Can't modify in place since it's a tuple
-            return new_tuple(type(elem), (self.__map_tensors(mapper, part) for part in elem))
-
-        # Tensor element
-        return mapper(elem)
 
     def numpy(self, data_type=None):
         """
@@ -572,21 +598,6 @@ class StepSequence(Sequence[Step]):
         start_step = bounds[index]
         end_step = bounds[index + 1]
         return self[start_step:end_step]
-
-    @property
-    def rollout_count(self):
-        """ Count the number of sub-rollouts inside this step sequence. """
-        if not self.continuous:
-            raise pyrado.ValueErr(msg="Sub-rollouts are only supported on continuous data.")
-        return len(self._rollout_bounds) - 1
-
-    @property
-    def rollout_lengths(self):
-        """ Lengths of sub-rollouts. """
-        if not self.continuous:
-            raise pyrado.ValueErr(msg="Sub-rollouts are only supported on continuous data.")
-        bounds = self._rollout_bounds
-        return bounds[1:] - bounds[:-1]
 
     def iterate_rollouts(self):
         """ Iterate over all sub-rollouts of a concatenated rollout. """
@@ -693,16 +704,6 @@ class StepSequence(Sequence[Step]):
             for b in gen_shuffled_batch_idcs(batch_size, self.length):
                 yield self[b]
 
-    @property
-    def data_format(self) -> str:
-        """ Get the name of data format ('torch' or 'numpy'). """
-        return self._data_format
-
-    @property
-    def data_names(self) -> Sequence[str]:
-        """ Get the list of data attribute names. """
-        return self._data_names
-
     def undiscounted_return(self) -> float:
         """
         Compute the undiscounted return.
@@ -773,6 +774,77 @@ class StepSequence(Sequence[Step]):
         return StepSequence(
             data_format=data_format, done=done, continuous=continuous, rollout_bounds=rollout_bounds, **data
         )
+
+    @classmethod
+    def process_data(
+        cls,
+        rollout: "StepSequence",
+        fcn: Callable,
+        fcn_arg_name: str,
+        fcn_arg_types: Union[type, Tuple[type]] = np.ndarray,
+        include_fields: Sequence[str] = None,
+        exclude_fields: Sequence[str] = None,
+        **process_fcn_kwargs,
+    ):
+        """
+        Process all data fields of a rollouts using an arbitrary function. Optionally, some fields can be excluded.
+
+        :param rollout: `StepSequence` holding the data
+        :param fcn: function (of one remaining input) to used manipulate the data fields, e.g. `scipy.filtfilt()`
+        :param fcn_arg_name: sting of the remaining input of `process_fcn()`, e.g. `x` for `scipy.filtfilt()`
+        :param fcn_arg_types: type or tuple thereof which are expected as input to `fcn()`
+        :param include_fields: list of field names to include for processing, pass `None` to not include everything.
+                               If specified, only fields from this selection will be considered
+        :param exclude_fields: list of field names to exclude from processing, pass `None` to not exclude anything
+        :param process_fcn_kwargs: keyword arguments forwarded to `process_fcn()`
+        :return: new `StepSequence` instance with processed data
+        """
+
+        @functools.wraps(fcn)
+        def recursive_wrapper(inp, **kwargs):
+            """ Wrap the processing function to call it recursivelyy for nested data structures. """
+            # Add to actual data input to the keyword arguments to make calling the function easier
+            kwargs.update({fcn_arg_name: inp})
+
+            if isinstance(inp, fcn_arg_types):
+                # Process the data
+                inp = fcn(**kwargs)
+
+            elif isinstance(inp, dict):
+                # Recursive call
+                for key, value in inp.items():
+                    if isinstance(value, fcn_arg_types):
+                        inp[key] = recursive_wrapper(value, **kwargs)
+                    else:
+                        inp[key] = value
+
+            elif isinstance(inp, list):
+                # Recursive call
+                for idx, item in enumerate(inp):
+                    if isinstance(item, fcn_arg_types):
+                        inp[idx] = recursive_wrapper(item, **kwargs)
+                    else:
+                        inp[idx] = item
+
+            return inp
+
+        # Go through all desired data fields and apply the processing function
+        data_dict = dict()
+        include_fields = include_fields or rollout.data_names
+        exclude_fields = exclude_fields or []
+        for name in rollout.data_names:
+            # Extract data field
+            data = rollout.get_data_values(name)
+
+            # Process current data field if included and not explicitly excluded
+            if name in include_fields and name not in exclude_fields:
+                data = recursive_wrapper(data, **process_fcn_kwargs)
+
+            # Collect the new/old data
+            data_dict[name] = data
+
+        # Create new object
+        return StepSequence(**data_dict, rollout_info=rollout.rollout_info, continuous=rollout.continuous)
 
 
 def discounted_reverse_cumsum(data, gamma: float):

@@ -71,7 +71,8 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
     def __init__(
         self,
         num_dof: int,
-        frame_skip: int,
+        frame_skip: int = 4,
+        dt: Optional[float] = None,
         max_steps: Optional[int] = pyrado.inf,
         task_args: Optional[dict] = None,
     ):
@@ -79,7 +80,11 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
         Constructor
 
         :param num_dof: number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used
-        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size
+        :param frame_skip: number of simulation frames for which the same action is held, results in a multiplier of
+                           the time step size `dt`
+        :param dt: by default the time step size is the one from the mujoco config file multiplied by the number of
+                   frame skips (legacy from OpenAI environments). By passing an explicit `dt` value, this can be
+                   overwritten. Possible use case if if you know that you recorded a trajectory with a specific `dt`.
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction
         """
@@ -100,7 +105,11 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
         self._num_dof = num_dof
 
         model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, graph_file_name)
-        super().__init__(model_path, frame_skip, max_steps, task_args)
+        super().__init__(model_path, frame_skip, dt, max_steps, task_args)
+
+        # Fixed initial state space
+        init_state = np.concatenate([self.init_qpos, self.init_qvel])
+        self._init_space = SingularStateSpace(init_state)
 
         self.camera_config = dict(
             trackbodyid=0,  # id of the body to track
@@ -116,7 +125,21 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
     @property
     def torque_space(self) -> Space:
         """ Get the space of joint torques. """
-        return self._torque_space
+        return torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
+
+    @property
+    def state_space(self) -> Space:
+        state_shape = np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).shape
+        return BoxSpace(bound_lo=-pyrado.inf, bound_up=pyrado.inf, shape=state_shape)
+
+    @property
+    def obs_space(self) -> Space:
+        return self.state_space
+
+    @property
+    def act_space(self) -> Space:
+        # Running a PD controller on joint positions and velocities
+        return act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
 
     @classmethod
     def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
@@ -136,7 +159,6 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
                 joint_5_stiction=0.2,  # dry friction coefficient of motor joint 5 [-]
                 joint_6_stiction=0.2,  # dry friction coefficient of motor joint 6 [-]
                 joint_7_stiction=0.2,  # dry friction coefficient of motor joint 7 [-]
-                rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
             )
         elif num_dof == 4:
             return dict(
@@ -152,32 +174,15 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
-    def _create_spaces(self):
-        # Torque and action space (running a PD controller on joint positions and velocities)
-        self._torque_space = torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
-        self._act_space = act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
-
-        # State space
-        state_shape = np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).shape
-        self._state_space = BoxSpace(bound_lo=-pyrado.inf, bound_up=pyrado.inf, shape=state_shape)
-
-        # Fixed initial state space
-        init_state = np.concatenate([self.init_qpos, self.init_qvel])
-        self._init_space = SingularStateSpace(init_state)
-
-        # Observation space (observations are the exact state)
-        self._obs_space = self._state_space.copy()
-
     def _create_task(self, task_args: Optional[dict] = None) -> Task:
         state_des = np.concatenate([self.init_qpos, self.init_qvel])
         return DesStateTask(self.spec, state_des, ZeroPerStepRewFcn())
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
-        if not act.shape[0] % 2 == 0:
-            raise pyrado.ShapeErr(msg=f"The action must have and even length, but its shape is {act.shape}!")
+        assert self.act_space.contains(act, verbose=True)
 
         # Get the desired positions and velocities for the selected joints
-        qpos_des, qvel_des = act[: act.shape[0] // 2], act[act.shape[0] // 2 :]
+        qpos_des, qvel_des = np.split(act, 2)
 
         # Compute the position and velocity errors
         err_pos = qpos_des - self.state[: self._num_dof]
@@ -185,7 +190,7 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
 
         # Compute the torques for the PD controller and clip them to their max values
         torque = self.p_gains * err_pos + self.d_gains * err_vel
-        torque = self._torque_space.project_to(torque)
+        torque = self.torque_space.project_to(torque)
 
         # Apply the torques to the robot
         self.sim.data.qfrc_applied[: self._num_dof] = torque

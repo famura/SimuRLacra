@@ -30,6 +30,8 @@
 Script to evaluate a posterior obtained using the sbi package.
 Plot a real and the simulated rollout segments for evey initial state, i.e. every real-world rollout, using the
 `num_ml_samples` most likely domain parameter sets for the segment length of `len_segment` steps.
+Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
+By default (args.iter = -1), the most recent iteration is evaluated.
 """
 import numpy as np
 import os
@@ -39,11 +41,12 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.inference.lfi import LFI
+from pyrado.algorithms.inference.lfi import NPDR
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_act_equal
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
@@ -85,22 +88,22 @@ if __name__ == "__main__":
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
-    if not isinstance(algo, LFI):
-        raise pyrado.TypeErr(given=algo, expected_type=LFI)
+    if not isinstance(algo, NPDR):
+        raise pyrado.TypeErr(given=algo, expected_type=NPDR)
 
     # Compute the most likely domain parameters for every target domain observation
-    domain_params_ml_all = LFI.get_ml_posterior_samples(
+    domain_params_ml_all = NPDR.get_ml_posterior_samples(
         algo.dp_mapping,
         posterior,
         observations_real,
         args.num_samples,
         num_ml_samples,
-        normalize_posterior=args.normalize_posterior,
+        normalize_posterior=args.normalize,
         sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
     )
 
     # Load the rollouts
-    rollouts_real = load_rollouts_from_dir(ex_dir)
+    rollouts_real, _ = load_rollouts_from_dir(ex_dir)
     if args.iter != -1:
         # Only load the selected iteration's initial state
         rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
@@ -124,7 +127,9 @@ if __name__ == "__main__":
     segments_real_all = []
     for ro in rollouts_real:
         # Split the target domain rollout, see compute_observations()
-        if args.num_segments is not None and args.len_segments is None:
+        if args.num_segments is not None and args.num_segments == 1 and args.len_segments is None:
+            segments_real = [ro]
+        elif args.num_segments is not None and args.num_segments > 1 and args.len_segments is None:
             segments_real = list(ro.split_ordered_batches(num_batches=args.num_segments + 1))
             segments_real = segments_real[:-1]
         elif args.len_segments is not None and args.num_segments is None:
@@ -135,6 +140,10 @@ if __name__ == "__main__":
             raise pyrado.ValueErr(msg="Either batch_size or num_batches must not be None, but not both or none!")
 
         segments_real_all.append(segments_real)
+
+    # Set the init space of the simulation environment such that we can later set to arbitrary states that could have
+    # occurred during the rollout. This is necessary since we are running the evaluation in segments.
+    env_sim.init_space = BoxSpace(-pyrado.inf, pyrado.inf, shape=env_sim.init_space.shape)
 
     # Sample rollouts with the most likely domain parameter sets associated to that observation
     segments_ml_all = []  # all top max likelihood segments for all target domain rollouts
@@ -217,42 +226,39 @@ if __name__ == "__main__":
     colors = plt.get_cmap("Reds")(np.linspace(0.5, 1.0, num_ml_samples))
     for idx_r in range(len(segments_real_all)):
         fig, axs = plt.subplots(nrows=dim_obs, figsize=(16, 9), tight_layout=True, sharex="col")
+
         for idx_o in range(dim_obs):
             # Plot the real segments
-            cnt_step = 0
+            cnt_step = [0]
             for segment_real in segments_real_all[idx_r]:
                 axs[idx_o].plot(
-                    np.arange(cnt_step, cnt_step + segment_real.length),
+                    np.arange(cnt_step[-1], cnt_step[-1] + segment_real.length),
                     segment_real.get_data_values("observations", True)[:, idx_o],
                     c="black",
-                    label="real" if cnt_step == 0 else "",  # only print once
+                    label="real" if cnt_step[-1] == 0 else "",  # only print once
                 )
-                cnt_step += segment_real.length
+                cnt_step.append(cnt_step[-1] + segment_real.length)
 
             # Plot the maximum likely simulated segments
-            cnt_step = 0
-            for sml in segments_ml_all[idx_r]:
+            for idx_s, sml in enumerate(segments_ml_all[idx_r]):
                 for idx_dp, smdp in enumerate(sml):
                     axs[idx_o].plot(
-                        np.arange(cnt_step, cnt_step + smdp.length),
+                        np.arange(cnt_step[idx_s], cnt_step[idx_s] + smdp.length),
                         smdp.get_data_values("observations", True)[:, idx_o],
                         c=colors[idx_dp],
                         ls="--",
-                        label=f"sim ml {idx_dp}" if cnt_step == 0 else "",  # only print once for each domain param set
+                        label=f"sim ml {idx_dp}" if cnt_step[idx_s] == 0 else "",  # only print once for each dp set
                     )
-                cnt_step += smdp.length
 
             # Plot the nominal simulation's segments
-            cnt_step = 0
-            for sn in segments_nom[idx_r]:
+            for idx_s, sn in enumerate(segments_nom[idx_r]):
                 axs[idx_o].plot(
-                    np.arange(cnt_step, cnt_step + sn.length),
+                    np.arange(cnt_step[idx_s], cnt_step[idx_s] + sn.length),
                     sn.get_data_values("observations", True)[:, idx_o],
                     c="steelblue",
                     ls="-.",
-                    label="sim nom" if cnt_step == 0 else "",  # only print once
+                    label="sim nom" if cnt_step[idx_s] == 0 else "",  # only print once
                 )
-                cnt_step += sn.length
 
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
         fig.canvas.set_window_title(f"Real and Simulated Observations (rollout {idx_r+1} of {num_rollouts_real})")
@@ -269,7 +275,7 @@ if __name__ == "__main__":
                 os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
                 use_rec = "_use_rec" if args.use_rec else ""
                 fig.savefig(
-                    os.path.join(ex_dir, "plots", f"lfi_sim_real_rollouts_{idx_r}{use_rec}.{fmt}"),
+                    os.path.join(ex_dir, "plots", f"sim_real_rollouts_{idx_r}{use_rec}.{fmt}"),
                     bbox_extra_artists=(lg,),
                     dpi=500,
                 )

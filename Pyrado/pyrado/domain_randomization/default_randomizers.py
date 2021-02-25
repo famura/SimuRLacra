@@ -594,9 +594,9 @@ def create_default_randomizer_wambic() -> DomainRandomizer:
     )
 
 
-def get_default_domain_param_map_bob() -> Dict[int, Tuple[str, str]]:
+def create_default_domain_param_map_bob() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
+    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -620,9 +620,9 @@ def get_default_domain_param_map_bob() -> Dict[int, Tuple[str, str]]:
     }
 
 
-def get_default_domain_param_map_omo() -> Dict[int, Tuple[str, str]]:
+def create_default_domain_param_map_omo() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
+    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -637,9 +637,9 @@ def get_default_domain_param_map_omo() -> Dict[int, Tuple[str, str]]:
     }
 
 
-def get_default_domain_param_map_pend() -> Dict[int, Tuple[str, str]]:
+def create_default_domain_param_map_pend() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
+    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -650,9 +650,9 @@ def get_default_domain_param_map_pend() -> Dict[int, Tuple[str, str]]:
     }
 
 
-def get_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
+def create_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
+    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -673,9 +673,9 @@ def get_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
     }
 
 
-def get_default_domain_param_map_wambic() -> Dict[int, Tuple[str, str]]:
+def create_default_domain_param_map_wambic() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
+    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -717,4 +717,28 @@ def get_default_domain_param_map_wambic() -> Dict[int, Tuple[str, str]]:
         33: ("joint_6_stiction", "halfspan"),
         34: ("joint_7_stiction", "mean"),
         35: ("joint_7_stiction", "halfspan"),
+    }
+
+
+def create_damping_stiction_domain_param_map_wamjsc() -> Dict[int, str]:
+    """
+    Create a mapping from indices to domain parameters (as used in the `LFI` algorithm).
+
+    :return: `dict` where the key is the index and the value is the domain parameter name
+    """
+    return {
+        0: "joint_1_damping",
+        1: "joint_2_damping",
+        2: "joint_3_damping",
+        3: "joint_4_damping",
+        4: "joint_5_damping",
+        5: "joint_6_damping",
+        6: "joint_7_damping",
+        7: "joint_1_stiction",
+        8: "joint_2_stiction",
+        9: "joint_3_stiction",
+        10: "joint_4_stiction",
+        11: "joint_5_stiction",
+        12: "joint_6_stiction",
+        13: "joint_7_stiction",
     }

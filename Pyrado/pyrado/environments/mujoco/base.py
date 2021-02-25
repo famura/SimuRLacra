@@ -32,6 +32,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from init_args_serializer import Serializable
 from mujoco_py.generated.const import RND_FOG
+from typing import Optional
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
@@ -50,13 +51,22 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
     """
 
     def __init__(
-        self, model_path: str, frame_skip: int = 1, max_steps: int = pyrado.inf, task_args: [dict, None] = None
+        self,
+        model_path: str,
+        frame_skip: Optional[int] = 1,
+        dt: Optional[float] = None,
+        max_steps: Optional[int] = pyrado.inf,
+        task_args: Optional[dict] = None,
     ):
         """
         Constructor
 
         :param model_path: model path
-        :param frame_skip: number of frame skips
+        :param frame_skip: number of simulation frames for which the same action is held, results in a multiplier of
+                           the time step size `dt`
+        :param dt: by default the time step size is the one from the mujoco config file multiplied by the number of
+                   frame skips (legacy from OpenAI environments). By passing an explicit `dt` value, this can be
+                   overwritten. Possible use case if if you know that you recorded a trajectory with a specific `dt`.
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
@@ -72,18 +82,14 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         self._create_mujoco_model()
 
         # Call SimEnv's constructor
-        super().__init__(dt=self.model.opt.timestep * self.frame_skip, max_steps=max_steps)
+        super().__init__(dt=self.model.opt.timestep * self.frame_skip if dt is None else dt, max_steps=max_steps)
 
         # Memorize the initial states of the model from the xml (for fixed init space or later reset)
         self.init_qpos = self.sim.data.qpos.copy()
         self.init_qvel = self.sim.data.qvel.copy()
 
-        # Initialize spaces
-        self._state_space = None
-        self._obs_space = None
-        self._act_space = None
+        # Initialize space (to be overwritten in constructor of subclasses)
         self._init_space = None
-        self._create_spaces()
 
         # Create task
         if not (isinstance(task_args, dict) or task_args is None):
@@ -97,12 +103,19 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         self._curr_act = np.zeros(self.act_space.shape)
 
     @property
+    @abstractmethod
     def state_space(self) -> Space:
-        return self._state_space
+        raise NotImplementedError
 
     @property
+    @abstractmethod
     def obs_space(self) -> Space:
-        return self._obs_space
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def act_space(self) -> Space:
+        raise NotImplementedError
 
     @property
     def init_space(self) -> Space:
@@ -113,20 +126,6 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         if not isinstance(space, Space):
             raise pyrado.TypeErr(given=space, expected_type=Space)
         self._init_space = space
-
-    @property
-    def act_space(self) -> Space:
-        return self._act_space
-
-    @abstractmethod
-    def _create_spaces(self):
-        """
-        Create spaces based on the domain parameters.
-        Should set the attributes `_state_space`, `_act_space`, `_obs_space`, and `_init_space`.
-
-        .. note::
-            This function is called from the constructor and from the domain parameter setter.
-        """
 
     @property
     def task(self) -> Task:
@@ -158,9 +157,6 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
             glfw.destroy_window(self.viewer.window)
             self.viewer = None
-
-        # Update spaces
-        self._create_spaces()
 
         # Update task
         self._task = self._create_task(self.task_args)
@@ -228,16 +224,16 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         if domain_param is not None:
             self.domain_param = domain_param
 
+        # Sample or set the initial simulation state
         if init_state is None:
             # Sample init state from init state space
             init_state = self.init_space.sample_uniform()
         elif not isinstance(init_state, np.ndarray):
             # Make sure init state is a numpy array
             try:
-                init_state = np.array(init_state)
+                init_state = np.asarray(init_state)
             except Exception:
-                raise pyrado.TypeErr(given=init_state, expected_type=[np.ndarray, list])
-
+                raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
         if not self.init_space.contains(init_state, verbose=True):
             raise pyrado.ValueErr(msg="The init state must be within init state space!")
 

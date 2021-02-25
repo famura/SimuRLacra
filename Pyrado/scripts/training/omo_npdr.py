@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Sim-to-sim experiment on the One-Mass-Oscillator environment using likelihood-free inference
+Domain parameter identification experiment on the One-Mass-Oscillator environment using Neural Posterior Domain Randomization
 """
 import numpy as np
 import torch as to
@@ -37,7 +37,7 @@ from sbi import utils
 from copy import deepcopy
 
 import pyrado
-from pyrado.algorithms.inference.lfi import LFI
+from pyrado.algorithms.inference.lfi import NPDR
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{LFI.name}")
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{NPDR.name}")
 
     # Set seed if desired
     pyrado.set_seed(11, verbose=True)
@@ -86,14 +86,15 @@ if __name__ == "__main__":
         high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=4)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=4)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=5,
         summary_statistic="bayessim",  # bayessim or dtw_distance
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=1000,
+        num_sim_per_round=2000,
+        num_sbi_rounds=1,
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=None,
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         sbi_sampling_hparam=dict(sample_with_mcmc=True),
         num_workers=8,
     )
-    algo = LFI(
+    algo = NPDR(
         ex_dir,
         env_sim,
         env_real,

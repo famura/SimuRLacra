@@ -42,10 +42,11 @@ from pyrado.environments.barrett_wam import (
 )
 from pyrado.environments.barrett_wam.wam_base import WAMReal
 from pyrado.spaces import BoxSpace
+from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.tasks.goalless import GoallessTask
 from pyrado.tasks.reward_functions import ZeroPerStepRewFcn
-from pyrado.utils.input_output import print_cbt, completion_context, print_cbt_once
+from pyrado.utils.input_output import print_cbt, completion_context
 
 
 class WAMJointSpaceCtrlRealEpisodic(WAMReal):
@@ -79,17 +80,21 @@ class WAMJointSpaceCtrlRealEpisodic(WAMReal):
 
         self._curr_step_rr = None
 
-    def _create_spaces(self):
-        # State space
-        self._state_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
+    @property
+    def state_space(self) -> Space:
+        # Normalized time
+        return BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
 
-        # Action space (running a PD controller on joint positions and velocities)
-        self._act_space = act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
-
-        # Observation space
+    @property
+    def obs_space(self) -> Space:
         lo = np.concatenate([wam_q_limits_lo_7dof[: self._num_dof], wam_qd_limits_lo_7dof[: self._num_dof]])
         up = np.concatenate([wam_q_limits_up_7dof[: self._num_dof], wam_qd_limits_up_7dof[: self._num_dof]])
-        self._obs_space = BoxSpace(bound_lo=lo, bound_up=up)
+        return BoxSpace(bound_lo=lo, bound_up=up)
+
+    @property
+    def act_space(self) -> Space:
+        # Running a PD controller on joint positions and velocities
+        return act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
 
     def _create_task(self, task_args: dict) -> Task:
         # Dummy task
@@ -218,21 +223,24 @@ class WAMJointSpaceCtrlRealStepBased(WAMReal):
 
         self._cnt_too_slow = None
 
-    def _create_spaces(self):
-        # State space
+    @property
+    def state_space(self) -> Space:
         lo = np.concatenate([wam_q_limits_lo_7dof[: self._num_dof], wam_qd_limits_lo_7dof[: self._num_dof]])
         up = np.concatenate([wam_q_limits_up_7dof[: self._num_dof], wam_qd_limits_up_7dof[: self._num_dof]])
-        self._state_space = BoxSpace(
+        return BoxSpace(
             bound_lo=lo,
             bound_up=up,
             labels=[f"q_{i}" for i in range(1, 8)] + [f"qd_{i}" for i in range(1, 8)],
         )
 
-        # Action space (running a PD controller on joint positions and velocities)
-        self._act_space = act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
+    @property
+    def obs_space(self) -> Space:
+        return self.state_space
 
-        # Observation space
-        self._obs_space = self._state_space.copy()
+    @property
+    def act_space(self) -> Space:
+        # Running a PD controller on joint positions and velocities
+        return act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
 
     def _create_task(self, task_args: dict) -> Task:
         # Dummy task

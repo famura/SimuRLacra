@@ -30,6 +30,7 @@
 Script to evaluate a posterior obtained using the sbi package.
 Plot a real and the simulated rollouts for evey initial state, i.e. every real-world rollout using the `num_ml_samples`
 most likely domain parameter sets.
+By default (args.iter = -1), the most recent iteration is evaluated.
 """
 import numpy as np
 import os
@@ -39,7 +40,7 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.inference.lfi import LFI
+from pyrado.algorithms.inference.lfi import NPDR
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.policies.special.time import PlaybackPolicy
@@ -72,22 +73,22 @@ if __name__ == "__main__":
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
-    if not isinstance(algo, LFI):
-        raise pyrado.TypeErr(given=algo, expected_type=LFI)
+    if not isinstance(algo, NPDR):
+        raise pyrado.TypeErr(given=algo, expected_type=NPDR)
 
     # Compute the most likely domain parameters for every target domain observation
-    domain_params_ml_all = LFI.get_ml_posterior_samples(
+    domain_params_ml_all = NPDR.get_ml_posterior_samples(
         algo.dp_mapping,
         posterior,
         observations_real,
         args.num_samples,
         num_ml_samples,
-        normalize_posterior=args.normalize_posterior,
+        normalize_posterior=args.normalize,
         sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
     )
 
     # Load the rollouts
-    rollouts_real = load_rollouts_from_dir(ex_dir)
+    rollouts_real, _ = load_rollouts_from_dir(ex_dir)
     if args.iter != -1:
         # Only load the selected iteration's initial state
         rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
@@ -193,7 +194,7 @@ if __name__ == "__main__":
                 os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
                 use_rec = "_use_rec" if args.use_rec else ""
                 fig.savefig(
-                    os.path.join(ex_dir, "plots", f"lfi_sim_real_rollouts_{idx_r}{use_rec}.{fmt}"),
+                    os.path.join(ex_dir, "plots", f"sim_real_rollouts_{idx_r}{use_rec}.{fmt}"),
                     bbox_extra_artists=(lg,),
                     dpi=500,
                 )

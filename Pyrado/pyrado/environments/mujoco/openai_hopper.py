@@ -33,6 +33,7 @@ from typing import Optional
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
+from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.goalless import GoallessTask
@@ -54,42 +55,27 @@ class HopperSim(MujocoSimEnv, Serializable):
 
     name: str = "hop"
 
-    def __init__(self, frame_skip: int = 5, max_steps: int = 1000, task_args: Optional[dict] = None):
+    def __init__(
+        self,
+        frame_skip: Optional[int] = 5,
+        dt: Optional[float] = None,
+        max_steps: Optional[int] = 1000,
+        task_args: Optional[dict] = None,
+    ):
         """
         Constructor
 
-        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size,
-                           directly passed to `self.sim`
+        :param frame_skip: number of simulation frames for which the same action is held, results in a multiplier of
+                           the time step size `dt`
+        :param dt: by default the time step size is the one from the mujoco config file multiplied by the number of
+                   frame skips (legacy from OpenAI environments). By passing an explicit `dt` value, this can be
+                   overwritten. Possible use case if if you know that you recorded a trajectory with a specific `dt`.
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
         # Call MujocoSimEnv's constructor
         model_path = osp.join(osp.dirname(__file__), "assets", "openai_hopper.xml")
-        super().__init__(model_path, frame_skip, max_steps, task_args)
-
-        self.camera_config = dict(trackbodyid=2, distance=3.0, lookat=np.array((0.0, 0.0, 1.15)), elevation=-20.0)
-
-    @classmethod
-    def get_nominal_domain_param(cls) -> dict:
-        return dict(
-            state_bound=100.0, z_lower_bound=0.7, angle_bound=0.2, foot_friction_coeff=2.0, reset_noise_halfspan=5e-3
-        )
-
-    def _create_spaces(self):
-        # Action
-        act_bounds = self.model.actuator_ctrlrange.copy().T
-        self._act_space = BoxSpace(*act_bounds, labels=["thigh", "leg", "foot"])
-
-        # State
-        n = self.init_qpos.size + self.init_qvel.size
-        min_state = -self.domain_param["state_bound"] * np.ones(n)
-        min_state[0] = -pyrado.inf  # ignore forward position
-        min_state[1] = self.domain_param["z_lower_bound"]
-        min_state[2] = -self.domain_param["angle_bound"]
-        max_state = self.domain_param["state_bound"] * np.ones(n)
-        max_state[0] = +pyrado.inf  # ignore forward position
-        max_state[2] = self.domain_param["angle_bound"]
-        self._state_space = BoxSpace(min_state, max_state)
+        super().__init__(model_path, frame_skip, dt, max_steps, task_args)
 
         # Initial state
         noise_halfspan = self.domain_param["reset_noise_halfspan"]
@@ -101,10 +87,34 @@ class HopperSim(MujocoSimEnv, Serializable):
         max_init_state = np.concatenate([max_init_qpos, max_init_qvel]).ravel()
         self._init_space = BoxSpace(min_init_state, max_init_state)
 
-        # Observation
-        obs_shape = self.observe(max_state).shape
-        max_obs = np.full(obs_shape, pyrado.inf)
-        self._obs_space = BoxSpace(-max_obs, max_obs)
+        self.camera_config = dict(trackbodyid=2, distance=3.0, lookat=np.array((0.0, 0.0, 1.15)), elevation=-20.0)
+
+    @property
+    def state_space(self) -> Space:
+        n = self.init_qpos.size + self.init_qvel.size
+        min_state = -self.domain_param["state_bound"] * np.ones(n)
+        min_state[0] = -pyrado.inf  # ignore forward position
+        min_state[1] = self.domain_param["z_lower_bound"]
+        min_state[2] = -self.domain_param["angle_bound"]
+        max_state = self.domain_param["state_bound"] * np.ones(n)
+        max_state[0] = +pyrado.inf  # ignore forward position
+        max_state[2] = self.domain_param["angle_bound"]
+        return BoxSpace(min_state, max_state)
+
+    @property
+    def obs_space(self) -> Space:
+        return BoxSpace(-pyrado.inf, pyrado.inf, shape=self.state_space.shape)
+
+    @property
+    def act_space(self) -> Space:
+        act_bounds = self.model.actuator_ctrlrange.copy().T
+        return BoxSpace(*act_bounds, labels=["thigh", "leg", "foot"])
+
+    @classmethod
+    def get_nominal_domain_param(cls) -> dict:
+        return dict(
+            state_bound=100.0, z_lower_bound=0.7, angle_bound=0.2, foot_friction_coeff=2.0, reset_noise_halfspan=5e-3
+        )
 
     def _create_task(self, task_args: dict) -> Task:
         if "fwd_rew_weight" not in task_args:

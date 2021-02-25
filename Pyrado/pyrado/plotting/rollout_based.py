@@ -28,6 +28,7 @@
 
 import functools
 import numpy as np
+import pandas as pd
 import torch as to
 from matplotlib import pyplot as plt
 from typing import Sequence
@@ -36,6 +37,7 @@ import pyrado
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.utils import typed_env, inner_env
 from pyrado.environments.base import Env
+from pyrado.plotting.curve import draw_curve
 from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
@@ -82,7 +84,7 @@ def plot_observations_actions_rewards(ro: StepSequence):
         # Use recorded time stamps if possible
         t = getattr(ro, "time", np.arange(0, ro.length + 1))
 
-        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_obs + dim_act + 1), figsize=(8, 12), tight_layout=True)
+        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_obs + dim_act + 1), figsize=(14, 10), tight_layout=True)
         fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
@@ -217,7 +219,7 @@ def plot_actions(ro: StepSequence, env: Env):
         # Use recorded time stamps if possible
         t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
-        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_act), figsize=(8, 12), tight_layout=True)
+        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_act), figsize=(10, 8), tight_layout=True)
         fig.canvas.set_window_title("Actions over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
@@ -250,7 +252,7 @@ def plot_actions(ro: StepSequence, env: Env):
         plt.subplots_adjust(hspace=0.2)
 
 
-def draw_rewards(ro: StepSequence):
+def plot_rewards(ro: StepSequence):
     """
     Plot the reward trajectories of the given rollout.
 
@@ -267,7 +269,7 @@ def draw_rewards(ro: StepSequence):
         ax.set_xlabel("time")
 
 
-def draw_potentials(ro: StepSequence, layout: str = "joint"):
+def plot_potentials(ro: StepSequence, layout: str = "joint"):
     """
     Plot the trajectories specific to a potential-based policy.
 
@@ -312,7 +314,7 @@ def draw_potentials(ro: StepSequence, layout: str = "joint"):
             plt.subplots_adjust(wspace=0.8)
 
         elif layout == "joint":
-            fig, axs = plt.subplots(nrows=4, ncols=1, figsize=(12, 10), sharex="all")
+            fig, axs = plt.subplots(nrows=4, ncols=1, figsize=(14, 10), sharex="all")
 
             for i in range(dim_pot):
                 axs[0].plot(t, ro.stimuli_external[:, i], label=rf"$s_{{ext,{i}}}$", c=colors_pot[i])
@@ -338,7 +340,7 @@ def draw_potentials(ro: StepSequence, layout: str = "joint"):
                 a.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
 
-def draw_statistic_across_rollouts(
+def plot_statistic_across_rollouts(
     rollouts: Sequence[StepSequence],
     stat_fcn: callable,
     stat_fcn_kwargs=None,
@@ -351,8 +353,8 @@ def draw_statistic_across_rollouts(
     :param rollouts: list of rollouts, they can be of unequal length but are assumed to be from the same type of env
     :param stat_fcn: function to calculate the statistic of interest (e.g. np.mean)
     :param stat_fcn_kwargs: keyword arguments for the stat_fcn (e.g. {'axis': 0})
-    :param obs_idcs: indices of the observations to process and plot
-    :param act_idcs: indices of the actions to process and plot
+    :param obs_idcs: indices of the observations to process and plot, pass `None` to select all
+    :param act_idcs: indices of the actions to process and plot, pass `None` to select all
     """
     if obs_idcs is None and act_idcs is None:
         raise pyrado.ValueErr(msg="Must select either an observation or an action, but both are None!")
@@ -386,3 +388,84 @@ def draw_statistic_across_rollouts(
         for i, act_idx in enumerate(act_idcs):
             axs[1].plot(act_stats[:, i], label=_get_act_label(rollouts[0], i), c=f"C{i%10}")
         axs[1].legend()
+
+
+def plot_mean_std_across_rollouts(
+    rollouts: Sequence[StepSequence],
+    idcs_obs: Sequence[int] = None,
+    idcs_act: Sequence[int] = None,
+):
+    """
+    Plot the mean and standard deviation across a selection of rollouts.
+
+    :param rollouts: list of rollouts, they can be of unequal length but are assumed to be from the same type of env
+    :param idcs_obs: indices of the observations to process and plot, pass `None` to select all
+    :param idcs_act: indices of the actions to process and plot, pass `None` to select all
+    """
+    dim_obs = rollouts[0].observations.shape[1]  # assuming same for all rollouts
+    dim_act = rollouts[0].actions.shape[1]  # assuming same for all rollouts
+    if idcs_obs is None:
+        idcs_obs = slice(0, dim_obs)
+    if idcs_act is None:
+        idcs_act = slice(0, idcs_act)
+
+    max_len = 0
+    time = None
+    data_obs = pd.DataFrame()
+    data_act = pd.DataFrame()
+    for ro in rollouts:
+        ro.numpy()
+        if len(ro) > max_len:
+            # Extract time
+            max_len = len(ro)
+            time = getattr(ro, "time", None)
+
+        # Extract observations
+        df = pd.DataFrame(ro.observations[:, idcs_obs], columns=ro.rollout_info["env_spec"].obs_space.labels[idcs_obs])
+        data_obs = pd.concat([data_obs, df], axis=1)
+
+        # Extract actions
+        df = pd.DataFrame(ro.actions[:, idcs_act], columns=ro.rollout_info["env_spec"].act_space.labels[idcs_act])
+        data_act = pd.concat([data_act, df], axis=1)
+
+    # Compute statistics
+    means_obs = data_obs.groupby(by=data_obs.columns, axis=1).mean()
+    stds_obs = data_obs.groupby(by=data_obs.columns, axis=1).std()
+    means_act = data_act.groupby(by=data_act.columns, axis=1).mean()
+    stds_act = data_act.groupby(by=data_act.columns, axis=1).std()
+
+    # Plot observations
+    num_rows, num_cols = num_rows_cols_from_length(dim_obs, transposed=True)
+    fig_obs, axs_obs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
+    fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Observations over Time")
+    colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs))
+
+    for idx_o, c in enumerate(data_obs.columns.unique()):
+        draw_curve(
+            "mean_std",
+            axs_obs[idx_o // num_cols, idx_o % num_cols] if isinstance(axs_obs, np.ndarray) else axs_obs,
+            pd.DataFrame(dict(mean=means_obs[c], std=stds_obs[c])),
+            x_grid=time,
+            show_legend=False,
+            x_label="time [s]" if time is not None else np.arange(len(data_obs)),
+            y_label=str(c),
+            plot_kwargs=dict(color=colors[idx_o]),
+        )
+
+    # Plot actions
+    num_rows, num_cols = num_rows_cols_from_length(dim_act, transposed=True)
+    fig_act, axs_act = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
+    fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Actions over Time")
+    colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
+
+    for idx_a, c in enumerate(data_act.columns.unique()):
+        draw_curve(
+            "mean_std",
+            axs_act[idx_a // num_cols, idx_a % num_cols] if isinstance(axs_act, np.ndarray) else axs_act,
+            pd.DataFrame(dict(mean=means_act[c], std=stds_act[c])),
+            x_grid=time[:-1],
+            show_legend=False,
+            x_label="time [s]" if time is not None else np.arange(len(data_act)),
+            y_label=str(c),
+            plot_kwargs=dict(color=colors[idx_a]),
+        )

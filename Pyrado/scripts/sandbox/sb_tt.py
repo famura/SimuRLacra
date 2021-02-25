@@ -34,7 +34,7 @@ import os.path as osp
 from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
 import rcsenv
-from pyrado.plotting.rollout_based import draw_rewards
+from pyrado.plotting.rollout_based import plot_rewards
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 
@@ -103,4 +103,4 @@ tm.save(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "TargetTracking", "pTT_simpletime.
 
 # Simulate and plot
 ro = rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
-draw_rewards(ro)
+plot_rewards(ro)

@@ -27,10 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pytest
+import torch.nn as nn
+from copy import deepcopy
+from sbi import utils
+from sbi.inference import SNPE
+
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
+from pyrado.algorithms.inference.npdr import NPDR
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.simopt import SimOpt
@@ -40,7 +46,7 @@ from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import (
     create_default_randomizer,
     create_zero_var_randomizer,
-    get_default_domain_param_map_qq,
+    create_default_domain_param_map_qq,
 )
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -174,7 +180,6 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
 
 @pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
-# @pytest.mark.parametrize("env_real", ["default_qqsu"], ids=["qq"], indirect=True)
 @pytest.mark.parametrize(
     "bayrn_hparam",
     [
@@ -196,7 +201,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     # Environments and domain randomization
     env_real = deepcopy(env)
     env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
-    dp_map = get_default_domain_param_map_qq()
+    dp_map = create_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
     env_real.domain_param = dict(Mp=0.024 * 1.1, Mr=0.095 * 1.1)
     env_real = wrap_like_other_env(env_real, env_sim)
@@ -450,3 +455,75 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     algo.train()
 
     assert algo.curr_iter == algo.max_iter
+
+
+@pytest.mark.longtime
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
+@pytest.mark.parametrize("summary_statistic", ["bayessim", "dtw_distance"], ids=["summstat", "dtw"])
+@pytest.mark.parametrize(
+    "num_segments, len_segments",
+    [(1, None), (10, None), (None, 100)],
+    ids=["num1-lenNone", "num10-lenNone", "numNone-len100"],
+)
+@pytest.mark.parametrize("num_real_obs", [1], ids=["1realobs"])
+@pytest.mark.parametrize("num_sbi_rounds", [2], ids=["2rounds"])
+def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_segments, num_real_obs, num_sbi_rounds):
+    # Create a fake ground truth target domain
+    env_real = deepcopy(env)
+    dp_nom = env.get_nominal_domain_param()
+    env_real.domain_param = {k: v + 0.03 * np.random.randn(1).item() for k, v in dp_nom.items()}
+
+    # Policy
+    policy = QQubeSwingUpAndBalanceCtrl(env.spec)
+
+    # Define a mapping: index - domain parameter
+    dp_mapping = {i: k for i, (k, v) in enumerate(dp_nom.items())}
+
+    # Prior and Posterior (normalizing flow)
+    prior_hparam = dict(
+        low=to.tensor([0.8 * dp_nom[v] for v in dp_mapping.values()]),
+        high=to.tensor([1.2 * dp_nom[v] for v in dp_mapping.values()]),
+    )
+    prior = utils.BoxUniform(**prior_hparam)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=3)
+
+    # Algorithm
+    algo_hparam = dict(
+        max_iter=1,
+        summary_statistic=summary_statistic,
+        num_real_rollouts=num_real_obs,
+        num_sim_per_round=200,
+        num_sbi_rounds=2,
+        simulation_batch_size=1,
+        normalize_posterior=False,
+        num_eval_samples=10,
+        num_segments=num_segments,
+        len_segments=len_segments,
+        sbi_training_hparam=dict(
+            num_atoms=10,  # default: 10
+            training_batch_size=50,  # default: 50
+            learning_rate=5e-4,  # default: 5e-4
+            validation_fraction=0.1,  # default: 0.1
+            stop_after_epochs=20,  # default: 20
+            discard_prior_samples=False,  # default: False
+            use_combined_loss=True,  # default: False
+            retrain_from_scratch_each_round=False,  # default: False
+            show_train_summary=False,  # default: False
+            max_num_epochs=20,  # default: None
+        ),
+        sbi_sampling_hparam=dict(sample_with_mcmc=False),
+        num_workers=1,
+    )
+    algo = NPDR(
+        ex_dir,
+        env,
+        env_real,
+        policy,
+        dp_mapping,
+        prior,
+        posterior_nn_hparam,
+        SNPE,
+        **algo_hparam,
+    )
+
+    algo.train()

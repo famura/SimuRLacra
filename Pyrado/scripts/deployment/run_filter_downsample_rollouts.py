@@ -27,27 +27,57 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to plot the observations from rollouts as well as their mean and std
+Script to filter and downsample recorded rollouts
 """
+import os
 from matplotlib import pyplot as plt
+from scipy import signal
 
-from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.rollout_based import plot_mean_std_across_rollouts
+import pyrado
+from pyrado.plotting.rollout_based import plot_observations
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_rollouts_from_dir
+from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
-    plt.rc("text", usetex=False)
-
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.dir is None else args.dir
+    parser = get_argparser()
+    parser.add_argument("--factor", type=int, default=2, help="downsampling factor")
+    parser.add_argument("--f_cut", type=float, default=50, help="cutoff frequency of the Butterworth filter in Hz")
+    args = parser.parse_args()
+    if args.dir is None:
+        raise pyrado.ValueErr(msg="Please provide a directory using -d or --dir")
 
     # Load the rollouts
-    rollouts, _ = load_rollouts_from_dir(ex_dir)
+    rollouts, file_names = load_rollouts_from_dir(args.dir)
 
-    # Plot
-    plot_mean_std_across_rollouts(rollouts, idcs_obs=None, idcs_act=None)
-    plt.show()
+    # Create a lowpass Butterworth filter with a cutoff at 50 Hz, and a sampling frequency of the orig system of 500Hz
+    b, a = signal.butter(N=10, Wn=args.f_cut, fs=1 / args.dt)
+
+    for ro, fname in zip(rollouts, file_names):
+        ro.numpy()
+        if args.verbose:
+            plot_observations(ro)
+            plt.gcf().canvas.set_window_title("Before")
+
+        # Filter the signals, but not the time
+        ro_proc = StepSequence.process_data(
+            ro, signal.filtfilt, fcn_arg_name="x", exclude_fields=["time"], b=b, a=a, padlen=150, axis=0
+        )
+
+        # Downsample all data fields
+        ro_proc = StepSequence.process_data(ro_proc, lambda x: x[:: args.factor], fcn_arg_name="x")
+
+        if args.verbose:
+            plot_observations(ro_proc)
+            plt.gcf().canvas.set_window_title("After")
+            plt.show()
+
+        # Save in a new folder on the same level as the current folder
+        curr_dir = args.dir[args.dir.rfind("/") + 1 :]
+        save_dir = os.path.join(args.dir, "..", curr_dir + f"_filt_dwnsmp_{args.factor}")
+        os.makedirs(save_dir, exist_ok=True)
+        pyrado.save(ro_proc, fname, "pkl", save_dir)
+        print_cbt(f"Saved {fname}.pkl to {save_dir}", "g")

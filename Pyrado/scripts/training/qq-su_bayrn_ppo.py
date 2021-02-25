@@ -37,7 +37,10 @@ import pyrado
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace, BoxSpace
 from pyrado.algorithms.step_based.ppo import PPO
-from pyrado.domain_randomization.default_randomizers import create_zero_var_randomizer, get_default_domain_param_map_qq
+from pyrado.domain_randomization.default_randomizers import (
+    create_zero_var_randomizer,
+    create_default_domain_param_map_qq,
+)
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.quanser.quanser_qube import QQubeReal
@@ -67,7 +70,7 @@ if __name__ == "__main__":
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
     env_sim = ActNormWrapper(env_sim)
     env_sim = DomainRandWrapperLive(env_sim, create_zero_var_randomizer(env_sim))
-    dp_map = get_default_domain_param_map_qq()
+    dp_map = create_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     env_real_hparams = dict(dt=1 / 500.0, max_steps=3000)

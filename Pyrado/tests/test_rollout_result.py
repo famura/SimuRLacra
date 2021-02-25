@@ -34,6 +34,7 @@ import numpy as np
 import torch as to
 import itertools
 import pickle
+from scipy import signal
 from typing import NamedTuple
 
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
@@ -456,3 +457,28 @@ def test_truncate_rollouts(env, num_real_ros, num_sim_ros, max_real_steps, max_s
     for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr):
         # All individual truncated rollouts have the correct length
         assert ro_r.length == ro_s.length
+
+
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
+def test_process(data_format):
+    # Create the rollout
+    ro = StepSequence(rewards=rewards, observations=observations, states=states, actions=actions, hidden=hidden)
+
+    if data_format == "numpy":
+        # Create the filter (arbitrary values)
+        b, a = signal.butter(N=5, Wn=10, fs=100)
+
+        # Filter the signals, but not the time
+        ro_proc = StepSequence.process_data(
+            ro, signal.filtfilt, fcn_arg_name="x", exclude_fields=["time"], b=b, a=a, padlen=2, axis=0
+        )
+
+    else:
+        # Tranform to PyTorch data and define a simple function
+        ro.torch()
+        ro_proc = StepSequence.process_data(
+            ro, lambda x: x * 2, fcn_arg_name="x", include_fields=["time"], fcn_arg_types=to.Tensor
+        )
+
+    assert isinstance(ro_proc, StepSequence)
+    assert ro_proc.length == ro.length

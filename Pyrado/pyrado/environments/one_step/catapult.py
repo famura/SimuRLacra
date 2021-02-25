@@ -164,9 +164,9 @@ class CatapultSim(SimEnv, Serializable):
                 self.state = init_state.copy()
             else:
                 try:
-                    self.state = np.array(init_state)
+                    self.state = np.asarray(init_state)
                 except Exception:
-                    raise pyrado.TypeErr(given=init_state, expected_type=[np.ndarray, list])
+                    raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
 
         # Reset the task
         self._task.reset(env_spec=self.spec)

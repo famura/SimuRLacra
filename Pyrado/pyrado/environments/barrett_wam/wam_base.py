@@ -38,6 +38,8 @@ from pyrado.environments.barrett_wam import (
     init_qpos_des_7dof,
     wam_pgains_7dof,
     wam_dgains_7dof,
+    wam_pgains_4dof,
+    wam_dgains_4dof,
 )
 from pyrado.environments.real_base import RealEnv
 from pyrado.spaces.base import Space
@@ -105,12 +107,6 @@ class WAMReal(RealEnv, ABC):
         else:
             raise pyrado.ValueErr(given=self._num_dof, eq_constraint="4 or 7")
 
-        # Initialize spaces
-        self._state_space = None
-        self._obs_space = None
-        self._act_space = None
-        self._create_spaces()
-
         # Initialize task
         self._task = self._create_task(task_args=dict())
 
@@ -126,31 +122,26 @@ class WAMReal(RealEnv, ABC):
         return self._num_dof
 
     @property
+    @abstractmethod
     def state_space(self) -> Space:
-        return self._state_space
+        """ Get the state space. """
+        raise NotImplementedError
 
     @property
+    @abstractmethod
     def obs_space(self) -> Space:
-        return self._obs_space
+        """ Get the observation space. """
+        raise NotImplementedError
 
     @property
+    @abstractmethod
     def act_space(self) -> Space:
-        return self._act_space
+        """ Get the action space. """
+        raise NotImplementedError
 
     @property
     def task(self) -> Task:
         return self._task
-
-    @abstractmethod
-    def _create_spaces(self):
-        """
-        Create spaces based on the domain parameters.
-        Should set the attributes `_state_space`, `_act_space`, and `_obs_space`.
-
-        .. note::
-            This function is called from the constructor.
-        """
-        raise NotImplementedError
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         if not self._connected:
@@ -161,8 +152,12 @@ class WAMReal(RealEnv, ABC):
         self._client.set(robcom.Streaming, 500.0)  # Hz
         dc = self._client.create(robcom.DirectControl, self._robot_group_name, "")
         dc.start()
-        dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_7dof[: self._num_dof].tolist())
-        dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_7dof[: self._num_dof].tolist())
+        if self.num_dof == 7:
+            dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_7dof.tolist())
+            dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_7dof.tolist())
+        else:
+            dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_4dof.tolist())
+            dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_4dof.tolist())
         dc.send_updates()
         dc.stop()
 

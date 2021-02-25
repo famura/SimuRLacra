@@ -48,6 +48,7 @@ from pyrado.environments.barrett_wam.natnet_client import NatNetClient
 from pyrado.environments.barrett_wam.trackers import RigidBodyTracker
 from pyrado.environments.barrett_wam.wam_base import WAMReal
 from pyrado.spaces import BoxSpace
+from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.goalless import GoallessTask
@@ -89,15 +90,20 @@ class WAMBallInCupRealEpisodic(WAMReal):
 
         self._curr_step_rr = None
 
-    def _create_spaces(self):
-        # State space (normalized time, since we do not have a simulation)
-        self._state_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
+    @property
+    def state_space(self) -> Space:
+        # Normalized time
+        return BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
 
-        # Action space (running a PD controller on joint positions and velocities)
-        self._act_space = act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
-
+    @property
+    def obs_space(self) -> Space:
         # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
+        return self.state_space
+
+    @property
+    def act_space(self) -> Space:
+        # Running a PD controller on joint positions and velocities
+        return act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
 
     def _create_task(self, task_args: dict) -> Task:
         # The wrapped task acts as a dummy and carries the FinalRewTask
@@ -248,7 +254,8 @@ class WAMBallInCupRealStepBased(WAMReal):
         )
         self.natnet_client.rigidBodyListener = self.rigid_body_tracker
 
-    def _create_spaces(self):
+    @property
+    def state_space(self) -> Space:
         # State space (joint positions and velocities)
         state_lo = np.concatenate([wam_q_limits_lo_7dof[: self._num_dof], wam_qd_limits_lo_7dof[: self._num_dof]])
         state_up = np.concatenate([wam_q_limits_up_7dof[: self._num_dof], wam_qd_limits_up_7dof[: self._num_dof]])
@@ -261,13 +268,13 @@ class WAMBallInCupRealStepBased(WAMReal):
             state_lo = np.r_[state_lo, np.full((3,), -3.0)]
             state_up = np.r_[state_up, np.full((3,), 3.0)]
 
-        self._state_space = BoxSpace(state_lo, state_up)
+        return BoxSpace(state_lo, state_up)
 
-        # Action space (running a PD controller on joint positions and velocities)
-        self._act_space = act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
-
+    @property
+    def obs_space(self) -> Space:
         # Observation space (normalized time and optionally cup and ball position)
         obs_lo, obs_up, labels = [0.0], [1.0], ["t"]
+
         if self.observe_ball:
             obs_lo.extend([-3.0, -3.0])
             obs_up.extend([3.0, 3.0])
@@ -276,7 +283,13 @@ class WAMBallInCupRealStepBased(WAMReal):
             obs_lo.extend([-3.0, -3.0])
             obs_up.extend([3.0, 3.0])
             labels.extend(["cup_x", "cup_z"])
-        self._obs_space = BoxSpace(obs_lo, obs_up, labels=labels)
+
+        return BoxSpace(obs_lo, obs_up, labels=labels)
+
+    @property
+    def act_space(self) -> Space:
+        # Running a PD controller on joint positions and velocities
+        return act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
 
     def _create_task(self, task_args: dict) -> Task:
         # The wrapped task acts as a dummy and carries the FinalRewTask
