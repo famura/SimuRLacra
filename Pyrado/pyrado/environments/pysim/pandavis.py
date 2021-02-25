@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import pathlib
+import pyautogui
 import sys
 
 from direct.showbase.ShowBase import ShowBase
@@ -78,6 +79,8 @@ class PandaVis(ShowBase):
         self.trace.setColor(0, 0, 0)
         self.lines = self.render.attachNewNode("Lines")
         self.last_pos = None
+        
+        pyautogui.press('f5')
 
     def update(self, task):
         """
