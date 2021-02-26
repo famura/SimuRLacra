@@ -57,7 +57,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 100.0, max_steps=600)
+    env_hparams = dict(dt=1 / 150.0, max_steps=600)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=120,
+        max_iter=150,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
@@ -108,13 +108,6 @@ if __name__ == "__main__":
                 target_cov_chol_flat=to.tensor([1.0]),
                 context_mean=to.tensor([8.4]),
                 context_cov_chol_flat=to.tensor([0.1]),
-            ),
-            SelfPacedLearnerParameter(
-                name="Mr",
-                target_mean=to.tensor([0.095]),
-                target_cov_chol_flat=to.tensor([0.03]),
-                context_mean=to.tensor([0.095]),
-                context_cov_chol_flat=to.tensor([0.009]),
             ),
             SelfPacedLearnerParameter(
                 name="Mp",
