@@ -338,9 +338,6 @@ class OneMassOscillatorVis(PandaVis):
         # And force
         self.force.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
 
-        # Draw trace
-        self.draw_trace(pos_mass)
-
         # Update scale of force
         capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
         self.force.setSx(capped_act / 10.0 * self._scale)
@@ -439,9 +436,6 @@ class PendulumVis(PandaVis):
         current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
                        pole_pos[1],
                        pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
-
-        # Draw line to that point
-        self.draw_trace(current_pos)
 
         # Update displayed text
         self.text.setText(
