@@ -13,7 +13,7 @@ from pyrado.environments.sim_base import SimEnv
 
 # Configuration for panda3d-window
 confVars = """
-win-size 800 600
+win-size 1280 720
 framebuffer-multisample 1
 multisamples 2
 show-frame-rate-meter 1
@@ -35,7 +35,6 @@ class PandaVis(ShowBase):
         
         if(self._render):
             sys.path.insert(0, os.path.join(os.path.relpath(__file__ + "/../../../../.."), 'thirdParty', 'render_pipeline'))
-
             from rpcore import RenderPipeline, SpotLight
             self.render_pipeline = RenderPipeline()
             self.render_pipeline.pre_showbase_init()
@@ -72,6 +71,7 @@ class PandaVis(ShowBase):
         self.textNodePath = aspect2d.attachNewNode(self.text)
         self.text.setTextColor(0, 0, 0, 1)
         self.textNodePath.setScale(0.07)
+        self.textNodePath.setPos(-1.9, 0, 0.9)
 
         # Configure trace
         self.trace = LineSegs()
@@ -146,10 +146,6 @@ class BallOnBeamVis(PandaVis):
 
         # Set pov
         self.cam.setY(-3.0 * self._scale)
-
-        # Set text properties
-        self.textNodePath.setScale(0.07)
-        self.textNodePath.setPos(0.3, 0, -0.3)
 
         # Ball
         self.ball = self.loader.loadModel(
@@ -246,9 +242,6 @@ class OneMassOscillatorVis(PandaVis):
 
         # Set pov
         self.cam.setY(-5 * self._scale)
-
-        # Set text properties
-        self.textNodePath.setPos(-1.4, 0, 0.9)
 
         # Ground
         self.ground = self.loader.loadModel(
@@ -398,10 +391,6 @@ class PendulumVis(PandaVis):
         # Set pov
         self.cam.setY(-20 * self._scale)
 
-        # Set text properties
-        self.textNodePath.setScale(0.06)
-        self.textNodePath.setPos(0.45, 0, -0.3)
-
         # Joint
         self.joint = self.loader.loadModel(
             pathlib.Path(self.dir, "models/ball.egg")
@@ -503,10 +492,6 @@ class QBallBalancerVis(PandaVis):
 
         # Set pov
         self.cam.setY(-1.3 * self._scale)
-
-        # Set text properties
-        self.textNodePath.setScale(0.05)
-        self.textNodePath.setPos(-1.4, 0, 0.9)
 
         # Ball
         self.ball = self.loader.loadModel(
@@ -839,9 +824,6 @@ class QQubeVis(PandaVis):
             0.4 * self._scale,
         )
         self.cam.setHpr(-20, -10, 0)
-
-        # Set text properties
-        self.textNodePath.setPos(0.4, 0, -0.1)
 
         # Box
         self.box = self.loader.loadModel(
