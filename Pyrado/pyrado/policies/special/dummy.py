@@ -27,6 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
+from pyrado.spaces import BoxSpace
+from pyrado.spaces.discrete import DiscreteSpace
+from torch.distributions import Categorical
 from torch.distributions.uniform import Uniform
 
 from pyrado.policies.base import Policy
@@ -71,16 +74,12 @@ class DummyPolicy(Policy):
         """
         super().__init__(spec, use_cuda)
 
-        low = to.from_numpy(spec.act_space.bound_lo)
-        high = to.from_numpy(spec.act_space.bound_up)
-        self._distr = Uniform(low, high)
-
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         pass
 
     def forward(self, obs: to.Tensor = None) -> to.Tensor:
         # Observations are ignored
-        return self._distr.sample()
+        return to.tensor(self.env_spec.act_space.sample_uniform())
 
 
 class RecurrentDummyPolicy(RecurrentPolicy):
