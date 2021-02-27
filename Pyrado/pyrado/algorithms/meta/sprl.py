@@ -104,7 +104,7 @@ class SPRL(Algorithm):
     def __init__(
         self,
         env: DomainRandWrapper,
-        subroutine: ActorCritic,
+        subroutine: Algorithm,
         kl_constraints_ub,
         max_iter: int,
         performance_lower_bound: float,
@@ -118,12 +118,11 @@ class SPRL(Algorithm):
         :param subroutine: Algorithm which performs the policy/value-function optimization.
         :param kl_constraints_ub: Upper bound for the KL-divergence
         """
+
         if not isinstance(subroutine, Algorithm):
             raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
         if not typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
-        if not isinstance(subroutine, ActorCritic):
-            raise pyrado.TypeErr(given=subroutine, expected_type=ActorCritic)
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
