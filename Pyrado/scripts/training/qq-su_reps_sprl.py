@@ -29,6 +29,8 @@
 """
 Train an agent to solve the Quanser Qube swing-up task using Relative Entropy Search.
 """
+from multiprocessing import cpu_count
+
 import pyrado
 import torch as to
 from pyrado.algorithms.episodic.reps import REPS
@@ -108,15 +110,11 @@ if __name__ == "__main__":
         expl_std_min=0.02,
         use_map=True,
         optim_mode="scipy",
-        num_workers=1,
+        num_workers=cpu_count(),
     )
     algo = REPS(ex_dir, env, policy, **algo_hparam)
     sprl_hparam = dict(
-        kl_constraints_ub=8000,
-        performance_lower_bound=500,
-        std_lower_bound=0.4,
-        kl_threshold=200,
-        max_iter=50,
+        kl_constraints_ub=8000, performance_lower_bound=500, std_lower_bound=0.4, kl_threshold=200, max_iter=50,
     )
     algo = SPRL(env, algo, **sprl_hparam)
 
