@@ -48,8 +48,6 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
     dt = args.dt if args.dt is not None else 0.01
-    
-    render = args.render
 
     if args.env_name == QCartPoleSwingUpSim.name:
         env = QCartPoleSwingUpSim(dt=dt, max_steps=int(10 / dt), wild_init=False)
@@ -85,7 +83,7 @@ if __name__ == "__main__":
         ro = rollout(
             env,
             policy,
-            render_mode=RenderMode(text=True, video=True, render=render),
+            render_mode=RenderMode(text=True, video=True, render=args.render),
             eval=True,
             reset_kwargs=dict(domain_param=param, init_state=state),
         )
