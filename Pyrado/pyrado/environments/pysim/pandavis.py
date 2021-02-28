@@ -30,15 +30,16 @@ class PandaVis(ShowBase):
         """
         ShowBase.__init__(self)
         self.dir = pathlib.Path(__file__).resolve().parent.absolute()
-        
         self._render = render
         
-        if(self._render):
+        if self._render:
             sys.path.insert(0, os.path.join(os.path.relpath(__file__ + "/../../../../.."), 'thirdParty', 'render_pipeline'))
             from rpcore import RenderPipeline, SpotLight
             self.render_pipeline = RenderPipeline()
             self.render_pipeline.pre_showbase_init()
             self.render_pipeline.create(self)
+            # TODO
+            # self.render_pipeline.set_effect(render, os.path.join(sys.path[0],"effects","skybox.yaml"), {}, sort=250)
 
         # Set title and background color
         self.render.setAntialias(AntialiasAttrib.MAuto)
@@ -478,7 +479,7 @@ class QBallBalancerVis(PandaVis):
         l_pole = 0.02
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / l_plate
+        self._scale = 1 / d_plate
 
         # Set window title
         self.windowProperties.setTitle("Quanser Ball Balancer")
@@ -541,9 +542,8 @@ class QBallBalancerVis(PandaVis):
         # Null_plate
         self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
         self.null_plate.setPos(0, 0, - 2.5 * l_pole * self._scale)
-        self.null_plate.setScale(l_plate * 1.1 * 0.5 * self._scale, l_plate * 1.1 * 0.5 * self._scale, d_plate / 20.0 * self._scale)
-        self.null_plate.setTransparency(1)
-        self.null_plate.setColorScale(0, 0, 0, 0.5)
+        self.null_plate.setScale(l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale, d_plate / 20.0 * self._scale)
+        self.null_plate.setColor(0, 0, 0)
         self.null_plate.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
