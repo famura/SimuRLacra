@@ -43,7 +43,7 @@ from pyrado.utils.input_output import print_cbt
 class SimPyEnv(SimEnv, Serializable):
     """ Base class for simulated environments implemented in pure Python """
 
-    def __init__(self,render:bool, dt: float, max_steps: Optional[int] = pyrado.inf, task_args: Optional[dict] = None):
+    def __init__(self, dt: float, max_steps: Optional[int] = pyrado.inf, task_args: Optional[dict] = None):
         """
         Constructor
 
@@ -53,7 +53,7 @@ class SimPyEnv(SimEnv, Serializable):
         """
         Serializable._init(self, locals())
         super().__init__(dt, max_steps)
-        self._render = render
+        self._render = False
 
         # Initialize the domain parameters and the derived constants
         self._domain_param = self.get_nominal_domain_param()
@@ -246,8 +246,9 @@ class SimPyEnv(SimEnv, Serializable):
                 print(
                     f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
-
-            # VPython
+                
+            self._render = mode.render
+            # Panda3D
             if mode.video:
                 if not hasattr(self, "_visualization"):
                     self._init_anim()

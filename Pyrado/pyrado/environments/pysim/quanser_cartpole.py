@@ -49,7 +49,6 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
     def __init__(
         self,
-        render: bool,
         dt: float,
         max_steps: int,
         task_args: Optional[dict],
@@ -79,7 +78,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self._x_buffer = 0.05  # [m]
 
         # Call SimPyEnv's constructor
-        super().__init__(render, dt, max_steps, task_args)
+        super().__init__(dt, max_steps, task_args)
 
         # Update the class-specific domain parameters
         self.domain_param = self.get_nominal_domain_param(long=long)
@@ -218,7 +217,6 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
 
     def __init__(
         self,
-        render: bool,
         dt: float,
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
@@ -240,7 +238,7 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
         self.stab_thold = 15 / 180.0 * np.pi  # threshold angle for the stabilization task to be a failure [rad]
         self.max_init_th_offset = 8 / 180.0 * np.pi  # [rad]
 
-        super().__init__(render, dt, max_steps, task_args, long, simple_dynamics, wild_init=False)
+        super().__init__(dt, max_steps, task_args, long, simple_dynamics, wild_init=False)
 
     def _create_spaces(self):
         super()._create_spaces()
@@ -285,7 +283,6 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
 
     def __init__(
         self,
-        render: bool,
         dt: float,
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
@@ -307,7 +304,7 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         """
         Serializable._init(self, locals())
 
-        super().__init__(render, dt, max_steps, task_args, long, simple_dynamics, wild_init)
+        super().__init__(dt, max_steps, task_args, long, simple_dynamics, wild_init)
 
     def _create_spaces(self):
         super()._create_spaces()

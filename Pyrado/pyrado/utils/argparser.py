@@ -53,12 +53,6 @@ def get_argparser() -> argparse.ArgumentParser:
         help="environments time step size in seconds (no default)",
     )
     parser.add_argument(
-        "--render",
-        type=bool,
-        help="additional rendering option",
-        default=False,
-    )
-    parser.add_argument(
         "-d",
         "--dir",
         type=str,
@@ -166,6 +160,18 @@ def get_argparser() -> argparse.ArgumentParser:
         default=False,
         help="don't stop (e.g. continue simulating after done flag was raised)",
     )
+    parser.add_argument(
+        "--render",
+        dest="render",
+        action="store_true",
+        help="show a rendered animation (default: True)",
+    )
+    parser.add_argument(
+        "--no_render",
+        dest="render",
+        action="store_false",
+    )
+    parser.set_defaults(render=False)
     parser.add_argument(
         "--no_dr",
         action="store_true",
