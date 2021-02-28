@@ -130,14 +130,7 @@ def _pes_sample_one(G, param):
     pol_param, dom_param, init_state = param
     vector_to_parameters(pol_param, G.policy.parameters())
 
-    return rollout(
-        G.env,
-        G.policy,
-        reset_kwargs={
-            "init_state": init_state,
-            "domain_param": dom_param,
-        },
-    )
+    return rollout(G.env, G.policy, reset_kwargs={"init_state": init_state, "domain_param": dom_param,},)
 
 
 class ParameterExplorationSampler(Serializable):
@@ -189,6 +182,7 @@ class ParameterExplorationSampler(Serializable):
             mp.set_start_method("spawn", force=True)
 
         # Create parallel pool. We use one thread per environment because it's easier.
+        print(f"Parameter exploration sampler is using {num_workers} workers.")
         self.pool = SamplerPool(num_workers)
 
         # Set all rngs' seeds
