@@ -50,8 +50,7 @@ from pyrado.domain_randomization.default_randomizers import (
     create_default_randomizer,
     create_zero_var_randomizer,
     create_default_domain_param_map_qq,
-    get_default_domain_param_map_qq,
-    get_uniform_masses_lengths_randomizer_qq,
+    create_default_domain_param_map_qq,
     create_default_randomizer_qbb,
 )
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
