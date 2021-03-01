@@ -40,9 +40,9 @@ class BoxSpace(Space):
 
     def __init__(
         self,
-        bound_lo: [float, list, np.ndarray],
-        bound_up: [float, list, np.ndarray],
-        shape: [tuple, int] = None,
+        bound_lo: Union[float, list, np.ndarray],
+        bound_up: Union[float, list, np.ndarray],
+        shape: Union[tuple, int] = None,
         labels: Sequence[str] = None,
     ):
         """
