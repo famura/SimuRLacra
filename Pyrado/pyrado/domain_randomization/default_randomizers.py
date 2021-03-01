@@ -307,7 +307,7 @@ def create_default_randomizer_qq() -> DomainRandomizer:
     )
 
 
-def get_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
+def create_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
     """
     Get a uniform randomizer that applies to all masses and lengths of the Quanser Qube according to a fraction of their
     nominal parameter values
