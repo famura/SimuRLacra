@@ -1,11 +1,15 @@
 codecov:
   token: 7fe199ac-ee2b-4a80-b21f-17a9c37af37d
 ignore:
+  - "Pyrado/data"
   - "Pyrado/doc"
   - "Pyrado/pyrado/environments/barrett_wam"
   - "Pyrado/pyrado/environments/mujoco"
+  - "Pyrado/pyrado/environments/quanser"
   - "Pyrado/scripts"
-  - "Pyrado/tests"
+  - "RcsPySim/doc"
+  - "RcsPySim/config"
+  - "thirdParty"
 comment:
   layout: "reach, diff, flags, files"
   behavior: default
