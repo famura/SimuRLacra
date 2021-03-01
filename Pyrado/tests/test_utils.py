@@ -48,6 +48,7 @@ from pyrado.utils.optimizers import GSS
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
 from pyrado.utils.data_processing import RunningStandardizer, Standardizer, scale_min_max, MinMaxScaler
 from pyrado.utils.data_processing import RunningNormalizer, normalize
+from pyrado.logger.iteration import IterationTracker
 
 
 @pytest.mark.parametrize(
@@ -213,27 +214,6 @@ def test_scale_min_max(dtype, lb, ub):
             bound_up = bound_up.numpy()
         assert np.all(bound_lo * np.ones_like(x_scaled) <= x_scaled)
         assert np.all(x_scaled <= bound_up * np.ones_like(x_scaled))
-
-
-@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
-@pytest.mark.parametrize(
-    "lb, ub",
-    [(0, 1), (-1, 1), (-2.5, 0), (-np.ones((3, 2)), np.ones((3, 2)))],
-    ids=["lb0_ub1", "lb-1_ub1", "lb-2.5_ub0", "np_ones"],
-)
-def test_minmaxscaler(dtype, lb, ub):
-    for _ in range(10):
-        scaler = MinMaxScaler(lb, ub)
-        x = 1e2 * to.rand(3, 2) if dtype == "torch" else np.random.rand(3, 2)
-        x_scaled = scaler.scale_to(x)
-        x_scaled_back = scaler.scale_back(x_scaled)
-
-        if isinstance(x_scaled, to.Tensor):
-            x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
-            x_scaled_back = x_scaled_back.numpy()  # for easier checking with pytest.approx
-        assert np.all(scaler._bound_lo * np.ones_like(x_scaled) <= x_scaled)
-        assert np.all(x_scaled <= scaler._bound_up * np.ones_like(x_scaled))
-        assert np.allclose(x, x_scaled_back)
 
 
 @pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
@@ -726,3 +706,23 @@ def test_check_all_lengths_equal(x, b):
 )
 def test_check_all_shapes_equal(x, b):
     assert check_all_shapes_equal(x) == b
+
+
+def test_iteration_tracker():
+    tracker: IterationTracker = IterationTracker()
+    assert isinstance(tracker, IterationTracker)
+    with pytest.raises(IndexError):
+        tracker.pop()
+    tracker.push("meta", 1)
+    tracker.push("sub", 42)
+    assert str(tracker) == "meta_1-sub_42"
+    assert tracker.peek() == ("sub", 42)
+    assert list(tracker) == [("meta", 1), ("sub", 42)]
+    assert tracker.pop() == ("sub", 42)
+    assert tracker.pop() == ("meta", 1)
+    assert tracker.get("magic") == None
+    with tracker.iteration("meta", 1):
+        assert tracker.peek() == ("meta", 1)
+        with tracker.iteration("sub", 42):
+            assert tracker.get("sub") == 42
+            assert tracker.format() == "meta_1-sub_42"
