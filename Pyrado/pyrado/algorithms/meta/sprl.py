@@ -57,6 +57,10 @@ class MultivariateNormalWrapper:
         return MultivariateNormalWrapper(to.tensor(mean).double(), to.tensor(cov_chol_flat).double())
 
     @property
+    def dim(self):
+        return self._mean.shape[0]
+
+    @property
     def mean(self):
         return self._mean
 
@@ -92,6 +96,66 @@ class MultivariateNormalWrapper:
         self.distribution = MultivariateNormal(self.mean, self.cov)
 
 
+class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
+    def __init__(self, mean: to.Tensor, cov_chol_flat: to.Tensor, mean_is_parameter: bool, cov_is_parameter: bool):
+        super().__init__(mean, cov_chol_flat)
+
+        self._mean_is_parameter = mean_is_parameter
+        self._cov_is_parameter = cov_is_parameter
+
+    def from_stacked(self, stacked: np.ndarray) -> "ParameterAgnosticMultivariateNormalWrapper":
+        assert len(stacked.shape) == 1, "Stacked has invalid shape! Must be 1-dimensional."
+        expected_dim_multiplier = 0
+        if self._mean_is_parameter:
+            expected_dim_multiplier += 1
+        if self._cov_is_parameter:
+            expected_dim_multiplier += 1
+        assert (
+            stacked.shape[0] == expected_dim_multiplier * self.dim
+        ), f"Stacked has invalid size! Must be {expected_dim_multiplier}*dim."
+
+        if self._mean_is_parameter and self._cov_is_parameter:
+            mean = stacked[: self.dim]
+            cov_chol_flat = stacked[self.dim :]
+        elif self._mean_is_parameter and not self._cov_is_parameter:
+            mean = stacked[: self.dim]
+            cov_chol_flat = self.cov_chol_flat
+        elif not self._mean_is_parameter and self._cov_is_parameter:
+            mean = self.cov_chol_flat
+            cov_chol_flat = stacked
+        else:
+            mean = self.cov_chol_flat
+            cov_chol_flat = self.cov_chol_flat
+
+        if type(mean) == np.ndarray:
+            mean = to.tensor(mean).double()
+        else:
+            mean = mean.clone()
+
+        if type(cov_chol_flat) == np.ndarray:
+            cov_chol_flat = to.tensor(cov_chol_flat).double()
+        else:
+            cov_chol_flat = cov_chol_flat.clone()
+
+        return ParameterAgnosticMultivariateNormalWrapper(
+            mean=mean,
+            cov_chol_flat=cov_chol_flat,
+            mean_is_parameter=self._mean_is_parameter,
+            cov_is_parameter=self._cov_is_parameter,
+        )
+
+    def parameters(self) -> List[to.Tensor]:
+        params = []
+        if self._mean_is_parameter:
+            params.append(self.mean)
+        if self._cov_is_parameter:
+            params.append(self.cov_chol_flat)
+        return params
+
+    def get_stacked(self) -> np.ndarray:
+        return np.concatenate([p.detach().numpy() for p in self.parameters()])
+
+
 class SPRL(Algorithm):
     """
     Self-Paced Reinforcement Leaner (SPRL)
@@ -110,6 +174,8 @@ class SPRL(Algorithm):
         performance_lower_bound: float,
         std_lower_bound: float = 0.2,
         kl_threshold: float = 0.1,
+        optimize_mean: bool = True,
+        optimize_cov: bool = True,
     ):
         """
         Constructor
@@ -136,6 +202,8 @@ class SPRL(Algorithm):
         self._std_lower_bound = std_lower_bound
         self._kl_threshold = kl_threshold
         self._performance_lower_bound = performance_lower_bound
+        self._optimize_mean = optimize_mean
+        self._optimize_cov = optimize_cov
 
         self._performance_lower_bound_reached = False
 
@@ -176,8 +244,12 @@ class SPRL(Algorithm):
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
 
         # Update distribution
-        previous_distribution = MultivariateNormalWrapper(context_mean, context_cov_chol)
-        target_distribution = MultivariateNormalWrapper(target_mean, target_cov_chol)
+        previous_distribution = ParameterAgnosticMultivariateNormalWrapper(
+            context_mean, context_cov_chol, self._optimize_mean, self._optimize_cov
+        )
+        target_distribution = ParameterAgnosticMultivariateNormalWrapper(
+            target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
+        )
         rollouts = self._subroutine.rollouts
         contexts = to.tensor(
             np.array(
@@ -201,45 +273,45 @@ class SPRL(Algorithm):
         values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
 
         def kl_constraint_fn(x):
-            distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+            distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
             )
             return kl_divergence.detach().numpy()
 
         def kl_constraint_fn_prime(x):
-            distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+            distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
             )
-            mean_grad, cov_chol_grad = to.autograd.grad(kl_divergence, distribution.parameters())
-            return np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
+            grads = to.autograd.grad(kl_divergence, distribution.parameters())
+            return np.concatenate([g.detach().numpy() for g in grads])
 
         kl_constraint = NonlinearConstraint(
             fun=kl_constraint_fn,
             lb=-np.inf,
             ub=self._kl_constraints_ub,
             jac=kl_constraint_fn_prime,
-            keep_feasible=True,
+            # keep_feasible=True,
         )
 
         def performance_constraint_fn(x):
-            distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+            distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             return performance.detach().numpy()
 
         def performance_constraint_fn_prime(x):
-            distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+            distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
-            mean_grad, cov_chol_grad = to.autograd.grad(performance, distribution.parameters())
-            return np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
+            grads = to.autograd.grad(performance, distribution.parameters())
+            return np.concatenate([g.detach().numpy() for g in grads])
 
         performance_contraint = NonlinearConstraint(
             fun=performance_constraint_fn,
             lb=self._performance_lower_bound,
             ub=np.inf,
             jac=performance_constraint_fn_prime,
-            keep_feasible=True,
+            # keep_feasible=True,
         )
 
         # optionally clip the bounds of the new variance
@@ -247,7 +319,8 @@ class SPRL(Algorithm):
             lower_bound = np.ones_like(previous_distribution.get_stacked()) * -np.inf
             lower_bound[dim] = self._std_lower_bound
             upper_bound = np.ones_like(previous_distribution.get_stacked()) * np.inf
-            bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
+            # bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
+            bounds = Bounds(lb=lower_bound, ub=upper_bound)
             x0 = np.clip(previous_distribution.get_stacked(), lower_bound, upper_bound)
         else:
             bounds = None
@@ -264,15 +337,15 @@ class SPRL(Algorithm):
 
             # We now optimize based on the kl-divergence between target and context distribution by minimizing it
             def objective(x):
-                distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+                distribution = previous_distribution.from_stacked(x)
                 kl_divergence = to.distributions.kl_divergence(
                     distribution.distribution, target_distribution.distribution
                 )
-                mean_grad, cov_chol_grad = to.autograd.grad(kl_divergence, distribution.parameters())
+                grads = to.autograd.grad(kl_divergence, distribution.parameters())
 
                 return (
                     kl_divergence.detach().numpy(),
-                    np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()]),
+                    np.concatenate([g.detach().numpy() for g in grads]),
                 )
 
             objective_fn = objective
@@ -283,13 +356,13 @@ class SPRL(Algorithm):
 
             # now we optimize on the expected performance, meaning maximizing it
             def objective(x):
-                distribution = MultivariateNormalWrapper.from_stacked(dim, x)
+                distribution = previous_distribution.from_stacked(x)
                 performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
-                mean_grad, cov_chol_grad = to.autograd.grad(performance, distribution.parameters())
+                grads = to.autograd.grad(performance, distribution.parameters())
 
                 return (
                     -performance.detach().numpy(),
-                    -np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()]),
+                    -np.concatenate([g.detach().numpy() for g in grads]),
                 )
 
             objective_fn = objective
@@ -305,12 +378,14 @@ class SPRL(Algorithm):
                 bounds=bounds,
             )
         if result and result.success:
-            mean_pointer = 0
+            pointer = 0
             for param in self._spl_parameters:
-                param.adapt("context_mean", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
-                mean_pointer += param.dim
-                param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
-                mean_pointer += param.dim
+                if self._optimize_mean:
+                    param.adapt("context_mean", to.tensor(result.x[pointer : pointer + param.dim]))
+                    pointer += param.dim
+                if self._optimize_cov:
+                    param.adapt("context_cov_chol_flat", to.tensor(result.x[pointer : pointer + param.dim]))
+                    pointer += param.dim
         # we have a result but the optimization process was not a success
         elif result:
             old_f = objective_fn(previous_distribution.get_stacked())[0]
@@ -319,14 +394,16 @@ class SPRL(Algorithm):
             std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
 
             if constraints_satisfied and std_ok and result.fun < old_f:
-                mean_pointer = 0
+                pointer = 0
                 for param in self._spl_parameters:
-                    param.adapt("context_mean", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
-                    mean_pointer += param.dim
-                    param.adapt("context_cov_chol_flat", to.tensor(result.x[mean_pointer : mean_pointer + param.dim]))
-                    mean_pointer += param.dim
+                    if self._optimize_mean:
+                        param.adapt("context_mean", to.tensor(result.x[pointer : pointer + param.dim]))
+                        pointer += param.dim
+                    if self._optimize_cov:
+                        param.adapt("context_cov_chol_flat", to.tensor(result.x[pointer : pointer + param.dim]))
+                        pointer += param.dim
             else:
-                print(f"Update unsuccessfull, keeping old values spl parameters")
+                print(f"Update unsuccessful, keeping old values spl parameters")
 
         # Reset environment.
         self._subroutine.reset()

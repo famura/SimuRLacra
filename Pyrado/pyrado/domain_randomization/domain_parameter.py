@@ -331,10 +331,10 @@ class SelfPacedLearnerParameter(DomainParam):
 
         super().__init__(name=name)
 
-        self.target_mean = target_mean
-        self.target_cov_chol_flat = target_cov_chol_flat
-        self.context_mean = context_mean
-        self.context_cov_chol_flat = context_cov_chol_flat
+        self.target_mean = target_mean.double()
+        self.target_cov_chol_flat = target_cov_chol_flat.double()
+        self.context_mean = context_mean.double()
+        self.context_cov_chol_flat = context_cov_chol_flat.double()
 
         self.dim = target_mean.shape[0]
 
