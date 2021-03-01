@@ -27,7 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
+import matplotlib
 import pytest
+from torch.functional import Tensor
 import torch.nn as nn
 from functools import partial
 from math import ceil
@@ -208,33 +210,12 @@ def test_scale_min_max(dtype, lb, ub):
 
         x = 1e2 * to.rand(3, 2) if dtype == "torch" else np.random.rand(3, 2)
         x_scaled = scale_min_max(x, bound_lo, bound_up)
-        if isinstance(x_scaled, to.Tensor):
+        if isinstance(x_scaled, to.Tensor) and isinstance(bound_lo, to.Tensor) and isinstance(bound_up, to.Tensor):
             x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
             bound_lo = bound_lo.numpy()
             bound_up = bound_up.numpy()
         assert np.all(bound_lo * np.ones_like(x_scaled) <= x_scaled)
         assert np.all(x_scaled <= bound_up * np.ones_like(x_scaled))
-
-
-@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
-@pytest.mark.parametrize(
-    "lb, ub",
-    [(0, 1), (-1, 1), (-2.5, 0), (-np.ones((3, 2)), np.ones((3, 2)))],
-    ids=["lb0_ub1", "lb-1_ub1", "lb-2.5_ub0", "np_ones"],
-)
-def test_minmaxscaler(dtype, lb, ub):
-    for _ in range(10):
-        scaler = MinMaxScaler(lb, ub)
-        x = 1e2 * to.rand(3, 2) if dtype == "torch" else np.random.rand(3, 2)
-        x_scaled = scaler.scale_to(x)
-        x_scaled_back = scaler.scale_back(x_scaled)
-
-        if isinstance(x_scaled, to.Tensor):
-            x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
-            x_scaled_back = x_scaled_back.numpy()  # for easier checking with pytest.approx
-        assert np.all(scaler._bound_lo * np.ones_like(x_scaled) <= x_scaled)
-        assert np.all(x_scaled <= scaler._bound_up * np.ones_like(x_scaled))
-        assert np.allclose(x, x_scaled_back)
 
 
 @pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
@@ -574,7 +555,7 @@ def test_print_cbt_once(color, bright):
 def test_logmeanexp(x, dim):
     lme = logmeanexp(x, dim)
     assert lme is not None
-    if isinstance(x, to.Tensor):
+    if isinstance(x, to.Tensor) and isinstance(lme, to.Tensor):
         assert to.allclose(lme, to.log(to.mean(to.exp(x), dim=dim)))
     if isinstance(x, np.ndarray):
         assert np.allclose(lme, np.log(np.mean(np.exp(x), axis=dim)))

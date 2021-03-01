@@ -73,10 +73,10 @@ class BoxSpace(Space):
 
         # Process the labels
         if labels is not None:
-            labels = np.array(labels, dtype=object)
-            if not labels.shape == self.shape:
-                raise pyrado.ShapeErr(given=labels, expected_match=self)
-            self._labels = labels
+            labels_np = np.array(labels, dtype=object)
+            if not labels_np.shape == self.shape:
+                raise pyrado.ShapeErr(given=labels_np, expected_match=self)
+            self._labels = labels_np
         else:
             self._labels = np.empty(self.shape, dtype=object)
             self._labels.fill(None)
@@ -209,7 +209,7 @@ class BoxSpace(Space):
 class InfBoxSpace(BoxSpace):
     r""" Multidimensional box space where all limits are $\pm \inf$. """
 
-    def __init__(self, shape: [tuple, int], labels: Sequence[str] = None):
+    def __init__(self, shape: Union[tuple, int], labels: Sequence[str] = None):
         """
         Constructor
 
