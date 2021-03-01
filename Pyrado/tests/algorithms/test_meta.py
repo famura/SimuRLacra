@@ -26,13 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import numpy as np
 import pytest
 import torch.nn as nn
 from copy import deepcopy
 from sbi import utils
 from sbi.inference import SNPE
-
-from numpy import pi
 
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
@@ -85,49 +84,6 @@ def ex_dir(tmpdir):
     # Fixture providing an experiment directory
     set_log_prefix_dir(tmpdir)
     return tmpdir
-
-
-# TODO @Robin
-# @pytest.mark.parametrize(
-#     'env', [
-#         'default_qqsu'
-#     ],
-#     ids=['qq-su'],
-#     indirect=True
-# )
-# @pytest.mark.parametrize(
-#     'subrtn_hparam', [dict(max_iter=2, min_rollouts=5, num_workers=1, num_epoch=4)],
-#     ids=['casual']
-# )
-# @pytest.mark.parametrize(
-#     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
-#     ids=['casual']
-# )
-# @pytest.mark.parametrize(
-#     'vfcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
-#     ids=['casual']
-# )
-# @pytest.mark.parametrize(
-#     'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)],
-#     ids=['casual']
-# )
-# @pytest.mark.parametrize(
-#     'adr_hparam', [dict(max_iter=2, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
-#                         num_workers=1, randomized_params=[])],
-#     ids=['casual']
-# )
-# def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, vfcn_hparam, critic_hparam, adr_hparam):
-#     # Create the subroutine for the meta-algorithm
-#     actor = FNNPolicy(spec=env.spec, **actor_hparam)
-#     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
-#     critic = GAE(vfcn, **critic_hparam)
-#     subroutine = PPO(ex_dir, env, actor, critic, **subrtn_hparam)
-#
-#     # Create algorithm and train
-#     particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
-#     algo = ADR(ex_dir, env, subroutine, svpg_particle_hparam=particle_hparam, **adr_hparam)
-#     algo.train()
-#     assert algo.curr_iter == algo.max_iter
 
 
 @pytest.mark.longtime
@@ -485,12 +441,12 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
     env = GaussianObsNoiseWrapper(
         env,
         noise_std=[
-            1 / 180 * pi,
-            1 / 180 * pi,
+            1 / 180 * np.pi,
+            1 / 180 * np.pi,
             0.0025,
             0.0025,
-            2 / 180 * pi,
-            2 / 180 * pi,
+            2 / 180 * np.pi,
+            2 / 180 * np.pi,
             0.05,
             0.05,
         ],
