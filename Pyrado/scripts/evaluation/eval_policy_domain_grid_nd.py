@@ -33,16 +33,16 @@ NOTE: the domain parameters have to be scalars, otherwise the generation of the 
 import datetime
 import os
 import os.path as osp
+
 import numpy as np
 import pandas as pd
-from prettyprinter import pprint
-
 import pyrado
+from prettyprinter import pprint
 from pyrado.domain_randomization.utils import param_grid
-from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, ask_for_experiment
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
@@ -50,7 +50,6 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import dict_arraylike_to_float
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
-
 
 if __name__ == "__main__":
     # Parse command line arguments
@@ -64,10 +63,12 @@ if __name__ == "__main__":
 
     # Create multi-dim evaluation grid
     param_spec = dict()
-    if isinstance(inner_env(env), BallOnPlateSim):
-        param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
-        param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
+    # if isinstance(inner_env(env), BallOnPlateSim):
+    #     param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
+    #     param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
 
+    if isinstance(inner_env(env), QQubeSwingUpSim):
+        param_spec["g"] = np.linspace(7.91, 11.91, num=11, endpoint=True)
     elif isinstance(inner_env(env), QBallBalancerSim):
         # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)

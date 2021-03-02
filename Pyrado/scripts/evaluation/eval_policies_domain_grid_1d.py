@@ -140,7 +140,7 @@ if __name__ == "__main__":
     elif env_name == QQubeSwingUpSim.name:
         env = QQubeSwingUpSim(dt=dt, max_steps=args.max_steps)
 
-        # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
+        param_spec["g"] = np.linspace(9.81 * 0.7, 9.81 * 1.3, num=11, endpoint=True)
         # param_spec['Rm'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
         # param_spec['km'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
         # param_spec['Mr'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
@@ -173,8 +173,11 @@ if __name__ == "__main__":
         env = ActDelayWrapper(env)
         # param_spec['act_delay'] = np.linspace(0, 60, num=21, endpoint=True, dtype=int)
 
-    if not len(param_spec.keys()) == 1:
-        raise pyrado.ValueErr(msg="Do not vary more than one domain parameter for this script! (Check action delay.)")
+    if len(param_spec) != 1:
+        error_msg = "no" if len(param_spec) < 1 else len(param_spec)
+        raise pyrado.ValueErr(
+            msg=f"Vary exactly one domain parameter for this script (was varying {error_msg} parameters)!"
+        )
     varied_param_key = "".join(param_spec.keys())  # to get a str
 
     if not check_all_lengths_equal([prefixes, ex_names, ex_labels]):
