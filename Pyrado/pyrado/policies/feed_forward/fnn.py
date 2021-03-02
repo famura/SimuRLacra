@@ -29,7 +29,7 @@
 import torch as to
 import torch.nn as nn
 from torch.nn.utils import convert_parameters as cp
-from typing import Sequence, Callable, Iterable
+from typing import Sequence, Callable, Iterable, Tuple, Union
 
 import pyrado
 from pyrado.spaces.discrete import DiscreteSpace
@@ -46,7 +46,7 @@ class FNN(nn.Module):
         input_size: int,
         output_size: int,
         hidden_sizes: Sequence[int],
-        hidden_nonlin: [Callable, Sequence[Callable]],
+        hidden_nonlin: Union[Callable, Sequence[Callable]],
         dropout: float = 0.0,
         output_nonlin: Callable = None,
         init_param_kwargs: dict = None,
@@ -167,7 +167,7 @@ class FNNPolicy(Policy):
         self,
         spec: EnvSpec,
         hidden_sizes: Sequence[int],
-        hidden_nonlin: [Callable, Sequence[Callable]],
+        hidden_nonlin: Union[Callable, Sequence[Callable]],
         dropout: float = 0.0,
         output_nonlin: Callable = None,
         init_param_kwargs: dict = None,
@@ -269,7 +269,7 @@ class DiscreteActQValPolicy(Policy):
         else:
             self.param_values = init_values
 
-    def _build_q_table(self, obs: to.Tensor) -> (to.Tensor, to.Tensor, int):
+    def _build_q_table(self, obs: to.Tensor) -> Tuple[to.Tensor, to.Tensor, int]:
         """
         Compute the state-action values for the given observations and all possible actions.
         Since we operate on a discrete action space, we can construct a table (here for 3 actions)
