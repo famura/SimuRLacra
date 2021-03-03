@@ -129,13 +129,9 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
 
         if type(mean) == np.ndarray:
             mean = to.tensor(mean).double()
-        else:
-            mean = mean.clone()
 
         if type(cov_chol_flat) == np.ndarray:
             cov_chol_flat = to.tensor(cov_chol_flat).double()
-        else:
-            cov_chol_flat = cov_chol_flat.clone()
 
         return ParameterAgnosticMultivariateNormalWrapper(
             mean=mean,
