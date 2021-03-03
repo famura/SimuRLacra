@@ -30,6 +30,7 @@
 Train an agent to solve the Half-Cheetah environment using Proximal Policy Optimization.
 """
 import torch as to
+from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.step_based.ppo import PPO
@@ -56,7 +57,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env = HalfCheetahSim()
+    env_hparams = dict()
+    env = HalfCheetahSim(**env_hparams)
 
     # Simple Randomizer
     dp_nom = HalfCheetahSim.get_nominal_domain_param()
@@ -69,33 +71,40 @@ if __name__ == "__main__":
     policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
     # Critic
-    vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
-        gamma=0.995,
-        lamda=0.95,
+        gamma=0.9844224855479998,
+        lamda=0.9700148505302241,
         num_epoch=5,
-        batch_size=512,
-        standardize_adv=True,
-        standardizer=None,
-        lr=3e-4,
+        batch_size=500,
+        standardize_adv=False,
+        lr=7.058326426522811e-4,
+        max_grad_norm=6.0,
+        lr_scheduler=lr_scheduler.ExponentialLR,
+        lr_scheduler_hparam=dict(gamma=0.999),
     )
     critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=500,
-        min_steps=20 * env.max_steps,
-        num_epoch=5,
-        eps_clip=0.1,
-        batch_size=512,
-        lr=3e-4,
-        num_workers=6,
+        max_iter=300,
+        eps_clip=0.12648736789309026,
+        min_steps=30 * env.max_steps,
+        num_epoch=7,
+        batch_size=500,
+        std_init=0.7573286998997557,
+        lr=6.999956625305722e-04,
+        max_grad_norm=1.0,
+        lr_scheduler=lr_scheduler.ExponentialLR,
+        lr_scheduler_hparam=dict(gamma=0.999),
+        num_workers=4,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
