@@ -77,7 +77,7 @@ class PandaVis(ShowBase):
         # Configure trace
         self.trace = LineSegs()
         self.trace.setThickness(3)
-        self.trace.setColor(0, 0, 0)
+        self.trace.setColor(0.8, 0.8, 0.8)
         self.lines = self.render.attachNewNode("Lines")
         self.last_pos = None
         
