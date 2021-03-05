@@ -1,9 +1,8 @@
 import keyboard
 import numpy as np
-import os
-import pathlib
 import sys
 
+import pyrado
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase.ShowBaseGlobal import aspect2d
 from direct.task import Task
@@ -29,17 +28,15 @@ class PandaVis(ShowBase):
         Constructor
         """
         ShowBase.__init__(self)
-        self.dir = pathlib.Path(__file__).resolve().parent.absolute()
+        self.dir = Filename.fromOsSpecific(pyrado.PANDA_ASSETS_DIR).getFullpath()
         self._render = render
         
         if self._render:
-            sys.path.insert(0, os.path.join(os.path.relpath(__file__ + "/../../../../.."), 'thirdParty', 'render_pipeline'))
-            from rpcore import RenderPipeline, SpotLight
+            sys.path.insert(0, pyrado.R_PIPELINE_DIR)
+            from rpcore import RenderPipeline
             self.render_pipeline = RenderPipeline()
             self.render_pipeline.pre_showbase_init()
             self.render_pipeline.create(self)
-            # TODO
-            # self.render_pipeline.set_effect(render, os.path.join(sys.path[0],"effects","skybox.yaml"), {}, sort=250)
 
         # Set title and background color
         self.render.setAntialias(AntialiasAttrib.MAuto)
@@ -150,7 +147,7 @@ class BallOnBeamVis(PandaVis):
 
         # Ball
         self.ball = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
+            self.dir + "/ball_red.egg"
         )
         self.ball.setColor(1, 0, 0, 0)  # red
         self.ball.setScale(r_ball * self._scale)
@@ -163,7 +160,7 @@ class BallOnBeamVis(PandaVis):
 
         # Beam
         self.beam = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+            self.dir + "/box_green.egg"
         )
         self.beam.setColor(0, 1, 0, 0)  # green
         self.beam.setScale(
@@ -238,7 +235,7 @@ class OneMassOscillatorVis(PandaVis):
         self._scale = 5/c
 
         # Set window title
-        self.windowProperties.setTitle("One Mass Oscilator")
+        self.windowProperties.setTitle("One Mass Oscillator")
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
@@ -246,7 +243,7 @@ class OneMassOscillatorVis(PandaVis):
 
         # Ground
         self.ground = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+            self.dir + "/box_green.egg"
         )
         self.ground.setPos(0, 0, -0.02 * self._scale)
         self.ground.setScale(
@@ -259,7 +256,7 @@ class OneMassOscillatorVis(PandaVis):
 
         # Object
         self.mass = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+            self.dir + "/box_green.egg"
         )
         self.mass.setPos(
             self._env.state[0] * self._scale,
@@ -271,12 +268,17 @@ class OneMassOscillatorVis(PandaVis):
             c * 0.5 * self._scale,
             c * 0.5 * self._scale,
         )  # multiplied by 0.5 since Blender object has length of 2
-        self.mass.setColor(0, 0, 1, 0)  # blue
+        # self.mass.setColor(0, 0, 1, 0)  # blue
+        self.mass.setColor(
+            decode_sRGB_float(0x51),
+            decode_sRGB_float(0xC2),
+            decode_sRGB_float(0xC6),
+        )
         self.mass.reparentTo(self.render)
 
         # Desired state
         self.des = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+            self.dir + "/box_green.egg"
         )
         self.des.setPos(
             self._env._task.state_des[0] * self._scale,
@@ -294,7 +296,7 @@ class OneMassOscillatorVis(PandaVis):
 
         # Force
         self.force = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/arrow.egg")
+            self.dir + "/arrow_turquoise.egg"
         )
         self.force.setPos(
             self._env.state[0] * self._scale,
@@ -311,7 +313,7 @@ class OneMassOscillatorVis(PandaVis):
 
         # Spring
         self.spring = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/spring.egg")
+            self.dir + "/spring_yellow.egg"
         )
         self.spring.setPos(0, 0, c / 2.0 * self._scale)
         self.spring.setScale(
@@ -391,7 +393,7 @@ class PendulumVis(PandaVis):
 
         # Joint
         self.joint = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
+            self.dir + "/ball_red.egg"
         )
         self.joint.setPos(0, r_pole * self._scale, 0)
         self.joint.setScale(
@@ -404,7 +406,7 @@ class PendulumVis(PandaVis):
 
         # Pole
         self.pole = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_top.egg")
+            self.dir + "/cylinder_top_blue.egg"
         )
         self.pole.setPos(0, r_pole * self._scale, 0)
         self.pole.setScale(
@@ -490,7 +492,7 @@ class QBallBalancerVis(PandaVis):
 
         # Ball
         self.ball = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
+            self.dir + "/ball_red.egg"
         )
         self.ball.setPos(
             self._env.state[2] * self._scale,
@@ -503,7 +505,7 @@ class QBallBalancerVis(PandaVis):
 
         # Plate
         self.plate = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+            self.dir, "/box_green.egg"
         )
         self.plate.setScale(
             l_plate * 0.5 * self._scale,
@@ -515,7 +517,7 @@ class QBallBalancerVis(PandaVis):
 
         # Joint
         self.joint = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
+            self.dir + "/ball_red.egg"
         )
         self.joint.setPos(0, 0, -d_plate * self._scale)
         self.joint.setScale(
@@ -528,7 +530,7 @@ class QBallBalancerVis(PandaVis):
 
         # Pole
         self.pole = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_top.egg")
+            self.dir + "/cylinder_top_blue.egg"
         )
         self.pole.setPos(0, 0, -d_plate * self._scale)
         self.pole.setScale(
@@ -540,7 +542,7 @@ class QBallBalancerVis(PandaVis):
         self.pole.reparentTo(self.render)
 
         # Null_plate
-        self.null_plate = self.loader.loadModel(pathlib.Path(self.dir, "models/box.egg"))
+        self.null_plate = self.loader.loadModel(self.dir + "/box_green.egg")
         self.null_plate.setPos(0, 0, - 2.5 * l_pole * self._scale)
         self.null_plate.setScale(l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale, d_plate / 20.0 * self._scale)
         self.null_plate.setColor(0, 0, 0)
@@ -668,7 +670,7 @@ class QCartPoleVis(PandaVis):
 
         # Rail
         self.rail = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_middle.egg")
+            self.dir + "/cylinder_middle_blue.egg"
         )
         self.rail.setPos(0, 0, (-h_cart - r_rail) * self._scale)
         self.rail.setScale(
@@ -682,7 +684,7 @@ class QCartPoleVis(PandaVis):
 
         # Cart
         self.cart = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+            self.dir + "/box_green.egg"
         )
         self.cart.setX(x * self._scale)
         self.cart.setScale(
@@ -695,7 +697,7 @@ class QCartPoleVis(PandaVis):
 
         # Joint
         self.joint = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
+            self.dir + "/ball_red.egg"
         )
         self.joint.setPos(
             x * self._scale,
@@ -708,7 +710,7 @@ class QCartPoleVis(PandaVis):
 
         # Pole
         self.pole = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_top.egg")
+            self.dir + "/cylinder_top_blue.egg"
         )
         self.pole.setPos(
             x * self._scale,
@@ -821,7 +823,7 @@ class QQubeVis(PandaVis):
 
         # Box
         self.box = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/box.egg")
+            self.dir + "/box_green.egg"
         )
         self.box.setPos(0, 0.07 * self._scale, 0)
         self.box.setScale(
@@ -834,7 +836,7 @@ class QQubeVis(PandaVis):
 
         # Cylinder
         self.cylinder = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_middle.egg")
+            self.dir + "/cylinder_middle_blue.egg"
         )
         self.cylinder.setScale(
             0.005 * self._scale,
@@ -847,7 +849,7 @@ class QQubeVis(PandaVis):
 
         # Joint 1
         self.joint1 = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
+            self.dir + "/ball_red.egg"
         )
         self.joint1.setScale(0.005 * self._scale)
         self.joint1.setPos(0.0, 0.07 * self._scale, 0.15 * self._scale)
@@ -855,7 +857,7 @@ class QQubeVis(PandaVis):
 
         # Arm
         self.arm = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_top.egg")
+            self.dir + "/cylinder_top_blue.egg"
         )
         self.arm.setScale(
             arm_radius * self._scale,
@@ -869,7 +871,7 @@ class QQubeVis(PandaVis):
 
         # Joint 2
         self.joint2 = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/ball.egg")
+            self.dir + "/ball_red.egg"
         )
         self.joint2.setScale(pole_radius * self._scale)
         self.joint2.setPos(
@@ -882,7 +884,7 @@ class QQubeVis(PandaVis):
 
         # Pole
         self.pole = self.loader.loadModel(
-            pathlib.Path(self.dir, "models/cylinder_center_bottom.egg")
+            self.dir + "/cylinder_bottom_blue.egg"
         )
         self.pole.setScale(
             pole_radius * self._scale,
