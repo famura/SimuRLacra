@@ -114,7 +114,11 @@ if __name__ == "__main__":
     )
     algo = REPS(ex_dir, env, policy, **algo_hparam)
     sprl_hparam = dict(
-        kl_constraints_ub=8000, performance_lower_bound=500, std_lower_bound=0.4, kl_threshold=200, max_iter=50,
+        kl_constraints_ub=8000,
+        performance_lower_bound=500,
+        std_lower_bound=0.4,
+        kl_threshold=200,
+        max_iter=50,
     )
     algo = SPRL(env, algo, **sprl_hparam)
 

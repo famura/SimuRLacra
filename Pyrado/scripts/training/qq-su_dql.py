@@ -90,7 +90,9 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed), dict(algo=algo_hparam, algo_name=algo.name), save_dir=ex_dir,
+        dict(env=env_hparams, seed=args.seed),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

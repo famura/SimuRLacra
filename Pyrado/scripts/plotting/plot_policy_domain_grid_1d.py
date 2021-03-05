@@ -141,7 +141,11 @@ if __name__ == "__main__":
         df = df.loc[:, df.apply(pd.Series.nunique) != 1]
 
         _plot_and_save(
-            df, "g", r"$g$", save_figure=args.save, save_dir=eval_dir,
+            df,
+            "g",
+            r"$g$",
+            save_figure=args.save,
+            save_dir=eval_dir,
         )
 
     plt.show()

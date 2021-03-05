@@ -148,7 +148,9 @@ class Algorithm(ABC, LoggerAware):
     @property
     def rollouts(self) -> List[List[StepSequence]]:
         if not self._ros:
-            raise pyrado.ValueErr(msg="No rollout sampled so far! Check if the algorithm adds the rollouts via add_rollout!")
+            raise pyrado.ValueErr(
+                msg="No rollout sampled so far! Check if the algorithm adds the rollouts via add_rollout!"
+            )
         return self._ros
 
     def stopping_criterion_met(self) -> bool:
