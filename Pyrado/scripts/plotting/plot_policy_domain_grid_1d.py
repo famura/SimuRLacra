@@ -70,7 +70,8 @@ def _plot_and_save(
         df_grouped = df.groupby(index)[value].agg([np.mean, np.std, q_5, q_95])
 
         # Create plot with standard deviation as shaded region.
-        fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
+        # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
+        fig, ax = plt.subplots()
         ax.plot(df_grouped.index, df_grouped["mean"])
         ax.fill_between(
             df_grouped.index,
@@ -92,7 +93,8 @@ def _plot_and_save(
             fig.savefig(osp.join(save_dir, f"{value}_mean_std.pdf"))
 
         # Create plot with quantiles as shaded region.
-        fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
+        # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
+        fig, ax = plt.subplots()
         ax.plot(df_grouped.index, df_grouped["mean"])
         ax.fill_between(df_grouped.index, df_grouped["q_5"], df_grouped["q_95"], alpha=0.3)
         if show_legend:
