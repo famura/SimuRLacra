@@ -54,7 +54,7 @@ if __name__ == "__main__":
     plt.rc("text", usetex=args.use_tex)
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hyperparameters) if args.dir is None else args.dir
 
     env_sim = joblib.load(osp.join(ex_dir, "env_sim.pkl"))
     if not typed_env(env_sim, MetaDomainRandWrapper):

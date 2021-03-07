@@ -28,11 +28,11 @@
 
 import itertools
 import os
-import os.path as osp
 from copy import deepcopy
 from datetime import datetime
+from os import path as osp
 from pathlib import Path
-from typing import Sequence, Union, Iterable, List
+from typing import Sequence, Union, Iterable, List, Callable, Optional
 
 import numpy as np
 import pyrado
@@ -41,6 +41,7 @@ import torch.nn as nn
 import yaml
 from pyrado.logger import set_log_prefix_dir
 from pyrado.utils import get_class_name
+from pyrado.utils.data_types import dict_path_access
 from pyrado.utils.input_output import select_query, print_cbt
 
 
@@ -92,7 +93,7 @@ class Experiment:
                 exp_id += "--" + slurm_id
         else:
             # Try to parse extra_info from exp id
-            sd = exp_id.split("--", 1)
+            sd = exp_id.split("--")
             if len(sd) == 1:
                 timestr = sd[0]
             elif len(sd) == 2:
@@ -266,6 +267,31 @@ def select_by_hint(exps: Sequence[Experiment], hint: str):
     return sl
 
 
+def create_experiment_formatter(
+    show_hyper_parameters: Optional[List[str]] = None, show_extra_info: bool = True, show_slurm_id: bool = True
+) -> Callable[[Experiment], str]:
+    def formatter(exp: Experiment) -> str:
+        result = f"({exp.timestamp}) {exp.prefix}"
+        if show_hyper_parameters:
+            hyper_parameters = load_hyperparameters(exp)
+            result += " {"
+            first = True
+            for param in show_hyper_parameters:
+                value = dict_path_access(hyper_parameters, param)
+                if not first:
+                    result += ","
+                result += f" {param}={value}"
+                first = False
+            result += " }"
+        if show_extra_info and exp.extra_info is not None:
+            result += f" ({exp.extra_info})"
+        if show_slurm_id and exp.slurm_id is not None:
+            result += f" [SLURM ID: {exp.slurm_id}]"
+        return result
+
+    return formatter
+
+
 def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
     """
     Split a path at the point where the machine-dependent and the machine-independent part can be separated.
@@ -314,11 +340,15 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
     return custom, common
 
 
-def ask_for_experiment(latest_only: bool = False):
+def ask_for_experiment(
+    latest_only: bool = False, max_display: int = 10, show_hyper_parameters: Optional[List[str]] = None
+) -> Experiment:
     """
     Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.
 
     :param latest_only: only select the latest experiment of each type (environment-algorithm combination)
+    :param max_display: only display this many items
+    :param show_hyper_parameters: Load the hyperparams file and show the parameters in this list. Sub-dicts can be separated with a dot.
     :return: query asking the user for an experiment
     """
     # Scan for experiment list
@@ -342,9 +372,10 @@ def ask_for_experiment(latest_only: bool = False):
     return select_query(
         sel_exp_by_prefix,
         fallback=lambda hint: select_by_hint(all_exps, hint),
-        item_formatter=lambda exp: f"({exp.timestamp}) {exp.prefix}",
+        item_formatter=create_experiment_formatter(show_hyper_parameters=show_hyper_parameters),
         header="Available experiments:",
         footer="Enter experiment number or a partial path to an experiment.",
+        max_display=max_display,
     )
 
 
@@ -462,3 +493,18 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
     with open(yaml_file, "r") as yaml_file:
         data = yaml.load(yaml_file, Loader=AugmentedSafeLoader)
     return data
+
+
+def load_hyperparameters(ex_dir, throw_error: bool = False) -> Union[dict, Optional[dict]]:
+    hparams_file_name = "hyperparams.yaml"
+    try:
+        return load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
+    except (pyrado.PathErr, FileNotFoundError, KeyError):
+        print_cbt(
+            f"Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.",
+            "y",
+            bright=True,
+        )
+        if throw_error:
+            raise
+        return None
