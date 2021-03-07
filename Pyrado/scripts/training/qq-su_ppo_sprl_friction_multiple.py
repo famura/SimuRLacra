@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PPO.name}_{FNNPolicy.name}",
-                              f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter{'_cov_only' if args.cov_only else ''}_seed_{args.seed}")
+                              f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
