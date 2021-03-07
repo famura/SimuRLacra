@@ -273,7 +273,7 @@ def create_experiment_formatter(
     def formatter(exp: Experiment) -> str:
         result = f"({exp.timestamp}) {exp.prefix}"
         if show_hyper_parameters:
-            hyper_parameters = load_hyperparameters(exp)
+            hyper_parameters = load_hyperparameters(exp, raise_error=True)
             result += " {"
             first = True
             for param in show_hyper_parameters:
@@ -495,7 +495,7 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
     return data
 
 
-def load_hyperparameters(ex_dir, throw_error: bool = False) -> Union[dict, Optional[dict]]:
+def load_hyperparameters(ex_dir, raise_error: bool = False) -> Union[dict, Optional[dict]]:
     hparams_file_name = "hyperparams.yaml"
     try:
         return load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
@@ -505,6 +505,6 @@ def load_hyperparameters(ex_dir, throw_error: bool = False) -> Union[dict, Optio
             "y",
             bright=True,
         )
-        if throw_error:
+        if raise_error:
             raise
         return None
