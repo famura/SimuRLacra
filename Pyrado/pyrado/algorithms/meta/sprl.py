@@ -25,7 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple, Union
 
 import numpy as np
 import pyrado
@@ -140,16 +140,34 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             cov_is_parameter=self._cov_is_parameter,
         )
 
-    def parameters(self) -> List[to.Tensor]:
+    def parameters(self, return_mean_cov_indices: bool = False) -> Union[List[to.Tensor], Tuple[List[to.Tensor], Optional[List[int]], Optional[List[int]]]]:
         params = []
         if self._mean_is_parameter:
             params.append(self.mean)
         if self._cov_is_parameter:
             params.append(self.cov_chol_flat)
+        if return_mean_cov_indices:
+            pointer = 0
+            mean_indices, cov_indices = None, None
+            if self._mean_is_parameter:
+                mean_indices = list(range(pointer, pointer + self.dim))
+                pointer += self.dim
+            if self._cov_is_parameter:
+                cov_indices = list(range(pointer, pointer + self.dim))
+                pointer += self.dim
+            return params, mean_indices, cov_indices
         return params
 
-    def get_stacked(self) -> np.ndarray:
-        return np.concatenate([p.detach().numpy() for p in self.parameters()])
+    def get_stacked(self, return_mean_cov_indices: bool = False) -> Union[np.ndarray, Tuple[np.ndarray, Optional[List[int]], Optional[List[int]]]]:
+        parameters = self.parameters(return_mean_cov_indices=return_mean_cov_indices)
+        if return_mean_cov_indices:
+            parameters, mean_indices, cov_indices = parameters
+        else:
+            mean_indices, cov_indices = None, None
+        stacked = np.concatenate([p.detach().numpy() for p in parameters])
+        if return_mean_cov_indices:
+            return stacked, mean_indices, cov_indices
+        return stacked
 
 
 class SPRL(Algorithm):
@@ -311,16 +329,17 @@ class SPRL(Algorithm):
         )
 
         # optionally clip the bounds of the new variance
-        if self._kl_threshold and (self._kl_threshold < kl_divergence):
-            lower_bound = np.ones_like(previous_distribution.get_stacked()) * -np.inf
-            lower_bound[dim] = self._std_lower_bound
-            upper_bound = np.ones_like(previous_distribution.get_stacked()) * np.inf
+        bounds = None
+        x0, _, x0_cov_indices = previous_distribution.get_stacked(return_mean_cov_indices=True)
+        if True or self._kl_threshold and (self._kl_threshold < kl_divergence):
+            lower_bound = np.ones_like(x0) * -np.inf
+            if x0_cov_indices is not None:
+                lower_bound[x0_cov_indices] = self._std_lower_bound
+            upper_bound = np.ones_like(x0) * np.inf
             # bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
             bounds = Bounds(lb=lower_bound, ub=upper_bound)
-            x0 = np.clip(previous_distribution.get_stacked(), lower_bound, upper_bound)
-        else:
-            bounds = None
-            x0 = previous_distribution.get_stacked()
+            x0 = np.clip(x0, lower_bound, upper_bound)
+
 
         objective_fn: Optional[Callable[..., Tuple[np.array, np.array]]] = None
         result = None
