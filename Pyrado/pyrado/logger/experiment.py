@@ -28,9 +28,9 @@
 
 import itertools
 import os
-import os.path as osp
 from copy import deepcopy
 from datetime import datetime
+from os import path as osp
 from pathlib import Path
 from typing import Sequence, Union, Iterable, List, Callable, Optional
 
@@ -93,7 +93,7 @@ class Experiment:
                 exp_id += "--SLURM:" + slurm_id
         else:
             # Try to parse extra_info from exp id
-            sd = exp_id.split("--", 1)
+            sd = exp_id.split("--")
             if len(sd) == 1:
                 timestr = sd[0]
             elif len(sd) == 2:
