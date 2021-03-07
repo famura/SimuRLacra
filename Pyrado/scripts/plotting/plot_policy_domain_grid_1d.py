@@ -52,16 +52,16 @@ def q_95(x):
 
 
 def _plot_and_save(
-        df: pd.DataFrame,
-        index: str,
-        index_label: str,
-        value: str = "ret",
-        value_label: str = "Return",
-        nom_dp_value: float = None,
-        y_lim: list = None,
-        show_legend: bool = True,
-        save_figure: bool = False,
-        save_dir: str = None,
+    df: pd.DataFrame,
+    index: str,
+    index_label: str,
+    value: str = "ret",
+    value_label: str = "Return",
+    nom_dp_value: float = None,
+    y_lim: list = None,
+    show_legend: bool = True,
+    save_figure: bool = False,
+    save_dir: str = None,
 ):
     if index in df.columns and value in df.columns:
         df_grouped = df.groupby(index)[value].agg([np.mean, np.std, q_5, q_95])
@@ -69,13 +69,13 @@ def _plot_and_save(
         # Create plot with standard deviation as shaded region.
         # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
         fig, ax = plt.subplots()
-        ax.plot(df_grouped.index, df_grouped["mean"], label='Mean')
+        ax.plot(df_grouped.index, df_grouped["mean"], label="Mean")
         ax.fill_between(
             df_grouped.index,
             df_grouped["mean"] - 2 * df_grouped["std"],
             df_grouped["mean"] + 2 * df_grouped["std"],
             alpha=0.3,
-            label='95% Standard Deviation',
+            label="95% Standard Deviation",
         )
         if show_legend:
             ax.legend()
@@ -93,8 +93,8 @@ def _plot_and_save(
         # Create plot with quantiles as shaded region.
         # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
         fig, ax = plt.subplots()
-        ax.plot(df_grouped.index, df_grouped["mean"], label='Mean')
-        ax.fill_between(df_grouped.index, df_grouped["q_5"], df_grouped["q_95"], alpha=0.3, label='95% Quantiles')
+        ax.plot(df_grouped.index, df_grouped["mean"], label="Mean")
+        ax.fill_between(df_grouped.index, df_grouped["q_5"], df_grouped["q_95"], alpha=0.3, label="95% Quantiles")
         if show_legend:
             ax.legend()
         ax.set_xlabel(index_label)
