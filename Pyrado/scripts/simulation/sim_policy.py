@@ -47,7 +47,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hyperparameters) if args.dir is None else args.dir
 
     # Load the environment and the policy
     env, policy, kwout = load_experiment(ex_dir, args)
