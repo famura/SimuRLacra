@@ -33,9 +33,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional, Union
 
 import pyrado
-from pyrado.logger.experiment import split_path_custom_common
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
+from pyrado.logger.experiment import split_path_custom_common
 from pyrado.logger.step import StepLogger, LoggerAware
 from pyrado.policies.base import Policy
 from pyrado import set_seed

@@ -30,7 +30,7 @@ import collections
 import numpy as np
 import torch as to
 from copy import deepcopy
-from typing import Sequence, NamedTuple, Union
+from typing import Sequence, NamedTuple, Union, Any
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -261,3 +261,10 @@ def fill_list_of_arrays(loa: Sequence[np.ndarray], des_len: int, fill_ele=np.nan
 
     # Return the modified copy
     return loa_c
+
+
+def dict_path_access(d: dict, path: str) -> Any:
+    result = d
+    for part in path.split("."):
+        result = result[part]
+    return result
