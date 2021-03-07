@@ -27,18 +27,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import itertools
-import numpy as np
 import os
 import os.path as osp
-import torch as to
-import torch.nn as nn
-import yaml
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Sequence, Union, Iterable, List
 
+import numpy as np
 import pyrado
+import torch as to
+import torch.nn as nn
+import yaml
 from pyrado.logger import set_log_prefix_dir
 from pyrado.utils import get_class_name
 from pyrado.utils.input_output import select_query, print_cbt
@@ -50,7 +50,7 @@ class Experiment:
     This is a path-like object, and as such it can be used everywhere a normal path would be used.
 
     Experiment folder path:
-    <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>
+    <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>--<slurm_id>
     """
 
     def __init__(
@@ -61,6 +61,7 @@ class Experiment:
         exp_id: str = None,
         timestamp: datetime = None,
         base_dir: str = pyrado.TEMP_DIR,
+        include_slurm_id_if_possible: bool = True,
     ):
         """
         Constructor
@@ -71,8 +72,25 @@ class Experiment:
         :param exp_id: combined timestamp and extra_info, usually the final folder name
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
+        :param include_slurm_id_if_possible: If a SLURM ID is present in the environment variables, include them in the experiment ID.
         """
-        if exp_id is not None:
+
+        slurm_id = None
+        if include_slurm_id_if_possible and "SLURM_JOB_ID" in os.environ:
+            slurm_id = str(os.environ["SLURM_JOB_ID"])
+            if "SLURM_ARRAY_TASK_ID" in os.environ:
+                slurm_id += "_" + str(os.environ["SLURM_ARRAY_TASK_ID"])
+        if exp_id is None:
+            # Create exp id from timestamp and info
+            if timestamp is None:
+                timestamp = datetime.now()
+            exp_id = timestamp.strftime(pyrado.timestamp_format)
+
+            if extra_info is not None:
+                exp_id = exp_id + "--" + extra_info
+            if slurm_id is not None:
+                exp_id += "--" + slurm_id
+        else:
             # Try to parse extra_info from exp id
             sd = exp_id.split("--", 1)
             if len(sd) == 1:
@@ -84,19 +102,12 @@ class Experiment:
                 timestamp = datetime.strptime(timestr, pyrado.timestamp_format)
             else:
                 timestamp = datetime.strptime(timestr, pyrado.timestamp_date_format)
-        else:
-            # Create exp id from timestamp and info
-            if timestamp is None:
-                timestamp = datetime.now()
-            exp_id = timestamp.strftime(pyrado.timestamp_format)
-
-            if extra_info is not None:
-                exp_id = exp_id + "--" + extra_info
 
         # Store values
         self.env_name = env_name
         self.algo_name = algo_name
         self.extra_info = extra_info
+        self.slurm_id = slurm_id
         self.exp_id = exp_id
         self.timestamp = timestamp
         self.base_dir = base_dir
@@ -132,10 +143,18 @@ class Experiment:
             return self.env_name == env_name and self.algo_name == algo_name and self.exp_id == eid
 
 
-def setup_experiment(env_name: str, algo_name: str, extra_info: str = None, base_dir: str = pyrado.TEMP_DIR):
+def setup_experiment(
+    env_name: str,
+    algo_name: str,
+    extra_info: str = None,
+    base_dir: str = pyrado.TEMP_DIR,
+    include_slurm_id_if_possible: bool = True,
+):
     """ Setup a new experiment for recording. """
     # Create experiment object
-    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir)
+    exp = Experiment(
+        env_name, algo_name, extra_info, base_dir=base_dir, include_slurm_id_if_possible=include_slurm_id_if_possible
+    )
 
     # Create the folder
     os.makedirs(exp, exist_ok=True)
