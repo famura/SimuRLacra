@@ -27,18 +27,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import itertools
-import numpy as np
 import os
 import os.path as osp
-import torch as to
-import torch.nn as nn
-import yaml
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Sequence, Union, Iterable, List, Callable, Optional
 
+import numpy as np
 import pyrado
+import torch as to
+import torch.nn as nn
+import yaml
 from pyrado.logger import set_log_prefix_dir
 from pyrado.utils import get_class_name
 from pyrado.utils.data_types import dict_path_access
@@ -51,7 +51,7 @@ class Experiment:
     This is a path-like object, and as such it can be used everywhere a normal path would be used.
 
     Experiment folder path:
-    <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>
+    <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>--<slurm_id>
     """
 
     def __init__(
@@ -108,6 +108,7 @@ class Experiment:
         self.env_name = env_name
         self.algo_name = algo_name
         self.extra_info = extra_info
+        self.slurm_id = slurm_id
         self.exp_id = exp_id
         self.timestamp = timestamp
         self.base_dir = base_dir
