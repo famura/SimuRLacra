@@ -48,16 +48,23 @@ from torch.optim import lr_scheduler
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.add_argument('--frequency', default=250, type=int)
+    parser.set_defaults(max_steps=600)
+    parser.add_argument('--ppo_iterations', default=150, type=int)
+    parser.add_argument('--sprl_iterations', default=50, type=int)
+    parser.add_argument('--cov_only', default=False, type=bool)
+    args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PPO.name}_{FNNPolicy.name}", f"100Hz_seed_{args.seed}")
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PPO.name}_{FNNPolicy.name}",
+                              f"{args.frequency}Hz_{args.frequency}PPOIter_{args.sprl_iterations}SPRLIter{'_cov_only' if args.cov_only else ''}_seed_{args.seed}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 250.0, max_steps=600)
+    env_hparams = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -87,7 +94,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=150,
+        max_iter=args.ppo_iterations,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
@@ -117,7 +124,8 @@ if __name__ == "__main__":
         performance_lower_bound=500,
         std_lower_bound=0.4,
         kl_threshold=200,
-        max_iter=50,
+        max_iter=args.sprl_iterations,
+        optimize_mean=not args.cov_only,
     )
     algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
 

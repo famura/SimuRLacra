@@ -31,17 +31,14 @@ Script to plot the results from the 2D domain parameter grid evaluations of a si
 """
 import os
 import os.path as osp
+
+import numpy as np
 import pandas as pd
-from matplotlib import colors
-
-from matplotlib import pyplot as plt
-
 import pyrado
+from matplotlib import pyplot as plt
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.heatmap import draw_heatmap
 from pyrado.plotting.utils import AccNorm
 from pyrado.utils.argparser import get_argparser
-import numpy as np
 
 
 def q_5(x):
@@ -55,16 +52,16 @@ def q_95(x):
 
 
 def _plot_and_save(
-    df: pd.DataFrame,
-    index: str,
-    index_label: str,
-    value: str = "ret",
-    value_label: str = "Return",
-    nom_dp_value: float = None,
-    y_lim: list = None,
-    show_legend: bool = True,
-    save_figure: bool = False,
-    save_dir: str = None,
+        df: pd.DataFrame,
+        index: str,
+        index_label: str,
+        value: str = "ret",
+        value_label: str = "Return",
+        nom_dp_value: float = None,
+        y_lim: list = None,
+        show_legend: bool = True,
+        save_figure: bool = False,
+        save_dir: str = None,
 ):
     if index in df.columns and value in df.columns:
         df_grouped = df.groupby(index)[value].agg([np.mean, np.std, q_5, q_95])
@@ -72,12 +69,13 @@ def _plot_and_save(
         # Create plot with standard deviation as shaded region.
         # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
         fig, ax = plt.subplots()
-        ax.plot(df_grouped.index, df_grouped["mean"])
+        ax.plot(df_grouped.index, df_grouped["mean"], label='Mean')
         ax.fill_between(
             df_grouped.index,
             df_grouped["mean"] - 2 * df_grouped["std"],
             df_grouped["mean"] + 2 * df_grouped["std"],
             alpha=0.3,
+            label='95% Standard Deviation',
         )
         if show_legend:
             ax.legend()
@@ -95,8 +93,8 @@ def _plot_and_save(
         # Create plot with quantiles as shaded region.
         # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
         fig, ax = plt.subplots()
-        ax.plot(df_grouped.index, df_grouped["mean"])
-        ax.fill_between(df_grouped.index, df_grouped["q_5"], df_grouped["q_95"], alpha=0.3)
+        ax.plot(df_grouped.index, df_grouped["mean"], label='Mean')
+        ax.fill_between(df_grouped.index, df_grouped["q_5"], df_grouped["q_95"], alpha=0.3, label='95% Quantiles')
         if show_legend:
             ax.legend()
         ax.set_xlabel(index_label)

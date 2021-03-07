@@ -178,7 +178,7 @@ class QQubeSwingUpSim(QQubeSim):
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
         state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
-        Q = task_args.get("Q", np.diag([3e-1, 1.0, 2e-2, 5e-3]))
+        Q = task_args.get("Q", np.diag([1.0, 1.0, 2e-2, 5e-3]))
         R = task_args.get("R", np.diag([4e-3]))
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
