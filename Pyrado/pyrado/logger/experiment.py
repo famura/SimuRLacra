@@ -96,8 +96,12 @@ class Experiment:
             sd = exp_id.split("--", 1)
             if len(sd) == 1:
                 timestr = sd[0]
-            else:
+            elif len(sd) == 2:
                 timestr, extra_info = sd
+            elif len(sd) == 3:
+                timestr, extra_info, slurm_id = sd
+            else:
+                assert False, 'Experiment ID has to many "columns" separated by "--"!'
             # Parse time string
             if "_" in timestr:
                 timestamp = datetime.strptime(timestr, pyrado.timestamp_format)
