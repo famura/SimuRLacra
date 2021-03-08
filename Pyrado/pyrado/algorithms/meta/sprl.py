@@ -413,11 +413,12 @@ class SPRL(Algorithm):
 
             if constraints_satisfied and std_ok and result.fun < old_f:
                 pointer = 0
-                for param in self._spl_parameters:
-                    if self._optimize_mean:
+                if self._optimize_mean:
+                    for param in self._spl_parameters:
                         param.adapt("context_mean", to.tensor(result.x[pointer : pointer + param.dim]))
                         pointer += param.dim
-                    if self._optimize_cov:
+                if self._optimize_cov:
+                    for param in self._spl_parameters:
                         param.adapt("context_cov_chol_flat", to.tensor(result.x[pointer : pointer + param.dim]))
                         pointer += param.dim
             else:
