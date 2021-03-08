@@ -144,6 +144,7 @@ if __name__ == "__main__":
             df,
             "g",
             r"$g$",
+            nom_dp_value=9.81,
             save_figure=args.save,
             save_dir=eval_dir,
         )

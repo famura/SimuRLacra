@@ -68,7 +68,14 @@ if __name__ == "__main__":
     #     param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
 
     if isinstance(inner_env(env), QQubeSwingUpSim):
-        param_spec["g"] = np.linspace(7, 14, num=70, endpoint=True)
+        eval_parameters = ["g"]
+        eval_interval = 0.5
+        eval_num = 100
+        for param, nominal_value in env.get_nominal_domain_param().items():
+            if param in eval_parameters:
+                param_spec[param] = np.linspace(
+                    nominal_value * eval_interval, nominal_value * (1 + eval_interval), num=eval_num, endpoint=True
+                )
     elif isinstance(inner_env(env), QBallBalancerSim):
         # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)
