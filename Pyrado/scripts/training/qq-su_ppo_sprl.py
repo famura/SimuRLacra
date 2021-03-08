@@ -53,7 +53,7 @@ if __name__ == "__main__":
     parser.set_defaults(max_steps=600)
     parser.add_argument("--ppo_iterations", default=150, type=int)
     parser.add_argument("--sprl_iterations", default=50, type=int)
-    parser.add_argument("--cov_only", default=False, type=bool)
+    parser.add_argument("--cov_only", action="store_true")
     args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
@@ -109,17 +109,17 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
+    env_sprl_params = [
+        dict(
+            name="g",
+            target_mean=to.tensor([9.81]),
+            target_cov_chol_flat=to.tensor([1.0]),
+            context_mean=to.tensor([9.81]),
+            context_cov_chol_flat=to.tensor([0.05]),
+        )
+    ]
     env = DomainRandWrapperLive(
-        env,
-        randomizer=DomainRandomizer(
-            SelfPacedLearnerParameter(
-                name="g",
-                target_mean=to.tensor([9.81]),
-                target_cov_chol_flat=to.tensor([0.2]),
-                context_mean=to.tensor([8.0]),
-                context_cov_chol_flat=to.tensor([0.8]),
-            )
-        ),
+        env, randomizer=DomainRandomizer(*[SelfPacedLearnerParameter(**p) for p in env_sprl_params])
     )
 
     sprl_hparam = dict(
@@ -138,7 +138,7 @@ if __name__ == "__main__":
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=algo_hparam, subrtn_name=PPO.name),
-        dict(algo=sprl_hparam, algo_name=algo.name),
+        dict(algo=sprl_hparam, algo_name=algo.name, env_sprl_params=env_sprl_params),
         save_dir=ex_dir,
     )
 
