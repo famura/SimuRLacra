@@ -35,7 +35,7 @@ __Cons__
 * __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
 * __Unfinished GPU-support.__ At the moment the porting of the policies is implemented but not fully tested. The GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
 
-SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4 (deprecated) and 1.7.
+SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4, 1.7 (deprecated) and 1.8.
 The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
 
 
@@ -97,9 +97,9 @@ In all cases you will download Rcs, eigen3, pybind11, catch2, and mujoco-py, int
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.7.0
+pip install torch==1.8.0
 # or if CUDA support not needed
-# pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+# pip install torch==1.8.0+cpu torchvision==0.9.0+cpu torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py wo_rcs_wo_pytorch -j8
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
@@ -127,9 +127,9 @@ If you can't install the libraries, you can still use the Python part of this fr
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.7.0
+pip install torch==1.8.0
 # or if CUDA support not needed
-# pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+# pip install torch==1.8.0+cpu torchvision==0.9.0+cpu torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py w_rcs_wo_pytorch -j8
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.

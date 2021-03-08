@@ -204,7 +204,7 @@ wam_url = f"https://github.com/psclklnk/self-paced-rl/archive/{wam_repo_version}
 
 # PyTorch
 # NOTE: Assumes that the current environment does NOT already contain PyTorch!
-pytorch_version = "1.7.0"
+pytorch_version = "1.8.0"
 pytorch_git_repo = "https://github.com/pytorch/pytorch.git"
 pytorch_src_dir = osp.join(dependency_dir, "pytorch")
 
@@ -507,7 +507,7 @@ def setup_mujoco_py():
 
 
 def setup_pytorch_based():
-    # Locally build PyTorch==1.7.0 requires dataclasses (does not harm when using pytorch from pip)
+    # Locally build PyTorch>=1.7.0 requires dataclasses (does not harm when using pytorch from pip)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "dataclasses"])
     # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl"])
