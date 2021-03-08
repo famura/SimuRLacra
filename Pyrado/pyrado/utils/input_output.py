@@ -26,16 +26,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import pyrado
+from pyrado.utils import run_once
+
 import contextlib
 import select
 import sys
 import typing
-from typing import Sequence, Iterable, Callable
-
 import numpy as np
-import pyrado
 from colorama import Fore, Style
-from pyrado.utils import run_once
+from typing import Sequence, Iterable, Callable
 
 T = typing.TypeVar("T")
 

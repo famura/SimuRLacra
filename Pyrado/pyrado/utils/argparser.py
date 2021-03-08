@@ -255,7 +255,7 @@ def get_argparser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-p",
-        "--show_hyperparameters",
+        "--show_hparams",
         action="append",
         help="The hyperparameters to show in the ask-for-experiment dialog. Use this parameter multiple times to show multiple hyperparameters.",
     )
