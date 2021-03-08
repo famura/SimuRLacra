@@ -277,7 +277,7 @@ def create_experiment_formatter(
             result += " {"
             first = True
             for param in show_hyper_parameters:
-                value = dict_path_access(hyper_parameters, param)
+                value = dict_path_access(hyper_parameters, param, default='None')
                 if not first:
                     result += ","
                 result += f" {param}={value}"

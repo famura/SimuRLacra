@@ -33,9 +33,12 @@ from copy import deepcopy
 from typing import Sequence, NamedTuple, Union, Any
 
 import pyrado
+import typing
 from pyrado.spaces.base import Space
 from pyrado.spaces.empty import EmptySpace
 from pyrado.utils.checks import is_sequence
+
+T = typing.TypeVar("T")
 
 
 class EnvSpec(NamedTuple):
@@ -244,8 +247,13 @@ def fill_list_of_arrays(loa: Sequence[np.ndarray], des_len: int, fill_ele=np.nan
     return loa_c
 
 
-def dict_path_access(d: dict, path: str) -> Any:
+def dict_path_access(
+    d: dict, path: str, default: typing.Optional[T] = None, default_for_last_layer_only: bool = False
+) -> T:
     result = d
-    for part in path.split("."):
+    path_split = path.split(".")
+    for i, part in enumerate(path_split):
+        if part not in result and (i == len(path_split) - 1 or not default_for_last_layer_only):
+            return default
         result = result[part]
     return result
