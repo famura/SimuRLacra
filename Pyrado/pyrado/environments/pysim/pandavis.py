@@ -47,16 +47,12 @@ class PandaVis(ShowBase):
 
         # Configuration of the lighting
         self.directionalLight1 = DirectionalLight("directionalLight")
-        self.directionalLightNP1 = self.render.attachNewNode(
-            self.directionalLight1
-        )
+        self.directionalLightNP1 = self.render.attachNewNode(self.directionalLight1)
         self.directionalLightNP1.setHpr(0, -8, 0)
         self.render.setLight(self.directionalLightNP1)
 
         self.directionalLight2 = DirectionalLight("directionalLight")
-        self.directionalLightNP2 = self.render.attachNewNode(
-            self.directionalLight2
-        )
+        self.directionalLightNP2 = self.render.attachNewNode(self.directionalLight2)
         self.directionalLightNP2.setHpr(180, -20, 0)
         self.render.setLight(self.directionalLightNP2)
 
@@ -146,23 +142,13 @@ class BallOnBeamVis(PandaVis):
 
         # Ball
         self.ball = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
-        self.ball.setColor(1, 0, 0, 0)  # red
         self.ball.setScale(r_ball * self._scale)
-        self.ball.setPos(
-            x * self._scale,
-            0,
-            (d_beam / 2.0 + r_ball) * self._scale,
-        )
+        self.ball.setPos(x * self._scale, 0, (d_beam / 2.0 + r_ball) * self._scale)
         self.ball.reparentTo(self.render)
 
         # Beam
-        self.beam = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
-        self.beam.setColor(0, 1, 0, 0)  # green
-        self.beam.setScale(
-            l_beam / 2 * self._scale,
-            d_beam * self._scale,
-            d_beam / 2 * self._scale,
-        )
+        self.beam = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
+        self.beam.setScale(l_beam / 2 * self._scale, d_beam * self._scale, d_beam / 2 * self._scale)
         self.beam.setR(-a * 180 / np.pi)
         self.beam.reparentTo(self.render)
 
@@ -170,7 +156,6 @@ class BallOnBeamVis(PandaVis):
         self.taskMgr.add(self.update, "update")
 
     def update(self, task):
-
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
         m_ball = self._env.domain_param["m_ball"]
@@ -183,7 +168,8 @@ class BallOnBeamVis(PandaVis):
         x = float(self._env.state[0])  # ball position along the beam axis [m]
         a = float(self._env.state[1])  # angle [rad]
 
-        ball_pos = ((np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball)) * self._scale, 0, (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball)) * self._scale)
+        ball_pos = ((np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball)) * self._scale, 0,
+                    (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball)) * self._scale)
         # Update position of ball
         self.ball.setPos(ball_pos)
 
@@ -225,7 +211,7 @@ class OneMassOscillatorVis(PandaVis):
         c = 0.1 * self._env.obs_space.bound_up[0]
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 5/c
+        self._scale = 5 / c
 
         # Set window title
         self.windowProperties.setTitle("One Mass Oscillator")
@@ -235,59 +221,38 @@ class OneMassOscillatorVis(PandaVis):
         self.cam.setY(-5 * self._scale)
 
         # Ground
-        self.ground = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
+        self.ground = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
         self.ground.setPos(0, 0, -0.02 * self._scale)
-        self.ground.setScale(
-            self._env.obs_space.bound_up[0] * self._scale,
-            1.5 * c * self._scale,
-            0.01 * self._scale,
-        )  # Scale modified according to Blender Object
-        self.ground.setColor(0, 1, 0, 0)  # green
+        self.ground.setScale(self._env.obs_space.bound_up[0] * self._scale, 1.5 * c * self._scale,
+                             0.01 * self._scale)  # Scale modified according to Blender Object
         self.ground.reparentTo(self.render)
 
         # Object
-        self.mass = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
+        self.mass = self.loader.loadModel(osp.join(self.dir, "cube_blue.egg"))
         self.mass.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.mass.setScale(
-            c * 0.5 * self._scale,
-            c * 0.5 * self._scale,
-            c * 0.5 * self._scale,
-        )  # multiplied by 0.5 since Blender object has length of 2
-        self.mass.setColor(0, 0, 1, 0)  # blue
+        self.mass.setScale(c * 0.5 * self._scale, c * 0.5 * self._scale,
+                           c * 0.5 * self._scale)  # multiplied by 0.5 since Blender object has length of 2
         self.mass.reparentTo(self.render)
 
         # Desired state
-        self.des = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
+        self.des = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
         self.des.setPos(self._env._task.state_des[0] * self._scale, 0, 0.4 * c * self._scale)
-        self.des.setScale(
-            0.4 * c * self._scale,
-            0.4 * c * self._scale,
-            0.4 * c * self._scale,
-        )
+        self.des.setScale(0.4 * c * self._scale, 0.4 * c * self._scale, 0.4 * c * self._scale)
         self.des.setTransparency(1)
-        self.des.setColorScale(0, 1, 1, 0.5)
         self.des.reparentTo(self.render)
 
         # Force
-        self.force = self.loader.loadModel(osp.join(self.dir, "arrow_turquoise.egg"))
-        self.force.setPos( self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.force.setScale(
-            0.1 * self._env._curr_act / 10.0 * self._scale,
-            0.1 * c * self._scale,
-            0.1 * c * self._scale,
-        )
-        self.force.setColor(1, 0, 0, 0)  # red
+        self.force = self.loader.loadModel(osp.join(self.dir, "arrow_red.egg"))
+        self.force.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
+        self.force.setScale(0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale,
+                            0.1 * c * self._scale)
         self.force.reparentTo(self.render)
 
         # Spring
-        self.spring = self.loader.loadModel(osp.join(self.dir, "spring_yellow.egg"))
+        self.spring = self.loader.loadModel(osp.join(self.dir, "spring_orange.egg"))
         self.spring.setPos(0, 0, c / 2.0 * self._scale)
-        self.spring.setScale(
-            (self._env.state[0] - c / 2.0) / 7.3 * self._scale,
-            c / 6.0 * self._scale,
-            c / 6.0 * self._scale,
-        )  # scaling according to Blender object
-        self.spring.setColor(0, 0, 1, 0)  # blue
+        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.3 * self._scale, c / 6.0 * self._scale,
+                             c / 6.0 * self._scale)  # scaling according to Blender object
         self.spring.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
@@ -315,9 +280,7 @@ class OneMassOscillatorVis(PandaVis):
             self.force.setSx(capped_act / 10.0 * self._scale)
 
         # Update scale of spring
-        self.spring.setSx(
-            (self._env.state[0] - c / 2.0) / 7.3 * self._scale
-        )  # scaling according to Blender object
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3 * self._scale)  # scaling according to Blender object
 
         # Update displayed text
         self.text.setText(
@@ -361,32 +324,21 @@ class PendulumVis(PandaVis):
         self.cam.setY(-20 * self._scale)
 
         # Joint
-        self.joint = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
+        self.joint = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
         self.joint.setPos(0, r_pole * self._scale, 0)
-        self.joint.setScale(
-            r_pole * self._scale,
-            r_pole * self._scale,
-            r_pole * self._scale,
-        )
-        self.joint.setColor(0, 0, 0)  # black
+        self.joint.setScale(r_pole * self._scale, r_pole * self._scale, r_pole * self._scale)
         self.joint.reparentTo(self.render)
 
         # Pole
         self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
         self.pole.setPos(0, r_pole * self._scale, 0)
-        self.pole.setScale(
-            r_pole * self._scale,
-            r_pole * self._scale,
-            2 * l_pole * self._scale,
-        )
-        self.pole.setColor(0, 0, 1)  # blue
+        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
-
         # Accessing the current parameter values
         th, _ = self._env.state
         g = self._env.domain_param["g"]
@@ -401,18 +353,17 @@ class PendulumVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
-                       pole_pos[1],
+        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale, pole_pos[1],
                        pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
 
         # Update displayed text
         self.text.setText(
             f"""
             dt: {self._env._dt :1.4f}
-            theta: {self._env.state[0]*180/np.pi : 2.3f}
+            theta: {self._env.state[0] * 180 / np.pi : 2.3f}
             sin theta: {np.sin(self._env.state[0]) : 1.3f}
             cos theta: {np.cos(self._env.state[0]) : 1.3f}
-            theta_dot: {self._env.state[1]*180/np.pi : 2.3f}
+            theta_dot: {self._env.state[1] * 180 / np.pi : 2.3f}
             tau: {self._env._curr_act[0] : 1.3f}
             g: {g : 1.3f}
             m_pole: {m_pole : 1.3f}
@@ -437,9 +388,7 @@ class QBallBalancerVis(PandaVis):
         # Accessing variables of environment class
         self._env = env
         l_plate = self._env.domain_param["l_plate"]
-        m_ball = self._env.domain_param[
-            "m_ball"
-        ]  # mass of the ball is not needed for panda3d visualization
+        m_ball = self._env.domain_param["m_ball"]  # mass of the ball is not needed for panda3d visualization
         r_ball = self._env.domain_param["r_ball"]
         d_plate = 0.01
         r_pole = 0.005
@@ -457,59 +406,40 @@ class QBallBalancerVis(PandaVis):
 
         # Ball
         self.ball = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
-        self.ball.setPos(
-            self._env.state[2] * self._scale,
-            self._env.state[3] * self._scale,
-            (r_ball + d_plate / 2.0) * self._scale,
-        )
+        self.ball.setPos(self._env.state[2] * self._scale, self._env.state[3] * self._scale,
+                         (r_ball + d_plate / 2.0) * self._scale)
         self.ball.setScale(r_ball * self._scale)
-        self.ball.setColor(1, 0, 0, 0)  # red
         self.ball.reparentTo(self.render)
 
         # Plate
-        self.plate = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
-        self.plate.setScale(
-            l_plate * 0.5 * self._scale,
-            l_plate * 0.5 * self._scale,
-            d_plate * 0.5 * self._scale,
-        )  # modified according to Blender object
-        self.plate.setColor(0, 1, 1, 0)  # blue
+        self.plate = self.loader.loadModel(osp.join(self.dir, "cube_blue.egg"))
+        self.plate.setScale(l_plate * 0.5 * self._scale, l_plate * 0.5 * self._scale,
+                            d_plate * 0.5 * self._scale)  # modified according to Blender object
         self.plate.reparentTo(self.render)
 
         # Joint
-        self.joint = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
+        self.joint = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
         self.joint.setPos(0, 0, -d_plate * self._scale)
-        self.joint.setScale(
-            r_pole * self._scale,
-            r_pole * self._scale,
-            r_pole * self._scale,
-        )
-        self.joint.setColor(1, 1, 1)  # white
+        self.joint.setScale(r_pole * self._scale, r_pole * self._scale, r_pole * self._scale)
         self.joint.reparentTo(self.render)
 
         # Pole
-        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
+        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_grey.egg"))
         self.pole.setPos(0, 0, -d_plate * self._scale)
-        self.pole.setScale(
-            r_pole * self._scale,
-            r_pole * self._scale,
-            l_pole * self._scale,
-        )
-        self.pole.setColor(0, 0, 0)  # black
+        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
         # Null_plate
-        self.null_plate = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
+        self.null_plate = self.loader.loadModel(osp.join(self.dir, "cube_grey.egg"))
         self.null_plate.setPos(0, 0, - 2.5 * l_pole * self._scale)
-        self.null_plate.setScale(l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale, d_plate / 20.0 * self._scale)
-        self.null_plate.setColor(0, 0, 0)
+        self.null_plate.setScale(l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale,
+                                 d_plate / 20.0 * self._scale)
         self.null_plate.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
-
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
         l_plate = self._env.domain_param["l_plate"]
@@ -538,20 +468,17 @@ class QBallBalancerVis(PandaVis):
         y = self._env.state[3]  # along the y axis
 
         # Compute plate orientation
-        a_vp = -self._env.plate_angs[
-            0
-        ]  # plate's angle around the y axis (alpha) # Roll
-        b_vp = self._env.plate_angs[
-            1
-        ]  # plate's angle around the x axis (beta) # Pitch
+        a_vp = -self._env.plate_angs[0]  # plate's angle around the y axis (alpha) # Roll
+        b_vp = self._env.plate_angs[1]  # plate's angle around the x axis (beta) # Pitch
 
         # Update rotation of plate
         self.plate.setR(-a_vp * 180 / np.pi)  # rotate Roll axis
         self.plate.setP(b_vp * 180 / np.pi)  # rotate Pitch axis
 
         # Update position of ball
-        ball_pos = (x * np.cos(a_vp) * self._scale, y * np.cos(b_vp) * self._scale,
-            (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0) * self._scale)
+        ball_pos = (x * np.cos(a_vp) * self._scale,
+                    y * np.cos(b_vp) * self._scale,
+                    (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0) * self._scale)
         self.ball.setPos(ball_pos)
 
         # Draw line to that point
@@ -596,7 +523,7 @@ class QCartPoleVis(PandaVis):
     """
     Visualization for QCartPoleSim
     """
-    
+
     def __init__(self, env: SimEnv, render):
         """
         Constructor
@@ -626,59 +553,34 @@ class QCartPoleVis(PandaVis):
         self.cam.setY(-5 * self._scale)
 
         # Rail
-        self.rail = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_blue.egg"))
+        self.rail = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_grey.egg"))
         self.rail.setPos(0, 0, (-h_cart - r_rail) * self._scale)
-        self.rail.setScale(
-            r_rail * self._scale,
-            r_rail * self._scale,
-            l_rail * self._scale,
-        )
-        self.rail.setColor(0.85, 0.85, 0.85)  # light Grey
+        self.rail.setScale(r_rail * self._scale, r_rail * self._scale, l_rail * self._scale)
         self.rail.reparentTo(self.render)
         self.rail.setR(90)
 
         # Cart
-        self.cart = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
+        self.cart = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
         self.cart.setX(x * self._scale)
-        self.cart.setScale(
-            l_cart * self._scale,
-            h_cart / 2 * self._scale,
-            h_cart * self._scale,
-        )
-        self.cart.setColor(0, 1, 0, 0)  # green
+        self.cart.setScale(l_cart * self._scale, h_cart / 2 * self._scale, h_cart * self._scale)
         self.cart.reparentTo(self.render)
 
         # Joint
         self.joint = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
-        self.joint.setPos(
-            x * self._scale,
-            (-r_pole - h_cart / 2) * self._scale,
-            0,
-        )
+        self.joint.setPos(x * self._scale, (-r_pole - h_cart / 2) * self._scale, 0)
         self.joint.setScale(r_pole * self._scale)
-        self.joint.setColor(0.85, 0.85, 0.85)  # lightGrey
         self.joint.reparentTo(self.render)
 
         # Pole
         self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
-        self.pole.setPos(
-            x * self._scale,
-            (-r_pole - h_cart / 2) * self._scale,
-            0,
-        )
-        self.pole.setScale(
-            r_pole * self._scale,
-            r_pole * self._scale,
-            2 * l_pole * self._scale,
-        )
-        self.pole.setColor(0, 0, 1)  # blue
+        self.pole.setPos(x * self._scale, (-r_pole - h_cart / 2) * self._scale, 0)
+        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
     def update(self, task):
-
         # Accessing the current parameter values
         x, th, _, _ = self._env.state
         g = self._env.domain_param["g"]
@@ -707,8 +609,7 @@ class QCartPoleVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
-                       pole_pos[1],
+        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale, pole_pos[1],
                        pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
 
         # Draw line to that point
@@ -756,75 +657,50 @@ class QQubeVis(PandaVis):
         pole_radius = 0.0045
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 20/Lp
+        self._scale = 20 / Lp
 
         # Set window title
         self.windowProperties.setTitle("Quanser Qube")
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(
-            -0.4 * self._scale,
-            -1.3 * self._scale,
-            0.4 * self._scale,
-        )
+        self.cam.setPos(-0.4 * self._scale, -1.3 * self._scale, 0.4 * self._scale)
         self.cam.setHpr(-20, -10, 0)
 
         # Box
-        self.box = self.loader.loadModel(osp.join(self.dir, "box_green.egg"))
+        self.box = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
         self.box.setPos(0, 0.07 * self._scale, 0)
-        self.box.setScale(
-            0.09 * self._scale,
-            0.1 * self._scale,
-            0.09 * self._scale,
-        )
-        self.box.setColor(0.5, 0.5, 0.5)  # grey
+        self.box.setScale(0.09 * self._scale, 0.1 * self._scale, 0.09 * self._scale)
         self.box.reparentTo(self.render)
 
         # Cylinder
-        self.cylinder = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_blue.egg"))
-        self.cylinder.setScale(
-            0.005 * self._scale,
-            0.005 * self._scale,
-            0.03 * self._scale,
-        )
+        self.cylinder = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_grey.egg"))
+        self.cylinder.setScale(0.005 * self._scale, 0.005 * self._scale, 0.03 * self._scale)
         self.cylinder.setPos(0, 0.07 * self._scale, 0.12 * self._scale)
-        self.cylinder.setColor(0.5, 0.5, 0, 5)  # grey
         self.cylinder.reparentTo(self.render)
 
         # Joint 1
-        self.joint1 = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
+        self.joint1 = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
         self.joint1.setScale(0.005 * self._scale)
         self.joint1.setPos(0.0, 0.07 * self._scale, 0.15 * self._scale)
         self.joint1.reparentTo(self.render)
 
         # Arm
         self.arm = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
-        self.arm.setScale(
-            arm_radius * self._scale,
-            arm_radius * self._scale,
-            Lr * self._scale,
-        )
-        self.arm.setColor(0, 0, 1)  # blue
+        self.arm.setScale(arm_radius * self._scale, arm_radius * self._scale, Lr * self._scale)
         self.arm.setP(90)
         self.arm.setPos(0, 0.07 * self._scale, 0.15 * self._scale)
         self.arm.reparentTo(self.render)
 
         # Joint 2
-        self.joint2 = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
+        self.joint2 = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
         self.joint2.setScale(pole_radius * self._scale)
         self.joint2.setPos(0.0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
-        self.joint2.setColor(0, 0, 0)  # black
         self.joint2.wrtReparentTo(self.arm)
 
         # Pole
-        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_bottom_blue.egg"))
-        self.pole.setScale(
-            pole_radius * self._scale,
-            pole_radius * self._scale,
-            Lp * self._scale,
-        )
-        self.pole.setColor(1, 0, 0)  # red
+        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_bottom_red.egg"))
+        self.pole.setScale(pole_radius * self._scale, pole_radius * self._scale, Lp * self._scale)
         self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
@@ -853,10 +729,9 @@ class QQubeVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        current_pos = (
-            pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
-            pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
-            pole_pos[2] - 2 * Lp * np.cos(al) * self._scale)
+        current_pos = (pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
+                       pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
+                       pole_pos[2] - 2 * Lp * np.cos(al) * self._scale)
 
         # Draw line to that point
         self.draw_trace(current_pos)
