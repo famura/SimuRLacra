@@ -140,7 +140,9 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             cov_is_parameter=self._cov_is_parameter,
         )
 
-    def parameters(self, return_mean_cov_indices: bool = False) -> Union[List[to.Tensor], Tuple[List[to.Tensor], Optional[List[int]], Optional[List[int]]]]:
+    def parameters(
+        self, return_mean_cov_indices: bool = False
+    ) -> Union[List[to.Tensor], Tuple[List[to.Tensor], Optional[List[int]], Optional[List[int]]]]:
         params = []
         if self._mean_is_parameter:
             params.append(self.mean)
@@ -158,7 +160,9 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             return params, mean_indices, cov_indices
         return params
 
-    def get_stacked(self, return_mean_cov_indices: bool = False) -> Union[np.ndarray, Tuple[np.ndarray, Optional[List[int]], Optional[List[int]]]]:
+    def get_stacked(
+        self, return_mean_cov_indices: bool = False
+    ) -> Union[np.ndarray, Tuple[np.ndarray, Optional[List[int]], Optional[List[int]]]]:
         parameters = self.parameters(return_mean_cov_indices=return_mean_cov_indices)
         if return_mean_cov_indices:
             parameters, mean_indices, cov_indices = parameters
@@ -331,7 +335,7 @@ class SPRL(Algorithm):
         # optionally clip the bounds of the new variance
         bounds = None
         x0, _, x0_cov_indices = previous_distribution.get_stacked(return_mean_cov_indices=True)
-        if True or self._kl_threshold and (self._kl_threshold < kl_divergence):
+        if self._kl_threshold and (self._kl_threshold < kl_divergence):
             lower_bound = np.ones_like(x0) * -np.inf
             if x0_cov_indices is not None:
                 lower_bound[x0_cov_indices] = self._std_lower_bound
@@ -339,7 +343,6 @@ class SPRL(Algorithm):
             # bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
             bounds = Bounds(lb=lower_bound, ub=upper_bound)
             x0 = np.clip(x0, lower_bound, upper_bound)
-
 
         objective_fn: Optional[Callable[..., Tuple[np.array, np.array]]] = None
         result = None
