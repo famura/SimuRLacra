@@ -121,10 +121,10 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             mean = stacked[: self.dim]
             cov_chol_flat = self.cov_chol_flat
         elif not self._mean_is_parameter and self._cov_is_parameter:
-            mean = self.cov_chol_flat
+            mean = self.mean
             cov_chol_flat = stacked
         else:
-            mean = self.cov_chol_flat
+            mean = self.mean
             cov_chol_flat = self.cov_chol_flat
 
         if type(mean) == np.ndarray:
