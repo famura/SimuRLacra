@@ -52,16 +52,16 @@ def q_95(x):
 
 
 def _plot_and_save(
-        df: pd.DataFrame,
-        index: str,
-        index_label: str,
-        value: str = "ret",
-        value_label: str = "Return",
-        nom_dp_value: float = None,
-        y_lim: list = None,
-        show_legend: bool = True,
-        save_figure: bool = False,
-        save_dir: str = None,
+    df: pd.DataFrame,
+    index: str,
+    index_label: str,
+    value: str = "ret",
+    value_label: str = "Return",
+    nom_dp_value: float = None,
+    y_lim: list = None,
+    show_legend: bool = True,
+    save_figure: bool = False,
+    save_dir: str = None,
 ):
     if index in df.columns and value in df.columns:
         df_grouped = df.groupby(index)[value].agg([np.mean, np.std, q_5, q_95])
@@ -69,13 +69,13 @@ def _plot_and_save(
         # Create plot with standard deviation as shaded region.
         # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
         fig, ax = plt.subplots()
-        ax.plot(df_grouped.index, df_grouped["mean"], label='Mean')
+        ax.plot(df_grouped.index, df_grouped["mean"], label="Mean")
         ax.fill_between(
             df_grouped.index,
             df_grouped["mean"] - 2 * df_grouped["std"],
             df_grouped["mean"] + 2 * df_grouped["std"],
             alpha=0.3,
-            label='95% Standard Deviation',
+            label="95% Standard Deviation",
         )
         if show_legend:
             ax.legend()
@@ -93,8 +93,8 @@ def _plot_and_save(
         # Create plot with quantiles as shaded region.
         # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
         fig, ax = plt.subplots()
-        ax.plot(df_grouped.index, df_grouped["mean"], label='Mean')
-        ax.fill_between(df_grouped.index, df_grouped["q_5"], df_grouped["q_95"], alpha=0.3, label='95% Quantiles')
+        ax.plot(df_grouped.index, df_grouped["mean"], label="Mean")
+        ax.fill_between(df_grouped.index, df_grouped["q_5"], df_grouped["q_95"], alpha=0.3, label="95% Quantiles")
         if show_legend:
             ax.legend()
         ax.set_xlabel(index_label)
@@ -109,16 +109,10 @@ def _plot_and_save(
             fig.savefig(osp.join(save_dir, f"{value}_mean_ci.pdf"))
 
 
-if __name__ == "__main__":
-    # Parse command line arguments
-    args = get_argparser().parse_args()
+def plot_policy(args, ex_dir):
     plt.rc("text", usetex=args.use_tex)
 
-    # Commonly scale the colorbars of all plots
-    accnorm = AccNorm()
-
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hyperparameters) if args.dir is None else args.dir
     eval_parent_dir = osp.join(ex_dir, "eval_domain_grid")
     if not osp.isdir(eval_parent_dir):
         raise pyrado.PathErr(given=eval_parent_dir)
@@ -141,12 +135,28 @@ if __name__ == "__main__":
         df = df.loc[:, df.apply(pd.Series.nunique) != 1]
 
         _plot_and_save(
-            df,
-            "g",
-            r"$g$",
-            nom_dp_value=9.81,
-            save_figure=args.save,
-            save_dir=eval_dir,
+            df, "g", r"$g$", nom_dp_value=9.81, save_figure=args.save, save_dir=eval_dir,
         )
 
     plt.show()
+
+
+if __name__ == "__main__":
+    # Parse command line arguments
+    g_args = get_argparser().parse_args()
+    if g_args.load_all:
+        if not g_args.dir:
+            raise pyrado.PathErr(msg="load_all was set but no dir was given")
+        if not os.path.isdir(g_args.dir):
+            raise pyrado.PathErr(given=g_args.dir)
+
+        g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir) if "policy.pt" in tmp[2]]
+    elif g_args.dir is None:
+        g_ex_dirs = [ask_for_experiment(show_hyper_parameters=g_args.show_hyperparameters)]
+    else:
+        g_ex_dirs = [g_args.dir]
+
+    print(f"Plotting all of {g_ex_dirs}.")
+    for g_ex_dir in g_ex_dirs:
+        print(f"Plotting {g_ex_dir}.")
+        plot_policy(g_args, g_ex_dir)
