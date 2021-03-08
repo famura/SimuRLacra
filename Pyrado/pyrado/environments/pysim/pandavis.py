@@ -1,4 +1,3 @@
-import keyboard
 import numpy as np
 import os.path as osp
 import sys
@@ -24,20 +23,21 @@ loadPrcFileData("", confVars)
 
 
 class PandaVis(ShowBase):
-    def __init__(self, render):
+    def __init__(self, rendering):
         """
         Constructor
         """
         ShowBase.__init__(self)
         self.dir = Filename.fromOsSpecific(pyrado.PANDA_ASSETS_DIR).getFullpath()
-        self._render = render
-        
+        self._render = rendering
+
         if self._render:
             sys.path.insert(0, pyrado.RENDER_PIPELINE_DIR)
             from rpcore import RenderPipeline
             self.render_pipeline = RenderPipeline()
             self.render_pipeline.pre_showbase_init()
             self.render_pipeline.create(self)
+            self.render_pipeline.daytime_mgr.time = "17:00"
 
         # Set title and background color
         self.render.setAntialias(AntialiasAttrib.MAuto)
@@ -78,8 +78,6 @@ class PandaVis(ShowBase):
         self.trace.setColor(0.8, 0.8, 0.8)
         self.lines = self.render.attachNewNode("Lines")
         self.last_pos = None
-        
-        keyboard.press('f5')
 
     def update(self, task):
         """
@@ -311,7 +309,10 @@ class OneMassOscillatorVis(PandaVis):
 
         # Update scale of force
         capped_act = np.sign(self._env._curr_act) * max(0.1 * np.abs(self._env._curr_act), 0.3)
-        self.force.setSx(capped_act / 10.0 * self._scale)
+        if capped_act == 0:
+            self.force.setSx(0.00001)  # has_mat error if scale = 0
+        else:
+            self.force.setSx(capped_act / 10.0 * self._scale)
 
         # Update scale of spring
         self.spring.setSx(
@@ -445,7 +446,7 @@ class QBallBalancerVis(PandaVis):
         l_pole = 0.02
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / d_plate
+        self._scale = 1 / r_pole
 
         # Set window title
         self.windowProperties.setTitle("Quanser Ball Balancer")
