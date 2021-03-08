@@ -32,22 +32,39 @@ import argparse
 def get_argparser() -> argparse.ArgumentParser:
     """ Return Pyrado's default argument parser. """
 
-    parser = argparse.ArgumentParser(description="Pyrado's default argument parser",)
-    parser.add_argument(
-        "--animation", dest="animation", action="store_true", help="show a rendered animation (default: True)",
+    parser = argparse.ArgumentParser(
+        description="Pyrado's default argument parser",
     )
     parser.add_argument(
-        "--no_animation", dest="animation", action="store_false",
+        "--animation",
+        dest="animation",
+        action="store_true",
+        help="show a rendered animation (default: True)",
+    )
+    parser.add_argument(
+        "--no_animation",
+        dest="animation",
+        action="store_false",
     )
     parser.set_defaults(animation=True)
     parser.add_argument(
-        "--dt", type=float, help="environments time step size in seconds (no default)",
+        "--dt",
+        type=float,
+        help="environments time step size in seconds (no default)",
     )
     parser.add_argument(
-        "-d", "--dir", type=str, nargs="?", help="path to the (experiment) directory to load from",
+        "-d",
+        "--dir",
+        type=str,
+        nargs="?",
+        help="path to the (experiment) directory to load from",
     )
     parser.add_argument(
-        "-e", "--env_name", type=str, nargs="?", help="name of the environment to use (e.g. 'qbb' or 'qcp-st')",
+        "-e",
+        "--env_name",
+        type=str,
+        nargs="?",
+        help="name of the environment to use (e.g. 'qbb' or 'qcp-st')",
     )
     parser.add_argument(
         "--idcs",
@@ -75,7 +92,10 @@ def get_argparser() -> argparse.ArgumentParser:
         help="plotting layout for plotting, e.g. inside or outside for plotting a posterior (default: outside)",
     )
     parser.add_argument(
-        "--load_all", action="store_true", default=False, help="load all quantities e.g. policies (default: False)",
+        "--load_all",
+        action="store_true",
+        default=False,
+        help="load all quantities e.g. policies (default: False)",
     )
     parser.add_argument(
         "--max_steps",
@@ -120,10 +140,16 @@ def get_argparser() -> argparse.ArgumentParser:
         help="number of environments to sample from in parallel (default: 4)",
     )
     parser.add_argument(
-        "--num_runs", type=int, default=1, help="number of runs for the overall experiment (default: 1)",
+        "--num_runs",
+        type=int,
+        default=1,
+        help="number of runs for the overall experiment (default: 1)",
     )
     parser.add_argument(
-        "-n", "--num_samples", type=int, help="number of samples",
+        "-n",
+        "--num_samples",
+        type=int,
+        help="number of samples",
     )
     parser.add_argument(
         "-q",
@@ -133,7 +159,10 @@ def get_argparser() -> argparse.ArgumentParser:
         help="display minimal information, the opposite of verbose (default: True)",
     )
     parser.add_argument(
-        "--random_init_state", action="store_true", default=False, help="use a random initial state (default: False)",
+        "--random_init_state",
+        action="store_true",
+        default=False,
+        help="use a random initial state (default: False)",
     )
     parser.add_argument(
         "--relentless",
@@ -173,10 +202,17 @@ def get_argparser() -> argparse.ArgumentParser:
         help="(partial) name of the policy to load, e.g. 'argmax_policy', or 'iter_0_policy' " "(default: policy)",
     )
     parser.add_argument(
-        "-s", "--save", action="store_true", default=False, help="save all generated figures (default: False)",
+        "-s",
+        "--save",
+        action="store_true",
+        default=False,
+        help="save all generated figures (default: False)",
     )
     parser.add_argument(
-        "--seed", type=int, default=None, help="seed for the random number generators (default: None for no seeding)",
+        "--seed",
+        type=int,
+        default=None,
+        help="seed for the random number generators (default: None for no seeding)",
     )
     parser.add_argument(
         "--use_rec",
@@ -212,7 +248,10 @@ def get_argparser() -> argparse.ArgumentParser:
         help="start a procedure with initialized parameters, e.g. for the policy",
     )
     parser.add_argument(
-        "--from_scratch", dest="warmstart", action="store_false", help="the opposite of 'warmstart'",
+        "--from_scratch",
+        dest="warmstart",
+        action="store_false",
+        help="the opposite of 'warmstart'",
     )
     parser.add_argument(
         "-p",

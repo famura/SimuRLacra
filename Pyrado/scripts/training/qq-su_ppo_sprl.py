@@ -49,16 +49,19 @@ from torch.optim import lr_scheduler
 if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument('--frequency', default=250, type=int)
+    parser.add_argument("--frequency", default=250, type=int)
     parser.set_defaults(max_steps=600)
-    parser.add_argument('--ppo_iterations', default=150, type=int)
-    parser.add_argument('--sprl_iterations', default=50, type=int)
-    parser.add_argument('--cov_only', default=False, type=bool)
+    parser.add_argument("--ppo_iterations", default=150, type=int)
+    parser.add_argument("--sprl_iterations", default=50, type=int)
+    parser.add_argument("--cov_only", default=False, type=bool)
     args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PPO.name}_{FNNPolicy.name}",
-                              f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}")
+    ex_dir = setup_experiment(
+        QQubeSwingUpSim.name,
+        f"{PPO.name}_{FNNPolicy.name}",
+        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
