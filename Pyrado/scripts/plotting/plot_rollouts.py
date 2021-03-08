@@ -43,7 +43,7 @@ if __name__ == "__main__":
     plt.rc("text", usetex=False)
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hparams) if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(show_hparams=args.show_hparams) if args.dir is None else args.dir
 
     # Load the rollouts
     rollouts, _ = load_rollouts_from_dir(ex_dir)

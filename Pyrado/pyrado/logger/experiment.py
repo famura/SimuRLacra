@@ -341,14 +341,14 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
 
 
 def ask_for_experiment(
-    latest_only: bool = False, max_display: int = 10, show_hyper_parameters: Optional[List[str]] = None
+    latest_only: bool = False, max_display: int = 10, show_hparams: Optional[List[str]] = None
 ) -> Experiment:
     """
     Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.
 
     :param latest_only: only select the latest experiment of each type (environment-algorithm combination)
     :param max_display: only display this many items
-    :param show_hyper_parameters: Load the hyperparams file and show the parameters in this list. Sub-dicts can be separated with a dot.
+    :param show_hparams: Load the hyperparams file and show the parameters in this list. Sub-dicts can be separated with a dot.
     :return: query asking the user for an experiment
     """
     # Scan for experiment list
@@ -372,7 +372,7 @@ def ask_for_experiment(
     return select_query(
         sel_exp_by_prefix,
         fallback=lambda hint: select_by_hint(all_exps, hint),
-        item_formatter=create_experiment_formatter(show_hparams=show_hyper_parameters),
+        item_formatter=create_experiment_formatter(show_hparams=show_hparams),
         header="Available experiments:",
         footer="Enter experiment number or a partial path to an experiment.",
         max_display=max_display,
