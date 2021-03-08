@@ -28,9 +28,9 @@
 
 import itertools
 import os
+import os.path as osp
 from copy import deepcopy
 from datetime import datetime
-from os import path as osp
 from pathlib import Path
 from typing import Sequence, Union, Iterable, List, Callable, Optional
 
@@ -51,7 +51,7 @@ class Experiment:
     This is a path-like object, and as such it can be used everywhere a normal path would be used.
 
     Experiment folder path:
-    <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>--<slurm_id>
+    <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>
     """
 
     def __init__(
@@ -62,7 +62,7 @@ class Experiment:
         exp_id: str = None,
         timestamp: datetime = None,
         base_dir: str = pyrado.TEMP_DIR,
-        include_slurm_id_if_possible: bool = True,
+        include_slurm_id: bool = True,
     ):
         """
         Constructor
@@ -73,11 +73,11 @@ class Experiment:
         :param exp_id: combined timestamp and extra_info, usually the final folder name
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
-        :param include_slurm_id_if_possible: If a SLURM ID is present in the environment variables, include them in the experiment ID.
+        :param include_slurm_id: If a SLURM ID is present in the environment variables, include them in the experiment ID.
         """
 
         slurm_id = None
-        if include_slurm_id_if_possible and "SLURM_JOB_ID" in os.environ:
+        if include_slurm_id and "SLURM_JOB_ID" in os.environ:
             slurm_id = str(os.environ["SLURM_JOB_ID"])
             if "SLURM_ARRAY_TASK_ID" in os.environ:
                 slurm_id += "_" + str(os.environ["SLURM_ARRAY_TASK_ID"])
@@ -90,18 +90,14 @@ class Experiment:
             if extra_info is not None:
                 exp_id = exp_id + "--" + extra_info
             if slurm_id is not None:
-                exp_id += "--" + slurm_id
+                exp_id += "--SLURM:" + slurm_id
         else:
             # Try to parse extra_info from exp id
-            sd = exp_id.split("--")
+            sd = exp_id.split("--", 1)
             if len(sd) == 1:
                 timestr = sd[0]
-            elif len(sd) == 2:
-                timestr, extra_info = sd
-            elif len(sd) == 3:
-                timestr, extra_info, slurm_id = sd
             else:
-                assert False, 'Experiment ID has to many "columns" separated by "--"!'
+                timestr, extra_info = sd
             # Parse time string
             if "_" in timestr:
                 timestamp = datetime.strptime(timestr, pyrado.timestamp_format)
@@ -112,7 +108,6 @@ class Experiment:
         self.env_name = env_name
         self.algo_name = algo_name
         self.extra_info = extra_info
-        self.slurm_id = slurm_id
         self.exp_id = exp_id
         self.timestamp = timestamp
         self.base_dir = base_dir
@@ -157,9 +152,7 @@ def setup_experiment(
 ):
     """ Setup a new experiment for recording. """
     # Create experiment object
-    exp = Experiment(
-        env_name, algo_name, extra_info, base_dir=base_dir, include_slurm_id_if_possible=include_slurm_id_if_possible
-    )
+    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir, include_slurm_id=include_slurm_id_if_possible)
 
     # Create the folder
     os.makedirs(exp, exist_ok=True)
@@ -268,16 +261,25 @@ def select_by_hint(exps: Sequence[Experiment], hint: str):
 
 
 def create_experiment_formatter(
-    show_hyper_parameters: Optional[List[str]] = None, show_extra_info: bool = True, show_slurm_id: bool = True
+    show_hparams: Optional[List[str]] = None, show_extra_info: bool = True
 ) -> Callable[[Experiment], str]:
+    """
+    Returns an experiment formatter (i.e. a function that takes an experiment and produces a string) to be used in the
+    ask-for-experiments dialog. It produces useful information like the timestamp based on the experiments' data.
+
+    :param show_hparams: list of "paths" to hyperparameters that to be shown in the selection dialog; sub-dicts can be references with a dot, e.g. :code:`env.dt`
+    :param show_extra_info: whether to show the information stored in the :code:`extra_info` field of the experiment
+    :return: a function that serves as the formatter
+    """
+
     def formatter(exp: Experiment) -> str:
         result = f"({exp.timestamp}) {exp.prefix}"
-        if show_hyper_parameters:
+        if show_hparams:
             hyper_parameters = load_hyperparameters(exp, raise_error=True)
             result += " {"
             first = True
-            for param in show_hyper_parameters:
-                value = dict_path_access(hyper_parameters, param, default='None')
+            for param in show_hparams:
+                value = dict_path_access(hyper_parameters, param, default="None")
                 if not first:
                     result += ","
                 result += f" {param}={value}"
@@ -285,8 +287,6 @@ def create_experiment_formatter(
             result += " }"
         if show_extra_info and exp.extra_info is not None:
             result += f" ({exp.extra_info})"
-        if show_slurm_id and exp.slurm_id is not None:
-            result += f" [SLURM ID: {exp.slurm_id}]"
         return result
 
     return formatter
@@ -372,7 +372,7 @@ def ask_for_experiment(
     return select_query(
         sel_exp_by_prefix,
         fallback=lambda hint: select_by_hint(all_exps, hint),
-        item_formatter=create_experiment_formatter(show_hyper_parameters=show_hyper_parameters),
+        item_formatter=create_experiment_formatter(show_hparams=show_hyper_parameters),
         header="Available experiments:",
         footer="Enter experiment number or a partial path to an experiment.",
         max_display=max_display,
@@ -496,6 +496,13 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
 
 
 def load_hyperparameters(ex_dir, raise_error: bool = False) -> Union[dict, Optional[dict]]:
+    """
+    Loads the hyperparameters-dict from the given experiment directory. The hyperparameters file is assumed to be
+    named :code:`hyperparams.yaml`.
+
+    :param raise_error: whether to raise an error if one occurs; if false, :code:`None` is returned and an error
+                        message is printed
+    """
     hparams_file_name = "hyperparams.yaml"
     try:
         return load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
