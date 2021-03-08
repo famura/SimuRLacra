@@ -49,7 +49,7 @@ if __name__ == "__main__":
     plt.rc("text", usetex=args.use_tex)
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hparams) if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(show_hparams=args.show_hparams) if args.dir is None else args.dir
 
     # Load the data
     cands = to.load(osp.join(ex_dir, "candidates.pt"))
