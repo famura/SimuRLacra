@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # Get the experiment's directory to load from
     if args.env_name is None:
         print("No env_name was given, asking for experiment!")
-        experiment = ask_for_experiment(show_hyper_parameters=args.show_hyperparameters)
+        experiment = ask_for_experiment(show_hyper_parameters=args.show_hparams)
         env, policy, _ = load_experiment(experiment, args)
         env_name = env.name
         dt = env.dt

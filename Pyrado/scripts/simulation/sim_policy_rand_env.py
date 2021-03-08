@@ -56,7 +56,7 @@ if __name__ == "__main__":
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hyperparameters) if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hparams) if args.dir is None else args.dir
 
     # Get the simulation environment
     env, policy, kwout = load_experiment(ex_dir, args)

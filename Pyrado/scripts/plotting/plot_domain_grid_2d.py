@@ -81,7 +81,7 @@ if __name__ == "__main__":
     accnorm = AccNorm()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hyperparameters) if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hparams) if args.dir is None else args.dir
     eval_parent_dir = osp.join(ex_dir, "eval_domain_grid")
     if not osp.isdir(eval_parent_dir):
         raise pyrado.PathErr(given=eval_parent_dir)
