@@ -135,7 +135,12 @@ def plot_policy(args, ex_dir):
         df = df.loc[:, df.apply(pd.Series.nunique) != 1]
 
         _plot_and_save(
-            df, "g", r"$g$", nom_dp_value=9.81, save_figure=args.save, save_dir=eval_dir,
+            df,
+            "g",
+            r"$g$",
+            nom_dp_value=9.81,
+            save_figure=args.save,
+            save_dir=eval_dir,
         )
 
     plt.show()
@@ -144,9 +149,7 @@ def plot_policy(args, ex_dir):
 if __name__ == "__main__":
     # Parse command line arguments
     g_args = get_argparser().parse_args()
-    if g_args.load_all:
-        if not g_args.dir:
-            raise pyrado.PathErr(msg="load_all was set but no dir was given")
+    if g_args.load_all and g_args.dir:
         if not os.path.isdir(g_args.dir):
             raise pyrado.PathErr(given=g_args.dir)
 
