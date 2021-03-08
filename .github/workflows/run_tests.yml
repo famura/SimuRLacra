@@ -39,7 +39,7 @@ jobs:
           fail_ci_if_error: true
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
-        if: github.repository_owner == 'famura'
+        if: ${{ github.repository_owner == 'famura' }}
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
