@@ -257,7 +257,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "-p",
         "--show_hparams",
         action="append",
-        help="The hyperparameters to show in the ask-for-experiment dialog. Use this parameter multiple times to show multiple hyperparameters.",
+        help="hyperparameters to show in the ask-for-experiment dialog; use this parameter multiple times to show multiple hyperparameters; e.g. to differentiate between experiments",
     )
 
     segment_group = parser.add_mutually_exclusive_group(required=False)
