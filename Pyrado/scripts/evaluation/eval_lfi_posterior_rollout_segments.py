@@ -76,7 +76,7 @@ if __name__ == "__main__":
     num_ml_samples = args.num_rollouts_per_config
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hyperparameters) if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(show_hyper_parameters=args.show_hparams) if args.dir is None else args.dir
 
     # Load the environments, the policy, and the posterior
     env_sim, policy, kwout = load_experiment(ex_dir, args)
