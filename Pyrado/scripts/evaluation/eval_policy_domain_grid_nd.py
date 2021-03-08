@@ -58,7 +58,7 @@ if __name__ == "__main__":
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
-    # Load the policy (trained in simulation) and the environment
+def evaluate_policy(args, ex_dir):
     env, policy, _ = load_experiment(ex_dir, args)
 
     # Create multi-dim evaluation grid
@@ -164,3 +164,24 @@ if __name__ == "__main__":
         file_name="summary",
     )
     df.to_pickle(osp.join(save_dir, "df_sp_grid_nd.pkl"))
+
+
+if __name__ == "__main__":
+    # Parse command line arguments
+    g_args = get_argparser().parse_args()
+    if g_args.load_all:
+        if not g_args.dir:
+            raise pyrado.PathErr(msg="load_all was set but no dir was given")
+        if not os.path.isdir(g_args.dir):
+            raise pyrado.PathErr(given=g_args.dir)
+
+        g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir) if "policy.pt" in tmp[2]]
+    elif g_args.dir is None:
+        g_ex_dirs = [ask_for_experiment(show_hyper_parameters=g_args.show_hyperparameters)]
+    else:
+        g_ex_dirs = [g_args.dir]
+
+    print(f"Evaluating all of {g_ex_dirs}.")
+    for g_ex_dir in g_ex_dirs:
+        print(f"Evaluating {g_ex_dir}.")
+        evaluate_policy(g_args, g_ex_dir)
