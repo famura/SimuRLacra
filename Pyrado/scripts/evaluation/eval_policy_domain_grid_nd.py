@@ -159,7 +159,7 @@ def evaluate_policy(args, ex_dir):
         save_dir=save_dir,
         file_name="summary",
     )
-    df.to_pickle(osp.join(save_dir, "df_sp_grid_nd.pkl"))
+    df.to_pickle(osp.join(save_dir, f"df_sp_grid_{len(param_spec)}d.pkl"))
 
 
 if __name__ == "__main__":
