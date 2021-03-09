@@ -77,15 +77,14 @@ def _plot_and_save(
         # Save heat map and color bar if desired
         if save_figure:
             name = "-".join([index, column])
-            fig_hm.savefig(osp.join(save_dir, f"hm-{name}.pgf"))
+            fig_hm.savefig(osp.join(save_dir, f"hm-{name}.pdf"))
             if fig_cb is not None:
-                fig_cb.savefig(osp.join(save_dir, f"cb-{name}.pgf"))
+                fig_cb.savefig(osp.join(save_dir, f"cb-{name}.pdf"))
 
 
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    plt.rc("text", usetex=args.use_tex)
 
     # Get the experiment's directory to load from
     if args.dir is None:
@@ -118,7 +117,11 @@ if __name__ == "__main__":
             assert osp.isdir(eval_dir)
 
             # Load the data
-            df = pd.read_pickle(osp.join(eval_dir, "df_sp_grid_nd.pkl"))
+            pickle_file = osp.join(eval_dir, "df_sp_grid_2d.pkl")
+            if not osp.isfile(pickle_file):
+                print(f"{pickle_file} is not a file! Skipping...")
+                continue
+            df = pd.read_pickle(pickle_file)
 
             # Remove constant rows
             # df = df.loc[:, df.apply(pd.Series.nunique) != 1]

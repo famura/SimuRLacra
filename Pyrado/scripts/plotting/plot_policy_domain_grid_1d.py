@@ -88,7 +88,7 @@ def _plot_and_save(
             ax.axvline(nom_dp_value, c="k", ls="--", lw=1)
         # Save plot
         if save_figure:
-            fig.savefig(osp.join(save_dir, f"{value}_mean_std.pgf"))
+            fig.savefig(osp.join(save_dir, f"{value}_mean_std.pdf"))
 
         # Create plot with quantiles as shaded region.
         # fig, ax = plt.subplots(figsize=pyrado.figsize_IEEE_1col_18to10)
@@ -106,7 +106,7 @@ def _plot_and_save(
             ax.axvline(nom_dp_value, c="k", ls="--", lw=1)
         # Save plot
         if save_figure:
-            fig.savefig(osp.join(save_dir, f"{value}_mean_ci.pgf"))
+            fig.savefig(osp.join(save_dir, f"{value}_mean_ci.pdf"))
 
 
 def plot_policy(args, ex_dir):
@@ -129,7 +129,11 @@ def plot_policy(args, ex_dir):
         assert osp.isdir(eval_dir)
 
         # Load the data
-        df = pd.read_pickle(osp.join(eval_dir, "df_sp_grid_nd.pkl"))
+        pickle_file = osp.join(eval_dir, "df_sp_grid_1d.pkl")
+        if not osp.isfile(pickle_file):
+            print(f"{pickle_file} is not a file! Skipping...")
+            continue
+        df = pd.read_pickle(pickle_file)
 
         # Remove constant rows
         df = df.loc[:, df.apply(pd.Series.nunique) != 1]
