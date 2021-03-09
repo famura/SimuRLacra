@@ -43,7 +43,7 @@ class PandaVis(ShowBase):
         self.render.setAntialias(AntialiasAttrib.MAuto)
         self.windowProperties = WindowProperties()
         self.windowProperties.setForeground(True)
-        self.setBackgroundColor(decode_sRGB_float(0x35), decode_sRGB_float(0x50), decode_sRGB_float(0x6B))
+        self.setBackgroundColor(1, 1, 1)
 
         # Configuration of the lighting
         self.directionalLight1 = DirectionalLight("directionalLight")
