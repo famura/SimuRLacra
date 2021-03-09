@@ -59,6 +59,16 @@ def _get_obs_label(rollout: StepSequence, idx: int):
     return label
 
 
+def _get_state_label(rollout: StepSequence, idx: int):
+    try:
+        label = f"{rollout.rollout_info['env_spec'].state_space.labels[idx]}"
+        if label == "None":
+            label = f"o_{{{idx}}}"
+    except (AttributeError, KeyError):
+        label = f"o_{{{idx}}}"
+    return label
+
+
 def _get_act_label(rollout: StepSequence, idx: int):
     try:
         label = f"{rollout.rollout_info['env_spec'].act_space.labels[idx]}"
@@ -159,6 +169,55 @@ def plot_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
                         # Omit the last observation for simplicity
                         axs[i, j].plot(t, ro.observations[:, j + i * num_cols], c=colors[j + i * num_cols])
                         axs[i, j].set_ylabel(_get_obs_label(ro, j + i * num_cols))
+                    else:
+                        # We might create more subplots than there are observations
+                        axs[i, j].remove()
+
+
+def plot_states(ro: StepSequence, idcs_sel: Sequence[int] = None):
+    """
+    Plot all state trajectories of the given rollout.
+
+    :param ro: input rollout
+    :param idcs_sel: indices of the selected selected states, if `None` plot all
+    """
+    if hasattr(ro, "states"):
+        if not isinstance(ro.states, np.ndarray):
+            raise pyrado.TypeErr(given=ro.states, expected_type=np.ndarray)
+
+        # Select dimensions to plot
+        dim_states = range(ro.states.shape[1]) if idcs_sel is None else idcs_sel
+
+        # Use recorded time stamps if possible
+        t = getattr(ro, "time", np.arange(0, ro.length + 1))
+
+        if len(dim_states) <= 6:
+            divisor = 2
+        elif len(dim_states) <= 12:
+            divisor = 4
+        else:
+            divisor = 8
+        num_cols = int(np.ceil(len(dim_states) / divisor))
+        num_rows = int(np.ceil(len(dim_states) / num_cols))
+
+        fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
+        axs = np.atleast_2d(axs)
+        axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case axs was 1-dim
+        fig.canvas.set_window_title("States over Time")
+        colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_states)))
+
+        if len(dim_states) == 1:
+            axs[0, 0].plot(t, ro.states[:, dim_states[0]], label=_get_state_label(ro, dim_states[0]))
+            axs[0, 0].legend()
+            axs.plot(t, ro.states[:, dim_states[0]], label=_get_state_label(ro, dim_states[0]))
+            axs.legend()
+        else:
+            for i in range(num_rows):
+                for j in range(num_cols):
+                    if j + i * num_cols < len(dim_states):
+                        # Omit the last observation for simplicity
+                        axs[i, j].plot(t, ro.states[:, j + i * num_cols], c=colors[j + i * num_cols])
+                        axs[i, j].set_ylabel(_get_state_label(ro, j + i * num_cols))
                     else:
                         # We might create more subplots than there are observations
                         axs[i, j].remove()

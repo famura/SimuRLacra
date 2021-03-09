@@ -49,6 +49,7 @@ from pyrado.plotting.rollout_based import (
     plot_rewards,
     plot_potentials,
     plot_features,
+    plot_states,
 )
 from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
@@ -342,6 +343,7 @@ def after_rollout_query(
         ["I", "print information about environment (including randomizer), and policy"],
         ["S", "set a domain parameter explicitly"],
         ["P", "plot all observations, actions, and rewards"],
+        ["PS [indices]", "plot all states, or selected ones by passing separated integers"],
         ["PO [indices]", "plot all observations, or selected ones by passing separated integers"],
         ["PA", "plot actions"],
         ["PR", "plot rewards"],
@@ -416,6 +418,17 @@ def after_rollout_query(
     elif "po" in ans and any(char.isdigit() for char in ans):
         idcs = [int(s) for s in ans.split() if s.isdigit()]
         plot_observations(rollout, idcs_sel=idcs)
+        plt.show()
+        return after_rollout_query(env, policy, rollout)
+
+    elif ans == "ps":
+        plot_states(rollout)
+        plt.show()
+        return after_rollout_query(env, policy, rollout)
+
+    elif "ps" in ans and any(char.isdigit() for char in ans):
+        idcs = [int(s) for s in ans.split() if s.isdigit()]
+        plot_states(rollout, idcs_sel=idcs)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
