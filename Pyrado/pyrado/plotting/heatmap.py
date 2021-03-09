@@ -169,7 +169,9 @@ def draw_heatmap(
     :param norm: colormap normalizer passed to `imshow()`
     :param annotate: select if the heat map should be annotated
     :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False
-    :param add_sep_colorbar: if `True`, add a color bar in a separate figure, else no color bar is plotted    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
+    :param add_sep_colorbar: if `True`, add a color bar in a separate figure
+    :param add_colorbar: if `True`, add a color bar in the same figure
+    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
     :param colorbar_label: label for the color bar
     :param colorbar_orientation: orientation of the color bar
     :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.
@@ -211,10 +213,12 @@ def draw_heatmap(
         data,
         cmap=cmap,
         norm=norm,
-        aspect=1.0 / ax_hm.get_data_ratio(),
         origin="lower",
         extent=[x.min(), x.max(), y.min(), y.max()],
     )
+    ax_hm.set_aspect(1.0 / ax_hm.get_data_ratio(), adjustable="box")
+    if add_colorbar:
+        fig_hm.colorbar(img)
 
     # Set axes limits
     ax_hm.set_xlim(x.min(), x.max())

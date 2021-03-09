@@ -31,12 +31,12 @@ Script to plot the results from the 2D domain parameter grid evaluations of a si
 """
 import os
 import os.path as osp
+from typing import Tuple, Optional
+
 import pandas as pd
-from matplotlib import colors
-
-from matplotlib import pyplot as plt
-
 import pyrado
+from matplotlib import colors
+from matplotlib import pyplot as plt
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.heatmap import draw_heatmap
 from pyrado.plotting.utils import AccNorm
@@ -52,24 +52,34 @@ def _plot_and_save(
     values: str = "ret",
     add_sep_colorbar: bool = True,
     norm: colors.Normalize = None,
+    nominal: Optional[Tuple[float, float]] = None,
     save_figure: bool = False,
     save_dir: pyrado.PathLike = None,
 ):
     if index in df.columns and column in df.columns:
         # Pivot table (by default averages over identical index / columns cells)
-        df_pivot = df.pivot_table(index=index, columns=column, values=values)
+        df_pivot = df.pivot_table(index=[index], columns=[column], values=values)
 
         # Generate the plot
         fig_hm, fig_cb = draw_heatmap(
-            df_pivot, add_sep_colorbar=add_sep_colorbar, norm=norm, y_label=index_label, x_label=column_label
+            df_pivot,
+            annotate=False,
+            add_sep_colorbar=add_sep_colorbar,
+            norm=norm,
+            y_label=index_label,
+            x_label=column_label,
+            add_colorbar=True,
         )
+
+        if nominal:
+            fig_hm.get_axes()[0].scatter(*nominal, s=100, marker="*", color="tab:green", label="")
 
         # Save heat map and color bar if desired
         if save_figure:
             name = "-".join([index, column])
-            fig_hm.savefig(osp.join(save_dir, f"hm-{name}.pdf"))
+            fig_hm.savefig(osp.join(save_dir, f"hm-{name}.pgf"))
             if fig_cb is not None:
-                fig_cb.savefig(osp.join(save_dir, f"cb-{name}.pdf"))
+                fig_cb.savefig(osp.join(save_dir, f"cb-{name}.pgf"))
 
 
 if __name__ == "__main__":
@@ -101,7 +111,7 @@ if __name__ == "__main__":
         df = pd.read_pickle(osp.join(eval_dir, "df_sp_grid_nd.pkl"))
 
         # Remove constant rows
-        df = df.loc[:, df.apply(pd.Series.nunique) != 1]
+        # df = df.loc[:, df.apply(pd.Series.nunique) != 1]
 
         """ QBallBalancerSim """
 
@@ -211,6 +221,20 @@ if __name__ == "__main__":
             norm=accnorm,
             save_figure=args.save,
             save_dir=eval_dir,
+        )
+
+        """ QQubeSwingUpSim """
+        _plot_and_save(
+            df,
+            "Dp",
+            "Dr",
+            r"$D_p$",
+            r"$D_r$",
+            add_sep_colorbar=True,
+            norm=accnorm,
+            save_figure=args.save,
+            save_dir=eval_dir,
+            nominal=(1e-6, 5e-6),
         )
 
     plt.show()

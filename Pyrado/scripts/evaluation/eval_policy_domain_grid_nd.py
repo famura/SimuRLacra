@@ -68,14 +68,10 @@ def evaluate_policy(args, ex_dir):
     #     param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
 
     if isinstance(inner_env(env), QQubeSwingUpSim):
-        eval_parameters = ["g"]
-        eval_interval = 0.5
-        eval_num = 100
-        for param, nominal_value in env.get_nominal_domain_param().items():
-            if param in eval_parameters:
-                param_spec[param] = np.linspace(
-                    nominal_value * eval_interval, nominal_value * (1 + eval_interval), num=eval_num, endpoint=True
-                )
+        eval_num = 200
+        # param_spec["g"] = np.linspace(0.0, 50.0, num=eval_num, endpoint=True)
+        param_spec["Dp"] = np.linspace(0.0, 0.0002, num=eval_num, endpoint=True)
+        param_spec["Dr"] = np.linspace(0.0, 0.0015, num=eval_num, endpoint=True)
     elif isinstance(inner_env(env), QBallBalancerSim):
         # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)
@@ -177,7 +173,7 @@ if __name__ == "__main__":
 
         g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir) if "policy.pt" in tmp[2]]
     elif g_args.dir is None:
-        g_ex_dirs = [ask_for_experiment(show_hyper_parameters=g_args.show_hyperparameters)]
+        g_ex_dirs = [ask_for_experiment(show_hyper_parameters=g_args.show_hyperparameters, max_display=50)]
     else:
         g_ex_dirs = [g_args.dir]
 
