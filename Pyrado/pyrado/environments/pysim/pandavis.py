@@ -36,6 +36,7 @@ class PandaVis(ShowBase):
             from rpcore import RenderPipeline
             self.render_pipeline = RenderPipeline()
             self.render_pipeline.pre_showbase_init()
+            self.render_pipeline.set_loading_screen_image(osp.join(self.dir, "logo.png"))
             self.render_pipeline.create(self)
             self.render_pipeline.daytime_mgr.time = "17:00"
 
