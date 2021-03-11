@@ -31,6 +31,7 @@ Train an agent to solve the Quanser Qube swing-up task using Proximal Policy Opt
 """
 import pyrado
 import torch as to
+import numpy as np
 from pyrado.algorithms.meta.sprl import SPRL
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
@@ -130,8 +131,9 @@ if __name__ == "__main__":
     )
 
     sprl_hparam = dict(
-        kl_constraints_ub=2000,
+        kl_constraints_ub=17,
         performance_lower_bound=500,
+        kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
         optimize_mean=not args.cov_only,
     )

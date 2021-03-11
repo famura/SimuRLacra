@@ -335,7 +335,7 @@ class SPRL(Algorithm):
         # optionally clip the bounds of the new variance
         bounds = None
         x0, _, x0_cov_indices = previous_distribution.get_stacked(return_mean_cov_indices=True)
-        if self._kl_threshold and (self._kl_threshold < kl_divergence):
+        if self._kl_threshold != -np.inf and (self._kl_threshold < kl_divergence):
             lower_bound = np.ones_like(x0) * -np.inf
             if x0_cov_indices is not None:
                 lower_bound[x0_cov_indices] = self._std_lower_bound
@@ -396,14 +396,7 @@ class SPRL(Algorithm):
                 bounds=bounds,
             )
         if result and result.success:
-            pointer = 0
-            for param in self._spl_parameters:
-                if self._optimize_mean:
-                    param.adapt("context_mean", to.tensor(result.x[pointer : pointer + param.dim]))
-                    pointer += param.dim
-                if self._optimize_cov:
-                    param.adapt("context_cov_chol_flat", to.tensor(result.x[pointer : pointer + param.dim]))
-                    pointer += param.dim
+            self._adapt_parameters(result.x)
         # we have a result but the optimization process was not a success
         elif result:
             old_f = objective_fn(previous_distribution.get_stacked())[0]
@@ -412,15 +405,7 @@ class SPRL(Algorithm):
             std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
 
             if constraints_satisfied and std_ok and result.fun < old_f:
-                pointer = 0
-                if self._optimize_mean:
-                    for param in self._spl_parameters:
-                        param.adapt("context_mean", to.tensor(result.x[pointer : pointer + param.dim]))
-                        pointer += param.dim
-                if self._optimize_cov:
-                    for param in self._spl_parameters:
-                        param.adapt("context_cov_chol_flat", to.tensor(result.x[pointer : pointer + param.dim]))
-                        pointer += param.dim
+                self._adapt_parameters(result.x)
             else:
                 print(f"Update unsuccessful, keeping old values spl parameters")
 
@@ -446,3 +431,13 @@ class SPRL(Algorithm):
     ) -> to.Tensor:
         context_ratio = to.exp(distribution.distribution.log_prob(context) - old_log_prop)
         return to.mean(context_ratio * values)
+
+    def _adapt_parameters(self, result: np.array) -> None:
+        for i, param in enumerate(self._spl_parameters):
+            if self._optimize_mean:
+                param.adapt("context_mean", to.tensor(result[i : i + param.dim]))
+            if self._optimize_cov and self._optimize_mean:
+                pointer = i + param.dim * len(self._spl_parameters)
+                param.adapt("context_cov_chol_flat", to.tensor(result[pointer : pointer + param.dim]))
+            elif self._optimize_cov:
+                param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
