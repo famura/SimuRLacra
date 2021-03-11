@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import pathlib
 
 import numpy as np
 import torch as to
@@ -32,12 +33,12 @@ from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.pysim.pandavis import QQubeVis
 from pyrado.environments.quanser import max_act_qq
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
-
 
 class QQubeSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Qube swing-up and stabilization task """
@@ -138,82 +139,10 @@ class QQubeSim(SimPyEnv, Serializable):
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
     def _init_anim(self):
-        import vpython as vp
-
-        # Convert to float for VPython
-        Lr = float(self.domain_param["Lr"])
-        Lp = float(self.domain_param["Lp"])
-
-        # Init render objects on first call
-        self._anim["canvas"] = vp.canvas(width=800, height=600, title="Quanser Qube")
-        scene_range = 0.2
-        arm_radius = 0.003
-        pole_radius = 0.0045
-        self._anim["canvas"].background = vp.color.white
-        self._anim["canvas"].lights = []
-        vp.distant_light(direction=vp.vec(0.2, 0.2, 0.5), color=vp.color.white)
-        self._anim["canvas"].up = vp.vec(0, 0, 1)
-        self._anim["canvas"].range = scene_range
-        self._anim["canvas"].center = vp.vec(0.04, 0, 0)
-        self._anim["canvas"].forward = vp.vec(-2, 1.2, -1)
-        vp.box(pos=vp.vec(0, 0, -0.07), length=0.09, width=0.1, height=0.09, color=vp.color.gray(0.5))
-        vp.cylinder(axis=vp.vec(0, 0, -1), radius=0.005, length=0.03, color=vp.color.gray(0.5))
-        # Joints
-        self._anim["joint1"] = vp.sphere(radius=0.005, color=vp.color.white)
-        self._anim["joint2"] = vp.sphere(radius=pole_radius, color=vp.color.white)
-        # Arm
-        self._anim["arm"] = vp.cylinder(radius=arm_radius, length=Lr, color=vp.color.blue)
-        # Pole
-        self._anim["pole"] = vp.cylinder(radius=pole_radius, length=Lp, color=vp.color.red)
-        # Curve
-        self._anim["curve"] = vp.curve(color=vp.color.white, radius=0.0005, retain=2000)
-
-    def _update_anim(self):
-        import vpython as vp
-
-        # Convert to float for VPython
-        g = self.domain_param["g"]
-        Mr = self.domain_param["Mr"]
-        Mp = self.domain_param["Mp"]
-        Lr = float(self.domain_param["Lr"])
-        Lp = float(self.domain_param["Lp"])
-        km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
-        Dr = self.domain_param["Dr"]
-        Dp = self.domain_param["Dp"]
-
-        th, al, _, _ = self.state
-        arm_pos = (Lr * np.cos(th), Lr * np.sin(th), 0.0)
-        pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
-        self._anim["arm"].axis = vp.vec(*arm_pos)
-        self._anim["pole"].pos = vp.vec(*arm_pos)
-        self._anim["pole"].axis = vp.vec(*pole_ax)
-        self._anim["joint1"].pos = self._anim["arm"].pos
-        self._anim["joint2"].pos = self._anim["pole"].pos
-        self._anim["curve"].append(self._anim["pole"].pos + self._anim["pole"].axis)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-            theta: {self.state[0]*180/np.pi : 3.1f}
-            alpha: {self.state[1]*180/np.pi : 3.1f}
-            dt: {self._dt :1.4f}
-            g: {g : 1.3f}
-            Mr: {Mr : 1.4f}
-            Mp: {Mp : 1.4f}
-            Lr: {Lr : 1.4f}
-            Lp: {Lp : 1.4f}
-            Dr: {Dr : 1.7f}
-            Dp: {Dp : 1.7f}
-            Rm: {Rm : 1.3f}
-            km: {km : 1.4f}
-            """
-
-    def _reset_anim(self):
-        # Reset VPython animation
-        if self._anim["curve"] is not None:
-            self._anim["curve"].clear()
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import PandaVis
+        # Create instance of PandaVis
+        self._visualization = QQubeVis(self, self._render)
 
 
 class QQubeSwingUpSim(QQubeSim):

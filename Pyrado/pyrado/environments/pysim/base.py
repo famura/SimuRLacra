@@ -53,6 +53,7 @@ class SimPyEnv(SimEnv, Serializable):
         """
         Serializable._init(self, locals())
         super().__init__(dt, max_steps)
+        self._render = False
 
         # Initialize the domain parameters and the derived constants
         self._domain_param = self.get_nominal_domain_param()
@@ -71,9 +72,8 @@ class SimPyEnv(SimEnv, Serializable):
             raise pyrado.TypeErr(given=task_args, expected_type=dict)
         self._task = self._create_task(task_args=dict() if task_args is None else task_args)
 
-        # Animation with VPython
+        # Animation with Panda3D
         self._curr_act = np.zeros(self.act_space.shape)
-        self._anim = dict(canvas=None)
 
     @property
     def state_space(self) -> Space:
@@ -192,7 +192,7 @@ class SimPyEnv(SimEnv, Serializable):
         self._task.reset(env_spec=self.spec)
 
         # Reset VPython animation
-        if self._anim["canvas"] is not None:
+        if hasattr(self, "_visualization"):
             self._reset_anim()
 
         # Return an observation
@@ -244,11 +244,14 @@ class SimPyEnv(SimEnv, Serializable):
                 print(
                     f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
-
-            # VPython
+                
+            self._render = mode.render
+            # Panda3D
             if mode.video:
-                if self._anim["canvas"] is None:
+                if not hasattr(self, "_visualization"):
                     self._init_anim()
+                    # Calculate if and how many frames are dropped
+                    self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
                 # Update the animation
                 self._update_anim()
@@ -256,20 +259,26 @@ class SimPyEnv(SimEnv, Serializable):
     def _init_anim(self):
         """
         Initialize animation. Called by first render call.
-        :return:
         """
         pass
 
     def _update_anim(self):
         """
         Update animation. Called by each render call.
-        :return:
+        Skips certain number of simulation steps per frame to achieve 60 Hz output.
         """
-        pass
+        # Do not render while _skip_frames is bigger than 1
+        if self._skip_frames > 1:
+            # Decrease _skip_frames by one
+            self._skip_frames -= 1
+        else:
+            # Render frame
+            self._visualization.taskMgr.step()
+            # Calculate number of frames that need to be skipped
+            self._skip_frames = 1 / 60 / self._dt  # 60 Hz
 
     def _reset_anim(self):
         """
-        Reset animation to initial state. Called by reset() if needed.
-        The default implementation does nothing.
+        Removes trace. Called by reset() if needed. Calls reset of pandavis-class.
         """
-        pass
+        self._visualization.reset()

@@ -51,6 +51,7 @@ class RenderMode(NamedTuple):
 
     text: bool = False
     video: bool = False
+    render: bool = False
 
 
 class TimeSeriesDataPair(NamedTuple):

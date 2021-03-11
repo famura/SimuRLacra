@@ -27,58 +27,58 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Simulate (with animation) a rollout in an environment.
+Train an agent to solve the One-Mass-Oscillator environment using Hill Climbing
 """
-from prettyprinter import pprint
+import numpy as np
 
 import pyrado
-from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
-from pyrado.logger.experiment import ask_for_experiment
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.algorithms.episodic.hc import HCNormal
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.policies.features import FeatureStack, const_feat, identity_feat
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import load_experiment
-from pyrado.utils.input_output import print_cbt
-from pyrado.utils.data_types import RenderMode
 
 
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.dir is None else args.dir
+    # Experiment (set seed before creating the modules)
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{HCNormal.name}_{LinearPolicy.name}")
 
-    # Load the environment and the policy
-    env, policy, kwout = load_experiment(ex_dir, args)
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
-    # Override the time step size if specified
-    if args.dt is not None:
-        env.dt = args.dt
+    # Environment
+    env_hparams = dict(dt=1 / 50.0, max_steps=200)
+    env = OneMassOscillatorSim(**env_hparams, task_args=dict(state_des=np.array([0.5, 0])))
+    env = ActNormWrapper(env)
 
-    if args.verbose:
-        print("Hyper-parameters of the experiment")
-        pprint(kwout.get("hparams", "No hyper-parameters found!"))
+    # Policy
+    policy_hparam = dict(
+        feats=FeatureStack([const_feat, identity_feat])
+    )
+    policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
-    if args.no_dr:
-        env = remove_all_dr_wrappers(env, verbose=True)
+    algo_hparam = dict(
+        max_iter=15,
+        pop_size=20,
+        num_init_states_per_domain=4,
+        expl_factor=1.05,
+        expl_std_init=1.0,
+        num_workers=4,
+    )
+    algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
-    # Use the environments number of steps in case of the default argument (inf)
-    max_steps = env.max_steps if args.max_steps == pyrado.inf else args.max_steps
+    # Save the hyper-parameters
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
+    )
 
-    # Simulate
-    done, state, param = False, None, None
-    while not done:
-        ro = rollout(
-            env,
-            policy,
-            render_mode=RenderMode(text=args.verbose, video=args.animation, render=args.render),
-            eval=True,
-            max_steps=max_steps,
-            stop_on_done=not args.relentless,
-            reset_kwargs=dict(domain_param=param, init_state=state),
-        )
-        print_domain_params(env.domain_param)
-        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
-        done, state, param = after_rollout_query(env, policy, ro)
-    pyrado.close_vpython()
+    # Jeeeha
+    algo.train(seed=args.seed)

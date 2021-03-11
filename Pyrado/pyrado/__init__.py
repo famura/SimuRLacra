@@ -45,7 +45,8 @@ EXP_DIR = osp.join(osp.dirname(__file__), "..", "data", "perma", "experiments")
 HPARAM_DIR = osp.join(osp.dirname(__file__), "..", "data", "perma", "hyperparams")
 TEMP_DIR = osp.join(osp.dirname(__file__), "..", "data", "temp")
 MUJOCO_ASSETS_DIR = osp.join(osp.dirname(__file__), "environments", "mujoco", "assets")
-ISAAC_ASSETS_DIR = osp.join(osp.dirname(__file__), "..", "..", "thirdParty", "isaac_gym", "assets")
+PANDA_ASSETS_DIR = osp.join(osp.relpath(__file__), "..", "environments", "pysim", "assets")
+RENDER_PIPELINE_DIR = osp.join(osp.relpath(__file__), "..", "..", "..", "thirdParty", "render_pipeline")
 
 # Set the availability of the physics-engine based simulations to False. These are set to True in the respective
 # top-level __init__.py files, if they can be imported successfully
@@ -104,6 +105,9 @@ __all__ = [
     "EVAL_DIR",
     "EXP_DIR",
     "HPARAM_DIR",
+    "MUJOCO_ASSETS_DIR",
+    "PANDA_ASSETS_DIR",
+    "RENDER_PIPELINE_DIR",
     "rcsenv_loaded",
     "mujoco_loaded",
     "use_pgf",

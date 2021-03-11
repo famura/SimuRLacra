@@ -27,58 +27,66 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Simulate (with animation) a rollout in an environment.
+Test predefined energy-based controller to make the Quanser Cart-Pole swing up or balancing task.
 """
-from prettyprinter import pprint
+import numpy as np
 
 import pyrado
-from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
-from pyrado.logger.experiment import ask_for_experiment
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
+from pyrado.environments.pysim.pendulum import PendulumSim
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import load_experiment
-from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_types import RenderMode
+from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
+    dt = args.dt if args.dt is not None else 0.01
 
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.dir is None else args.dir
+    if args.env_name == QCartPoleSwingUpSim.name:
+        env = QCartPoleSwingUpSim(dt=dt, max_steps=int(10 / dt), wild_init=False)
+        state = np.array([0, 87 / 180 * np.pi, 0, 0])
 
-    # Load the environment and the policy
-    env, policy, kwout = load_experiment(ex_dir, args)
+    elif args.env_name == QQubeSwingUpSim.name:
+        env = QQubeSwingUpSim(dt=dt, max_steps=int(10 / dt))
+        state = np.array([5 / 180 * np.pi, 87 / 180 * np.pi, 0, 0])
 
-    # Override the time step size if specified
-    if args.dt is not None:
-        env.dt = args.dt
+    elif args.env_name == QBallBalancerSim.name:
+        env = QBallBalancerSim(dt=dt, max_steps=int(10 / dt))
+        state = np.array([2 / 180 * np.pi, 2 / 180 * np.pi, 0.1, -0.08, 0, 0, 0, 0])
 
-    if args.verbose:
-        print("Hyper-parameters of the experiment")
-        pprint(kwout.get("hparams", "No hyper-parameters found!"))
+    elif args.env_name == OneMassOscillatorSim.name:
+        env = OneMassOscillatorSim(dt=dt, max_steps=int(10 / dt))
+        state = np.array([-0.7, 0])
 
-    if args.no_dr:
-        env = remove_all_dr_wrappers(env, verbose=True)
+    elif args.env_name == PendulumSim.name:
+        env = PendulumSim(dt=dt, max_steps=int(10 / dt))
+        state = np.array([87 / 180 * np.pi, 0])
 
-    # Use the environments number of steps in case of the default argument (inf)
-    max_steps = env.max_steps if args.max_steps == pyrado.inf else args.max_steps
+    else:
+        raise pyrado.ValueErr(
+            given=args.env_name,
+            eq_constraint=f"{QCartPoleSwingUpSim.name}, {QQubeSwingUpSim.name}, {QBallBalancerSim.name}",
+        )
+
+    policy = IdlePolicy(env.spec)
 
     # Simulate
-    done, state, param = False, None, None
+    done, param = False, None
     while not done:
         ro = rollout(
             env,
             policy,
-            render_mode=RenderMode(text=args.verbose, video=args.animation, render=args.render),
+            render_mode=RenderMode(text=True, video=True, render=args.render),
             eval=True,
-            max_steps=max_steps,
-            stop_on_done=not args.relentless,
             reset_kwargs=dict(domain_param=param, init_state=state),
         )
-        print_domain_params(env.domain_param)
+        # print_domain_params(env.domain_param)
         print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, state, param = after_rollout_query(env, policy, ro)
-    pyrado.close_vpython()

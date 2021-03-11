@@ -26,6 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Added stuff
+import math, pathlib, platform
+
 import numpy as np
 from init_args_serializer.serializable import Serializable
 
@@ -36,6 +39,8 @@ from pyrado.spaces.compound import CompoundSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
+
+
 
 
 class BallOnBeamSim(SimPyEnv, Serializable):
@@ -128,88 +133,11 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         self.state[2:] += np.array([x_ddot, a_ddot]) * self._dt  # next velocity
         self.state[:2] += self.state[2:] * self._dt  # next position
 
-    def _reset_anim(self):
-        import vpython as vp
-
-        r_ball = self.domain_param["r_ball"]
-        l_beam = self.domain_param["l_beam"]
-        d_beam = self.domain_param["d_beam"]
-
-        self._anim["ball"].pos = vp.vec(
-            float(self.state[0]),
-            vp.sin(self.state[1]) * float(self.state[0]) + vp.cos(self.state[1]) * d_beam / 2.0 + r_ball,
-            0,
-        )
-        self._anim["beam"].visible = False
-        self._anim["beam"] = vp.box(
-            pos=vp.vec(0, 0, 0),
-            axis=vp.vec(vp.cos(float(self.state[1])), vp.sin(float(self.state[1])), 0),
-            length=l_beam,
-            height=d_beam,
-            width=2 * d_beam,
-            color=vp.color.green,
-            canvas=self._anim["canvas"],
-        )
-
     def _init_anim(self):
-        import vpython as vp
-
-        r_ball = self.domain_param["r_ball"]
-        l_beam = self.domain_param["l_beam"]
-        d_beam = self.domain_param["d_beam"]
-        x = float(self.state[0])  # ball position along the beam axis [m]
-        a = float(self.state[1])  # angle [rad]
-
-        self._anim["canvas"] = vp.canvas(width=800, height=600, title="Ball on Beam")
-        self._anim["ball"] = vp.sphere(
-            pos=vp.vec(x, d_beam / 2.0 + r_ball, 0), radius=r_ball, color=vp.color.red, canvas=self._anim["canvas"]
-        )
-        self._anim["beam"] = vp.box(
-            pos=vp.vec(0, 0, 0),
-            axis=vp.vec(vp.cos(a), vp.sin(a), 0),
-            length=l_beam,
-            height=d_beam,
-            width=2 * d_beam,
-            color=vp.color.green,
-            canvas=self._anim["canvas"],
-        )
-
-    def _update_anim(self):
-        import vpython as vp
-
-        g = self.domain_param["g"]
-        m_ball = self.domain_param["m_ball"]
-        r_ball = self.domain_param["r_ball"]
-        m_beam = self.domain_param["m_beam"]
-        l_beam = self.domain_param["l_beam"]
-        d_beam = self.domain_param["d_beam"]
-        ang_offset = self.domain_param["ang_offset"]
-        c_frict = self.domain_param["c_frict"]
-        x = float(self.state[0])  # ball position along the beam axis [m]
-        a = float(self.state[1])  # angle [rad]
-
-        # Update the animation
-        self._anim["ball"].radius = r_ball
-        self._anim["ball"].pos = vp.vec(
-            vp.cos(a) * x - vp.sin(a) * (d_beam / 2.0 + r_ball), vp.sin(a) * x + vp.cos(a) * (d_beam / 2.0 + r_ball), 0
-        )
-        self._anim["beam"].size = vp.vec(l_beam, d_beam, 2 * d_beam)
-        self._anim["beam"].rotate(angle=float(self.state[3]) * self._dt, axis=vp.vec(0, 0, 1), origin=vp.vec(0, 0, 0))
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-                    dt: {self._dt : 1.4f}
-                    g: {g : 1.3f}
-                    m_ball: {m_ball: 1.2f}
-                    r_ball: {r_ball : 1.3f}
-                    m_beam: {m_beam : 1.2f}
-                    l_beam: {l_beam : 1.2f}
-                    d_beam: {d_beam : 1.2f}
-                    c_frict: {c_frict : 1.3f}
-                    ang_offset: {ang_offset : 1.3f}
-                    """
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import BallOnBeamVis
+        # Create instance of PandaVis
+        self._visualization = BallOnBeamVis(self, self._render)
 
 
 class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
