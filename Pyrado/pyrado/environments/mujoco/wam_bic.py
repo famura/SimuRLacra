@@ -199,11 +199,14 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
     @property
     def state_space(self) -> Space:
-        state_shape = np.concatenate([self.init_qpos, self.init_qvel]).shape  # same shape as init space
+        # The state space has the same shape as the init space (including ball and cup)
+        state_shape = np.concatenate([self.init_qpos, self.init_qvel, np.empty(3), np.empty(3)]).shape
         state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
+
         # Ensure that joint limits of the arm are not reached (5 deg safety margin)
         state_lo[: self._num_dof] = wam_q_limits_lo_7dof[: self._num_dof]
         state_up[: self._num_dof] = wam_q_limits_up_7dof[: self._num_dof]
+
         return BoxSpace(state_lo, state_up)
 
     @property

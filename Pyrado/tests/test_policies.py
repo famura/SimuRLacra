@@ -98,7 +98,7 @@ def test_simple_feature_stack(feat_list):
 
 
 @pytest.mark.features
-@pytest.mark.parametrize("obs_dim, idcs", [(2, [0, 1]), (3, [2, 0]), (10, [0, 1, 5, 6])], ids=["2_2", "3_2", "10_4"])
+@pytest.mark.parametrize("obs_dim, idcs", [(2, (0, 1)), (3, (2, 0)), (10, (0, 1, 5, 6))], ids=["2_2", "3_2", "10_4"])
 def test_mul_feat(obs_dim, idcs):
     mf = MultFeat(idcs=idcs)
     fs = FeatureStack([identity_feat, mf])

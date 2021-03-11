@@ -103,7 +103,8 @@ class HopperSim(MujocoSimEnv, Serializable):
 
     @property
     def obs_space(self) -> Space:
-        return BoxSpace(-pyrado.inf, pyrado.inf, shape=self.state_space.shape)
+        obs_space_shape = (self.state_space.shape[0] - 1,)  # ignoring the x position
+        return BoxSpace(-pyrado.inf, pyrado.inf, shape=obs_space_shape)
 
     @property
     def act_space(self) -> Space:

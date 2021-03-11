@@ -36,6 +36,7 @@ from sbi.inference import simulate_for_sbi, SNPE
 from sbi.user_input.user_input_checks import prepare_for_sbi
 from sbi.utils import posterior_nn, BoxUniform
 
+from pyrado.algorithms.inference.embeddings import Embedding
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts
@@ -286,7 +287,7 @@ def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels,
     data_real = simulator(domain_param_gt)
 
     # Get a (random) condition
-    condition = domain_param_gt.clone()
+    condition = Embedding.pack(domain_param_gt.clone())
 
     if layout == "inside":
         num_rows, num_cols = len(dp_mapping), len(dp_mapping)
