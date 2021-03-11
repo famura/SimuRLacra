@@ -275,8 +275,8 @@ class ParameterExplorationSampler(Serializable):
             ]
         else:
             # This is an edge case, but here we need as many init states as num_domains * num_init_states_per_domain
-            if not len(init_states) == len(domain_params*self.num_init_states_per_domain):
-                raise pyrado.ShapeErr(given=init_states, expected_match=domain_params*self.num_init_states_per_domain)
+            if not len(init_states) == len(domain_params * self.num_init_states_per_domain):
+                raise pyrado.ShapeErr(given=init_states, expected_match=domain_params * self.num_init_states_per_domain)
 
         # Repeat the sets for the number of initial states per domain
         domain_params *= self.num_init_states_per_domain

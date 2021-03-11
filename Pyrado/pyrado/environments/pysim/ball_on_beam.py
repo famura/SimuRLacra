@@ -26,9 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Added stuff
-import math, pathlib, platform
-
 import numpy as np
 from init_args_serializer.serializable import Serializable
 
@@ -39,8 +36,6 @@ from pyrado.spaces.compound import CompoundSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
-
-
 
 
 class BallOnBeamSim(SimPyEnv, Serializable):

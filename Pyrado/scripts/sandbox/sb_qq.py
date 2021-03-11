@@ -50,7 +50,7 @@ if __name__ == "__main__":
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Simulate
-    ro = rollout(env, policy, render_mode=RenderMode(text=False, video=True), eval=True)
+    ro = rollout(env, policy, render_mode=RenderMode(text=False, video=False), eval=True)
 
     # Filter the observations of the last rollout
     theta_dot = ro.observations[:, 4]
