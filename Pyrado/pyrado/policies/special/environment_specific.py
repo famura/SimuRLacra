@@ -699,3 +699,33 @@ def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) 
     ctrl = LinearPolicy(env.spec, feats)
     ctrl.init_param(-1 * ctrl_gains)  # in classical control it is u = -K*x; here a = psi(s)*s
     return ctrl
+
+
+def wam_jsp_7dof_sin(t: float, flip_sign: bool = False):
+    """
+    A sin-based excitation function for the 7-DoF WAM, describing desired a desired joint angle offset and its velocity
+    at every point in time
+
+    :param t: time
+    :param flip_sign: if `True`, flip the sign
+    :return: joint angle positions and velocities
+    """
+    flip_sign = int(flip_sign)
+    return -(1 ** flip_sign) * np.array(
+        [
+            0.5 * np.sin(2 * np.pi * t * 0.23),
+            0.5 * np.sin(2 * np.pi * t * 0.51),
+            0.5 * np.sin(2 * np.pi * t * 0.33),
+            0.5 * np.sin(2 * np.pi * t * 0.41),
+            0.5 * np.sin(2 * np.pi * t * 0.57),
+            0.5 * np.sin(2 * np.pi * t * 0.63),
+            0.5 * np.sin(2 * np.pi * t * 0.71),
+            2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.23),
+            2 * np.pi * 0.51 * 0.5 * np.cos(2 * np.pi * t * 0.51),
+            2 * np.pi * 0.33 * 0.5 * np.cos(2 * np.pi * t * 0.33),
+            2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.41),
+            2 * np.pi * 0.57 * 0.5 * np.cos(2 * np.pi * t * 0.57),
+            2 * np.pi * 0.63 * 0.5 * np.cos(2 * np.pi * t * 0.63),
+            2 * np.pi * 0.71 * 0.5 * np.cos(2 * np.pi * t * 0.71),
+        ]
+    )

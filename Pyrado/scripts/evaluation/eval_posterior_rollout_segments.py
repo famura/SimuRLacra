@@ -31,7 +31,7 @@ Script to evaluate a posterior obtained using the sbi package.
 Plot a real and the simulated rollout segments for evey initial state, i.e. every real-world rollout, using the
 `num_ml_samples` most likely domain parameter sets for the segment length of `len_segment` steps.
 Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
-By default (args.iter = -1), the most recent iteration is evaluated.
+By default (args.iter = -1), the all iterations are evaluated.
 """
 import numpy as np
 import os
@@ -49,26 +49,13 @@ from pyrado.sampling.rollout import rollout
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_act_equal
+from pyrado.utils.data_types import repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
-from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = get_argparser()
-    parser.add_argument(
-        "--num_segments",
-        type=int,
-        default=None,
-        help="number of segments to split the rollout into (default: None)",
-    )
-    parser.add_argument(
-        "--len_segments",
-        type=int,
-        default=None,
-        help="length of the segments to split the rollout into (default: None)",
-    )
-    args = parser.parse_args()
+    args = get_argparser().parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
     if not isinstance(args.num_rollouts_per_config, int) or args.num_rollouts_per_config < 1:
@@ -84,58 +71,51 @@ if __name__ == "__main__":
     env_real = pyrado.load(None, "env_real", "pkl", ex_dir)
     prior = kwout["prior"]
     posterior = kwout["posterior"]
-    observations_real = kwout["observations_real"]
+    data_real = kwout["data_real"]
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
     if not isinstance(algo, NPDR):
         raise pyrado.TypeErr(given=algo, expected_type=NPDR)
 
+    # Load the rollouts
+    rollouts_real, _ = load_rollouts_from_dir(ex_dir)
+    if args.iter != -1:
+        # Only load the selected iteration's rollouts
+        rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
+    num_rollouts_real = len(rollouts_real)
+    [ro.numpy() for ro in rollouts_real]
+    dim_obs = rollouts_real[0].observations.shape[1]  # same for all rollouts
+
+    # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
+    if args.use_rec:
+        policy = PlaybackPolicy(env_sim.spec, [ro.actions for ro in rollouts_real], no_reset=True)
+
     # Compute the most likely domain parameters for every target domain observation
     domain_params_ml_all = NPDR.get_ml_posterior_samples(
         algo.dp_mapping,
         posterior,
-        observations_real,
+        data_real,
         args.num_samples,
         num_ml_samples,
         normalize_posterior=args.normalize,
         sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
     )
 
-    # Load the rollouts
-    rollouts_real, _ = load_rollouts_from_dir(ex_dir)
-    if args.iter != -1:
-        # Only load the selected iteration's initial state
-        rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
-    num_rollouts_real = len(rollouts_real)
-    dim_obs = rollouts_real[0].observations.shape[1]  # same for all rollouts
-
-    if num_rollouts_real > len(domain_params_ml_all):
-        print_cbt("Found more real rollouts than sbi observations, truncated the superfluous.", "y")
-        rollouts_real = rollouts_real[: len(domain_params_ml_all)]
-        num_rollouts_real = len(rollouts_real)
-    elif num_rollouts_real < len(domain_params_ml_all):
-        print_cbt("Found more sbi observations than real rollouts, truncated the superfluous.", "y")
-        domain_params_ml_all = domain_params_ml_all[:num_rollouts_real]
-
-    # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
-    if args.use_rec:
-        policy = PlaybackPolicy(env_sim.spec, [ro.actions for ro in rollouts_real], no_reset=True)
+    # Repeat the domain parameters to zip them later with the real rollouts, such that they all belong to the same iter
+    num_iter = len(domain_params_ml_all)
+    num_rep = num_rollouts_real // num_iter
+    domain_params_ml_all = repeat_interleave(domain_params_ml_all, num_rep)
+    assert len(domain_params_ml_all) == num_rollouts_real
 
     # Split rollouts into segments
-    [ro.numpy() for ro in rollouts_real]
     segments_real_all = []
     for ro in rollouts_real:
-        # Split the target domain rollout, see compute_observations()
-        if args.num_segments is not None and args.num_segments == 1 and args.len_segments is None:
-            segments_real = [ro]
-        elif args.num_segments is not None and args.num_segments > 1 and args.len_segments is None:
-            segments_real = list(ro.split_ordered_batches(num_batches=args.num_segments + 1))
-            segments_real = segments_real[:-1]
+        # Split the target domain rollout, see SimRolloutSamplerForSBI.__call__()
+        if args.num_segments is not None and args.len_segments is None:
+            segments_real = list(ro.split_ordered_batches(num_batches=args.num_segments))
         elif args.len_segments is not None and args.num_segments is None:
             segments_real = list(ro.split_ordered_batches(batch_size=args.len_segments))
-            if segments_real[-1].length < 2:
-                segments_real = segments_real[:-1]
         else:
             raise pyrado.ValueErr(msg="Either batch_size or num_batches must not be None, but not both or none!")
 
@@ -175,6 +155,7 @@ if __name__ == "__main__":
                     eval=True,
                     reset_kwargs=dict(init_state=segment_real.states[0, :], domain_param=domain_param),
                     max_steps=segment_real.length,
+                    stop_on_done=False,
                 )
                 segments_dp.append(sml)
 
@@ -212,6 +193,7 @@ if __name__ == "__main__":
                 eval=True,
                 reset_kwargs=dict(init_state=segment_real.states[0]),
                 max_steps=segment_real.length,
+                stop_on_done=False,
             )
             segment_nom.append(sn)
             if args.use_rec:
@@ -261,7 +243,10 @@ if __name__ == "__main__":
                 )
 
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
-        fig.canvas.set_window_title(f"Real and Simulated Observations (rollout {idx_r+1} of {num_rollouts_real})")
+        fig.canvas.set_window_title(
+            f"Real and Simulated data (rollout {idx_r+1} of {num_rollouts_real}, i.e. "
+            f"iteration {idx_r // algo.num_real_rollouts} of {num_iter-1})"
+        )
         lg = axs[0].legend(
             ncol=2 + num_ml_samples,
             bbox_to_anchor=(0.0, 1.02, 1.0, 0.102),
@@ -274,8 +259,9 @@ if __name__ == "__main__":
             for fmt in ["pdf", "pgf"]:
                 os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
                 use_rec = "_use_rec" if args.use_rec else ""
+                rnd = f"_round_{args.round}" if args.round is not None else ""
                 fig.savefig(
-                    os.path.join(ex_dir, "plots", f"sim_real_rollouts_{idx_r}{use_rec}.{fmt}"),
+                    os.path.join(ex_dir, "plots", f"posterior_iter_{args.iter}{rnd}_rollout_{idx_r}{use_rec}.{fmt}"),
                     bbox_extra_artists=(lg,),
                     dpi=500,
                 )

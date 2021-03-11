@@ -31,13 +31,20 @@ Domain parameter identification experiment on the One-Mass-Oscillator environmen
 """
 import numpy as np
 import torch as to
-import torch.nn as nn
 from sbi.inference import SNPE
 from sbi import utils
 from copy import deepcopy
 
 import pyrado
+from pyrado.algorithms.inference.embeddings import (
+    LastStepEmbedding,
+    BayesSimEmbedding,
+    DynamicTimeWarpingEmbedding,
+    RNNEmbedding,
+    AllStepsEmbedding,
+)
 from pyrado.algorithms.inference.lfi import NPDR
+from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
@@ -62,7 +69,7 @@ if __name__ == "__main__":
     env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake ground truth target domain
-    num_real_obs = 1
+    num_real_obs = 3
     env_real = deepcopy(env_sim)
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="m", mean=0.8, std=0.8 / 50),
@@ -79,27 +86,46 @@ if __name__ == "__main__":
     # Define a mapping: index - domain parameter
     dp_mapping = {0: "m", 1: "k", 2: "d"}
 
-    # Prior and Posterior (normalizing flow)
+    # Prior
     dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
     prior_hparam = dict(
         low=to.tensor([dp_nom["m"] * 0.5, dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
         high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=4)
+
+    # Time series embedding
+    # embedding_hparam = dict()
+    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
+    embedding_hparam = dict(downsampling_factor=10)
+    embedding = AllStepsEmbedding(
+        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
+    )
+    # embedding_hparam = dict(downsampling_factor=2)
+    # embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
+    # embedding_hparam = dict(downsampling_factor=2)
+    # embedding = DynamicTimeWarpingEmbedding(
+    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
+    # )
+    # embedding_hparam = dict(hidden_size=10, num_recurrent_layers=2, output_size=1, downsampling_factor=10)
+    # embedding = RNNEmbedding(
+    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
+    # )
+
+    # Posterior (normalizing flow)
+    posterior_nn_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=5,
-        summary_statistic="bayessim",  # bayessim or dtw_distance
+        max_iter=1,
         num_real_rollouts=num_real_obs,
         num_sim_per_round=2000,
-        num_sbi_rounds=1,
+        num_sbi_rounds=3,
         simulation_batch_size=10,
         normalize_posterior=False,
-        num_eval_samples=None,
-        # num_segments=4,
-        len_segments=50,
+        num_eval_samples=200,
+        num_segments=5,
+        # len_segments=50,
         sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
@@ -110,9 +136,10 @@ if __name__ == "__main__":
             use_combined_loss=True,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
+            # max_num_epochs=5,  # only use for debugging
         ),
-        sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        num_workers=8,
+        sbi_sampling_hparam=dict(sample_with_mcmc=False),
+        num_workers=10,
     )
     algo = NPDR(
         ex_dir,
@@ -123,6 +150,7 @@ if __name__ == "__main__":
         prior,
         posterior_nn_hparam,
         SNPE,
+        embedding,
         **algo_hparam,
     )
 
@@ -131,6 +159,7 @@ if __name__ == "__main__":
         dict(env=env_hparams, seed=args.seed),
         dict(prior=prior_hparam),
         dict(posterior_nn=posterior_nn_hparam),
+        dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

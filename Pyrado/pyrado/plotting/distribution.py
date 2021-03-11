@@ -29,9 +29,7 @@
 import numpy as np
 import seaborn as sns
 import torch as to
-from itertools import product
 from matplotlib import pyplot as plt, patches
-from pyrado.policies.special.mdn import MDN
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
 from torch.distributions import Distribution
@@ -42,9 +40,11 @@ import pyrado
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
+from pyrado.policies.special.moe import MoEPolicy
 from pyrado.plotting.utils import draw_sep_cbar
 from pyrado.utils.checks import check_all_types_equal, is_iterable, check_all_shapes_equal, check_all_lengths_equal
 from pyrado.utils.data_types import merge_dicts
+from pyrado.utils.input_output import completion_context
 
 
 @to.no_grad()
@@ -116,11 +116,12 @@ def draw_distr_evolution(
 def draw_posterior_distr_1d(
     ax: plt.Axes,
     posterior: Union[DirectPosterior, List[DirectPosterior]],
-    observations_real: to.Tensor,
+    data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dim: Union[int, Tuple[int]],
     prior: Optional[BoxUniform] = None,
     env_real: Optional[DomainRandWrapperBuffer] = None,
+    prob: Optional[to.Tensor] = None,
     condition: Optional[to.Tensor] = None,
     show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
@@ -134,18 +135,24 @@ def draw_posterior_distr_1d(
 ) -> plt.Figure:
     r"""
     Evaluate an posterior obtained from the sbi package on a 2-dim grid of domain parameter values.
-    Draw every posterior, conditioned on the real-world observation, in a separate plot.
+    Draw every posterior, conditioned on the real-world data, in a separate plot.
 
     :param ax: axis of the figure to plot on
     :param posterior: sbi `DirectPosterior` object to evaluate
-    :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
+    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+                      [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param dim: selected dimension
     :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
                      infer the ground truth domain parameters
     :param prior: distribution used by sbi as a prior
-    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions
+    :param prob: pre-computed probabilities used to compute the marginal probabilities. The use case in mind is the
+                 pairwise density plot, where we evaluate several 2-dim grids and later want to use these
+                 evaluations to plot a marginal which is in-line with the other plots
+    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions. `None`
+                      can be used in case of a 1-dim domain parameter mapping, else it must be a tensor of shape
+                      [num_iter, 1, dim_domain_param]
     :param show_prior: display the prior as a box
     :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set
                         arbitrarily, but should contain the prior if `show_prior` is `True`.
@@ -159,21 +166,30 @@ def draw_posterior_distr_1d(
     :param plot_kwargs: keyword arguments forwarded to pyplot's `plot()` function for the posterior distribution
     :return: handle to the resulting figure
     """
-    if len(dp_mapping) > 1 and condition is None:
-        raise pyrado.ValueErr(
-            msg="When the posteriors has more than 1 dimension, i.e. there is more than 1 domain "
-            "parameter, a condition has to be provided."
+    if not data_real.ndim == 2:
+        raise pyrado.ShapeErr(
+            msg=f"The target domain data tensor to have 2 dimensions, but is of shape {data_real.shape}!"
         )
-    elif len(dp_mapping) > 1 and (condition.numel() != len(dp_mapping)):
-        raise pyrado.ShapeErr(given=condition, expected_match=dp_mapping)
+    num_iter = data_real.shape[0]
+
+    # Check the inputs
     if isinstance(dim, tuple):
         if len(dim) != 1:
             raise pyrado.ShapeErr(given=dim, expected_match=(1,))
         dim = dim[0]
     if not isinstance(grid_res, int):
         raise pyrado.TypeErr(given=grid_res, expected_type=int)
-
-    num_obs_r, dim_obs_r = observations_real.shape
+    if condition is None:
+        # No condition was given, check if that is feasible
+        if len(dp_mapping) > 1:
+            raise pyrado.ValueErr(
+                msg="When the posteriors has more than 1 dimensions, i.e. there are more than 1 domain "
+                "parameters, a condition has to be provided."
+            )
+    else:
+        # A condition was given, check it
+        if condition.shape != (num_iter, 1, len(dp_mapping)):
+            raise pyrado.ShapeErr(given=condition, expected_match=(num_iter, 1, len(dp_mapping)))
 
     # Set defaults which can be overwritten by passing plot_kwargs
     plot_kwargs = merge_dicts([dict(), plot_kwargs])
@@ -197,23 +213,30 @@ def draw_posterior_distr_1d(
     else:
         raise pyrado.ValueErr(msg="Neither an explicit grid nor a prior has been provided!")
     grid_x = to.linspace(grid_bounds[0, 0], grid_bounds[0, 1], grid_res)
+    if prob is not None and not isinstance(prob, to.Tensor):
+        raise pyrado.TypeErr(given=prob, expected_type=to.Tensor)
     if condition is None:
         # No condition is necessary since dim(posterior) = dim(grid) = 1
-        grid = to.atleast_2d(grid_x)  # TODO test
+        grids = to.atleast_2d(grid_x).repeat(num_iter, 1, 1)  # untested
     else:
         # A condition is necessary since dim(posterior) > dim(grid) = 1
-        grid = condition.repeat(grid_res, 1)
-        grid[:, dim] = grid_x
-    if not grid.shape == (grid_res, len(dp_mapping)):
-        raise pyrado.ShapeErr(given=grid, expected_match=(grid_res, len(dp_mapping)))
+        grids = condition.repeat(1, grid_res, 1)
+        grids[:, :, dim] = grid_x
+    if not grids.shape == (num_iter, grid_res, len(dp_mapping)):
+        raise pyrado.ShapeErr(given=grids, expected_match=(grid_res, len(dp_mapping)))
 
-    # Compute the posterior probabilities
-    if rescale_posterior:
-        log_prob = sum([posterior.log_prob(grid, obs, False) for obs in observations_real])
-        prob = to.exp(log_prob - log_prob.max())
+    if prob is None:
+        # Compute the posterior probabilities
+        if rescale_posterior:
+            log_prob = sum([posterior.log_prob(grid, obs, False) for grid, obs in zip(grids, data_real)])
+            prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
+        else:
+            log_prob = sum([posterior.log_prob(grid, obs, normalize_posterior) for grid, obs in zip(grids, data_real)])
+            prob = to.exp(log_prob)
     else:
-        log_prob = sum([posterior.log_prob(grid, obs, normalize_posterior) for obs in observations_real])
-        prob = to.exp(log_prob)
+        # Use precomputed posterior probabilities
+        if prob.shape != (grid_res,):
+            raise pyrado.ShapeErr(given=prob, expected_match=(grid_res,))
 
     # Plot the posterior
     if transposed:
@@ -232,16 +255,15 @@ def draw_posterior_distr_1d(
 
     # Plot bounding box for the prior
     if prior is not None and show_prior:
-        raise NotImplementedError  # TODO
-        # _draw_prior(ax, prior, dim, dim)
+        _draw_prior(ax, prior, dim, None, num_dim=1, transposed=transposed)
 
     # Annotate
     if transposed:
         ax.set_ylabel(f"${dp_mapping[dim]}$" if x_label == "" else x_label)
-        ax.set_xlabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_obs_r}}})$" if y_label == "" else y_label)
+        ax.set_xlabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
     else:
         ax.set_xlabel(f"${dp_mapping[dim]}$" if x_label == "" else x_label)
-        ax.set_ylabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_obs_r}}})$" if y_label == "" else y_label)
+        ax.set_ylabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
     ax.set_aspect(1.0 / ax.get_data_ratio(), adjustable="box")
     ax.set_title(f"")
 
@@ -252,8 +274,8 @@ def draw_posterior_distr_1d(
 def draw_posterior_distr_2d(
     axs: plt.Axes,
     plot_type: str,
-    posterior: Union[DirectPosterior, List[DirectPosterior], MDN],
-    observations_real: to.Tensor,
+    posterior: Union[DirectPosterior, List[DirectPosterior], MoEPolicy],
+    data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dims: Tuple[int, int],
     prior: Optional[BoxUniform] = None,
@@ -261,7 +283,7 @@ def draw_posterior_distr_2d(
     condition: Optional[to.Tensor] = None,
     show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
-    grid_res: Optional[int] = 200,
+    grid_res: Optional[int] = 100,
     normalize_posterior: Optional[bool] = False,
     rescale_posterior: Optional[bool] = False,
     x_label: Optional[str] = "",
@@ -271,25 +293,28 @@ def draw_posterior_distr_2d(
     contourf_kwargs: Optional[dict] = None,
     scatter_kwargs: Optional[dict] = None,
     colorbar_kwargs: Optional[dict] = None,
-) -> Union[plt.Figure, Optional[Union[Any, plt.Figure]]]:
+) -> Union[plt.Figure, Optional[Union[Any, plt.Figure]], to.Tensor]:
     r"""
     Evaluate an posterior obtained from the sbi package on a 2-dim grid of domain parameter values.
-    Draw every posterior, conditioned on the real-world observation, in a separate plot.
+    Draw every posterior, conditioned on the real-world data, in a separate plot.
 
     :param axs: axis (joint) or axes (separately) of the figure to plot on
     :param plot_type: joint to draw the joint posterior probability probabilities in one plot, or separately to draw
-                      the posterior probabilities, conditioned on the real-world observation, in a separate plot. The
+                      the posterior probabilities, conditioned on the real-world data, in a separate plot. The
                       modes `joint` and `separate` always use the latest posterior (the only one given), while the mode
-                      `evolution` uses the posterior from the iteration in which the observation was obtained.
+                      `evolution` uses the posterior from the iteration in which the data was obtained.
     :param posterior: sbi `DirectPosterior` object to evaluate
-    :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
+    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+                      [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param prior: distribution used by sbi as a prior
     :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
                      infer the ground truth domain parameters
     :param dims: selected dimensions
-    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions
+    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions. `None`
+                      can be used in case of a 2-dim domain parameter mapping, else it must be a tensor of shape
+                      [num_iter, 1, dim_domain_param]
     :param show_prior: display the prior as a box
     :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set
                         arbitrarily, but should contain the prior if `show_prior` is `True`.
@@ -306,41 +331,51 @@ def draw_posterior_distr_2d(
     :param scatter_kwargs: keyword arguments forwarded to pyplot's `scatter()` function for the true parameter
     :param colorbar_kwargs: keyword arguments forwarded to `draw_sep_cbar()` function, possible kwargs: `ax_cb`,
                             `colorbar_label`, `colorbar_orientation`, `fig_size`, `cmap`, `norm`, num_major_ticks_cb`
-    :return: handle to the resulting figure
+    :return: handle to the resulting figure, optionally the handle to a color bar, and the tensor of the marginal
+             probabilities obtained averaging over the rows and columns of the the 2-dim evaluation grid
     """
-    num_obs_r, dim_obs_r = observations_real.shape
-    dim_x, dim_y = dims
-    plot_type = plot_type.lower()
-
     # Check the inputs
+    if not data_real.ndim == 2:
+        raise pyrado.ShapeErr(
+            msg=f"The target domain data tensor to have 2 dimensions, but is of shape {data_real.shape}!"
+        )
+    num_iter = data_real.shape[0]
+    dim_x, dim_y = dims
+
+    plot_type = plot_type.lower()
     if plot_type == "joint":
         if not isinstance(axs, plt.Axes):
             raise pyrado.TypeErr(given=axs, expected_type=plt.Axes)
-    elif plot_type in ["separate", "evolution"]:
+    elif plot_type in ["separate", "evolution-iter", "evolution-round"]:
         axs = np.atleast_2d(axs)
-        if not axs.size == num_obs_r:
-            raise pyrado.ShapeErr(msg=f"The plotting axes need to be a 2-dim array with {num_obs_r} elements!")
+        if not axs.size == num_iter:
+            raise pyrado.ShapeErr(msg=f"The plotting axes need to be a 2-dim array with {num_iter} elements!")
     else:
-        raise pyrado.ValueErr(given=plot_type, eq_constraint="joint, separate, or evolution")
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="joint, separate, evolution-iter, or evolution-round")
     if plot_type in ["joint", "separate"]:
-        if not (isinstance(posterior, DirectPosterior) or isinstance(posterior, MDN)):
+        if not (isinstance(posterior, DirectPosterior) or isinstance(posterior, MoEPolicy)):
             raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
-    elif plot_type == "evolution":
+    elif "evolution" in plot_type:
         if not (
-            is_iterable(posterior) and (isinstance(posterior[0], DirectPosterior) or isinstance(posterior[0], MDN))
+            is_iterable(posterior)
+            and (isinstance(posterior[0], DirectPosterior) or isinstance(posterior[0], MoEPolicy))
         ):
             raise pyrado.TypeErr(given=posterior[0], expected_type=DirectPosterior)
-    if len(dp_mapping) == 1:
-        raise NotImplementedError("So far, this function does not support plotting 1-dim posteriors.")
-    if len(dp_mapping) > 2 and condition is None:
-        raise pyrado.ValueErr(
-            msg="When the posteriors has more than 2 dimensions, i.e. there are more than 2 domain "
-            "parameters, a condition has to be provided."
-        )
-    elif len(dp_mapping) > 2 and (condition.numel() != len(dp_mapping)):
-        raise pyrado.ShapeErr(given=condition, expected_match=dp_mapping)
     if not isinstance(grid_res, int):
         raise pyrado.TypeErr(given=grid_res, expected_type=int)
+    if len(dp_mapping) == 1:
+        raise NotImplementedError("This function does not support plotting 1-dim posteriors.")
+    if condition is None:
+        # No condition was given, check if that is feasible
+        if len(dp_mapping) > 2:
+            raise pyrado.ValueErr(
+                msg="When the posteriors has more than 2 dimensions, i.e. there are more than 2 domain "
+                "parameters, a condition has to be provided."
+            )
+    else:
+        # A condition was given, check it
+        if condition.shape != (num_iter, 1, len(dp_mapping)):
+            raise pyrado.ShapeErr(given=condition, expected_match=(num_iter, 1, len(dp_mapping)))
 
     # Set defaults which can be overwritten by passing plot_kwargs
     contourf_kwargs = merge_dicts([dict(), contourf_kwargs])
@@ -375,32 +410,39 @@ def draw_posterior_distr_2d(
     x = x.repeat(grid_res)  # 1 2 3 1 2 3 1 2 3
     y = to.repeat_interleave(y, grid_res)  # 4 4 4 5 5 5 6 6 6
     grid_x, grid_y = x.view(grid_res, grid_res), y.view(grid_res, grid_res)
-    grid_x, grid_y = grid_x.numpy(), grid_y.numpy()
     if condition is None:
         # No condition is necessary since dim(posterior) = dim(grid) = 2
-        grid = to.stack([x, y], dim=1)
+        grids = to.stack([x, y], dim=1).repeat(num_iter, 1, 1)
     else:
         # A condition is necessary since dim(posterior) > dim(grid) = 2
-        grid = condition.repeat(grid_res ** 2, 1)
-        grid[:, dim_x] = x
-        grid[:, dim_y] = y
-    if not grid.shape == (grid_res ** 2, len(dp_mapping)):
-        raise pyrado.ShapeErr(given=grid, expected_match=(grid_res ** 2, len(dp_mapping)))
+        grids = condition.repeat(1, grid_res ** 2, 1)
+        grids[:, :, dim_x] = x
+        grids[:, :, dim_y] = y
+    if not grids.shape == (num_iter, grid_res ** 2, len(dp_mapping)):
+        raise pyrado.ShapeErr(given=grids, expected_match=(grid_res ** 2, len(dp_mapping)))
 
     fig = plt.gcf()
     if plot_type == "joint":
         # Compute the posterior probabilities
-        if rescale_posterior:
-            log_prob = sum([posterior.log_prob(grid, obs, False) for obs in observations_real])
-            prob = to.exp(log_prob - log_prob.max())
-        else:
-            log_prob = sum([posterior.log_prob(grid, obs, normalize_posterior) for obs in observations_real])
-            prob = to.exp(log_prob)
-        prob = prob.reshape(grid_res, grid_res).numpy()
+        with completion_context("Evaluating domain param grid", color="w"):
+            if rescale_posterior:
+                log_prob = sum([posterior.log_prob(grid, obs, False) for grid, obs in zip(grids, data_real)])
+                prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
+            else:
+                log_prob = sum(
+                    [posterior.log_prob(grid, obs, normalize_posterior) for grid, obs in zip(grids, data_real)]
+                )
+                prob = to.exp(log_prob)
+        prob = prob.reshape(grid_res, grid_res)
 
         # Plot the posterior
         axs.contourf(
-            grid_x, grid_y, prob, extent=[x.min(), x.max(), y.min(), y.max()], origin="lower", **contourf_kwargs
+            grid_x.numpy(),
+            grid_y.numpy(),
+            prob.numpy(),
+            extent=[x.min(), x.max(), y.min(), y.max()],
+            origin="lower",
+            **contourf_kwargs,
         )
 
         # Plot the ground truth parameters
@@ -415,22 +457,32 @@ def draw_posterior_distr_2d(
         axs.set_aspect(1.0 / axs.get_data_ratio(), adjustable="box")
         axs.set_xlabel(f"${dp_mapping[dim_x]}$" if x_label == "" else x_label)
         axs.set_ylabel(f"${dp_mapping[dim_y]}$" if y_label == "" else y_label)
-        axs.set_title(f"{num_obs_r} observations" if title == "" else title)
-        fig.canvas.set_window_title("Joint Probability of the Latest Posterior for All Real World Observation")
+        axs.set_title(f"across {num_iter} iterations" if title == "" else title)
+        fig.canvas.set_window_title("Posterior Probability")
 
-    elif plot_type in ["separate", "evolution"]:
+    elif plot_type in ["separate", "evolution-iter", "evolution-round"]:
         for i in range(axs.shape[0]):
             for j in range(axs.shape[1]):
                 # Compute the posterior probabilities
                 idx = j + i * axs.shape[1]  # iterate column-wise
                 p = posterior if plot_type == "separate" else posterior[idx]
-                log_prob = p.log_prob(grid, observations_real[idx, :], normalize_posterior)
-                prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
-                prob = prob.reshape(grid_res, grid_res).numpy()
+                with completion_context("Evaluating domain param grid", color="w"):
+                    if rescale_posterior:
+                        log_prob = p.log_prob(grids[idx], data_real[idx], False)
+                        prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
+                    else:
+                        log_prob = p.log_prob(grids[idx], data_real[idx], normalize_posterior)
+                        prob = to.exp(log_prob)
+                prob = prob.reshape(grid_res, grid_res)
 
                 # Plot the posterior
                 axs[i, j].contourf(
-                    grid_x, grid_y, prob, extent=[x.min(), x.max(), y.min(), y.max()], origin="lower", **contourf_kwargs
+                    grid_x.numpy(),
+                    grid_y.numpy(),
+                    prob.numpy(),
+                    extent=[x.min(), x.max(), y.min(), y.max()],
+                    origin="lower",
+                    **contourf_kwargs,
                 )
 
                 # Plot the ground truth parameters
@@ -445,37 +497,55 @@ def draw_posterior_distr_2d(
                 axs[i, j].set_aspect(1.0 / axs[i, j].get_data_ratio(), adjustable="box")
                 axs[i, j].set_xlabel(f"${dp_mapping[dim_x]}$" if x_label == "" else x_label)
                 axs[i, j].set_ylabel(f"${dp_mapping[dim_y]}$" if y_label == "" else y_label)
-                axs[i, j].set_title(f"observation {idx}")
+                default_title = f"iteration {idx}" if plot_type != "evolution-round" else f"round {idx}"
+                axs[i, j].set_title(default_title if title == "" else title)
+
         if plot_type == "separate":
-            fig.canvas.set_window_title("Probability of the Latest Posterior for Every Real World Observation")
+            fig.canvas.set_window_title("Probability of the Latest Posterior")
         else:
-            fig.canvas.set_window_title("Probability of the Current Posterior for Every Real World Observation")
+            fig.canvas.set_window_title("Probability of the Associated Iteration's Posterior")
 
     # Add a separate colorbar if desired
     fig_cb = draw_sep_cbar(**colorbar_kwargs) if add_sep_colorbar else None
 
-    return fig, fig_cb
+    # Marginalize
+    marginal_prob = to.zeros((2, grid_res))
+    marginal_prob[0, :] = to.mean(prob, dim=0)
+    marginal_prob[1, :] = to.mean(prob, dim=1)
+
+    return fig, fig_cb, marginal_prob
 
 
-def _draw_prior(ax, prior, dim_x, dim_y):
+def _draw_prior(ax, prior, dim_x, dim_y, num_dim: int = 2, transposed: bool = False):
     """ Helper function to draw a rectangle for the prior (assuming uniform distribution) """
-    x = prior.support.lower_bound[dim_x]
-    y = prior.support.lower_bound[dim_y]
-    dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
-    dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
-    rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
-    ax.add_patch(rect)
+    if num_dim == 1:
+        if transposed:
+            y = [prior.support.lower_bound[dim_x], prior.support.upper_bound[dim_x]]  # double-use of x
+            ax.hlines(y, 0, 1, transform=ax.get_xaxis_transform(), lw=1, ls="--", edgecolor="gray", facecolor="none")
+        else:
+            x = [prior.support.lower_bound[dim_x], prior.support.upper_bound[dim_x]]
+            ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), lw=1, ls="--", edgecolor="gray", facecolor="none")
+    elif num_dim == 2:
+        x = prior.support.lower_bound[dim_x]
+        y = prior.support.lower_bound[dim_y]
+        dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
+        dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
+        rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
+        ax.add_patch(rect)
+    else:
+        return NotImplementedError
 
 
 @to.no_grad()
 def draw_posterior_distr_pairwise(
     axs: plt.Axes,
     posterior: Union[DirectPosterior, to.distributions.Distribution],
-    observations_real: to.Tensor,
+    data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     condition: to.Tensor,
     prior: Optional[Union[BoxUniform, Uniform]] = None,
     env_real: Optional[DomainRandWrapperBuffer] = None,
+    show_prior: bool = False,
     grid_res: Optional[int] = 100,
     marginal_layout: str = "inside",
     normalize_posterior: Optional[bool] = False,
@@ -490,13 +560,17 @@ def draw_posterior_distr_pairwise(
 
     :param axs: axis (joint) or axes (separately) of the figure to plot on
     :param posterior: sbi `DirectPosterior` object to evaluate
-    :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
+    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+                      [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
-    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions
+    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions. `None`
+                      can be used in case of a 2-dim domain parameter mapping, else it must be a tensor of shape
+                      [num_iter, 1, dim_domain_param]
     :param prior: distribution used by sbi as a prior
     :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
                      infer the ground truth domain parameters
+    :param show_prior: display the prior as a box or as two lines
     :param dims: selected dimensions
     :param grid_res: number of elements on one axis of the evaluation gird
     :param marginal_layout: choose between `inside` for plotting the marginals on the diagonal (more dense), and
@@ -581,17 +655,20 @@ def draw_posterior_distr_pairwise(
     assert check_all_types_equal(idcs_marginal) and check_all_lengths_equal(idcs_marginal)
     assert check_all_types_equal(idcs_pair) and check_all_lengths_equal(idcs_pair)
 
+    # Initialize a container for the probabilities of each 2-dim grid evaluation
+    marginal_probs = to.zeros((len(dp_mapping), grid_res))
+
     # Plot the pairwise posteriors
     for i, j in idcs_pair:
         dim_x, dim_y = j, i  # transposed since we want the x-axis of the domain params to be the same for all columns
         if marginal_layout == "outside":
             dim_y = i - 1  # counter the shift that we got from the marginal plots in the top row
 
-        draw_posterior_distr_2d(
+        _, _, marginal_prob = draw_posterior_distr_2d(
             axs[i, j],
             "joint",
             posterior,
-            observations_real,
+            data_real,
             dp_mapping,
             dims=(dim_x, dim_y),
             prior=prior,
@@ -599,7 +676,7 @@ def draw_posterior_distr_pairwise(
             condition=condition,
             grid_bounds=None,
             grid_res=grid_res,
-            show_prior=False,
+            show_prior=show_prior,
             normalize_posterior=normalize_posterior,
             rescale_posterior=rescale_posterior,
             x_label=x_labels[dim_x, dim_y] if x_labels is not None else None,
@@ -607,6 +684,13 @@ def draw_posterior_distr_pairwise(
             title=None,
             add_sep_colorbar=False,
         )
+
+        # Extract the marginals (1st dim is always the x-axis in the 2-dim plots)
+        marginal_probs[dim_x, :] += marginal_prob[0]
+        marginal_probs[dim_y, :] += marginal_prob[1]
+
+    # Every domain parameter got evaluated for every other domain parameter twice, thus rescale
+    marginal_probs /= 2 * (len(dp_mapping) - 1)
 
     # Plot the marginal distributions
     for i, j in idcs_marginal:
@@ -629,13 +713,14 @@ def draw_posterior_distr_pairwise(
         draw_posterior_distr_1d(
             axs[i, j],
             posterior,
-            observations_real,
+            data_real,
             dp_mapping,
             dim,
             prior=prior,
             env_real=env_real,
+            prob=marginal_probs[dim],
             condition=condition,
-            show_prior=False,
+            show_prior=show_prior,
             grid_bounds=None,
             grid_res=grid_res,
             normalize_posterior=normalize_posterior,
@@ -644,6 +729,171 @@ def draw_posterior_distr_pairwise(
             y_label=y_label,
             transposed=rotate,
         )
+
+    if marginal_layout == "outside":
+        for i, j in idcs_skipp:
+            axs[i, j].set_visible(False)
+
+    return plt.gcf()
+
+
+def draw_posterior_distr_pairwise_scatter(
+    axs: plt.Axes,
+    dp_samples: List[to.Tensor],
+    dp_mapping: Mapping[int, str],
+    marginal_layout: str = "outside",
+    x_labels: Optional[np.ndarray] = "",
+    y_labels: Optional[np.ndarray] = "",
+    prob_labels: Optional[np.ndarray] = "",
+    c_palette=sns.color_palette(),
+) -> plt.Figure:
+    """
+    Plot a 2-dim gird of pairwise slices of the posterior distribution evaluated with samples from the posterior
+
+    :param axs: axis (joint) or axes (separately) of the figure to plot on
+    :param dp_samples: a batch of domain parameter samples generated from different distributions
+    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+                       Here this mapping must not have more than 2 elements since we can't plot more.
+    :param marginal_layout: choose between `inside` for plotting the marginals on the diagonal (more dense), and
+                           `outside` plotting the marginals on the side (better comparison)
+    :param x_labels: 2-dim numpy array of labels for the x-axes, pass `""` to use domain parameter name by default,
+                     or pass `None` to use no labels
+    :param y_labels: 2-dim numpy array of labels for the y-axes, pass `""` to use domain parameter name by default,
+                     or pass `None` to use no labels
+    :param prob_labels: 1-dim numpy array of labels for the probability axis in the marginal plots
+    :param c_palette: colorpalette for plotting the different distribution samples
+    :return: figure containing the pair plot
+    """
+    # Check the inputs
+    if marginal_layout == "inside":
+        plot_shape = (len(dp_mapping), len(dp_mapping))
+    elif marginal_layout == "outside":
+        plot_shape = (len(dp_mapping) + 1, len(dp_mapping) + 1)
+    else:
+        raise pyrado.ValueErr(given=marginal_layout, eq_constraint="inside or outside")
+    assert isinstance(axs, np.ndarray)
+    if axs.shape != plot_shape:
+        raise pyrado.ShapeErr(given=axs, expected_match=plot_shape)
+
+    # Manage the labels
+    if x_labels == "":
+        # The default values for the labels has been given, fill with the domain parameter names
+        x_labels = np.empty(plot_shape, dtype=object)
+        for i in range(len(dp_mapping)):
+            x_labels[:, i] = dp_mapping[i]
+    elif x_labels is not None:
+        # A non-default values for the labels has been given, check the shape
+        if x_labels.shape != plot_shape:
+            raise pyrado.ShapeErr(given=x_labels, expected_match=plot_shape)
+    if y_labels == "":
+        # The default values for the labels has been given, fill with the domain parameter names
+        y_labels = np.empty(plot_shape, dtype=object)
+        if marginal_layout == "inside":
+            for i in range(len(dp_mapping)):
+                y_labels[i, :] = dp_mapping[i]
+        else:
+            for i in range(len(dp_mapping)):
+                y_labels[i + 1, :] = dp_mapping[i]
+    elif y_labels != "" and y_labels is not None:
+        # A non-default values for the labels has been given, check the shape
+        if y_labels.shape != plot_shape:
+            raise pyrado.ShapeErr(given=y_labels, expected_match=plot_shape)
+
+    if prob_labels == "":
+        if marginal_layout == "inside":
+            for i in range(len(dp_mapping)):
+                y_labels[i, i] = "num samples"
+        else:
+            y_labels[0, :] = "num samples"
+            x_labels[:, -1] = "num samples"
+    elif prob_labels != "" and prob_labels is not None:
+        if len(prob_labels) == len(dp_mapping):
+            if marginal_layout == "inside":
+                for i in range(len(dp_mapping)):
+                    y_labels[i, i] = prob_labels[i]
+            else:
+                y_labels[0, :] = prob_labels
+                x_labels[:, -1] = prob_labels
+        else:
+            raise pyrado.ShapeErr(given=prob_labels, expected_match=dp_mapping)
+
+    # Generate the indices for the subplots
+    if marginal_layout == "inside":
+        # Set the indices for the marginal plots
+        idcs_marginal = [idx for idx, _ in np.ndenumerate(axs) if idx[0] == idx[1]]
+        # Set the indices for the pair plots
+        idcs_pair = [idx for idx, _ in np.ndenumerate(axs) if idx not in idcs_marginal]
+    elif marginal_layout == "outside":
+        # Ignore the -1 lower diagonal and the single top right one
+        idcs_skipp = [(i + 1, i) for i in range(plot_shape[0] - 1)] + [(0, plot_shape[1] - 1)]
+        # Set the indices for the marginal plots
+        idcs_marginal = [
+            idx
+            for idx, _ in np.ndenumerate(axs)
+            if (idx[0] == 0 or idx[1] == plot_shape[1] - 1) and (idx not in idcs_skipp)
+        ]
+        # Set the indices for the pair plots
+        idcs_pair = [idx for idx, _ in np.ndenumerate(axs) if idx not in idcs_marginal and idx not in idcs_skipp]
+
+    assert check_all_types_equal(idcs_marginal) and check_all_lengths_equal(idcs_marginal)
+    assert check_all_types_equal(idcs_pair) and check_all_lengths_equal(idcs_pair)
+
+    # Yehaa plot everything
+    for i, j in idcs_pair:
+        dim_x, dim_y = j, i
+        if marginal_layout == "outside":
+            dim_y -= 1
+
+        # Plot the points
+        plt.sca(axs[i, j])
+        for idx_obs in range(len(dp_samples)):
+            sns.scatterplot(
+                x=dp_samples[idx_obs][:, dim_x],
+                y=dp_samples[idx_obs][:, dim_y],
+                color=c_palette[idx_obs],
+                alpha=(1 - idx_obs / len(dp_samples)),
+            )
+
+        axs[i, j].set_xlabel(x_labels[i, j])
+        axs[i, j].set_ylabel(y_labels[i, j])
+
+    for i, j in idcs_marginal:
+        if marginal_layout == "outside":
+            if i == 0:
+                dim = j
+                rotate = False
+            if j == len(dp_mapping):
+                dim = i - 1
+                rotate = True
+        else:
+            dim = i
+            rotate = False
+        plt.sca(axs[i, j])
+        for idx_obs in range(len(dp_samples)):
+            obs = dp_samples[idx_obs]
+            if rotate:
+                # Rotate the sub-plot
+                if len(obs) == 1:
+                    plt.hlines(
+                        obs[:, dim],
+                        xmin=axs[i, j].get_xlim()[0],
+                        xmax=axs[i, j].get_xlim()[1],
+                        colors=c_palette[idx_obs],
+                    )
+                else:
+                    sns.histplot(y=obs[:, dim], color=c_palette[idx_obs])
+            else:
+                if len(obs) == 1:
+                    plt.vlines(
+                        obs[:, dim],
+                        ymin=axs[i, j].get_ylim()[0],
+                        ymax=axs[i, j].get_ylim()[1],
+                        colors=c_palette[idx_obs],
+                    )
+                else:
+                    sns.histplot(x=obs[:, dim], color=c_palette[idx_obs])
+        axs[i, j].set_xlabel(x_labels[i, j])
+        axs[i, j].set_ylabel(y_labels[i, j])
 
     if marginal_layout == "outside":
         for i, j in idcs_skipp:

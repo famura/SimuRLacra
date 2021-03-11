@@ -46,6 +46,7 @@ from sbi.utils import posterior_nn
 
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
+from pyrado.algorithms.inference.embeddings import Embedding
 from pyrado.algorithms.inference.sbi_rollout_sampler import (
     SimRolloutSamplerForSBI,
     RealRolloutSamplerForSBI,
@@ -63,7 +64,7 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.discrete import DiscreteSpace
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, completion_context
 
 
 class NPDR(InterruptableAlgorithm):
@@ -91,11 +92,10 @@ class NPDR(InterruptableAlgorithm):
         prior: Distribution,
         posterior_nn_hparam: dict,
         sbi_subrtn_class: Type[PosteriorEstimator],
-        summary_statistic: str,
+        embedding: Embedding,
         max_iter: int,
-        num_real_rollouts: int,  # TODO deprecate
+        num_real_rollouts: int,
         num_sim_per_round: int,
-        num_sim_per_real_rollout: int = None,
         num_segments: int = None,
         len_segments: int = None,
         num_sbi_rounds: Optional[int] = 1,
@@ -123,16 +123,11 @@ class NPDR(InterruptableAlgorithm):
         :param prior: distribution used by sbi as a prior
         :param posterior_nn_hparam: hyper parameters for creating the posterior's density estimator
         :param sbi_subrtn_class: sbi algorithm calls for executing the LFI, e.g. SNPE
-        :param summary_statistic: the method with which the observations for LFI are computed from the rollouts
-                                  Possible options:
-                                 `states` (uses all observed states from rollout),
-                                 `final_state` (use the last observed state from the rollout), and
-                                 `bayessim` (summary statistics as proposed in [1])
+        :param embedding: embedding used for pre-processing the data before passing it to the posterior
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_real_rollouts: number of real-world observation received by sbi, i.e. from every rollout exactly one
-                                  observation is computed
-        :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received  # TODO deprecate
-        :param num_sim_per_round: number of simulations done by sbi per real-world observation received
+        :param num_real_rollouts: number of real-world rollouts received by sbi, i.e. from every rollout exactly one
+                                  data set is computed
+        :param num_sim_per_round: number of simulations done by sbi per real-world data set received
         :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
@@ -140,7 +135,7 @@ class NPDR(InterruptableAlgorithm):
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
         :param num_sbi_rounds: set to an integer > 1 to use multi-round sbi. This way the posteriors (saved as
-                               `..._round_NUMBER...` will be tailored to the observation of that round, where `NUMBER`
+                               `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`
                                counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior
                                is called amortized (it has never seen any target domain data).
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
@@ -169,12 +164,11 @@ class NPDR(InterruptableAlgorithm):
         self._env_sim_trn = DomainRandWrapperBuffer(deepcopy(env_sim), randomizer=None, selection="random")
         self._env_real = env_real
         self.dp_mapping = dp_mapping
-        self.summary_statistic = summary_statistic.lower()
+        self._embedding = embedding
         self.posterior_nn_hparam = posterior_nn_hparam
         self.sbi_subrtn_class = sbi_subrtn_class
         self.num_sbi_rounds = num_sbi_rounds
         self.num_sim_per_round = num_sim_per_round
-        self._num_sim_per_round = num_sim_per_real_rollout  # TODO deprecate
         self.num_real_rollouts = num_real_rollouts
         self.sbi_training_hparam = sbi_training_hparam if sbi_training_hparam is not None else dict()
         self.sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
@@ -188,7 +182,7 @@ class NPDR(InterruptableAlgorithm):
         self.num_workers = num_workers
 
         # Temporary containers
-        self._curr_obs_real = None
+        self._curr_data_real = None
         self._curr_domain_param_eval = None
 
         # Optional policy optimization subroutine
@@ -209,17 +203,18 @@ class NPDR(InterruptableAlgorithm):
         self._setup_sbi(prior=prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
-        density_estimator = posterior_nn(**self.posterior_nn_hparam)  # can't be saved
+        density_estimator = posterior_nn(**self.posterior_nn_hparam)  # embedding for nflows is always nn.Identity
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
         self._sbi_subrtn = self.sbi_subrtn_class(
             prior=self._sbi_prior, density_estimator=density_estimator, summary_writer=summary_writer
         )
 
-        # Save initial environments and the prior
+        # Save initial environments, the embedding, and the prior
         pyrado.save(self._env_sim_trn, "env_sim", "pkl", self._save_dir)
         pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
-        pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
+        pyrado.save(embedding, "embedding", "pt", self._save_dir, use_state_dict=False)
+        pyrado.save(prior, "prior", "pt", self._save_dir, use_state_dict=False)
 
     @property
     def subroutine_policy(self) -> Algorithm:
@@ -231,13 +226,15 @@ class NPDR(InterruptableAlgorithm):
         """ Get the system identification subroutine coming from the sbi module. """
         return self._sbi_subrtn
 
-    def num_sim_per_real_rollout(self):
-        return self.num_sim_per_round  # TODO deprecate
-
     @property
     def sbi_simulator(self) -> Optional[Callable]:
         """ Get the simulator wrapped for sbi. """
         return self._sbi_simulator
+
+    # @property
+    # def embedding(self) -> Optional[EmbeddingBase]:
+    #     """ Get the embedding forwarded to the posterior NN. """
+    # return posterior.net._embedding_net
 
     def _setup_sbi(self, prior: Optional[Distribution] = None, rollouts_real: Optional[List[StepSequence]] = None):
         """
@@ -251,7 +248,7 @@ class NPDR(InterruptableAlgorithm):
             self._env_sim_sbi,
             self._policy,
             self.dp_mapping,
-            self.summary_statistic,
+            self._embedding,
             self.num_segments,
             self.len_segments,
             rollouts_real,
@@ -267,32 +264,28 @@ class NPDR(InterruptableAlgorithm):
         self.save_snapshot()
 
         if self.curr_checkpoint == 0:
-            self._curr_obs_real, _ = NPDR.collect_real_observations(
+            self._curr_data_real, _ = NPDR.collect_data_real(
                 self.save_dir,
                 self._env_real,
                 self._policy,
-                self.summary_statistic,
+                self._embedding,
                 prefix=f"iter_{self._curr_iter}",
                 num_rollouts=self.num_real_rollouts,
                 num_segments=self.num_segments,
                 len_segments=self.len_segments,
             )
-            if self._curr_obs_real.ndim != 2 or self._curr_obs_real.shape[0] != self.num_real_rollouts:
-                raise pyrado.ShapeErr(
-                    msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
-                    f"many entries as there are observations, but the shape is {self._curr_obs_real.shape}!"
-                )
 
+            # Save the target domain data
             if self._curr_iter == 0:
-                # Append the first set of observations
-                pyrado.save(self._curr_obs_real, "observations_real", "pt", self._save_dir)
+                # Append the first set of data
+                pyrado.save(self._curr_data_real, "data_real", "pt", self._save_dir)
             else:
-                # Append and save all observations
-                prev_observations = pyrado.load(None, "observations_real", "pt", self._save_dir)
-                observations_real_hist = to.cat([prev_observations, self._curr_obs_real], dim=0)
-                pyrado.save(observations_real_hist, "observations_real", "pt", self._save_dir)
+                # Append and save all data
+                prev_data = pyrado.load(None, "data_real", "pt", self._save_dir)
+                data_real_hist = to.cat([prev_data, self._curr_data_real], dim=0)
+                pyrado.save(data_real_hist, "data_real", "pt", self._save_dir)
 
-            # Initialize sbi simulator and prior, and set the initial state space
+            # Initialize sbi simulator and prior
             self._setup_sbi(
                 rollouts_real=pyrado.load(
                     None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
@@ -305,21 +298,20 @@ class NPDR(InterruptableAlgorithm):
             # Multi-round sbi
             proposal = self._sbi_prior
             for idx_r in range(self.num_sbi_rounds):
-                divisor = 1 if idx_r == 0 else 5
-                # Sample parameters proposal, and simulate these parameters to obtain the observations
-                domain_param, observation_sim = simulate_for_sbi(
+                # Sample parameters proposal, and simulate these parameters to obtain the data
+                domain_param, data_sim = simulate_for_sbi(
                     simulator=self._sbi_simulator,
                     proposal=proposal,
-                    num_simulations=int(self.num_sim_per_round / divisor),
+                    num_simulations=int(self.num_sim_per_round),
                     simulation_batch_size=self.simulation_batch_size,
                     num_workers=self.num_workers,
                 )
-                self._cnt_samples += int(self.num_sim_per_round / divisor) * self._env_sim_sbi.max_steps
+                self._cnt_samples += int(self.num_sim_per_round) * self._env_sim_sbi.max_steps
 
                 # Append simulations and proposals for sbi
                 self._sbi_subrtn.append_simulations(
                     domain_param,
-                    observation_sim,
+                    data_sim,
                     proposal=proposal,  # do not pass proposal arg for SNLE or SNRE
                 )
 
@@ -327,7 +319,7 @@ class NPDR(InterruptableAlgorithm):
                 density_estimator = self._sbi_subrtn.train(**self.sbi_training_hparam)
                 posterior = self._sbi_subrtn.build_posterior(density_estimator, **self.sbi_sampling_hparam)
 
-                # Save the posterior of this iteration before tailoring it to observations (when it is still amortized)
+                # Save the posterior of this iteration before tailoring it to the data (when it is still amortized)
                 if idx_r == 0:
                     pyrado.save(
                         posterior,
@@ -349,8 +341,9 @@ class NPDR(InterruptableAlgorithm):
                         use_state_dict=False,
                     )
 
-                    # Set proposal of the next round to focus on the next observation
-                    proposal = posterior.set_default_x(self._curr_obs_real[idx_r % self._curr_obs_real.shape[0]])
+                    # Set proposal of the next round to focus on the next data set.
+                    # set_default_x() expects dim [1, num_rollouts * data_samples]
+                    proposal = posterior.set_default_x(self._curr_data_real)
 
                 # Always save the latest
                 pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
@@ -362,7 +355,7 @@ class NPDR(InterruptableAlgorithm):
             posterior = pyrado.load(None, "posterior", "pt", self._save_dir, meta_info)
             self._curr_domain_param_eval, log_probs = NPDR.eval_posterior(
                 posterior,
-                self._curr_obs_real,
+                self._curr_data_real,
                 self.num_eval_samples,
                 normalize_posterior=self.normalize_posterior,
             )
@@ -393,18 +386,18 @@ class NPDR(InterruptableAlgorithm):
 
     @staticmethod
     @to.no_grad()
-    def collect_real_observations(
+    def collect_data_real(
         save_dir: Optional[str],
         env: Union[Env, str],
         policy: Policy,
-        summary_statistic: str,
+        embedding: Embedding,
         prefix: str,
         num_rollouts: int,
         num_segments: int = None,
         len_segments: int = None,
     ) -> Tuple[to.Tensor, List[StepSequence]]:
         """
-        Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the observations
+        Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the data
         computed from the recorded rollouts.
         This method is static to facilitate evaluation of specific policies in hindsight.
 
@@ -412,11 +405,7 @@ class NPDR(InterruptableAlgorithm):
         :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance,
                     in case you want to use pre-recorded rollouts pass the path to the parent folder as string
         :param policy: policy to evaluate
-        :param summary_statistic: the method with which the observations for LFI are computed from the rollouts.
-                                  Possible options:
-                                 `states` (uses all observed states from rollout),
-                                 `final_state` (use the last observed state from the rollout), and
-                                 `bayessim` (summary statistics as proposed in [1])
+        :param embedding: embedding used for pre-processing the data before passing it to the posterior
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
@@ -426,7 +415,8 @@ class NPDR(InterruptableAlgorithm):
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
+        :return: data from the real-world rollouts a.k.a. $x_o$ of shape [num_iter, num_rollouts_per_iter,
+                 time_series_length, dim_data], and the real-world rollouts
         """
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv) or isinstance(env, str)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv, str])
@@ -434,39 +424,41 @@ class NPDR(InterruptableAlgorithm):
         # Evaluate sequentially (necessary for sim-to-real experiments)
         if isinstance(env, str):
             rollout_worker = RecRolloutSamplerForSBI(
-                summary_statistic, env, num_segments, len_segments, rand_init_rollout=False
+                env, embedding, num_segments, len_segments, rand_init_rollout=False
             )
         else:
-            rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic, num_segments, len_segments)
+            rollout_worker = RealRolloutSamplerForSBI(env, policy, embedding, num_segments, len_segments)
 
-        observations_real = []
+        data_real = []
         rollouts_real = []
         for _ in tqdm(
             range(num_rollouts),
             total=num_rollouts,
-            desc=Fore.CYAN + Style.BRIGHT + f"Collecting observations using {prefix}_policy" + Style.RESET_ALL,
+            desc=Fore.CYAN + Style.BRIGHT + f"Collecting data using {prefix}_policy" + Style.RESET_ALL,
             unit="rollouts",
             file=sys.stdout,
         ):
-            observation, rollout = rollout_worker()
-            observations_real.append(observation)
+            data, rollout = rollout_worker()
+            data_real.append(data)
             rollouts_real.append(rollout)
 
-        # Stacked to tensor, samples along 1st dimension
-        observations_real = to.stack(observations_real)
+        # Stacked to tensor with shape [1, num_rollouts, dim_feat]
+        data_real = to.cat(data_real, dim=1)
+        if data_real.shape != (1, num_rollouts * embedding.dim_output):
+            raise pyrado.ShapeErr(given=data_real, expected_match=(1, num_rollouts * embedding.dim_output))
 
         # Optionally save the data
         if save_dir is not None:
-            pyrado.save(observations_real, "observations_real", "pt", save_dir, meta_info=dict(prefix=prefix))
+            pyrado.save(data_real, "data_real", "pt", save_dir, meta_info=dict(prefix=prefix))
             pyrado.save(rollouts_real, "rollouts_real", "pkl", save_dir, meta_info=dict(prefix=prefix))
 
-        return observations_real, rollouts_real
+        return data_real, rollouts_real
 
     @staticmethod
     @to.no_grad()
     def eval_posterior(
         posterior: DirectPosterior,
-        observations_real: to.Tensor,
+        data_real: to.Tensor,
         num_samples: int,
         calculate_log_probs: Optional[bool] = True,
         normalize_posterior: Optional[bool] = True,
@@ -477,40 +469,53 @@ class NPDR(InterruptableAlgorithm):
         and the simulated trajectory.
 
         :param posterior: posterior to evaluate, e.g. a normalizing flow, that samples domain parameters conditioned on
-                          the provided observations
-        :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
+                          the provided data
+        :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+                          [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
         :param num_samples: number of samples to draw from the posterior
         :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned
         :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
-        :return: domain parameters sampled form the posterior, and log-probabilities of these domain parameters
+        :return: domain parameters sampled form the posterior of shape [batch_size, num_samples, dim_domain_param], as
+                 well as the log-probabilities of these domain parameters
         """
-        if observations_real.ndim != 2:
-            raise pyrado.ShapeErr(msg="The observations must be a 2-dim PyTorch tensor!")
-        num_obs, dim_obs = observations_real.shape
+        if not isinstance(data_real, to.Tensor) or data_real.ndim != 2:
+            raise pyrado.ShapeErr(msg=f"The data must be a 2-dim PyTorch tensor, but is of shape {data_real.shape}!")
 
-        # Sample domain parameters
+        batch_size, _ = data_real.shape
+
+        # Sample domain parameters for all batches and stack them
         sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
         domain_params = to.stack(
-            [posterior.sample((num_samples,), x=obs, **sbi_sampling_hparam) for obs in observations_real], dim=0
+            [posterior.sample((num_samples,), x=obs, **sbi_sampling_hparam) for obs in data_real],
+            dim=0,
         )
-        if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
-            raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))
+
+        # Check shape
+        if not domain_params.ndim == 3 or domain_params.shape[:2] != (batch_size, num_samples):
+            raise pyrado.ShapeErr(
+                msg=f"The sampled domain parameters must be a 3-dim tensor where the 1st dimension is {batch_size} and "
+                f"the 2nd dimension is {num_samples}, but it is of shape {domain_params.shape}!"
+            )
 
         # Compute the log probability if desired
-        log_probs = to.empty((num_obs, num_samples)) if calculate_log_probs else None
         if calculate_log_probs:
-            for idx in tqdm(
-                range(num_obs),
-                total=num_obs,
-                desc="Evaluating posterior",
-                unit="observations",
-                file=sys.stdout,
-                leave=False,
-            ):
-                log_probs[idx, :] = posterior.log_prob(
-                    domain_params[idx, :, :], x=observations_real[idx, :], norm_posterior=normalize_posterior
+            # Batch-wise computation and stacking
+            with completion_context("Evaluating posterior", color="w"):
+                log_probs = to.stack(
+                    [
+                        posterior.log_prob(dp, x=obs, norm_posterior=normalize_posterior)
+                        for dp, obs in zip(domain_params, data_real)
+                    ],
+                    dim=0,
                 )
+
+            # Check shape
+            if log_probs.shape != (batch_size, num_samples):
+                raise pyrado.ShapeErr(given=log_probs, expected_match=(batch_size, num_samples))
+
+        else:
+            log_probs = None
 
         return domain_params, log_probs
 
@@ -519,25 +524,29 @@ class NPDR(InterruptableAlgorithm):
     def get_ml_posterior_samples(
         dp_mapping: Mapping[int, str],
         posterior: DirectPosterior,
-        observations_real: to.Tensor,
+        data_real: to.Tensor,
         num_eval_samples: int,
         num_ml_samples: Optional[int] = 1,
         calculate_log_probs: Optional[bool] = True,
         normalize_posterior: Optional[bool] = True,
         sbi_sampling_hparam: Optional[dict] = None,
-    ) -> List[List[Dict]]:
+        return_as_tensor: Optional[bool] = False,
+    ) -> Union[List[List[Dict]], to.Tensor]:
         r"""
         Evaluates the posterior and extract the `num_ml_samples` most likely domain parameter sets.
 
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param posterior: posterior to evaluate, e.g. a normalizing flow, that samples domain parameters conditioned on
-                          the provided observations
-        :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
+                          the provided data
+        :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+                          [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
         :param num_eval_samples: number of samples to draw from the posterior
         :param num_ml_samples: number of most likely samples, i.e. 1 equals argmax
         :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned
         :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
+        :param return_as_tensor: if `True`, return the most likely domain parameter sets as a tensor of shape
+                                 [num_iter, num_ml_samples, dim_domain_param], else as a list of `dict`
         :return: most likely domain parameters sets sampled form the posterior
         """
         if not isinstance(num_ml_samples, int) or num_ml_samples < 1:
@@ -546,22 +555,45 @@ class NPDR(InterruptableAlgorithm):
         # Evaluate the posterior
         domain_params, log_probs = NPDR.eval_posterior(
             posterior,
-            observations_real,
+            data_real,
             num_eval_samples,
             calculate_log_probs,
             normalize_posterior,
             sbi_sampling_hparam,
         )
 
-        # Extract the most likely domain parameter sets for every target domain observation
+        # Extract the most likely domain parameter sets for every target domain data set
         domain_params_ml = []
         for idx_r in range(domain_params.shape[0]):
             idcs_ml = to.argsort(log_probs[idx_r, :], descending=True)
             idcs_sel = idcs_ml[:num_ml_samples]
             dp_vals = domain_params[idx_r, idcs_sel, :]
-            dp_vals = np.atleast_1d(dp_vals.numpy())
-            domain_param_ml = [dict(zip(dp_mapping.values(), dpv)) for dpv in dp_vals]
-            domain_params_ml.append(domain_param_ml)
+
+            if return_as_tensor:
+                # Return as tensor
+                domain_params_ml.append(dp_vals)
+
+            else:
+                # Return as dict
+                dp_vals = np.atleast_1d(dp_vals.numpy())
+                domain_param_ml = [dict(zip(dp_mapping.values(), dpv)) for dpv in dp_vals]
+                domain_params_ml.append(domain_param_ml)
+
+        if return_as_tensor:
+            domain_params_ml = to.stack(domain_params_ml, dim=0)
+            if not domain_params_ml.shape == (domain_params.shape[0], num_ml_samples, len(dp_mapping)):
+                raise pyrado.ShapeErr(
+                    given=domain_params_ml, expected_match=(domain_params.shape[0], num_ml_samples, len(dp_mapping))
+                )
+
+        else:
+            # Check the first element
+            if len(domain_params_ml[0]) != num_ml_samples or len(domain_params_ml[0][0]) != len(dp_mapping):
+                raise pyrado.ShapeErr(
+                    msg=f"The max likelihood domain parameter sets need to be of length {num_ml_samples}, but are "
+                    f"{domain_params_ml[0]}, and the domain parameter sets need to be of length {len(dp_mapping)}, but "
+                    f"are {len(domain_params_ml[0][0])}!"
+                )
 
         return domain_params_ml
 
@@ -711,7 +743,7 @@ class NPDR(InterruptableAlgorithm):
         tmp_sbi_subrtn_summary_writer = self.__dict__["_sbi_subrtn"].__dict__.pop("_summary_writer")
         tmp_sbi_subrtn_build_neural_net = self.__dict__["_sbi_subrtn"].__dict__.pop("_build_neural_net")
 
-        # Remove the policy optimization subroutine, since it contains non-leaf tensors. These cause an error durin the
+        # Remove the policy optimization subroutine, since it contains non-leaf tensors. These cause an error during the
         # subsequent deepcopying
         tmp_subrtn_policy = self.__dict__.pop("_subrtn_policy", None)
 

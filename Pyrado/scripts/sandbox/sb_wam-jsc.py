@@ -36,7 +36,7 @@ from pyrado.utils.data_types import RenderMode
 
 
 if __name__ == "__main__":
-    num_dof = 4
+    num_dof = 7
     num_steps = 6000
 
     # Create the environment

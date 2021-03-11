@@ -28,13 +28,13 @@
 
 ###############################################################################
 ## SLURM Configurations
-#SBATCH --job-name single_run_cpu
-#SBATCH --array 0-0
+#SBATCH --job-name seed_array_cpu
+#SBATCH --array 0-19
 #SBATCH --time 72:00:00
 ## Always leave ntasks value to 1. This is only used for MPI, which is not supported now.
 #SBATCH --ntasks 1
 ## Specify the number of cores. The maximum is 32.
-#SBATCH --cpus-per-task 16
+#SBATCH --cpus-per-task 1
 ## Leave this if you want to use a GPU per job. Remove it if you do not need it.
 ##SBATCH --gres=gpu:rtx2080:1
 ##SBATCH -C avx
@@ -57,4 +57,4 @@ cd "$SCRIPTS_DIR"
 
 # Run python scripts with provided command line arguments
 CMD="$@" # all arguments for the script call starting from PATHTO/SimuRLacra/Pyrado/scripts (excluding "python")
-python $CMD
+python $CMD --seed $SLURM_ARRAY_TASK_ID

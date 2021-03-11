@@ -28,7 +28,7 @@
 
 ###############################################################################
 ## SLURM Configurations
-#SBATCH --job-name pyrado_gpu
+#SBATCH --job-name single_run_gpu
 #SBATCH --array 0-0
 #SBATCH --time 72:00:00
 ## Always leave ntasks value to 1. This is only used for MPI, which is not supported now.
@@ -43,7 +43,7 @@
 #SBATCH -e /home/muratore/Software/SimuRLacra/remotelaunch/logs/%A_%a-err.txt
 ###############################################################################
 
-# Your PROGRAM call starts here
+# Your program call starts here
 echo "Starting Job $SLURM_JOB_ID, Index $SLURM_ARRAY_TASK_ID"
 
 # Activate the pyrado anaconda environment

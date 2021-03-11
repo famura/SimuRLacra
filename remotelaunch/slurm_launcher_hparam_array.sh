@@ -28,8 +28,8 @@
 
 ###############################################################################
 ## SLURM Configurations
-#SBATCH --job-name pyrado_cpu
-#SBATCH --array 0-9
+#SBATCH --job-name hparam_array_cpu
+#SBATCH --array 1,2,5,10,20,50,100,200,500
 #SBATCH --time 72:00:00
 ## Always leave ntasks value to 1. This is only used for MPI, which is not supported now.
 #SBATCH --ntasks 1
@@ -43,7 +43,7 @@
 #SBATCH -e /home/muratore/Software/SimuRLacra/remotelaunch/logs/%A_%a-err.txt
 ###############################################################################
 
-# Your PROGRAM call starts here
+# Your program call starts here
 echo "Starting Job $SLURM_JOB_ID, Index $SLURM_ARRAY_TASK_ID"
 
 # Activate the pyrado anaconda environment
@@ -57,4 +57,4 @@ cd "$SCRIPTS_DIR"
 
 # Run python scripts with provided command line arguments
 CMD="$@" # all arguments for the script call starting from PATHTO/SimuRLacra/Pyrado/scripts (excluding "python")
-python $CMD --seed $SLURM_ARRAY_TASK_ID
+python $CMD --seed 1001 --ARG_NAME_FOR_THE_PARAM $SLURM_ARRAY_TASK_ID

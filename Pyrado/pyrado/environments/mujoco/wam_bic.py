@@ -116,15 +116,13 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         self.observe_ball = observe_ball
         self.observe_cup = observe_cup
 
-        # File name of the xml and desired joint position for the initial state
+        # Initialize num DoF specific variables
         self._num_dof = num_dof
         if num_dof == 4:
             graph_file_name = "wam_4dof_bic.xml"
             self.qpos_des_init = init_qpos_des_4dof
             self.p_gains = wam_pgains_4dof
             self.d_gains = wam_dgains_4dof
-            self.init_qpos[:4] = np.array([0.0, 0.63, 0.0, 1.27])
-            self.init_qpos[4] = -0.34  # angle of the first rope segment relative to the cup bottom plate
             init_ball_pos = np.array([0.723, 0.0, 1.168])
             init_cup_goal = goal_pos_init_sim_4dof
         elif num_dof == 7:
@@ -132,8 +130,6 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             self.qpos_des_init = init_qpos_des_7dof
             self.p_gains = wam_pgains_7dof
             self.d_gains = wam_dgains_7dof
-            self.init_qpos[:7] = np.array([0.0, 0.65, 0.0, 1.41, 0.0, -0.28, -1.57])
-            self.init_qpos[7] = -0.21  # angle of the first rope segment relative to the cup bottom plate
             init_ball_pos = np.array([0.828, 0.0, 1.131])
             init_cup_goal = goal_pos_init_sim_7dof
         else:
@@ -141,6 +137,14 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
         model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, graph_file_name)
         super().__init__(model_path, frame_skip, dt, max_steps, task_args)
+
+        # Actual initial joint position (when the WAM moved to the home position)
+        if num_dof == 4:
+            self.init_qpos[:4] = np.array([0.0, 0.63, 0.0, 1.27])
+            self.init_qpos[4] = -0.34  # angle of the first rope segment relative to the cup bottom plate
+        else:
+            self.init_qpos[:7] = np.array([0.0, 0.65, 0.0, 1.41, 0.0, -0.28, -1.57])
+            self.init_qpos[7] = -0.21  # angle of the first rope segment relative to the cup bottom plate
 
         # Set the actual stable initial position. This position would be reached after some time using the internal
         # PD controller to stabilize at self._qpos_des_init.
@@ -195,7 +199,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
     @property
     def state_space(self) -> Space:
-        state_shape = self._init_state.shape
+        state_shape = np.concatenate([self.init_qpos, self.init_qvel]).shape  # same shape as init space
         state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
         # Ensure that joint limits of the arm are not reached (5 deg safety margin)
         state_lo[: self._num_dof] = wam_q_limits_lo_7dof[: self._num_dof]
@@ -235,13 +239,13 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
                 joint_5_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_6_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_7_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
-                joint_5_stiction=0.2,  # dry friction coefficient of motor joint 5 [-]
-                joint_6_stiction=0.2,  # dry friction coefficient of motor joint 6 [-]
-                joint_7_stiction=0.2,  # dry friction coefficient of motor joint 7 [-]
+                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
+                joint_5_dryfriction=0.4,  # dry friction coefficient of motor joint 5 [-]
+                joint_6_dryfriction=0.4,  # dry friction coefficient of motor joint 6 [-]
+                joint_7_dryfriction=0.4,  # dry friction coefficient of motor joint 7 [-]
                 rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
             )
         elif num_dof == 4:
@@ -253,10 +257,10 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
                 joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
+                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
                 rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
             )
         else:
@@ -351,7 +355,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         rew_fcn = QuadrErrRewFcn(
             Q=task_args.get("Q_dev", np.diag([2e-1, 1e-6, 5e0])),  # Cartesian distance from init cup position
             R=task_args.get(
-                "R_dev", np.zeros((self._act_space.shape[0], self._act_space.shape[0]))
+                "R_dev", np.zeros((self.act_space.shape[0], self.act_space.shape[0]))
             ),  # joint space distance from init pose, interferes with R_default from _create_main_task
         )
         task = DesStateTask(spec, state_des, rew_fcn)

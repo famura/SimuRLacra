@@ -74,7 +74,7 @@ class LinearPolicy(Policy):
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
-            # Initialize the linear layer using default initialization
+            # Initialize the layer using default initialization
             init_param(self.net, **kwargs)
         else:
             self.param_values = init_values  # ignore the IntelliJ warning

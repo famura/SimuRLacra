@@ -90,6 +90,8 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
         """
         Serializable._init(self, locals())
 
+        # Initialize num DoF specific variables
+        self._num_dof = num_dof
         if num_dof == 4:
             graph_file_name = "wam_4dof_base.xml"
             self.qpos_des_init = init_qpos_des_4dof
@@ -102,7 +104,6 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
             self.d_gains = wam_dgains_7dof
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
-        self._num_dof = num_dof
 
         model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, graph_file_name)
         super().__init__(model_path, frame_skip, dt, max_steps, task_args)
@@ -152,13 +153,13 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
                 joint_5_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_6_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_7_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
-                joint_5_stiction=0.2,  # dry friction coefficient of motor joint 5 [-]
-                joint_6_stiction=0.2,  # dry friction coefficient of motor joint 6 [-]
-                joint_7_stiction=0.2,  # dry friction coefficient of motor joint 7 [-]
+                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
+                joint_5_dryfriction=0.4,  # dry friction coefficient of motor joint 5 [-]
+                joint_6_dryfriction=0.4,  # dry friction coefficient of motor joint 6 [-]
+                joint_7_dryfriction=0.4,  # dry friction coefficient of motor joint 7 [-]
             )
         elif num_dof == 4:
             return dict(
@@ -166,10 +167,10 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
                 joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
                 joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_stiction=0.6,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_stiction=0.6,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_stiction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_stiction=0.4,  # dry friction coefficient of motor joint 4 [-]
+                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
+                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
+                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
+                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
             )
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")

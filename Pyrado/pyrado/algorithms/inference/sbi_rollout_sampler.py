@@ -35,6 +35,7 @@ from operator import itemgetter
 from typing import Union, Mapping, Optional, Tuple, List, ValuesView
 
 import pyrado
+from pyrado.algorithms.inference.embeddings import Embedding
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
@@ -46,11 +47,14 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces import BoxSpace
 from pyrado.utils.checks import check_act_equal
+from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt_once
 
 
 def _check_domain_params(
-    rollouts: List[StepSequence], domain_param_value: np.ndarray, domain_param_names: Union[List[str], ValuesView]
+    rollouts: Union[List[StepSequence], StepSequence],
+    domain_param_value: np.ndarray,
+    domain_param_names: Union[List[str], ValuesView],
 ):
     """
     Verify if the domain parameters in the rollout are actually the ones commanded.
@@ -59,6 +63,9 @@ def _check_domain_params(
     :param domain_param_value: one set of domain parameters as commanded
     :param domain_param_names: names of the domain parameters to set, i.e. values of the domain parameter mapping
     """
+    if isinstance(rollouts, StepSequence):
+        rollouts = [rollouts]
+
     if not all(
         [
             np.allclose(
@@ -78,7 +85,9 @@ class RolloutSamplerForSBI(ABC, Serializable):
     was a callable that only needs the simulator parameters as inputs
     """
 
-    def __init__(self, env: Env, policy: Policy, strategy: str, num_segments: int = None, len_segments: int = None):
+    def __init__(
+        self, env: Env, policy: Policy, embedding: Embedding, num_segments: int = None, len_segments: int = None
+    ):
         """
         Constructor
 
@@ -86,202 +95,38 @@ class RolloutSamplerForSBI(ABC, Serializable):
                     a sim-to-sim experiment this can be a (randomized) `SimEnv`. We strip all domain randomization
                     wrappers from this env since we want to randomize it manually here.
         :param policy: policy used for sampling the rollout
-        :param strategy: method with which the observations are computed from the rollouts. Possible options:
-                         `dtw_distance` (dynamic time warping using all observations from the rollout),
-                         `final_state` (use the last observed state from the rollout), and
-                         `bayessim` (summary statistics as proposed in [1])
+        :param embedding: embedding used for pre-processing the data before (later) passing it to the posterior
         :param num_segments: number of segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
-
-        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", arXiv, 2019
         """
-        if not strategy.lower() in ["dtw_distance", "final_state", "bayessim"]:
-            raise pyrado.ValueErr(given=strategy, eq_constraint="dtw_distance, final_state, bayessim")
+        if num_segments is None and len_segments is None or num_segments is not None and len_segments is not None:
+            raise pyrado.ValueErr(msg="Either num_segments or len_segments must not be None, but not both or none!")
 
         Serializable._init(self, locals())
 
         self._env = env
         self._policy = policy
-        self.strategy = strategy.lower()
-        if num_segments is None and len_segments is None or num_segments is not None and len_segments is not None:
-            raise pyrado.ValueErr(msg="Either num_segments or len_segments must not be None, but not both or none!")
         self.num_segments = num_segments
         self.len_segments = len_segments
+        self._embedding = embedding
 
     @abstractmethod
     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
         raise NotImplementedError
 
-    @property
-    def dim_output(self):
-        """ Get the output dimension of the respective transformation. """
-        if self.strategy == "dtw_distance":
-            d = 1
-        elif self.strategy == "final_state":
-            d = self._env.obs_space.shape[0]
-        elif self.strategy == "bayessim":
-            obs_dim = self._env.obs_space.shape[0]
-            act_dim = self._env.act_space.shape[0]
-            d = obs_dim * act_dim + 2 * obs_dim
-        else:
-            raise NotImplementedError
-
-        return d * self.num_segments if self.num_segments is not None else d
-
-    def compute_observations(
-        self, rollout_query: StepSequence, rollouts_ref: Optional[Union[StepSequence, List[StepSequence]]]
-    ) -> to.Tensor:
-        """
-        Compute the observations from a given rollout, depending on the transformation and the way to segment the
-        rollout. In that process, the last segment might be ignored to get rid off too short segments.
-
-        :param rollout_query: rollout or segment thereof containing the data to be transformed for inference
-        :param rollouts_ref: reference rollout(s) from the target domain, if `None` the reference is set to the the
-                             query. The latter case is true for computing the statistics for the target domain rollouts
-        :return: feature values
-        """
-        if self.num_segments is not None and self.num_segments == 1:
-            # Use the complete rollout without spitting it
-            obs_real = self.transform_data(rollout_query, rollouts_ref)
-
-        elif self.num_segments is not None and self.num_segments > 1:
-            segs_sim = list(rollout_query.split_ordered_batches(num_batches=self.num_segments + 1))
-            segs_sim = segs_sim[:-1]
-            if rollouts_ref is not None:
-                segs_real = list(rollouts_ref.split_ordered_batches(num_batches=self.num_segments + 1))
-                segs_real = segs_real[: len(segs_sim)]
-            else:
-                segs_real = [None] * len(segs_sim)
-
-            # Transform the data to torch and compute the observations used for inference from the rollout data.
-            # This is done for all segments separately, and since we know how many segments there will be, we can
-            # concatenate them, and use them individually
-            obs_real = to.cat([self.transform_data(ss, sr) for ss, sr in zip(segs_sim, segs_real)], dim=0)
-
-        else:
-            segs_sim = list(rollout_query.split_ordered_batches(batch_size=self.len_segments))
-            if segs_sim[-1].length < 2:
-                segs_sim = segs_sim[:-1]
-            if rollouts_ref is not None:
-                segs_real = list(rollouts_ref.split_ordered_batches(batch_size=self.len_segments))
-                segs_real = segs_real[: len(segs_sim)]
-            else:
-                segs_real = [None] * len(segs_sim)
-
-            # Transform the data to torch and compute the observations used for inference from the rollout data.
-            # This is done for all segments separately, and since we know don't how many segments there will be,
-            # we can only average them
-            obs_real = to.mean(to.stack([self.transform_data(ss, sr) for ss, sr in zip(segs_sim, segs_real)]), dim=0)
-
-        return obs_real
-
-    def transform_data(self, rollout_query: StepSequence, rollouts_ref: Optional[List[StepSequence]]) -> to.Tensor:
-        r"""
-        Transforms rollouts into the observations used for likelihood-free inference.
-        Currently a state-representation as well as state-action summary-statistics are available.
-
-        :param rollout_query: rollout or segment thereof containing the data to be transformed for inference
-        :param rollouts_ref: reference rollout(s) from the target domain, if `None` the reference is set to the the
-                             query. The latter case is true for computing the statistics for the target domain rollouts
-        :return: observation used for inference, a.k.a $x_o$
-        """
-        if self.strategy == "dtw_distance":
-            return self.dtw_distance(rollout_query, rollouts_ref)
-        elif self.strategy == "final_state":
-            return self.final_state(rollout_query)
-        elif self.strategy == "bayessim":
-            assert rollout_query.length > 1
-            return self.bayessim_statistic(rollout_query)
-        else:
-            raise pyrado.ValueErr(given=self.strategy)
-
     @staticmethod
-    def dtw_distance(
-        rollout_query: StepSequence, rollouts_ref: Optional[Union[StepSequence, List[StepSequence]]]
-    ) -> to.Tensor:
+    def get_dim_data(spec: EnvSpec) -> int:
         """
-        Returns the dynamic time warping distance between the rollouts' observations.
+        Compute the dimension of the data which is extracted from the rollouts.
 
-        .. note::
-            It is necessary to take the mean over all distances since the same function is used to compute the
-            observations (for sbi) form the target domain rollouts. At this point in time there might be only one target
-            domain rollout, thus the target domain rollouts are only compared with themselves, thus yield a scalar
-            distance value.
-
-        :param rollout_query: rollout or segment thereof containing the data to be transformed for inference
-        :param rollouts_ref: reference rollout(s) from the target domain, if `None` the reference is set to the the
-                             query. The latter case is true for computing the statistics for the target domain rollouts
-        :return: dynamic time warping distance in multi-dim observations space, averaged over target domain rollouts
+        :param spec: environment specification
+        :return: dimension of one data sample, i.e. one time step
         """
-        from dtw import dtw
-
-        if rollouts_ref is None:
-            rollouts_ref = [rollout_query]
-        elif isinstance(rollouts_ref, StepSequence):
-            rollouts_ref = [rollouts_ref]
-        if not isinstance(rollouts_ref, (StepSequence, list)):
-            raise pyrado.TypeErr(given=rollouts_ref, expected_type=(StepSequence, list))
-        if isinstance(rollouts_ref, list) and not isinstance(rollouts_ref[0], StepSequence):
-            raise pyrado.TypeErr(given=rollouts_ref[0], expected_type=StepSequence)
-
-        # Align the rollouts with the Rabiner-Juang type VI-c unsmoothed recursion
-        distances = []
-        for ro_ref in rollouts_ref:
-            distances.append(
-                dtw(
-                    rollout_query.observations,
-                    ro_ref.observations,
-                    open_end=True,
-                    # step_pattern=rabinerJuangStepPattern(6, "c"),
-                ).distance
-            )
-
-        return to.mean(to.as_tensor(distances, dtype=to.get_default_dtype())).view(1)
-
-    @staticmethod
-    def final_state(rollout: StepSequence) -> to.Tensor:
-        """
-        Returns the last observations of the rollout as a vector.
-
-        :param rollout: rollout or segment thereof containing the data to be transformed for inference
-        :return: last observations as a vector
-        """
-        rollout.torch(data_type=to.get_default_dtype())
-
-        return rollout.observations[-1].view(-1)
-
-    @staticmethod
-    def bayessim_statistic(rollout: StepSequence) -> to.Tensor:
-        """
-        Computing summary statistics based on approach in [1], see eq. (22).
-        This method guarantees output which has the same size for every trajectory.
-
-        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", arXiv, 2019
-
-        :param rollout: rollout or segment thereof containing the data to be transformed for inference
-        :return: summary statistics of the rollout
-        """
-        if rollout.length < 2:
-            raise pyrado.ShapeErr(given=rollout, expected_match=(2, -1))
-
-        rollout.torch(data_type=to.get_default_dtype())
-        act = rollout.actions if len(rollout.observations) == len(rollout.actions) + 1 else rollout.actions[:-1]
-        obs = rollout.observations  #
-        obs_diff = obs[1:] - obs[:-1]
-
-        # Compute the statistics
-        act_obs_dot_prod = to.einsum("ij,ik->jk", act, obs_diff).view(-1)
-        mean_obs_diff = to.mean(obs_diff, dim=0)
-        var_obs_diff = to.mean((mean_obs_diff - obs_diff) ** 2, dim=0)
-
-        # Combine all the statistics
-        return to.cat((act_obs_dot_prod, mean_obs_diff, var_obs_diff), dim=0)
+        return spec.state_space.flat_dim + spec.act_space.flat_dim
 
 
 class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
@@ -292,7 +137,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         env: Union[SimEnv, EnvWrapper],
         policy: Policy,
         dp_mapping: Mapping[int, str],
-        strategy: str,
+        embedding: Embedding,
         num_segments: int = None,
         len_segments: int = None,
         rollouts_real: Optional[List[StepSequence]] = None,
@@ -304,19 +149,13 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     randomize it manually via the domain parameters coming from the sbi package
         :param policy: policy used for sampling the rollout
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
+        :param embedding: embedding used for pre-processing the data before (later) passing it to the posterior
         :param num_segments: number of segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
-        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
-                         `dtw_distance` (dynamic time warping using all observations from the rollout),
-                         `final_state` (use the last observed state from the rollout), and
-                         `bayessim` (summary statistics as proposed in [1])
-
-        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", arXiv, 2019
         """
         if typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(
@@ -332,7 +171,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         Serializable._init(self, locals())
 
         super().__init__(
-            env=env, policy=policy, strategy=strategy, num_segments=num_segments, len_segments=len_segments
+            env=env, policy=policy, embedding=embedding, num_segments=num_segments, len_segments=len_segments
         )
 
         self.dp_names = dp_mapping.values()
@@ -340,9 +179,11 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
     def __call__(self, dp_values: to.Tensor) -> to.Tensor:
         """
-        Set the domain parameter, run one rollout, and compute summary statistics.
+        Run one rollout for every domain parameter set. The rollouts are done in segments, and after every segment the
+        simulation state is set to the current state in the target domain rollout.
 
-        :param dp_values: tensor containing the domain parameter values [num samples x num domain parameters]
+        :param dp_values: tensor containing domain parameters along the 1st dimension
+        :return: features computed from the time series data
         """
         dp_values = to.atleast_2d(dp_values).numpy()
 
@@ -356,30 +197,25 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                 -pyrado.inf, pyrado.inf, self._env.state_space.shape, labels=self._env.state_space.labels
             )
 
-            obs_real_all = []  # for all target domain rollouts
+            data_sim_all = []  # for all target domain rollouts
 
             # Iterate over domain parameter sets
             for dp_value in dp_values:
-                obs_real_one_dp = []  # for all target domain rollouts of one domain parameter set
+                data_sim_one_dp = []  # for all target domain rollouts of one domain parameter set
 
                 # Iterate over target domain rollouts
                 for idx_r, ro_real in enumerate(self.rollouts_real):
+                    data_one_ro = []
                     ro_real.numpy()
-                    # Split the target domain rollout if desired, see compute_observations()
-                    if self.num_segments is not None and self.num_segments == 1:
-                        segs_real = [ro_real]
-                    elif self.num_segments is not None and self.num_segments > 1:
-                        segs_real = list(ro_real.split_ordered_batches(num_batches=self.num_segments + 1))
-                        segs_real = segs_real[:-1]
+
+                    # Split the target domain rollout if desired
+                    if self.num_segments is not None:
+                        segs_real = list(ro_real.split_ordered_batches(num_batches=self.num_segments))
                     else:
                         segs_real = list(ro_real.split_ordered_batches(batch_size=self.len_segments))
-                        if segs_real[-1].length < 2:
-                            segs_real = segs_real[:-1]
-
-                    segs_sim = []
-                    cnt_step = 0
 
                     # Iterate over segments of one target domain rollout
+                    cnt_step = 0
                     for seg_real in segs_real:
                         # Disabled the policy reset of PlaybackPolicy to do it here manually
                         policy.curr_rec = idx_r
@@ -391,59 +227,82 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                             policy,
                             eval=True,
                             reset_kwargs=dict(
-                                init_state=seg_real.states[0], domain_param=dict(zip(self.dp_names, dp_value))
+                                init_state=seg_real.states[0, :], domain_param=dict(zip(self.dp_names, dp_value))
                             ),
+                            stop_on_done=False,
                             max_steps=seg_real.length,
                         )
                         check_act_equal(seg_real, seg_sim)
+                        _check_domain_params(seg_sim, dp_value, self.dp_names)
 
-                        # Append the current segment, and increase step counter for next segment
-                        segs_sim.append(seg_sim)
+                        # Increase step counter for next segment
                         cnt_step += seg_real.length
 
-                    _check_domain_params(segs_sim, dp_value, self.dp_names)
-                    assert len(segs_sim) == len(segs_real)
-
-                    # Compute the observations, see compute_observations()
-                    if self.num_segments is not None:
-                        obs_real_segs = to.cat(
-                            [self.transform_data(s_sim, s_real) for s_sim, s_real in zip(segs_sim, segs_real)], dim=0
+                        # Concatenate states and actions of the simulated and real segments
+                        data_one_seg = np.concatenate(
+                            [seg_sim.states[: len(seg_real), :], seg_sim.actions[: len(seg_real), :]], axis=1
                         )
-                    else:
-                        obs_real_segs = to.mean(
-                            to.stack(
-                                [self.transform_data(s_sim, s_real) for s_sim, s_real in zip(segs_sim, segs_real)]
-                            ),
-                            dim=0,
-                        )
-                    obs_real_one_dp.append(obs_real_segs)
+                        if self._embedding.requires_target_domain_data:
+                            # The embedding is also using target domain data (the case for DTW distance)
+                            data_one_seg_real = np.concatenate(
+                                [seg_real.states[: len(seg_real), :], seg_real.actions], axis=1
+                            )
+                            data_one_seg = np.concatenate([data_one_seg, data_one_seg_real], axis=1)
+                        data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
+                        data_one_ro.append(data_one_seg)
 
-                # Append the mean observation, averaged over target domain rollouts
-                obs_real_all.append(to.mean(to.stack(obs_real_one_dp), dim=0))
+                    # Append one simulated rollout
+                    data_sim_one_dp.append(to.cat(data_one_ro, dim=0))
+
+                # Append the segments of all target domain rollouts for the current domain parameter
+                data_sim_all.append(to.stack(data_sim_one_dp, dim=0))
+
+            # Compute the features from all time series
+            data_sim_all = to.stack(data_sim_all, dim=0)  # shape [batch_size, num_rollouts, len_time_series, dim_data]
+            data_sim_all = self._embedding(Embedding.pack(data_sim_all))
+
+            # Check
+            if data_sim_all.shape != (dp_values.shape[0], len(self.rollouts_real) * self._embedding.dim_output):
+                raise pyrado.ShapeErr(
+                    given=data_sim_all,
+                    expected_match=(dp_values.shape[0], len(self.rollouts_real) * self._embedding.dim_output),
+                )
 
         else:
             # There are no pre-recorded rollouts, e.g. during _setup_sbi() in LFI.__init__()
             policy = self._policy
 
             # Do the rollouts
-            obs_real_all = []
-            for dpv in dp_values:
+            data_sim_all = []
+            for dp_value in dp_values:
                 ro_sim = rollout(
                     self._env,
                     policy,
                     eval=True,
-                    reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dpv))),
+                    reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_value))),
+                    stop_on_done=False,
                 )
-                # Get the observations from the simulated rollout
-                obs_real_segs = self.compute_observations(ro_sim, None)
-                obs_real_all.append(obs_real_segs)
+                _check_domain_params(ro_sim, dp_value, self.dp_names)
 
-        # Stack and check
-        obs_real_all = to.stack(obs_real_all, dim=0)
-        if obs_real_all.shape[0] != dp_values.shape[0]:
-            raise pyrado.ShapeErr(given=obs_real_all, expected_match=dp_values)
+                # Concatenate states and actions of the simulated segments
+                data_one_seg = np.concatenate([ro_sim.states[:-1, :], ro_sim.actions], axis=1)
+                if self._embedding.requires_target_domain_data:
+                    data_one_seg = np.concatenate([data_one_seg, data_one_seg], axis=1)
+                data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
+                data_sim_all.append(data_one_seg)
 
-        return obs_real_all
+            # Compute the features from all time series
+            data_sim_all = to.stack(data_sim_all, dim=0)
+            data_sim_all = data_sim_all.unsqueeze(1)  # equivalent to only one target domain rollout
+            data_sim_all = self._embedding(Embedding.pack(data_sim_all))
+
+            # Check
+            if data_sim_all.shape != (dp_values.shape[0], self._embedding.dim_output):
+                raise pyrado.ShapeErr(
+                    given=data_sim_all, expected_match=(dp_values.shape[0], self._embedding.dim_output)
+                )
+
+        return data_sim_all  # shape [batch_size, num_rollouts * dim_feat]
 
 
 class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
@@ -453,7 +312,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         self,
         env: Env,
         policy: Policy,
-        strategy: str,
+        embedding: Embedding,
         num_segments: int = None,
         len_segments: int = None,
     ):
@@ -463,40 +322,41 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, i.e.
                     `RealEnv`, but in a sim-to-sim experiment this can be a (randomized) `SimEnv`
         :param policy: policy used for sampling the rollout
-        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
-                         `dtw_distance` (dynamic time warping using all observations from the rollout),
-                         `final_state` (use the last observed state from the rollout), and
-                         `bayessim` (summary statistics as proposed in [1])
+        :param embedding: embedding used for pre-processing the data before (later) passing it to the posterior
         :param num_segments: number of segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
-
-        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", arXiv, 2019
         """
 
         Serializable._init(self, locals())
 
         super().__init__(
-            env=env, policy=policy, strategy=strategy, num_segments=num_segments, len_segments=len_segments
+            env=env, policy=policy, embedding=embedding, num_segments=num_segments, len_segments=len_segments
         )
 
     def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:
-        r"""
-        Run one rollout and compute summary statistics.
+        """
+        Run one rollout in the target domain, and compute the features of the data used for sbi.
 
         :param dp_values: ignored, just here for the interface compatibility
-        :return: observation a.k.a. $x_o$, and initial state of the physical device
+        :return: features computed from the time series data, and the complete rollout
         """
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
-        ro = rollout(self._env, self._policy, eval=True)
+        ro = rollout(self._env, self._policy, eval=True, stop_on_done=False)
+        ro.torch()
 
-        obs_real = self.compute_observations(ro, None)
+        data_real = to.cat([ro.states[:-1, :], ro.actions], dim=1)
+        if self._embedding.requires_target_domain_data:
+            data_real = to.cat([data_real, data_real], dim=1)
 
-        return obs_real, ro
+        # Compute the features
+        data_real = data_real.unsqueeze(0)  # only one target domain rollout
+        data_real = self._embedding(Embedding.pack(data_real))
+
+        return data_real, ro
 
 
 class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
@@ -504,8 +364,8 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
 
     def __init__(
         self,
-        strategy: str,
         rollouts_dir: str,
+        embedding: Embedding,
         num_segments: int = None,
         len_segments: int = None,
         rand_init_rollout: Optional[bool] = True,
@@ -513,28 +373,24 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         """
         Constructor
 
-        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
-                         `dtw_distance` (dynamic time warping using all observations from the rollout),
-                         `final_state` (use the last observed state from the rollout), and
-                         `bayessim` (summary statistics as proposed in [1])
         :param rollouts_dir: directory where to find the of pre-recorded rollouts
         :param num_segments: number of segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
+        :param embedding: embedding used for pre-processing the data before (later) passing it to the posterior
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
         :param rand_init_rollout: if `True`, chose the first rollout at random, and then cycle through the list
-
-        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", arXiv, 2019
         """
         if not os.path.isdir(rollouts_dir):
             raise pyrado.PathErr(given=rollouts_dir)
 
         Serializable._init(self, locals())
 
-        super().__init__(env=None, policy=None, strategy=strategy, num_segments=num_segments, len_segments=len_segments)
+        super().__init__(
+            env=None, policy=None, embedding=embedding, num_segments=num_segments, len_segments=len_segments
+        )
 
         # Crawl through the directory and load every file that starts with the word rollout
         rollouts_rec = []
@@ -565,18 +421,25 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         self._ring_idx = idx
 
     def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:
-        r"""
-        Run one rollout and compute summary statistics.
+        """
+        Yield one rollout from the pre-recorded buffer of rollouts, and compute the features of the data used for sbi.
 
         :param dp_values: ignored, just here for the interface compatibility
-        :return: observation a.k.a. $x_o$, and initial state of the physical device
+        :return: features computed from the time series data, and the complete rollout
         """
         print_cbt_once(f"Using pre-recorded target domain rollouts to from {self.rollouts_dir}", "g")
 
         # Get pre-recoded rollout and advance the index
         ro = self.rollouts_rec[self._ring_idx]
+        ro.torch()
         self._ring_idx = (self._ring_idx + 1) % len(self.rollouts_rec)
 
-        obs_real = self.compute_observations(ro, None)
+        data_real = to.cat([ro.states[:-1, :], ro.actions], dim=1)
+        if self._embedding.requires_target_domain_data:
+            data_real = to.cat([data_real, data_real], dim=1)
 
-        return obs_real, ro
+        # Compute the features
+        data_real = data_real.unsqueeze(0)  # only one target domain rollout
+        data_real = self._embedding(Embedding.pack(data_real))
+
+        return data_real, ro

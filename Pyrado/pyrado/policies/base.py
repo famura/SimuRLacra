@@ -28,9 +28,9 @@
 
 import torch as to
 import torch.nn as nn
-import torch.nn.utils.convert_parameters as cp
 from abc import ABC, abstractmethod
 from torch.jit import ScriptModule, trace, script
+from torch.nn.utils import convert_parameters as cp
 from warnings import warn
 
 import pyrado

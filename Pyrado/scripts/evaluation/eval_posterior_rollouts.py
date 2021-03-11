@@ -30,8 +30,9 @@
 Script to evaluate a posterior obtained using the sbi package.
 Plot a real and the simulated rollouts for evey initial state, i.e. every real-world rollout using the `num_ml_samples`
 most likely domain parameter sets.
-By default (args.iter = -1), the most recent iteration is evaluated.
+By default (args.iter = -1), the all iterations are evaluated.
 """
+
 import numpy as np
 import os
 import sys
@@ -47,8 +48,8 @@ from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_act_equal
+from pyrado.utils.data_types import repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
-from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
@@ -69,44 +70,42 @@ if __name__ == "__main__":
     env_real = pyrado.load(None, "env_real", "pkl", ex_dir)
     prior = kwout["prior"]
     posterior = kwout["posterior"]
-    observations_real = kwout["observations_real"]
+    data_real = kwout["data_real"]
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
     if not isinstance(algo, NPDR):
         raise pyrado.TypeErr(given=algo, expected_type=NPDR)
 
+    # Load the rollouts
+    rollouts_real, _ = load_rollouts_from_dir(ex_dir)
+    if args.iter != -1:
+        # Only load the selected iteration's rollouts
+        rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
+    num_rollouts_real = len(rollouts_real)
+    [ro.numpy() for ro in rollouts_real]
+    dim_obs = rollouts_real[0].observations.shape[1]  # same for all rollouts
+
+    # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
+    if args.use_rec:
+        policy = PlaybackPolicy(env_sim.spec, [ro.actions for ro in rollouts_real], no_reset=True)
+
     # Compute the most likely domain parameters for every target domain observation
     domain_params_ml_all = NPDR.get_ml_posterior_samples(
         algo.dp_mapping,
         posterior,
-        observations_real,
+        data_real,
         args.num_samples,
         num_ml_samples,
         normalize_posterior=args.normalize,
         sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
     )
 
-    # Load the rollouts
-    rollouts_real, _ = load_rollouts_from_dir(ex_dir)
-    if args.iter != -1:
-        # Only load the selected iteration's initial state
-        rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
-    num_rollouts_real = len(rollouts_real)
-    [ro.numpy() for ro in rollouts_real]
-    dim_obs = rollouts_real[0].observations.shape[1]  # same for all rollouts
-
-    if num_rollouts_real > len(domain_params_ml_all):
-        print_cbt("Found more real rollouts than sbi observations, truncated the superfluous.", "y")
-        rollouts_real = rollouts_real[: len(domain_params_ml_all)]
-        num_rollouts_real = len(rollouts_real)
-    elif num_rollouts_real < len(domain_params_ml_all):
-        print_cbt("Found more sbi observations than real rollouts, truncated the superfluous.", "y")
-        domain_params_ml_all = domain_params_ml_all[:num_rollouts_real]
-
-    # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
-    if args.use_rec:
-        policy = PlaybackPolicy(env_sim.spec, [ro.actions for ro in rollouts_real], no_reset=True)
+    # Repeat the domain parameters to zip them later with the real rollouts, such that they all belong to the same iter
+    num_iter = len(domain_params_ml_all)
+    num_rep = num_rollouts_real // num_iter
+    domain_params_ml_all = repeat_interleave(domain_params_ml_all, num_rep)
+    assert len(domain_params_ml_all) == num_rollouts_real
 
     # Sample rollouts with the most likely domain parameter sets associated to that observation
     rollouts_ml_all = []
@@ -120,7 +119,7 @@ if __name__ == "__main__":
         # Extract the initial state
         init_state = rollout_real.states[0, :]
 
-        rollouts_per_is = []
+        rollouts_per_real = []
         for domain_param in domain_params_ml:
             # Reset the policy
             if args.use_rec:
@@ -129,14 +128,18 @@ if __name__ == "__main__":
 
             # Sample one rollout and append
             rollout_dp = rollout(
-                env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state, domain_param=domain_param)
+                env_sim,
+                policy,
+                eval=True,
+                reset_kwargs=dict(init_state=init_state, domain_param=domain_param),
+                stop_on_done=False,
             )
 
-            rollouts_per_is.append(rollout_dp)
+            rollouts_per_real.append(rollout_dp)
             if args.use_rec:
                 check_act_equal(rollout_real, rollout_dp)
 
-        rollouts_ml_all.append(rollouts_per_is)
+        rollouts_ml_all.append(rollouts_per_real)
 
     assert len(rollouts_ml_all) == len(rollouts_real) or len(rollouts_ml_all) == algo.num_real_rollouts
 
@@ -153,13 +156,15 @@ if __name__ == "__main__":
             policy.curr_step = 0
 
         # Sample one rollout and append
-        rollouts_nom.append(rollout(env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state)))
+        rollouts_nom.append(
+            rollout(env_sim, policy, eval=True, reset_kwargs=dict(init_state=init_state), stop_on_done=False)
+        )
 
     assert len(rollouts_nom) == len(rollouts_ml_all)
     if args.use_rec:
         check_act_equal(rollouts_real, rollouts_nom)
 
-    # Plot the different init states in separate figures and the different observations along the columns
+    # Plot the different init states in separate figures and the different data along the columns
     colors = plt.get_cmap("Reds")(np.linspace(0.5, 1.0, num_ml_samples))
     for idx_r in range(num_rollouts_real):
         fig, axs = plt.subplots(nrows=dim_obs, figsize=(16, 9), tight_layout=True, sharex="col")
@@ -180,7 +185,10 @@ if __name__ == "__main__":
             axs[idx_o].plot(rollouts_nom[idx_r].observations[:, idx_o], c="steelblue", ls="-.", label="sim nom")
 
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
-        fig.canvas.set_window_title(f"Real and Simulated Observations (rollout {idx_r+1} of {num_rollouts_real})")
+        fig.canvas.set_window_title(
+            f"Real and Simulated data (rollout {idx_r+1} of {num_rollouts_real}, i.e. "
+            f"iteration {idx_r // algo.num_real_rollouts} of {num_iter-1})"
+        )
         lg = axs[0].legend(
             ncol=2 + num_ml_samples,
             bbox_to_anchor=(0.0, 1.02, 1.0, 0.102),
@@ -193,8 +201,9 @@ if __name__ == "__main__":
             for fmt in ["pdf", "pgf"]:
                 os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
                 use_rec = "_use_rec" if args.use_rec else ""
+                rnd = f"_round_{args.round}" if args.round is not None else ""
                 fig.savefig(
-                    os.path.join(ex_dir, "plots", f"sim_real_rollouts_{idx_r}{use_rec}.{fmt}"),
+                    os.path.join(ex_dir, "plots", f"posterior_iter_{args.iter}{rnd}_rollout_{idx_r}{use_rec}.{fmt}"),
                     bbox_extra_artists=(lg,),
                     dpi=500,
                 )

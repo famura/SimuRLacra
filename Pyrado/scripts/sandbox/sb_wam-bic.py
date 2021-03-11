@@ -180,7 +180,7 @@ def eval_damping():
     plt.show()
 
 
-def eval_stiction():
+def eval_dryfriction():
     """ Plot joint trajectories for different joint stiction parameters """
     # Environment
     env = WAMBallInCupSim(num_dof=7, max_steps=1500)
@@ -197,13 +197,13 @@ def eval_stiction():
     for dpv in dp_vals:
         env.reset(
             domain_param=dict(
-                joint_1_stiction=dpv,
-                joint_2_stiction=dpv,
-                joint_3_stiction=dpv,
-                joint_4_stiction=dpv,
-                joint_5_stiction=dpv,
-                joint_6_stiction=dpv,
-                joint_7_stiction=dpv,
+                joint_1_dryfriction=dpv,
+                joint_2_dryfriction=dpv,
+                joint_3_dryfriction=dpv,
+                joint_4_dryfriction=dpv,
+                joint_5_dryfriction=dpv,
+                joint_6_dryfriction=dpv,
+                joint_7_dryfriction=dpv,
             )
         )
         ro = rollout(env, policy, render_mode=RenderMode(video=False), eval=True)
@@ -323,7 +323,7 @@ if __name__ == "__main__":
         eval_damping()
 
     elif args.mode.lower() == "stiction":
-        eval_stiction()
+        eval_dryfriction()
 
     elif args.mode.lower() == "7dof":
         rollout_dummy_rbf_policy_7dof()

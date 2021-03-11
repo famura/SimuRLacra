@@ -39,6 +39,7 @@ from pyrado.environments.barrett_wam.wam_jsc import WAMJointSpaceCtrlRealStepBas
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.policies.special.environment_specific import wam_jsp_7dof_sin
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.argparser import get_argparser
@@ -81,27 +82,7 @@ if __name__ == "__main__":
             return act.repeat(env_real.act_space.flat_dim)
 
     elif args.mode.lower() == "wam_sin":
-
-        def fcn_of_time(t: float):
-            act = np.array(
-                [
-                    0.5 * np.sin(2 * np.pi * t * 0.23),
-                    0.5 * np.sin(2 * np.pi * t * 0.51),
-                    0.5 * np.sin(2 * np.pi * t * 0.33),
-                    0.5 * np.sin(2 * np.pi * t * 0.41),
-                    0.5 * np.sin(2 * np.pi * t * 0.57),
-                    0.5 * np.sin(2 * np.pi * t * 0.63),
-                    0.5 * np.sin(2 * np.pi * t * 0.71),
-                    2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.23),
-                    2 * np.pi * 0.51 * 0.5 * np.cos(2 * np.pi * t * 0.51),
-                    2 * np.pi * 0.33 * 0.5 * np.cos(2 * np.pi * t * 0.33),
-                    2 * np.pi * 0.23 * 0.5 * np.cos(2 * np.pi * t * 0.41),
-                    2 * np.pi * 0.57 * 0.5 * np.cos(2 * np.pi * t * 0.57),
-                    2 * np.pi * 0.63 * 0.5 * np.cos(2 * np.pi * t * 0.63),
-                    2 * np.pi * 0.71 * 0.5 * np.cos(2 * np.pi * t * 0.71),
-                ]
-            )
-            return act
+        fcn_of_time = wam_jsp_7dof_sin
 
     else:
         raise pyrado.ValueErr(given=args.mode, eq_constraint="chrip or sin")

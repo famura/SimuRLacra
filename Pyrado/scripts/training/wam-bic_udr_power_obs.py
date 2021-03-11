@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the WAM Ball-in-cup environment with ball observation/tracking using Policy learning by Weighting Exploration with the Returns.
+Train an agent to solve the WAM Ball-in-cup environment with ball observation/tracking using Policy learning by
+Weighting Exploration with the Returns
 """
 import numpy as np
 
@@ -78,7 +79,7 @@ if __name__ == "__main__":
         NormalDomainParam(name="rope_length", mean=0.3, std=0.005),
         NormalDomainParam(name="ball_mass", mean=0.021, std=0.001),
         UniformDomainParam(name="joint_2_damping", mean=0.05, halfspan=0.05),
-        UniformDomainParam(name="joint_2_stiction", mean=0.1, halfspan=0.1),
+        UniformDomainParam(name="joint_2_dryfriction", mean=0.1, halfspan=0.1),
     )
     env = DomainRandWrapperLive(env, randomizer)
 

@@ -27,27 +27,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Pendulum environment using Neural Posterior Domain Randomization
+Train an agent to solve the Pendulum environment using Neural Posterior Domain Randomization
 """
-import numpy as np
 import torch as to
+import torch.nn as nn
 from copy import deepcopy
 from sbi.inference import SNPE
 from sbi import utils
 
 import pyrado
-from pyrado.algorithms.inference.embeddings import (
-    LastStepEmbedding,
-    BayesSimEmbedding,
-    DynamicTimeWarpingEmbedding,
-    RNNEmbedding,
-    AllStepsEmbedding,
-)
+from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.algorithms.inference.lfi import NPDR
-from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.special.time import PlaybackPolicy
+from pyrado.policies.features import FeatureStack, const_feat, identity_feat, squared_feat, MultFeat, sign_feat
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 
@@ -56,19 +50,20 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}", "sin")
+    ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}-{HCNormal.name}_{LinearPolicy.name}")
+    num_workers = 4
 
     # Set seed if desired
-    pyrado.set_seed(0, verbose=True)
-    # pyrado.set_seed(args.seed, verbose=True)
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=400)
+    env_hparams = dict(dt=1 / 100.0, max_steps=1000)
     env_sim = PendulumSim(**env_hparams)
+    # env_sim.domain_param = dict(d_pole=0, tau_max=10.0)
 
     # Create a fake ground truth target domain
     env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(m_pole=1 / 1.2 ** 2, l_pole=1.2)
+    env_real.domain_param = dict(m_pole=1 / 1.25 ** 2, l_pole=1.25)
 
     # Define a mapping: index - domain parameter
     dp_mapping = {0: "m_pole", 1: "l_pole"}
@@ -76,71 +71,53 @@ if __name__ == "__main__":
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
-        high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
+        low=to.tensor([dp_nom["m_pole"] * 0.2, dp_nom["l_pole"] * 0.2]),
+        high=to.tensor([dp_nom["m_pole"] * 1.8, dp_nom["l_pole"] * 1.8]),
     )
     prior = utils.BoxUniform(**prior_hparam)
-
-    # Time series embedding
-    # embedding_hparam = dict()
-    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    embedding_hparam = dict(downsampling_factor=20)
-    embedding = AllStepsEmbedding(
-        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    )
-    # embedding_hparam = dict(downsampling_factor=1)
-    # embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = DynamicTimeWarpingEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
-    # )
-    # embedding_hparam = dict(hidden_size=10, num_recurrent_layers=2, output_size=1, downsampling_factor=10)
-    # embedding = RNNEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-
-    # Posterior (normalizing flow)
-    posterior_nn_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=5)
 
     # Policy
-    policy_hparam = dict(amp_max=dp_nom["tau_max"], f_sin=0.5)
+    policy_hparam = dict(
+        feats=FeatureStack([const_feat, identity_feat, sign_feat, squared_feat, MultFeat((0, 2)), MultFeat((1, 2))])
+    )
+    policy = LinearPolicy(spec=env_sim.spec, **policy_hparam)
 
-    def fcn_of_time(t: float):
-        act = policy_hparam["amp_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"]) + np.random.randn(1) / 50
-        return act.repeat(env_sim.act_space.flat_dim)
-
-    num_real_rollouts = 1
-    act_recordings = [
-        [fcn_of_time(t) for t in np.arange(0, env_sim.max_steps * env_sim.dt, env_sim.dt)]
-        for _ in range(num_real_rollouts)
-    ]
-    policy = PlaybackPolicy(env_sim.spec, act_recordings)
+    # Algorithm
+    subrtn_policy_hparam = dict(
+        max_iter=10,
+        pop_size=10 * policy.num_param,
+        num_init_states_per_domain=1,
+        expl_factor=1.05,
+        expl_std_init=1.0,
+        num_workers=4,
+    )
+    subrtn_policy = HCNormal(ex_dir, env_sim, policy, **subrtn_policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=400,
-        num_sbi_rounds=3,
+        summary_statistic="bayessim",  # bayessim or dtw_distance
+        num_real_rollouts=1,
+        num_sbi_rounds=2,
+        num_sim_per_round=500,
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=100,
-        # num_segments=1,
-        len_segments=100,
+        num_segments=1,
+        # len_segments=40,
         sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
-            learning_rate=5e-4,  # default: 5e-4
+            learning_rate=3e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
-            stop_after_epochs=20,  # default: 20
+            stop_after_epochs=30,  # default: 20
             discard_prior_samples=False,  # default: False
             use_combined_loss=True,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
-            # max_num_epochs=5,  # only use for debugging
         ),
-        sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=4,
+        num_workers=num_workers,
     )
     algo = NPDR(
         ex_dir,
@@ -151,7 +128,7 @@ if __name__ == "__main__":
         prior,
         posterior_nn_hparam,
         SNPE,
-        embedding,
+        subrtn_policy=subrtn_policy,
         **algo_hparam,
     )
 
@@ -161,6 +138,7 @@ if __name__ == "__main__":
         dict(prior=prior_hparam),
         dict(posterior_nn=posterior_nn_hparam),
         dict(policy=policy_hparam),
+        dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

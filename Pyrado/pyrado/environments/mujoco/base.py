@@ -31,6 +31,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from init_args_serializer import Serializable
+from math import floor
 from mujoco_py.generated.const import RND_FOG
 from typing import Optional
 
@@ -39,6 +40,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.utils.data_types import RenderMode
+from pyrado.utils.input_output import print_cbt
 
 
 class MujocoSimEnv(SimEnv, ABC, Serializable):
@@ -72,17 +74,41 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         """
         Serializable._init(self, locals())
 
-        # Initialize domain parameters and MuJoCo model
+        # Initialize
         self.model_path = model_path
-        self.frame_skip = frame_skip
         self._domain_param = self.get_nominal_domain_param()
+        if dt is None:
+            # Specify the time step size as a multiple of MuJoCo's simulation time step size
+            self.frame_skip = frame_skip
+        else:
+            # Specify the time step size explicitly
+            with open(self.model_path, mode="r") as file_raw:
+                xml_model_temp = file_raw.read()
+            xml_model_temp = MujocoSimEnv._adapt_model_file(xml_model_temp, self.domain_param)
+            # Create a dummy model to extract the solver's time step size
+            model_tmp = mujoco_py.load_model_from_xml(xml_model_temp)
+            frame_skip = dt / model_tmp.opt.timestep
+            if frame_skip.is_integer():
+                self.frame_skip = frame_skip
+            elif dt > model_tmp.opt.timestep:
+                print_cbt(
+                    f"The desired time step size is {dt} s, but solver's time step size in the MuJoCo config file is "
+                    f"{model_tmp.opt.timestep} s. Thus, frame_skip is rounded down to {floor(frame_skip)}.",
+                    "y",
+                )
+                self.frame_skip = floor(frame_skip)
+            else:
+                # The number of skipped frames must be >= 1
+                pyrado.ValueErr(given=dt, ge_constraint=model_tmp.opt.timestep)
+
+        # Creat the MuJoCo model
         with open(self.model_path, mode="r") as file_raw:
             # Save raw (with placeholders) XML-file as attribute since we need it for resetting the domain params
             self.xml_model_template = file_raw.read()
         self._create_mujoco_model()
 
         # Call SimEnv's constructor
-        super().__init__(dt=self.model.opt.timestep * self.frame_skip if dt is None else dt, max_steps=max_steps)
+        super().__init__(dt=self.model.opt.timestep * self.frame_skip, max_steps=max_steps)
 
         # Memorize the initial states of the model from the xml (for fixed init space or later reset)
         self.init_qpos = self.sim.data.qpos.copy()
@@ -161,11 +187,15 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Update task
         self._task = self._create_task(self.task_args)
 
-    def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
+    @staticmethod
+    def _adapt_model_file(xml_model: str, domain_param: dict) -> str:
         """
         Changes the model's XML-file given the current domain parameters before constructing the MuJoCo simulation.
         One use case is for example the cup_scale for the `WAMBallInCupSim` where multiple values in the model's
         XML-file are changed based on one domain parameter.
+
+        .. note::
+            It is mandatory to call this function in case you modified the mxl config file with tags like `[DP_NAME]`.
 
         :param xml_model: parsed model file
         :param domain_param: copy of the environments domain parameters

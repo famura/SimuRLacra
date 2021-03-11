@@ -133,6 +133,22 @@ class LinDSSpec(DSSpec):
         super().__init__(function=function, goal=goal, errorDynamics=errorDynamics)
 
 
+def repeat_interleave(sequence: Union[list, tuple], num_reps) -> Union[list, tuple]:
+    """
+    Repeat every element of the input sequence, but keep the order of the elements.
+
+    :param sequence: input list or tuple
+    :param num_reps: number of repetitions
+    :return: list or tuple with repeated elements
+    """
+    if isinstance(sequence, list):
+        return [ele for ele in sequence for _ in range(num_reps)]
+    elif isinstance(sequence, tuple):
+        return tuple(ele for ele in sequence for _ in range(num_reps))
+    else:
+        raise pyrado.TypeErr(given=sequence, expected_type=(list, tuple))
+
+
 def merge_dicts(dicts: Sequence[dict]) -> dict:
     """
     Marge a list of dicts in to one dict.

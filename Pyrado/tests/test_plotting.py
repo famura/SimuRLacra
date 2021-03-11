@@ -32,6 +32,9 @@ import pandas as pd
 import torch as to
 from copy import deepcopy
 from matplotlib import pyplot as plt
+from sbi.inference import simulate_for_sbi, SNPE
+from sbi.user_input.user_input_checks import prepare_for_sbi
+from sbi.utils import posterior_nn, BoxUniform
 
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
@@ -247,9 +250,6 @@ def test_rollout_based(env, policy):
 @pytest.mark.parametrize("layout", ["inside", "outside"], ids=["inside", "outside"])
 @pytest.mark.parametrize("x_labels, y_labels, prob_labels", [(None, None, None), ("", "", "")], ids=["None", "default"])
 def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels, prob_labels):
-    from sbi import utils
-    from sbi.inference.base import infer
-
     def _simulator(dp: to.Tensor) -> to.Tensor:
         """ The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope """
         ro = rollout(env, policy, eval=True, reset_kwargs=dict(domain_param=dict(m=dp[0], k=dp[1], d=dp[2])))
@@ -263,20 +263,30 @@ def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels,
 
     # Domain parameter mapping and prior
     dp_mapping = {0: "m", 1: "k", 2: "d"}
-    prior = utils.BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
+    prior = BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
 
     # Learn a likelihood from the simulator
-    posterior = infer(_simulator, prior, method="SNPE", num_simulations=100, num_workers=4)
+    density_estimator = posterior_nn(model="maf", hidden_features=10, num_transforms=3)
+    snpe = SNPE(prior, density_estimator)
+    simulator, prior = prepare_for_sbi(_simulator, prior)
+    domain_param, data_sim = simulate_for_sbi(
+        simulator=simulator,
+        proposal=prior,
+        num_simulations=50,
+        num_workers=4,
+    )
+    snpe.append_simulations(domain_param, data_sim)
+    density_estimator = snpe.train(max_num_epochs=5)
+    posterior = snpe.build_posterior(density_estimator)
 
-    # Create a fake (noisy) true distribution
-    num_observations_real = 1
+    # Create a fake (random) true domain parameter
     domain_param_gt = to.tensor([env_real.domain_param[key] for _, key in dp_mapping.items()])
-    domain_param_gt = domain_param_gt.repeat((num_observations_real, 1))
-    domain_param_gt += domain_param_gt * to.randn(num_observations_real, len(dp_mapping)) / 5
-    observations_real = to.cat([_simulator(dp) for dp in domain_param_gt], dim=0)
+    domain_param_gt += domain_param_gt * to.randn(len(dp_mapping)) / 5
+    domain_param_gt = domain_param_gt.unsqueeze(0)
+    data_real = simulator(domain_param_gt)
 
-    # Get a condition
-    condition = posterior.sample((1,), x=observations_real)
+    # Get a (random) condition
+    condition = domain_param_gt.clone()
 
     if layout == "inside":
         num_rows, num_cols = len(dp_mapping), len(dp_mapping)
@@ -287,7 +297,7 @@ def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels,
     fig = draw_posterior_distr_pairwise(
         axs,
         posterior,
-        observations_real,
+        data_real,
         dp_mapping,
         condition,
         prior,

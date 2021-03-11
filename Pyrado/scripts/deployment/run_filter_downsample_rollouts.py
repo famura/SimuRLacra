@@ -44,11 +44,15 @@ from pyrado.utils.input_output import print_cbt
 if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument("--factor", type=int, default=2, help="downsampling factor")
-    parser.add_argument("--f_cut", type=float, default=50, help="cutoff frequency of the Butterworth filter in Hz")
+    parser.add_argument("--factor", type=int, default=1, help="downsampling factor (default: 1, i.e. no downsampling)")
+    parser.add_argument(
+        "--f_cut", type=float, default=50, help="cutoff frequency of the Butterworth filter in Hz (default: 50Hz)"
+    )
     args = parser.parse_args()
     if args.dir is None:
         raise pyrado.ValueErr(msg="Please provide a directory using -d or --dir")
+    if args.dt is None:
+        raise pyrado.ValueErr(msg="Please provide a time step size using --dt")
 
     # Load the rollouts
     rollouts, file_names = load_rollouts_from_dir(args.dir)

@@ -95,8 +95,9 @@ class RNNPolicyBase(RecurrentPolicy):
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
-            # Initialize RNN layers using default initialization
+            # Initialize the layers using default initialization
             init_param(self.rnn_layers, **kwargs)
+            init_param(self.output_layer, **kwargs)
         else:
             self.param_values = init_values
 

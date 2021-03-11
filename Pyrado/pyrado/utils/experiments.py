@@ -174,25 +174,26 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         # Policy
         policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
-        # Extra (prior, posterior, observations)
+        # Extra (prior, posterior, data)
         extra["prior"] = pyrado.load(None, "prior", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'prior.pt')}", "g")
         if args.iter == -1:
-            # Load the complete history
+            # Load the latest posterior and the complete data
             extra["posterior"] = pyrado.load(None, "posterior", "pt", ex_dir, None)
-            extra["observations_real"] = pyrado.load(None, "observations_real", "pt", ex_dir, None)
+            extra["data_real"] = pyrado.load(None, "data_real", "pt", ex_dir, None)
             print_cbt(f"Loaded {osp.join(ex_dir, f'posterior.pt')}", "g")
-            print_cbt(f"Loaded {osp.join(ex_dir, f'observations_real.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'data_real.pt')}", "g")
         else:
             # Load only one iteration
+            rnd = f"_round_{args.round}" if args.round is not None else ""
             extra["posterior"] = pyrado.load(
-                None, "posterior", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
+                None, "posterior", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}{rnd}")
             )
-            extra["observations_real"] = pyrado.load(
-                None, f"observations_real", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
+            extra["data_real"] = pyrado.load(
+                None, f"data_real", "pt", ex_dir, meta_info=dict(prefix=f"iter_{args.iter}")
             )
             print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_posterior.pt')}", "g")
-            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_observations_real.pt')}", "g")
+            print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_data_real.pt')}", "g")
 
     elif algo.name in ["a2c", "ppo", "ppo2"]:
         # Environment

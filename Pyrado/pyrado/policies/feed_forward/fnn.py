@@ -29,7 +29,7 @@
 import torch as to
 import torch.nn as nn
 from torch.nn.utils import convert_parameters as cp
-from typing import Sequence, Callable, Iterable, Tuple, Union
+from typing import Sequence, Callable, Iterable, Tuple, Union, Optional
 
 import pyrado
 from pyrado.spaces.discrete import DiscreteSpace
@@ -46,11 +46,11 @@ class FNN(nn.Module):
         input_size: int,
         output_size: int,
         hidden_sizes: Sequence[int],
-        hidden_nonlin: Union[Callable, Sequence[Callable]],
-        dropout: float = 0.0,
-        output_nonlin: Callable = None,
-        init_param_kwargs: dict = None,
-        use_cuda: bool = False,
+        hidden_nonlin: [Callable, Sequence[Callable]],
+        dropout: Optional[float] = 0.0,
+        output_nonlin: Optional[Callable] = None,
+        init_param_kwargs: Optional[dict] = None,
+        use_cuda: Optional[bool] = False,
     ):
         """
         Constructor
@@ -111,7 +111,7 @@ class FNN(nn.Module):
         """ Set the policy parameters from an 1d array. """
         cp.vector_to_parameters(param, self.parameters())
 
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
+    def init_param(self, init_values: Optional[to.Tensor] = None, **kwargs):
         """
         Initialize the network's parameters. By default the parameters are initialized randomly.
 
@@ -168,10 +168,10 @@ class FNNPolicy(Policy):
         spec: EnvSpec,
         hidden_sizes: Sequence[int],
         hidden_nonlin: Union[Callable, Sequence[Callable]],
-        dropout: float = 0.0,
-        output_nonlin: Callable = None,
-        init_param_kwargs: dict = None,
-        use_cuda: bool = False,
+        dropout: Optional[float] = 0.0,
+        output_nonlin: Optional[Callable] = None,
+        init_param_kwargs: Optional[dict] = None,
+        use_cuda: Optional[bool] = False,
     ):
         """
         Constructor
@@ -203,7 +203,7 @@ class FNNPolicy(Policy):
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
-            # Forward to the nets's custom initialization function (handles dropout)
+            # Forward to the FNN's custom initialization function (handles dropout)
             self.net.init_param(init_values, **kwargs)
         else:
             self.param_values = init_values
@@ -218,7 +218,9 @@ class DiscreteActQValPolicy(Policy):
 
     name: str = "discrqval"
 
-    def __init__(self, spec: EnvSpec, net: nn.Module, init_param_kwargs: dict = None, use_cuda: bool = False):
+    def __init__(
+        self, spec: EnvSpec, net: nn.Module, init_param_kwargs: Optional[dict] = None, use_cuda: Optional[bool] = False
+    ):
         """
         Constructor
 
@@ -261,10 +263,10 @@ class DiscreteActQValPolicy(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
             if isinstance(self.net, FNN):
-                # Forward to the net's custom initialization function (handles dropout)
+                # Forward to the FNN's custom initialization function (handles dropout)
                 self.net.init_param(init_values, **kwargs)
             else:
-                # Initialize the using default initialization
+                # Initialize using default initialization
                 init_param(self.net, **kwargs)
         else:
             self.param_values = init_values

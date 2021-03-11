@@ -69,8 +69,8 @@ if __name__ == "__main__":
         3: ("rope_damping", "halfspan"),
         4: ("ball_mass", "mean"),
         5: ("ball_mass", "std"),
-        6: ("joint_2_stiction", "mean"),
-        7: ("joint_2_stiction", "halfspan"),
+        6: ("joint_2_dryfriction", "mean"),
+        7: ("joint_2_dryfriction", "halfspan"),
         8: ("joint_2_damping", "mean"),
         9: ("joint_2_damping", "halfspan"),
     }
@@ -87,8 +87,8 @@ if __name__ == "__main__":
                 dp_nom["rope_damping"] / 100,
                 0.85 * dp_nom["ball_mass"],
                 dp_nom["ball_mass"] / 1000,
-                0.0 * dp_nom["joint_2_stiction"],
-                dp_nom["joint_2_stiction"] / 100,
+                0.0 * dp_nom["joint_2_dryfriction"],
+                dp_nom["joint_2_dryfriction"] / 100,
                 0.0 * dp_nom["joint_2_damping"],
                 dp_nom["joint_2_damping"] / 100,
             ]
@@ -101,8 +101,8 @@ if __name__ == "__main__":
                 dp_nom["rope_damping"] / 2,
                 1.15 * dp_nom["ball_mass"],
                 dp_nom["ball_mass"] / 10,
-                2 * dp_nom["joint_2_stiction"],
-                dp_nom["joint_2_stiction"] / 2,
+                2 * dp_nom["joint_2_dryfriction"],
+                dp_nom["joint_2_dryfriction"] / 2,
                 2 * dp_nom["joint_2_damping"],
                 dp_nom["joint_2_damping"] / 2,
             ]

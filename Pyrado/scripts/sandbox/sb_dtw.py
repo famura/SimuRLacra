@@ -35,7 +35,7 @@ from dtw import *
 if __name__ == "__main__":
     # A noisy sine wave as query
     idx = np.linspace(0, 6.28, num=100)
-    multidim = True
+    multidim = False
 
     if multidim:
         query = np.stack([np.sin(idx), np.sin(idx)], axis=1)

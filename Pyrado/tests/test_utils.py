@@ -140,6 +140,22 @@ def test_merge_lod_var_dtype(x, y):
 
 
 @pytest.mark.parametrize(
+    "seq",
+    [
+        [1, 2, 3],
+        (1, 2, 3),
+    ],
+    ids=["list", "tuple"],
+)
+@pytest.mark.parametrize("num_reps", [3])
+def test_repeat_interleave(seq, num_reps):
+    seq_rep = repeat_interleave(seq, num_reps)
+    assert len(seq_rep) == num_reps * len(seq)
+    assert all([seq_rep[i] == seq[0] for i in range(num_reps)])  # only check first ele
+    assert type(seq_rep) == type(seq)
+
+
+@pytest.mark.parametrize(
     "batch_size, data_size",
     [(3, 30), (3, 29), (3, 28), (2, 2)],
     ids=["division_mod0", "division_mod1", "division_mod2", "edge_case"],

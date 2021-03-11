@@ -87,6 +87,11 @@ def get_argparser() -> argparse.ArgumentParser:
         help="iteration to select for evaluation (default: -1 for all iterations)",
     )
     parser.add_argument(
+        "--layout",
+        default="outside",
+        help="plotting layout for plotting, e.g. inside or outside for plotting a posterior (default: outside)",
+    )
+    parser.add_argument(
         "--load_all",
         action="store_true",
         default=False,
@@ -173,6 +178,12 @@ def get_argparser() -> argparse.ArgumentParser:
         help="rescale sth (depending on the script), e.g. the posterior probabilities to be in ]0, 1] (default: False)",
     )
     parser.add_argument(
+        "--round",
+        type=int,
+        default=None,
+        help="round index, e.g. for the NPDR algorithm (default: None)",
+    )
+    parser.add_argument(
         "--policy_name",
         type=str,
         nargs="?",
@@ -230,6 +241,22 @@ def get_argparser() -> argparse.ArgumentParser:
         dest="warmstart",
         action="store_false",
         help="the opposite of 'warmstart'",
+    )
+
+    segment_group = parser.add_mutually_exclusive_group(required=False)
+    segment_group.add_argument(
+        "--num_segments",
+        type=int,
+        default=None,
+        help="number of the segments to split the rollouts into (default: None); "
+        "either use num_segments or len_segments but not both",
+    )
+    segment_group.add_argument(
+        "--len_segments",
+        type=int,
+        default=None,
+        help="length of the segments to split the rollouts into (default: None); "
+        "either use len_segments or num_segments but not both",
     )
 
     return parser
