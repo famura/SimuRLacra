@@ -50,9 +50,9 @@ class DiscreteSpace(Space):
             # Make sure the dimension of the state is along the first array dimension
             self.eles = eles if eles.ndim == 2 else eles.reshape(-1, 1)
         elif isinstance(eles, list):
-            self.eles = np.array(eles, dtype=np.int)
+            self.eles = np.array(eles, dtype=np.intc)
             # Make sure the dimension of the state is along the first array dimension
-            self.eles = eles if self.eles.ndim == 2 else self.eles.reshape(-1, 1)
+            self.eles = self.eles if self.eles.ndim == 2 else self.eles.reshape(-1, 1)
         else:
             raise pyrado.TypeErr(given=eles, expected_type=[np.ndarray, list])
 
@@ -62,10 +62,10 @@ class DiscreteSpace(Space):
 
         # Process the labels
         if labels is not None:
-            labels = np.array(labels, dtype=object)
-            if not labels.shape == self.shape:
+            labels_np = np.array(labels, dtype=object)
+            if not labels_np.shape == self.shape:
                 raise pyrado.ShapeErr(given=labels, expected_match=self)
-            self._labels = labels
+            self._labels = labels_np
         else:
             self._labels = np.empty(self.shape, dtype=object)
             self._labels.fill(None)
@@ -101,7 +101,7 @@ class DiscreteSpace(Space):
     def shrink(self, new_lo: np.ndarray, new_up: np.ndarray):
         raise NotImplementedError
 
-    def contains(self, cand: np.ndarray, verbose: bool = False) -> bool:
+    def contains(self, cand: np.ndarray, verbose: bool = False) -> np.bool_:
         # Check the candidate
         if not cand.shape == self.shape:
             raise pyrado.ShapeErr(given=cand, expected_match=self)

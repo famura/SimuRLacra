@@ -28,6 +28,8 @@
 
 import pytest
 
+from copy import deepcopy
+
 from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.dql import DQL

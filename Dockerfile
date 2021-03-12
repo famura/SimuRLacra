@@ -90,10 +90,10 @@ ARG J=8
 RUN if [ $OPTION == 'blackforest' ]; then\
     python setup_deps.py w_rcs_w_pytorch -j$J;\
     elif [ $OPTION == 'sacher' ]; then\
-    pip install torch==1.7.0\
+    pip install torch==1.8.0\
     && python setup_deps.py w_rcs_wo_pytorch -j$J;\
     elif [ $OPTION == 'redvelvet' ]; then\
-    pip install torch==1.7.0 &&\
+    pip install torch==1.8.0 &&\
     python setup_deps.py wo_rcs_wo_pytorch -j$J &&\
     rm -fr Rcs RcsPySim;\
     elif [ $OPTION == 'malakoff' ]; then\

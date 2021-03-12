@@ -47,7 +47,10 @@ class IterationTracker:
 
     def pop(self) -> tuple:
         """ Remove the last iteration scope. """
-        self._iter_stack.pop()
+        return self._iter_stack.pop()
+
+    def peek(self) -> tuple:
+        return self._iter_stack[-1]
 
     @contextmanager
     def iteration(self, label: str, num: int):
@@ -71,8 +74,7 @@ class IterationTracker:
         for l, n in self._iter_stack:
             if l == label:
                 return n
-        else:
-            return None
+        return None
 
     def __iter__(self):
         yield from self._iter_stack
@@ -85,7 +87,7 @@ class IterationTracker:
         :param label_num_sep: string separating each label/number pair
         :return: string with custom separators
         """
-        return scope_sep.join(l + label_num_sep + n for l, n in self._iter_stack)
+        return scope_sep.join(l + label_num_sep + str(n) for l, n in self._iter_stack)
 
     def __str__(self):
         """ Get an information string. """

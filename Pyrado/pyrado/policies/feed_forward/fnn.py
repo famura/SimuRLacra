@@ -28,6 +28,7 @@
 
 import torch as to
 import torch.nn as nn
+import torch.cuda as cuda
 from torch.nn.utils import convert_parameters as cp
 from typing import Sequence, Callable, Iterable, Tuple, Union, Optional
 
@@ -64,7 +65,7 @@ class FNN(nn.Module):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        self._device = "cuda" if use_cuda and to.cuda.is_available() else "cpu"
+        self._device = "cuda" if use_cuda and cuda.is_available() else "cpu"
 
         super().__init__()  # init nn.Module
 
@@ -231,6 +232,7 @@ class DiscreteActQValPolicy(Policy):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
+
         if not isinstance(spec.act_space, DiscreteSpace):
             raise pyrado.TypeErr(given=spec.act_space, expected_type=DiscreteSpace)
         if not isinstance(net, nn.Module):
@@ -295,6 +297,8 @@ class DiscreteActQValPolicy(Policy):
         else:
             raise pyrado.ShapeErr(msg=f"Expected 1- or 2-dim observations, but the shape is {obs.shape}!")
 
+        assert isinstance(self.env_spec.act_space, DiscreteSpace)
+
         # Create batched state-action table
         obs = to.atleast_2d(obs)  # batch dim is along first axis, then transposed
         columns_obs = obs.repeat_interleave(repeats=self.env_spec.act_space.num_ele, dim=0)
@@ -338,6 +342,8 @@ class DiscreteActQValPolicy(Policy):
         q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
 
         # Select the actions with the highest Q-value
+        assert isinstance(self.env_spec.act_space, DiscreteSpace)
+
         possible_acts = to.from_numpy(self.env_spec.act_space.eles)  # could be affected by domain randomization
         possible_acts = possible_acts.view(1, -1).to(self.device)
         acts = possible_acts.repeat(batch_size, 1)

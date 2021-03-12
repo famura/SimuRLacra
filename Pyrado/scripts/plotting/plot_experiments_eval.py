@@ -109,7 +109,8 @@ class ResultContainer:
                 num_samples = []  # number of samples per return estimate
                 for root, dirs, files in os.walk(eval_dir):
                     files.sort(reverse=True)  # in case there are multiple evaluations
-                    for f in files:
+                    # Only include the latest evaluation found in the folder if flag is set
+                    for f in files if not self.latest_evals_only else files[:1]:
                         if f.endswith(".npy"):
                             rets.append(np.load(osp.join(eval_dir, f)))
                             num_samples.append(len(rets))
@@ -117,10 +118,6 @@ class ResultContainer:
                             rets.append(to.load(osp.join(eval_dir, f)).cpu().numpy())
                         else:
                             raise FileNotFoundError
-
-                        # Only include the latest evaluation found in the folder
-                        if self.latest_evals_only:
-                            break
 
             else:
                 cnt_nonexist_dirs += 1

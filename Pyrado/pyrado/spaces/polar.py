@@ -27,9 +27,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from typing import Sequence
+from typing import List, Sequence, TypeVar, Union
+
+from numpy.core import numeric
 
 from pyrado.spaces import BoxSpace
+
+
+SpaceType = TypeVar("SpaceType", List[Union[int, float]], np.ndarray)
 
 
 class Polar2DPosSpace(BoxSpace):
@@ -40,9 +45,9 @@ class Polar2DPosSpace(BoxSpace):
 
     def __init__(
         self,
-        bound_lo: [float, list, np.ndarray],
-        bound_up: [float, list, np.ndarray],
-        shape: [tuple, int] = None,
+        bound_lo: SpaceType,
+        bound_up: SpaceType,
+        shape: Union[tuple, int] = None,
         labels: Sequence[str] = None,
     ):
         """
@@ -53,7 +58,10 @@ class Polar2DPosSpace(BoxSpace):
         :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical
         :param labels: label for each dimension of the space
         """
-        assert bound_lo.size == bound_up.size == 2
+        if isinstance(bound_up, list):
+            assert len(bound_lo) == len(bound_up) == 2
+        elif isinstance(bound_lo, np.ndarray):
+            assert bound_lo.size == bound_up.size == 2
         # Actually, this space is a BoxSpace
         super().__init__(bound_lo, bound_up, shape, labels=labels)
 
@@ -82,9 +90,9 @@ class Polar2DPosVelSpace(BoxSpace):
 
     def __init__(
         self,
-        bound_lo: [float, list, np.ndarray],
-        bound_up: [float, list, np.ndarray],
-        shape: [tuple, int] = None,
+        bound_lo: Union[float, List[Union[int, float]], np.ndarray],
+        bound_up: Union[float, List[Union[int, float]], np.ndarray],
+        shape: Union[tuple, int] = None,
         labels: Sequence[str] = None,
     ):
         """
@@ -95,7 +103,8 @@ class Polar2DPosVelSpace(BoxSpace):
         :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical
         :param labels: label for each dimension of the space
         """
-        assert bound_lo.size == bound_up.size == 4
+        if isinstance(bound_lo, np.ndarray) and isinstance(bound_up, np.ndarray):
+            assert bound_lo.size == bound_up.size == 4
         # Actually, this space is a BoxSpace
         super().__init__(bound_lo, bound_up, shape, labels=labels)
 
@@ -115,3 +124,6 @@ class Polar2DPosVelSpace(BoxSpace):
         )  # arctan2 returns in range [-pi, pi] -> check bounds
         # Query base
         return super().contains(np.r_[polar, cand[2:]], verbose=verbose)
+
+
+Polar2DPosVelSpace([1], [1])

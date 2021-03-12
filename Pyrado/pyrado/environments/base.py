@@ -44,7 +44,7 @@ class Env(ABC, Serializable):
 
     name: str = None  # unique identifier
 
-    def __init__(self, dt: Union[int, float], max_steps: Optional[int] = pyrado.inf):
+    def __init__(self, dt: Union[int, float], max_steps: Union[int, float] = pyrado.inf):
         """
         Constructor
 
@@ -122,7 +122,7 @@ class Env(ABC, Serializable):
         self._dt = float(dt)
 
     @property
-    def max_steps(self) -> (int, float):
+    def max_steps(self) -> Union[int, float]:
         """
         Get the maximum number of simulation steps.
 
