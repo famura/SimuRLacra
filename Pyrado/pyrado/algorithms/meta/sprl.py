@@ -448,7 +448,7 @@ class SPRL(Algorithm):
                 param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
 
     def _train_subroutine_and_evaluate_perf(self, snapshot_mode: str, meta_info: dict = None) -> float:
-        self._subrtn.reset()
+        self._subroutine.reset()
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
         rollouts = self._subroutine.rollouts
         x = np.median([[ro.undiscounted_return() for ros in rollouts for ro in ros]])
