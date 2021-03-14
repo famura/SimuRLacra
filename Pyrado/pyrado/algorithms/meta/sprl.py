@@ -35,6 +35,7 @@ from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.domain_randomization.domain_parameter import SelfPacedLearnerParameter
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
+from pyrado.algorithms.utils import until_thold_exceeded
 from scipy.optimize import NonlinearConstraint, minimize, Bounds
 from torch import distributions
 from torch.distributions import MultivariateNormal
@@ -194,6 +195,7 @@ class SPRL(Algorithm):
         kl_threshold: float = 0.1,
         optimize_mean: bool = True,
         optimize_cov: bool = True,
+        max_subrtn_retries: int = 1,
     ):
         """
         Constructor
@@ -201,6 +203,7 @@ class SPRL(Algorithm):
         :param env: Environment wrapped in a DomainRandWrapper.
         :param subroutine: Algorithm which performs the policy/value-function optimization.
         :param kl_constraints_ub: Upper bound for the KL-divergence
+        :param max_subrtn_retries: How often a failed (median performance < 30 % of performance_lower_bound) training attempt of the subroutine should be reattempted
         """
 
         if not isinstance(subroutine, Algorithm):
@@ -222,6 +225,7 @@ class SPRL(Algorithm):
         self._performance_lower_bound = performance_lower_bound
         self._optimize_mean = optimize_mean
         self._optimize_cov = optimize_cov
+        self._max_subrtn_retries = max_subrtn_retries
 
         self._performance_lower_bound_reached = False
 
@@ -259,7 +263,9 @@ class SPRL(Algorithm):
 
         dim = context_mean.shape[0]
         # First, train with the initial context distribution
-        self._subroutine.train(snapshot_mode, self._seed, meta_info)
+        until_thold_exceeded(self._performance_lower_bound * 0.3, self._max_subrtn_retries)(
+            self._train_subroutine_and_evaluate_perf
+        )(snapshot_mode, meta_info)
 
         # Update distribution
         previous_distribution = ParameterAgnosticMultivariateNormalWrapper(
@@ -410,7 +416,6 @@ class SPRL(Algorithm):
                 print(f"Update unsuccessful, keeping old values spl parameters")
 
         # Reset environment.
-        self._subroutine.reset()
         self._env.reset()
 
     def reset(self, seed: int = None):
@@ -441,3 +446,10 @@ class SPRL(Algorithm):
                 param.adapt("context_cov_chol_flat", to.tensor(result[pointer : pointer + param.dim]))
             elif self._optimize_cov:
                 param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
+
+    def _train_subroutine_and_evaluate_perf(self, snapshot_mode: str, meta_info: dict = None) -> float:
+        self._subrtn.reset()
+        self._subroutine.train(snapshot_mode, self._seed, meta_info)
+        rollouts = self._subroutine.rollouts
+        x = np.median([[ro.undiscounted_return() for ros in rollouts for ro in ros]])
+        return x
