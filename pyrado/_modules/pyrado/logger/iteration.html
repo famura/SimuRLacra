@@ -248,7 +248,10 @@
 
 <div class="viewcode-block" id="IterationTracker.pop"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.iteration.IterationTracker.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Remove the last iteration scope. &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_iter_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="IterationTracker.peek"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.iteration.IterationTracker.peek">[docs]</a>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="IterationTracker.iteration"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.iteration.IterationTracker.iteration">[docs]</a>    <span class="nd">@contextmanager</span>
     <span class="k">def</span> <span class="nf">iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -272,8 +275,7 @@
         <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_stack</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="n">label</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">n</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_stack</span>
@@ -286,7 +288,7 @@
 <span class="sd">        :param label_num_sep: string separating each label/number pair</span>
 <span class="sd">        :return: string with custom separators</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">scope_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">label_num_sep</span> <span class="o">+</span> <span class="n">n</span> <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_stack</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">scope_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">label_num_sep</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_stack</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>

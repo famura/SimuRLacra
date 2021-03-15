@@ -247,13 +247,11 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span>
-            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span>
-            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; (id: </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span><span class="si">}{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}{</span><span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;(id: </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="o">+</span> <span class="n">tabulate</span><span class="p">(</span>
                 <span class="p">[[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">],</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span><span class="p">]],</span>
-                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">],</span>
                 <span class="n">showindex</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">],</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -285,7 +283,7 @@
         <span class="k">return</span> <span class="n">reduce</span><span class="p">((</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Get the labels for space entries, or `None` if not supported. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
 

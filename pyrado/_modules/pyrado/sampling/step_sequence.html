@@ -226,6 +226,9 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Final</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.exceptions</span> <span class="kn">import</span> <span class="n">ValueErr</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">random</span>
@@ -234,7 +237,7 @@
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">stack_to_format</span><span class="p">,</span> <span class="n">to_format</span><span class="p">,</span> <span class="n">cat_to_format</span><span class="p">,</span> <span class="n">new_tuple</span>
@@ -510,18 +513,18 @@
 
         <span class="c1"># Set done list if any. The done list is always a numpy array since torch doesn&#39;t support boolean tensors.</span>
         <span class="k">if</span> <span class="n">done</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">done</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">complete</span> <span class="ow">and</span> <span class="n">continuous</span><span class="p">:</span>
                 <span class="n">done</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">done</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">done</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="n">done</span>
 
         <span class="c1"># Compute rollout bounds from done list (yes this is not exactly safe...)</span>
         <span class="c1"># The bounds list has one extra entry 0, this simplifies queries greatly.</span>
         <span class="c1"># bounds[i] = start of rollout i; bounds[i+1]=end of rollout i</span>
-        <span class="k">if</span> <span class="n">continuous</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rollout_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">rollout_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">rollout_bounds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">done</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -549,6 +552,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rollout_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span>
 
     <span class="nd">@property</span>
@@ -831,7 +835,7 @@
 
         <span class="k">return</span> <span class="n">steps</span><span class="p">,</span> <span class="n">next_steps</span></div>
 
-<div class="viewcode-block" id="StepSequence.split_ordered_batches"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">[docs]</a>    <span class="k">def</span> <span class="nf">split_ordered_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="StepSequence.split_ordered_batches"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">[docs]</a>    <span class="k">def</span> <span class="nf">split_ordered_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Batch generation. Split the step collection into ordered mini-batches of size batch_size.</span>
 
@@ -841,21 +845,20 @@
 <span class="sd">        .. note::</span>
 <span class="sd">            Left out the option to return complete rollouts like for `split_shuffled_batches`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_batches</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_batches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Either batch_size or num_batches must not be None, but not both or none!&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">batch_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">num_batches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_batches</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_batches</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Switch the splitting mode</span>
-        <span class="k">if</span> <span class="n">num_batches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">num_batches</span><span class="p">,</span> <span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Either batch_size or num_batches must not be None&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">num_batches</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_batches</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
             <span class="n">batch_size</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">/</span> <span class="n">num_batches</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">num_batches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Either batch_size or num_batches must not be None&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">batch_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;batch_size and num_batches are mutually exclusive&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
             <span class="c1"># Yield all at once if there are less steps than the batch size</span>
             <span class="k">yield</span> <span class="bp">self</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Split by steps</span>
             <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>

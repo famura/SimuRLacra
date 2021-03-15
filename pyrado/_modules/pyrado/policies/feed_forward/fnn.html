@@ -227,6 +227,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.cuda</span> <span class="k">as</span> <span class="nn">cuda</span>
 <span class="kn">from</span> <span class="nn">torch.nn.utils</span> <span class="kn">import</span> <span class="n">convert_parameters</span> <span class="k">as</span> <span class="n">cp</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
@@ -263,7 +264,7 @@
 <span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># init nn.Module</span>
 
@@ -430,6 +431,7 @@
 <span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">DiscreteSpace</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DiscreteSpace</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -494,6 +496,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Expected 1- or 2-dim observations, but the shape is </span><span class="si">{</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
 
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">DiscreteSpace</span><span class="p">)</span>
+
         <span class="c1"># Create batched state-action table</span>
         <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>  <span class="c1"># batch dim is along first axis, then transposed</span>
         <span class="n">columns_obs</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="n">repeats</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">num_ele</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -537,6 +541,8 @@
         <span class="n">q_vals</span><span class="p">,</span> <span class="n">argmax_act_idcs</span><span class="p">,</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_q_table</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 
         <span class="c1"># Select the actions with the highest Q-value</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">DiscreteSpace</span><span class="p">)</span>
+
         <span class="n">possible_acts</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">eles</span><span class="p">)</span>  <span class="c1"># could be affected by domain randomization</span>
         <span class="n">possible_acts</span> <span class="o">=</span> <span class="n">possible_acts</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">acts</span> <span class="o">=</span> <span class="n">possible_acts</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>

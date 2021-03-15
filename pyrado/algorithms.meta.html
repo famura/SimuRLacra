@@ -105,7 +105,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">meta</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.adr">adr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.arpl">arpl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#bayrn">bayrn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayrn">bayrn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.epopt">epopt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.simopt">simopt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.spota">spota</a></li>
@@ -470,8 +470,190 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd></dl>
 
 </div>
-<div class="section" id="bayrn">
-<h2>bayrn<a class="headerlink" href="#bayrn" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.algorithms.meta.bayrn">
+<span id="bayrn"></span><h2>bayrn<a class="headerlink" href="#module-pyrado.algorithms.meta.bayrn" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">BayRn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_sim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper"><span class="pre">pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_real</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.real_base.RealEnv" title="pyrado.environments.real_base.RealEnv"><span class="pre">pyrado.environments.real_base.RealEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><span class="pre">pyrado.algorithms.base.Algorithm</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddp_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><span class="pre">pyrado.spaces.box.BoxSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acq_fc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acq_restarts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acq_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acq_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc_estimator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_eval_rollouts_real</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_eval_rollouts_sim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thold_succ</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thold_succ_subrtn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">-</span> <span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warmstart</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_param_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valuefcn_param_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'best'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm" title="pyrado.algorithms.base.InterruptableAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.InterruptableAlgorithm</span></code></a></p>
+<p>Bayesian Domain Randomization (BayRn)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A candidate is a set of parameter values for the domain parameter distribution and its value is the
+(estimated) real-world return.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>F. Muratore, C. Eilers, M. Gienger, J. Peters, “Bayesian Domain Randomization for Sim-to-Real Transfer”,
+arXiv, 2020</p>
+</div>
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.argmax_posterior_mean">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">argmax_posterior_mean</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cands</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cands_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddp_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><span class="pre">pyrado.spaces.box.BoxSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_restarts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.argmax_posterior_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.argmax_posterior_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the GP input with the maximal posterior mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cands</strong> – candidates a.k.a. x</p></li>
+<li><p><strong>cands_values</strong> – observed values a.k.a. y</p></li>
+<li><p><strong>ddp_space</strong> – space of the domain distribution parameters, indicates the lower and upper bound</p></li>
+<li><p><strong>num_restarts</strong> – number of restarts for the optimization of the acquisition function</p></li>
+<li><p><strong>num_samples</strong> – number of samples for the optimization of the acquisition function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>un-normalized candidate with maximum posterior value a.k.a. x</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.eval_init_policies">
+<code class="sig-name descname"><span class="pre">eval_init_policies</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.eval_init_policies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.eval_init_policies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the trained initial policies on the target device and store the estimated return per candidate.
+The number of initial policies to evaluate is the number of found policies.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.eval_policy">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">eval_policy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">save_dir:</span> <span class="pre">Optional[str],</span> <span class="pre">env:</span> <span class="pre">[&lt;class</span> <span class="pre">'pyrado.environments.real_base.RealEnv'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'pyrado.environments.sim_base.SimEnv'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper'&gt;],</span> <span class="pre">policy:</span> <span class="pre">pyrado.policies.base.Policy,</span> <span class="pre">mc_estimator:</span> <span class="pre">bool,</span> <span class="pre">prefix:</span> <span class="pre">str,</span> <span class="pre">num_rollouts:</span> <span class="pre">int,</span> <span class="pre">num_workers:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4</span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.eval_policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.eval_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate a policy either in the source or in the target domain.
+This method is static to facilitate evaluation of specific policies in hindsight.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save the snapshots i.e. the results in, if <cite>None</cite> nothing is saved</p></li>
+<li><p><strong>env</strong> – target environment for evaluation, in the sim-2-sim case this is another simulation instance</p></li>
+<li><p><strong>policy</strong> – policy to evaluate</p></li>
+<li><p><strong>mc_estimator</strong> – estimate the return with a sample average (<cite>True</cite>) or a lower confidence
+bound (<cite>False</cite>) obtained from bootrapping</p></li>
+<li><p><strong>prefix</strong> – to control the saving for the evaluation of an initial policy, <cite>None</cite> to deactivate</p></li>
+<li><p><strong>num_rollouts</strong> – number of rollouts to collect on the target system</p></li>
+<li><p><strong>prefix</strong> – to control the saving for the evaluation of an initial policy, <cite>None</cite> to deactivate</p></li>
+<li><p><strong>num_workers</strong> – number of environments for the parallel sampler (only used for a <cite>SimEnv</cite>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>estimated return in the target domain</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.iteration_key">
+<code class="sig-name descname"><span class="pre">iteration_key</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bayrn_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.iteration_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bayrn'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.sample_count">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sample_count</span></code><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.sample_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the total number of samples, i.e. steps of a rollout, used for training so far.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.save_snapshot">
+<code class="sig-name descname"><span class="pre">save_snapshot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a <cite>dict</cite> of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.step">
+<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.stopping_criterion_met">
+<code class="sig-name descname"><span class="pre">stopping_criterion_met</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.stopping_criterion_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.stopping_criterion_met" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if one of the algorithms (characteristic) stopping criterions is met.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function can be overwritten by the subclasses to implement custom stopping behavior.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>flag if one of the stopping criterion(s) is met</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.subroutine">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subroutine</span></code><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.subroutine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the policy optimization subroutine.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.train_argmax_policy">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">train_argmax_policy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_sim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper"><span class="pre">pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><span class="pre">pyrado.algorithms.base.Algorithm</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_restarts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_param_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valuefcn_param_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'best'</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.train_argmax_policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.train_argmax_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a policy based on the maximizer of the posterior mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_dir</strong> – directory to load from</p></li>
+<li><p><strong>env_sim</strong> – simulation environment</p></li>
+<li><p><strong>subrtn</strong> – algorithm which performs the policy / value-function optimization</p></li>
+<li><p><strong>num_restarts</strong> – number of restarts for the optimization of the acquisition function</p></li>
+<li><p><strong>num_samples</strong> – number of samples for the optimization of the acquisition function</p></li>
+<li><p><strong>policy_param_init</strong> – initial policy parameter values for the subroutine, set <cite>None</cite> to be random</p></li>
+<li><p><strong>valuefcn_param_init</strong> – initial value function parameter values for the subroutine, set <cite>None</cite> to be random</p></li>
+<li><p><strong>subrtn_snapshot_mode</strong> – snapshot mode for saving during training of the subroutine</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the final BayRn policy</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.train_init_policies">
+<code class="sig-name descname"><span class="pre">train_init_policies</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.train_init_policies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.train_init_policies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the algorithm with a number of random distribution parameter sets a.k.a. candidates specified by
+the user. Train a policy for every candidate. Finally, store the policies and candidates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim">
+<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</p></li>
+<li><p><strong>prefix</strong> – set a prefix to the saved file name by passing it to <cite>meta_info</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>estimated return of the trained policy in the target domain</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.algorithms.meta.epopt">
 <span id="epopt"></span><h2>epopt<a class="headerlink" href="#module-pyrado.algorithms.meta.epopt" title="Permalink to this headline">¶</a></h2>

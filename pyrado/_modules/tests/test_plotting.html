@@ -227,23 +227,31 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
+<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">simulate_for_sbi</span><span class="p">,</span> <span class="n">SNPE</span>
+<span class="kn">from</span> <span class="nn">sbi.user_input.user_input_checks</span> <span class="kn">import</span> <span class="n">prepare_for_sbi</span>
+<span class="kn">from</span> <span class="nn">sbi.utils</span> <span class="kn">import</span> <span class="n">posterior_nn</span><span class="p">,</span> <span class="n">BoxUniform</span>
 
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.inference.embeddings</span> <span class="kn">import</span> <span class="n">Embedding</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.categorical</span> <span class="kn">import</span> <span class="n">draw_categorical</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.curve</span> <span class="kn">import</span> <span class="n">draw_curve_from_data</span><span class="p">,</span> <span class="n">draw_dts</span>
+<span class="kn">from</span> <span class="nn">pyrado.plotting.distribution</span> <span class="kn">import</span> <span class="n">draw_posterior_distr_pairwise</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.rollout_based</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">plot_observations_actions_rewards</span><span class="p">,</span>
     <span class="n">plot_observations</span><span class="p">,</span>
     <span class="n">plot_actions</span><span class="p">,</span>
-    <span class="n">draw_rewards</span><span class="p">,</span>
-    <span class="n">draw_potentials</span><span class="p">,</span>
+    <span class="n">plot_rewards</span><span class="p">,</span>
+    <span class="n">plot_potentials</span><span class="p">,</span>
     <span class="n">plot_features</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.surface</span> <span class="kn">import</span> <span class="n">draw_surface</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.potential_based</span> <span class="kn">import</span> <span class="n">PotentialBasedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.singular</span> <span class="kn">import</span> <span class="n">SingularStateSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">rosenbrock</span>
 
 
@@ -423,13 +431,85 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">LinearPolicy</span><span class="p">):</span>
         <span class="n">plot_features</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">PotentialBasedPolicy</span><span class="p">):</span>
-        <span class="n">draw_potentials</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
+        <span class="n">plot_potentials</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">plot_observations_actions_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
         <span class="n">plot_observations</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
         <span class="n">plot_actions</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
-        <span class="n">draw_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
+        <span class="n">plot_rewards</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
         <span class="n">draw_dts</span><span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">dts_policy</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">dts_step</span><span class="p">,</span> <span class="n">ro</span><span class="o">.</span><span class="n">dts_remainder</span><span class="p">,</span> <span class="n">y_top_lim</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_pair_plot"><a class="viewcode-back" href="../../tests.html#tests.test_plotting.test_pair_plot">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;env, policy&quot;</span><span class="p">,</span>
+    <span class="p">[(</span><span class="s2">&quot;default_omo&quot;</span><span class="p">,</span> <span class="s2">&quot;idle_policy&quot;</span><span class="p">)],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;layout&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;inside&quot;</span><span class="p">,</span> <span class="s2">&quot;outside&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;inside&quot;</span><span class="p">,</span> <span class="s2">&quot;outside&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;x_labels, y_labels, prob_labels&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_pair_plot</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">x_labels</span><span class="p">,</span> <span class="n">y_labels</span><span class="p">,</span> <span class="n">prob_labels</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_simulator</span><span class="p">(</span><span class="n">dp</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope &quot;&quot;&quot;</span>
+        <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="n">dp</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="n">dp</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span>
+        <span class="n">observation_sim</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">observation_sim</span><span class="p">)</span>
+
+    <span class="c1"># Fix the init state</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">init_space</span> <span class="o">=</span> <span class="n">SingularStateSpace</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">())</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
+
+    <span class="c1"># Domain parameter mapping and prior</span>
+    <span class="n">dp_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;d&quot;</span><span class="p">}</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">BoxUniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]),</span> <span class="n">high</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]))</span>
+
+    <span class="c1"># Learn a likelihood from the simulator</span>
+    <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">posterior_nn</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;maf&quot;</span><span class="p">,</span> <span class="n">hidden_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_transforms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">snpe</span> <span class="o">=</span> <span class="n">SNPE</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="n">density_estimator</span><span class="p">)</span>
+    <span class="n">simulator</span><span class="p">,</span> <span class="n">prior</span> <span class="o">=</span> <span class="n">prepare_for_sbi</span><span class="p">(</span><span class="n">_simulator</span><span class="p">,</span> <span class="n">prior</span><span class="p">)</span>
+    <span class="n">domain_param</span><span class="p">,</span> <span class="n">data_sim</span> <span class="o">=</span> <span class="n">simulate_for_sbi</span><span class="p">(</span>
+        <span class="n">simulator</span><span class="o">=</span><span class="n">simulator</span><span class="p">,</span>
+        <span class="n">proposal</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span>
+        <span class="n">num_simulations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">snpe</span><span class="o">.</span><span class="n">append_simulations</span><span class="p">(</span><span class="n">domain_param</span><span class="p">,</span> <span class="n">data_sim</span><span class="p">)</span>
+    <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">snpe</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">max_num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">posterior</span> <span class="o">=</span> <span class="n">snpe</span><span class="o">.</span><span class="n">build_posterior</span><span class="p">(</span><span class="n">density_estimator</span><span class="p">)</span>
+
+    <span class="c1"># Create a fake (random) true domain parameter</span>
+    <span class="n">domain_param_gt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dp_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+    <span class="n">domain_param_gt</span> <span class="o">+=</span> <span class="n">domain_param_gt</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">))</span> <span class="o">/</span> <span class="mi">5</span>
+    <span class="n">domain_param_gt</span> <span class="o">=</span> <span class="n">domain_param_gt</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">data_real</span> <span class="o">=</span> <span class="n">simulator</span><span class="p">(</span><span class="n">domain_param_gt</span><span class="p">)</span>
+
+    <span class="c1"># Get a (random) condition</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="n">Embedding</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">domain_param_gt</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s2">&quot;inside&quot;</span><span class="p">:</span>
+        <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">draw_posterior_distr_pairwise</span><span class="p">(</span>
+        <span class="n">axs</span><span class="p">,</span>
+        <span class="n">posterior</span><span class="p">,</span>
+        <span class="n">data_real</span><span class="p">,</span>
+        <span class="n">dp_mapping</span><span class="p">,</span>
+        <span class="n">condition</span><span class="p">,</span>
+        <span class="n">prior</span><span class="p">,</span>
+        <span class="n">env_real</span><span class="p">,</span>
+        <span class="n">marginal_layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span>
+        <span class="n">grid_res</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">normalize_posterior</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">rescale_posterior</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">x_labels</span><span class="o">=</span><span class="n">x_labels</span><span class="p">,</span>
+        <span class="n">y_labels</span><span class="o">=</span><span class="n">y_labels</span><span class="p">,</span>
+        <span class="n">prob_labels</span><span class="o">=</span><span class="n">prob_labels</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 </pre></div>
 
            </div>
