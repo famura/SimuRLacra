@@ -27,9 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from typing import List, Sequence, TypeVar, Union
-
 from numpy.core import numeric
+from typing import List, Sequence, TypeVar, Union
 
 from pyrado.spaces import BoxSpace
 
