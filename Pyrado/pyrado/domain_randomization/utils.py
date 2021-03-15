@@ -85,8 +85,7 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
             dp = deepcopy(domain_params)
             for k, v in dp.items():
                 if isinstance(v, list):
-                    for i in v:
-                        v[i] = float(i)
+                    dp[k] = [float(i) for i in v]
                 else:
                     try:
                         dp[k] = [float(v)]

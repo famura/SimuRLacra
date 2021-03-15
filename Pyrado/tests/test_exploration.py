@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pytest
+from copy import deepcopy
 
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim

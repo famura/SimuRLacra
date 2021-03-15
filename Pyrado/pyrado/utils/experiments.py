@@ -60,7 +60,9 @@ from pyrado.utils.checks import check_all_types_equal, is_iterable
 from pyrado.utils.input_output import print_cbt
 
 
-def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper], Policy, dict):
+def load_experiment(
+    ex_dir: str, args: Any = None
+) -> Tuple[Optional[Union[SimEnv, EnvWrapper]], Optional[Policy], Optional[dict]]:
     """
     Load the (training) environment and the policy.
     This helper function first tries to read the hyper-parameters yaml-file in the experiment's directory to infer

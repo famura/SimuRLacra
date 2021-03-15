@@ -27,6 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+
+from typing_extensions import Final
+from pyrado.utils.exceptions import ValueErr
 import numpy as np
 import operator
 import random
@@ -35,7 +38,7 @@ import torch as to
 from collections.abc import Iterable
 from copy import deepcopy
 from math import ceil
-from typing import Sequence, Type, Optional, Union, Callable, Tuple
+from typing import List, Sequence, Type, Optional, Union, Callable, Tuple, cast
 
 import pyrado
 from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
@@ -311,18 +314,18 @@ class StepSequence(Sequence[Step]):
 
         # Set done list if any. The done list is always a numpy array since torch doesn't support boolean tensors.
         if done is None:
-            done = np.zeros(self.length, dtype=np.bool)
+            done = np.zeros(self.length, dtype=np.bool_)
             if complete and continuous:
                 done[-1] = True
         else:
-            done = np.asarray(done, dtype=np.bool)
+            done = np.asarray(done, dtype=np.bool_)
             assert done.shape[0] == self.length
         self.done = done
 
         # Compute rollout bounds from done list (yes this is not exactly safe...)
         # The bounds list has one extra entry 0, this simplifies queries greatly.
         # bounds[i] = start of rollout i; bounds[i+1]=end of rollout i
-        if continuous:
+        if self.continuous:
             if rollout_bounds is None:
                 rollout_bounds = [0]
                 rollout_bounds.extend(np.flatnonzero(done) + 1)
@@ -350,6 +353,7 @@ class StepSequence(Sequence[Step]):
 
     @property
     def rollout_bounds(self) -> np.ndarray:
+        assert self.continuous
         return self._rollout_bounds
 
     @property
@@ -632,7 +636,7 @@ class StepSequence(Sequence[Step]):
 
         return steps, next_steps
 
-    def split_ordered_batches(self, batch_size: int = None, num_batches: int = None):
+    def split_ordered_batches(self, batch_size: Optional[int] = None, num_batches: Optional[int] = None):
         """
         Batch generation. Split the step collection into ordered mini-batches of size batch_size.
 
@@ -642,21 +646,20 @@ class StepSequence(Sequence[Step]):
         .. note::
             Left out the option to return complete rollouts like for `split_shuffled_batches`.
         """
-        if batch_size is None and num_batches is None or batch_size is not None and num_batches is not None:
-            raise pyrado.ValueErr(msg="Either batch_size or num_batches must not be None, but not both or none!")
-        elif batch_size is not None and batch_size < 1:
-            raise pyrado.ValueErr(given=batch_size, ge_constraint="1 (int)")
-        elif num_batches is not None and num_batches < 1:
-            raise pyrado.ValueErr(given=num_batches, ge_constraint="1 (int)")
 
-        # Switch the splitting mode
-        if num_batches is not None:
+        if batch_size is None:
+            assert num_batches, ValueErr(msg="Either batch_size or num_batches must not be None")
+            assert num_batches < 1, ValueErr(given=num_batches, ge_constraint="1 (int)")
             batch_size = ceil(self.length / num_batches)
+        elif num_batches is None:
+            assert batch_size, ValueErr(msg="Either batch_size or num_batches must not be None")
+            assert batch_size < 1, ValueErr(given=batch_size, ge_constraint="1 (int)")
+        else:
+            raise ValueErr(msg="batch_size and num_batches are mutually exclusive")
 
         if batch_size >= self.length:
             # Yield all at once if there are less steps than the batch size
             yield self
-
         else:
             # Split by steps
             for b in gen_ordered_batch_idcs(batch_size, self.length, sorted=True):

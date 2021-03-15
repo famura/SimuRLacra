@@ -29,7 +29,7 @@
 import numpy as np
 from abc import abstractmethod
 from init_args_serializer import Serializable
-from typing import Optional
+from typing import Optional, Union
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -63,7 +63,7 @@ class EnvWrapper(Env, Serializable):
         return self._wrapped_env.name
 
     @property
-    def wrapped_env(self) -> [Env, SimEnv]:
+    def wrapped_env(self) -> Env:
         """ Get the wrapped environment of this wrapper. """
         return self._wrapped_env
 
@@ -99,7 +99,7 @@ class EnvWrapper(Env, Serializable):
         return self._wrapped_env.curr_step
 
     @property
-    def max_steps(self) -> int:
+    def max_steps(self) -> Union[int, float]:
         return self._wrapped_env.max_steps
 
     @max_steps.setter

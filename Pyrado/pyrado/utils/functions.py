@@ -31,13 +31,13 @@ A small collection of well-known functions for testing or benchmarking
 """
 import numpy as np
 import torch as to
-from typing import Union
+from typing import Tuple, Union
 
 import pyrado
 from pyrado.spaces import BoxSpace
 
 
-def rosenbrock(x: Union[to.Tensor, np.ndarray]) -> (to.Tensor, np.ndarray):
+def rosenbrock(x: Union[to.Tensor, np.ndarray]) -> Union[to.Tensor, np.ndarray]:
     """
     The Rosenbrock function
     (consistent with https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html)
@@ -53,7 +53,9 @@ def rosenbrock(x: Union[to.Tensor, np.ndarray]) -> (to.Tensor, np.ndarray):
         raise pyrado.TypeErr(given=x, expected_type=[np.ndarray, to.Tensor])
 
 
-def noisy_nonlin_fcn(x: [to.Tensor, np.ndarray], f: float = 1.0, noise_std: float = 0.0) -> [to.Tensor, np.ndarray]:
+def noisy_nonlin_fcn(
+    x: Union[to.Tensor, np.ndarray], f: float = 1.0, noise_std: float = 0.0
+) -> Union[to.Tensor, np.ndarray]:
     """
     A 1-dim function (sinus superposed with polynomial), representing the black box function in Bayesian optimization
 
@@ -71,8 +73,11 @@ def noisy_nonlin_fcn(x: [to.Tensor, np.ndarray], f: float = 1.0, noise_std: floa
 
 
 def skyline(
-    dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace
-) -> (np.ndarray, np.ndarray):
+    dt: Union[int, float, np.ndarray],
+    t_end: Union[int, float, np.ndarray],
+    t_intvl_space: BoxSpace,
+    val_space: BoxSpace,
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Step function that randomly samples a value from the given range, and then holds this value for a time interval
     which is also randomly sampled given a range of time intervals. This procedure is repeated until the sequence is
