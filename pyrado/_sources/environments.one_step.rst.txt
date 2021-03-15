@@ -23,6 +23,15 @@ rosenbrock
    :show-inheritance:
 
 
+two\_dim\_gaussian
+------------------
+
+.. automodule:: pyrado.environments.one_step.two_dim_gaussian
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Module contents
 ---------------
 

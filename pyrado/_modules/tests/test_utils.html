@@ -336,6 +336,22 @@
     <span class="k">assert</span> <span class="n">z</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span></div>
 
 
+<div class="viewcode-block" id="test_repeat_interleave"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_repeat_interleave">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;seq&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;tuple&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_reps&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_repeat_interleave</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">):</span>
+    <span class="n">seq_rep</span> <span class="o">=</span> <span class="n">repeat_interleave</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_rep</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_reps</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">seq_rep</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">seq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_reps</span><span class="p">)])</span>  <span class="c1"># only check first ele</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">seq_rep</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="test_gen_batch_idcs"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_gen_batch_idcs">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;batch_size, data_size&quot;</span><span class="p">,</span>
     <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span>

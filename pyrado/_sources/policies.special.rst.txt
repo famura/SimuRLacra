@@ -41,6 +41,15 @@ environment\_specific
    :show-inheritance:
 
 
+moe
+---
+
+.. automodule:: pyrado.policies.special.moe
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 time
 ----
 

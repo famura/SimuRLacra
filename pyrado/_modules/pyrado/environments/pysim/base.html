@@ -378,15 +378,13 @@
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">init_state</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="c1"># Allow setting the complete state space</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-                <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The full init state is not within the state space.&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-                <span class="c1"># raise pyrado.ValueErr(msg=&quot;The full init state must be within the state space!&quot;)</span>
+            <span class="c1"># if not self.state_space.contains(init_state, verbose=True):</span>
+            <span class="c1">#     print_cbt(&quot;The full init state is not within the state space.&quot;, &quot;r&quot;)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">init_state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Set the initial state determined by an element of the init space</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The  init state is not within init state space.&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-                <span class="c1"># raise pyrado.ValueErr(msg=&quot;The init state must be within init state space!&quot;)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_from_init</span><span class="p">(</span><span class="n">init_state</span><span class="p">)</span>
 
         <span class="c1"># Reset the task</span>
