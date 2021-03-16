@@ -30,6 +30,7 @@ import numpy as np
 import seaborn as sns
 import torch as to
 from matplotlib import pyplot as plt, patches
+from pyrado.policies.special.moe import MoEPolicy
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
 from torch.distributions import Distribution
@@ -405,8 +406,8 @@ def draw_posterior_distr_2d(
         )
     else:
         raise pyrado.ValueErr(msg="Neither an explicit grid nor a prior has been provided!")
-    x = to.linspace(grid_bounds[0, 0], grid_bounds[0, 1], grid_res)  # 1 2 3
-    y = to.linspace(grid_bounds[1, 0], grid_bounds[1, 1], grid_res)  # 4 5 6
+    x = to.linspace(grid_bounds[0, 0].item(), grid_bounds[0, 1].item(), grid_res)  # 1 2 3
+    y = to.linspace(grid_bounds[1, 0].item(), grid_bounds[1, 1].item(), grid_res)  # 4 5 6
     x = x.repeat(grid_res)  # 1 2 3 1 2 3 1 2 3
     y = to.repeat_interleave(y, grid_res)  # 4 4 4 5 5 5 6 6 6
     grid_x, grid_y = x.view(grid_res, grid_res), y.view(grid_res, grid_res)
@@ -709,6 +710,8 @@ def draw_posterior_distr_pairwise(
                 rotate = True
                 x_label = x_labels[dim, 0] if x_labels is not None else None
                 y_label = prob_labels[dim] if prob_labels is not None else None
+        else:
+            x_label = y_label = None
 
         draw_posterior_distr_1d(
             axs[i, j],

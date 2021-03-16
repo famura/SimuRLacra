@@ -56,7 +56,7 @@ def bs(request):
         np.array([1, 2, 3], dtype=np.int32),
         np.array([-2, -1, 0, 1, 2], dtype=np.int64),
         np.array([4, -3, 5, 0, 1, 2, 6, -7], dtype=np.int32),
-        np.array([4.0, -3, 5, 0, 1, 2, 6, -7], dtype=np.float),
+        np.array([4.0, -3, 5, 0, 1, 2, 6, -7], dtype=np.float64),
     ],
     ids=["scalar1dim", "scalar2dim", "pos", "pos_neg", "prandom", "prandom_float"],
 )
@@ -181,3 +181,7 @@ def test_torus2D():
     torus_90deg = Polar2DPosVelSpace(np.array([1, np.pi / 2, 0, 0]), np.array([1, np.pi / 2, 0, 0]))
     sample_90deg = torus_90deg.sample_uniform()
     assert np.all(np.isclose(sample_90deg, np.array([0, 1, 0, 0])))
+
+
+def test_string_representation(bs):
+    assert str(bs)

@@ -43,7 +43,7 @@ class EnvSpec(NamedTuple):
 
     obs_space: Space
     act_space: Space
-    state_space: Space = EmptySpace
+    state_space: Space = EmptySpace()
 
 
 class RenderMode(NamedTuple):
@@ -90,10 +90,10 @@ class MSDDSSpec(DSSpec):
     def __init__(
         self,
         function: str,
-        goal: [np.ndarray, float, int],
-        attractorStiffness: [float, int],
-        damping: [float, int],
-        mass: [float, int] = 1.0,
+        goal: Union[np.ndarray, float, int],
+        attractorStiffness: Union[float, int],
+        damping: Union[float, int],
+        mass: Union[float, int] = 1.0,
     ):
         """
         Constructor
@@ -120,7 +120,9 @@ class LinDSSpec(DSSpec):
     LinDSSpec(function='lin', goal=np.array([-1., 2.]), errorDynamics=np.eye(2))
     """
 
-    def __init__(self, function: str, goal: [np.ndarray, float, int], errorDynamics: [np.ndarray, float, int]):
+    def __init__(
+        self, function: str, goal: Union[np.ndarray, float, int], errorDynamics: Union[np.ndarray, float, int]
+    ):
         """
         Constructor
 
@@ -243,7 +245,7 @@ def fill_list_of_arrays(loa: Sequence[np.ndarray], des_len: int, fill_ele=np.nan
     :return: list of ndarrays with equal length
     """
     # Copy the list to avoid undesired changes to the input
-    loa_c = deepcopy(loa)
+    loa_c = list(loa)
     if not isinstance(loa_c, (tuple, list)):
         raise pyrado.TypeErr(given=loa_c, expected_type=[tuple, list])
 

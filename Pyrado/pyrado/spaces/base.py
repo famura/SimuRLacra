@@ -48,13 +48,11 @@ class Space(ABC):
     def __str__(self):
         """ Get an information string. """
         return (
-            Style.BRIGHT
-            + f"{get_class_name(self)}"
-            + Style.RESET_ALL
-            + f" (id: {id(self)})\n"
+            f"{Style.BRIGHT}{get_class_name(self)}{Style.RESET_ALL}"
+            + f"(id: {id(self)})\n"
             + tabulate(
                 [[b for b in self.bound_lo], [b for b in self.bound_up]],
-                headers=self.labels,
+                headers=[*self.labels],
                 showindex=["lower", "upper"],
             )
         )
@@ -86,7 +84,7 @@ class Space(ABC):
         return reduce((lambda x, y: x * y), self.shape)
 
     @property
-    def labels(self) -> (np.ndarray, None):
+    def labels(self) -> Union[np.ndarray, None]:
         """ Get the labels for space entries, or `None` if not supported. """
         return None
 

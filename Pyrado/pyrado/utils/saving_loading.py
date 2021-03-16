@@ -118,7 +118,7 @@ def load(obj, name: str, file_ext: str, load_dir: str, meta_info: Optional[dict]
     """
     Load an object object using a prefix or suffix, depending on the meta information.
 
-    :param obj: PyTorch modeule to load into, this can be `None` except for the case if you want to load and save the
+    :param obj: PyTorch module to load into, this can be `None` except for the case if you want to load and save the
                 module's `state_dict`
     :param name: name of the object for loading
     :param file_ext: file extension, extension.g. 'pt' for PyTorch modules like the Pyrado policies

@@ -32,7 +32,7 @@ import torch as to
 from abc import ABC, abstractmethod
 from init_args_serializer import Serializable
 from operator import itemgetter
-from typing import Union, Mapping, Optional, Tuple, List, ValuesView
+from typing import Sequence, Union, Mapping, Optional, Tuple, List, ValuesView
 
 import pyrado
 from pyrado.algorithms.inference.embeddings import Embedding
@@ -430,6 +430,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         print_cbt_once(f"Using pre-recorded target domain rollouts to from {self.rollouts_dir}", "g")
 
         # Get pre-recoded rollout and advance the index
+        assert isinstance(self.rollouts_rec, StepSequence)
         ro = self.rollouts_rec[self._ring_idx]
         ro.torch()
         self._ring_idx = (self._ring_idx + 1) % len(self.rollouts_rec)

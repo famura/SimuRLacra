@@ -454,7 +454,6 @@ class QCartPoleGoToLimCtrl:
         self.delta_x_min = 0.1
         self.sign = 1 if positive else -1
         self.u_max = self.sign * np.array([1.5])
-        self._t_init = False
         self._t0 = None
         self._t_max = 10.0
         self._t_min = 2.0
@@ -469,9 +468,8 @@ class QCartPoleGoToLimCtrl:
         x, _, _, xd, _ = obs
 
         # Initialize time
-        if not self._t_init:
+        if self._t0 is None:
             self._t0 = time.time()
-            self._t_init = True
 
         # Compute voltage
         if (time.time() - self._t0) < self._t_min:
