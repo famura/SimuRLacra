@@ -415,9 +415,6 @@ class SPRL(Algorithm):
             else:
                 print(f"Update unsuccessful, keeping old values spl parameters")
 
-        # Reset environment.
-        self._env.reset()
-
     def reset(self, seed: int = None):
         # Forward to subroutine
         self._subroutine.reset(seed)
@@ -449,6 +446,8 @@ class SPRL(Algorithm):
 
     def _train_subroutine_and_evaluate_perf(self, snapshot_mode: str, meta_info: dict = None) -> float:
         self._subroutine.reset()
+        self._env.reset()
+
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
         rollouts = self._subroutine.rollouts
         x = np.median([[ro.undiscounted_return() for ros in rollouts for ro in ros]])
