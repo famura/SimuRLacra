@@ -13,4 +13,7 @@
 [submodule "thirdParty/mujoco-py"]
 	path = thirdParty/mujoco-py
 	url = https://github.com/openai/mujoco-py.git
+[submodule "thirdParty/RenderPipeline"]
+	path = thirdParty/RenderPipeline
+	url = https://github.com/tobspr/RenderPipeline.git
 
