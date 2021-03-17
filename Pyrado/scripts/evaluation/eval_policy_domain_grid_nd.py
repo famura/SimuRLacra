@@ -68,10 +68,10 @@ def evaluate_policy(args, ex_dir):
     #     param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
 
     if isinstance(inner_env(env), QQubeSwingUpSim):
-        eval_num = 200 // 4
-        param_spec["g"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
-        # param_spec["Dp"] = np.linspace(0.0, 0.0002, num=eval_num, endpoint=True)
-        # param_spec["Dr"] = np.linspace(0.0, 0.0015, num=eval_num, endpoint=True)
+        eval_num = 200
+        # param_spec["g"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
+        param_spec["Dp"] = np.linspace(0.0, 0.0002, num=eval_num, endpoint=True)
+        param_spec["Dr"] = np.linspace(0.0, 0.0015, num=eval_num, endpoint=True)
     elif isinstance(inner_env(env), QBallBalancerSim):
         # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)
