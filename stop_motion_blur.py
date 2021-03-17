@@ -4,7 +4,7 @@
 import os.path as osp
 
 fname = "plugins.yaml"
-rp_dir = osp.join(osp.dirname(__file__), "thirdParty", "render_pipeline", "config")
+rp_dir = osp.join(osp.dirname(__file__), "thirdParty", "RenderPipeline", "config")
 
 # Read each line of the file into an array
 with open(osp.join(rp_dir, fname), 'r') as file:
