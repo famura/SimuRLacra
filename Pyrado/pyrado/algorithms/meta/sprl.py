@@ -262,10 +262,15 @@ class SPRL(Algorithm):
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
 
         dim = context_mean.shape[0]
-        # First, train with the initial context distribution
+
+        # if we are in the first iteration and have a bad performance
+        # we want to completely reset the policy if training is unsuccessful
+        reset_policy = False
+        if self.curr_iter == 0:
+            reset_policy = True
         until_thold_exceeded(self._performance_lower_bound * 0.3, self._max_subrtn_retries)(
             self._train_subroutine_and_evaluate_perf
-        )(snapshot_mode, meta_info)
+        )(snapshot_mode, meta_info, reset_policy)
 
         # Update distribution
         previous_distribution = ParameterAgnosticMultivariateNormalWrapper(
@@ -444,9 +449,12 @@ class SPRL(Algorithm):
             elif self._optimize_cov:
                 param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
 
-    def _train_subroutine_and_evaluate_perf(self, snapshot_mode: str, meta_info: dict = None) -> float:
+    def _train_subroutine_and_evaluate_perf(
+        self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False
+    ) -> float:
+        if reset_policy:
+            self._subroutine.policy.reset()
         self._subroutine.reset()
-        self._env.reset()
 
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
         rollouts = self._subroutine.rollouts
