@@ -6,6 +6,7 @@ algorithms
 .. toctree::
 
    pyrado.algorithms.episodic
+   pyrado.algorithms.inference
    pyrado.algorithms.meta
    pyrado.algorithms.step_based
 

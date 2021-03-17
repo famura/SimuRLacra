@@ -229,6 +229,7 @@
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.timeseries_prediction</span> <span class="kn">import</span> <span class="n">TSPred</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.mdn</span> <span class="kn">import</span> <span class="n">MDNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.time</span> <span class="kn">import</span> <span class="n">PlaybackPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
@@ -241,7 +242,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_sets</span> <span class="kn">import</span> <span class="n">TimeSeriesDataSet</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span><span class="p">,</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">skyline</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.nn_layers</span> <span class="kn">import</span> <span class="n">IndiNonlinLayer</span>
 <span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span><span class="p">,</span> <span class="n">m_needs_rcs</span><span class="p">,</span> <span class="n">m_needs_libtorch</span>
@@ -1125,6 +1126,50 @@
 
     <span class="n">policy</span><span class="o">.</span><span class="n">reset_curr_rec</span><span class="p">()</span>
     <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">curr_rec</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="test_mdn_policy"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_mdn_policy">[docs]</a><span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;condition, dim_in&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,)),</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;dim_out&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;7out&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_comp&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;5comp&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_mdn_policy</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">dim_in</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dim_out</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_comp</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="c1"># Create instance</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">MDNPolicy</span><span class="p">(</span>
+        <span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">obs_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">dim_in</span><span class="p">),</span> <span class="n">act_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">dim_out</span><span class="p">)),</span>
+        <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+        <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span>
+        <span class="n">num_comp</span><span class="o">=</span><span class="n">num_comp</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">coeffs</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">trils</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">condition</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">coeffs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_comp</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">means</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim_out</span><span class="p">,</span> <span class="n">num_comp</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">trils</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">dim_out</span> <span class="o">*</span> <span class="p">(</span><span class="n">dim_out</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">num_comp</span><span class="p">)</span>
+
+    <span class="c1"># Test sampling</span>
+    <span class="n">num_samples</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">):</span>
+        <span class="n">policy</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span>  <span class="c1"># no condition was given</span>
+    <span class="k">if</span> <span class="n">condition</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">condition</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+            <span class="n">policy</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,),</span> <span class="n">condition</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,),</span> <span class="n">condition</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">dim_out</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,),</span> <span class="n">condition</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">condition</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_samples</span><span class="p">,)</span>
+        <span class="n">policy</span><span class="o">.</span><span class="n">set_default_x</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">dim_out</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span>
+        <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_samples</span><span class="p">,)</span></div>
 </pre></div>
 
            </div>

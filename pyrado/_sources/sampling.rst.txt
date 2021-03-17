@@ -95,6 +95,24 @@ sampler\_pool
    :show-inheritance:
 
 
+sbi\_embeddings
+---------------
+
+.. automodule:: pyrado.sampling.sbi_embeddings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+sbi\_rollout\_sampler
+---------------------
+
+.. automodule:: pyrado.sampling.sbi_rollout_sampler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 sequences
 ---------
 

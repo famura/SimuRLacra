@@ -1,0 +1,23 @@
+
+
+inference
+=========
+
+
+
+snpea
+-----
+
+.. automodule:: pyrado.algorithms.inference.snpea
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.algorithms.inference
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -345,6 +345,8 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.base.all_tasks">all_tasks() (in module pyrado.tasks.base)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding">AllStepsEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
+</li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewMode.always_negative">always_negative() (FinalRewMode property)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewMode.always_positive">always_positive() (FinalRewMode property)</a>
@@ -398,6 +400,10 @@
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_on_plate.BallOnPlateSim">BallOnPlateSim (class in pyrado.environments.rcspysim.ball_on_plate)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.exceptions.BaseErr">BaseErr</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim">BayesSim (class in pyrado.algorithms.meta.bayessim)</a>
+</li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding">BayesSimEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn">BayRn (class in pyrado.algorithms.meta.bayrn)</a>
 </li>
@@ -565,6 +571,8 @@
       </ul></li>
       <li><a href="pyrado.html#pyrado.close_vpython">close_vpython() (in module pyrado)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.collect_data_real">collect_data_real() (SBIBase static method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.input_output.color_validity">color_validity() (in module pyrado.utils.input_output)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.completion_context">completion_context() (in module pyrado.utils.input_output)</a>
@@ -627,10 +635,10 @@
 </li>
       <li><a href="policies.html#pyrado.policies.features.cos_feat">cos_feat() (in module pyrado.policies.features)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.math.cosine_similarity">cosine_similarity() (in module pyrado.utils.math)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="utils.html#pyrado.utils.math.cosine_similarity">cosine_similarity() (in module pyrado.utils.math)</a>
+</li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.CosOfOneEleRewFcn">CosOfOneEleRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.math.cov">cov() (in module pyrado.utils.math)</a>
@@ -876,6 +884,8 @@
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.device">device() (DiagNormalNoise property)</a>
 
       <ul>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.device">(Embedding property)</a>
+</li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN.device">(FNN property)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.normal_noise.FullNormalNoise.device">(FullNormalNoise property)</a>
@@ -897,6 +907,20 @@
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.dilation">dilation (MirrConv1d attribute)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.dim_output">dim_output() (AllStepsEmbedding property)</a>
+
+      <ul>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.dim_output">(BayesSimEmbedding property)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.dim_output">(DynamicTimeWarpingEmbedding property)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.dim_output">(Embedding property)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding.dim_output">(LastStepEmbedding property)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.dim_output">(RNNEmbedding property)</a>
+</li>
+      </ul></li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.discounted_return">discounted_return() (StepSequence method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.discounted_reverse_cumsum">discounted_reverse_cumsum() (in module pyrado.sampling.step_sequence)</a>
@@ -951,21 +975,11 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.curve.draw_curve_from_data">draw_curve_from_data() (in module pyrado.plotting.curve)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_distr_evolution">draw_distr_evolution() (in module pyrado.plotting.distribution)</a>
-</li>
       <li><a href="plotting.html#pyrado.plotting.curve.draw_dts">draw_dts() (in module pyrado.plotting.curve)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.heatmap.draw_heatmap">draw_heatmap() (in module pyrado.plotting.heatmap)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.policy_parameters.draw_policy_params">draw_policy_params() (in module pyrado.plotting.policy_parameters)</a>
-</li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_1d">draw_posterior_distr_1d() (in module pyrado.plotting.distribution)</a>
-</li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_2d">draw_posterior_distr_2d() (in module pyrado.plotting.distribution)</a>
-</li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_pairwise">draw_posterior_distr_pairwise() (in module pyrado.plotting.distribution)</a>
-</li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_pairwise_scatter">draw_posterior_distr_pairwise_scatter() (in module pyrado.plotting.distribution)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.utils.draw_sep_cbar">draw_sep_cbar() (in module pyrado.plotting.utils)</a>
 </li>
@@ -995,6 +1009,8 @@
 </li>
       <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy">DummyPolicy (class in pyrado.policies.special.dummy)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding">DynamicTimeWarpingEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1007,6 +1023,14 @@
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.ele_dim">ele_dim() (Space property)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding">Embedding (class in pyrado.sampling.sbi_embeddings)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.embedding">embedding() (BayesSim property)</a>
+
+      <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.embedding">(SBIBase property)</a>
+</li>
+      </ul></li>
       <li><a href="spaces.html#pyrado.spaces.empty.EmptySpace">EmptySpace (class in pyrado.spaces.empty)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.ensure_math_mode">ensure_math_mode() (in module pyrado.utils.input_output)</a>
@@ -1069,10 +1093,10 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.eval">eval() (EpsGreedyExplStrat method)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
+</li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_ddp_policy">eval_ddp_policy() (SimOpt static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">eval_domain_params() (in module pyrado.sampling.parallel_evaluation)</a>
@@ -1084,6 +1108,12 @@
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_nominal_domain">eval_nominal_domain() (in module pyrado.sampling.parallel_evaluation)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.eval_policy">eval_policy() (BayRn static method)</a>
+
+      <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.eval_policy">(SBIBase static method)</a>
+</li>
+      </ul></li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.eval_posterior">eval_posterior() (SBIBase static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_randomized_domain">eval_randomized_domain() (in module pyrado.sampling.parallel_evaluation)</a>
 </li>
@@ -1165,6 +1195,8 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.fill_buffer">fill_buffer() (DomainRandWrapperBuffer method)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.fill_domain_param_buffer">fill_domain_param_buffer() (SBIBase static method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.data_types.fill_list_of_arrays">fill_list_of_arrays() (in module pyrado.utils.data_types)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.order.filter_los_by_lok">filter_los_by_lok() (in module pyrado.utils.order)</a>
@@ -1216,6 +1248,8 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy.forward">(DummyPolicy method)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward">(Embedding method)</a>
+</li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.forward">(EpsGreedyExplStrat method)</a>
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN.forward">(FNN method)</a>
@@ -1230,9 +1264,9 @@
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.forward">(LinearPolicy method)</a>
 </li>
-        <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.forward">(MirrConv1d method)</a>
+        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.forward">(MDNPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.moe.MoEPolicy.forward">(MoEPolicy method)</a>
+        <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.forward">(MirrConv1d method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy.forward">(NFPolicy method)</a>
 </li>
@@ -1289,6 +1323,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward_one_batch">forward_one_batch() (Embedding method)</a>
+</li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcn">ForwardVelocityRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.FullNormalNoise">FullNormalNoise (class in pyrado.exploration.normal_noise)</a>
@@ -1341,6 +1377,8 @@
       </ul></li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.get_data_values">get_data_values() (StepSequence method)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI.get_dim_data">get_dim_data() (RolloutSamplerForSBI static method)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.get_entropy">get_entropy() (DiagNormalNoise method)</a>
 
       <ul>
@@ -1379,6 +1417,10 @@
 </li>
       <li><a href="logger.html#pyrado.logger.get_log_prefix_dir">get_log_prefix_dir() (in module pyrado.logger)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_ml_posterior_samples">get_ml_posterior_samples() (SBIBase static method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim.get_nominal_domain_param">get_nominal_domain_param() (BallInTubeSim class method)</a>
 
       <ul>
@@ -1427,8 +1469,6 @@
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.get_nominal_domain_param">(TwoDimGaussian class method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.html#pyrado.policies.features.FeatureStack.get_num_feat">get_num_feat() (FeatureStack method)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">get_params() (DomainRandomizer method)</a>
@@ -1594,7 +1634,7 @@
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.init_param">(LinearPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.moe.MoEPolicy.init_param">(MoEPolicy method)</a>
+        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.init_param">(MDNPolicy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy.init_param">(NFPolicy method)</a>
 </li>
@@ -1616,6 +1656,8 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.init_param">(RecurrentDummyPolicy method)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.init_param">(RNNEmbedding method)</a>
+</li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase.init_param">(RNNPolicyBase method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_param">(StochasticActionExplStrat method)</a>
@@ -1631,8 +1673,6 @@
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param">(TwoHeadedRNNPolicyBase method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.init_space">init_space() (CatapultSim property)</a>
 
       <ul>
@@ -1653,6 +1693,8 @@
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.init_space">(TwoDimGaussian property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker.initialized">initialized() (MarkerTracker method)</a>
 
       <ul>
@@ -1718,9 +1760,15 @@
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.iteration_key">iteration_key (Algorithm attribute)</a>
 
       <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.iteration_key">(BayesSim attribute)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.iteration_key">(BayRn attribute)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.iteration_key">(NPDR attribute)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.iteration_key">(SimOpt attribute)</a>
+</li>
+        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.iteration_key">(SNPEA attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.iteration_key">(SPOTA attribute)</a>
 </li>
@@ -1769,6 +1817,8 @@
         <li><a href="spaces.html#pyrado.spaces.base.Space.labels">(Space property)</a>
 </li>
       </ul></li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding">LastStepEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
+</li>
       <li><a href="environments.html#pyrado.environments.base.Env.limit_act">limit_act() (Env method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.LinDSSpec">LinDSSpec (class in pyrado.utils.data_types)</a>
@@ -1797,7 +1847,7 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">load_snapshot() (Algorithm static method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.moe.MoEPolicy.log_prob">log_prob() (MoEPolicy method)</a>
+      <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.log_prob">log_prob() (MDNPolicy method)</a>
 
       <ul>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.log_prob">(TwoDimGaussian static method)</a>
@@ -1859,6 +1909,8 @@
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.max_steps">(EnvWrapper property)</a>
 </li>
       </ul></li>
+      <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy">MDNPolicy (class in pyrado.policies.special.mdn)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.mean">mean() (NormalActNoiseExplStrat property)</a>
 
       <ul>
@@ -1927,15 +1979,25 @@
 </li>
         <li><a href="algorithms.episodic.html#module-pyrado.algorithms.episodic.sysid_via_episodic_rl">pyrado.algorithms.episodic.sysid_via_episodic_rl</a>
 </li>
+        <li><a href="algorithms.inference.html#module-pyrado.algorithms.inference">pyrado.algorithms.inference</a>
+</li>
+        <li><a href="algorithms.inference.html#module-pyrado.algorithms.inference.snpea">pyrado.algorithms.inference.snpea</a>
+</li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta">pyrado.algorithms.meta</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.adr">pyrado.algorithms.meta.adr</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.arpl">pyrado.algorithms.meta.arpl</a>
 </li>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayessim">pyrado.algorithms.meta.bayessim</a>
+</li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayrn">pyrado.algorithms.meta.bayrn</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.epopt">pyrado.algorithms.meta.epopt</a>
+</li>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.npdr">pyrado.algorithms.meta.npdr</a>
+</li>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.sbi_base">pyrado.algorithms.meta.sbi_base</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.simopt">pyrado.algorithms.meta.simopt</a>
 </li>
@@ -2105,8 +2167,6 @@
 </li>
         <li><a href="plotting.html#module-pyrado.plotting.curve">pyrado.plotting.curve</a>
 </li>
-        <li><a href="plotting.html#module-pyrado.plotting.distribution">pyrado.plotting.distribution</a>
-</li>
         <li><a href="plotting.html#module-pyrado.plotting.gaussian_process">pyrado.plotting.gaussian_process</a>
 </li>
         <li><a href="plotting.html#module-pyrado.plotting.heatmap">pyrado.plotting.heatmap</a>
@@ -2161,7 +2221,7 @@
 </li>
         <li><a href="policies.special.html#module-pyrado.policies.special.environment_specific">pyrado.policies.special.environment_specific</a>
 </li>
-        <li><a href="policies.special.html#module-pyrado.policies.special.moe">pyrado.policies.special.moe</a>
+        <li><a href="policies.special.html#module-pyrado.policies.special.mdn">pyrado.policies.special.mdn</a>
 </li>
         <li><a href="policies.special.html#module-pyrado.policies.special.time">pyrado.policies.special.time</a>
 </li>
@@ -2186,6 +2246,10 @@
         <li><a href="sampling.html#module-pyrado.sampling.sampler">pyrado.sampling.sampler</a>
 </li>
         <li><a href="sampling.html#module-pyrado.sampling.sampler_pool">pyrado.sampling.sampler_pool</a>
+</li>
+        <li><a href="sampling.html#module-pyrado.sampling.sbi_embeddings">pyrado.sampling.sbi_embeddings</a>
+</li>
+        <li><a href="sampling.html#module-pyrado.sampling.sbi_rollout_sampler">pyrado.sampling.sbi_rollout_sampler</a>
 </li>
         <li><a href="sampling.html#module-pyrado.sampling.sequences">pyrado.sampling.sequences</a>
 </li>
@@ -2315,8 +2379,6 @@
 </li>
         <li><a href="tests.html#module-tests.test_logger">tests.test_logger</a>
 </li>
-        <li><a href="tests.html#module-tests.test_plotting">tests.test_plotting</a>
-</li>
         <li><a href="tests.html#module-tests.test_policies">tests.test_policies</a>
 </li>
         <li><a href="tests.html#module-tests.test_rollout_result">tests.test_rollout_result</a>
@@ -2336,8 +2398,6 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="policies.special.html#pyrado.policies.special.moe.MoEPolicy">MoEPolicy (class in pyrado.policies.special.moe)</a>
-</li>
       <li><a href="plotting.html#pyrado.plotting.utils.most_square_product">most_square_product() (in module pyrado.plotting.utils)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.mp_blending.MPBlendingSim">MPBlendingSim (class in pyrado.environments.rcspysim.mp_blending)</a>
@@ -2363,6 +2423,8 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.name">(Algorithm attribute)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.name">(AllStepsEmbedding attribute)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.name">(ARPL attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeIKSim.name">(BallInTubeIKSim attribute)</a>
@@ -2380,6 +2442,10 @@
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_on_plate.BallOnPlate2DSim.name">(BallOnPlate2DSim attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_on_plate.BallOnPlate5DSim.name">(BallOnPlate5DSim attribute)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.name">(BayesSim attribute)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.name">(BayesSimEmbedding attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.name">(BayRn attribute)</a>
 </li>
@@ -2415,6 +2481,10 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy.name">(DummyPolicy attribute)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.name">(DynamicTimeWarpingEmbedding attribute)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.name">(Embedding attribute)</a>
+</li>
         <li><a href="environments.html#pyrado.environments.base.Env.name">(Env attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.epopt.EPOpt.name">(EPOpt attribute)</a>
@@ -2429,19 +2499,23 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.IdlePolicy.name">(IdlePolicy attribute)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding.name">(LastStepEmbedding attribute)</a>
+</li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.name">(LinearPolicy attribute)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.predefined_lqr.LQR.name">(LQR attribute)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.LSTMPolicy.name">(LSTMPolicy attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.moe.MoEPolicy.name">(MoEPolicy attribute)</a>
+        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.name">(MDNPolicy attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.mp_blending.MPBlendingSim.name">(MPBlendingSim attribute)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.nes.NES.name">(NES attribute)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy.name">(NFPolicy attribute)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.name">(NPDR attribute)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.name">(OneMassOscillatorSim attribute)</a>
 </li>
@@ -2501,6 +2575,8 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.name">(REPS attribute)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.name">(RNNEmbedding attribute)</a>
+</li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicy.name">(RNNPolicy attribute)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.rosenbrock.RosenSim.name">(RosenSim attribute)</a>
@@ -2508,6 +2584,8 @@
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.name">(SAC attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.name">(SimOpt attribute)</a>
+</li>
+        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.name">(SNPEA attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.name">(SPOTA attribute)</a>
 </li>
@@ -2604,6 +2682,8 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise">NormalParamNoise (class in pyrado.exploration.stochastic_params)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR">NPDR (class in pyrado.algorithms.meta.npdr)</a>
+</li>
       <li><a href="spaces.html#pyrado.spaces.discrete.DiscreteSpace.num_ele">num_ele() (DiscreteSpace property)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.num_iter_from_rollouts">num_iter_from_rollouts() (in module pyrado.algorithms.utils)</a>
@@ -2614,6 +2694,8 @@
 
       <ul>
         <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.num_rollouts">(ParameterSamplingResult method)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.num_rollouts">(RecRolloutSamplerForSBI property)</a>
 </li>
       </ul></li>
       <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.num_rollouts_per_param">num_rollouts_per_param() (ParameterExplorationSampler property)</a>
@@ -2728,6 +2810,8 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.pack">pack() (Embedding static method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.padding">padding (MirrConv1d attribute)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.padding_mode">padding_mode (MirrConv1d attribute)</a>
@@ -2822,6 +2906,8 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_rewards">plot_rewards() (in module pyrado.plotting.rollout_based)</a>
 </li>
+      <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_rollouts_segment_wise">plot_rollouts_segment_wise() (in module pyrado.plotting.rollout_based)</a>
+</li>
       <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_statistic_across_rollouts">plot_statistic_across_rollouts() (in module pyrado.plotting.rollout_based)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.PlusOnePerStepRewFcn">PlusOnePerStepRewFcn (class in pyrado.tasks.reward_functions)</a>
@@ -2844,6 +2930,12 @@
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.PositiveScaleLayer">PositiveScaleLayer (class in pyrado.utils.nn_layers)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.posterior">posterior() (BayesSim property)</a>
+
+      <ul>
+        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.posterior">(SNPEA property)</a>
+</li>
+      </ul></li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy">PotentialBasedPolicy (class in pyrado.policies.recurrent.potential_based)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy.potentials_dot">potentials_dot() (ADNPolicy method)</a>
@@ -2868,6 +2960,8 @@
         <li><a href="logger.html#pyrado.logger.step.StepLogger.prefix">(StepLogger method)</a>
 </li>
       </ul></li>
+      <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.pretrain_proposal">pretrain_proposal() (SNPEA method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.input_output.print_cbt">print_cbt() (in module pyrado.utils.input_output)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.print_cbt_once">print_cbt_once() (in module pyrado.utils.input_output)</a>
@@ -3004,6 +3098,20 @@
 </li>
       </ul></li>
       <li>
+    pyrado.algorithms.inference
+
+      <ul>
+        <li><a href="algorithms.inference.html#module-pyrado.algorithms.inference">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.inference.snpea
+
+      <ul>
+        <li><a href="algorithms.inference.html#module-pyrado.algorithms.inference.snpea">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.algorithms.meta
 
       <ul>
@@ -3025,6 +3133,13 @@
 </li>
       </ul></li>
       <li>
+    pyrado.algorithms.meta.bayessim
+
+      <ul>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayessim">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.algorithms.meta.bayrn
 
       <ul>
@@ -3036,6 +3151,20 @@
 
       <ul>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.epopt">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.meta.npdr
+
+      <ul>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.npdr">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.meta.sbi_base
+
+      <ul>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.sbi_base">module</a>
 </li>
       </ul></li>
       <li>
@@ -3395,6 +3524,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.quanser_cartpole">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_qube
 
@@ -3416,8 +3547,6 @@
         <li><a href="environments.quanser.html#module-pyrado.environments.quanser.base">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.quanser.quanser_ball_balancer
 
@@ -3629,13 +3758,6 @@
 </li>
       </ul></li>
       <li>
-    pyrado.plotting.distribution
-
-      <ul>
-        <li><a href="plotting.html#module-pyrado.plotting.distribution">module</a>
-</li>
-      </ul></li>
-      <li>
     pyrado.plotting.gaussian_process
 
       <ul>
@@ -3825,10 +3947,10 @@
 </li>
       </ul></li>
       <li>
-    pyrado.policies.special.moe
+    pyrado.policies.special.mdn
 
       <ul>
-        <li><a href="policies.special.html#module-pyrado.policies.special.moe">module</a>
+        <li><a href="policies.special.html#module-pyrado.policies.special.mdn">module</a>
 </li>
       </ul></li>
       <li>
@@ -3913,6 +4035,20 @@
 
       <ul>
         <li><a href="sampling.html#module-pyrado.sampling.sampler_pool">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.sampling.sbi_embeddings
+
+      <ul>
+        <li><a href="sampling.html#module-pyrado.sampling.sbi_embeddings">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.sampling.sbi_rollout_sampler
+
+      <ul>
+        <li><a href="sampling.html#module-pyrado.sampling.sbi_rollout_sampler">module</a>
 </li>
       </ul></li>
       <li>
@@ -4316,7 +4452,11 @@
 </li>
       <li><a href="environments.html#pyrado.environments.real_base.RealEnv">RealEnv (class in pyrado.environments.real_base)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI">RealRolloutSamplerForSBI (class in pyrado.sampling.sbi_rollout_sampler)</a>
+</li>
       <li><a href="logger.html#pyrado.logger.step.StepLogger.record_step">record_step() (StepLogger method)</a>
+</li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI">RecRolloutSamplerForSBI (class in pyrado.sampling.sbi_rollout_sampler)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.GRUPolicy.recurrent_network_type">recurrent_network_type (GRUPolicy attribute)</a>
 
@@ -4394,6 +4534,20 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.required_fields">required_fields (StepSequence attribute)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.requires_target_domain_data">requires_target_domain_data (AllStepsEmbedding attribute)</a>
+
+      <ul>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.requires_target_domain_data">(BayesSimEmbedding attribute)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.requires_target_domain_data">(DynamicTimeWarpingEmbedding attribute)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.requires_target_domain_data">(Embedding attribute)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding.requires_target_domain_data">(LastStepEmbedding attribute)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.requires_target_domain_data">(RNNEmbedding attribute)</a>
+</li>
+      </ul></li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.rescale_distr_param">rescale_distr_param() (DomainRandomizer method)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.action_delay.ActDelayWrapper.reset">reset() (ActDelayWrapper method)</a>
@@ -4599,12 +4753,18 @@
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.RigidBodyTracker">RigidBodyTracker (class in pyrado.environments.barrett_wam.trackers)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.ring_idx">ring_idx() (DomainRandWrapperBuffer property)</a>
+
+      <ul>
+        <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.ring_idx">(RecRolloutSamplerForSBI property)</a>
 </li>
+      </ul></li>
       <li><a href="utils.html#pyrado.utils.math.rmse">rmse() (in module pyrado.utils.math)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.rnn_policy">rnn_policy() (DefaultPolicies static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.rnn_policy_cuda">rnn_policy_cuda() (DefaultPolicies static method)</a>
+</li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding">RNNEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicy">RNNPolicy (class in pyrado.policies.recurrent.rnn)</a>
 </li>
@@ -4626,6 +4786,8 @@
         <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.rollouts">(ParameterSamplingResult method)</a>
 </li>
       </ul></li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI">RolloutSamplerForSBI (class in pyrado.sampling.sbi_rollout_sampler)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.functions.rosenbrock">rosenbrock() (in module pyrado.utils.functions)</a>
 </li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.rosenbrock.RosenSim">RosenSim (class in pyrado.environments.one_step.rosenbrock)</a>
@@ -4663,7 +4825,7 @@
 </li>
         <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam.sample">(DomainParam method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.moe.MoEPolicy.sample">(MoEPolicy method)</a>
+        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.sample">(MDNPolicy method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.sample">(ParallelRolloutSampler method)</a>
 </li>
@@ -4755,6 +4917,8 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.save_snapshot">(ARPL method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.save_snapshot">(BayesSim method)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.save_snapshot">(BayRn method)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.save_snapshot">(DQL method)</a>
@@ -4767,7 +4931,11 @@
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.save_snapshot">(SAC method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.save_snapshot">(SBIBase method)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.save_snapshot">(SimOpt method)</a>
+</li>
+        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.save_snapshot">(SNPEA method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.save_snapshot">(SPOTA method)</a>
 </li>
@@ -4782,6 +4950,10 @@
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.save_snapshot">(ValueBased method)</a>
 </li>
       </ul></li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.sbi_simulator">sbi_simulator() (SBIBase property)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase">SBIBase (class in pyrado.algorithms.meta.sbi_base)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.data_processing.MinMaxScaler.scale_back">scale_back() (MinMaxScaler method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_processing.scale_min_max">scale_min_max() (in module pyrado.utils.data_processing)</a>
@@ -4834,7 +5006,7 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.set_adv">set_adv() (StateAugmentationWrapper method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.moe.MoEPolicy.set_default_x">set_default_x() (MoEPolicy method)</a>
+      <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.set_default_x">set_default_x() (MDNPolicy method)</a>
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.VelocityFilter.set_initial_state">set_initial_state() (VelocityFilter method)</a>
 </li>
@@ -4898,6 +5070,8 @@
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv">SimPyEnv (class in pyrado.environments.pysim.base)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_rollout_sampler.SimRolloutSamplerForSBI">SimRolloutSamplerForSBI (class in pyrado.sampling.sbi_rollout_sampler)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.features.sin_feat">sin_feat() (in module pyrado.policies.features)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.features.sincos_feat">sincos_feat() (in module pyrado.policies.features)</a>
@@ -4909,6 +5083,8 @@
       <li><a href="utils.html#pyrado.utils.functions.skyline">skyline() (in module pyrado.utils.functions)</a>
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.snd_rcv">snd_rcv() (QSocket method)</a>
+</li>
+      <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA">SNPEA (class in pyrado.algorithms.inference.snpea)</a>
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.soft_update">soft_update() (SAC static method)</a>
 </li>
@@ -4926,10 +5102,10 @@
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.space_des">(TaskWrapper property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.html#pyrado.environments.base.Env.spec">spec() (Env property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager.spin">spin() (LiveFigureManager method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">split_ordered_batches() (StepSequence method)</a>
@@ -5035,6 +5211,8 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.step">(ARPL method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.step">(BayesSim method)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.step">(BayRn method)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.step">(CatapultSim method)</a>
@@ -5057,6 +5235,8 @@
 </li>
         <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv.step">(MockEnv method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.step">(NPDR method)</a>
+</li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.step">(ParameterExploring method)</a>
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.step">(QuanserReal method)</a>
@@ -5065,9 +5245,13 @@
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.rosenbrock.RosenSim.step">(RosenSim method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.step">(SBIBase method)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.step">(SimOpt method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.step">(SimPyEnv method)</a>
+</li>
+        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.step">(SNPEA method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.step">(SPOTA method)</a>
 </li>
@@ -5160,9 +5344,21 @@
       </ul></li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.subroutine_cand">subroutine_cand() (SPOTA property)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.subroutine_distr">subroutine_distr() (SimOpt property)</a>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.subroutine_distr">subroutine_distr() (BayesSim property)</a>
+
+      <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.subroutine_distr">(SimOpt property)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.subroutine_policy">subroutine_policy() (SimOpt property)</a>
+      </ul></li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.subroutine_policy">subroutine_policy() (BayesSim property)</a>
+
+      <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.subroutine_policy">(SBIBase property)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.subroutine_policy">(SimOpt property)</a>
+</li>
+      </ul></li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.subroutine_sbi">subroutine_sbi() (SBIBase property)</a>
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.subrtn">subrtn() (SysIdViaEpisodicRL property)</a>
 </li>
@@ -5174,6 +5370,20 @@
         <li><a href="spaces.html#pyrado.spaces.empty.EmptySpace.subspace">(EmptySpace method)</a>
 </li>
         <li><a href="spaces.html#pyrado.spaces.base.Space.subspace">(Space method)</a>
+</li>
+      </ul></li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.summary_statistic">summary_statistic() (AllStepsEmbedding method)</a>
+
+      <ul>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.summary_statistic">(BayesSimEmbedding method)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.summary_statistic">(DynamicTimeWarpingEmbedding method)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.summary_statistic">(Embedding method)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding.summary_statistic">(LastStepEmbedding method)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.summary_statistic">(RNNEmbedding method)</a>
 </li>
       </ul></li>
       <li><a href="environments.html#pyrado.environments.sim_base.SimEnv.supported_domain_param">supported_domain_param() (SimEnv property)</a>
@@ -5398,6 +5608,8 @@
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_mask_invert">test_mask_invert() (in module tests.environment_wrappers.test_observation_partial)</a>
 </li>
+      <li><a href="tests.html#tests.test_policies.test_mdn_policy">test_mdn_policy() (in module tests.test_policies)</a>
+</li>
       <li><a href="tests.html#tests.test_utils.test_merge_lod_var_dtype">test_merge_lod_var_dtype() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_minmaxscaler">test_minmaxscaler() (in module tests.test_utils)</a>
@@ -5423,8 +5635,6 @@
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_npdr">test_npdr() (in module tests.algorithms.test_meta)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">test_order_act_noise_act_norm() (in module tests.environment_wrappers.test_action_noise)</a>
-</li>
-      <li><a href="tests.html#tests.test_plotting.test_pair_plot">test_pair_plot() (in module tests.test_plotting)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_parallel_rollout_sampler">test_parallel_rollout_sampler() (in module tests.test_sampling)</a>
 </li>
@@ -5474,10 +5684,6 @@
 </li>
       <li><a href="tests.html#tests.test_policies.test_recurrent_policy_one_step">test_recurrent_policy_one_step() (in module tests.test_policies)</a>
 </li>
-      <li><a href="tests.html#tests.test_plotting.test_render_categorical">test_render_categorical() (in module tests.test_plotting)</a>
-</li>
-      <li><a href="tests.html#tests.test_plotting.test_render_curve">test_render_curve() (in module tests.test_plotting)</a>
-</li>
       <li><a href="tests.html#tests.test_sampling.test_reparametrization_trick">test_reparametrization_trick() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_repeat_interleave">test_repeat_interleave() (in module tests.test_utils)</a>
@@ -5512,8 +5718,6 @@
 </li>
       <li><a href="tests.html#tests.test_environments.test_rollout">test_rollout() (in module tests.test_environments)</a>
 </li>
-      <li><a href="tests.html#tests.test_plotting.test_rollout_based">test_rollout_based() (in module tests.test_plotting)</a>
-</li>
       <li><a href="tests.html#tests.test_sampling.test_rollout_wo_exploration">test_rollout_wo_exploration() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_rollout_wo_policy">test_rollout_wo_policy() (in module tests.test_sampling)</a>
@@ -5530,10 +5734,10 @@
 </li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_discrete_space">test_sample_contains_discrete_space() (in module tests.test_spaces)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">test_sample_from_unit_sphere_surface() (in module tests.test_sampling)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect">test_sampler_collect() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect_minrun">test_sampler_collect_minrun() (in module tests.test_sampling)</a>
@@ -5599,8 +5803,6 @@
       <li><a href="tests.html#tests.test_spaces.test_string_representation">test_string_representation() (in module tests.test_spaces)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_subspace_box_space">test_subspace_box_space() (in module tests.test_spaces)</a>
-</li>
-      <li><a href="tests.html#tests.test_plotting.test_surface">test_surface() (in module tests.test_plotting)</a>
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_svpg">test_svpg() (in module tests.algorithms.test_algorithms)</a>
 </li>
@@ -5784,13 +5986,6 @@
 </li>
       </ul></li>
       <li>
-    tests.test_plotting
-
-      <ul>
-        <li><a href="tests.html#module-tests.test_plotting">module</a>
-</li>
-      </ul></li>
-      <li>
     tests.test_policies
 
       <ul>
@@ -5894,12 +6089,18 @@
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_init_policies">train_init_policies() (BayRn method)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim">train_policy_sim() (BayRn method)</a>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.train_policy_sim">train_policy_sim() (BayesSim method)</a>
 
       <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim">(BayRn method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.train_policy_sim">(SBIBase method)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim">(SimOpt method)</a>
 </li>
       </ul></li>
+      <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.train_posterior">train_posterior() (SNPEA method)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.training">training (DiagNormalNoise attribute)</a>
 
       <ul>
@@ -5979,6 +6180,8 @@
       <li><a href="exploration.html#pyrado.exploration.uniform_noise.UniformNoise">UniformNoise (class in pyrado.exploration.uniform_noise)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.math.UnitCubeProjector">UnitCubeProjector (class in pyrado.utils.math)</a>
+</li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.unpack">unpack() (Embedding static method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_processing.Standardizer.unstandardize">unstandardize() (Standardizer method)</a>
 </li>

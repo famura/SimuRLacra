@@ -41,10 +41,10 @@ environment\_specific
    :show-inheritance:
 
 
-moe
+mdn
 ---
 
-.. automodule:: pyrado.policies.special.moe
+.. automodule:: pyrado.policies.special.mdn
    :members:
    :undoc-members:
    :show-inheritance:

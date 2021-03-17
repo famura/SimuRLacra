@@ -223,7 +223,6 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
@@ -234,7 +233,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.sysid_via_episodic_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span><span class="p">,</span> <span class="n">SysIdViaEpisodicRL</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.inference.npdr</span> <span class="kn">import</span> <span class="n">NPDR</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.npdr</span> <span class="kn">import</span> <span class="n">NPDR</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.arpl</span> <span class="kn">import</span> <span class="n">ARPL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.bayrn</span> <span class="kn">import</span> <span class="n">BayRn</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.epopt</span> <span class="kn">import</span> <span class="n">EPOpt</span>
@@ -246,7 +245,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">create_default_randomizer</span><span class="p">,</span>
     <span class="n">create_zero_var_randomizer</span><span class="p">,</span>
-    <span class="n">create_default_domain_param_map_qq</span><span class="p">,</span>
     <span class="n">create_default_domain_param_map_qq</span><span class="p">,</span>
     <span class="n">create_default_randomizer_qbb</span><span class="p">,</span>
 <span class="p">)</span>
@@ -716,7 +714,7 @@
         <span class="n">high</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.2</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()]),</span>
     <span class="p">)</span>
     <span class="n">prior</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">(</span><span class="o">**</span><span class="n">prior_hparam</span><span class="p">)</span>
-    <span class="n">posterior_nn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;maf&quot;</span><span class="p">,</span> <span class="n">embedding_net</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">(),</span> <span class="n">hidden_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">num_transforms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">posterior_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;maf&quot;</span><span class="p">,</span> <span class="n">embedding_net</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">(),</span> <span class="n">hidden_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">num_transforms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
     <span class="c1"># Algorithm</span>
     <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
@@ -730,7 +728,7 @@
         <span class="n">num_eval_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
         <span class="n">num_segments</span><span class="o">=</span><span class="n">num_segments</span><span class="p">,</span>
         <span class="n">len_segments</span><span class="o">=</span><span class="n">len_segments</span><span class="p">,</span>
-        <span class="n">sbi_training_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">subrtn_sbi_training_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
             <span class="n">num_atoms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># default: 10</span>
             <span class="n">training_batch_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># default: 50</span>
             <span class="n">learning_rate</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>  <span class="c1"># default: 5e-4</span>
@@ -742,7 +740,7 @@
             <span class="n">show_train_summary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># default: False</span>
             <span class="n">max_num_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>  <span class="c1"># default: None</span>
         <span class="p">),</span>
-        <span class="n">sbi_sampling_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">sample_with_mcmc</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">subrtn_sbi_sampling_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">sample_with_mcmc</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">NPDR</span><span class="p">(</span>
@@ -752,7 +750,7 @@
         <span class="n">policy</span><span class="p">,</span>
         <span class="n">dp_mapping</span><span class="p">,</span>
         <span class="n">prior</span><span class="p">,</span>
-        <span class="n">posterior_nn_hparam</span><span class="p">,</span>
+        <span class="n">posterior_hparam</span><span class="p">,</span>
         <span class="n">SNPE</span><span class="p">,</span>
         <span class="o">**</span><span class="n">algo_hparam</span><span class="p">,</span>
     <span class="p">)</span>

@@ -258,7 +258,7 @@
         <span class="sd">&quot;&quot;&quot; Constructor &quot;&quot;&quot;</span>
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
 
-        <span class="c1"># Initialize basic variables</span>
+        <span class="c1"># Call SimEnv&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># Initialize the domain parameters and the derived constants</span>
@@ -267,7 +267,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">SingularStateSpace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
-        <span class="c1"># Define the task including the reward function</span>
+        <span class="c1"># Define a dummy task including the reward function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_task</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_to_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -402,7 +402,7 @@
     <span class="k">def</span> <span class="nf">log_prob</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Very ugly, but can be used to calculate the probability of a rollout in the case that we are interested on</span>
-<span class="sd">        the exact posterior probabilty</span>
+<span class="sd">        the exact posterior probability</span>
 
 <span class="sd">        Calculates the log-probability for a pair of states and domain parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

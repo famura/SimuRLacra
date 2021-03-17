@@ -115,6 +115,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.rollout">rollout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sampler">sampler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sampler_pool">sampler_pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sbi_embeddings">sbi_embeddings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sbi_rollout_sampler">sbi_rollout_sampler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sequences">sequences</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.step_sequence">step_sequence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.utils">utils</a></li>
@@ -881,6 +883,377 @@ There is no deterministic assignment of workers to arglist elements. Optionally 
 <dd><p>Terminate all workers.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.sbi_embeddings">
+<span id="sbi-embeddings"></span><h2>sbi_embeddings<a class="headerlink" href="#module-pyrado.sampling.sbi_embeddings" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_embeddings.AllStepsEmbedding">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">AllStepsEmbedding</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#AllStepsEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.AllStepsEmbedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
+<p>Embedding for simulation-based inference with time series data which selects the states of all time steps of
+the rollouts</p>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.AllStepsEmbedding.dim_output">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim_output</span></code><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.AllStepsEmbedding.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'asemb'</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.AllStepsEmbedding.requires_target_domain_data">
+<code class="sig-name descname"><span class="pre">requires_target_domain_data</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.requires_target_domain_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.AllStepsEmbedding.summary_statistic">
+<code class="sig-name descname"><span class="pre">summary_statistic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#AllStepsEmbedding.summary_statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.summary_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last states of the rollout as a vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – states and actions of a rollout or segment to be transformed for inference</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>all states as a flattened vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_embeddings.BayesSimEmbedding">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">BayesSimEmbedding</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#BayesSimEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.BayesSimEmbedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
+<p>Embedding for simulation-based inference with time series data which computes the same features of the rollouts
+states and actions as done in [1]</p>
+<dl class="simple">
+<dt>[1] F. Ramos, R.C. Possas, D. Fox, “BayesSim: adaptive domain randomization via probabilistic inference for</dt><dd><p>robotics simulators”, RSS, 2019</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.BayesSimEmbedding.dim_output">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim_output</span></code><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.BayesSimEmbedding.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bsemb'</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.BayesSimEmbedding.requires_target_domain_data">
+<code class="sig-name descname"><span class="pre">requires_target_domain_data</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.requires_target_domain_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.BayesSimEmbedding.summary_statistic">
+<code class="sig-name descname"><span class="pre">summary_statistic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#BayesSimEmbedding.summary_statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.summary_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computing summary statistics based on approach in [1], see eq. (22).
+This method guarantees output which has the same size for every trajectory.</p>
+<dl class="simple">
+<dt>[1] F. Ramos, R.C. Possas, D. Fox, “BayesSim: adaptive domain randomization via probabilistic inference for</dt><dd><p>robotics simulators”, RSS, 2019</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – states and actions of a rollout or segment to be transformed for inference</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>summary statistics of the rollout</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">DynamicTimeWarpingEmbedding</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_pattern</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#DynamicTimeWarpingEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
+<p>Embedding for simulation-based inference with time series data which uses the dtw-python package to compute the
+Dynamic Time Warping (DTW) distance between the states as features of the data</p>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.dim_output">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim_output</span></code><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'dtwemb'</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.requires_target_domain_data">
+<code class="sig-name descname"><span class="pre">requires_target_domain_data</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.requires_target_domain_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.summary_statistic">
+<code class="sig-name descname"><span class="pre">summary_statistic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#DynamicTimeWarpingEmbedding.summary_statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.summary_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the dynamic time warping distance between the simulated rollouts” and the real rollouts’ states.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is necessary to take the mean over all distances since the same function is used to compute the
+observations (for sbi) form the target domain rollouts. At this point in time there might be only one target
+domain rollout, thus the target domain rollouts are only compared with themselves, thus yield a scalar
+distance value.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – data tensor containing the simulated states (1st part of the 1st half of the 1st dim) and the
+real states (1st part of the 2nd half of the 1st dim)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dynamic time warping distance in multi-dim state space</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Embedding</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#Embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Base class for all embeddings used for simulation-based inference with time series data</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The features of each rollout are concatenated, and since the inference procedure requires a consistent size of
+the inputs, it is necessary that all rollouts yield the same number of features, i.e. have equal length!</p>
+</div>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.device">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">device</span></code><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the device (CPU or GPU) on which the embedding is stored.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.dim_output">
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim_output</span></code><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.dim_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.forward">
+<code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#Embedding.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms rollouts into the observations used for likelihood-free inference.
+Currently a state-representation as well as state-action summary-statistics are available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – packed data to be fed into the embedding</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>features of the data extracted from the embedding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.forward_one_batch">
+<code class="sig-name descname"><span class="pre">forward_one_batch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_batch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#Embedding.forward_one_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.forward_one_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over all data batches and compute the features for each rollout separately, then average the features
+over the rollouts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_batch</strong> – data batch of shape [num_rollouts, len_time_series, dim_data]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>concatenation of the features for each rollout</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.pack">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">pack</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#Embedding.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reshape the data such that the shape is [batch_dim, num_rollouts, data_points_flattened].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – un-packed a.k.a. un-flattened data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>packed a.k.a. flattened data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.requires_target_domain_data">
+<code class="sig-name descname"><span class="pre">requires_target_domain_data</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.requires_target_domain_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.summary_statistic">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">summary_statistic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#Embedding.summary_statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.summary_statistic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.Embedding.unpack">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">unpack</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_data_orig</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#Embedding.unpack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.Embedding.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reshape the data such that the shape is [batch_dim, num_rollouts, data_series, data_sample].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – packed a.k.a. flattened data</p></li>
+<li><p><strong>dim_data_orig</strong> – dimension of the original data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>un-pack a.k.a. un-flattened data</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_embeddings.LastStepEmbedding">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">LastStepEmbedding</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#LastStepEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.LastStepEmbedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
+<p>Embedding for simulation-based inference with time series data which selects the last state of the rollouts</p>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.LastStepEmbedding.dim_output">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim_output</span></code><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.LastStepEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.LastStepEmbedding.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'lsemb'</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.LastStepEmbedding.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.LastStepEmbedding.requires_target_domain_data">
+<code class="sig-name descname"><span class="pre">requires_target_domain_data</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.LastStepEmbedding.requires_target_domain_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.LastStepEmbedding.summary_statistic">
+<code class="sig-name descname"><span class="pre">summary_statistic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#LastStepEmbedding.summary_statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.LastStepEmbedding.summary_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last state of the rollout as a vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – states and actions of a rollout or segment to be transformed for inference</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>last states as a vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_embeddings.RNNEmbedding">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RNNEmbedding</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">spec:</span> <span class="pre">pyrado.utils.data_types.EnvSpec</span></em>, <em class="sig-param"><span class="pre">dim_data:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">len_rollouts:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">hidden_size:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">num_recurrent_layers:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">output_size:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">recurrent_network_type:</span> <span class="pre">Optional[type]</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.rnn.RNN'&gt;</span></em>, <em class="sig-param"><span class="pre">dropout:</span> <span class="pre">Optional[float]</span> <span class="pre">=</span> <span class="pre">0.0</span></em>, <em class="sig-param"><span class="pre">init_param_kwargs:</span> <span class="pre">Optional[dict]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">downsampling_factor:</span> <span class="pre">Optional[int]</span> <span class="pre">=</span> <span class="pre">1</span></em>, <em class="sig-param"><span class="pre">use_cuda:</span> <span class="pre">Optional[bool]</span> <span class="pre">=</span> <span class="pre">False</span></em>, <em class="sig-param"><span class="pre">**recurrent_net_kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#RNNEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.RNNEmbedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></code></a></p>
+<p>Embedding for simulation-based inference with time series data which uses an Recurrent Neural Network (RNN) to
+compute features of the rollouts</p>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.RNNEmbedding.dim_output">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim_output</span></code><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.RNNEmbedding.dim_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.RNNEmbedding.init_param">
+<code class="sig-name descname"><span class="pre">init_param</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#RNNEmbedding.init_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.RNNEmbedding.init_param" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.RNNEmbedding.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'rnnemb'</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.RNNEmbedding.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.sbi_embeddings.RNNEmbedding.requires_target_domain_data">
+<code class="sig-name descname"><span class="pre">requires_target_domain_data</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.RNNEmbedding.requires_target_domain_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_embeddings.RNNEmbedding.summary_statistic">
+<code class="sig-name descname"><span class="pre">summary_statistic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_embeddings.html#RNNEmbedding.summary_statistic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_embeddings.RNNEmbedding.summary_statistic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass the time series data through a recurrent neural network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – states and actions of a rollout or segment to be transformed for inference</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>features obtained from the RNN at every time step, fattened into a vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.sbi_rollout_sampler">
+<span id="sbi-rollout-sampler"></span><h2>sbi_rollout_sampler<a class="headerlink" href="#module-pyrado.sampling.sbi_rollout_sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RealRolloutSamplerForSBI</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#RealRolloutSamplerForSBI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI" title="pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Wrapper to make SimuRLacra’s real environments similar to the sbi simulator</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RecRolloutSamplerForSBI</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rand_init_rollout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#RecRolloutSamplerForSBI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI" title="pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Wrapper to yield pre-recorded rollouts similar to the sbi simulator</p>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.num_rollouts">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">num_rollouts</span></code><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.num_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of stored rollouts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.ring_idx">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">ring_idx</span></code><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RecRolloutSamplerForSBI.ring_idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the buffer’s index.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RolloutSamplerForSBI</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#RolloutSamplerForSBI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Wrapper to do enable the sbi simulator instance to make rollouts from SimuRLacra environments as if the environment
+was a callable that only needs the simulator parameters as inputs</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The features of each rollout are concatenated, and since the inference procedure requires a consistent size of
+the inputs, it is necessary that all rollouts yield the same number of features, i.e. have equal length!</p>
+</div>
+<dl class="py method">
+<dt id="pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI.get_dim_data">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_dim_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#RolloutSamplerForSBI.get_dim_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI.get_dim_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the dimension of the data which is extracted from the rollouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>spec</strong> – environment specification</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dimension of one data sample, i.e. one time step</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sbi_rollout_sampler.SimRolloutSamplerForSBI">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">SimRolloutSamplerForSBI</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_mapping</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sbi_embeddings.Embedding" title="pyrado.sampling.sbi_embeddings.Embedding"><span class="pre">pyrado.sampling.sbi_embeddings.Embedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rollouts_real</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sbi_rollout_sampler.html#SimRolloutSamplerForSBI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.sbi_rollout_sampler.SimRolloutSamplerForSBI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI" title="pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sbi_rollout_sampler.RolloutSamplerForSBI</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Wrapper to make SimuRLacra’s simulation environments usable as simulators for the sbi package</p>
 </dd></dl>
 
 </div>

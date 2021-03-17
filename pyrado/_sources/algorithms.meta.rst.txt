@@ -23,6 +23,15 @@ arpl
    :show-inheritance:
 
 
+bayessim
+--------
+
+.. automodule:: pyrado.algorithms.meta.bayessim
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 bayrn
 -----
 
@@ -36,6 +45,24 @@ epopt
 -----
 
 .. automodule:: pyrado.algorithms.meta.epopt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+npdr
+----
+
+.. automodule:: pyrado.algorithms.meta.npdr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+sbi\_base
+---------
+
+.. automodule:: pyrado.algorithms.meta.sbi_base
    :members:
    :undoc-members:
    :show-inheritance:
