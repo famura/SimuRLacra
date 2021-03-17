@@ -91,14 +91,12 @@ def eval_domain_params(
     """
     # Strip all domain randomization wrappers from the environment
     env = remove_all_dr_wrappers(env, verbose=True)
-    if init_state is not None:
-        env.init_space = SingularStateSpace(fixed_state=init_state)
 
     pool.invoke_all(_ps_init, pickle.dumps(env), pickle.dumps(policy))
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True), params, pb)
+        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True, init_state=init_state), params, pb)
 
 
 def eval_nominal_domain(

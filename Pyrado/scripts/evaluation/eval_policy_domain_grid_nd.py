@@ -109,7 +109,7 @@ def evaluate_policy(args, ex_dir):
     param_list *= args.num_rollouts_per_config
 
     # Fix initial state (set to None if it should not be fixed)
-    init_state = None
+    init_state = np.array([0.0, 0.0, 0.0, 0.0])
 
     # Create sampler
     pool = SamplerPool(args.num_workers)

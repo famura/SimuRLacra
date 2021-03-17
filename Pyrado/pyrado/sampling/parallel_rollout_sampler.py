@@ -83,12 +83,12 @@ def _ps_run_one_init_state(G, init_state: np.ndarray, eval: bool):
     return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=init_state))
 
 
-def _ps_run_one_domain_param(G, domain_param: dict, eval: bool):
+def _ps_run_one_domain_param(G, domain_param: dict, eval: bool, init_state: Optional[np.ndarray] = None):
     """
     Sample one rollout with given domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(domain_param=domain_param))
+    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(domain_param=domain_param, init_state=init_state))
 
 
 def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
