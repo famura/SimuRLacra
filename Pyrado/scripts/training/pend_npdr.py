@@ -32,19 +32,15 @@ Domain parameter identification experiment on the Pendulum environment using Neu
 import numpy as np
 import torch as to
 from copy import deepcopy
-from sbi.inference import SNPE
+from sbi.inference import SNPE_C
 from sbi import utils
 
 import pyrado
-from pyrado.algorithms.inference.embeddings import (
-    LastStepEmbedding,
-    BayesSimEmbedding,
-    DynamicTimeWarpingEmbedding,
-    RNNEmbedding,
+from pyrado.sampling.sbi_embeddings import (
     AllStepsEmbedding,
 )
-from pyrado.algorithms.inference.lfi import NPDR
-from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.time import PlaybackPolicy
@@ -100,13 +96,13 @@ if __name__ == "__main__":
     # )
 
     # Posterior (normalizing flow)
-    posterior_nn_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
+    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
 
-    # Policy
-    policy_hparam = dict(amp_max=dp_nom["tau_max"], f_sin=0.5)
+    # Behavioral policy
+    policy_hparam = dict(tau_max=dp_nom["tau_max"], f_sin=0.5)
 
     def fcn_of_time(t: float):
-        act = policy_hparam["amp_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"]) + np.random.randn(1) / 50
+        act = policy_hparam["tau_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"]) + np.random.randn(1) / 50
         return act.repeat(env_sim.act_space.flat_dim)
 
     num_real_rollouts = 1
@@ -127,7 +123,8 @@ if __name__ == "__main__":
         num_eval_samples=100,
         # num_segments=1,
         len_segments=100,
-        sbi_training_hparam=dict(
+        posterior_hparam=posterior_hparam,
+        subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4
@@ -139,7 +136,7 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        sbi_sampling_hparam=dict(sample_with_mcmc=False),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
         num_workers=4,
     )
     algo = NPDR(
@@ -149,8 +146,7 @@ if __name__ == "__main__":
         policy,
         dp_mapping,
         prior,
-        posterior_nn_hparam,
-        SNPE,
+        SNPE_C,
         embedding,
         **algo_hparam,
     )
@@ -159,7 +155,7 @@ if __name__ == "__main__":
     save_dicts_to_yaml(
         dict(env=env_hparams, seed=args.seed),
         dict(prior=prior_hparam),
-        dict(posterior_nn=posterior_nn_hparam),
+        dict(posterior_nn=posterior_hparam),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

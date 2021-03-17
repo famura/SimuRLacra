@@ -36,7 +36,7 @@ from sbi.inference import simulate_for_sbi, SNPE
 from sbi.user_input.user_input_checks import prepare_for_sbi
 from sbi.utils import posterior_nn, BoxUniform
 
-from pyrado.algorithms.inference.embeddings import Embedding
+from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts

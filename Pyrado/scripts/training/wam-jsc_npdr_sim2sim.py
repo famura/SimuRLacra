@@ -30,21 +30,16 @@
 Domain parameter identification experiment on the joint space controlled WAM environment using Neural Posterior
 Domain Randomization
 """
-import numpy as np
 import torch as to
 from sbi.inference import SNPE_C
 from sbi import utils
 
 import pyrado
-from pyrado.algorithms.inference.embeddings import (
-    LastStepEmbedding,
+from pyrado.sampling.sbi_embeddings import (
     BayesSimEmbedding,
-    DynamicTimeWarpingEmbedding,
-    RNNEmbedding,
-    AllStepsEmbedding,
 )
-from pyrado.algorithms.inference.lfi import NPDR
-from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.domain_randomization.default_randomizers import create_damping_dryfriction_domain_param_map_wamjsc
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
@@ -64,7 +59,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_sim_hparams = dict(num_dof=7, dt=1 / 250.0, max_steps=5 * 250)  # TODO shorter for now
+    env_sim_hparams = dict(num_dof=7, dt=1 / 250.0, max_steps=10 * 250)
     env_sim = WAMJointSpaceCtrlSim(**env_sim_hparams)
 
     # Create a fake ground truth target domain
@@ -109,7 +104,7 @@ if __name__ == "__main__":
     # }
     dp_mapping = create_damping_dryfriction_domain_param_map_wamjsc()
 
-    # Policy
+    # Behavioral policy
     policy_hparam = dict()
     policy = TimePolicy(env_real.spec, wam_jsp_7dof_sin, env_real.dt)
 
@@ -128,7 +123,7 @@ if __name__ == "__main__":
     # embedding = AllStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
-    embedding_hparam = dict(downsampling_factor=10)
+    embedding_hparam = dict(downsampling_factor=1)
     embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=2)
     # embedding = DynamicTimeWarpingEmbedding(
@@ -140,23 +135,24 @@ if __name__ == "__main__":
     # )
 
     # Posterior (normalizing flow)
-    posterior_nn_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
+    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=1,
-        num_sim_per_round=5000,
-        num_sbi_rounds=3,
-        simulation_batch_size=100,
+        num_sim_per_round=2000,
+        num_sbi_rounds=4,
+        simulation_batch_size=50,
         normalize_posterior=False,
         num_eval_samples=10,
         # num_segments=5,
         len_segments=50,
-        sbi_training_hparam=dict(
+        posterior_hparam=posterior_hparam,
+        subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=100,  # default: 50
-            learning_rate=3e-4,  # default: 5e-4
+            learning_rate=5e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
             discard_prior_samples=False,  # default: False
@@ -165,7 +161,7 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        sbi_sampling_hparam=dict(sample_with_mcmc=True),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
         num_workers=12,
     )
     algo = NPDR(
@@ -175,7 +171,6 @@ if __name__ == "__main__":
         policy,
         dp_mapping,
         prior,
-        posterior_nn_hparam,
         SNPE_C,
         embedding,
         **algo_hparam,
@@ -185,7 +180,7 @@ if __name__ == "__main__":
     save_dicts_to_yaml(
         dict(env=env_sim_hparams, seed=args.seed),
         dict(prior=prior_hparam),
-        dict(posterior_nn=posterior_nn_hparam),
+        dict(posterior_nn=posterior_hparam),
         dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

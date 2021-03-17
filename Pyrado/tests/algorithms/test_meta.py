@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import pytest
 import torch.nn as nn
 from copy import deepcopy
@@ -37,7 +36,7 @@ from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
-from pyrado.algorithms.inference.npdr import NPDR
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
@@ -49,7 +48,6 @@ from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import (
     create_default_randomizer,
     create_zero_var_randomizer,
-    create_default_domain_param_map_qq,
     create_default_domain_param_map_qq,
     create_default_randomizer_qbb,
 )
@@ -519,7 +517,7 @@ def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_seg
         high=to.tensor([1.2 * dp_nom[v] for v in dp_mapping.values()]),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=3)
+    posterior_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=3)
 
     # Algorithm
     algo_hparam = dict(
@@ -533,7 +531,7 @@ def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_seg
         num_eval_samples=10,
         num_segments=num_segments,
         len_segments=len_segments,
-        sbi_training_hparam=dict(
+        subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4
@@ -545,7 +543,7 @@ def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_seg
             show_train_summary=False,  # default: False
             max_num_epochs=20,  # default: None
         ),
-        sbi_sampling_hparam=dict(sample_with_mcmc=False),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
         num_workers=1,
     )
     algo = NPDR(
@@ -555,7 +553,7 @@ def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_seg
         policy,
         dp_mapping,
         prior,
-        posterior_nn_hparam,
+        posterior_hparam,
         SNPE,
         **algo_hparam,
     )

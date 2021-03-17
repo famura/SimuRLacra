@@ -37,7 +37,7 @@ from matplotlib import pyplot as plt
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.bayessim import BayesSim
-from pyrado.algorithms.inference.lfi import NPDR
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
@@ -68,8 +68,8 @@ if __name__ == "__main__":
 
     # Load the algorithm
     algo = Algorithm.load_snapshot(ex_dir)
-    if not (isinstance(algo, NPDR) or isinstance(algo, BayesSim)):
-        raise pyrado.TypeErr(given=algo, expected_type=NPDR)
+    if not isinstance(algo, (NPDR, BayesSim)):
+        raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
 
     # Load the environments, the policy, and the posterior
     env_sim, policy, kwout = load_experiment(ex_dir, args)
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     # Select the domain parameters to plot
     if len(algo.dp_mapping) == 1:
-        idcs_dp = 0
+        idcs_dp = (0,)
     elif len(algo.dp_mapping) == 2:
         idcs_dp = (0, 1)
     elif args.idcs is not None:
@@ -152,7 +152,7 @@ if __name__ == "__main__":
                 data_real,
                 args.num_samples,
                 normalize_posterior=False,  # not necessary here
-                sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
+                subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
             )
             domain_params_posterior = domain_params.reshape(1, -1, domain_params.shape[-1]).squeeze()
             # Reconstruct ground truth domain parameters if they exist
@@ -168,14 +168,14 @@ if __name__ == "__main__":
             condition = None
         else:
             # Get the most likely domain parameters per iteration
-            condition = NPDR.get_ml_posterior_samples(
+            condition, _ = NPDR.get_ml_posterior_samples(
                 algo.dp_mapping,
                 posterior[-1] if "evolution" in args.mode.lower() else posterior,
                 data_real,
                 args.num_samples,
                 num_ml_samples=1,
                 normalize_posterior=False,
-                sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
+                subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
                 return_as_tensor=True,
             )
 

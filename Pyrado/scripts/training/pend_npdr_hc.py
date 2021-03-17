@@ -30,14 +30,13 @@
 Train an agent to solve the Pendulum environment using Neural Posterior Domain Randomization
 """
 import torch as to
-import torch.nn as nn
 from copy import deepcopy
 from sbi.inference import SNPE
 from sbi import utils
 
 import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
-from pyrado.algorithms.inference.lfi import NPDR
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, const_feat, identity_feat, squared_feat, MultFeat, sign_feat
@@ -75,7 +74,7 @@ if __name__ == "__main__":
         high=to.tensor([dp_nom["m_pole"] * 1.8, dp_nom["l_pole"] * 1.8]),
     )
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=5)
+    posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=5)
 
     # Policy
     policy_hparam = dict(
@@ -106,7 +105,8 @@ if __name__ == "__main__":
         num_eval_samples=100,
         num_segments=1,
         # len_segments=40,
-        sbi_training_hparam=dict(
+        posterior_hparam=posterior_hparam,
+        subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
             learning_rate=3e-4,  # default: 5e-4
@@ -126,7 +126,6 @@ if __name__ == "__main__":
         policy,
         dp_mapping,
         prior,
-        posterior_nn_hparam,
         SNPE,
         subrtn_policy=subrtn_policy,
         **algo_hparam,
@@ -136,7 +135,7 @@ if __name__ == "__main__":
     save_dicts_to_yaml(
         dict(env=env_hparams, seed=args.seed),
         dict(prior=prior_hparam),
-        dict(posterior_nn=posterior_nn_hparam),
+        dict(posterior_nn=posterior_hparam),
         dict(policy=policy_hparam),
         dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name),

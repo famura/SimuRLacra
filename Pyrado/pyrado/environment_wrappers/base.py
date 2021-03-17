@@ -81,8 +81,17 @@ class EnvWrapper(Env, Serializable):
 
     @property
     def init_space(self) -> Space:
+        """ Get the initial state space if it exists. Forwards to the wrapped environment. """
         if isinstance(self._wrapped_env, (SimEnv, EnvWrapper)):
             return self._wrapped_env.init_space
+        else:
+            raise NotImplementedError
+
+    @init_space.setter
+    def init_space(self, space: Space):
+        """ Set the initial state space if it exists. Forwards to the wrapped environment. """
+        if isinstance(self._wrapped_env, (SimEnv, EnvWrapper)):
+            self._wrapped_env.init_space = space
         else:
             raise NotImplementedError
 

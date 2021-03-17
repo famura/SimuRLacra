@@ -31,7 +31,7 @@ Simulate (with animation) a rollout in a live perturbed environment.
 """
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.inference.npdr import NPDR
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.utils import print_domain_params
@@ -76,7 +76,7 @@ if __name__ == "__main__":
             num_samples=args.num_samples,
             calculate_log_probs=False,
             normalize_posterior=False,
-            sbi_sampling_hparam=None,
+            subrtn_sbi_sampling_hparam=None,
         )
         env = DomainRandWrapperBuffer(env, randomizer=None, selection="random")
         NPDR.fill_domain_param_buffer(env, algo.dp_mapping, domain_params.squeeze(0))

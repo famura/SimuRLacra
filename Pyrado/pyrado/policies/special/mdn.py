@@ -40,10 +40,16 @@ from pyrado.policies.initialization import init_param
 from pyrado.utils.data_types import EnvSpec
 
 
-class MoEPolicy(Policy):
-    """ Conditional Mixture of Experts (MoE) network using multivariate Gaussian distributions """
+class MDNPolicy(Policy):
+    """
+    Conditional Mixture of Densities Network (MDN) using multivariate Gaussian distributions as presented in [1]
 
-    name: str = "moe"
+    .. seealso::
+        [1] G. Papamakarios, I. Murray. "Fast epsilon-free inference of simulation models with Bayesian conditional
+            density estimation.", NIPS, 2016
+    """
+
+    name: str = "mdn"
 
     def __init__(
         self,
@@ -83,13 +89,14 @@ class MoEPolicy(Policy):
 
         # Create the different heads
         self.num_comp = num_comp
-        self.dim_in = spec.obs_space.flat_dim
-        self.dim_out = spec.act_space.flat_dim
-        self.coeff_layer = nn.Linear(self.dim_out, self.num_comp)
-        self.L_layer = nn.Linear(self.dim_out, int(0.5 * self.num_comp * self.dim_out * (self.dim_out - 1)))
-        self.L_diag_layer = nn.Linear(self.dim_out, self.num_comp * self.dim_out)
-        self.mean_layer = nn.Linear(self.dim_out, self.num_comp * self.dim_out)
+        self._dim_in = spec.obs_space.flat_dim
+        self._dim_out = spec.act_space.flat_dim
+        self.coeff_layer = nn.Linear(self._dim_out, self.num_comp)
+        self.mean_layer = nn.Linear(self._dim_out, self.num_comp * self._dim_out)
+        # A lower triangular (including diagonal) has n * (n+1) / 2 entries
+        self.tril_layer = nn.Linear(self._dim_out, self.num_comp * int(self._dim_out * (self._dim_out + 1) / 2))
 
+        # Initialize with no condition
         self._x = None
 
         # Call custom initialization function after PyTorch network parameter initialization
@@ -102,28 +109,28 @@ class MoEPolicy(Policy):
             self.shared.init_param(init_values, **kwargs)
 
             init_param(self.coeff_layer, **kwargs)
-            init_param(self.L_layer, **kwargs)
-            init_param(self.L_diag_layer, **kwargs)
+            init_param(self.tril_layer, **kwargs)
             init_param(self.mean_layer, **kwargs)
 
         else:
             self.param_values = init_values
 
-    def forward(self, x: to.Tensor) -> Tuple[to.Tensor, to.Tensor, to.Tensor, to.Tensor]:
+    def forward(self, x: to.Tensor) -> Tuple[to.Tensor, to.Tensor, to.Tensor]:
         x = x.to(device=self.device, dtype=to.get_default_dtype())
 
         # Get latent from the FNN
         z = self.shared(x)
 
+        # Compute the components' mixture coefficients
         coeffs = nn.functional.softmax(self.coeff_layer(z), -1)
 
-        # first dim is the batch size, 2nd dim is the number of elements in L_diag and L respectively,
-        # 3rd dim represents the elements for every gaussian
-        L_diagonal = to.exp(self.L_diag_layer(z)).reshape(-1, self.dim_out, self.num_comp)
-        L = self.L_layer(z).reshape(-1, int(0.5 * self.dim_out * (self.dim_out - 1)), self.num_comp)
+        # Compute the components' means
+        means = self.mean_layer(z).reshape(-1, self._dim_out, self.num_comp)
 
-        means = self.mean_layer(z).reshape(-1, self.dim_out, self.num_comp)
-        return coeffs, means, L, L_diagonal
+        # Compute the lower triangular matrices' elements of shape [batch_size, num_tril_ele, num_comp]
+        trils = self.tril_layer(z).reshape(-1, int(self._dim_out * (self._dim_out + 1) / 2), self.num_comp)
+
+        return coeffs, means, trils
 
     def log_prob(self, y: to.Tensor, x: Optional[to.Tensor] = None, **kwargs):
         """
@@ -139,8 +146,8 @@ class MoEPolicy(Policy):
         if x is None or not y.shape[0] == x.shape[0]:
             x = self._check_single_x(x)
 
-        pi, mu, l, l_diag = self.forward(x)
-        scale_tril = self._calc_scale_tril(l, l_diag)
+        pi, mu, tril = self.forward(x)
+        scale_tril = self._compose_cov_from_tril(tril)
         log_probs = to.zeros((y.shape[0], self.num_comp))
         log_probs_sum = to.zeros((y.shape[0],))
 
@@ -157,8 +164,8 @@ class MoEPolicy(Policy):
         x = self._check_single_x(x)
 
         self.eval()
-        pi, mu, l, l_diagonal = self.forward(x)
-        scale_tril = self._calc_scale_tril(l, l_diagonal)
+        pi, mu, tril = self.forward(x)
+        scale_tril = self._compose_cov_from_tril(tril)
         mog = [
             MultivariateNormal(loc=m, scale_tril=s) for m, s in zip(mu.permute(2, 0, 1), scale_tril.permute(3, 0, 1, 2))
         ]
@@ -176,20 +183,32 @@ class MoEPolicy(Policy):
 
         return samples
 
-    def _calc_scale_tril(self, l: to.Tensor, l_diag: to.Tensor) -> to.Tensor:
-        """
-        Calculates the cholesky decomposition of the covariance matrix
+    def _compose_cov_from_tril(self, tril: to.Tensor) -> to.Tensor:
+        r"""
+        Constructs covariance matrixes from the the cholesky decomposition of the covariance matrix
+        $\Sigma = G G^T = L D L^T$, where G := L D^{1/2},
+        with L being the normalized and G being the un-normalized lower triangular matrices.
 
-        :param l: lower triangular elements of the Cholesky factorization
-        :param l_diag: diagonal matrix entries of the Cholesky factorization
-        :return: the cholesky decomposition as a 4-dim tensor [batch_size x n x n x number of Gaussians]
+        .. note::
+            `to.einsum("ij,kj->ik", A, B)` equals `to.matmul(A, B.T)`
+
+        :param tril: lower triangular elements (including diagonal) of the Cholesky factorization
+        :return: composed covariance matrix as a 4-dim tensor of shape [batch_size, n, n, num_comp]
         """
-        tril_idx = np.tril_indices(self.dim_out, -1)  # TODO
-        diag_idx = np.diag_indices(self.dim_out)
-        scale_tril = to.zeros(l.shape[0], self.dim_out, self.dim_out, self.num_comp)
-        scale_tril[:, tril_idx[0], tril_idx[1], :] = l
-        scale_tril[:, diag_idx[0], diag_idx[1]] = l_diag
-        return scale_tril
+        # Bring the lower triangular into the shape of the covariance
+        idcs_tril = np.tril_indices(self._dim_out)
+        cov_tril = to.zeros(tril.shape[0], self._dim_out, self._dim_out, self.num_comp)
+        cov_tril[:, idcs_tril[0], idcs_tril[1], :] = tril
+
+        # Compute L L^T for the inner two dimensions
+        cov = to.einsum("aijb,akjb->aikb", cov_tril, cov_tril)
+
+        # Check for the 1st of the remaining dims
+        tmp = cov_tril[0, :, :, 0].clone()
+        assert to.all(to.isclose(cov[0, :, :, 0], to.matmul(tmp, tmp.T)))
+
+        # Return the full covariance matrix
+        return cov
 
     def _check_single_x(self, x: Optional[to.Tensor]):
         r"""
@@ -208,10 +227,10 @@ class MoEPolicy(Policy):
                 )
         elif x.ndim == 1:
             return x.unsqueeze(dim=0)
-        elif x.ndim == 2 and x.shape == (1, self.dim_in):
+        elif x.ndim == 2 and x.shape == (1, self._dim_in):
             return x
         else:
-            raise pyrado.ShapeErr(given=x, msg=f"Expected shape (1, {self.dim_in}), but received {x.shape}")
+            raise pyrado.ShapeErr(given=x, msg=f"Expected shape (1, {self._dim_in}), but received {x.shape}")
 
     def set_default_x(self, x: to.Tensor):
         """

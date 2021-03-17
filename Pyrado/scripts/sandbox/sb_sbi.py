@@ -33,13 +33,14 @@ import functools
 import numpy as np
 import sbi.utils as utils
 import torch as to
+import torch.nn as nn
 from matplotlib import pyplot as plt
 from sbi.inference import simulate_for_sbi, SNPE_C
 from sbi.user_input.user_input_checks import prepare_for_sbi
 from sbi.utils import posterior_nn
 
 import pyrado
-from pyrado.algorithms.inference.embeddings import Embedding, LastStepEmbedding
+from pyrado.sampling.sbi_embeddings import Embedding, LastStepEmbedding
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.distribution import draw_posterior_distr_2d
@@ -50,7 +51,7 @@ from pyrado.sampling.rollout import rollout
 from pyrado.spaces.singular import SingularStateSpace
 
 
-def simple_omo_sim(domain_params: to.Tensor, env: SimEnv, policy: Policy) -> to.Tensor:
+def simple_omo_sim(domain_params: to.Tensor, env: SimEnv, policy: Policy, embedding: Embedding) -> to.Tensor:
     """ The most simple interface of a simulation to sbi, see `SimRolloutSamplerForSBI` """
     domain_params = to.atleast_2d(domain_params)
     data = []
@@ -64,7 +65,7 @@ def simple_omo_sim(domain_params: to.Tensor, env: SimEnv, policy: Policy) -> to.
         )
         data.append(to.from_numpy(ro.observations).to(dtype=to.get_default_dtype()))
     data = to.stack(data, dim=0).unsqueeze(1)  # batched domain param int the 1st dim and one rollout in the 2nd dim
-    return Embedding.pack(data)
+    return embedding(Embedding.pack(data))
 
 
 if __name__ == "__main__":
@@ -82,18 +83,20 @@ if __name__ == "__main__":
     dp_mapping = {0: "k", 1: "d"}
     prior = utils.BoxUniform(low=to.tensor([20.0, 0.0]), high=to.tensor([40.0, 0.3]))
 
+    # Create time series embedding
+    embedding = LastStepEmbedding(env.spec, dim_data=env.spec.obs_space.flat_dim)
+
     # Wrap the simulator to abstract the env and the policy away from sbi
-    w_simulator = functools.partial(simple_omo_sim, env=env, policy=policy)
+    w_simulator = functools.partial(simple_omo_sim, env=env, policy=policy, embedding=embedding)
 
     # Learn a likelihood from the simulator
-    embedding = LastStepEmbedding(env.spec, dim_data=env.spec.obs_space.flat_dim)
-    density_estimator = posterior_nn(model="maf", embedding_net=embedding, hidden_features=20, num_transforms=4)
+    density_estimator = posterior_nn(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=4)
     snpe = SNPE_C(prior, density_estimator)
     simulator, prior = prepare_for_sbi(w_simulator, prior)
     domain_param, data_sim = simulate_for_sbi(
         simulator=simulator,
         proposal=prior,
-        num_simulations=50,
+        num_simulations=300,
         num_workers=1,
     )
     snpe.append_simulations(domain_param, data_sim)
@@ -107,13 +110,21 @@ if __name__ == "__main__":
     domain_param_gt = domain_param_gt.repeat((num_instances_real, 1))
     domain_param_gt += domain_param_gt * to.randn(num_instances_real, 2) / 5
     data_real = to.cat([simulator(dp) for dp in domain_param_gt], dim=0)
-    data_real = Embedding.unpack(data_real, dim_data_orig=env.spec.obs_space.flat_dim)
+    # data_real = Embedding.unpack(data_real, dim_data_orig=env.spec.obs_space.flat_dim)
+    assert data_real.shape[0] == num_instances_real
 
     # Plot the posterior
     _, axs = plt.subplots(*num_rows_cols_from_length(num_instances_real), figsize=(14, 14), tight_layout=True)
     axs = np.atleast_2d(axs)
     draw_posterior_distr_2d(
-        axs, "separate", posterior, data_real, dp_mapping, dims=(0, 1), condition=to.zeros(2), prior=prior
+        axs,
+        "separate",
+        posterior,
+        data_real,
+        dp_mapping,
+        dims=(0, 1),
+        condition=Embedding.pack(domain_param_gt),
+        prior=prior,
     )
 
     # Plot the ground truth domain parameters

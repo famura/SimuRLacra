@@ -29,6 +29,7 @@
 import numpy as np
 from init_args_serializer import Serializable
 
+import pyrado
 from pyrado.environment_wrappers.base import EnvWrapperAct
 from pyrado.environments.base import Env
 
@@ -49,7 +50,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         super().__init__(wrapped_env)
 
         # Store parameter and initialize slot for queue
-        self._delay = delay
+        self._delay = round(delay)  # round returns int
         self._act_queue = []
 
     @property
@@ -59,8 +60,9 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
     @delay.setter
     def delay(self, delay: int):
         # Validate and set
-        assert isinstance(delay, int) and delay >= 0
-        self._delay = delay
+        if not delay >= 0:
+            raise pyrado.ValueErr(given=delay, ge_constraint="0")
+        self._delay = round(delay)  # round returns int
 
     def _save_domain_param(self, domain_param: dict):
         """
@@ -68,8 +70,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
 
         :param domain_param: domain parameter dict
         """
-        # Cast to integer for consistency
-        domain_param["act_delay"] = int(self._delay)
+        domain_param["act_delay"] = self._delay
 
     def _load_domain_param(self, domain_param: dict):
         """
@@ -78,7 +79,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         :param domain_param: domain parameter dict
         """
         # Cast the delay value to int, since randomizer yields ndarrays or Tensors
-        self._delay = int(domain_param.get("act_delay", self._delay))
+        self._delay = round(domain_param.get("act_delay", self._delay))
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Adapt _delay to the new act_delay if provided

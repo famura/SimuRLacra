@@ -31,19 +31,15 @@ Domain parameter identification experiment on the Quanser Qube environment using
 """
 import os.path as osp
 import torch as to
-from sbi.inference import SNPE
+from sbi.inference import SNPE_C
 from sbi import utils
 
 import pyrado
-from pyrado.algorithms.inference.embeddings import (
+from pyrado.sampling.sbi_embeddings import (
     BayesSimEmbedding,
-    LastStepEmbedding,
-    DynamicTimeWarpingEmbedding,
-    RNNEmbedding,
-    AllStepsEmbedding,
 )
-from pyrado.algorithms.inference.lfi import NPDR
-from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
@@ -66,7 +62,7 @@ if __name__ == "__main__":
         raise pyrado.ValueErr(msg="Either num_segments or len_segments must not be None, but not both or none!")
 
     # Experiment (set seed before creating the modules)
-    ectl = True
+    ectl = False
     if ectl:
         ex_dir = setup_experiment(
             QQubeSwingUpSim.name,
@@ -93,16 +89,16 @@ if __name__ == "__main__":
     if ectl:
         env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz_filt")
     else:
-        # env_real = osp.join(pyrado.EVAL_DIR, "qq_chrip_5to0Hz_05V_250Hz_neg")
         env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
 
-    # Policy
+    # Behavioral policy
     assert osp.isdir(env_real)
-    behavior_policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
+    policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
+    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
@@ -113,24 +109,26 @@ if __name__ == "__main__":
             [
                 1e-8,
                 1e-8,
-                dp_nom["Rm"] * 0.7,
-                dp_nom["km"] * 0.7,
-                dp_nom["Mr"] * 0.7,
-                dp_nom["Mp"] * 0.7,
-                dp_nom["Lr"] * 0.7,
-                dp_nom["Lp"] * 0.7,
+                dp_nom["Rm"] * 0.8,
+                dp_nom["km"] * 0.8,
+                dp_nom["Mr"] * 0.9,
+                dp_nom["Mp"] * 0.9,
+                dp_nom["Lr"] * 0.9,
+                dp_nom["Lp"] * 0.9,
+                dp_nom["g"] * 0.95,
             ]
         ),
         high=to.tensor(
             [
                 2 * 0.0015,
                 2 * 0.0005,
-                dp_nom["Rm"] * 1.3,
-                dp_nom["km"] * 1.3,
-                dp_nom["Mr"] * 1.3,
-                dp_nom["Mp"] * 1.3,
-                dp_nom["Lr"] * 1.3,
-                dp_nom["Lp"] * 1.3,
+                dp_nom["Rm"] * 1.2,
+                dp_nom["km"] * 1.2,
+                dp_nom["Mr"] * 1.1,
+                dp_nom["Mp"] * 1.1,
+                dp_nom["Lr"] * 1.1,
+                dp_nom["Lp"] * 1.1,
+                dp_nom["g"] * 1.05,
             ]
         ),
     )
@@ -146,6 +144,10 @@ if __name__ == "__main__":
     embedding_hparam = dict(downsampling_factor=1)
     embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=2)
+    # embedding = AllStepsEmbedding(
+    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
+    # )
+    # embedding_hparam = dict(downsampling_factor=20)
     # embedding = DynamicTimeWarpingEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
     # )
@@ -155,43 +157,43 @@ if __name__ == "__main__":
     # )
 
     # Posterior (normalizing flow)
-    posterior_nn_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
+    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=1,
-        num_sim_per_round=5000,
-        num_sbi_rounds=3,
-        simulation_batch_size=50,
+        num_sim_per_round=200,
+        num_sbi_rounds=5,
+        simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=10,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
-        sbi_training_hparam=dict(
+        posterior_hparam=posterior_hparam,
+        subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=100,  # default: 50
             learning_rate=3e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
             discard_prior_samples=False,  # default: False
-            use_combined_loss=True,  # default: False
+            use_combined_loss=False,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=10,
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
+        num_workers=8,
     )
     algo = NPDR(
         ex_dir,
         env_sim,
         env_real,
-        behavior_policy,
+        policy,
         dp_mapping,
         prior,
-        posterior_nn_hparam,
-        SNPE,
+        SNPE_C,
         embedding,
         **algo_hparam,
     )
@@ -201,7 +203,7 @@ if __name__ == "__main__":
         dict(env=env_sim_hparams, seed=args.seed),
         dict(prior=prior_hparam),
         dict(embedding=embedding_hparam, embedding_name=embedding.name),
-        dict(posterior_nn=posterior_nn_hparam),
+        dict(posterior_nn=posterior_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

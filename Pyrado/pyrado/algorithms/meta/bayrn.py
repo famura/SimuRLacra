@@ -126,7 +126,7 @@ class BayRn(InterruptableAlgorithm):
         :param num_eval_rollouts_sim: number of rollouts in simulation to estimate the return after training
         :param thold_succ: success threshold on the real system's return for BayRn, stop the algorithm if exceeded
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
-                                      subroutine until the threshold is exceeded or the for a given number of iterations
+                                  subroutine until the threshold is exceeded or the for a given number of iterations
         :param warmstart: initialize the policy parameters with the one of the previous iteration. This option has no
                           effect for initial policies and can be overruled by passing init policy params explicitly.
         :param policy_param_init: initial policy parameter values for the subroutine, set `None` to be random

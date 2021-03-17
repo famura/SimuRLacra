@@ -36,16 +36,11 @@ from sbi.inference import SNPE_C
 from sbi import utils
 
 import pyrado
-from pyrado.algorithms.inference.embeddings import (
-    LastStepEmbedding,
-    BayesSimEmbedding,
-    DynamicTimeWarpingEmbedding,
-    RNNEmbedding,
+from pyrado.sampling.sbi_embeddings import (
     AllStepsEmbedding,
 )
-from pyrado.algorithms.inference.lfi import NPDR
-from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI
-from pyrado.domain_randomization.default_randomizers import create_damping_dryfriction_domain_param_map_wamjsc
+from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.dummy import DummyPolicy
@@ -88,9 +83,9 @@ if __name__ == "__main__":
     }
     # dp_mapping = create_damping_dryfriction_domain_param_map_wamjsc()
 
-    # Policy
+    # Behavioral policy
     assert osp.isdir(env_real)
-    behavior_policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
+    policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()
@@ -119,7 +114,7 @@ if __name__ == "__main__":
     # )
 
     # Posterior (normalizing flow)
-    posterior_nn_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
+    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
@@ -132,7 +127,8 @@ if __name__ == "__main__":
         num_eval_samples=500,
         # num_segments=5,
         len_segments=250,
-        sbi_training_hparam=dict(
+        posterior_hparam=posterior_hparam,
+        subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=100,  # default: 50
             learning_rate=3e-4,  # default: 5e-4
@@ -144,17 +140,16 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        sbi_sampling_hparam=dict(sample_with_mcmc=True),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
         num_workers=20,
     )
     algo = NPDR(
         ex_dir,
         env_sim,
         env_real,
-        behavior_policy,
+        policy,
         dp_mapping,
         prior,
-        posterior_nn_hparam,
         SNPE_C,
         embedding,
         **algo_hparam,
@@ -164,7 +159,7 @@ if __name__ == "__main__":
     save_dicts_to_yaml(
         dict(env=env_sim_hparams, seed=args.seed),
         dict(prior=prior_hparam),
-        dict(posterior_nn=posterior_nn_hparam),
+        dict(posterior_nn=posterior_hparam),
         dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

@@ -28,10 +28,11 @@
 
 import functools
 import numpy as np
+import os
 import pandas as pd
 import torch as to
 from matplotlib import pyplot as plt
-from typing import Sequence
+from typing import Sequence, List, Optional
 
 import pyrado
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -469,3 +470,112 @@ def plot_mean_std_across_rollouts(
             y_label=str(c),
             plot_kwargs=dict(color=colors[idx_a]),
         )
+
+
+def plot_rollouts_segment_wise(
+    segments_ground_truth: List[List[StepSequence]],
+    segments_multiple_envs: List[List[List[StepSequence]]],
+    segments_nominal: List[List[StepSequence]],
+    use_rec: bool,
+    idx_iter: int,
+    idx_round: Optional[int] = None,
+    state_labels: Optional[List[str]] = None,
+    save_dir: Optional[str] = None,
+) -> List[plt.Figure]:
+    """
+    Plot the different rollouts in separate figures and the different state dimensions along the columns.
+
+    :param segments_ground_truth: list of lists containing rollout segments from the ground truth environment
+    :param segments_multiple_envs: list of lists of lists containing rollout segments from different environment
+                                   instances, e.g. samples from a posterior coming from `NDPR`
+    :param segments_nominal: list of lists containing rollout segments from the nominal environment
+    :param use_rec: `True` if pre-recorded actions have been used to generate the rollouts
+    :param idx_iter: selected iteration
+    :param idx_round: selected round
+    :param state_labels: y-axes labels to override the default value which is extracted from the state space's labels
+    :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
+    :return: list of handles to the created figures
+    """
+    # Extract the state dimension, and the number of most likely samples from the data
+    dim_state = segments_ground_truth[0][0].get_data_values("states")[0, :].size
+    num_samples = len(segments_multiple_envs[0][0])
+
+    # Extract the state labels if not explicitly given
+    if state_labels is None:
+        env_spec = segments_ground_truth[0][0].rollout_info.get("env_spec", None)
+        state_labels = env_spec.state_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
+    else:
+        if len(state_labels) != dim_state:
+            raise pyrado.ShapeErr(given=state_labels, expected_match=(dim_state,))
+
+    colors = plt.get_cmap("Reds")(np.linspace(0.5, 1.0, num_samples))
+    fig_list = []
+
+    for idx_r in range(len(segments_ground_truth)):
+        fig, axs = plt.subplots(nrows=dim_state, figsize=(16, 9), tight_layout=True, sharex="col")
+
+        for idx_state in range(dim_state):
+            # Plot the real segments
+            cnt_step = [0]
+            for segment_real in segments_ground_truth[idx_r]:
+                axs[idx_state].plot(
+                    np.arange(cnt_step[-1], cnt_step[-1] + segment_real.length),
+                    segment_real.get_data_values("states", truncate_last=True)[:, idx_state],
+                    c="black",
+                    label="real" if cnt_step[-1] == 0 else "",  # only print once
+                )
+                cnt_step.append(cnt_step[-1] + segment_real.length)
+
+            # Plot the maximum likely simulated segments
+            for idx_seg, sml in enumerate(segments_multiple_envs[idx_r]):
+                for idx_dp, smdp in enumerate(sml):
+                    axs[idx_state].plot(
+                        np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + smdp.length),
+                        smdp.get_data_values("states", truncate_last=True)[:, idx_state],
+                        c=colors[idx_dp],
+                        ls="--",
+                        label=f"sim ml {idx_dp}" if cnt_step[idx_seg] == 0 else "",  # only print once for each dp set
+                    )
+
+            # Plot the nominal simulation's segments
+            for idx_seg, sn in enumerate(segments_nominal[idx_r]):
+                axs[idx_state].plot(
+                    np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sn.length),
+                    sn.get_data_values("states", truncate_last=True)[:, idx_state],
+                    c="steelblue",
+                    ls="-.",
+                    label="sim nom" if cnt_step[idx_seg] == 0 else "",  # only print once
+                )
+
+            axs[idx_state].set_ylabel(state_labels[idx_state])
+
+        # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
+        use_rec = ", using rec actions" if use_rec else ""
+        rnd = f"round {idx_round}, " if idx_round is not None else ""
+        fig.canvas.set_window_title(
+            f"Target Domain and Simulated Rollouts (iteration {idx_iter}, {rnd}rollout {idx_r}{use_rec})"
+        )
+        lg = axs[0].legend(
+            ncol=2 + num_samples,
+            bbox_to_anchor=(0.0, 1.02, 1.0, 0.102),
+            loc="lower left",
+            mode="expand",
+            borderaxespad=0.0,
+        )
+
+        # Save if desired
+        if save_dir is not None:
+            for fmt in ["pdf", "pgf"]:
+                os.makedirs(os.path.join(save_dir, "plots"), exist_ok=True)
+                use_rec = "_use_rec" if use_rec else ""
+                rnd = f"_round_{idx_round}" if idx_round is not None else ""
+                fig.savefig(
+                    os.path.join(save_dir, "plots", f"posterior_iter_{idx_iter}{rnd}_rollout_{idx_r}{use_rec}.{fmt}"),
+                    bbox_extra_artists=(lg,),
+                    dpi=500,
+                )
+
+        # Append current figure
+        fig_list.append(fig)
+
+    return fig_list

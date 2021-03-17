@@ -35,7 +35,7 @@ from operator import itemgetter
 from typing import Sequence, Union, Mapping, Optional, Tuple, List, ValuesView
 
 import pyrado
-from pyrado.algorithms.inference.embeddings import Embedding
+from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
@@ -83,6 +83,10 @@ class RolloutSamplerForSBI(ABC, Serializable):
     """
     Wrapper to do enable the sbi simulator instance to make rollouts from SimuRLacra environments as if the environment
     was a callable that only needs the simulator parameters as inputs
+
+    .. note::
+        The features of each rollout are concatenated, and since the inference procedure requires a consistent size of
+        the inputs, it is necessary that all rollouts yield the same number of features, i.e. have equal length!
     """
 
     def __init__(
@@ -233,7 +237,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                             max_steps=seg_real.length,
                         )
                         check_act_equal(seg_real, seg_sim)
-                        _check_domain_params(seg_sim, dp_value, self.dp_names)
+                        # _check_domain_params(seg_sim, dp_value, self.dp_names)
 
                         # Increase step counter for next segment
                         cnt_step += seg_real.length
@@ -282,7 +286,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_value))),
                     stop_on_done=False,
                 )
-                _check_domain_params(ro_sim, dp_value, self.dp_names)
+                # _check_domain_params(ro_sim, dp_value, self.dp_names)
 
                 # Concatenate states and actions of the simulated segments
                 data_one_seg = np.concatenate([ro_sim.states[:-1, :], ro_sim.actions], axis=1)
@@ -416,9 +420,14 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
     @ring_idx.setter
     def ring_idx(self, idx: int):
         """ Set the buffer's index. """
-        if not (isinstance(idx, int) or not 0 <= idx < len(self.rollouts_rec)):
-            raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=len(self.rollouts_rec))
+        if not (isinstance(idx, int) or not 0 <= idx < self.num_rollouts):
+            raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=self.num_rollouts)
         self._ring_idx = idx
+
+    @property
+    def num_rollouts(self) -> int:
+        """ Get the number of stored rollouts. """
+        return len(self.rollouts_rec)
 
     def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:
         """
@@ -433,7 +442,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         assert isinstance(self.rollouts_rec, StepSequence)
         ro = self.rollouts_rec[self._ring_idx]
         ro.torch()
-        self._ring_idx = (self._ring_idx + 1) % len(self.rollouts_rec)
+        self._ring_idx = (self._ring_idx + 1) % self.num_rollouts
 
         data_real = to.cat([ro.states[:-1, :], ro.actions], dim=1)
         if self._embedding.requires_target_domain_data:
