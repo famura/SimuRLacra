@@ -698,13 +698,18 @@ resulting gradient to PyTorch.</p>
 
 <dl class="py function">
 <dt id="pyrado.algorithms.utils.until_thold_exceeded">
-<code class="sig-name descname"><span class="pre">until_thold_exceeded</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#until_thold_exceeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.until_thold_exceeded" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">until_thold_exceeded</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rep</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#until_thold_exceeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.until_thold_exceeded" title="Permalink to this definition">¶</a></dt>
 <dd><p>Designed to wrap a function and repeat it until the return value exceeds a threshold.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The wrapped function must accept the kwarg <cite>cnt_rep</cite>. This can be useful to trigger different behavior
+depending on the number of already done repetition.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>thold</strong> – threshold</p></li>
-<li><p><strong>max_iter</strong> – maximum number of iterations of the wrapped function, set to <cite>None</cite> to run the loop relentlessly</p></li>
+<li><p><strong>max_rep</strong> – maximum number of repetitions of the wrapped function, set to <cite>None</cite> to run the loop relentlessly</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

@@ -344,45 +344,49 @@
             <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">length</span></div></div>
 
 
-<div class="viewcode-block" id="until_thold_exceeded"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.until_thold_exceeded">[docs]</a><span class="k">def</span> <span class="nf">until_thold_exceeded</span><span class="p">(</span><span class="n">thold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="until_thold_exceeded"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.until_thold_exceeded">[docs]</a><span class="k">def</span> <span class="nf">until_thold_exceeded</span><span class="p">(</span><span class="n">thold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_rep</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Designed to wrap a function and repeat it until the return value exceeds a threshold.</span>
 
+<span class="sd">    .. note::</span>
+<span class="sd">        The wrapped function must accept the kwarg `cnt_rep`. This can be useful to trigger different behavior</span>
+<span class="sd">        depending on the number of already done repetition.</span>
+
 <span class="sd">    :param thold: threshold</span>
-<span class="sd">    :param max_iter: maximum number of iterations of the wrapped function, set to `None` to run the loop relentlessly</span>
+<span class="sd">    :param max_rep: maximum number of repetitions of the wrapped function, set to `None` to run the loop relentlessly</span>
 <span class="sd">    :return: wrapped function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">actual_decorator</span><span class="p">(</span><span class="n">trn_eval_fcn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Designed to wrap a training + evaluation function and repeat it until the return value exceeds a threshold.</span>
+<span class="sd">        Designed to wrap a training and evaluation function and repeat it until the return value exceeds a threshold.</span>
 
-<span class="sd">        :param trn_eval_fcn: function to wrap</span>
+<span class="sd">        :param trn_eval_fcn: function to wrap, must accept the kwarg `cnt_rep`</span>
 <span class="sd">        :return: wrapped function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">trn_eval_fcn</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">wrapper_trn_eval_fcn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
-            <span class="n">cnt_iter</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">while</span> <span class="n">ret</span> <span class="o">&lt;=</span> <span class="n">thold</span><span class="p">:</span>  <span class="c1"># &lt;= guarantees that we at least train once, even if thold is -inf</span>
+            <span class="n">ret_val</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
+            <span class="n">cnt_rep</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">ret_val</span> <span class="o">&lt;=</span> <span class="n">thold</span><span class="p">:</span>  <span class="c1"># &lt;= guarantees that we at least train once, even if thold is -inf</span>
                 <span class="c1"># Train and evaluate</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">trn_eval_fcn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">cnt_iter</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">ret_val</span> <span class="o">=</span> <span class="n">trn_eval_fcn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">cnt_rep</span><span class="o">=</span><span class="n">cnt_rep</span><span class="p">)</span>
+                <span class="n">cnt_rep</span> <span class="o">+=</span> <span class="mi">1</span>
 
                 <span class="c1"># Break if done</span>
-                <span class="k">if</span> <span class="n">ret</span> <span class="o">&gt;=</span> <span class="n">thold</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ret_val</span> <span class="o">&gt;=</span> <span class="n">thold</span><span class="p">:</span>
                     <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The threshold </span><span class="si">{</span><span class="n">thold</span><span class="si">}</span><span class="s2"> has been exceeded.&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
                     <span class="k">break</span>
 
                 <span class="c1"># Break if max_iter is reached</span>
-                <span class="k">if</span> <span class="n">max_iter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cnt_iter</span> <span class="o">==</span> <span class="n">max_iter</span><span class="p">:</span>
-                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exiting the until_thold_exceeded loop after </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">max_rep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cnt_rep</span> <span class="o">==</span> <span class="n">max_rep</span><span class="p">:</span>
+                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exiting the until_thold_exceeded loop after </span><span class="si">{</span><span class="n">max_rep</span><span class="si">}</span><span class="s2"> repetitions.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
                     <span class="k">break</span>
 
                 <span class="c1"># Else repeat training</span>
                 <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The threshold </span><span class="si">{</span><span class="n">thold</span><span class="si">}</span><span class="s2"> has not been exceeded. Repeating ...&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">ret</span>
+            <span class="k">return</span> <span class="n">ret_val</span>
 
         <span class="k">return</span> <span class="n">wrapper_trn_eval_fcn</span>
 

@@ -353,12 +353,13 @@
     <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">sample_count</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_distr</span><span class="o">.</span><span class="n">sample_count</span>
 
-<div class="viewcode-block" id="SimOpt.train_policy_sim"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim">[docs]</a>    <span class="k">def</span> <span class="nf">train_policy_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="SimOpt.train_policy_sim"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim">[docs]</a>    <span class="k">def</span> <span class="nf">train_policy_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cnt_rep</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Train a policy in simulation for given hyper-parameters from the domain randomizer.</span>
 
 <span class="sd">        :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</span>
 <span class="sd">        :param prefix: set a prefix to the saved file name by passing it to `meta_info`</span>
+<span class="sd">        :param cnt_rep: current repetition count, coming from the wrapper function</span>
 <span class="sd">        :return: estimated return of the trained policy in the target domain</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Save the current candidate</span>
@@ -371,9 +372,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">sample_count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-        <span class="c1"># Do a warm start if desired</span>
+        <span class="c1"># Do a warm start if desired, but randomly reset the policy parameters if training failed once</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">warmstart</span><span class="p">,</span> <span class="n">policy_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span><span class="p">,</span> <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">valuefcn_param_init</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warmstart</span> <span class="ow">and</span> <span class="n">cnt_rep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">policy_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy_param_init</span><span class="p">,</span>
+            <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">valuefcn_param_init</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Train a policy in simulation using the subroutine</span>

@@ -740,13 +740,14 @@ the user. Train a policy for every candidate. Finally, store the policies and ca
 
 <dl class="py method">
 <dt id="pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim">
-<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnt_rep</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</p></li>
 <li><p><strong>prefix</strong> – set a prefix to the saved file name by passing it to <cite>meta_info</cite></p></li>
+<li><p><strong>cnt_rep</strong> – current repetition count, coming from the wrapper function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1064,7 +1065,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 
 <dl class="py method">
 <dt id="pyrado.algorithms.meta.sbi_base.SBIBase.train_policy_sim">
-<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sbi_base.html#SBIBase.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sbi_base.SBIBase.train_policy_sim" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnt_rep</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sbi_base.html#SBIBase.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sbi_base.SBIBase.train_policy_sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1072,6 +1073,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <li><p><strong>domain_params</strong> – domain parameters sampled from the posterior [shape N x D where N is the number of
 samples and D is the number of domain parameters]</p></li>
 <li><p><strong>prefix</strong> – set a prefix to the saved file name by passing it to <cite>meta_info</cite></p></li>
+<li><p><strong>cnt_rep</strong> – current repetition count, coming from the wrapper function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1220,13 +1222,14 @@ contains a dict of information about the current iteration of the meta-algorithm
 
 <dl class="py method">
 <dt id="pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim">
-<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/simopt.html#SimOpt.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cand</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnt_rep</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/simopt.html#SimOpt.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</p></li>
 <li><p><strong>prefix</strong> – set a prefix to the saved file name by passing it to <cite>meta_info</cite></p></li>
+<li><p><strong>cnt_rep</strong> – current repetition count, coming from the wrapper function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
