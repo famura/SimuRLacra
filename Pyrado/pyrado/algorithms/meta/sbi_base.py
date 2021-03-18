@@ -571,13 +571,14 @@ class SBIBase(InterruptableAlgorithm, ABC):
         env.ring_idx = 0
         print_cbt(f"Filled the environment's buffer with {len(env.buffer)} domain parameters sets.", "g")
 
-    def train_policy_sim(self, domain_params: to.Tensor, prefix: str) -> float:
+    def train_policy_sim(self, domain_params: to.Tensor, prefix: str, cnt_rep: int) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
         :param domain_params: domain parameters sampled from the posterior [shape N x D where N is the number of
                               samples and D is the number of domain parameters]
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :param cnt_rep: current repetition count, coming from the wrapper function
         :return: estimated return of the trained policy in the target domain
         """
         if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):
@@ -604,6 +605,13 @@ class SBIBase(InterruptableAlgorithm, ABC):
             self._subrtn_policy.sampler.reinit(env=self._env_sim_trn)
         else:
             raise pyrado.KeyErr(keys="sampler", container=self._subrtn_policy)
+
+        # Do a warm start if desired, but randomly reset the policy parameters if training failed once
+        # self._subrtn_policy.init_modules(
+        #     self.warmstart and cnt_rep == 0,
+        #     policy_param_init=self.policy_param_init,
+        #     valuefcn_param_init=self.valuefcn_param_init,
+        # )
 
         # Train a policy in simulation using the subroutine
         self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))

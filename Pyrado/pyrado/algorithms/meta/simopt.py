@@ -154,12 +154,13 @@ class SimOpt(InterruptableAlgorithm):
     def sample_count(self) -> int:
         return self._cnt_samples + self._subrtn_policy.sample_count + self._subrtn_distr.sample_count
 
-    def train_policy_sim(self, cand: to.Tensor, prefix: str) -> float:
+    def train_policy_sim(self, cand: to.Tensor, prefix: str, cnt_rep: int) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
         :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :param cnt_rep: current repetition count, coming from the wrapper function
         :return: estimated return of the trained policy in the target domain
         """
         # Save the current candidate
@@ -172,9 +173,11 @@ class SimOpt(InterruptableAlgorithm):
         self._cnt_samples += self._subrtn_policy.sample_count
         self._subrtn_policy.reset()
 
-        # Do a warm start if desired
+        # Do a warm start if desired, but randomly reset the policy parameters if training failed once
         self._subrtn_policy.init_modules(
-            self.warmstart, policy_param_init=self.policy_param_init, valuefcn_param_init=self.valuefcn_param_init
+            self.warmstart and cnt_rep == 0,
+            policy_param_init=self.policy_param_init,
+            valuefcn_param_init=self.valuefcn_param_init,
         )
 
         # Train a policy in simulation using the subroutine
