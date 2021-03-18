@@ -30,7 +30,6 @@ import numpy as np
 import seaborn as sns
 import torch as to
 from matplotlib import pyplot as plt, patches
-from pyrado.policies.special.moe import MoEPolicy
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
 from torch.distributions import Distribution

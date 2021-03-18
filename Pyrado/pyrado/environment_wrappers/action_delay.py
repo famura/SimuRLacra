@@ -79,7 +79,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         :param domain_param: domain parameter dict
         """
         # Cast the delay value to int, since randomizer yields ndarrays or Tensors
-        self._delay = round(domain_param.get("act_delay", self._delay))
+        self._delay = int(domain_param.get("act_delay", self._delay))
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Adapt _delay to the new act_delay if provided
