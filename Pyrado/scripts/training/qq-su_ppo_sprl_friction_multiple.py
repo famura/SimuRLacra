@@ -113,17 +113,17 @@ if __name__ == "__main__":
     env_sprl_params = [
         dict(
             name="Dr",
-            target_mean=to.tensor([15e-4]),
-            target_cov_chol_flat=to.tensor([8e-5]),
-            context_mean=to.tensor([15e-4]),
-            context_cov_chol_flat=to.tensor([1e-4]),
+            target_mean=to.tensor([5e-6]),
+            target_cov_chol_flat=to.tensor([5e-7]),
+            context_mean=to.tensor([5e-6]),
+            context_cov_chol_flat=to.tensor([2.5e-8]),
         ),
         dict(
             name="Dp",
-            target_mean=to.tensor([5e-4]),
-            target_cov_chol_flat=to.tensor([2e-4]),
-            context_mean=to.tensor([5e-4]),
-            context_cov_chol_flat=to.tensor([1e-5]),
+            target_mean=to.tensor([1e-6]),
+            target_cov_chol_flat=to.tensor([1e-7]),
+            context_mean=to.tensor([1e-6]),
+            context_cov_chol_flat=to.tensor([5e-9]),
         ),
     ]
     env = DomainRandWrapperLive(
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     )
 
     sprl_hparam = dict(
-        kl_constraints_ub=17,
+        kl_constraints_ub=5,
         performance_lower_bound=500,
         kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
