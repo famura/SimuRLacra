@@ -39,6 +39,7 @@ from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
+
 class QQubeSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Qube swing-up and stabilization task """
 
@@ -140,6 +141,7 @@ class QQubeSim(SimPyEnv, Serializable):
     def _init_anim(self):
         # Import PandaVis Class
         from pyrado.environments.pysim.pandavis import PandaVis
+
         # Create instance of PandaVis
         self._visualization = QQubeVis(self, self._render)
 

@@ -244,7 +244,7 @@ class SimPyEnv(SimEnv, Serializable):
                 print(
                     f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
-                
+
             self._render = mode.render
             # Panda3D
             if mode.video:

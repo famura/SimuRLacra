@@ -36,6 +36,7 @@ from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
+
 class PendulumSim(SimPyEnv, Serializable):
     """ Under-actuated inverted pendulum environment similar to the one from OpenAI Gym """
 
@@ -91,5 +92,6 @@ class PendulumSim(SimPyEnv, Serializable):
     def _init_anim(self):
         # Import PandaVis Class
         from pyrado.environments.pysim.pandavis import PendulumVis
+
         # Create instance of PandaVis
         self._visualization = PendulumVis(self, self._render)

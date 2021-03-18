@@ -18,6 +18,7 @@ Start by creating a new class called <<YourEnvironment>>Vis inheriting from Pand
 
 class YourEnvironmentVis(PandaVis):
     """The following content is extracted from PandaVis.QCartPoleVis"""
+
     def __init__(self):
         """
         This method will only be called once, at the very start of the simulation
@@ -77,10 +78,10 @@ class YourEnvironmentVis(PandaVis):
 
         """Continuing, there is a number of properties, that can be set, by neatly named accessor methods in most cases, such as
         """
-        self.pole.setPos() # Position(X, Y, Z)
-        self.pole.setScale() # Scale(Sx, Sy, Sz)
-        self.pole.setHpr() # Angles(H, P, R)
-        self.pole.setColor() # Color (R, G, B)
+        self.pole.setPos()  # Position(X, Y, Z)
+        self.pole.setScale()  # Scale(Sx, Sy, Sz)
+        self.pole.setHpr()  # Angles(H, P, R)
+        self.pole.setColor()  # Color (R, G, B)
         """
         Position: setPosition(X, Y, Z)
         Scale: setScale(Sx, Sy, Sz)
@@ -135,8 +136,11 @@ class YourEnvironmentVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale, pole_pos[1],
-                       pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
+        current_pos = (
+            pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
+            pole_pos[1],
+            pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale,
+        )
 
         # Draw line to that point
         self.draw_trace(current_pos)

@@ -34,6 +34,7 @@ class PandaVis(ShowBase):
         if self._render:
             sys.path.insert(0, pyrado.RENDER_PIPELINE_DIR)
             from rpcore import RenderPipeline
+
             self.render_pipeline = RenderPipeline()
             self.render_pipeline.pre_showbase_init()
             self.render_pipeline.set_loading_screen_image(osp.join(self.dir, "logo.png"))
@@ -170,8 +171,11 @@ class BallOnBeamVis(PandaVis):
         x = float(self._env.state[0])  # ball position along the beam axis [m]
         a = float(self._env.state[1])  # angle [rad]
 
-        ball_pos = ((np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball)) * self._scale, 0,
-                    (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball)) * self._scale)
+        ball_pos = (
+            (np.cos(a) * x - np.sin(a) * (d_beam / 2.0 + r_ball)) * self._scale,
+            0,
+            (np.sin(a) * x + np.cos(a) * (d_beam / 2.0 + r_ball)) * self._scale,
+        )
         # Update position of ball
         self.ball.setPos(ball_pos)
 
@@ -225,15 +229,17 @@ class OneMassOscillatorVis(PandaVis):
         # Ground
         self.ground = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
         self.ground.setPos(0, 0, -0.02 * self._scale)
-        self.ground.setScale(self._env.obs_space.bound_up[0] * self._scale, 1.5 * c * self._scale,
-                             0.01 * self._scale)  # Scale modified according to Blender Object
+        self.ground.setScale(
+            self._env.obs_space.bound_up[0] * self._scale, 1.5 * c * self._scale, 0.01 * self._scale
+        )  # Scale modified according to Blender Object
         self.ground.reparentTo(self.render)
 
         # Object
         self.mass = self.loader.loadModel(osp.join(self.dir, "cube_blue.egg"))
         self.mass.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.mass.setScale(c * 0.5 * self._scale, c * 0.5 * self._scale,
-                           c * 0.5 * self._scale)  # multiplied by 0.5 since Blender object has length of 2
+        self.mass.setScale(
+            c * 0.5 * self._scale, c * 0.5 * self._scale, c * 0.5 * self._scale
+        )  # multiplied by 0.5 since Blender object has length of 2
         self.mass.reparentTo(self.render)
 
         # Desired state
@@ -246,15 +252,17 @@ class OneMassOscillatorVis(PandaVis):
         # Force
         self.force = self.loader.loadModel(osp.join(self.dir, "arrow_red.egg"))
         self.force.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.force.setScale(0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale,
-                            0.1 * c * self._scale)
+        self.force.setScale(
+            0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale, 0.1 * c * self._scale
+        )
         self.force.reparentTo(self.render)
 
         # Spring
         self.spring = self.loader.loadModel(osp.join(self.dir, "spring_orange.egg"))
         self.spring.setPos(0, 0, c / 2.0 * self._scale)
-        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.3 * self._scale, c / 6.0 * self._scale,
-                             c / 6.0 * self._scale)  # scaling according to Blender object
+        self.spring.setScale(
+            (self._env.state[0] - c / 2.0) / 7.3 * self._scale, c / 6.0 * self._scale, c / 6.0 * self._scale
+        )  # scaling according to Blender object
         self.spring.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
@@ -355,8 +363,11 @@ class PendulumVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale, pole_pos[1],
-                       pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
+        current_pos = (
+            pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
+            pole_pos[1],
+            pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale,
+        )
 
         # Update displayed text
         self.text.setText(
@@ -408,15 +419,17 @@ class QBallBalancerVis(PandaVis):
 
         # Ball
         self.ball = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
-        self.ball.setPos(self._env.state[2] * self._scale, self._env.state[3] * self._scale,
-                         (r_ball + d_plate / 2.0) * self._scale)
+        self.ball.setPos(
+            self._env.state[2] * self._scale, self._env.state[3] * self._scale, (r_ball + d_plate / 2.0) * self._scale
+        )
         self.ball.setScale(r_ball * self._scale)
         self.ball.reparentTo(self.render)
 
         # Plate
         self.plate = self.loader.loadModel(osp.join(self.dir, "cube_blue.egg"))
-        self.plate.setScale(l_plate * 0.5 * self._scale, l_plate * 0.5 * self._scale,
-                            d_plate * 0.5 * self._scale)  # modified according to Blender object
+        self.plate.setScale(
+            l_plate * 0.5 * self._scale, l_plate * 0.5 * self._scale, d_plate * 0.5 * self._scale
+        )  # modified according to Blender object
         self.plate.reparentTo(self.render)
 
         # Joint
@@ -433,9 +446,10 @@ class QBallBalancerVis(PandaVis):
 
         # Null_plate
         self.null_plate = self.loader.loadModel(osp.join(self.dir, "cube_grey.egg"))
-        self.null_plate.setPos(0, 0, - 2.5 * l_pole * self._scale)
-        self.null_plate.setScale(l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale,
-                                 d_plate / 20.0 * self._scale)
+        self.null_plate.setPos(0, 0, -2.5 * l_pole * self._scale)
+        self.null_plate.setScale(
+            l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale, d_plate / 20.0 * self._scale
+        )
         self.null_plate.reparentTo(self.render)
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
@@ -478,9 +492,11 @@ class QBallBalancerVis(PandaVis):
         self.plate.setP(b_vp * 180 / np.pi)  # rotate Pitch axis
 
         # Update position of ball
-        ball_pos = (x * np.cos(a_vp) * self._scale,
-                    y * np.cos(b_vp) * self._scale,
-                    (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0) * self._scale)
+        ball_pos = (
+            x * np.cos(a_vp) * self._scale,
+            y * np.cos(b_vp) * self._scale,
+            (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0) * self._scale,
+        )
         self.ball.setPos(ball_pos)
 
         # Draw line to that point
@@ -611,8 +627,11 @@ class QCartPoleVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        current_pos = (pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale, pole_pos[1],
-                       pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale)
+        current_pos = (
+            pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
+            pole_pos[1],
+            pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale,
+        )
 
         # Draw line to that point
         self.draw_trace(current_pos)
@@ -731,9 +750,11 @@ class QQubeVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
         # Calculate position of new point
-        current_pos = (pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
-                       pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
-                       pole_pos[2] - 2 * Lp * np.cos(al) * self._scale)
+        current_pos = (
+            pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
+            pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
+            pole_pos[2] - 2 * Lp * np.cos(al) * self._scale,
+        )
 
         # Draw line to that point
         self.draw_trace(current_pos)

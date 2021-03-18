@@ -131,6 +131,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     def _init_anim(self):
         # Import PandaVis Class
         from pyrado.environments.pysim.pandavis import BallOnBeamVis
+
         # Create instance of PandaVis
         self._visualization = BallOnBeamVis(self, self._render)
 
