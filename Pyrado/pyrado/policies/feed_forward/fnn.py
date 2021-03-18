@@ -199,8 +199,8 @@ class FNNPolicy(Policy):
         )
 
         # Call custom initialization function after PyTorch network parameter initialization
-        init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
-        self.init_param(None, **init_param_kwargs)
+        self.init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
+        self.init_param(None, **self.init_param_kwargs)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
@@ -212,6 +212,13 @@ class FNNPolicy(Policy):
     def forward(self, obs: to.Tensor) -> to.Tensor:
         # Get the action from the owned FNN
         return self.net(obs)
+
+    def reset_nn(self):
+        """
+        Resets the network parameters
+        """
+        super().reset()
+        self.init_param(None, **self.init_param_kwargs)
 
 
 class DiscreteActQValPolicy(Policy):
