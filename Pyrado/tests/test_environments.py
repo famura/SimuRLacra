@@ -316,7 +316,7 @@ def test_reset(env):
     ids=["bobd", "bob", "omo", "pend", "qbb", "qq-su", "qcp-st"],
     indirect=True,
 )
-def test_vpython_animations(env):
+def test_panda3d_animations(env):
     assert isinstance(env, SimEnv)
     env.reset()
     env.render(mode=RenderMode(video=True))
@@ -327,6 +327,8 @@ def test_vpython_animations(env):
             break
     env.reset()  # only calls _reset_anim if window is already existing
     assert env.curr_step <= env.max_steps
+    env._visualization.destroy()
+    del env._visualization
 
 
 @pytest.mark.visualization
