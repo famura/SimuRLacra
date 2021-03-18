@@ -231,7 +231,6 @@
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span><span class="p">,</span> <span class="n">patches</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.moe</span> <span class="kn">import</span> <span class="n">MoEPolicy</span>
 <span class="kn">from</span> <span class="nn">sbi.inference.posteriors.direct_posterior</span> <span class="kn">import</span> <span class="n">DirectPosterior</span>
 <span class="kn">from</span> <span class="nn">sbi.utils</span> <span class="kn">import</span> <span class="n">BoxUniform</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
@@ -242,9 +241,9 @@
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperBuffer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.moe</span> <span class="kn">import</span> <span class="n">MoEPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.mdn</span> <span class="kn">import</span> <span class="n">MDNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.utils</span> <span class="kn">import</span> <span class="n">draw_sep_cbar</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_types_equal</span><span class="p">,</span> <span class="n">is_iterable</span><span class="p">,</span> <span class="n">check_all_shapes_equal</span><span class="p">,</span> <span class="n">check_all_lengths_equal</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_types_equal</span><span class="p">,</span> <span class="n">is_iterable</span><span class="p">,</span> <span class="n">check_all_lengths_equal</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">completion_context</span>
 
@@ -341,7 +340,7 @@
 
 <span class="sd">    :param ax: axis of the figure to plot on</span>
 <span class="sd">    :param posterior: sbi `DirectPosterior` object to evaluate</span>
-<span class="sd">    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape</span>
+<span class="sd">    :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape</span>
 <span class="sd">                      [num_iter, num_rollouts_per_iter, time_series_length, dim_data]</span>
 <span class="sd">    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).</span>
 <span class="sd">                       Here this mapping must not have more than 2 elements since we can&#39;t plot more.</span>
@@ -419,13 +418,13 @@
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">prob</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">condition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># No condition is necessary since dim(posterior) = dim(grid) = 1</span>
-        <span class="n">grids</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">grid_x</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># untested</span>
+        <span class="n">grids</span> <span class="o">=</span> <span class="n">grid_x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># A condition is necessary since dim(posterior) &gt; dim(grid) = 1</span>
         <span class="n">grids</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">grids</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid_x</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">grids</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grids</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">grids</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grids</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)))</span>
 
     <span class="k">if</span> <span class="n">prob</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Compute the posterior probabilities</span>
@@ -476,7 +475,7 @@
 <span class="k">def</span> <span class="nf">draw_posterior_distr_2d</span><span class="p">(</span>
     <span class="n">axs</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
     <span class="n">plot_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">posterior</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">],</span> <span class="n">MoEPolicy</span><span class="p">],</span>
+    <span class="n">posterior</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DirectPosterior</span><span class="p">],</span> <span class="n">MDNPolicy</span><span class="p">],</span>
     <span class="n">data_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
     <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">dims</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
@@ -506,7 +505,7 @@
 <span class="sd">                      modes `joint` and `separate` always use the latest posterior (the only one given), while the mode</span>
 <span class="sd">                      `evolution` uses the posterior from the iteration in which the data was obtained.</span>
 <span class="sd">    :param posterior: sbi `DirectPosterior` object to evaluate</span>
-<span class="sd">    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape</span>
+<span class="sd">    :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape</span>
 <span class="sd">                      [num_iter, num_rollouts_per_iter, time_series_length, dim_data]</span>
 <span class="sd">    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).</span>
 <span class="sd">                       Here this mapping must not have more than 2 elements since we can&#39;t plot more.</span>
@@ -555,18 +554,18 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;joint, separate, evolution-iter, or evolution-round&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">plot_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;separate&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">MoEPolicy</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">MDNPolicy</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DirectPosterior</span><span class="p">)</span>
     <span class="k">elif</span> <span class="s2">&quot;evolution&quot;</span> <span class="ow">in</span> <span class="n">plot_type</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
             <span class="n">is_iterable</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">DirectPosterior</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">MoEPolicy</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">DirectPosterior</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">MDNPolicy</span><span class="p">))</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">posterior</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DirectPosterior</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grid_res</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid_res</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This function does not support plotting 1-dim posteriors.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;The draw_posterior_distr_2d() function does not support plotting 1-dim posteriors.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">condition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># No condition was given, check if that is feasible</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -596,7 +595,7 @@
     <span class="c1"># Create the grid</span>
     <span class="k">if</span> <span class="n">grid_bounds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">grid_bounds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">grid_bounds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">grid_bounds</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">grid_bounds</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grid_bounds</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="n">BoxUniform</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="n">Uniform</span><span class="p">):</span>
         <span class="n">grid_bounds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
@@ -620,7 +619,7 @@
         <span class="n">grids</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">grid_res</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">grids</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">dim_x</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
         <span class="n">grids</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">dim_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">grids</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="n">grid_res</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">grids</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="n">grid_res</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">grids</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">grid_res</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)))</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
@@ -762,7 +761,7 @@
 
 <span class="sd">    :param axs: axis (joint) or axes (separately) of the figure to plot on</span>
 <span class="sd">    :param posterior: sbi `DirectPosterior` object to evaluate</span>
-<span class="sd">    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape</span>
+<span class="sd">    :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape</span>
 <span class="sd">                      [num_iter, num_rollouts_per_iter, time_series_length, dim_data]</span>
 <span class="sd">    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).</span>
 <span class="sd">                       Here this mapping must not have more than 2 elements since we can&#39;t plot more.</span>
@@ -950,6 +949,8 @@
     <span class="n">y_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">prob_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">c_palette</span><span class="o">=</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(),</span>
+    <span class="n">legend_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">label_mapping</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a 2-dim gird of pairwise slices of the posterior distribution evaluated with samples from the posterior</span>
@@ -1006,10 +1007,10 @@
     <span class="k">if</span> <span class="n">prob_labels</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;inside&quot;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)):</span>
-                <span class="n">y_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;num samples&quot;</span>
+                <span class="n">y_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;samples&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">y_labels</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="s2">&quot;num samples&quot;</span>
-            <span class="n">x_labels</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;num samples&quot;</span>
+            <span class="n">y_labels</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="s2">&quot;samples&quot;</span>
+            <span class="n">x_labels</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;samples&quot;</span>
     <span class="k">elif</span> <span class="n">prob_labels</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">prob_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prob_labels</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;inside&quot;</span><span class="p">:</span>
@@ -1042,7 +1043,7 @@
     <span class="k">assert</span> <span class="n">check_all_types_equal</span><span class="p">(</span><span class="n">idcs_marginal</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_all_lengths_equal</span><span class="p">(</span><span class="n">idcs_marginal</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">check_all_types_equal</span><span class="p">(</span><span class="n">idcs_pair</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_all_lengths_equal</span><span class="p">(</span><span class="n">idcs_pair</span><span class="p">)</span>
 
-    <span class="c1"># Yehaa plot everything</span>
+    <span class="c1"># Plot everything</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_pair</span><span class="p">:</span>
         <span class="n">dim_x</span><span class="p">,</span> <span class="n">dim_y</span> <span class="o">=</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span>
         <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;outside&quot;</span><span class="p">:</span>
@@ -1051,15 +1052,41 @@
         <span class="c1"># Plot the points</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">idx_obs</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_samples</span><span class="p">)):</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">idx_obs</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_samples</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_samples</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span>
                 <span class="n">x</span><span class="o">=</span><span class="n">dp_samples</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">][:,</span> <span class="n">dim_x</span><span class="p">],</span>
                 <span class="n">y</span><span class="o">=</span><span class="n">dp_samples</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">][:,</span> <span class="n">dim_y</span><span class="p">],</span>
                 <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">],</span>
-                <span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx_obs</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_samples</span><span class="p">)),</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">x_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">y_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+        <span class="c1"># FORMER</span>
+        <span class="c1"># axs[i, j].set_xlabel(x_labels[i, j])</span>
+        <span class="c1"># axs[i, j].set_ylabel(y_labels[i, j])</span>
+
+        <span class="c1"># HACKY</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">plot_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="c1"># axs[i, j].set_xlabel(x_labels[i, j])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">plot_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="n">plot_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">pass</span>
+                <span class="c1"># axs[i, j].set_xlabel(x_labels[i, j])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="c1"># axs[i, j].set_ylabel(y_labels[i, j])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">pass</span>
+                <span class="c1"># axs[i, j].set_ylabel(y_labels[i, j])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_marginal</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;outside&quot;</span><span class="p">:</span>
@@ -1083,9 +1110,10 @@
                         <span class="n">xmin</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
                         <span class="n">xmax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
                         <span class="n">colors</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">],</span>
+                        <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">obs</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">])</span>
+                    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">obs</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx_obs</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_samples</span><span class="p">)))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span>
@@ -1093,15 +1121,67 @@
                         <span class="n">ymin</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
                         <span class="n">ymax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
                         <span class="n">colors</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">],</span>
+                        <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">obs</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">])</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">x_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
-        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">y_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">obs</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx_obs</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_samples</span><span class="p">)))</span>
+
+        <span class="c1"># adjust labels</span>
+        <span class="n">font_size</span> <span class="o">=</span> <span class="mi">12</span>
+        <span class="n">current_x_label</span> <span class="o">=</span> <span class="n">x_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="n">current_y_label</span> <span class="o">=</span> <span class="n">y_labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">current_x_label</span> <span class="ow">in</span> <span class="n">label_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">current_x_label</span> <span class="o">=</span> <span class="n">label_mapping</span><span class="p">[</span><span class="n">current_x_label</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">current_y_label</span> <span class="ow">in</span> <span class="n">label_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">current_y_label</span> <span class="o">=</span> <span class="n">label_mapping</span><span class="p">[</span><span class="n">current_y_label</span><span class="p">]</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+            <span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_x_label</span><span class="p">),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="n">font_size</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+            <span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_y_label</span><span class="p">),</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="n">font_size</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># adjust axis appearance</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span> <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+            <span class="c1"># optional</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+            <span class="c1"># axs[i, j].get_xaxis().set_visible(False)</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">plot_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_right</span><span class="p">()</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">plot_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+            <span class="c1"># optional</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+            <span class="c1"># axs[i, j].get_yaxis().set_visible(False)</span>
+        <span class="c1"># plt.setp(axs[i, j].get_xticklabels(), rotation=90, horizontalalignment=&#39;center&#39;)</span>
 
     <span class="k">if</span> <span class="n">marginal_layout</span> <span class="o">==</span> <span class="s2">&quot;outside&quot;</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">idcs_skipp</span><span class="p">:</span>
             <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># build legend</span>
+    <span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Patch</span>
+
+    <span class="k">if</span> <span class="n">legend_labels</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">legend_elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx_obs</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dp_samples</span><span class="p">)):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">c_palette</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">idx_obs</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">legend_labels</span><span class="p">):</span>
+                <span class="n">legend_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">legend_labels</span><span class="p">[</span><span class="n">idx_obs</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">legend_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Create the legend</span>
+        <span class="n">ax_leg</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">plot_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">ax_leg</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax_leg</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+        <span class="n">ax_leg</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span></div>
 </pre></div>
