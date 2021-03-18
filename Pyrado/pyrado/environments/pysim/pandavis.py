@@ -4,7 +4,6 @@ import sys
 
 import pyrado
 from direct.showbase.ShowBase import ShowBase
-from direct.showbase.ShowBaseGlobal import aspect2d
 from direct.task import Task
 from panda3d.core import *
 

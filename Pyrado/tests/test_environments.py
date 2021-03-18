@@ -319,16 +319,15 @@ def test_reset(env):
 def test_panda3d_animations(env):
     assert isinstance(env, SimEnv)
     env.reset()
-    env.render(mode=RenderMode(video=True))
+    env.render(mode=RenderMode(video=False))
     for _ in range(300):  # do max 300 steps
         state, rew, done, info = env.step(np.ones(env.act_space.shape))
-        env.render(mode=RenderMode(video=True))
+        env.render(mode=RenderMode(video=False))
         if done:
             break
     env.reset()  # only calls _reset_anim if window is already existing
     assert env.curr_step <= env.max_steps
-    env._visualization.destroy()
-    del env._visualization
+    env.close()
 
 
 @pytest.mark.visualization
