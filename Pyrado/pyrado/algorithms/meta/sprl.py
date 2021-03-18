@@ -453,7 +453,7 @@ class SPRL(Algorithm):
         self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False
     ) -> float:
         if reset_policy:
-            self._subroutine.policy.reset()
+            self._subroutine.init_modules(False)
         self._subroutine.reset()
 
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
