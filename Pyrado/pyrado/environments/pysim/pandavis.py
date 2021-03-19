@@ -144,7 +144,7 @@ class BallOnBeamVis(PandaVis):
         a = float(self._env.state[1])  # angle [rad]
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 1 / l_beam
+        self._scale = 10 / l_beam
 
         # Set window title
         self.windowProperties.setTitle("Ball on Beam")
@@ -295,8 +295,8 @@ class OneMassOscillatorVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            mass_x: {self.mass.getX()}
-            spring_Sx: {self.spring.getSx()}
+            mass_x: {np.round(self.mass.getX(), 3)}
+            spring_Sx: {np.round(self.spring.getSx(), 3)}
             dt: {self._env.dt :1.4f}
             m: {m : 1.3f}
             k: {k : 2.2f}
@@ -340,7 +340,7 @@ class PendulumVis(PandaVis):
         self.joint.reparentTo(self.render)
 
         # Pole
-        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
+        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_red.egg"))
         self.pole.setPos(0, r_pole * self._scale, 0)
         self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
@@ -577,13 +577,13 @@ class QCartPoleVis(PandaVis):
         self.cart.reparentTo(self.render)
 
         # Joint
-        self.joint = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
+        self.joint = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
         self.joint.setPos(x * self._scale, (-r_pole - h_cart / 2) * self._scale, 0)
         self.joint.setScale(r_pole * self._scale)
         self.joint.reparentTo(self.render)
 
         # Pole
-        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
+        self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_red.egg"))
         self.pole.setPos(x * self._scale, (-r_pole - h_cart / 2) * self._scale, 0)
         self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
@@ -635,7 +635,7 @@ class QCartPoleVis(PandaVis):
             g: {g : 1.3f}
             m_cart: {m_cart : 1.4f}
             l_rail: {l_rail : 1.3f}
-            l_pole: {l_pole : 1.3f} (0.168 is short)
+            l_pole: {l_pole : 1.3f}
             eta_m: {eta_m : 1.3f}
             eta_g: {eta_g : 1.3f}
             K_g: {K_g : 1.3f}

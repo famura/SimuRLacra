@@ -256,12 +256,6 @@ class SimPyEnv(SimEnv, Serializable):
                 # Update the animation
                 self._update_anim()
 
-    def close(self):
-        if hasattr(self, "_visualization"):
-            if not self._rendering:
-                self._visualization.destroy()
-                del self._visualization
-
     def _init_anim(self):
         """
         Initialize animation. Called by first render call.
