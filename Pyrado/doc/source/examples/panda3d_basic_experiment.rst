@@ -64,8 +64,6 @@ This is due to the cameras unchangeable size. It is recommended to choose a valu
 .. code-block:: python
 
     self._scale = 10 / l_pole
-    self.example_box.setX(l_pole * self._scale)
-    self.example_box.setScale(r_pole * self._scale)
 
 Setting a **window title** is *not absolutely neccessary*, but very much recommended and easily done
 
