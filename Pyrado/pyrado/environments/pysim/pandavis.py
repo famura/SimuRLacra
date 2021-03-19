@@ -22,15 +22,17 @@ loadPrcFileData("", confVars)
 
 
 class PandaVis(ShowBase):
-    def __init__(self, rendering):
+    def __init__(self, rendering: bool):
         """
         Constructor
-        """
-        ShowBase.__init__(self)
-        self.dir = Filename.fromOsSpecific(pyrado.PANDA_ASSETS_DIR).getFullpath()
-        self._render = rendering
 
-        if self._render:
+        :param rendering: boolean indicating whether to use RenderPipeline or default Panda3d as visualization-module.
+        """
+        super().__init__(self)
+        self.dir = Filename.fromOsSpecific(pyrado.PANDA_ASSETS_DIR).getFullpath()
+
+        # Initialize RenderPipeline
+        if rendering:
             sys.path.insert(0, pyrado.RENDER_PIPELINE_DIR)
             from rpcore import RenderPipeline
 
@@ -41,10 +43,15 @@ class PandaVis(ShowBase):
             self.render_pipeline.create(self)
             self.render_pipeline.daytime_mgr.time = "17:00"
 
-        # Set title and background color
+        # Activate antialiasing
         self.render.setAntialias(AntialiasAttrib.MAuto)
+
+        # Set window properties
         self.windowProperties = WindowProperties()
         self.windowProperties.setForeground(True)
+        self.windowProperties.setTitle("Experiment")
+
+        # Set background color
         self.setBackgroundColor(1, 1, 1)
 
         # Configuration of the lighting
@@ -63,26 +70,26 @@ class PandaVis(ShowBase):
         self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
         self.render.setLight(self.ambientLightNP)
 
-        # Create a text node which displays the parameter on the bottom right of the screen
+        # Create a text node displaying the physic parameters on the top left of the screen
         self.text = TextNode("parameters")
         self.textNodePath = aspect2d.attachNewNode(self.text)
-        self.text.setTextColor(0, 0, 0, 1)
+        self.text.setTextColor(0, 0, 0, 1)  # black
         self.textNodePath.setScale(0.07)
         self.textNodePath.setPos(-1.9, 0, 0.9)
 
         # Configure trace
         self.trace = LineSegs()
         self.trace.setThickness(3)
-        self.trace.setColor(0.8, 0.8, 0.8)
+        self.trace.setColor(0.8, 0.8, 0.8)  # light grey
         self.lines = self.render.attachNewNode("Lines")
         self.last_pos = None
 
-    def update(self, task):
+    def update(self, task: Task):
         """
         Updates the visualization with every call.
 
         :param task: Needed by panda3d task manager.
-        :return: Task.cont indicates that task should be called again next frame.
+        :return Task.cont: indicates that task should be called again next frame.
         """
         return Task.cont
 
@@ -97,7 +104,7 @@ class PandaVis(ShowBase):
         """
         Draws a line from the last point to the current point
 
-        :param point: Current position of pen. Needs 3 values.
+        :param point: Current position of pen. Needs 3 value vector.
         """
         # Check if trace initialized
         if self.last_pos:
@@ -116,13 +123,14 @@ class PandaVis(ShowBase):
 
 
 class BallOnBeamVis(PandaVis):
-    def __init__(self, env: SimEnv, render):
+    def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
 
         :param env: environment to visualize
+        :param rendering
         """
-        super().__init__(render)
+        super().__init__(rendering)
 
         # Accessing variables of environment class
         self._env = env
@@ -157,7 +165,7 @@ class BallOnBeamVis(PandaVis):
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
-    def update(self, task):
+    def update(self, task: Task):
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
         m_ball = self._env.domain_param["m_ball"]
@@ -203,13 +211,13 @@ class BallOnBeamVis(PandaVis):
 
 
 class OneMassOscillatorVis(PandaVis):
-    def __init__(self, env: SimEnv, render):
+    def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__(render)
+        super().__init__(rendering)
 
         # Accessing variables of environment class
         self._env = env
@@ -267,7 +275,7 @@ class OneMassOscillatorVis(PandaVis):
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
-    def update(self, task):
+    def update(self, task: Task):
 
         # Accessing the current parameter values
         m = self._env.domain_param["m"]
@@ -307,14 +315,14 @@ class OneMassOscillatorVis(PandaVis):
 
 
 class PendulumVis(PandaVis):
-    def __init__(self, env: SimEnv, render):
+    def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
 
         :param env: environment to visualize
 
         """
-        super().__init__(render)
+        super().__init__(rendering)
 
         # Accessing variables of environment class
         self._env = env
@@ -389,13 +397,13 @@ class PendulumVis(PandaVis):
 
 
 class QBallBalancerVis(PandaVis):
-    def __init__(self, env: SimEnv, render):
+    def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__(render)
+        super().__init__(rendering)
 
         # Accessing variables of environment class
         self._env = env
@@ -541,13 +549,13 @@ class QCartPoleVis(PandaVis):
     Visualization for QCartPoleSim
     """
 
-    def __init__(self, env: SimEnv, render):
+    def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__(render)
+        super().__init__(rendering)
 
         # Accessing variables of environment class
         self._env = env
@@ -597,7 +605,7 @@ class QCartPoleVis(PandaVis):
         # Adds one instance of the update function to the task-manager, thus initializes the animation
         self.taskMgr.add(self.update, "update")
 
-    def update(self, task):
+    def update(self, task: Task):
         # Accessing the current parameter values
         x, th, _, _ = self._env.state
         g = self._env.domain_param["g"]
@@ -661,13 +669,13 @@ class QCartPoleVis(PandaVis):
 
 
 class QQubeVis(PandaVis):
-    def __init__(self, env: SimEnv, render):
+    def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
 
         :param env: environment to visualize
         """
-        super().__init__(render)
+        super().__init__(rendering)
 
         # Accessing variables of environment class
         self._env = env

@@ -94,4 +94,4 @@ class PendulumSim(SimPyEnv, Serializable):
         from pyrado.environments.pysim.pandavis import PendulumVis
 
         # Create instance of PandaVis
-        self._visualization = PendulumVis(self, self._render)
+        self._visualization = PendulumVis(self, self._rendering)

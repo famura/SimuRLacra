@@ -53,7 +53,7 @@ class SimPyEnv(SimEnv, Serializable):
         """
         Serializable._init(self, locals())
         super().__init__(dt, max_steps)
-        self._render = False
+        self._rendering = False
 
         # Initialize the domain parameters and the derived constants
         self._domain_param = self.get_nominal_domain_param()
@@ -245,7 +245,7 @@ class SimPyEnv(SimEnv, Serializable):
                     f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
-            self._render = mode.render
+            self._rendering = mode.render
             # Panda3D
             if mode.video:
                 if not hasattr(self, "_visualization"):

@@ -118,7 +118,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         from pyrado.environments.pysim.pandavis import OneMassOscillatorVis
 
         # Create instance of PandaVis
-        self._visualization = OneMassOscillatorVis(self, self._render)
+        self._visualization = OneMassOscillatorVis(self, self._rendering)
 
 
 class OneMassOscillatorDyn(Serializable):

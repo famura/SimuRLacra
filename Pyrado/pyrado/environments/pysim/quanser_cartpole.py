@@ -202,7 +202,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         from pyrado.environments.pysim.pandavis import QCartPoleVis
 
         # Create instance of PandaVis
-        self._visualization = QCartPoleVis(self, self._render)
+        self._visualization = QCartPoleVis(self, self._rendering)
 
 
 class QCartPoleStabSim(QCartPoleSim, Serializable):

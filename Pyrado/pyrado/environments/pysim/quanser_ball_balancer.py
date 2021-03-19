@@ -325,7 +325,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         from pyrado.environments.pysim.pandavis import QBallBalancerVis
 
         # Create instance of PandaVis
-        self._visualization = QBallBalancerVis(self, self._render)
+        self._visualization = QBallBalancerVis(self, self._rendering)
 
 
 class QBallBalancerKin(Serializable):
