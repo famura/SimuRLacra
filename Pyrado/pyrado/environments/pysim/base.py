@@ -258,8 +258,9 @@ class SimPyEnv(SimEnv, Serializable):
 
     def close(self):
         if hasattr(self, "_visualization"):
-            self._visualization.destroy()
-            del self._visualization
+            if not self._rendering:
+                self._visualization.destroy()
+                del self._visualization
 
     def _init_anim(self):
         """
