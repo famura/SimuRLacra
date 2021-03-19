@@ -84,6 +84,9 @@ class PandaVis(ShowBase):
         self.lines = self.render.attachNewNode("Lines")
         self.last_pos = None
 
+        # Adds one instance of the update function to the task-manager, thus initializes the animation
+        self.taskMgr.add(self.update, "update")
+
     def update(self, task: Task):
         """
         Updates the visualization with every call.
@@ -162,8 +165,6 @@ class BallOnBeamVis(PandaVis):
         self.beam.setR(-a * 180 / np.pi)
         self.beam.reparentTo(self.render)
 
-        # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
         # Accessing the current parameter values
@@ -236,17 +237,13 @@ class OneMassOscillatorVis(PandaVis):
         # Ground
         self.ground = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
         self.ground.setPos(0, 0, -0.02 * self._scale)
-        self.ground.setScale(
-            self._env.obs_space.bound_up[0] * self._scale, 1.5 * c * self._scale, 0.01 * self._scale
-        )  # Scale modified according to Blender Object
+        self.ground.setScale(self._env.obs_space.bound_up[0] * self._scale, 1.5 * c * self._scale, 0.01 * self._scale)
         self.ground.reparentTo(self.render)
 
         # Object
         self.mass = self.loader.loadModel(osp.join(self.dir, "cube_blue.egg"))
         self.mass.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.mass.setScale(
-            c * 0.5 * self._scale, c * 0.5 * self._scale, c * 0.5 * self._scale
-        )  # multiplied by 0.5 since Blender object has length of 2
+        self.mass.setScale(c * 0.5 * self._scale, c * 0.5 * self._scale, c * 0.5 * self._scale)
         self.mass.reparentTo(self.render)
 
         # Desired state
@@ -254,29 +251,23 @@ class OneMassOscillatorVis(PandaVis):
         self.des.setPos(self._env._task.state_des[0] * self._scale, 0, 0.4 * c * self._scale)
         self.des.setScale(0.4 * c * self._scale, 0.4 * c * self._scale, 0.4 * c * self._scale)
         self.des.setTransparency(1)
+        self.des.setColorScale(1, 0, 0, 0.5)
         self.des.reparentTo(self.render)
 
         # Force
         self.force = self.loader.loadModel(osp.join(self.dir, "arrow_red.egg"))
         self.force.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.force.setScale(
-            0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale, 0.1 * c * self._scale
-        )
+        self.force.setScale(0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale, 0.1 * c * self._scale)
         self.force.reparentTo(self.render)
 
         # Spring
         self.spring = self.loader.loadModel(osp.join(self.dir, "spring_orange.egg"))
         self.spring.setPos(0, 0, c / 2.0 * self._scale)
-        self.spring.setScale(
-            (self._env.state[0] - c / 2.0) / 7.3 * self._scale, c / 6.0 * self._scale, c / 6.0 * self._scale
-        )  # scaling according to Blender object
+        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.3 * self._scale, c / 6.0 * self._scale, c / 6.0 * self._scale)
         self.spring.reparentTo(self.render)
 
-        # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
-
         # Accessing the current parameter values
         m = self._env.domain_param["m"]
         k = self._env.domain_param["k"]
@@ -352,8 +343,6 @@ class PendulumVis(PandaVis):
         self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
-        # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
         # Accessing the current parameter values
@@ -459,8 +448,6 @@ class QBallBalancerVis(PandaVis):
         )
         self.null_plate.reparentTo(self.render)
 
-        # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
         # Accessing the current parameter values
@@ -602,8 +589,6 @@ class QCartPoleVis(PandaVis):
         self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
-        # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
         # Accessing the current parameter values
@@ -732,8 +717,6 @@ class QQubeVis(PandaVis):
         self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
-        # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update")
 
     def update(self, task: Task):
         # Accessing the current parameter values
