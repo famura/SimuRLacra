@@ -33,7 +33,7 @@ from matplotlib import colors
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from pandas.core.indexes.numeric import NumericIndex
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import pyrado
 from pyrado.plotting.utils import draw_sep_cbar
@@ -135,7 +135,7 @@ def _annotate_heatmap(
 def draw_heatmap(
     data: pd.DataFrame,
     ax_hm: Optional[plt.Axes] = None,
-    cmap: Optional[colors.Colormap] = None,
+    cmap: Optional[colors.Colormap] = plt.get_cmap("coolwarm"),
     norm: Optional[colors.Normalize] = colors.Normalize(),
     annotate: bool = True,
     annotation_valfmt: Optional[str] = "{x:.0f}",
