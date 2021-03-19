@@ -165,7 +165,6 @@ class BallOnBeamVis(PandaVis):
         self.beam.setR(-a * 180 / np.pi)
         self.beam.reparentTo(self.render)
 
-
     def update(self, task: Task):
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
@@ -257,15 +256,18 @@ class OneMassOscillatorVis(PandaVis):
         # Force
         self.force = self.loader.loadModel(osp.join(self.dir, "arrow_red.egg"))
         self.force.setPos(self._env.state[0] * self._scale, 0, c / 2.0 * self._scale)
-        self.force.setScale(0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale, 0.1 * c * self._scale)
+        self.force.setScale(
+            0.1 * self._env._curr_act / 10.0 * self._scale, 0.1 * c * self._scale, 0.1 * c * self._scale
+        )
         self.force.reparentTo(self.render)
 
         # Spring
         self.spring = self.loader.loadModel(osp.join(self.dir, "spring_orange.egg"))
         self.spring.setPos(0, 0, c / 2.0 * self._scale)
-        self.spring.setScale((self._env.state[0] - c / 2.0) / 7.3 * self._scale, c / 6.0 * self._scale, c / 6.0 * self._scale)
+        self.spring.setScale(
+            (self._env.state[0] - c / 2.0) / 7.3 * self._scale, c / 6.0 * self._scale, c / 6.0 * self._scale
+        )
         self.spring.reparentTo(self.render)
-
 
     def update(self, task: Task):
         # Accessing the current parameter values
@@ -288,7 +290,7 @@ class OneMassOscillatorVis(PandaVis):
             self.force.setSx(capped_act / 10.0 * self._scale)
 
         # Update scale of spring
-        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3 * self._scale)  # scaling according to Blender object
+        self.spring.setSx((self._env.state[0] - c / 2.0) / 7.3 * self._scale)
 
         # Update displayed text
         self.text.setText(
@@ -343,7 +345,6 @@ class PendulumVis(PandaVis):
         self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
-
     def update(self, task: Task):
         # Accessing the current parameter values
         th, _ = self._env.state
@@ -397,8 +398,9 @@ class QBallBalancerVis(PandaVis):
         # Accessing variables of environment class
         self._env = env
         l_plate = self._env.domain_param["l_plate"]
-        m_ball = self._env.domain_param["m_ball"]  # mass of the ball is not needed for panda3d visualization
         r_ball = self._env.domain_param["r_ball"]
+
+        # Only for animation
         d_plate = 0.01
         r_pole = 0.005
         l_pole = 0.02
@@ -423,9 +425,7 @@ class QBallBalancerVis(PandaVis):
 
         # Plate
         self.plate = self.loader.loadModel(osp.join(self.dir, "cube_blue.egg"))
-        self.plate.setScale(
-            l_plate * 0.5 * self._scale, l_plate * 0.5 * self._scale, d_plate * 0.5 * self._scale
-        )  # modified according to Blender object
+        self.plate.setScale(l_plate * 0.5 * self._scale, l_plate * 0.5 * self._scale, d_plate * 0.5 * self._scale)
         self.plate.reparentTo(self.render)
 
         # Joint
@@ -447,7 +447,6 @@ class QBallBalancerVis(PandaVis):
             l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale, d_plate / 20.0 * self._scale
         )
         self.null_plate.reparentTo(self.render)
-
 
     def update(self, task: Task):
         # Accessing the current parameter values
@@ -474,16 +473,16 @@ class QBallBalancerVis(PandaVis):
         d_plate = 0.01  # only for animation
 
         # Get ball position
-        x = self._env.state[2]  # along the x axis
-        y = self._env.state[3]  # along the y axis
+        x = self._env.state[2]
+        y = self._env.state[3]
 
         # Compute plate orientation
-        a_vp = -self._env.plate_angs[0]  # plate's angle around the y axis (alpha) # Roll
-        b_vp = self._env.plate_angs[1]  # plate's angle around the x axis (beta) # Pitch
+        a_vp = -self._env.plate_angs[0]
+        b_vp = self._env.plate_angs[1]
 
         # Update rotation of plate
-        self.plate.setR(-a_vp * 180 / np.pi)  # rotate Roll axis
-        self.plate.setP(b_vp * 180 / np.pi)  # rotate Pitch axis
+        self.plate.setR(-a_vp * 180 / np.pi)
+        self.plate.setP(b_vp * 180 / np.pi)
 
         # Update position of ball
         ball_pos = (
@@ -589,7 +588,6 @@ class QCartPoleVis(PandaVis):
         self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
-
     def update(self, task: Task):
         # Accessing the current parameter values
         x, th, _, _ = self._env.state
@@ -611,13 +609,14 @@ class QCartPoleVis(PandaVis):
         # Update position of Cart, Joint and Pole
         self.cart.setX(x * self._scale)
         self.joint.setX(x * self._scale)
-        self.pole.setX(x * self._scale)  # could be reparented to cart
+        self.pole.setX(x * self._scale)
 
         # Update rotation of Pole
         self.pole.setR(-th * 180 / np.pi)
 
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
+
         # Calculate position of new point
         current_pos = (
             pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
@@ -666,6 +665,8 @@ class QQubeVis(PandaVis):
         self._env = env
         Lr = self._env.domain_param["Lr"]
         Lp = self._env.domain_param["Lp"]
+
+        # Only for animation
         arm_radius = 0.003
         pole_radius = 0.0045
 
@@ -717,7 +718,6 @@ class QQubeVis(PandaVis):
         self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
-
     def update(self, task: Task):
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
@@ -739,6 +739,7 @@ class QQubeVis(PandaVis):
 
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
+
         # Calculate position of new point
         current_pos = (
             pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,

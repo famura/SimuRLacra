@@ -21,7 +21,7 @@ class YourEnvironmentVis(PandaVis):
 
     def __init__(self, env, rendering):
         """
-        This method will only be called once, at the very start of the simulation. The parameter "env" represent the environment you want to visualize. 
+        This method will only be called once, at the very start of the simulation. The parameter "env" represent the environment you want to visualize.
         The parameter "rendering" specifies if you want to use RenderPipeline as additional renderer (this will be specified as argument --render).
         """
 
