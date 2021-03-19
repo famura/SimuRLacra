@@ -27,19 +27,19 @@ The following content is extracted from PandaVis.QCartPoleVis
 
 Implementing \__init__-method
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This method will only be called once, at the very start of the simulation
+This method will only be called once, at the very start of the simulation. The parameter "env" represent the environment you want to get your updated physic parameters from. The parameter "rendering" specifies if you want to use RenderPipeline as additional renderer (this will be specified as argument --render).
 
 .. code-block:: python
 
-    def __init__(self):
+    def __init__(self, env, rendering):
 
 Beginn implementing the __init__-method by **calling the superconstructor.**
 This takes care of most properties shared by all simulations, such as window-Properties, lighting, antialiasing, backgroundcolor, textproperties
-and providing a handy path-variable as well as default version of the trace
+and providing a handy path-variable as well as default version of the trace. As mentioned above the "rendering" parameter toggles the usage of the RenderPipeline.
 
 .. code-block:: python
 
-    super().__init__()
+    super().__init__(rendering)
 
 Continue by **accessing outer calculated parameters**, called environment domain parameters or environment states, by **passing them into local variables**.
 Except for the env-variable itself, most of these are specific to the actual simulation and are either entries of the domain_param-dictionary or of the state-dictionary.
@@ -59,11 +59,13 @@ The name of the local variable should either be equal to the keyword neccessary 
     r_pole, r_rail = 0.01, 0.005
 
 Now it is neccessary to determine a fixed value as a **scaling attribute** to enable a handy use of the camera, concerning zooming, rotation and translation.
-This is due to the cameras unchangeable size. It is recommended to choose a value thats dependent on the length-properties of a bigger if not the main primitive object
+This is due to the cameras unchangeable size. It is recommended to choose a value thats dependent on the length-properties of a bigger if not the main primitive object. You have to multiply the **scaling attribute** with every position and scaling of your models (not the rotation!).
 
 .. code-block:: python
 
     self._scale = 10 / l_pole
+    self.example_box.setX(l_pole * self._scale)
+    self.example_box.setScale(r_pole * self._scale)
 
 Setting a **window title** is *not absolutely neccessary*, but very much recommended and easily done
 
