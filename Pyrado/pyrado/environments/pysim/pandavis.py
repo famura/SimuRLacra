@@ -1,12 +1,39 @@
+# Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+# Technical University of Darmstadt.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+#    or Technical University of Darmstadt, nor the names of its contributors may
+#    be used to endorse or promote products derived from this software without
+#    specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+# OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 import numpy as np
 import os.path as osp
 import sys
-
-import pyrado
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from panda3d.core import *
 
+import pyrado
 from pyrado.environments.sim_base import SimEnv
 
 # Configuration for panda3d-window
@@ -22,6 +49,8 @@ loadPrcFileData("", confVars)
 
 
 class PandaVis(ShowBase):
+    """ Base class for all visualizations with panda3d """
+    
     def __init__(self, rendering: bool):
         """
         Constructor
@@ -126,6 +155,8 @@ class PandaVis(ShowBase):
 
 
 class BallOnBeamVis(PandaVis):
+    """ Visualisation for the BallOnBeamSim class using panda3d """
+    
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -135,7 +166,7 @@ class BallOnBeamVis(PandaVis):
         """
         super().__init__(rendering)
 
-        # Accessing variables of environment class
+        # Accessing variables of the environment
         self._env = env
         r_ball = self._env.domain_param["r_ball"]
         l_beam = self._env.domain_param["l_beam"]
@@ -195,7 +226,7 @@ class BallOnBeamVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            dt: {self._env._dt : 1.4f}
+            dt: {self._env.dt : 1.4f}
             g: {g : 1.3f}
             m_ball: {m_ball: 1.2f}
             r_ball: {r_ball : 1.3f}
@@ -211,6 +242,8 @@ class BallOnBeamVis(PandaVis):
 
 
 class OneMassOscillatorVis(PandaVis):
+    """ Visualisation for the OneMassOscillatorSim class using panda3d """
+    
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -219,7 +252,7 @@ class OneMassOscillatorVis(PandaVis):
         """
         super().__init__(rendering)
 
-        # Accessing variables of environment class
+        # Accessing variables of the environment
         self._env = env
         c = 0.1 * self._env.obs_space.bound_up[0]
 
@@ -308,6 +341,8 @@ class OneMassOscillatorVis(PandaVis):
 
 
 class PendulumVis(PandaVis):
+    """ Visualisation for the PendulumSim class using panda3d """
+    
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -317,7 +352,7 @@ class PendulumVis(PandaVis):
         """
         super().__init__(rendering)
 
-        # Accessing variables of environment class
+        # Accessing variables of the environment
         self._env = env
         th, _ = self._env.state
         l_pole = float(self._env.domain_param["l_pole"])
@@ -369,7 +404,7 @@ class PendulumVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            dt: {self._env._dt :1.4f}
+            dt: {self._env.dt :1.4f}
             theta: {self._env.state[0] * 180 / np.pi : 2.3f}
             sin theta: {np.sin(self._env.state[0]) : 1.3f}
             cos theta: {np.cos(self._env.state[0]) : 1.3f}
@@ -387,6 +422,8 @@ class PendulumVis(PandaVis):
 
 
 class QBallBalancerVis(PandaVis):
+    """ Visualisation for the QBallBalancerSim class using panda3d """
+    
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -395,7 +432,7 @@ class QBallBalancerVis(PandaVis):
         """
         super().__init__(rendering)
 
-        # Accessing variables of environment class
+        # Accessing variables of the environment
         self._env = env
         l_plate = self._env.domain_param["l_plate"]
         r_ball = self._env.domain_param["r_ball"]
@@ -531,9 +568,7 @@ class QBallBalancerVis(PandaVis):
 
 
 class QCartPoleVis(PandaVis):
-    """
-    Visualization for QCartPoleSim
-    """
+    """ Visualisation for the QCartPoleSim class using panda3d """
 
     def __init__(self, env: SimEnv, rendering: bool):
         """
@@ -543,7 +578,7 @@ class QCartPoleVis(PandaVis):
         """
         super().__init__(rendering)
 
-        # Accessing variables of environment class
+        # Accessing variables of the environment
         self._env = env
         x, th, _, _ = self._env.state
         l_pole = float(self._env.domain_param["l_pole"])
@@ -631,7 +666,7 @@ class QCartPoleVis(PandaVis):
         self.text.setText(
             f"""
             theta: {self._env.state[1] * 180 / np.pi : 2.3f}
-            dt: {self._env._dt :1.4f}
+            dt: {self._env.dt :1.4f}
             g: {g : 1.3f}
             m_cart: {m_cart : 1.4f}
             l_rail: {l_rail : 1.3f}
@@ -653,6 +688,8 @@ class QCartPoleVis(PandaVis):
 
 
 class QQubeVis(PandaVis):
+    """ Visualisation for the QQubeSim class using panda3d """
+    
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -661,7 +698,7 @@ class QQubeVis(PandaVis):
         """
         super().__init__(rendering)
 
-        # Accessing variables of environment class
+        # Accessing variables of the environment
         self._env = env
         Lr = self._env.domain_param["Lr"]
         Lp = self._env.domain_param["Lp"]
@@ -755,7 +792,7 @@ class QQubeVis(PandaVis):
             f"""
             theta: {self._env.state[0] * 180 / np.pi : 3.1f}
             alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
-            dt: {self._env._dt :1.4f}
+            dt: {self._env.dt :1.4f}
             g: {g : 1.3f}
             Mr: {Mr : 1.4f}
             Mp: {Mp : 1.4f}
