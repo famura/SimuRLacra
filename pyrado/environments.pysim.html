@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -113,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.base">base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.one_mass_oscillator">one_mass_oscillator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.openai_classical_control">openai_classical_control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.pandavis">pandavis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.pendulum">pendulum</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.quanser_ball_balancer">quanser_ball_balancer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.quanser_cartpole">quanser_cartpole</a></li>
@@ -477,7 +479,7 @@ but there might also be additional parameters that depend on the domain paramete
 
 <dl class="py method">
 <dt id="pyrado.environments.pysim.openai_classical_control.GymEnv.render">
-<code class="sig-name descname"><span class="pre">render</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/openai_classical_control.html#GymEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.render" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">render</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode"><span class="pre">pyrado.utils.data_types.RenderMode</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False,</span> <span class="pre">render=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/openai_classical_control.html#GymEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.render" title="Permalink to this definition">¶</a></dt>
 <dd><p>Visualize one time step of the simulation.
 The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="field-list simple">
@@ -550,6 +552,173 @@ When a terminal condition is met, the reset function is called.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pyrado.environments.pysim.pandavis">
+<span id="pandavis"></span><h2>pandavis<a class="headerlink" href="#module-pyrado.environments.pysim.pandavis" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environments.pysim.pandavis.BallOnBeamVis">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">BallOnBeamVis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#BallOnBeamVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.BallOnBeamVis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
+<p>Visualisation for the BallOnBeamSim class using panda3d</p>
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.BallOnBeamVis.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#BallOnBeamVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.BallOnBeamVis.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the visualization with every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
+</dd>
+<dt class="field-even">Return Task.cont</dt>
+<dd class="field-even"><p>indicates that task should be called again next frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.pysim.pandavis.OneMassOscillatorVis">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">OneMassOscillatorVis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#OneMassOscillatorVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.OneMassOscillatorVis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
+<p>Visualisation for the OneMassOscillatorSim class using panda3d</p>
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.OneMassOscillatorVis.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#OneMassOscillatorVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.OneMassOscillatorVis.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the visualization with every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
+</dd>
+<dt class="field-even">Return Task.cont</dt>
+<dd class="field-even"><p>indicates that task should be called again next frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.pysim.pandavis.PandaVis">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">PandaVis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">direct.showbase.ShowBase.ShowBase</span></code></p>
+<p>Base class for all visualizations with panda3d</p>
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.PandaVis.draw_trace">
+<code class="sig-name descname"><span class="pre">draw_trace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis.draw_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis.draw_trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a line from the last point to the current point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> – Current position of pen. Needs 3 value vector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.PandaVis.reset">
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the the visualization to a certain state, so that in can be run again. Removes the trace.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.PandaVis.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PandaVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PandaVis.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the visualization with every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
+</dd>
+<dt class="field-even">Return Task.cont</dt>
+<dd class="field-even"><p>indicates that task should be called again next frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.pysim.pandavis.PendulumVis">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">PendulumVis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PendulumVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PendulumVis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
+<p>Visualisation for the PendulumSim class using panda3d</p>
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.PendulumVis.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#PendulumVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.PendulumVis.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the visualization with every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
+</dd>
+<dt class="field-even">Return Task.cont</dt>
+<dd class="field-even"><p>indicates that task should be called again next frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.pysim.pandavis.QBallBalancerVis">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">QBallBalancerVis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QBallBalancerVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QBallBalancerVis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
+<p>Visualisation for the QBallBalancerSim class using panda3d</p>
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.QBallBalancerVis.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QBallBalancerVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QBallBalancerVis.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the visualization with every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
+</dd>
+<dt class="field-even">Return Task.cont</dt>
+<dd class="field-even"><p>indicates that task should be called again next frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.pysim.pandavis.QCartPoleVis">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">QCartPoleVis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QCartPoleVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QCartPoleVis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
+<p>Visualisation for the QCartPoleSim class using panda3d</p>
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.QCartPoleVis.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QCartPoleVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QCartPoleVis.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the visualization with every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
+</dd>
+<dt class="field-even">Return Task.cont</dt>
+<dd class="field-even"><p>indicates that task should be called again next frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.pysim.pandavis.QQubeVis">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">QQubeVis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QQubeVis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QQubeVis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.pandavis.PandaVis" title="pyrado.environments.pysim.pandavis.PandaVis"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.pandavis.PandaVis</span></code></a></p>
+<p>Visualisation for the QQubeSim class using panda3d</p>
+<dl class="py method">
+<dt id="pyrado.environments.pysim.pandavis.QQubeVis.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">task:</span> <span class="pre">&lt;module</span> <span class="pre">'direct.task.Task'</span> <span class="pre">from</span> <span class="pre">'/home/user/miniconda3/envs/pyrado/lib/python3.7/site-packages/direct/task/Task.py'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pandavis.html#QQubeVis.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.pandavis.QQubeVis.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the visualization with every call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – Needed by panda3d task manager.</p>
+</dd>
+<dt class="field-even">Return Task.cont</dt>
+<dd class="field-even"><p>indicates that task should be called again next frame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-pyrado.environments.pysim.pendulum">
 <span id="pendulum"></span><h2>pendulum<a class="headerlink" href="#module-pyrado.environments.pysim.pendulum" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -597,7 +766,7 @@ When a terminal condition is met, the reset function is called.</p>
 <span id="quanser-ball-balancer"></span><h2>quanser_ball_balancer<a class="headerlink" href="#module-pyrado.environments.pysim.quanser_ball_balancer" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">QBallBalancerKin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qbb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_opt_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerKin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">QBallBalancerKin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qbb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_opt_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False,</span> <span class="pre">render=False)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_ball_balancer.html#QBallBalancerKin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Calculates and visualizes the kinematics from the servo shaft angles (th_x, th_x) to the plate angles (a, b).</p>
 <dl class="py method">

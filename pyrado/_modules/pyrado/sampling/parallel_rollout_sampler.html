@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -243,6 +244,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sampler</span> <span class="kn">import</span> <span class="n">SamplerBase</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
 
 
 <span class="k">def</span> <span class="nf">_ps_init</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
@@ -300,8 +302,50 @@
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span>
         <span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_ps_run_one_reset_kwargs_segment</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span>
+    <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">len_segment</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">use_rec</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">idx_r</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">cnt_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sample one segments of a rollout with given init state (which originates from a target domain setup) and domain</span>
+<span class="sd">    parameters, passed as a tuple for simplicity at the other end.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain_param</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_param</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_segment</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">len_segment</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># Set the init space of the simulation environment such that we can later set to arbitrary states that could have</span>
+    <span class="c1"># occurred during the rollout. This is necessary since we are running the evaluation in segments.</span>
+    <span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">init_space</span> <span class="o">=</span> <span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">init_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_rec</span><span class="p">:</span>
+        <span class="c1"># Disabled the policy reset of PlaybackPolicy to do it here manually</span>
+        <span class="k">assert</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">no_reset</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">curr_rec</span> <span class="o">=</span> <span class="n">idx_r</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">=</span> <span class="n">cnt_step</span>
+
+    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
+        <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span>
+        <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">),</span>
+        <span class="n">max_steps</span><span class="o">=</span><span class="n">len_segment</span><span class="p">,</span>
+        <span class="n">stop_on_done</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
 

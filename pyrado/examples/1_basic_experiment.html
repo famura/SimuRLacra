@@ -95,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -308,7 +309,6 @@ you want to continue from a previous experiment multiple times.</p>
                  <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">init_state</span><span class="o">=</span><span class="n">state</span><span class="p">))</span>
     <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Return: </span><span class="si">{</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">done</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">param</span> <span class="o">=</span> <span class="n">after_rollout_query</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">ro</span><span class="p">)</span>
-<span class="n">pyrado</span><span class="o">.</span><span class="n">close_vpython</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

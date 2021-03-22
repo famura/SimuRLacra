@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -379,6 +380,11 @@
     <span class="k">def</span> <span class="nf">curr_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the number of the current replay step (0 for the initial step). &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">no_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Returns `True` if the automatic reset is skipped, i.e. the reset has to be controlled manually. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_no_reset</span>
 
     <span class="nd">@curr_step</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">curr_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>

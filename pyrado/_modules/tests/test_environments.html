@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -498,7 +499,7 @@
     <span class="k">assert</span> <span class="n">obs2</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">obs1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_vpython_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_vpython_animations">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<div class="viewcode-block" id="test_panda3d_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_panda3d_animations">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;env&quot;</span><span class="p">,</span>
     <span class="p">[</span>
@@ -513,17 +514,20 @@
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bobd&quot;</span><span class="p">,</span> <span class="s2">&quot;bob&quot;</span><span class="p">,</span> <span class="s2">&quot;omo&quot;</span><span class="p">,</span> <span class="s2">&quot;pend&quot;</span><span class="p">,</span> <span class="s2">&quot;qbb&quot;</span><span class="p">,</span> <span class="s2">&quot;qq-su&quot;</span><span class="p">,</span> <span class="s2">&quot;qcp-st&quot;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_vpython_animations</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;use_render&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;render_off&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_panda3d_animations</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">use_render</span><span class="p">):</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">)</span>
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">render</span><span class="o">=</span><span class="n">use_render</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">):</span>  <span class="c1"># do max 300 steps</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">render</span><span class="o">=</span><span class="n">use_render</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
             <span class="k">break</span>
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># only calls _reset_anim if window is already existing</span>
-    <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">&lt;=</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span></div>
+    <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">&lt;=</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">_visualization</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">env</span><span class="o">.</span><span class="n">_visualization</span></div>
 
 
 <div class="viewcode-block" id="test_rcspysim_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_rcspysim_animations">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>

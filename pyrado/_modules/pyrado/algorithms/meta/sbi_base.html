@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -293,6 +294,7 @@
         <span class="n">num_sim_per_round</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_rec_act</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">num_eval_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">posterior_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -330,6 +332,9 @@
 <span class="sd">        :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial</span>
 <span class="sd">                             state of the simulation is reset, and thus for every set the features of the trajectories</span>
 <span class="sd">                             are computed separately. Either specify `num_segments` or `len_segments`.</span>
+<span class="sd">        :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout</span>
+<span class="sd">                            during simulation (feed-forward). If `False` there policy is used to generate (potentially)</span>
+<span class="sd">                            state-dependent actions (feed-back).</span>
 <span class="sd">        :param num_sbi_rounds: set to an integer &gt; 1 to use multi-round sbi. This way the posteriors (saved as</span>
 <span class="sd">                               `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`</span>
 <span class="sd">                               counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior</span>
@@ -382,6 +387,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_real_rollouts</span> <span class="o">=</span> <span class="n">num_real_rollouts</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_segments</span> <span class="o">=</span> <span class="n">num_segments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">len_segments</span> <span class="o">=</span> <span class="n">len_segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_rec_act</span> <span class="o">=</span> <span class="n">use_rec_act</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">=</span> <span class="n">num_sbi_rounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_samples</span> <span class="o">=</span> <span class="n">num_eval_samples</span> <span class="ow">or</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulation_batch_size</span> <span class="o">=</span> <span class="n">simulation_batch_size</span>
@@ -464,6 +470,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">num_segments</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">len_segments</span><span class="p">,</span>
             <span class="n">rollouts_real</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use_rec_act</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">prior</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;prior&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>

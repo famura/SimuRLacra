@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -225,10 +226,10 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">colorama</span> <span class="kn">import</span> <span class="n">init</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">_exit</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 
@@ -242,7 +243,11 @@
 <span class="n">HPARAM_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;perma&quot;</span><span class="p">,</span> <span class="s2">&quot;hyperparams&quot;</span><span class="p">)</span>
 <span class="n">TEMP_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">)</span>
 <span class="n">MUJOCO_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;environments&quot;</span><span class="p">,</span> <span class="s2">&quot;mujoco&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
-<span class="n">ISAAC_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thirdParty&quot;</span><span class="p">,</span> <span class="s2">&quot;isaac_gym&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
+<span class="n">PANDA_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;environments&quot;</span><span class="p">,</span> <span class="s2">&quot;pysim&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Linux&quot;</span><span class="p">:</span>
+    <span class="n">RENDER_PIPELINE_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thirdParty&quot;</span><span class="p">,</span> <span class="s2">&quot;RenderPipeline&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">RENDER_PIPELINE_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thirdParty&quot;</span><span class="p">,</span> <span class="s2">&quot;RenderPipeline&quot;</span><span class="p">)</span>
 
 <span class="c1"># Set the availability of the physics-engine based simulations to False. These are set to True in the respective</span>
 <span class="c1"># top-level __init__.py files, if they can be imported successfully</span>
@@ -301,6 +306,9 @@
     <span class="s2">&quot;EVAL_DIR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;EXP_DIR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;HPARAM_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MUJOCO_ASSETS_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PANDA_ASSETS_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RENDER_PIPELINE_DIR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;rcsenv_loaded&quot;</span><span class="p">,</span>
     <span class="s2">&quot;mujoco_loaded&quot;</span><span class="p">,</span>
     <span class="s2">&quot;use_pgf&quot;</span><span class="p">,</span>
@@ -308,16 +316,10 @@
     <span class="s2">&quot;nan&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sym_success&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sym_failure&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;close_vpython&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_seed&quot;</span><span class="p">,</span>
     <span class="s2">&quot;timestamp_format&quot;</span><span class="p">,</span>
     <span class="s2">&quot;timestamp_date_format&quot;</span><span class="p">,</span>
 <span class="p">]</span>
-
-
-<div class="viewcode-block" id="close_vpython"><a class="viewcode-back" href="../pyrado.html#pyrado.close_vpython">[docs]</a><span class="k">def</span> <span class="nf">close_vpython</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Forcefully close the connection to the current VPython animation &quot;&quot;&quot;</span>
-    <span class="n">_exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_seed"><a class="viewcode-back" href="../pyrado.html#pyrado.set_seed">[docs]</a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>

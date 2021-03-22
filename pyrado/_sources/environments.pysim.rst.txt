@@ -41,6 +41,15 @@ openai\_classical\_control
    :show-inheritance:
 
 
+pandavis
+--------
+
+.. automodule:: pyrado.environments.pysim.pandavis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 pendulum
 --------
 

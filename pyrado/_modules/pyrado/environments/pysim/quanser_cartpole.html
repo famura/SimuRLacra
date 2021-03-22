@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -397,108 +398,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>  <span class="c1"># next position</span>
 
     <span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">vpython</span> <span class="k">as</span> <span class="nn">vp</span>
+        <span class="c1"># Import PandaVis Class</span>
+        <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pandavis</span> <span class="kn">import</span> <span class="n">QCartPoleVis</span>
 
-        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;l_pole&quot;</span><span class="p">])</span>
-        <span class="n">l_rail</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;l_rail&quot;</span><span class="p">])</span>
-
-        <span class="c1"># Only for animation</span>
-        <span class="n">l_cart</span><span class="p">,</span> <span class="n">h_cart</span> <span class="o">=</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.08</span>
-        <span class="n">r_pole</span><span class="p">,</span> <span class="n">r_rail</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.005</span>
-
-        <span class="c1"># Get positions</span>
-        <span class="n">x</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;canvas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">canvas</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Quanser Cartpole&quot;</span><span class="p">)</span>
-        <span class="c1"># Rail</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;rail&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">cylinder</span><span class="p">(</span>
-            <span class="n">pos</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="o">-</span><span class="n">l_rail</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">h_cart</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">r_rail</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># a VPython&#39;s cylinder origin is at the bottom</span>
-            <span class="n">radius</span><span class="o">=</span><span class="n">r_rail</span><span class="p">,</span>
-            <span class="n">length</span><span class="o">=</span><span class="n">l_rail</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">white</span><span class="p">,</span>
-            <span class="n">canvas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;canvas&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="c1"># Cart</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;cart&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">box</span><span class="p">(</span>
-            <span class="n">pos</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="n">length</span><span class="o">=</span><span class="n">l_cart</span><span class="p">,</span>
-            <span class="n">height</span><span class="o">=</span><span class="n">h_cart</span><span class="p">,</span>
-            <span class="n">width</span><span class="o">=</span><span class="n">h_cart</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">green</span><span class="p">,</span>
-            <span class="n">canvas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;canvas&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;joint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">sphere</span><span class="p">(</span>
-            <span class="n">pos</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">+</span> <span class="n">h_cart</span> <span class="o">/</span> <span class="mi">4</span><span class="p">),</span>
-            <span class="n">radius</span><span class="o">=</span><span class="n">r_pole</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">white</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="c1"># Pole</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;pole&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">cylinder</span><span class="p">(</span>
-            <span class="n">pos</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">+</span> <span class="n">h_cart</span> <span class="o">/</span> <span class="mi">4</span><span class="p">),</span>
-            <span class="n">axis</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">vp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">vp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="n">radius</span><span class="o">=</span><span class="n">r_pole</span><span class="p">,</span>
-            <span class="n">length</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">blue</span><span class="p">,</span>
-            <span class="n">canvas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;canvas&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_update_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">vpython</span> <span class="k">as</span> <span class="nn">vp</span>
-
-        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">]</span>
-        <span class="n">m_cart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;m_cart&quot;</span><span class="p">]</span>
-        <span class="n">m_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;m_pole&quot;</span><span class="p">]</span>
-        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;l_pole&quot;</span><span class="p">])</span>
-        <span class="n">l_rail</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;l_rail&quot;</span><span class="p">])</span>
-        <span class="n">eta_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;eta_m&quot;</span><span class="p">]</span>
-        <span class="n">eta_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;eta_g&quot;</span><span class="p">]</span>
-        <span class="n">K_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;K_g&quot;</span><span class="p">]</span>
-        <span class="n">J_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;J_m&quot;</span><span class="p">]</span>
-        <span class="n">R_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;R_m&quot;</span><span class="p">]</span>
-        <span class="n">k_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;k_m&quot;</span><span class="p">]</span>
-        <span class="n">r_mp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;r_mp&quot;</span><span class="p">]</span>
-        <span class="n">B_eq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;B_eq&quot;</span><span class="p">]</span>
-        <span class="n">B_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;B_pole&quot;</span><span class="p">]</span>
-
-        <span class="c1"># Only for animation</span>
-        <span class="n">l_cart</span><span class="p">,</span> <span class="n">h_cart</span> <span class="o">=</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.08</span>
-        <span class="n">r_pole</span><span class="p">,</span> <span class="n">r_rail</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.005</span>
-
-        <span class="c1"># Get positions</span>
-        <span class="n">x</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
-
-        <span class="c1"># Rail</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;rail&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="o">-</span><span class="n">l_rail</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">h_cart</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">r_rail</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;rail&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">l_rail</span>
-        <span class="c1"># Cart</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;cart&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;joint&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">+</span> <span class="n">h_cart</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
-        <span class="c1"># Pole</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;pole&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span> <span class="o">+</span> <span class="n">h_cart</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;pole&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">vp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">vp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
-
-        <span class="c1"># Set caption text</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span>
-            <span class="s2">&quot;canvas&quot;</span>
-        <span class="p">]</span><span class="o">.</span><span class="n">caption</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                    x: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    theta: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="si">:</span><span class="s2">1.4f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    g: </span><span class="si">{</span><span class="n">g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    m_cart: </span><span class="si">{</span><span class="n">m_cart</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    l_rail: </span><span class="si">{</span><span class="n">l_rail</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    l_pole: </span><span class="si">{</span><span class="n">l_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"> (0.168 is short)</span>
-<span class="s2">                    eta_m: </span><span class="si">{</span><span class="n">eta_m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    eta_g: </span><span class="si">{</span><span class="n">eta_g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    K_g: </span><span class="si">{</span><span class="n">K_g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    J_m: </span><span class="si">{</span><span class="n">J_m</span> <span class="si">:</span><span class="s2"> 1.8f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    r_mp: </span><span class="si">{</span><span class="n">r_mp</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    R_m: </span><span class="si">{</span><span class="n">R_m</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    k_m: </span><span class="si">{</span><span class="n">k_m</span> <span class="si">:</span><span class="s2"> 1.6f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    B_eq: </span><span class="si">{</span><span class="n">B_eq</span> <span class="si">:</span><span class="s2"> 1.2f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    B_pole: </span><span class="si">{</span><span class="n">B_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    m_pole: </span><span class="si">{</span><span class="n">m_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                    &quot;&quot;&quot;</span></div>
+        <span class="c1"># Create instance of PandaVis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span> <span class="o">=</span> <span class="n">QCartPoleVis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="QCartPoleStabSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_cartpole.QCartPoleStabSim">[docs]</a><span class="k">class</span> <span class="nc">QCartPoleStabSim</span><span class="p">(</span><span class="n">QCartPoleSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>

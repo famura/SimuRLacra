@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -252,6 +253,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Initialize the domain parameters and the derived constants</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
@@ -270,9 +272,8 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">task_args</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_task</span><span class="p">(</span><span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">)</span>
 
-        <span class="c1"># Animation with VPython</span>
+        <span class="c1"># Animation with Panda3D</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">canvas</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
@@ -390,8 +391,8 @@
         <span class="c1"># Reset the task</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
 
-        <span class="c1"># Reset VPython animation</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;canvas&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Reset the animation</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_visualization&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_reset_anim</span><span class="p">()</span>
 
         <span class="c1"># Return an observation</span>
@@ -444,10 +445,13 @@
                     <span class="sa">f</span><span class="s2">&quot;step: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">  |  r_t: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2">  |  a_t: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span><span class="si">}</span><span class="s2">  |  s_t+1: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
 
-            <span class="c1"># VPython</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">render</span>
+            <span class="c1"># Panda3D</span>
             <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">video</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s2">&quot;canvas&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_visualization&quot;</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_init_anim</span><span class="p">()</span>
+                    <span class="c1"># Calculate if and how many frames are dropped</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_skip_frames</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>  <span class="c1"># 60 Hz</span>
 
                 <span class="c1"># Update the animation</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_update_anim</span><span class="p">()</span></div>
@@ -455,23 +459,29 @@
     <span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize animation. Called by first render call.</span>
-<span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_update_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update animation. Called by each render call.</span>
-<span class="sd">        :return:</span>
+<span class="sd">        Skips certain number of simulation steps per frame to achieve 60 Hz output.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+        <span class="c1"># Do not render while _skip_frames is bigger than 1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_frames</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Decrease _skip_frames by one</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_skip_frames</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Render frame</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span><span class="o">.</span><span class="n">taskMgr</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="c1"># Calculate number of frames that need to be skipped</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_skip_frames</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>  <span class="c1"># 60 Hz</span>
 
     <span class="k">def</span> <span class="nf">_reset_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset animation to initial state. Called by reset() if needed.</span>
-<span class="sd">        The default implementation does nothing.</span>
+<span class="sd">        Removes trace. Called by reset() if needed. Calls reset of pandavis-class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
