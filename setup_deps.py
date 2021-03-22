@@ -499,8 +499,8 @@ def setup_pre_commit():
 def setup_pyrado():
     # Set up Pyrado in development mode
     sp.check_call([sys.executable, "setup.py", "develop"], cwd=osp.join(project_dir, "Pyrado"))
-    
-    
+
+
 def setup_render_pipeline():
     # Set up RenderPipeline (custom fork)
     sp.check_call([sys.executable, "setup.py"], cwd=osp.join(project_dir, "thirdParty", "RenderPipeline"))
