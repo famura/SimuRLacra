@@ -499,6 +499,11 @@ def setup_pre_commit():
 def setup_pyrado():
     # Set up Pyrado in development mode
     sp.check_call([sys.executable, "setup.py", "develop"], cwd=osp.join(project_dir, "Pyrado"))
+    
+    
+def setup_render_pipeline():
+    # Set up RenderPipeline (custom fork)
+    sp.check_call([sys.executable, "setup.py"], cwd=osp.join(project_dir, "thirdParty", "RenderPipeline"))
 
 
 def setup_mujoco_py():
@@ -626,6 +631,7 @@ def setup_wo_rcs_wo_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
+        setup_render_pipeline()
     setup_pytorch_based()
     print("\nWAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
@@ -638,6 +644,7 @@ def setup_wo_rcs_w_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
+        setup_render_pipeline()
     setup_pytorch_based()
     print(
         "\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
@@ -658,6 +665,7 @@ def setup_w_rcs_wo_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
+        setup_render_pipeline()
     setup_pytorch_based()
     print(
         "\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
@@ -677,6 +685,7 @@ def setup_w_rcs_w_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
+        setup_render_pipeline()
     setup_pytorch_based()
     print(
         "\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
