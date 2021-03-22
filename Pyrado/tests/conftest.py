@@ -30,8 +30,8 @@
 This file is found by pytest and contains fixtures (i.e., common defaults) that can be used for all tests.
 """
 import multiprocessing as mp
-
 import pytest
+
 from pyrado.domain_randomization.domain_parameter import (
     MultivariateNormalDomainParam,
     NormalDomainParam,
