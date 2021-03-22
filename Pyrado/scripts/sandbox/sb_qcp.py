@@ -71,7 +71,7 @@ if __name__ == "__main__":
         ro = rollout(
             env,
             policy,
-            render_mode=RenderMode(text=False, video=True),
+            render_mode=RenderMode(text=False, video=True, render=args.render),
             eval=True,
             reset_kwargs=dict(domain_param=param, init_state=state),
         )

@@ -72,7 +72,7 @@ if __name__ == "__main__":
         ro = rollout(
             env,
             policy,
-            render_mode=RenderMode(text=args.verbose, video=args.animation),
+            render_mode=RenderMode(text=args.verbose, video=args.animation, render=args.render),
             eval=True,
             max_steps=max_steps,
             stop_on_done=not args.relentless,
@@ -81,4 +81,3 @@ if __name__ == "__main__":
         print_domain_params(env.domain_param)
         print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, state, param = after_rollout_query(env, policy, ro)
-    pyrado.close_vpython()

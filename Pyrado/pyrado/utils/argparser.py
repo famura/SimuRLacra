@@ -171,6 +171,18 @@ def get_argparser() -> argparse.ArgumentParser:
         help="don't stop (e.g. continue simulating after done flag was raised)",
     )
     parser.add_argument(
+        "--render",
+        dest="render",
+        action="store_true",
+        help="show a rendered animation (default: True)",
+    )
+    parser.add_argument(
+        "--no_render",
+        dest="render",
+        action="store_false",
+    )
+    parser.set_defaults(render=False)
+    parser.add_argument(
         "--rescale",
         action="store_true",
         default=False,

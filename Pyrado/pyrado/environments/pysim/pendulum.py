@@ -90,61 +90,8 @@ class PendulumSim(SimPyEnv, Serializable):
         self.state[0] += self.state[1] * self._dt  # next position
 
     def _init_anim(self):
-        import vpython as vp
+        # Import PandaVis Class
+        from pyrado.environments.pysim.pandavis import PendulumVis
 
-        l_pole = float(self.domain_param["l_pole"]) / 2  # scale for visualization
-        r_pole = 0.05
-        th, _ = self.state
-
-        # Init render objects on first call
-        self._anim["canvas"] = vp.canvas(width=1000, height=600, title="Pendulum")
-        # Joint
-        self._anim["joint"] = vp.sphere(
-            pos=vp.vec(0, 0, r_pole),
-            radius=r_pole,
-            color=vp.color.white,
-        )
-        # Pole
-        self._anim["pole"] = vp.cylinder(
-            pos=vp.vec(0, 0, r_pole),
-            axis=vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0),
-            radius=r_pole,
-            length=2 * l_pole,
-            color=vp.color.blue,
-            canvas=self._anim["canvas"],
-        )
-
-    def _update_anim(self):
-        import vpython as vp
-
-        g = self.domain_param["g"]
-        m_pole = self.domain_param["m_pole"]
-        l_pole = float(self.domain_param["l_pole"])
-        d_pole = self.domain_param["d_pole"]
-        tau_max = self.domain_param["tau_max"]
-        r_pole = 0.05
-        th, _ = self.state
-
-        # Cart
-        self._anim["joint"].pos = vp.vec(0, 0, r_pole)
-
-        # Pole
-        self._anim["pole"].pos = vp.vec(0, 0, r_pole)
-        self._anim["pole"].axis = vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-            theta: {self.state[0]*180/np.pi : 2.3f}
-            sin theta: {np.sin(self.state[0]) : 1.3f}
-            cos theta: {np.cos(self.state[0]) : 1.3f}
-            theta_dot: {self.state[1]*180/np.pi : 2.3f}
-            tau: {self._curr_act[0] : 1.3f}
-            dt: {self._dt :1.4f}
-            g: {g : 1.3f}
-            m_pole: {m_pole : 1.3f}
-            l_pole: {l_pole : 1.3f}
-            d_pole: {d_pole : 1.3f}
-            tau_max: {tau_max: 1.3f}
-            """
+        # Create instance of PandaVis
+        self._visualization = PendulumVis(self, self._rendering)

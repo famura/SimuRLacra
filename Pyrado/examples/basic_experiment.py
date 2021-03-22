@@ -145,4 +145,3 @@ while not done:
     )
     print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
     done, state, param = after_rollout_query(env, policy, ro)
-pyrado.close_vpython()
