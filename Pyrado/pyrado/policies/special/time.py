@@ -181,6 +181,11 @@ class PlaybackPolicy(Policy):
         """ Get the number of the current replay step (0 for the initial step). """
         return self._curr_step
 
+    @property
+    def no_reset(self) -> bool:
+        """ Returns `True` if the automatic reset is skipped, i.e. the reset has to be controlled manually. """
+        return self._no_reset
+
     @curr_step.setter
     def curr_step(self, curr_step: int):
         """ Set the number of the current replay step (0 for the initial step). """

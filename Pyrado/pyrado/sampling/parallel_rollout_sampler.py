@@ -44,6 +44,7 @@ from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sampler import SamplerBase
+from pyrado.spaces.box import InfBoxSpace
 
 
 def _ps_init(G, env, policy):
@@ -101,8 +102,50 @@ def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
         raise pyrado.TypeErr(given=reset_kwargs[0], expected_type=np.ndarray)
     if not isinstance(reset_kwargs[1], dict):
         raise pyrado.TypeErr(given=reset_kwargs[1], expected_type=dict)
+
     return rollout(
         G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1])
+    )
+
+
+def _ps_run_one_reset_kwargs_segment(
+    G,
+    domain_param: dict,
+    init_state: np.ndarray,
+    len_segment: int,
+    use_rec: bool,
+    idx_r: int,
+    cnt_step: int,
+    eval: bool,
+):
+    """
+    Sample one segments of a rollout with given init state (which originates from a target domain setup) and domain
+    parameters, passed as a tuple for simplicity at the other end.
+    """
+    if not isinstance(domain_param, dict):
+        raise pyrado.TypeErr(given=domain_param, expected_type=dict)
+    if not isinstance(init_state, np.ndarray):
+        raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
+    if not isinstance(len_segment, int):
+        raise pyrado.TypeErr(given=len_segment, expected_type=int)
+
+    # Set the init space of the simulation environment such that we can later set to arbitrary states that could have
+    # occurred during the rollout. This is necessary since we are running the evaluation in segments.
+    G.env.init_space = InfBoxSpace(shape=G.env.init_space.shape)
+
+    if use_rec:
+        # Disabled the policy reset of PlaybackPolicy to do it here manually
+        assert G.policy.no_reset
+        G.policy.curr_rec = idx_r
+        G.policy.curr_step = cnt_step
+
+    return rollout(
+        G.env,
+        G.policy,
+        eval=eval,
+        reset_kwargs=dict(init_state=init_state, domain_param=domain_param),
+        max_steps=len_segment,
+        stop_on_done=False,
     )
 
 

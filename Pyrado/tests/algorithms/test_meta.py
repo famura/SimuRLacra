@@ -71,6 +71,14 @@ from pyrado.policies.feed_forward.fnn import FNN, FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.sbi_embeddings import (
+    LastStepEmbedding,
+    AllStepsEmbedding,
+    BayesSimEmbedding,
+    DynamicTimeWarpingEmbedding,
+    RNNEmbedding,
+)
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.sampling.sequences import *
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
@@ -491,19 +499,41 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
 
 @pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
-@pytest.mark.parametrize("summary_statistic", ["bayessim", "dtw_distance"], ids=["summstat", "dtw"])
+@pytest.mark.parametrize(
+    "embedding_name",
+    [
+        LastStepEmbedding.name,
+        AllStepsEmbedding.name,
+        BayesSimEmbedding.name,
+        DynamicTimeWarpingEmbedding.name,
+        RNNEmbedding.name,
+    ],
+    ids=["laststep", "allsteps", "bayessim", "dtw", "rnn"],
+)
 @pytest.mark.parametrize(
     "num_segments, len_segments",
-    [(1, None), (10, None), (None, 100)],
-    ids=["num1-lenNone", "num10-lenNone", "numNone-len100"],
+    [(1, None), (10, None), (None, 50)],
+    ids=["num1-lenNone", "num10-lenNone", "numNone-len50"],
 )
-@pytest.mark.parametrize("num_real_obs", [1], ids=["1realobs"])
+@pytest.mark.parametrize("num_real_rollouts", [1], ids=["1rollout"])
 @pytest.mark.parametrize("num_sbi_rounds", [2], ids=["2rounds"])
-def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_segments, num_real_obs, num_sbi_rounds):
+@pytest.mark.parametrize("use_rec_act", [True, False], ids=["userecact", "dontuserecact"])
+def test_npdr(
+    ex_dir,
+    env: SimEnv,
+    embedding_name: str,
+    num_segments: int,
+    len_segments: int,
+    num_real_rollouts: int,
+    num_sbi_rounds: int,
+    use_rec_act: bool,
+):
     # Create a fake ground truth target domain
     env_real = deepcopy(env)
     dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = {k: v + 0.03 * np.random.randn(1).item() for k, v in dp_nom.items()}
+    env_real.domain_param = {
+        k: max(v + v / 3 / 5 * np.random.randn(1).item(), 0) for k, v in dp_nom.items()
+    }  # damping coefficients must be positive
 
     # Policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
@@ -511,26 +541,51 @@ def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_seg
     # Define a mapping: index - domain parameter
     dp_mapping = {i: k for i, (k, v) in enumerate(dp_nom.items())}
 
-    # Prior and Posterior (normalizing flow)
+    # Prior
     prior_hparam = dict(
-        low=to.tensor([0.8 * dp_nom[v] for v in dp_mapping.values()]),
-        high=to.tensor([1.2 * dp_nom[v] for v in dp_mapping.values()]),
+        low=to.tensor([0.9 * dp_nom[v] for v in dp_mapping.values()]),
+        high=to.tensor([1.1 * dp_nom[v] for v in dp_mapping.values()]),
     )
     prior = utils.BoxUniform(**prior_hparam)
+
+    # Time series embedding
+    embedding_hparam = dict()
+    if embedding_name == LastStepEmbedding.name:
+        embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam)
+    elif embedding_name == AllStepsEmbedding.name:
+        embedding = AllStepsEmbedding(
+            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, **embedding_hparam
+        )
+    elif embedding_name == BayesSimEmbedding.name:
+        embedding = BayesSimEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam)
+    elif embedding_name == DynamicTimeWarpingEmbedding.name:
+        embedding = DynamicTimeWarpingEmbedding(
+            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam
+        )
+    elif embedding_name == RNNEmbedding.name:
+        embedding_hparam = dict(hidden_size=10, num_recurrent_layers=1, output_size=1)
+        embedding = RNNEmbedding(
+            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, **embedding_hparam
+        )
+    else:
+        raise NotImplementedError
+
+    # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=3)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        summary_statistic=summary_statistic,
-        num_real_rollouts=num_real_obs,
-        num_sim_per_round=200,
-        num_sbi_rounds=2,
+        num_real_rollouts=num_real_rollouts,
+        num_sim_per_round=100,
+        num_sbi_rounds=num_sbi_rounds,
         simulation_batch_size=1,
         normalize_posterior=False,
         num_eval_samples=10,
         num_segments=num_segments,
         len_segments=len_segments,
+        use_rec_act=use_rec_act,
+        posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
@@ -541,7 +596,7 @@ def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_seg
             use_combined_loss=True,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
-            max_num_epochs=20,  # default: None
+            max_num_epochs=5,  # default: None
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
         num_workers=1,
@@ -553,9 +608,10 @@ def test_npdr(ex_dir, env: SimEnv, summary_statistic: str, num_segments, len_seg
         policy,
         dp_mapping,
         prior,
-        posterior_hparam,
         SNPE,
+        embedding,
         **algo_hparam,
     )
 
     algo.train()
+    assert algo.curr_iter == algo.max_iter

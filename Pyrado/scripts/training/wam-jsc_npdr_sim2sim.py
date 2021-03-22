@@ -63,7 +63,7 @@ if __name__ == "__main__":
     env_sim = WAMJointSpaceCtrlSim(**env_sim_hparams)
 
     # Create a fake ground truth target domain
-    num_real_obs = 1  # TODO fewer for now
+    num_real_rollouts = 3
     env_real = WAMJointSpaceCtrlSim(**env_sim_hparams)
     dp_nom = env_sim.get_nominal_domain_param()
     env_real.domain_param = dict(
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
         low=to.tensor([dp_nom[name] * 0 for name in dp_mapping.values()]),
-        high=to.tensor([dp_nom[name] * 20 for name in dp_mapping.values()]),
+        high=to.tensor([dp_nom[name] * 100 for name in dp_mapping.values()]),
     )
     prior = utils.BoxUniform(**prior_hparam)
 
@@ -141,8 +141,8 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=1,
-        num_sim_per_round=2000,
-        num_sbi_rounds=4,
+        num_sim_per_round=1000,
+        num_sbi_rounds=2,
         simulation_batch_size=50,
         normalize_posterior=False,
         num_eval_samples=10,
@@ -151,7 +151,7 @@ if __name__ == "__main__":
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
-            training_batch_size=100,  # default: 50
+            training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20

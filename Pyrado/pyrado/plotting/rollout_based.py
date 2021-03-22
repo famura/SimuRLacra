@@ -43,6 +43,7 @@ from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_types import fill_list_of_arrays
 from pyrado.utils.input_output import print_cbt
 
@@ -52,7 +53,7 @@ def _get_obs_label(rollout: StepSequence, idx: int):
         label = f"{rollout.rollout_info['env_spec'].obs_space.labels[idx]}"
         if label == "None":
             label = f"o_{{{idx}}}"
-    except (AttributeError, KeyError):
+    except (AttributeError, KeyError, TypeError):
         label = f"o_{{{idx}}}"
     return label
 
@@ -62,7 +63,7 @@ def _get_act_label(rollout: StepSequence, idx: int):
         label = f"{rollout.rollout_info['env_spec'].act_space.labels[idx]}"
         if label == "None":
             label = f"a_{{{idx}}}"
-    except (AttributeError, KeyError):
+    except (AttributeError, KeyError, TypeError):
         label = f"a_{{{idx}}}"
     return label
 
@@ -85,25 +86,29 @@ def plot_observations_actions_rewards(ro: StepSequence):
         # Use recorded time stamps if possible
         t = getattr(ro, "time", np.arange(0, ro.length + 1))
 
-        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_obs + dim_act + 1), figsize=(14, 10), tight_layout=True)
+        num_rows, num_cols = num_rows_cols_from_length(dim_obs + dim_act + 1)
+        fig, axs = plt.subplots(num_rows, num_cols, figsize=(14, 10), tight_layout=True)
         fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
         # Observations (without the last time step)
-        for i in range(dim_obs):
-            axs[i].plot(t, ro.observations[:, i], c=colors[i])
-            axs[i].set_ylabel(_get_obs_label(ro, i))
+        for idx_o in range(dim_obs):
+            ax = axs[idx_o // num_cols, idx_o % num_cols] if isinstance(axs, np.ndarray) else axs
+            ax.plot(t, ro.observations[:, idx_o], c=colors[idx_o])
+            ax.set_ylabel(_get_obs_label(ro, idx_o))
 
         # Actions
-        for i in range(dim_act):
-            axs[i + dim_obs].plot(t[:-1], ro.actions[:, i], c=colors[i])
-            axs[i + dim_obs].set_ylabel(_get_act_label(ro, i))
+        for idx_a in range(dim_obs, dim_obs + dim_act):
+            ax = axs[idx_a // num_cols, idx_a % num_cols] if isinstance(axs, np.ndarray) else axs
+            ax.plot(t[: len(ro.actions[:, idx_a - dim_obs])], ro.actions[:, idx_a - dim_obs], c=colors[idx_a - dim_obs])
+            ax.set_ylabel(_get_act_label(ro, idx_a - dim_obs))
         # action_labels = env.unwrapped.action_space.labels; label=action_labels[0]
 
         # Rewards
-        axs[-1].plot(t[:-1], ro.rewards, c="k")
-        axs[-1].set_ylabel("reward")
-        axs[-1].set_xlabel("time")
+        ax = axs[num_rows - 1, num_cols - 1] if isinstance(axs, np.ndarray) else axs
+        ax.plot(t[: len(ro.rewards)], ro.rewards, c="k")
+        ax.set_ylabel("reward")
+        ax.set_xlabel("time")
         plt.subplots_adjust(hspace=0.5)
 
 
@@ -456,7 +461,7 @@ def plot_mean_std_across_rollouts(
     # Plot actions
     num_rows, num_cols = num_rows_cols_from_length(dim_act, transposed=True)
     fig_act, axs_act = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
-    fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Actions over Time")
+    fig_act.canvas.set_window_title("Mean And 2 Standard Deviations of the Actions over Time")
     colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
     for idx_a, c in enumerate(data_act.columns.unique()):
@@ -473,6 +478,7 @@ def plot_mean_std_across_rollouts(
 
 
 def plot_rollouts_segment_wise(
+    plot_type: str,
     segments_ground_truth: List[List[StepSequence]],
     segments_multiple_envs: List[List[List[StepSequence]]],
     segments_nominal: List[List[StepSequence]],
@@ -482,9 +488,11 @@ def plot_rollouts_segment_wise(
     state_labels: Optional[List[str]] = None,
     save_dir: Optional[str] = None,
 ) -> List[plt.Figure]:
-    """
+    r"""
     Plot the different rollouts in separate figures and the different state dimensions along the columns.
 
+    :param plot_type: tye of plot, pass "samples" to plot the rollouts of the most likely domain parameters as
+                      individual lines, or pass "confidence" to plot the most likely one, and the mean $\pm$ 1 std
     :param segments_ground_truth: list of lists containing rollout segments from the ground truth environment
     :param segments_multiple_envs: list of lists of lists containing rollout segments from different environment
                                    instances, e.g. samples from a posterior coming from `NDPR`
@@ -496,6 +504,9 @@ def plot_rollouts_segment_wise(
     :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
     :return: list of handles to the created figures
     """
+    if not plot_type.lower() in ["samples", "confidence"]:
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="samples or confidence")
+
     # Extract the state dimension, and the number of most likely samples from the data
     dim_state = segments_ground_truth[0][0].get_data_values("states")[0, :].size
     num_samples = len(segments_multiple_envs[0][0])
@@ -517,24 +528,58 @@ def plot_rollouts_segment_wise(
         for idx_state in range(dim_state):
             # Plot the real segments
             cnt_step = [0]
-            for segment_real in segments_ground_truth[idx_r]:
+            for segment_gt in segments_ground_truth[idx_r]:
                 axs[idx_state].plot(
-                    np.arange(cnt_step[-1], cnt_step[-1] + segment_real.length),
-                    segment_real.get_data_values("states", truncate_last=True)[:, idx_state],
+                    np.arange(cnt_step[-1], cnt_step[-1] + segment_gt.length),
+                    segment_gt.get_data_values("states", truncate_last=True)[:, idx_state],
                     c="black",
-                    label="real" if cnt_step[-1] == 0 else "",  # only print once
+                    label="target" if cnt_step[-1] == 0 else "",  # only print once
                 )
-                cnt_step.append(cnt_step[-1] + segment_real.length)
+                cnt_step.append(cnt_step[-1] + segment_gt.length)
 
             # Plot the maximum likely simulated segments
             for idx_seg, sml in enumerate(segments_multiple_envs[idx_r]):
-                for idx_dp, smdp in enumerate(sml):
+                for idx_dp, sdp in enumerate(sml):
                     axs[idx_state].plot(
-                        np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + smdp.length),
-                        smdp.get_data_values("states", truncate_last=True)[:, idx_state],
+                        np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sdp.length),
+                        sdp.get_data_values("states", truncate_last=True)[:, idx_state],
                         c=colors[idx_dp],
                         ls="--",
-                        label=f"sim ml {idx_dp}" if cnt_step[idx_seg] == 0 else "",  # only print once for each dp set
+                        label=f"ml sim {idx_dp}" if cnt_step[idx_seg] == 0 else "",  # only print once for each dp
+                    )
+                    if plot_type.lower() != "samples":
+                        # Stop here, unless the rollouts of most likely all domain parameters should be plotted
+                        break
+
+            if plot_type.lower() == "confidence":
+                len_segs = len(segments_multiple_envs[idx_r][0][0])
+                assert check_all_lengths_equal(segments_multiple_envs[idx_r][0])  # all segments need to be equally long
+
+                states_all = []
+                for idx_dp in range(num_samples):
+                    # Reconstruct the step sequences for all domain parameters
+                    ss_dp = StepSequence.concat(
+                        [seg_dp[idx_dp] for seg_dp in [segs_ro for segs_ro in segments_multiple_envs[idx_r]]]
+                    )
+                    states = ss_dp.get_data_values("states", truncate_last=True)
+                    states_all.append(states)
+                states_all = np.stack(states_all, axis=0)
+                states_mean = np.mean(states_all, axis=0)
+                states_std = np.std(states_all, axis=0)
+
+                for idx_seg in range(len(segments_multiple_envs[idx_r])):
+                    m_i = states_mean[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
+                    s_i = states_std[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
+
+                    draw_curve(
+                        "mean_std",
+                        axs[idx_state],
+                        pd.DataFrame(dict(mean=m_i, std=s_i)),
+                        x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
+                        show_legend=False,
+                        curve_label="ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
+                        area_label=None,
+                        plot_kwargs=dict(color="gray"),
                     )
 
             # Plot the nominal simulation's segments
@@ -544,7 +589,7 @@ def plot_rollouts_segment_wise(
                     sn.get_data_values("states", truncate_last=True)[:, idx_state],
                     c="steelblue",
                     ls="-.",
-                    label="sim nom" if cnt_step[idx_seg] == 0 else "",  # only print once
+                    label="nom sim" if cnt_step[idx_seg] == 0 else "",  # only print once
                 )
 
             axs[idx_state].set_ylabel(state_labels[idx_state])
@@ -565,12 +610,17 @@ def plot_rollouts_segment_wise(
 
         # Save if desired
         if save_dir is not None:
-            for fmt in ["pdf", "pgf"]:
+            for fmt in ["pdf", "pgf", "png"]:
                 os.makedirs(os.path.join(save_dir, "plots"), exist_ok=True)
+                len_seg_str = f"seglen_{segments_ground_truth[0][0].length}"
                 use_rec = "_use_rec" if use_rec else ""
                 rnd = f"_round_{idx_round}" if idx_round is not None else ""
                 fig.savefig(
-                    os.path.join(save_dir, "plots", f"posterior_iter_{idx_iter}{rnd}_rollout_{idx_r}{use_rec}.{fmt}"),
+                    os.path.join(
+                        save_dir,
+                        "plots",
+                        f"posterior_iter_{idx_iter}{rnd}_rollout_{idx_r}_{len_seg_str}{use_rec}.{fmt}",
+                    ),
                     bbox_extra_artists=(lg,),
                     dpi=500,
                 )

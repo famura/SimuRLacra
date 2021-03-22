@@ -249,9 +249,9 @@ def draw_posterior_distr_1d(
     # Plot the ground truth parameters
     if dp_gt is not None:
         if transposed:
-            ax.hlines(dp_gt[:, dim], xmin=ax.get_xlim()[0], xmax=ax.get_xlim()[1], colors="firebrick")
+            ax.hlines(dp_gt[:, dim], xmin=ax.get_xlim()[0], xmax=ax.get_xlim()[1], colors="k")  # firebrick
         else:
-            ax.vlines(dp_gt[:, dim], ymin=ax.get_ylim()[0], ymax=ax.get_ylim()[1], colors="firebrick")
+            ax.vlines(dp_gt[:, dim], ymin=ax.get_ylim()[0], ymax=ax.get_ylim()[1], colors="k")  # firebrick
 
     # Plot bounding box for the prior
     if prior is not None and show_prior:

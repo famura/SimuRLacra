@@ -63,7 +63,7 @@ if __name__ == "__main__":
     env_sim = ActDelayWrapper(env_sim)
 
     # Create a fake ground truth target domain
-    num_real_obs = 5
+    num_real_rollouts = 5
     env_real = deepcopy(env_sim)
     dp_nom = env_sim.get_nominal_domain_param()
     env_real.domain_param = dict(
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     #     NormalDomainParam(name="Km", mean=dp_nom["km"] * 0.9, std=dp_nom["km"] / 50, clip_lo=0.0),
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
-    # env_real.fill_buffer(num_real_obs)
+    # env_real.fill_buffer(num_real_rollouts)
 
     # Behavioral policy
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827)

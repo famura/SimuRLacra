@@ -27,10 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from typing import List, Union
-
-import pyrado
-from pyrado.sampling.step_sequence import StepSequence
 
 
 def is_iterable(obj) -> bool:
@@ -137,33 +133,3 @@ def check_all_equal(iterable) -> bool:
         return all(np.allclose(first, rest) for rest in iterator)
     else:
         return all(first == rest for rest in iterator)
-
-
-def check_act_equal(
-    rollout_1: Union[StepSequence, List[StepSequence]], rollout_2: Union[StepSequence, List[StepSequence]]
-):
-    """
-    Check if the actions of two rollouts or pairwise two rollouts in in two lists are approximately the same
-
-    :param rollout_1: rollouts or list of rollouts
-    :param rollout_2: rollouts or list of rollouts
-    :return: `True` if the actions match
-    """
-    if isinstance(rollout_1, StepSequence) and isinstance(rollout_2, StepSequence):
-        if not np.allclose(
-            rollout_1.actions[: min(rollout_1.length, rollout_2.length)],
-            rollout_2.actions[: min(rollout_1.length, rollout_2.length)],
-        ):
-            raise pyrado.ValueErr(msg="The actions in the rollouts to compare are not equal!")
-
-    elif is_iterable(rollout_1) and is_iterable(rollout_2):
-        if not all(
-            [
-                np.allclose(r1.actions[: min(r1.length, r2.length)], r2.actions[: min(r1.length, r2.length)])
-                for r1, r2 in zip(rollout_1, rollout_2)
-            ]
-        ):
-            raise pyrado.ValueErr(msg="The actions in the rollouts to compare are not equal!")
-
-    else:
-        raise NotImplementedError

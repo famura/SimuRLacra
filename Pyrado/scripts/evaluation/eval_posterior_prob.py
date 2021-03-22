@@ -266,7 +266,7 @@ if __name__ == "__main__":
             )
 
     if args.save:
-        for fmt in ["pdf", "pgf"]:
+        for fmt in ["pdf", "pgf", "png"]:
             os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
             rnd = f"_round_{args.round}" if args.round is not None else ""
             fig.savefig(

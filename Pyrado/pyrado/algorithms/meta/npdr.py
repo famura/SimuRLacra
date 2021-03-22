@@ -64,6 +64,7 @@ class NPDR(SBIBase):
         num_sim_per_round: int,
         num_segments: int = None,
         len_segments: int = None,
+        use_rec_act: Optional[bool] = True,
         num_sbi_rounds: Optional[int] = 1,
         num_eval_samples: Optional[int] = None,
         posterior_hparam: Optional[dict] = None,
@@ -97,6 +98,9 @@ class NPDR(SBIBase):
         :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
+        :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout
+                            during simulation (feed-forward). If `False` there policy is used to generate (potentially)
+                            state-dependent actions (feed-back).
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
@@ -135,6 +139,7 @@ class NPDR(SBIBase):
             num_sim_per_round=num_sim_per_round,
             num_segments=num_segments,
             len_segments=len_segments,
+            use_rec_act=use_rec_act,
             num_sbi_rounds=num_sbi_rounds,
             num_eval_samples=num_eval_samples,
             posterior_hparam=posterior_hparam,
@@ -177,9 +182,10 @@ class NPDR(SBIBase):
 
             # Initialize sbi simulator and prior
             self._setup_sbi(
+                prior=self._sbi_prior,
                 rollouts_real=pyrado.load(
                     None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
-                )
+                ),
             )
 
             self.reached_checkpoint()  # setting counter to 1

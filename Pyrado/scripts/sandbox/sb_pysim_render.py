@@ -78,7 +78,7 @@ if __name__ == "__main__":
         raise pyrado.ValueErr(
             given=args.env_name,
             eq_constraint=f"{QCartPoleSwingUpSim.name}, {QQubeSwingUpSim.name}, {QBallBalancerSim.name}, "
-                          f"{OneMassOscillatorSim.name}, {PendulumSim.name}, or {BallOnBeamSim.name}",
+            f"{OneMassOscillatorSim.name}, {PendulumSim.name}, or {BallOnBeamSim.name}",
         )
 
     policy = IdlePolicy(env.spec)

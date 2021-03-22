@@ -34,9 +34,14 @@ Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
 By default (args.iter = -1), the all iterations are evaluated.
 """
 import numpy as np
-import sys
+import os.path as osp
+from dtw import dtw, rabinerJuangStepPattern
 from matplotlib import pyplot as plt
-from tqdm import tqdm
+from pyrado.sampling.parallel_evaluation import eval_domain_params_with_segmentwise_reset
+from pyrado.sampling.sampler_pool import SamplerPool
+from pyrado.spaces.box import InfBoxSpace
+from pyrado.utils.input_output import print_cbt
+from tabulate import tabulate
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -47,11 +52,11 @@ from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.rollout_based import plot_rollouts_segment_wise
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
-from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.checks import check_act_equal
+from pyrado.sampling.step_sequence import check_act_equal, StepSequence
 from pyrado.utils.data_types import repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
+from pyrado.utils.math import rmse
 
 
 if __name__ == "__main__":
@@ -62,6 +67,8 @@ if __name__ == "__main__":
     if not isinstance(args.num_rollouts_per_config, int) or args.num_rollouts_per_config < 1:
         raise pyrado.ValueErr(given=args.num_rollouts_per_config, ge_constraint="1")
     num_ml_samples = args.num_rollouts_per_config
+    if not args.mode.lower() in ["samples", "confidence"]:
+        raise pyrado.ValueErr(given=args, eq_constraint="samples or confidence")
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -78,6 +85,9 @@ if __name__ == "__main__":
     algo = Algorithm.load_snapshot(ex_dir)
     if not isinstance(algo, (NPDR, BayesSim)):
         raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed)
 
     # Load the rollouts
     rollouts_real, _ = load_rollouts_from_dir(ex_dir)
@@ -124,52 +134,69 @@ if __name__ == "__main__":
 
     # Set the init space of the simulation environment such that we can later set to arbitrary states that could have
     # occurred during the rollout. This is necessary since we are running the evaluation in segments.
-    env_sim.init_space = BoxSpace(-pyrado.inf, pyrado.inf, shape=env_sim.init_space.shape)
+    env_sim.init_space = InfBoxSpace(shape=env_sim.init_space.shape)
 
-    # Sample rollouts with the most likely domain parameter sets associated to that observation
-    segments_ml_all = []  # all top max likelihood segments for all target domain rollouts
-    for idx_r, (segments_real, domain_params_ml) in tqdm(
-        enumerate(zip(segments_real_all, domain_params_ml_all)),
-        total=len(segments_real_all),
-        desc="Sampling",
-        file=sys.stdout,
-        leave=False,
-    ):
-        segments_ml = []  # all top max likelihood segments for one target domain rollout
-        cnt_step = 0
+    if True:
+        # Create a new sampler pool for every policy to synchronize the random seeds i.e. init states
+        pool = SamplerPool(args.num_workers)
 
-        # Iterate over target domain segments
-        for segment_real in segments_real:
-            segments_dp = []  # segments for all domain parameters for the current target domain segment
-
-            # Iterate over domain parameter sets
-            for domain_param in domain_params_ml:
-                if args.use_rec:
-                    # Disabled the policy reset of PlaybackPolicy to do it here manually
-                    policy.curr_rec = idx_r
-                    policy.curr_step = cnt_step
-
-                # Do the rollout for a segment
-                sml = rollout(
-                    env_sim,
-                    policy,
-                    eval=True,
-                    reset_kwargs=dict(init_state=segment_real.states[0, :], domain_param=domain_param),
-                    max_steps=segment_real.length,
-                    stop_on_done=False,
-                )
-                segments_dp.append(sml)
-
-                assert np.allclose(sml.states[0, :], segment_real.states[0, :])
-                if args.use_rec:
-                    check_act_equal(segment_real, sml)
-
-            # Increase step counter for next segment, and append all domain parameter segments
-            cnt_step += segment_real.length
-            segments_ml.append(segments_dp)
+        # Seed the sampler
+        if args.seed is not None:
+            pool.set_seed(args.seed)
+            print_cbt(f"Set the random number generators' seed to {args.seed}.", "w")
+        else:
+            print_cbt("No seed was set", "y")
 
         # Append all segments for the current target domain rollout
-        segments_ml_all.append(segments_ml)
+        segments_ml_all = eval_domain_params_with_segmentwise_reset(
+            pool, env_sim, policy, segments_real_all, domain_params_ml_all, args.use_rec
+        )
+
+    else:
+        # Sample rollouts with the most likely domain parameter sets associated to that observation
+        segments_ml_all = []  # all top max likelihood segments for all target domain rollouts
+        for idx_r, (segments_real, domain_params_ml) in tqdm(
+            enumerate(zip(segments_real_all, domain_params_ml_all)),
+            total=len(segments_real_all),
+            desc="Sampling",
+            file=sys.stdout,
+            leave=False,
+        ):
+            segments_ml = []  # all top max likelihood segments for one target domain rollout
+            cnt_step = 0
+
+            # Iterate over target domain segments
+            for segment_real in segments_real:
+                segments_dp = []  # segments for all domain parameters for the current target domain segment
+
+                # Iterate over domain parameter sets
+                for domain_param in domain_params_ml:
+                    if args.use_rec:
+                        # Disabled the policy reset of PlaybackPolicy to do it here manually
+                        policy.curr_rec = idx_r
+                        policy.curr_step = cnt_step
+
+                    # Do the rollout for a segment
+                    sdp = rollout(
+                        env_sim,
+                        policy,
+                        eval=True,
+                        reset_kwargs=dict(init_state=segment_real.states[0, :], domain_param=domain_param),
+                        max_steps=segment_real.length,
+                        stop_on_done=False,
+                    )
+                    segments_dp.append(sdp)
+
+                    assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
+                    if args.use_rec:
+                        check_act_equal(segment_real, sdp)
+
+                # Increase step counter for next segment, and append all domain parameter segments
+                cnt_step += segment_real.length
+                segments_ml.append(segments_dp)
+
+            # Append all segments for the current target domain rollout
+            segments_ml_all.append(segments_ml)
 
     assert len(segments_ml_all) == len(segments_real_all)
 
@@ -202,11 +229,51 @@ if __name__ == "__main__":
 
         # Append individual segments
         segments_nom.append(segment_nom)
-
     assert len(segments_nom) == len(segments_ml_all)
+
+    # Get the states for computing the performance metrics
+    states_real = np.stack([ro.get_data_values("states", truncate_last=True) for ro in rollouts_real], axis=0)
+    states_nom = np.stack([StepSequence.concat(segs_nom).states for segs_nom in segments_nom], axis=0)
+    states_ml = np.stack(
+        [
+            StepSequence.concat([s[0] for s in [segs_ml for segs_ml in segments_ml]]).states  # 0 ist the most likely
+            for segments_ml in segments_ml_all
+        ],
+        axis=0,
+    )
+    assert states_real.shape == states_nom.shape == states_ml.shape
+    assert states_real.shape[0] == num_rollouts_real
+
+    # Iterate over all rollouts and compute the performance metrics
+    table = []
+    dtw_config = dict(open_end=True, step_pattern=rabinerJuangStepPattern(6, "c"))
+    dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg = 0, 0, 0, 0
+    for idx_r in range(num_rollouts_real):
+        # DTW
+        dtw_dist_ml = dtw(states_real[idx_r], states_ml[idx_r], **dtw_config).distance
+        dtw_dist_nom = dtw(states_real[idx_r], states_nom[idx_r], **dtw_config).distance
+        dtw_dist_ml_avg += dtw_dist_ml / num_rollouts_real
+        dtw_dist_nom_avg += dtw_dist_nom / num_rollouts_real
+
+        # RMSE averaged over the states
+        rmse_ml = np.mean(rmse(states_real[idx_r], states_ml[idx_r], dim=0))
+        rmse_nom = np.mean(rmse(states_real[idx_r], states_nom[idx_r], dim=0))
+        rmse_ml_avg += rmse_ml / num_rollouts_real
+        rmse_nom_avg += rmse_nom / num_rollouts_real
+
+        table.append([idx_r, dtw_dist_ml, dtw_dist_nom, rmse_ml, rmse_nom])
+    table.append(["average", dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg])
+
+    # Print the tabulated data
+    headers = ("rollout", "DTW dist. ml", "DTW dist. nom", "mean RMSE ml", "mean RMSE nom")
+    print(tabulate(table, headers))
+    table_latex_str = tabulate(table, headers, tablefmt="latex")
+    with open(osp.join(ex_dir, "distance_metrics_per_rollout.tex"), "w") as tab_file:
+        print(table_latex_str, file=tab_file)
 
     # Plot
     plot_rollouts_segment_wise(
+        args.mode.lower(),
         segments_real_all,
         segments_ml_all,
         segments_nom,

@@ -50,7 +50,7 @@ loadPrcFileData("", confVars)
 
 class PandaVis(ShowBase):
     """ Base class for all visualizations with panda3d """
-    
+
     def __init__(self, rendering: bool):
         """
         Constructor
@@ -156,7 +156,7 @@ class PandaVis(ShowBase):
 
 class BallOnBeamVis(PandaVis):
     """ Visualisation for the BallOnBeamSim class using panda3d """
-    
+
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -243,7 +243,7 @@ class BallOnBeamVis(PandaVis):
 
 class OneMassOscillatorVis(PandaVis):
     """ Visualisation for the OneMassOscillatorSim class using panda3d """
-    
+
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -342,7 +342,7 @@ class OneMassOscillatorVis(PandaVis):
 
 class PendulumVis(PandaVis):
     """ Visualisation for the PendulumSim class using panda3d """
-    
+
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -423,7 +423,7 @@ class PendulumVis(PandaVis):
 
 class QBallBalancerVis(PandaVis):
     """ Visualisation for the QBallBalancerSim class using panda3d """
-    
+
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor
@@ -689,7 +689,7 @@ class QCartPoleVis(PandaVis):
 
 class QQubeVis(PandaVis):
     """ Visualisation for the QQubeSim class using panda3d """
-    
+
     def __init__(self, env: SimEnv, rendering: bool):
         """
         Constructor

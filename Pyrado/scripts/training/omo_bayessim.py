@@ -57,17 +57,17 @@ if __name__ == "__main__":
     posterior_hparam = dict(num_comp=5, hidden_sizes=[42, 42], hidden_nonlin=to.relu, use_cuda=False)
 
     # Generate real_world observations
-    num_real_obs = 1
+    num_real_rollouts = 1
     num_segments = 1
     # TODO delete below
     # rollout_worker = SimRolloutSamplerForSBI(env_sim, policy, dp_mapping, embedding, num_segments=num_segments)
     # dp_nom_to = to.tensor(list(dp_nom.values()))
-    # data_real = to.stack([rollout_worker(dp_nom_to).squeeze() for _ in range(num_real_obs)])
+    # data_real = to.stack([rollout_worker(dp_nom_to).squeeze() for _ in range(num_real_rollouts)])
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=num_real_obs,
+        num_real_rollouts=num_real_rollouts,
         num_sim_per_round=300,
         num_segments=num_segments,
         posterior_hparam=posterior_hparam,

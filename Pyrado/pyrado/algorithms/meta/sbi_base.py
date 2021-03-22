@@ -94,6 +94,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         num_sim_per_round: int,
         num_segments: int = None,
         len_segments: int = None,
+        use_rec_act: Optional[bool] = True,
         num_sbi_rounds: Optional[int] = 1,
         num_eval_samples: Optional[int] = None,
         posterior_hparam: Optional[dict] = None,
@@ -131,6 +132,9 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
+        :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout
+                            during simulation (feed-forward). If `False` there policy is used to generate (potentially)
+                            state-dependent actions (feed-back).
         :param num_sbi_rounds: set to an integer > 1 to use multi-round sbi. This way the posteriors (saved as
                                `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`
                                counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior
@@ -183,6 +187,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.num_real_rollouts = num_real_rollouts
         self.num_segments = num_segments
         self.len_segments = len_segments
+        self.use_rec_act = use_rec_act
         self.num_sbi_rounds = num_sbi_rounds
         self.num_eval_samples = num_eval_samples or 10 * 2 ** len(dp_mapping)
         self.simulation_batch_size = simulation_batch_size
@@ -265,6 +270,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             self.num_segments,
             self.len_segments,
             rollouts_real,
+            self.use_rec_act,
         )
         if prior is None:
             prior = pyrado.load(None, "prior", "pt", self._save_dir)

@@ -136,8 +136,8 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--num_workers",
         type=int,
-        default=8,
-        help="number of environments to sample from in parallel (default: 8)",
+        default=4,
+        help="number of environments to sample from in parallel (default: 4)",
     )
     parser.add_argument(
         "--num_runs",

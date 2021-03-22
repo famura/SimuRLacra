@@ -35,16 +35,19 @@ from sbi.inference import SNPE_C
 from sbi import utils
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import (
-    BayesSimEmbedding,
-)
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.time import TimePolicy
+from pyrado.sampling.sbi_embeddings import (
+    BayesSimEmbedding,
+    AllStepsEmbedding,
+    RNNEmbedding,
+    DynamicTimeWarpingEmbedding,
+)
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 
 
@@ -53,7 +56,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
     seed_str, num_segs_str, len_seg_str = "", "", ""
     if args.seed is not None:
-        seed_str = f"seed-{args.seed}"
+        seed_str = f"_seed-{args.seed}"
     if args.num_segments is not None:
         num_segs_str = f"numsegs-{args.num_segments}"
     elif args.len_segments is not None:
@@ -61,20 +64,22 @@ if __name__ == "__main__":
     else:
         raise pyrado.ValueErr(msg="Either num_segments or len_segments must not be None, but not both or none!")
 
+    use_rec_act = True
+
     # Experiment (set seed before creating the modules)
     ectl = False
     if ectl:
         ex_dir = setup_experiment(
             QQubeSwingUpSim.name,
             f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}",
-            num_segs_str + len_seg_str + "_" + seed_str,
+            num_segs_str + len_seg_str + seed_str,
         )
         t_end = 6  # s
     else:
         ex_dir = setup_experiment(
             QQubeSwingUpSim.name,
             f"{NPDR.name}_{TimePolicy.name}",
-            num_segs_str + len_seg_str + "_" + seed_str,
+            num_segs_str + len_seg_str + seed_str,
         )
         t_end = 10  # s
 
@@ -85,20 +90,19 @@ if __name__ == "__main__":
     env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
 
-    # Create the ground truth target domain
+    # Create the ground truth target domain and the behavioral policy
     if ectl:
         env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz_filt")
+        policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
     else:
         env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
-
-    # Behavioral policy
-    assert osp.isdir(env_real)
-    policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
+        assert use_rec_act
+        policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
@@ -107,28 +111,30 @@ if __name__ == "__main__":
         # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
         low=to.tensor(
             [
-                1e-8,
-                1e-8,
-                dp_nom["Rm"] * 0.8,
-                dp_nom["km"] * 0.8,
-                dp_nom["Mr"] * 0.9,
-                dp_nom["Mp"] * 0.9,
-                dp_nom["Lr"] * 0.9,
-                dp_nom["Lp"] * 0.9,
+                dp_nom["Dr"] * 0,
+                dp_nom["Dp"] * 0,
+                dp_nom["Rm"] * 0.7,
+                dp_nom["km"] * 0.7,
+                dp_nom["Mr"] * 0.8,
+                dp_nom["Mp"] * 0.8,
+                dp_nom["Lr"] * 0.8,
+                dp_nom["Lp"] * 0.8,
                 dp_nom["g"] * 0.95,
+                0.0,
             ]
         ),
         high=to.tensor(
             [
-                2 * 0.0015,
-                2 * 0.0005,
-                dp_nom["Rm"] * 1.2,
-                dp_nom["km"] * 1.2,
-                dp_nom["Mr"] * 1.1,
-                dp_nom["Mp"] * 1.1,
-                dp_nom["Lr"] * 1.1,
-                dp_nom["Lp"] * 1.1,
+                dp_nom["Dr"] * 5,
+                dp_nom["Dp"] * 5,
+                dp_nom["Rm"] * 1.3,
+                dp_nom["km"] * 1.3,
+                dp_nom["Mr"] * 1.2,
+                dp_nom["Mp"] * 1.2,
+                dp_nom["Lr"] * 1.2,
+                dp_nom["Lp"] * 1.2,
                 dp_nom["g"] * 1.05,
+                5,
             ]
         ),
     )
@@ -141,20 +147,20 @@ if __name__ == "__main__":
     # embedding = AllStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
-    embedding_hparam = dict(downsampling_factor=1)
-    embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
+    # embedding_hparam = dict(downsampling_factor=1)
+    # embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=2)
     # embedding = AllStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
-    # embedding_hparam = dict(downsampling_factor=20)
+    # embedding_hparam = dict(downsampling_factor=2)
     # embedding = DynamicTimeWarpingEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
     # )
-    # embedding_hparam = dict(hidden_size=5, num_recurrent_layers=1, output_size=7, downsampling_factor=10)
-    # embedding = RNNEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
+    embedding_hparam = dict(hidden_size=10, num_recurrent_layers=1, output_size=1, downsampling_factor=1)
+    embedding = RNNEmbedding(
+        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
+    )
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
@@ -162,14 +168,15 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=1,
-        num_sim_per_round=200,
-        num_sbi_rounds=5,
+        num_real_rollouts=4,
+        num_sim_per_round=5000,
+        num_sbi_rounds=1,
         simulation_batch_size=10,
         normalize_posterior=False,
-        num_eval_samples=10,
+        num_eval_samples=1000,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
+        use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
@@ -184,7 +191,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=8,
+        num_workers=10,
     )
     algo = NPDR(
         ex_dir,

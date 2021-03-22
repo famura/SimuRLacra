@@ -32,7 +32,7 @@ import torch as to
 from abc import ABC, abstractmethod
 from init_args_serializer import Serializable
 from operator import itemgetter
-from typing import Sequence, Union, Mapping, Optional, Tuple, List, ValuesView
+from typing import Union, Mapping, Optional, Tuple, List, ValuesView
 
 import pyrado
 from pyrado.sampling.sbi_embeddings import Embedding
@@ -44,9 +44,8 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
-from pyrado.sampling.step_sequence import StepSequence
+from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces import BoxSpace
-from pyrado.utils.checks import check_act_equal
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt_once
 
@@ -145,6 +144,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         num_segments: int = None,
         len_segments: int = None,
         rollouts_real: Optional[List[StepSequence]] = None,
+        use_rec_act: Optional[bool] = True,
     ):
         """
         Constructor
@@ -160,6 +160,9 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
+        :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout
+                            during simulation (feed-forward). If `False` there policy is used to generate (potentially)
+                            state-dependent actions (feed-back).
         """
         if typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(
@@ -180,6 +183,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
         self.dp_names = dp_mapping.values()
         self.rollouts_real = rollouts_real
+        self.use_rec_act = use_rec_act
 
     def __call__(self, dp_values: to.Tensor) -> to.Tensor:
         """
@@ -192,8 +196,12 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         dp_values = to.atleast_2d(dp_values).numpy()
 
         if self.rollouts_real is not None:
-            # Create a policy that simply replays the recorded actions
-            policy = PlaybackPolicy(self._env.spec, [ro.actions for ro in self.rollouts_real], no_reset=True)
+            if self.use_rec_act:
+                # Create a policy that simply replays the recorded actions
+                policy = PlaybackPolicy(self._env.spec, [ro.actions for ro in self.rollouts_real], no_reset=True)
+            else:
+                # Use the current policy to generate the actions
+                policy = self._policy
 
             # The initial states will be set to states which will most likely not the be in the initial state space of
             # the environment, thus we set the initial state space to an infinite space
@@ -222,6 +230,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     cnt_step = 0
                     for seg_real in segs_real:
                         # Disabled the policy reset of PlaybackPolicy to do it here manually
+                        assert policy.no_reset
                         policy.curr_rec = idx_r
                         policy.curr_step = cnt_step
 
@@ -236,8 +245,9 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                             stop_on_done=False,
                             max_steps=seg_real.length,
                         )
-                        check_act_equal(seg_real, seg_sim)
                         # _check_domain_params(seg_sim, dp_value, self.dp_names)
+                        if self.use_rec_act:
+                            check_act_equal(seg_real, seg_sim)
 
                         # Increase step counter for next segment
                         cnt_step += seg_real.length
@@ -273,7 +283,8 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                 )
 
         else:
-            # There are no pre-recorded rollouts, e.g. during _setup_sbi() in LFI.__init__()
+            # There are no pre-recorded rollouts, e.g. during _setup_sbi().
+            # Use the current policy yo generate the actions.
             policy = self._policy
 
             # Do the rollouts
@@ -439,7 +450,9 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         print_cbt_once(f"Using pre-recorded target domain rollouts to from {self.rollouts_dir}", "g")
 
         # Get pre-recoded rollout and advance the index
-        assert isinstance(self.rollouts_rec, StepSequence)
+        if not isinstance(self.rollouts_rec, list) and isinstance(self.rollouts_rec[0], StepSequence):
+            raise pyrado.TypeErr(given=self.rollouts_rec, expected_type=list)
+
         ro = self.rollouts_rec[self._ring_idx]
         ro.torch()
         self._ring_idx = (self._ring_idx + 1) % self.num_rollouts

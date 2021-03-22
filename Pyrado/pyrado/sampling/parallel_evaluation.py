@@ -65,9 +65,14 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers, DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
-from pyrado.sampling.parallel_rollout_sampler import _ps_init, _ps_run_one_domain_param, _ps_run_one_init_state
+from pyrado.sampling.parallel_rollout_sampler import (
+    _ps_init,
+    _ps_run_one_domain_param,
+    _ps_run_one_init_state,
+    _ps_run_one_reset_kwargs_segment,
+)
 from pyrado.sampling.sampler_pool import SamplerPool
-from pyrado.sampling.step_sequence import StepSequence
+from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces.singular import SingularStateSpace
 
 
@@ -140,3 +145,68 @@ def eval_randomized_domain(
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
         return pool.run_map(functools.partial(_ps_run_one_init_state, eval=True), init_states, pb)
+
+
+def eval_domain_params_with_segmentwise_reset(
+    pool: SamplerPool,
+    env_sim: SimEnv,
+    policy: Policy,
+    segments_real_all: List[List[StepSequence]],
+    domain_params_ml_all: List[List[dict]],
+    use_rec: bool,
+) -> List[List[StepSequence]]:
+    """
+    Evaluate a policy for a given set of domain parameters, synchronizing the segments' initial states with the given
+    target domain segments
+
+    :param pool: parallel sampler
+    :param env_sim: environment to evaluate in
+    :param policy: policy to evaluate
+    :param segments_real_all: all segments from the target domain rollout
+    :param domain_params_ml_all: all domain parameters to evaluate over
+    :param use_rec: `True` if pre-recorded actions have been used to generate the rollouts
+    :return: list of segments of rollouts
+    """
+    # Sample rollouts with the most likely domain parameter sets associated to that observation
+    segments_ml_all = []  # all top max likelihood segments for all target domain rollouts
+    for idx_r, (segments_real, domain_params_ml) in tqdm(
+        enumerate(zip(segments_real_all, domain_params_ml_all)),
+        total=len(segments_real_all),
+        desc="Sampling",
+        file=sys.stdout,
+        leave=False,
+    ):
+        segments_ml = []  # all top max likelihood segments for one target domain rollout
+        cnt_step = 0
+
+        # Iterate over target domain segments
+        for segment_real in segments_real:
+            # Initialize workers
+            pool.invoke_all(_ps_init, pickle.dumps(env_sim), pickle.dumps(policy))
+
+            # Run without progress bar
+            segments_dp = pool.run_map(
+                functools.partial(
+                    _ps_run_one_reset_kwargs_segment,
+                    init_state=segment_real.states[0, :],
+                    len_segment=segment_real.length,
+                    use_rec=use_rec,
+                    idx_r=idx_r,
+                    cnt_step=cnt_step,
+                    eval=True,
+                ),
+                domain_params_ml,
+            )
+            for sdp in segments_dp:
+                assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
+                if use_rec:
+                    check_act_equal(segment_real, sdp)
+
+            # Increase step counter for next segment, and append all domain parameter segments
+            cnt_step += segment_real.length
+            segments_ml.append(segments_dp)
+
+        # Append all segments for the current target domain rollout
+        segments_ml_all.append(segments_ml)
+
+    return segments_ml_all

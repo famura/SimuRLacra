@@ -27,9 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
-
-from typing_extensions import Final
-from pyrado.utils.exceptions import ValueErr
 import numpy as np
 import operator
 import random
@@ -38,11 +35,12 @@ import torch as to
 from collections.abc import Iterable
 from copy import deepcopy
 from math import ceil
-from typing import List, Sequence, Type, Optional, Union, Callable, Tuple, cast
+from typing import Sequence, Type, Optional, Union, Callable, Tuple, List
 
 import pyrado
 from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
 from pyrado.sampling.utils import gen_shuffled_batch_idcs, gen_ordered_batch_idcs
+from pyrado.utils.checks import check_all_equal, is_iterable
 
 
 def _index_to_int(idx, n):
@@ -636,7 +634,7 @@ class StepSequence(Sequence[Step]):
 
         return steps, next_steps
 
-    def split_ordered_batches(self, batch_size: Optional[int] = None, num_batches: Optional[int] = None):
+    def split_ordered_batches(self, batch_size: int = None, num_batches: int = None):
         """
         Batch generation. Split the step collection into ordered mini-batches of size batch_size.
 
@@ -646,20 +644,21 @@ class StepSequence(Sequence[Step]):
         .. note::
             Left out the option to return complete rollouts like for `split_shuffled_batches`.
         """
+        if batch_size is None and num_batches is None or batch_size is not None and num_batches is not None:
+            raise pyrado.ValueErr(msg="Either batch_size or num_batches must not be None, but not both or none!")
+        elif batch_size is not None and batch_size < 1:
+            raise pyrado.ValueErr(given=batch_size, ge_constraint="1 (int)")
+        elif num_batches is not None and num_batches < 1:
+            raise pyrado.ValueErr(given=num_batches, ge_constraint="1 (int)")
 
-        if batch_size is None:
-            assert num_batches, ValueErr(msg="Either batch_size or num_batches must not be None")
-            assert num_batches < 1, ValueErr(given=num_batches, ge_constraint="1 (int)")
+        # Switch the splitting mode
+        if num_batches is not None:
             batch_size = ceil(self.length / num_batches)
-        elif num_batches is None:
-            assert batch_size, ValueErr(msg="Either batch_size or num_batches must not be None")
-            assert batch_size < 1, ValueErr(given=batch_size, ge_constraint="1 (int)")
-        else:
-            raise ValueErr(msg="batch_size and num_batches are mutually exclusive")
 
         if batch_size >= self.length:
             # Yield all at once if there are less steps than the batch size
             yield self
+
         else:
             # Split by steps
             for b in gen_ordered_batch_idcs(batch_size, self.length, sorted=True):
@@ -774,8 +773,18 @@ class StepSequence(Sequence[Step]):
                 rollout_bounds.extend(ro.rollout_bounds[1:] + acc_len)
                 acc_len += ro.rollout_bounds[-1]
 
+        # Keep the rollout info dict if it is the same for all StepSequences
+        rollout_info = None
+        if check_all_equal([p.rollout_info for p in parts]):
+            rollout_info = parts[0].rollout_info
+
         return StepSequence(
-            data_format=data_format, done=done, continuous=continuous, rollout_bounds=rollout_bounds, **data
+            data_format=data_format,
+            done=done,
+            continuous=continuous,
+            rollout_bounds=rollout_bounds,
+            rollout_info=rollout_info,
+            **data,
         )
 
     @classmethod
@@ -917,3 +926,33 @@ def gae_returns(rollout: StepSequence, gamma: float = 0.99, lamb: float = 0.95):
     deltas = [step.reward + gamma * _next_value(step) - step.value for step in rollout]
     cumsum = discounted_reverse_cumsum(deltas, gamma * lamb)
     return cumsum
+
+
+def check_act_equal(
+    rollout_1: Union[StepSequence, List[StepSequence]], rollout_2: Union[StepSequence, List[StepSequence]]
+):
+    """
+    Check if the actions of two rollouts or pairwise two rollouts in in two lists are approximately the same
+
+    :param rollout_1: rollouts or list of rollouts
+    :param rollout_2: rollouts or list of rollouts
+    :return: `True` if the actions match
+    """
+    if isinstance(rollout_1, StepSequence) and isinstance(rollout_2, StepSequence):
+        if not np.allclose(
+            rollout_1.actions[: min(rollout_1.length, rollout_2.length)],
+            rollout_2.actions[: min(rollout_1.length, rollout_2.length)],
+        ):
+            raise pyrado.ValueErr(msg="The actions in the rollouts to compare are not equal!")
+
+    elif is_iterable(rollout_1) and is_iterable(rollout_2):
+        if not all(
+            [
+                np.allclose(r1.actions[: min(r1.length, r2.length)], r2.actions[: min(r1.length, r2.length)])
+                for r1, r2 in zip(rollout_1, rollout_2)
+            ]
+        ):
+            raise pyrado.ValueErr(msg="The actions in the rollouts to compare are not equal!")
+
+    else:
+        raise NotImplementedError
