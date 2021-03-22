@@ -157,17 +157,23 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         self.pd_activated = False
         self.dp_nom = QCartPoleSim.get_nominal_domain_param(self.long)
 
-        self._log_u_max = nn.Parameter(to.log(to.tensor(18.0)), requires_grad=True)  # former: 18, 59.5
+        # Initial parameters
+        self._log_u_max_init = to.log(to.tensor(18.0))
         if long:
-            self._log_K_pd = nn.Parameter(
-                to.log(to.tensor([41.833, 189.8393, 47.8483, 28.0941])), requires_grad=True
-            )  # former: [-41.833, 189.8393, -47.8483, 28.0941]
+            self._log_K_pd_init = to.log(to.tensor([41.833, 189.8393, 47.8483, 28.0941]))
         else:
-            self._log_k_e = nn.Parameter(to.log(to.tensor(17.0)), requires_grad=True)  # former: 24.5, 36.5, 19.5
-            self._log_k_p = nn.Parameter(to.log(to.tensor(4.0)), requires_grad=True)  # former: 8.5, 2.25
-            self._log_K_pd = nn.Parameter(
-                to.log(to.tensor([41.0, 200.0, 55.0, 16.0])), requires_grad=True
+            self._log_K_pd_init = to.log(
+                to.tensor([41.0, 200.0, 55.0, 16.0])
             )  # former: [+41.8, 173.4, +46.1, 16.2], [34.1, 118.0, 43.4, 18.1]
+            self._log_k_e_init = to.log(to.tensor(17.0))  # former: 24.5, 36.5, 19.5
+            self._log_k_p_init = to.log(to.tensor(4.0))  # former: 8.5, 2.25
+
+        # Define parameters
+        self._log_u_max = nn.Parameter(to.empty_like(self._log_u_max_init), requires_grad=True)
+        self._log_K_pd = nn.Parameter(to.empty_like(self._log_K_pd_init), requires_grad=True)
+        if not long:
+            self._log_k_e = nn.Parameter(to.empty_like(self._log_k_e_init), requires_grad=True)
+            self._log_k_p = nn.Parameter(to.empty_like(self._log_k_p_init), requires_grad=True)
 
     @property
     def u_max(self):
@@ -191,6 +197,12 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is not None:
             self.param_values = init_values
+
+        else:
+            self._log_K_pd.data = self._log_K_pd_init
+            if not self.long:
+                self._log_k_e.data = self._log_k_e_init
+                self._log_k_p.data = self._log_k_p_init
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
         """
@@ -293,6 +305,11 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         if init_values is not None:
             self.param_values = init_values
 
+        else:
+            # Forward to the individual controllers
+            self.e_ctrl.init_param()
+            self.pd_ctrl.init_param()
+
     def forward(self, obs: to.tensor):
         # Reconstruct the sate for the error-based controller
         sin_th, cos_th, sin_al, cos_al, th_d, al_d = obs
@@ -329,10 +346,16 @@ class QQubeEnergyCtrl(Policy):
         """
         super().__init__(env_spec, use_cuda)
 
-        # Initialize parameters
-        self._log_E_ref = nn.Parameter(to.log(to.tensor(ref_energy)), requires_grad=True)
-        self._log_E_gain = nn.Parameter(to.log(to.tensor(energy_gain)), requires_grad=True)
-        self._th_gain = nn.Parameter(to.tensor(th_gain), requires_grad=True)
+        # Initial parameters
+        self._log_E_ref_init = to.log(to.tensor(ref_energy))
+        self._log_E_gain_init = to.log(to.tensor(energy_gain))
+        self._th_gain_init = to.tensor(th_gain)
+
+        # Define parameters
+        self._log_E_ref = nn.Parameter(to.empty_like(self._log_E_ref_init), requires_grad=True)
+        self._log_E_gain = nn.Parameter(to.empty_like(self._log_E_gain_init), requires_grad=True)
+        self._th_gain = nn.Parameter(to.empty_like(self._th_gain_init), requires_grad=True)
+
         self.acc_max = to.tensor(acc_max)
         self.dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
 
@@ -358,6 +381,12 @@ class QQubeEnergyCtrl(Policy):
         if init_values is not None:
             self.param_values = init_values
 
+        else:
+            # Initialize with original parameters
+            self._log_E_ref.data = self._log_E_ref_init
+            self._log_E_gain.data = self._log_E_gain_init
+            self._th_gain.data = self._th_gain_init
+
     def forward(self, obs: to.Tensor) -> to.Tensor:
         """
         Control step of energy-based controller which is used in the swing-up controller
@@ -379,7 +408,7 @@ class QQubeEnergyCtrl(Policy):
         acc = clamp_symm(u, self.acc_max)
         trq = self.dp_nom["Mr"] * self.dp_nom["Lr"] * acc
         volt = self.dp_nom["Rm"] / self.dp_nom["km"] * trq
-        return volt.unsqueeze(0)
+        return volt.view(1)
 
 
 class QQubePDCtrl(Policy):
@@ -408,9 +437,17 @@ class QQubePDCtrl(Policy):
         :param tols: tolerances for the desired angles $\theta$ and $\alpha$ [rad]
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
+        if not isinstance(pd_gains, to.Tensor):
+            raise pyrado.TypeErr(given=pd_gains, expected_type=to.Tensor)
+
         super().__init__(env_spec, use_cuda)
 
-        self.pd_gains = nn.Parameter(pd_gains, requires_grad=True)
+        # Initial parameters
+        self._pd_gains_init = pd_gains
+
+        # Define parameters
+        self.pd_gains = nn.Parameter(to.empty_like(self._pd_gains_init), requires_grad=True)
+
         self.state_des = to.tensor([th_des, al_des, 0.0, 0.0])
         self.tols = to.as_tensor(tols)
         self.done = False
@@ -418,6 +455,10 @@ class QQubePDCtrl(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is not None:
             self.param_values = init_values
+
+        else:
+            # Initialize with original parameters
+            self.pd_gains.data = self._pd_gains_init
 
     def forward(self, meas: to.Tensor) -> to.Tensor:
         meas = meas.to(dtype=to.get_default_dtype())

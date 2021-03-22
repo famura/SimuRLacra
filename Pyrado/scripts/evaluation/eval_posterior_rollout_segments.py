@@ -34,16 +34,17 @@ Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
 By default (args.iter = -1), the all iterations are evaluated.
 """
 import numpy as np
-import os
 import sys
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.inference.lfi import NPDR
+from pyrado.algorithms.meta.bayessim import BayesSim
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.rollout_based import plot_rollouts_segment_wise
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.spaces import BoxSpace
@@ -75,8 +76,8 @@ if __name__ == "__main__":
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
-    if not isinstance(algo, NPDR):
-        raise pyrado.TypeErr(given=algo, expected_type=NPDR)
+    if not isinstance(algo, (NPDR, BayesSim)):
+        raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
 
     # Load the rollouts
     rollouts_real, _ = load_rollouts_from_dir(ex_dir)
@@ -85,21 +86,21 @@ if __name__ == "__main__":
         rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
     num_rollouts_real = len(rollouts_real)
     [ro.numpy() for ro in rollouts_real]
-    dim_obs = rollouts_real[0].observations.shape[1]  # same for all rollouts
+    dim_state = rollouts_real[0].states.shape[1]  # same for all rollouts
 
     # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
     if args.use_rec:
         policy = PlaybackPolicy(env_sim.spec, [ro.actions for ro in rollouts_real], no_reset=True)
 
     # Compute the most likely domain parameters for every target domain observation
-    domain_params_ml_all = NPDR.get_ml_posterior_samples(
+    domain_params_ml_all, _ = NPDR.get_ml_posterior_samples(
         algo.dp_mapping,
         posterior,
         data_real,
         args.num_samples,
         num_ml_samples,
         normalize_posterior=args.normalize,
-        sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
     )
 
     # Repeat the domain parameters to zip them later with the real rollouts, such that they all belong to the same iter
@@ -117,7 +118,7 @@ if __name__ == "__main__":
         elif args.len_segments is not None and args.num_segments is None:
             segments_real = list(ro.split_ordered_batches(batch_size=args.len_segments))
         else:
-            raise pyrado.ValueErr(msg="Either batch_size or num_batches must not be None, but not both or none!")
+            raise pyrado.ValueErr(msg="Either num_segments or len_segments must not be None, but not both or none!")
 
         segments_real_all.append(segments_real)
 
@@ -204,66 +205,15 @@ if __name__ == "__main__":
 
     assert len(segments_nom) == len(segments_ml_all)
 
-    # Plot the different init states in separate figures and the different observations along the columns
-    colors = plt.get_cmap("Reds")(np.linspace(0.5, 1.0, num_ml_samples))
-    for idx_r in range(len(segments_real_all)):
-        fig, axs = plt.subplots(nrows=dim_obs, figsize=(16, 9), tight_layout=True, sharex="col")
-
-        for idx_o in range(dim_obs):
-            # Plot the real segments
-            cnt_step = [0]
-            for segment_real in segments_real_all[idx_r]:
-                axs[idx_o].plot(
-                    np.arange(cnt_step[-1], cnt_step[-1] + segment_real.length),
-                    segment_real.get_data_values("observations", True)[:, idx_o],
-                    c="black",
-                    label="real" if cnt_step[-1] == 0 else "",  # only print once
-                )
-                cnt_step.append(cnt_step[-1] + segment_real.length)
-
-            # Plot the maximum likely simulated segments
-            for idx_s, sml in enumerate(segments_ml_all[idx_r]):
-                for idx_dp, smdp in enumerate(sml):
-                    axs[idx_o].plot(
-                        np.arange(cnt_step[idx_s], cnt_step[idx_s] + smdp.length),
-                        smdp.get_data_values("observations", True)[:, idx_o],
-                        c=colors[idx_dp],
-                        ls="--",
-                        label=f"sim ml {idx_dp}" if cnt_step[idx_s] == 0 else "",  # only print once for each dp set
-                    )
-
-            # Plot the nominal simulation's segments
-            for idx_s, sn in enumerate(segments_nom[idx_r]):
-                axs[idx_o].plot(
-                    np.arange(cnt_step[idx_s], cnt_step[idx_s] + sn.length),
-                    sn.get_data_values("observations", True)[:, idx_o],
-                    c="steelblue",
-                    ls="-.",
-                    label="sim nom" if cnt_step[idx_s] == 0 else "",  # only print once
-                )
-
-        # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
-        fig.canvas.set_window_title(
-            f"Real and Simulated data (rollout {idx_r+1} of {num_rollouts_real}, i.e. "
-            f"iteration {idx_r // algo.num_real_rollouts} of {num_iter-1})"
-        )
-        lg = axs[0].legend(
-            ncol=2 + num_ml_samples,
-            bbox_to_anchor=(0.0, 1.02, 1.0, 0.102),
-            loc="lower left",
-            mode="expand",
-            borderaxespad=0.0,
-        )
-
-        if args.save:
-            for fmt in ["pdf", "pgf"]:
-                os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
-                use_rec = "_use_rec" if args.use_rec else ""
-                rnd = f"_round_{args.round}" if args.round is not None else ""
-                fig.savefig(
-                    os.path.join(ex_dir, "plots", f"posterior_iter_{args.iter}{rnd}_rollout_{idx_r}{use_rec}.{fmt}"),
-                    bbox_extra_artists=(lg,),
-                    dpi=500,
-                )
+    # Plot
+    plot_rollouts_segment_wise(
+        segments_real_all,
+        segments_ml_all,
+        segments_nom,
+        use_rec=args.use_rec,
+        idx_iter=args.iter,
+        idx_round=args.round,
+        save_dir=ex_dir if args.save else None,
+    )
 
     plt.show()

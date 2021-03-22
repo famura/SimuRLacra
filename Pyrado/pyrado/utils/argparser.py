@@ -156,8 +156,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "--quiet",
         dest="verbose",
         action="store_false",
-        default=False,
-        help="display minimal information, the opposite of verbose (default: False)",
+        help="display minimal information, the opposite of verbose (default: True)",
     )
     parser.add_argument(
         "--random_init_state",
@@ -232,9 +231,9 @@ def get_argparser() -> argparse.ArgumentParser:
         "--verbose",
         dest="verbose",
         action="store_true",
-        default=False,
         help="display additional information (default: False)",
     )
+    parser.set_defaults(verbose=True)
     parser.add_argument(
         "--vfcn_name",
         type=str,

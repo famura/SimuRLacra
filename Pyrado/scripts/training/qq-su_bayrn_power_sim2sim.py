@@ -54,8 +54,8 @@ if __name__ == "__main__":
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
-        f"{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}_sim2sim",
-        f"rand-Mp-Mr_seed-{args.seed}",
+        f"{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}",
+        f"sim2sim_rand-Mp-Mr_seed-{args.seed}",
     )
 
     # Set seed if desired
@@ -76,11 +76,11 @@ if __name__ == "__main__":
     env_real_hparams = env_sim_hparams
     env_real = wrap_like_other_env(env_real, env_sim)
 
-    # PoWER + energy-based controller setup
+    # PoWER and energy-based controller setup
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.0)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
-        max_iter=10,
+        max_iter=5,
         pop_size=50,
         num_init_states_per_domain=4,
         num_domains=10,
@@ -88,11 +88,11 @@ if __name__ == "__main__":
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=4,
+        num_workers=12,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
-    # PoWER + linear policy setup
+    # PoWER and linear policy setup
     # policy_hparam = dict(
     #     feats=FeatureStack([identity_feat, sign_feat, abs_feat, squared_feat,
     #                         MultFeat((2, 5)), MultFeat((3, 5)), MultFeat((4, 5))])
@@ -110,34 +110,6 @@ if __name__ == "__main__":
     # )
     # subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
-    # PPO + FNN setup
-    # policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    # policy = FNNPolicy(spec=env_sim.spec, **policy_hparam)
-    # vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    # vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
-    # critic_hparam = dict(
-    #     gamma=0.9885,
-    #     lamda=0.9648,
-    #     num_epoch=2,
-    #     batch_size=500,
-    #     standardize_adv=False,
-    #     lr=5.792e-4,
-    #     max_grad_norm=1.,
-    # )
-    # critic = GAE(vfcn, **critic_hparam)
-    # subrtn_hparam = dict(
-    #     max_iter=300,
-    #     min_steps=23*env_sim.max_steps,
-    #     num_epoch=7,
-    #     eps_clip=0.0744,
-    #     batch_size=500,
-    #     std_init=0.9074,
-    #     lr=3.446e-04,
-    #     max_grad_norm=1.,
-    #     num_workers=12,
-    # )
-    # subrtn = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
-
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     ddp_space = BoxSpace(
@@ -154,8 +126,8 @@ if __name__ == "__main__":
         acq_samples=1000,
         num_init_cand=4,
         warmstart=False,
-        num_eval_rollouts_real=10,  # sim-2-sim
-        # thold_succ_subrtn=300,
+        num_eval_rollouts_real=100,
+        thold_succ_subrtn=300,
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)

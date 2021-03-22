@@ -39,7 +39,13 @@ from pyrado.utils.data_types import merge_dicts, EnvSpec
 
 
 class Embedding(ABC, nn.Module):
-    """ Base class for all embeddings used for simulation-based inference with time series data """
+    """
+    Base class for all embeddings used for simulation-based inference with time series data
+
+    .. note::
+        The features of each rollout are concatenated, and since the inference procedure requires a consistent size of
+        the inputs, it is necessary that all rollouts yield the same number of features, i.e. have equal length!
+    """
 
     name: str
     requires_target_domain_data: bool
@@ -264,8 +270,8 @@ class BayesSimEmbedding(Embedding):
     Embedding for simulation-based inference with time series data which computes the same features of the rollouts
     states and actions as done in [1]
 
-    [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-        inference for robotics simulators", arXiv, 2019
+    [1] F. Ramos, R.C. Possas, D. Fox, "BayesSim: adaptive domain randomization via probabilistic inference for
+        robotics simulators", RSS, 2019
     """
 
     name: str = "bsemb"
@@ -283,8 +289,8 @@ class BayesSimEmbedding(Embedding):
         Computing summary statistics based on approach in [1], see eq. (22).
         This method guarantees output which has the same size for every trajectory.
 
-        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", arXiv, 2019
+        [1] F. Ramos, R.C. Possas, D. Fox, "BayesSim: adaptive domain randomization via probabilistic inference for
+            robotics simulators", RSS, 2019
 
         :param data: states and actions of a rollout or segment to be transformed for inference
         :return: summary statistics of the rollout

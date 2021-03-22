@@ -59,7 +59,7 @@ class TwoDimGaussian(SimEnv, Serializable):
         """ Constructor """
         Serializable._init(self, locals())
 
-        # Initialize basic variables
+        # Call SimEnv's constructor
         super().__init__(dt=1.0, max_steps=1)
 
         # Initialize the domain parameters and the derived constants
@@ -68,7 +68,7 @@ class TwoDimGaussian(SimEnv, Serializable):
 
         self._init_space = SingularStateSpace(np.zeros(self.state_space.shape))
 
-        # Define the task including the reward function
+        # Define a dummy task including the reward function
         self._task = self._create_task()
 
     def _to_scalar(self):
@@ -203,7 +203,7 @@ class TwoDimGaussian(SimEnv, Serializable):
     def log_prob(trajectory, params):
         """
         Very ugly, but can be used to calculate the probability of a rollout in the case that we are interested on
-        the exact posterior probabilty
+        the exact posterior probability
 
         Calculates the log-probability for a pair of states and domain parameters.
         """

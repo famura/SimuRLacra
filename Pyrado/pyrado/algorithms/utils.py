@@ -145,45 +145,49 @@ class ReplayMemory:
             return sum(self._memory.rewards) / self._memory.length
 
 
-def until_thold_exceeded(thold: float, max_iter: Optional[int] = None):
+def until_thold_exceeded(thold: float, max_rep: Optional[int] = None):
     """
     Designed to wrap a function and repeat it until the return value exceeds a threshold.
 
+    .. note::
+        The wrapped function must accept the kwarg `cnt_rep`. This can be useful to trigger different behavior
+        depending on the number of already done repetition.
+
     :param thold: threshold
-    :param max_iter: maximum number of iterations of the wrapped function, set to `None` to run the loop relentlessly
+    :param max_rep: maximum number of repetitions of the wrapped function, set to `None` to run the loop relentlessly
     :return: wrapped function
     """
 
     def actual_decorator(trn_eval_fcn):
         """
-        Designed to wrap a training + evaluation function and repeat it until the return value exceeds a threshold.
+        Designed to wrap a training and evaluation function and repeat it until the return value exceeds a threshold.
 
-        :param trn_eval_fcn: function to wrap
+        :param trn_eval_fcn: function to wrap, must accept the kwarg `cnt_rep`
         :return: wrapped function
         """
 
         @functools.wraps(trn_eval_fcn)
         def wrapper_trn_eval_fcn(*args, **kwargs):
-            ret = -pyrado.inf
-            cnt_iter = 0
-            while ret <= thold:  # <= guarantees that we at least train once, even if thold is -inf
+            ret_val = -pyrado.inf
+            cnt_rep = 0
+            while ret_val <= thold:  # <= guarantees that we at least train once, even if thold is -inf
                 # Train and evaluate
-                ret = trn_eval_fcn(*args, **kwargs)
-                cnt_iter += 1
+                ret_val = trn_eval_fcn(*args, **kwargs, cnt_rep=cnt_rep)
+                cnt_rep += 1
 
                 # Break if done
-                if ret >= thold:
+                if ret_val >= thold:
                     print_cbt(f"The threshold {thold} has been exceeded.", "g", True)
                     break
 
                 # Break if max_iter is reached
-                if max_iter is not None and cnt_iter == max_iter:
-                    print_cbt(f"Exiting the until_thold_exceeded loop after {max_iter} iterations.", "y", True)
+                if max_rep is not None and cnt_rep == max_rep:
+                    print_cbt(f"Exiting the until_thold_exceeded loop after {max_rep} repetitions.", "y", True)
                     break
 
                 # Else repeat training
                 print_cbt(f"The threshold {thold} has not been exceeded. Repeating ...", "w", True)
-            return ret
+            return ret_val
 
         return wrapper_trn_eval_fcn
 

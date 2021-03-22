@@ -56,7 +56,7 @@ if __name__ == "__main__":
     if not osp.isdir(args.dir):
         raise pyrado.PathErr(given=args.dir)
     if args.new_dir is None:
-        raise pyrado.ValueErr(msg="Provide the path to the new experiment directory using --new_dir")
+        raise pyrado.ValueErr(msg="Provide the path to the new experiment directory using --new_dir!")
 
     # Create the new directory and test it
     os.makedirs(args.new_dir, exist_ok=True)

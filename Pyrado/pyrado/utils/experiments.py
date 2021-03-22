@@ -162,7 +162,7 @@ def load_experiment(
             extra["vfcn"] = pyrado.load(algo.subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
             print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
 
-    elif algo.name in ["lfi", "bayessim", "npdr"]:
+    elif algo.name in ["bayessim", "npdr"]:
         # Environment
         env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
         if getattr(env, "randomizer", None) is not None:

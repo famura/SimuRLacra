@@ -30,7 +30,6 @@ import numpy as np
 import seaborn as sns
 import torch as to
 from matplotlib import pyplot as plt, patches
-from pyrado.policies.special.moe import MoEPolicy
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
 from torch.distributions import Distribution
@@ -41,9 +40,9 @@ import pyrado
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.policies.special.moe import MoEPolicy
+from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.plotting.utils import draw_sep_cbar
-from pyrado.utils.checks import check_all_types_equal, is_iterable, check_all_shapes_equal, check_all_lengths_equal
+from pyrado.utils.checks import check_all_types_equal, is_iterable, check_all_lengths_equal
 from pyrado.utils.data_types import merge_dicts
 from pyrado.utils.input_output import completion_context
 
@@ -140,7 +139,7 @@ def draw_posterior_distr_1d(
 
     :param ax: axis of the figure to plot on
     :param posterior: sbi `DirectPosterior` object to evaluate
-    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+    :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape
                       [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
@@ -218,13 +217,13 @@ def draw_posterior_distr_1d(
         raise pyrado.TypeErr(given=prob, expected_type=to.Tensor)
     if condition is None:
         # No condition is necessary since dim(posterior) = dim(grid) = 1
-        grids = to.atleast_2d(grid_x).repeat(num_iter, 1, 1)  # untested
+        grids = grid_x.view(-1, 1).repeat(num_iter, 1, 1)
     else:
         # A condition is necessary since dim(posterior) > dim(grid) = 1
         grids = condition.repeat(1, grid_res, 1)
         grids[:, :, dim] = grid_x
-    if not grids.shape == (num_iter, grid_res, len(dp_mapping)):
-        raise pyrado.ShapeErr(given=grids, expected_match=(grid_res, len(dp_mapping)))
+    if grids.shape != (num_iter, grid_res, len(dp_mapping)):
+        raise pyrado.ShapeErr(given=grids, expected_match=(num_iter, grid_res, len(dp_mapping)))
 
     if prob is None:
         # Compute the posterior probabilities
@@ -275,7 +274,7 @@ def draw_posterior_distr_1d(
 def draw_posterior_distr_2d(
     axs: plt.Axes,
     plot_type: str,
-    posterior: Union[DirectPosterior, List[DirectPosterior], MoEPolicy],
+    posterior: Union[DirectPosterior, List[DirectPosterior], MDNPolicy],
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dims: Tuple[int, int],
@@ -305,7 +304,7 @@ def draw_posterior_distr_2d(
                       modes `joint` and `separate` always use the latest posterior (the only one given), while the mode
                       `evolution` uses the posterior from the iteration in which the data was obtained.
     :param posterior: sbi `DirectPosterior` object to evaluate
-    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+    :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape
                       [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
@@ -354,18 +353,18 @@ def draw_posterior_distr_2d(
     else:
         raise pyrado.ValueErr(given=plot_type, eq_constraint="joint, separate, evolution-iter, or evolution-round")
     if plot_type in ["joint", "separate"]:
-        if not (isinstance(posterior, DirectPosterior) or isinstance(posterior, MoEPolicy)):
+        if not (isinstance(posterior, DirectPosterior) or isinstance(posterior, MDNPolicy)):
             raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
     elif "evolution" in plot_type:
         if not (
             is_iterable(posterior)
-            and (isinstance(posterior[0], DirectPosterior) or isinstance(posterior[0], MoEPolicy))
+            and (isinstance(posterior[0], DirectPosterior) or isinstance(posterior[0], MDNPolicy))
         ):
             raise pyrado.TypeErr(given=posterior[0], expected_type=DirectPosterior)
     if not isinstance(grid_res, int):
         raise pyrado.TypeErr(given=grid_res, expected_type=int)
     if len(dp_mapping) == 1:
-        raise NotImplementedError("This function does not support plotting 1-dim posteriors.")
+        raise NotImplementedError("The draw_posterior_distr_2d() function does not support plotting 1-dim posteriors.")
     if condition is None:
         # No condition was given, check if that is feasible
         if len(dp_mapping) > 2:
@@ -395,7 +394,7 @@ def draw_posterior_distr_2d(
     # Create the grid
     if grid_bounds is not None:
         grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
-        if not grid_bounds.shape == (2, 2):
+        if grid_bounds.shape != (2, 2):
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(2, 2))
     elif isinstance(prior, BoxUniform) or isinstance(prior, Uniform):
         grid_bounds = to.tensor(
@@ -419,7 +418,7 @@ def draw_posterior_distr_2d(
         grids = condition.repeat(1, grid_res ** 2, 1)
         grids[:, :, dim_x] = x
         grids[:, :, dim_y] = y
-    if not grids.shape == (num_iter, grid_res ** 2, len(dp_mapping)):
+    if grids.shape != (num_iter, grid_res ** 2, len(dp_mapping)):
         raise pyrado.ShapeErr(given=grids, expected_match=(grid_res ** 2, len(dp_mapping)))
 
     fig = plt.gcf()
@@ -561,7 +560,7 @@ def draw_posterior_distr_pairwise(
 
     :param axs: axis (joint) or axes (separately) of the figure to plot on
     :param posterior: sbi `DirectPosterior` object to evaluate
-    :param data_real: data from the real-world rollouts a.k.a. $x_o$ of shape
+    :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape
                       [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
@@ -749,6 +748,8 @@ def draw_posterior_distr_pairwise_scatter(
     y_labels: Optional[np.ndarray] = "",
     prob_labels: Optional[np.ndarray] = "",
     c_palette=sns.color_palette(),
+    legend_labels=None,
+    label_mapping: dict = dict(),
 ) -> plt.Figure:
     """
     Plot a 2-dim gird of pairwise slices of the posterior distribution evaluated with samples from the posterior
@@ -805,10 +806,10 @@ def draw_posterior_distr_pairwise_scatter(
     if prob_labels == "":
         if marginal_layout == "inside":
             for i in range(len(dp_mapping)):
-                y_labels[i, i] = "num samples"
+                y_labels[i, i] = "samples"
         else:
-            y_labels[0, :] = "num samples"
-            x_labels[:, -1] = "num samples"
+            y_labels[0, :] = "samples"
+            x_labels[:, -1] = "samples"
     elif prob_labels != "" and prob_labels is not None:
         if len(prob_labels) == len(dp_mapping):
             if marginal_layout == "inside":
@@ -841,7 +842,7 @@ def draw_posterior_distr_pairwise_scatter(
     assert check_all_types_equal(idcs_marginal) and check_all_lengths_equal(idcs_marginal)
     assert check_all_types_equal(idcs_pair) and check_all_lengths_equal(idcs_pair)
 
-    # Yehaa plot everything
+    # Plot everything
     for i, j in idcs_pair:
         dim_x, dim_y = j, i
         if marginal_layout == "outside":
@@ -850,15 +851,41 @@ def draw_posterior_distr_pairwise_scatter(
         # Plot the points
         plt.sca(axs[i, j])
         for idx_obs in range(len(dp_samples)):
+            alpha = 1 - idx_obs / len(dp_samples)
+            if len(dp_samples[idx_obs]) == 1:
+                alpha = 1.0
             sns.scatterplot(
                 x=dp_samples[idx_obs][:, dim_x],
                 y=dp_samples[idx_obs][:, dim_y],
                 color=c_palette[idx_obs],
-                alpha=(1 - idx_obs / len(dp_samples)),
+                alpha=alpha,
             )
 
-        axs[i, j].set_xlabel(x_labels[i, j])
-        axs[i, j].set_ylabel(y_labels[i, j])
+        # FORMER
+        # axs[i, j].set_xlabel(x_labels[i, j])
+        # axs[i, j].set_ylabel(y_labels[i, j])
+
+        # HACKY
+        plt.minorticks_on()
+        if i == plot_shape[0] - 1:
+            pass
+            # axs[i, j].set_xlabel(x_labels[i, j])
+        else:
+            if i == plot_shape[0] - 2 and j == plot_shape[0] - 2:
+                pass
+                # axs[i, j].set_xlabel(x_labels[i, j])
+            else:
+                axs[i, j].set_xticklabels([])
+        if j == 0:
+            pass
+            # axs[i, j].set_ylabel(y_labels[i, j])
+        else:
+            if j == 1 and i == 1:
+                pass
+                # axs[i, j].set_ylabel(y_labels[i, j])
+            else:
+                axs[i, j].set_yticklabels([])
+        plt.setp(axs[i, j].get_xticklabels(), rotation=90, horizontalalignment="center")
 
     for i, j in idcs_marginal:
         if marginal_layout == "outside":
@@ -882,9 +909,10 @@ def draw_posterior_distr_pairwise_scatter(
                         xmin=axs[i, j].get_xlim()[0],
                         xmax=axs[i, j].get_xlim()[1],
                         colors=c_palette[idx_obs],
+                        lw=2,
                     )
                 else:
-                    sns.histplot(y=obs[:, dim], color=c_palette[idx_obs])
+                    sns.histplot(y=obs[:, dim], color=c_palette[idx_obs], alpha=(1 - idx_obs / len(dp_samples)))
             else:
                 if len(obs) == 1:
                     plt.vlines(
@@ -892,14 +920,66 @@ def draw_posterior_distr_pairwise_scatter(
                         ymin=axs[i, j].get_ylim()[0],
                         ymax=axs[i, j].get_ylim()[1],
                         colors=c_palette[idx_obs],
+                        lw=2,
                     )
                 else:
-                    sns.histplot(x=obs[:, dim], color=c_palette[idx_obs])
-        axs[i, j].set_xlabel(x_labels[i, j])
-        axs[i, j].set_ylabel(y_labels[i, j])
+                    sns.histplot(x=obs[:, dim], color=c_palette[idx_obs], alpha=(1 - idx_obs / len(dp_samples)))
+
+        # adjust labels
+        font_size = 12
+        current_x_label = x_labels[i, j]
+        current_y_label = y_labels[i, j]
+        if current_x_label in label_mapping.keys():
+            current_x_label = label_mapping[current_x_label]
+        if current_y_label in label_mapping.keys():
+            current_y_label = label_mapping[current_y_label]
+        axs[i, j].set_xlabel(
+            "${}$".format(current_x_label),
+            fontsize=font_size,
+        )
+        axs[i, j].set_ylabel(
+            "${}$".format(current_y_label),
+            fontsize=font_size,
+        )
+
+        # adjust axis appearance
+        plt.minorticks_on()
+        if i == 0:
+            axs[i, j].xaxis.tick_top()
+            axs[i, j].get_yaxis().set_visible(False if j != 0 else True)
+            axs[i, j].xaxis.set_label_position("top")
+            # optional
+            axs[i, j].set_xticklabels([])
+            # axs[i, j].get_xaxis().set_visible(False)
+        if j == plot_shape[1] - 1:
+            axs[i, j].yaxis.tick_right()
+            axs[i, j].get_xaxis().set_visible(False if i != plot_shape[0] - 1 else True)
+            axs[i, j].yaxis.set_label_position("right")
+            # optional
+            axs[i, j].set_yticklabels([])
+            # axs[i, j].get_yaxis().set_visible(False)
+        # plt.setp(axs[i, j].get_xticklabels(), rotation=90, horizontalalignment='center')
 
     if marginal_layout == "outside":
         for i, j in idcs_skipp:
             axs[i, j].set_visible(False)
+
+    # build legend
+    from matplotlib.patches import Patch
+
+    if legend_labels != None:
+        legend_elements = list()
+        for idx_obs in range(len(dp_samples)):
+            c = c_palette[idx_obs]
+            if idx_obs < len(legend_labels):
+                legend_elements.append(Patch(facecolor=c, label=legend_labels[idx_obs]))
+            else:
+                legend_elements.append(Patch(facecolor=c, label="True"))
+
+        # Create the legend
+        ax_leg = axs[0, plot_shape[1] - 1]
+        ax_leg.set_visible(True)
+        ax_leg.axis("off")
+        ax_leg.legend(handles=legend_elements, loc="center")
 
     return plt.gcf()

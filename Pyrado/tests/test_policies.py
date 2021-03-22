@@ -32,6 +32,7 @@ from torch import nn as nn
 
 from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.environments.base import Env
+from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
@@ -44,7 +45,7 @@ from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_sets import TimeSeriesDataSet
-from pyrado.utils.data_types import RenderMode
+from pyrado.utils.data_types import RenderMode, EnvSpec
 from pyrado.utils.functions import skyline
 from pyrado.utils.nn_layers import IndiNonlinLayer
 from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
@@ -928,3 +929,47 @@ def test_playback_policy(env: Env, dtype):
 
     policy.reset_curr_rec()
     assert policy.curr_rec == -1
+
+
+@to.no_grad()
+@pytest.mark.parametrize(
+    "condition, dim_in",
+    [
+        (to.zeros((3, 4)), 4),
+        (to.zeros((1, 3)), 3),
+        (to.zeros((3,)), 3),
+    ],
+)
+@pytest.mark.parametrize("dim_out", [7], ids=["7out"])
+@pytest.mark.parametrize("num_comp", [5], ids=["5comp"])
+def test_mdn_policy(condition: to.Tensor, dim_in: int, dim_out: int, num_comp: int):
+    # Create instance
+    policy = MDNPolicy(
+        spec=EnvSpec(obs_space=InfBoxSpace(dim_in), act_space=InfBoxSpace(dim_out)),
+        hidden_sizes=[5, 5],
+        hidden_nonlin=to.relu,
+        num_comp=num_comp,
+    )
+
+    coeffs, means, trils = policy(condition)
+    if condition.ndim > 1:
+        assert coeffs.shape == (condition.shape[0], num_comp)
+        assert means.shape == (condition.shape[0], dim_out, num_comp)
+        assert trils.shape == (condition.shape[0], int(dim_out * (dim_out + 1) / 2), num_comp)
+
+    # Test sampling
+    num_samples = 2
+    with pytest.raises(pyrado.ValueErr):
+        policy.sample((num_samples,))  # no condition was given
+    if condition.ndim > 1 and condition.shape[0] > 1:
+        with pytest.raises(pyrado.ShapeErr):
+            print(condition)
+            policy.sample((num_samples,), condition)
+    else:
+        assert policy.sample((num_samples,), condition).shape == (num_samples, dim_out)
+        samples = policy.sample((num_samples,), condition)
+        assert policy.log_prob(samples, condition).shape == (num_samples,)
+        policy.set_default_x(condition)
+        assert policy.sample((num_samples,)).shape == (num_samples, dim_out)
+        samples = policy.sample((num_samples,))
+        assert policy.log_prob(samples).shape == (num_samples,)
