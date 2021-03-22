@@ -101,5 +101,3 @@ if __name__ == "__main__":
 
         if input("Stop replaying? [y / any other] ").lower() == "y":
             break
-
-    pyrado.close_vpython()

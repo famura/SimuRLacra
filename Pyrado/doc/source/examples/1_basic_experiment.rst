@@ -128,4 +128,3 @@ Simulate the learned policy in the environment it has been trained in. The follo
                      reset_kwargs=dict(domain_param=param, init_state=state))
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
         done, state, param = after_rollout_query(env, policy, ro)
-    pyrado.close_vpython()

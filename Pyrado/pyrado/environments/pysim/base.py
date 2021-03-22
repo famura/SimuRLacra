@@ -191,7 +191,7 @@ class SimPyEnv(SimEnv, Serializable):
         # Reset the task
         self._task.reset(env_spec=self.spec)
 
-        # Reset VPython animation
+        # Reset the animation
         if hasattr(self, "_visualization"):
             self._reset_anim()
 

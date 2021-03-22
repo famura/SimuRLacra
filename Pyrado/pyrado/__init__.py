@@ -118,16 +118,10 @@ __all__ = [
     "nan",
     "sym_success",
     "sym_failure",
-    "close_vpython",
     "set_seed",
     "timestamp_format",
     "timestamp_date_format",
 ]
-
-
-def close_vpython():
-    """ Forcefully close the connection to the current VPython animation """
-    _exit(0)
 
 
 def set_seed(seed: Union[int, None], verbose: bool = False):
