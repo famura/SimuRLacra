@@ -10,6 +10,7 @@
 !/thirdParty/eigen3
 !/thirdParty/catch2
 !/thirdParty/mujoco-py
+!/thirdParty/RenderPipeline
 
 ### Python
 # Byte-compiled / optimized / DLL files
