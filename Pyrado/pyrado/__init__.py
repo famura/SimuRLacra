@@ -28,10 +28,10 @@
 
 import numpy as np
 import os.path as osp
+import platform
 import random
 import torch as to
 from colorama import init
-from os import _exit, name
 from typing import Union
 
 
@@ -46,10 +46,10 @@ HPARAM_DIR = osp.join(osp.dirname(__file__), "..", "data", "perma", "hyperparams
 TEMP_DIR = osp.join(osp.dirname(__file__), "..", "data", "temp")
 MUJOCO_ASSETS_DIR = osp.join(osp.dirname(__file__), "environments", "mujoco", "assets")
 PANDA_ASSETS_DIR = osp.join(osp.dirname(__file__), "environments", "pysim", "assets")
-if name == 'nt':
-    RENDER_PIPELINE_DIR = osp.join(osp.relpath(__file__), "..", "..", "..", "thirdParty", "RenderPipeline")
-else:
+if platform.system() == "Linux":
     RENDER_PIPELINE_DIR = osp.join(osp.dirname(__file__), "..", "..", "thirdParty", "RenderPipeline")
+else:
+    RENDER_PIPELINE_DIR = osp.join(osp.relpath(__file__), "..", "..", "..", "thirdParty", "RenderPipeline")
 
 # Set the availability of the physics-engine based simulations to False. These are set to True in the respective
 # top-level __init__.py files, if they can be imported successfully

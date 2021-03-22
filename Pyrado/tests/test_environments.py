@@ -316,11 +316,7 @@ def test_reset(env):
     ids=["bobd", "bob", "omo", "pend", "qbb", "qq-su", "qcp-st"],
     indirect=True,
 )
-@pytest.mark.parametrize(
-    "use_render",
-    [False, True],
-    ids = ["render_off", "render_on"]
-)
+@pytest.mark.parametrize("use_render", [False, True], ids=["render_off", "render_on"])
 def test_panda3d_animations(env, use_render):
     assert isinstance(env, SimEnv)
     env.reset()
