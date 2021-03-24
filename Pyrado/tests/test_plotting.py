@@ -225,10 +225,10 @@ def test_render_curve(data, x_grid):
 
 @pytest.mark.parametrize(
     "env, policy",
-    [("default_qbb", "dummy_policy"), ("default_qbb", "linear_policy"), ("default_qbb", "nf_policy")],
+    [("default_bob", "dummy_policy"), ("default_qbb", "linear_policy"), ("default_qbb", "nf_policy")],
     indirect=True,
 )
-def test_rollout_based(env, policy):
+def test_rollout_based(env: SimEnv, policy: Policy):
     ro = rollout(env, policy, record_dts=True)
 
     if isinstance(policy, LinearPolicy):

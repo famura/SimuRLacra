@@ -97,12 +97,12 @@
     <geom class="z_axis"/>
 
     <body name="wam/base_link" pos="0 0 .84" euler="0 0 1.570796327">
-<!--      <inertial pos="6.93764e-06 0.0542887 0.076438" quat="0.496481 0.503509 -0.503703 0.496255" mass="27.5544" diaginertia="0.432537 0.318732 0.219528"/>-->
+      <inertial pos="6.93764e-06 0.0542887 0.076438" quat="0.496481 0.503509 -0.503703 0.496255" mass="27.5544" diaginertia="0.432537 0.318732 0.219528"/>
       <geom class="viz" mesh="base_link_fine" euler="0 0 -1.570796327"/>
       <geom class="col" mesh="base_link_convex" euler="0 0 -1.570796327"/>
-      <!--<geom class="x_axis"/>-->
-      <!--<geom class="y_axis"/>-->
-      <!--<geom class="z_axis"/>-->
+      <geom class="x_axis"/>
+      <geom class="y_axis"/>
+      <geom class="z_axis"/>
 
       <body name="wam/shoulder_yaw_link" pos="0 0 0.160" euler="0 0 -1.570796327">
         <inertial pos="-0.00443422 -0.00066489 -0.12189039" mass="10.76768767" fullinertia="0.50739925 0.46298222 0.11328369 0.00012485 -0.00213041 0.00068555"/>

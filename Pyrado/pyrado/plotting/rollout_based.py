@@ -86,8 +86,10 @@ def plot_observations_actions_rewards(ro: StepSequence):
         # Use recorded time stamps if possible
         t = getattr(ro, "time", np.arange(0, ro.length + 1))
 
-        num_rows, num_cols = num_rows_cols_from_length(dim_obs + dim_act + 1)
+        num_rows, num_cols = num_rows_cols_from_length(dim_obs + dim_act + 1, transposed=True)
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(14, 10), tight_layout=True)
+        axs = np.atleast_2d(axs)
+        axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case axs was 1-dim
         fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
@@ -443,6 +445,8 @@ def plot_mean_std_across_rollouts(
     # Plot observations
     num_rows, num_cols = num_rows_cols_from_length(dim_obs, transposed=True)
     fig_obs, axs_obs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
+    axs_obs = np.atleast_2d(axs_obs)
+    axs_obs = axs_obs.T if axs_obs.shape[0] == 1 else axs_obs  # compensate for np.atleast_2d in case axs was 1-dim
     fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Observations over Time")
     colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs))
 
