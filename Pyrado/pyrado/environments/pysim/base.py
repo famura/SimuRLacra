@@ -53,7 +53,6 @@ class SimPyEnv(SimEnv, Serializable):
         """
         Serializable._init(self, locals())
         super().__init__(dt, max_steps)
-        self._rendering = False
 
         # Initialize the domain parameters and the derived constants
         self._domain_param = self.get_nominal_domain_param()
@@ -73,6 +72,10 @@ class SimPyEnv(SimEnv, Serializable):
         self._task = self._create_task(task_args=dict() if task_args is None else task_args)
 
         # Animation with Panda3D
+        self._visualization = None
+        self._skip_frames = None
+        self._fps = 40  # fps
+        self._rendering = False
         self._curr_act = np.zeros(self.act_space.shape)
 
     @property
@@ -192,7 +195,7 @@ class SimPyEnv(SimEnv, Serializable):
         self._task.reset(env_spec=self.spec)
 
         # Reset the animation
-        if hasattr(self, "_visualization"):
+        if self._visualization is not None:
             self._reset_anim()
 
         # Return an observation
@@ -245,13 +248,13 @@ class SimPyEnv(SimEnv, Serializable):
                     f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  a_t: {self._curr_act}  |  s_t+1: {self.state}"
                 )
 
-            self._rendering = mode.render
             # Panda3D
             if mode.video:
-                if not hasattr(self, "_visualization"):
+                self._rendering = mode.render  # only render if displaying the animation
+                if self._visualization is None:
                     self._init_anim()
-                    # Calculate if and how many frames are dropped
-                    self._skip_frames = 1 / 60 / self._dt  # 60 Hz
+                    # Calculate number of frames that need to be skipped
+                    self._skip_frames = min(1, int(1 / self._fps / self._dt))
 
                 # Update the animation
                 self._update_anim()
@@ -267,15 +270,14 @@ class SimPyEnv(SimEnv, Serializable):
         Update animation. Called by each render call.
         Skips certain number of simulation steps per frame to achieve 60 Hz output.
         """
-        # Do not render while _skip_frames is bigger than 1
         if self._skip_frames > 1:
-            # Decrease _skip_frames by one
+            # Do not render while _skip_frames is > 1
             self._skip_frames -= 1
         else:
             # Render frame
             self._visualization.taskMgr.step()
             # Calculate number of frames that need to be skipped
-            self._skip_frames = 1 / 60 / self._dt  # 60 Hz
+            self._skip_frames = min(1, int(1 / self._fps / self._dt))
 
     def _reset_anim(self):
         """
