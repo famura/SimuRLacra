@@ -69,7 +69,7 @@ def evaluate_policy(args, ex_dir):
 
     param_spec_dim = None
     if isinstance(inner_env(env), QQubeSwingUpSim):
-        eval_num = 200 // 16
+        eval_num = 100
         # Use nominal values for all other parameters.
         for param, nominal_value in env.get_nominal_domain_param().items():
             param_spec[param] = nominal_value
