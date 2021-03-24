@@ -106,10 +106,9 @@ if __name__ == "__main__":
         if args.save:
             pyrado.save(
                 ro,
-                "rollout_real",
-                "pkl",
+                "rollout_real.pkl",
                 pyrado.TEMP_DIR,
-                meta_info=dict(suffix=datetime.now().strftime(pyrado.timestamp_format)),
+                suffix=datetime.now().strftime(pyrado.timestamp_format),
             )
             print_cbt(f"Saved rollout to {pyrado.TEMP_DIR}", "g")
 

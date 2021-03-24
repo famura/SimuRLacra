@@ -371,18 +371,18 @@ class SPOTA(InterruptableAlgorithm):
 
             # Load the policies (makes a difference for snapshot_mode = best)
             self._subrtn_cand._policy = pyrado.load(
-                self._subrtn_cand._policy,
-                "policy",
-                "pt",
+                "policy.pt",
                 self.save_dir,
-                dict(prefix=f"iter_{self._curr_iter}", suffix="cand"),
+                prefix=f"iter_{self._curr_iter}",
+                suffix="cand",
+                obj=self._subrtn_cand._policy,
             )
             self._subrtn_refs._policy = pyrado.load(
-                self._subrtn_refs._policy,
-                "policy",
-                "pt",
+                "policy.pt",
                 self.save_dir,
-                dict(prefix=f"iter_{self._curr_iter}", suffix=f"ref_{k}"),
+                prefix=f"iter_{self._curr_iter}",
+                suffix=f"ref_{k}",
+                obj=self._subrtn_refs._policy,
             )
 
             # Loop over all domain realizations of the reference solutions
@@ -459,11 +459,11 @@ class SPOTA(InterruptableAlgorithm):
                 else:
                     # Load a reference solution different from the the k-th
                     other_ref = pyrado.load(
-                        self._subrtn_refs._policy,
-                        "policy",
-                        "pt",
+                        "policy.pt",
                         self.save_dir,
-                        dict(prefix=f"iter_{self._curr_iter}", suffix=f"ref_{other_k}"),
+                        prefix=f"iter_{self._curr_iter}",
+                        suffix=f"ref_{other_k}",
+                        obj=self._subrtn_refs._policy,
                     )
                     other_ref_ret = 0
                     for r in range(self.nJ):
@@ -498,7 +498,7 @@ class SPOTA(InterruptableAlgorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self.env_dr, "env", "pkl", self.save_dir, meta_info)
-            pyrado.save(self.env_dr.randomizer, "randomizer", "pkl", self.save_dir, meta_info)
+            pyrado.save(self.env_dr, "env.pkl", self.save_dir)
+            pyrado.save(self.env_dr.randomizer, "randomizer", "pkl", self.save_dir)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")

@@ -277,7 +277,7 @@ class ADR(Algorithm):
         flattened_reference.torch(data_type=to.double)
         self.reward_generator.train(flattened_reference, flattened_randomized, self.num_discriminator_epoch)
         pyrado.save(
-            self.reward_generator.discriminator, "discriminator", "pt", self.save_dir, meta_info=dict(prefix="adr")
+            self.reward_generator.discriminator, "discriminator.pt", self.save_dir, prefix="adr", use_state_dict=True
         )
 
         if self.curr_time_step > self.warm_up_time:
@@ -298,7 +298,7 @@ class ADR(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subrtn of another algorithm
-            pyrado.save(self.env, "env", "pkl", self.save_dir, meta_info)
+            pyrado.save(self.env, "env.pkl", self.save_dir)
             self.svpg.save_snapshot(meta_info)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subrtn!")

@@ -196,9 +196,7 @@ class Algorithm(ABC, LoggerAware):
             print_cbt("Learning given an fixed parameter initialization.", "w")
 
         elif warmstart and ppi is None and self._curr_iter > 0:
-            self._policy = pyrado.load(
-                self._policy, "policy", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
-            )
+            self._policy = pyrado.load("policy.pt", self.save_dir, prefix=prefix, suffix=suffix, obj=self._policy)
             print_cbt(f"Learning given the results from iteration {self._curr_iter - 1}", "w")
 
         else:

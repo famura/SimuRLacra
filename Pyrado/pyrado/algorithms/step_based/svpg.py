@@ -316,9 +316,19 @@ class SVPG(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        for idx, p in enumerate(self.particles):
-            pyrado.save(p, f"particle_{idx}", "pt", self.save_dir, meta_info)
-
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)
+            pyrado.save(self._env, "env.pkl", self.save_dir)
+            for idx, p in enumerate(self.particles):
+                pyrado.save(p, f"particle_{idx}.pt", self.save_dir, use_state_dict=True)
+        else:
+            # This algorithm instance is a subroutine of another algorithm
+            for idx, p in enumerate(self.particles):
+                pyrado.save(
+                    p,
+                    f"particle_{idx}.pt",
+                    self.save_dir,
+                    prefix=meta_info.get("prefix", ""),
+                    suffix=meta_info.get("suffix", ""),
+                    use_state_dict=True,
+                )

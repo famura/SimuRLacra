@@ -264,12 +264,9 @@ class SNPEA(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        # Save the posterior of the current meta iteration
-        pyrado.save(self.density_estimator, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
-
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pass
+            pyrado.save(self.density_estimator, "posterior.pt", self._save_dir)
 
         else:
             # This algorithm instance is a subroutine of another algorithm
@@ -279,10 +276,5 @@ class SNPEA(Algorithm):
             if self.num_rounds > 1:
                 # Save the posterior tailored to each round
                 pyrado.save(
-                    self.density_estimator,
-                    "posterior",
-                    "pt",
-                    self._save_dir,
-                    meta_info=dict(prefix=prefix + f"_round_{idx_round}"),
-                    use_state_dict=False,
+                    self.density_estimator, "posterior.pt", self._save_dir, prefix=prefix + f"_round_{idx_round}"
                 )

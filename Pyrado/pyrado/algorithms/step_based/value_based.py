@@ -214,8 +214,16 @@ class ValueBased(Algorithm, ABC):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self._expl_strat.policy, "policy", "pt", self.save_dir, meta_info)
-
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)
+            pyrado.save(self._env, "env.pkl", self.save_dir)
+            pyrado.save(self._expl_strat.policy, "policy.pt", self.save_dir, use_state_dict=True)
+        else:
+            pyrado.save(
+                self._expl_strat.policy,
+                "policy.pt",
+                self.save_dir,
+                prefix=meta_info.get("prefix", ""),
+                suffix=meta_info.get("suffix", ""),
+                use_state_dict=True,
+            )

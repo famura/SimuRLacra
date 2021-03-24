@@ -353,8 +353,9 @@ class SysIdViaEpisodicRL(Algorithm):
         super().save_snapshot(meta_info)
 
         # ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)
-        if "prefix" in meta_info:
-            self._subrtn.save_snapshot(meta_info=dict(prefix=f"{meta_info['prefix']}_ddp"))  # save iter_X_ddp_policy.pt
+        prefix = meta_info.get("prefix", "")
+        if prefix != "":
+            self._subrtn.save_snapshot(meta_info=dict(prefix=f"{prefix}_ddp"))  # save iter_X_ddp_policy.pt
         self._subrtn.save_snapshot(meta_info=dict(prefix="ddp"))  # override ddp_policy.pt
 
         joblib.dump(self._subrtn.env, osp.join(self.save_dir, "env_sim.pkl"))
@@ -371,4 +372,4 @@ class SysIdViaEpisodicRL(Algorithm):
 
         if "rollouts_real" not in meta_info:
             raise pyrado.KeyErr(keys="rollouts_real", container=meta_info)
-        pyrado.save(meta_info["rollouts_real"], "rollouts_real", "pkl", self.save_dir, meta_info)
+        pyrado.save(meta_info["rollouts_real"], "rollouts_real.pkl", self.save_dir, prefix=prefix)

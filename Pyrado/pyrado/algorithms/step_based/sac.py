@@ -365,10 +365,10 @@ class SAC(ValueBased):
             self.qfcn_targ_2.init_param(t2pi)
         elif warmstart and (t1pi is None or t2pi is None) and self._curr_iter > 0:
             self.qfcn_targ_1 = pyrado.load(
-                self.qfcn_targ_1, "qfcn_target1", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+                "qfcn_target1.pt", self.save_dir, prefix=prefix, suffix=suffix, obj=self.qfcn_targ_1
             )
             self.qfcn_targ_2 = pyrado.load(
-                self.qfcn_targ_2, "qfcn_target2", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+                "qfcn_target2.pt", self.save_dir, prefix=prefix, suffix=suffix, obj=self.qfcn_targ_2
             )
         else:
             # Reset the target Q-functions
@@ -378,5 +378,17 @@ class SAC(ValueBased):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self.qfcn_targ_1, "qfcn_target1", "pt", self.save_dir, meta_info)
-        pyrado.save(self.qfcn_targ_2, "qfcn_target2", "pt", self.save_dir, meta_info)
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of another algorithm
+            pyrado.save(self.qfcn_targ_1, "qfcn_target1.pt", self.save_dir, use_state_dict=True)
+            pyrado.save(self.qfcn_targ_2, "qfcn_target2.pt", self.save_dir, use_state_dict=True)
+        else:
+            # This algorithm instance is a subroutine of another algorithm
+            prefix = meta_info.get("prefix", "")
+            suffix = meta_info.get("suffix", "")
+            pyrado.save(
+                self.qfcn_targ_1, "qfcn_target1.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True
+            )
+            pyrado.save(
+                self.qfcn_targ_2, "qfcn_target2.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True
+            )

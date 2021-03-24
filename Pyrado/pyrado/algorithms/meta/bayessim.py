@@ -207,10 +207,10 @@ class BayesSim(Algorithm):
                 )
 
         # Save initial environments and the prior
-        pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
-        pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
-        pyrado.save(embedding, "embedding", "pt", self._save_dir, use_state_dict=False)
-        pyrado.save(prior, "prior", "pt", self._save_dir, use_state_dict=False)
+        pyrado.save(self._env_sim, "env_sim.pkl", self._save_dir)
+        pyrado.save(self._env_real, "env_real.pkl", self._save_dir)
+        pyrado.save(embedding, "embedding.pt", self._save_dir)
+        pyrado.save(prior, "prior.pt", self._save_dir)
 
     @property
     def subroutine_policy(self) -> Algorithm:
@@ -250,12 +250,12 @@ class BayesSim(Algorithm):
         # Save the target domain data
         if self._curr_iter == 0:
             # Append the first set of data
-            pyrado.save(self._curr_data_real, "data_real", "pt", self._save_dir)
+            pyrado.save(self._curr_data_real, "data_real.pt", self._save_dir)
         else:
             # Append and save all data
-            prev_data = pyrado.load(None, "data_real", "pt", self._save_dir)
+            prev_data = pyrado.load("data_real.pt", self._save_dir)
             data_real_hist = to.cat([prev_data, self._curr_data_real], dim=0)
-            pyrado.save(data_real_hist, "data_real", "pt", self._save_dir)
+            pyrado.save(data_real_hist, "data_real.pt", self._save_dir)
 
         # Reset the inference subroutine
         self._subrtn_sbi.reset()
@@ -267,11 +267,11 @@ class BayesSim(Algorithm):
         )
 
         # Override the latest posterior
-        pyrado.save(self._subrtn_sbi.posterior, "posterior", "pt", self._save_dir, None, use_state_dict=False)
+        pyrado.save(self._subrtn_sbi.posterior, "posterior.pt", self._save_dir)
 
         # TODO comment this in once SNPE-A is implemented like in the sbi package
         # Logging (the evaluation can be time-intensive)
-        # posterior = pyrado.load(None, "posterior", "pt", self._save_dir, meta_info)
+        # posterior = pyrado.load("posterior.pt", self._save_dir, meta_info)
         # self._curr_domain_param_eval, log_probs = SBIBase.eval_posterior(
         #     posterior,
         #     self._curr_data_real,
@@ -313,7 +313,7 @@ class BayesSim(Algorithm):
         NPDR.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
 
         # Set the initial state spaces of the simulation environment to match the observed initial states
-        rollouts_real = pyrado.load(None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=prefix))
+        rollouts_real = pyrado.load("rollouts_real.pkl", self._save_dir, prefix=prefix)
         init_states_real = np.stack([ro.states[0, :] for ro in rollouts_real])
         if not init_states_real.shape == (len(rollouts_real), self._env_sim_trn.state_space.flat_dim):
             raise pyrado.ShapeErr(
@@ -337,7 +337,7 @@ class BayesSim(Algorithm):
         # Return the estimated return of the trained policy in simulation
         assert len(self._env_sim_trn.buffer) == self.num_eval_samples
         self._env_sim_trn.ring_idx = 0  # don't reset the buffer to eval on the same domains as trained
-        avg_ret_sim = self.eval_policy(
+        avg_ret_sim = SBIBase.eval_policy(
             None, self._env_sim_trn, self._subrtn_policy.policy, prefix, self.num_eval_samples
         )
         return float(avg_ret_sim)
@@ -349,6 +349,6 @@ class BayesSim(Algorithm):
             # This algorithm instance is not a subroutine of another algorithm
             if self._subrtn_policy is None:
                 # The policy is not being updated by a policy optimization subroutine
-                pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+                pyrado.save(self._policy, "policy.pt", self.save_dir, use_state_dict=True)
             else:
                 self._subrtn_policy.save_snapshot()

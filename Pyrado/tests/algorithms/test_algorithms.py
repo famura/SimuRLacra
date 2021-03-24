@@ -27,7 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pytest
-
 from copy import deepcopy
 
 from pyrado.algorithms.step_based.a2c import A2C

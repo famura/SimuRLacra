@@ -226,11 +226,11 @@ class DQL(ValueBased):
         if self._lr_scheduler is not None:
             self._lr_scheduler.last_epoch = -1
 
-    def init_modules(self, warmstart: bool, suffix: str = "", prefix: str = None, **kwargs):
+    def init_modules(self, warmstart: bool, suffix: str = "", prefix: str = "", **kwargs):
         # Initialize the policy
         super().init_modules(warmstart, suffix, prefix, **kwargs)
 
-        if prefix is None:
+        if prefix == "":
             prefix = f"iter_{self._curr_iter - 1}"
 
         tpi = kwargs.get("target_param_init", None)
@@ -239,7 +239,7 @@ class DQL(ValueBased):
             self.qfcn_targ.init_param(tpi)
         elif warmstart and tpi is None and self._curr_iter > 0:
             self.qfcn_targ = pyrado.load(
-                self.qfcn_targ, "qfcn_target", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+                "qfcn_target.pt", self.save_dir, prefix=prefix, suffix=suffix, obj=self.qfcn_targ
             )
         else:
             # Reset the target Q-function
@@ -248,4 +248,17 @@ class DQL(ValueBased):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self.qfcn_targ, "qfcn_target", "pt", self.save_dir, meta_info)
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of another algorithm
+            pyrado.save(self.qfcn_targ, "qfcn_target.pt", self.save_dir, use_state_dict=True)
+
+        else:
+            # This algorithm instance is a subroutine of another algorithm
+            pyrado.save(
+                self.qfcn_targ,
+                "qfcn_target.pt",
+                self.save_dir,
+                prefix=meta_info.get("prefix", ""),
+                suffix=meta_info.get("suffix", ""),
+                use_state_dict=True,
+            )

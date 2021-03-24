@@ -76,7 +76,7 @@ if __name__ == "__main__":
     # Load the environments, the policy, and the posterior
     env_sim, policy, kwout = load_experiment(ex_dir, args)
     env_sim = remove_all_dr_wrappers(env_sim)  # randomize manually later
-    env_real = pyrado.load(None, "env_real", "pkl", ex_dir)
+    env_real = pyrado.load("env_real.pkl", ex_dir)
     prior = kwout["prior"]
     posterior = kwout["posterior"]
     data_real = kwout["data_real"]

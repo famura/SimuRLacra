@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     # Load the environments, the policy, and the posterior
     env_sim, policy, kwout = load_experiment(ex_dir, args)
-    env_real = pyrado.load(None, "env_real", "pkl", ex_dir)
+    env_real = pyrado.load("env_real.pkl", ex_dir)
     prior = kwout["prior"]
     posterior = kwout["posterior"]
     data_real = kwout["data_real"]
@@ -99,9 +99,7 @@ if __name__ == "__main__":
                         load_curr = True
                 if load_curr:
                     # Load the current posterior
-                    posterior.append(
-                        pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
-                    )
+                    posterior.append(pyrado.load(name=f, load_dir=root))
             # Check
             if not posterior:
                 raise pyrado.ValueErr(

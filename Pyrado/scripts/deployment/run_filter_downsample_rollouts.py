@@ -83,5 +83,5 @@ if __name__ == "__main__":
         curr_dir = args.dir[args.dir.rfind("/") + 1 :]
         save_dir = os.path.join(args.dir, "..", curr_dir + f"_filt_dwnsmp_{args.factor}")
         os.makedirs(save_dir, exist_ok=True)
-        pyrado.save(ro_proc, fname, "pkl", save_dir)
+        pyrado.save(ro_proc, f"{fname}.pkl", save_dir)
         print_cbt(f"Saved {fname}.pkl to {save_dir}", "g")

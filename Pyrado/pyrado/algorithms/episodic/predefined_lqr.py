@@ -188,4 +188,4 @@ class LQR(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)
+            pyrado.save(self._env, "env.pkl", self.save_dir)

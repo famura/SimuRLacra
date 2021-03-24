@@ -145,7 +145,7 @@ def test_adr_reward_generator(env):
 @pytest.mark.parametrize("max_iter", [None, 2], ids=["relentless", "twice"])
 def test_until_thold_exceeded(thold, max_iter):
     @until_thold_exceeded(thold, max_iter)
-    def _trn_eval_fcn():
+    def _trn_eval_fcn(cnt_rep: int):
         # Draw a random number to mimic a training and evaluation process
         return np.random.rand(1)
 

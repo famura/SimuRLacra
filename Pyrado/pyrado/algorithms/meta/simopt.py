@@ -137,7 +137,7 @@ class SimOpt(InterruptableAlgorithm):
 
         # Save initial environments and the prior
         self.save_snapshot(meta_info=None)
-        pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
+        pyrado.save(self._env_real, "env_real.pkl", self._save_dir)
         pyrado.save(self._subrtn_distr.policy.prior, "prior", "pkl", self._save_dir)
 
     @property
@@ -164,7 +164,7 @@ class SimOpt(InterruptableAlgorithm):
         :return: estimated return of the trained policy in the target domain
         """
         # Save the current candidate
-        pyrado.save(cand.view(-1), "candidate", "pt", self.save_dir, meta_info=dict(prefix=prefix))
+        pyrado.save(cand.view(-1), "candidate.pt", self.save_dir, prefix=prefix)
 
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
@@ -292,9 +292,9 @@ class SimOpt(InterruptableAlgorithm):
 
         if save_dir is not None:
             # Save the evaluation results
-            pyrado.save(ros_real, "rollouts_real", "pkl", save_dir, meta_info=dict(prefix=prefix))
+            pyrado.save(ros_real, "rollouts_real.pkl", save_dir, prefix=prefix)
             rets_real = to.tensor([r.undiscounted_return() for r in ros_real])
-            pyrado.save(rets_real, "returns_real", "pt", save_dir, meta_info=dict(prefix=prefix))
+            pyrado.save(rets_real, "returns_real.pt", save_dir, prefix=prefix)
 
             print_cbt("Target domain performance", bright=True)
             print(
@@ -337,9 +337,7 @@ class SimOpt(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 1:
             # Evaluate the current policy in the target domain
-            policy = pyrado.load(
-                self.policy, "policy", "pt", self.save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
-            )
+            policy = pyrado.load("policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}", obj=self.policy)
             self.eval_behav_policy(
                 self.save_dir, self._env_real, policy, f"iter_{self._curr_iter}", self.num_eval_rollouts, None
             )
@@ -353,20 +351,18 @@ class SimOpt(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 2:
             # Train and evaluate the policy that represents domain parameter distribution
-            rollouts_real = pyrado.load(
-                None, "rollouts_real", "pkl", self.save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
-            )
+            rollouts_real = pyrado.load("rollouts_real.pkl", self.save_dir, prefix=f"iter_{self._curr_iter}")
             curr_cand_value = self.train_ddp_policy(rollouts_real, prefix=f"iter_{self._curr_iter}")
             if self._curr_iter == 0:
                 self.cands_values = to.tensor(curr_cand_value).unsqueeze(0)
             else:
                 self.cands_values = to.cat([self.cands_values, to.tensor(curr_cand_value).unsqueeze(0)], dim=0)
-            pyrado.save(self.cands_values, "candidates_values", "pt", self.save_dir, meta_info)
+            pyrado.save(self.cands_values, "candidates_values.pt", self.save_dir)
 
             # The next candidate is the current search distribution and not the best policy parameter set (is saved)
             next_cand = self._subrtn_distr.policy.transform_to_ddp_space(self._subrtn_distr.policy.param_values)
             self.cands = to.cat([self.cands, next_cand.unsqueeze(0)], dim=0)
-            pyrado.save(self.cands, "candidates", "pt", self.save_dir, meta_info)
+            pyrado.save(self.cands, "candidates.pt", self.save_dir)
 
             # Save the latest domain distribution parameter policy
             self._subrtn_distr.save_snapshot(meta_info=dict(prefix="ddp", rollouts_real=rollouts_real))
@@ -378,6 +374,6 @@ class SimOpt(InterruptableAlgorithm):
         # The subroutines are saving their snapshots during their training
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
+            pyrado.save(self._env_sim, "env_sim.pkl", self._save_dir)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subrtn!")

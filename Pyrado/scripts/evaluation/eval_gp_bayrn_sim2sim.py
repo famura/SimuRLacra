@@ -77,9 +77,9 @@ if __name__ == "__main__":
         except Exception:
             gt_val_y = None
 
-    cands = pyrado.load(None, "candidates", "pt", ex_dir)
-    cands_values = pyrado.load(None, "candidates_values", "pt", ex_dir).unsqueeze(1)
-    ddp_space = pyrado.load(None, "ddp_space", "pkl", ex_dir)
+    cands = pyrado.load("candidates.pt", ex_dir)
+    cands_values = pyrado.load("candidates_values.pt", ex_dir).unsqueeze(1)
+    ddp_space = pyrado.load("ddp_space.pkl", ex_dir)
 
     dim_cand = cands.shape[1]  # number of domain distribution parameters
     if dim_cand % 2 != 0:

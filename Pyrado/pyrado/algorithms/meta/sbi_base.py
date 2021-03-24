@@ -229,10 +229,10 @@ class SBIBase(InterruptableAlgorithm, ABC):
                 )
 
         # Save initial environments, the embedding, and the prior
-        pyrado.save(self._env_sim_trn, "env_sim", "pkl", self._save_dir)
-        pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
-        pyrado.save(embedding, "embedding", "pt", self._save_dir, use_state_dict=False)
-        pyrado.save(prior, "prior", "pt", self._save_dir, use_state_dict=False)
+        pyrado.save(self._env_sim_trn, "env_sim.pkl", self._save_dir)
+        pyrado.save(self._env_real, "env_real.pkl", self._save_dir)
+        pyrado.save(embedding, "embedding.pt", self._save_dir)
+        pyrado.save(prior, "prior.pt", self._save_dir)
 
     @property
     def subroutine_policy(self) -> Algorithm:
@@ -273,7 +273,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             self.use_rec_act,
         )
         if prior is None:
-            prior = pyrado.load(None, "prior", "pt", self._save_dir)
+            prior = pyrado.load("prior.pt", self._save_dir)
 
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
@@ -347,8 +347,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Optionally save the data
         if save_dir is not None:
-            pyrado.save(data_real, "data_real", "pt", save_dir, meta_info=dict(prefix=prefix))
-            pyrado.save(rollouts_real, "rollouts_real", "pkl", save_dir, meta_info=dict(prefix=prefix))
+            pyrado.save(data_real, "data_real.pt", save_dir, prefix=prefix)
+            pyrado.save(rollouts_real, "rollouts_real.pkl", save_dir, prefix=prefix)
 
         return data_real, rollouts_real
 
@@ -540,7 +540,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         if save_dir is not None:
             # Save and print the evaluation results
-            pyrado.save(rets_real, "returns_real", "pt", save_dir, meta_info=dict(prefix=prefix))
+            pyrado.save(rets_real, "returns_real.pt", save_dir, prefix=prefix)
             print_cbt("Target domain performance", bright=True)
             print(
                 tabulate(
@@ -594,7 +594,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
 
         # Set the initial state spaces of the simulation environment to match the observed initial states
-        rollouts_real = pyrado.load(None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=prefix))
+        rollouts_real = pyrado.load("rollouts_real.pkl", self._save_dir, prefix=prefix)
         init_states_real = np.stack([ro.states[0, :] for ro in rollouts_real])
         if not init_states_real.shape == (len(rollouts_real), self._env_sim_trn.state_space.flat_dim):
             raise pyrado.ShapeErr(
@@ -637,7 +637,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             # This algorithm instance is not a subroutine of another algorithm
             if self._subrtn_policy is None:
                 # The policy is not being updated by a policy optimization subroutine
-                pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+                pyrado.save(self._policy, "policy.pt", self.save_dir, use_state_dict=True)
             else:
                 self._subrtn_policy.save_snapshot()
 
@@ -674,14 +674,10 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Reconstruct the simulator for sbi
         try:
-            rollouts_real = pyrado.load(
-                None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
-            )
+            rollouts_real = pyrado.load("rollouts_real.pkl", self._save_dir, prefix=f"iter_{self._curr_iter}")
         except FileNotFoundError:
             try:
-                rollouts_real = pyrado.load(
-                    None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1}")
-                )
+                rollouts_real = pyrado.load("rollouts_real.pkl", self._save_dir, prefix=f"iter_{self._curr_iter - 1}")
             except (FileNotFoundError, RuntimeError, pyrado.PathErr, pyrado.TypeErr, pyrado.ValueErr):
                 rollouts_real = None
         self._setup_sbi(state["_sbi_prior"], rollouts_real)  # sbi_prior is fine as it is

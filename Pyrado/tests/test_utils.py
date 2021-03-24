@@ -587,34 +587,26 @@ def test_logmeanexp(x, dim):
     ],
     ids=["tensor", "ndarray", "dummypol", "pyenv"],
 )
-@pytest.mark.parametrize(
-    "meta_info",
-    [
-        None,
-        dict(prefix="pre", suffix="suf"),
-        dict(prefix="pre"),
-        dict(suffix="suf"),
-        dict(foo="baz"),
-    ],
-    ids=["None", "pre_suf", "pre", "suf", "neither"],
-)
+@pytest.mark.parametrize("prefix", ["", "pre"], ids=["defualt", "pre"])
+@pytest.mark.parametrize("suffix", ["", "suf"], ids=["defualt", "suf"])
 @pytest.mark.parametrize("use_state_dict", [True, False], ids=["use_state_dict", "not-use_state_dict"])
-def test_save_load(obj, file_ext, tmpdir, meta_info, use_state_dict):
+@pytest.mark.parametrize("verbose", [True, False], ids=["v", "q"])
+def test_save_load(obj, file_ext: str, tmpdir, prefix: str, suffix: str, use_state_dict: bool, verbose: bool):
     # Save
-    pyrado.save(obj, "tmpname", file_ext, tmpdir, meta_info, use_state_dict)
+    pyrado.save(obj, f"tmpname.{file_ext}", tmpdir, prefix, suffix, use_state_dict)
 
     # Check if sth has been saved with the correct pre- and suffix
-    if meta_info is None:
+    if prefix == "" and suffix == "":
         assert osp.exists(osp.join(tmpdir, f"tmpname.{file_ext}"))
-    elif "prefix" in meta_info and "suffix" in meta_info:
-        assert osp.exists(osp.join(tmpdir, f"{meta_info['prefix']}_tmpname_{meta_info['suffix']}.{file_ext}"))
-    elif "prefix" in meta_info and "suffix" not in meta_info:
-        assert osp.exists(osp.join(tmpdir, f"{meta_info['prefix']}_tmpname.{file_ext}"))
-    elif "prefix" not in meta_info and "suffix" in meta_info:
-        assert osp.exists(osp.join(tmpdir, f"tmpname_{meta_info['suffix']}.{file_ext}"))
+    elif prefix != "" and suffix != "":
+        assert osp.exists(osp.join(tmpdir, f"{prefix}_tmpname_{suffix}.{file_ext}"))
+    elif prefix != "" and suffix == "":
+        assert osp.exists(osp.join(tmpdir, f"{prefix}_tmpname.{file_ext}"))
+    elif prefix == "" and suffix != "":
+        assert osp.exists(osp.join(tmpdir, f"tmpname_{suffix}.{file_ext}"))
 
     # Check if sth has been loaded with the correct pre- and suffix
-    res = pyrado.load(obj, "tmpname", file_ext, tmpdir, meta_info)
+    res = pyrado.load(f"tmpname.{file_ext}", tmpdir, prefix, suffix, obj, verbose)
     assert res is not None
 
 

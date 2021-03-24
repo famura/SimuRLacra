@@ -147,11 +147,9 @@ class ActorCritic(Algorithm, ABC):
             print_cbt("Learning given an fixed parameter initialization.", "w")
 
         elif warmstart and ppi is None and self._curr_iter > 0:
-            self._policy = pyrado.load(
-                self._policy, "policy", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
-            )
+            self._policy = pyrado.load("policy.pt", self.save_dir, prefix=prefix, suffix=suffix, obj=self._policy)
             self._critic.vfcn = pyrado.load(
-                self._critic.vfcn, "vfcn", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+                "vfcn.pt", self.save_dir, prefix=prefix, suffix=suffix, obj=self._critic.vfcn
             )
             print_cbt(f"Learning given the results from iteration {self._curr_iter - 1}", "w")
 
@@ -164,9 +162,17 @@ class ActorCritic(Algorithm, ABC):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self._expl_strat.policy, "policy", "pt", self.save_dir, meta_info)
-        pyrado.save(self._critic.vfcn, "vfcn", "pt", self.save_dir, meta_info)
-
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)
+            pyrado.save(self._env, "env.pkl", self.save_dir)
+            pyrado.save(self._expl_strat.policy, "policy.pt", self.save_dir, use_state_dict=True)
+            pyrado.save(self._critic.vfcn, "vfcn.pt", self.save_dir, use_state_dict=True)
+
+        else:
+            # This algorithm instance is a subroutine of another algorithm
+            prefix = meta_info.get("prefix", "")
+            suffix = meta_info.get("suffix", "")
+            pyrado.save(
+                self._expl_strat.policy, "policy.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True
+            )
+            pyrado.save(self._critic.vfcn, "vfcn.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True)

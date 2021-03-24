@@ -33,6 +33,7 @@ from os import path as osp
 from typing import Optional
 
 from pyrado.utils.exceptions import PathErr, TypeErr, ValueErr
+from pyrado.utils.input_output import print_cbt
 
 
 def _save_fcn(obj, path, extension):
@@ -60,15 +61,16 @@ def _load_fcn(path, extension):
     return obj
 
 
-def save(obj, name: str, file_ext: str, save_dir: str, meta_info: Optional[dict] = None, use_state_dict: bool = True):
+def save(obj, name: str, save_dir: str, prefix: str = "", suffix: str = "", use_state_dict: bool = False):
     """
     Save an object object using a prefix or suffix, depending on the meta information.
 
     :param obj: PyTorch or pickled object to save
-    :param name: name of the object for saving
-    :param file_ext: file extension, extension.g. 'pt' for PyTorch modules like the Pyrado policies
+    :param name: name of the object for loading including the file extension, e.g. 'policy.pt' for PyTorch modules
+                 like a Pyrado `Policy` instance
     :param save_dir: directory to save in
-    :param meta_info: meta information that can contain a pre- and/or suffix for altering the name
+    :param prefix: prefix for altering the name, e.g. "iter_0_..."
+    :param suffix: suffix for altering the name, e.g. "..._ref"
     :param use_state_dict: if `True` save the `state_dict`, else save the entire module. This only has an effect if
                            PyTorch modules (file_ext = 'pt') are saved.
 
@@ -77,10 +79,23 @@ def save(obj, name: str, file_ext: str, save_dir: str, meta_info: Optional[dict]
     """
     if not isinstance(name, str):
         raise TypeErr(given=name, expected_type=str)
-    if not (file_ext in ["pt", "npy", "pkl"]):
-        raise ValueErr(given=file_ext, eq_constraint="pt, npy, or pkl")
     if not osp.isdir(save_dir):
         raise PathErr(given=save_dir)
+    if not isinstance(prefix, str):
+        raise TypeErr(given=prefix, expected_type=str)
+    elif prefix != "":
+        # A valid non-default prefix was given
+        prefix = prefix + "_"
+    if not isinstance(suffix, str):
+        raise TypeErr(given=suffix, expected_type=str)
+    elif suffix != "":
+        # A valid non-default prefix was given
+        suffix = "_" + suffix
+
+    # Infer file type
+    file_ext = name[name.rfind(".") + 1 :]
+    if not (file_ext in ["pt", "npy", "pkl"]):
+        raise ValueErr(msg="Only pt, npy, and pkl files are currently supported!")
 
     if file_ext == "pt" and use_state_dict:
         # Later save the model's sate dict if possible. If not, save the entire object
@@ -92,74 +107,60 @@ def save(obj, name: str, file_ext: str, save_dir: str, meta_info: Optional[dict]
         # Later save (and pickle) the entire model
         obj_ = obj
 
-    if meta_info is None:
-        _save_fcn(obj_, osp.join(save_dir, f"{name}.{file_ext}"), file_ext)
-
-    else:
-        if not isinstance(meta_info, dict):
-            raise TypeErr(given=meta_info, expected_type=dict)
-
-        if "prefix" in meta_info and "suffix" in meta_info:
-            _save_fcn(
-                obj_, osp.join(save_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"), file_ext
-            )
-
-        elif "prefix" in meta_info and "suffix" not in meta_info:
-            _save_fcn(obj_, osp.join(save_dir, f"{meta_info['prefix']}_{name}.{file_ext}"), file_ext)
-
-        elif "prefix" not in meta_info and "suffix" in meta_info:
-            _save_fcn(obj_, osp.join(save_dir, f"{name}_{meta_info['suffix']}.{file_ext}"), file_ext)
-
-        else:  # there is meta_info dict but with different keys words
-            _save_fcn(obj_, osp.join(save_dir, f"{name}.{file_ext}"), file_ext)
+    # Save the data
+    name_wo_file_ext = name[: name.find(".")]
+    _save_fcn(obj_, osp.join(save_dir, f"{prefix}{name_wo_file_ext}{suffix}.{file_ext}"), file_ext)
 
 
-def load(obj, name: str, file_ext: str, load_dir: str, meta_info: Optional[dict] = None):
+def load(name: str, load_dir: str, prefix: str = "", suffix: str = "", obj=None, verbose: Optional[bool] = False):
     """
     Load an object object using a prefix or suffix, depending on the meta information.
 
+    :param name: name of the object for loading including the file extension, e.g. 'policy.pt' for PyTorch modules
+                 like a Pyrado `Policy` instance
+    :param load_dir: directory to load from
+    :param prefix: prefix for altering the name, e.g. "iter_0_..."
+    :param suffix: suffix for altering the name, e.g. "..._ref"
     :param obj: PyTorch module to load into, this can be `None` except for the case if you want to load and save the
                 module's `state_dict`
-    :param name: name of the object for loading
-    :param file_ext: file extension, extension.g. 'pt' for PyTorch modules like the Pyrado policies
-    :param load_dir: directory to load from
-    :param meta_info: meta information that can contain a pre- and/or suffix for altering the name
+    :param verbose: if `True`, print the path of what has been loaded
 
     .. seealso::
         https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference
     """
     if not isinstance(name, str):
         raise TypeErr(given=name, expected_type=str)
-    if not (file_ext in ["pt", "npy", "pkl"]):
-        raise ValueErr(given=file_ext, eq_constraint="pt, npy, or pkl")
     if not osp.isdir(load_dir):
         raise PathErr(given=load_dir)
+    if not isinstance(prefix, str):
+        raise TypeErr(given=prefix, expected_type=str)
+    elif prefix != "":
+        # A valid non-default prefix was given
+        prefix = prefix + "_"
+    if not isinstance(suffix, str):
+        raise TypeErr(given=suffix, expected_type=str)
+    elif suffix != "":
+        # A valid non-default prefix was given
+        suffix = "_" + suffix
 
-    if meta_info is None:
-        obj_ = _load_fcn(osp.join(load_dir, f"{name}.{file_ext}"), file_ext)
+    # Infer file type
+    file_ext = name[name.rfind(".") + 1 :]
+    if not (file_ext in ["pt", "npy", "pkl"]):
+        raise ValueErr(msg="Only pt, npy, and pkl files are currently supported!")
 
-    else:
-        if not isinstance(meta_info, dict):
-            raise TypeErr(given=meta_info, expected_type=dict)
-
-        if "prefix" in meta_info and "suffix" in meta_info:
-            obj_ = _load_fcn(
-                osp.join(load_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"), file_ext
-            )
-
-        elif "prefix" in meta_info and "suffix" not in meta_info:
-            obj_ = _load_fcn(osp.join(load_dir, f"{meta_info['prefix']}_{name}.{file_ext}"), file_ext)
-
-        elif "prefix" not in meta_info and "suffix" in meta_info:
-            obj_ = _load_fcn(osp.join(load_dir, f"{name}_{meta_info['suffix']}.{file_ext}"), file_ext)
-
-        else:  # there is meta_info dict but with different keys words
-            obj_ = _load_fcn(osp.join(load_dir, f"{name}.{file_ext}"), file_ext)
-
+    # Load the data
+    name_wo_file_ext = name[: name.find(".")]
+    name_load = f"{prefix}{name_wo_file_ext}{suffix}.{file_ext}"
+    obj_ = _load_fcn(osp.join(load_dir, name_load), file_ext)
     assert obj_ is not None
+
     if isinstance(obj_, dict) and file_ext == "pt":
         # PyTorch saves state_dict as an OrderedDict
         obj.load_state_dict(obj_)
     else:
         obj = obj_
+
+    if verbose:
+        print_cbt(f"Loaded {osp.join(load_dir, name_load)}", "g")
+
     return obj

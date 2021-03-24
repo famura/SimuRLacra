@@ -197,8 +197,19 @@ class ParameterExploring(Algorithm):
         # Save the best element of the current population
         best_policy = deepcopy(self._policy)
         best_policy.param_values = self.best_policy_param
-        pyrado.save(best_policy, "policy", "pt", self.save_dir, meta_info)
+
+        if meta_info is not None:
+            # This algorithm instance is a subroutine of another alogrithm
+            pyrado.save(
+                best_policy,
+                "policy.pt",
+                self.save_dir,
+                prefix=meta_info.get("prefix", ""),
+                suffix=meta_info.get("suffix", ""),
+                use_state_dict=True,
+            )
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)
+            pyrado.save(best_policy, "policy.pt", self.save_dir, use_state_dict=True)
+            pyrado.save(self._env, "env.pkl", self.save_dir)

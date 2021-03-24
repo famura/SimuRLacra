@@ -173,19 +173,17 @@ class NPDR(SBIBase):
             # Save the target domain data
             if self._curr_iter == 0:
                 # Append the first set of data
-                pyrado.save(self._curr_data_real, "data_real", "pt", self._save_dir)
+                pyrado.save(self._curr_data_real, "data_real.pt", self._save_dir)
             else:
                 # Append and save all data
-                prev_data = pyrado.load(None, "data_real", "pt", self._save_dir)
+                prev_data = pyrado.load("data_real.pt", self._save_dir)
                 data_real_hist = to.cat([prev_data, self._curr_data_real], dim=0)
-                pyrado.save(data_real_hist, "data_real", "pt", self._save_dir)
+                pyrado.save(data_real_hist, "data_real.pt", self._save_dir)
 
             # Initialize sbi simulator and prior
             self._setup_sbi(
                 prior=self._sbi_prior,
-                rollouts_real=pyrado.load(
-                    None, "rollouts_real", "pkl", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
-                ),
+                rollouts_real=pyrado.load("rollouts_real.pkl", self._save_dir, prefix=f"iter_{self._curr_iter}"),
             )
 
             self.reached_checkpoint()  # setting counter to 1
@@ -219,22 +217,18 @@ class NPDR(SBIBase):
                 if idx_r == 0:
                     pyrado.save(
                         posterior,
-                        "posterior",
-                        "pt",
+                        "posterior.pt",
                         self._save_dir,
-                        meta_info=dict(prefix=f"iter_{self._curr_iter}"),
-                        use_state_dict=False,
+                        prefix=f"iter_{self._curr_iter}",
                     )
 
                 if self.num_sbi_rounds > 1:
                     # Save the posterior tailored to each round
                     pyrado.save(
                         posterior,
-                        "posterior",
-                        "pt",
+                        "posterior.pt",
                         self._save_dir,
-                        meta_info=dict(prefix=f"iter_{self._curr_iter}_round_{idx_r}"),
-                        use_state_dict=False,
+                        prefix=f"iter_{self._curr_iter}_round_{idx_r}",
                     )
 
                     # Set proposal of the next round to focus on the next data set.
@@ -242,13 +236,13 @@ class NPDR(SBIBase):
                     proposal = posterior.set_default_x(self._curr_data_real)
 
                 # Override the latest posterior
-                pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
+                pyrado.save(posterior, "posterior.pt", self._save_dir)
 
             self.reached_checkpoint()  # setting counter to 2
 
         if self.curr_checkpoint == 2:
             # Logging (the evaluation can be time-intensive)
-            posterior = pyrado.load(None, "posterior", "pt", self._save_dir, meta_info)
+            posterior = pyrado.load("posterior.pt", self._save_dir)
             self._curr_domain_param_eval, log_probs = NPDR.eval_posterior(
                 posterior,
                 self._curr_data_real,

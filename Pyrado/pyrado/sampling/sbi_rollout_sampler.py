@@ -411,11 +411,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         rollouts_rec = []
         for root, dirs, files in os.walk(rollouts_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
-            rollouts_rec = [
-                pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
-                for f in files
-                if f.startswith("rollout")
-            ]
+            rollouts_rec = [pyrado.load(name=f, load_dir=root) for f in files if f.startswith("rollout")]
         if not rollouts_rec:
             raise pyrado.ValueErr(msg="No rollouts have been found!")
 
