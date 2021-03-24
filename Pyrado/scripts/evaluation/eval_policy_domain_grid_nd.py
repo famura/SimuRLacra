@@ -67,11 +67,16 @@ def evaluate_policy(args, ex_dir):
     #     param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
     #     param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
 
+    param_spec_dim = None
     if isinstance(inner_env(env), QQubeSwingUpSim):
-        eval_num = 200
+        eval_num = 200 // 16
+        # Use nominal values for all other parameters.
+        for param, nominal_value in env.get_nominal_domain_param().items():
+            param_spec[param] = nominal_value
         # param_spec["g"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
         param_spec["Dp"] = np.linspace(0.0, 0.0002, num=eval_num, endpoint=True)
         param_spec["Dr"] = np.linspace(0.0, 0.0015, num=eval_num, endpoint=True)
+        param_spec_dim = 2
     elif isinstance(inner_env(env), QBallBalancerSim):
         # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)
@@ -159,7 +164,7 @@ def evaluate_policy(args, ex_dir):
         save_dir=save_dir,
         file_name="summary",
     )
-    df.to_pickle(osp.join(save_dir, f"df_sp_grid_{len(param_spec)}d.pkl"))
+    df.to_pickle(osp.join(save_dir, f"df_sp_grid_{len(param_spec) if param_spec_dim is None else param_spec_dim}d.pkl"))
 
 
 if __name__ == "__main__":
