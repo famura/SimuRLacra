@@ -81,6 +81,8 @@ class QBallBalancerPDCtrl(Policy):
         self.limit_rad = 0.52360  # limit for angle command; see the saturation block in the Simulink model
         self.kp_servo = 14.0  # P-gain for the servo angle; see the saturation block the Simulink model
         self.Kp, self.Kd = None, None
+
+        # Default initialization
         self.init_param(kp, kd)
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
@@ -166,7 +168,7 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
                 to.tensor([41.0, 200.0, 55.0, 16.0])
             )  # former: [+41.8, 173.4, +46.1, 16.2], [34.1, 118.0, 43.4, 18.1]
             self._log_k_e_init = to.log(to.tensor(17.0))  # former: 24.5, 36.5, 19.5
-            self._log_k_p_init = to.log(to.tensor(4.0))  # former: 8.5, 2.25
+            self._log_k_p_init = to.log(to.tensor(8.0))  # former: 4.0, 8.5, 2.25
 
         # Define parameters
         self._log_u_max = nn.Parameter(to.empty_like(self._log_u_max_init), requires_grad=True)
@@ -174,6 +176,9 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         if not long:
             self._log_k_e = nn.Parameter(to.empty_like(self._log_k_e_init), requires_grad=True)
             self._log_k_p = nn.Parameter(to.empty_like(self._log_k_p_init), requires_grad=True)
+
+        # Default initialization
+        self.init_param(None)
 
     @property
     def u_max(self):
@@ -199,6 +204,7 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
             self.param_values = init_values
 
         else:
+            self._log_u_max.data = self._log_u_max_init
             self._log_K_pd.data = self._log_K_pd_init
             if not self.long:
                 self._log_k_e.data = self._log_k_e_init
@@ -359,23 +365,26 @@ class QQubeEnergyCtrl(Policy):
         self.acc_max = to.tensor(acc_max)
         self.dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
 
+        # Default initialization
+        self.init_param(None)
+
     @property
     def E_ref(self):
         return to.exp(self._log_E_ref)
 
-    @E_ref.setter
-    def E_ref(self, new_E_ref):
-        self._log_E_ref = to.log(new_E_ref)
+    # @E_ref.setter
+    # def E_ref(self, new_E_ref: float):
+    #     self._log_E_ref = to.log(new_E_ref)
 
     @property
     def E_gain(self):
         r""" Called $\mu$ by Quanser."""
         return to.exp(self._log_E_gain)
 
-    @E_gain.setter
-    def E_gain(self, new_mu):
-        r""" Called $\mu$ by Quanser."""
-        self._log_E_gain = to.log(new_mu)
+    # @E_gain.setter
+    # def E_gain(self, new_mu):
+    #     r""" Called $\mu$ by Quanser."""
+    #     self._log_E_gain = to.log(new_mu)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is not None:
@@ -451,6 +460,9 @@ class QQubePDCtrl(Policy):
         self.state_des = to.tensor([th_des, al_des, 0.0, 0.0])
         self.tols = to.as_tensor(tols)
         self.done = False
+
+        # Default initialization
+        self.init_param(None)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is not None:

@@ -149,7 +149,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
 
 
 @pytest.mark.longtime
-@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "bayrn_hparam",
     [
@@ -333,7 +333,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
 
 
 @pytest.mark.longtime
-@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     # Environments
     env_real = deepcopy(env)
@@ -498,7 +498,7 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
 
 
 @pytest.mark.longtime
-@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "embedding_name",
     [

@@ -233,7 +233,7 @@ def get_argparser() -> argparse.ArgumentParser:
         action="store_true",
         help="display additional information (default: False)",
     )
-    parser.set_defaults(verbose=True)
+    parser.set_defaults(verbose=False)
     parser.add_argument(
         "--vfcn_name",
         type=str,

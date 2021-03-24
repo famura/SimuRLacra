@@ -67,7 +67,7 @@ if __name__ == "__main__":
     use_rec_act = True
 
     # Experiment (set seed before creating the modules)
-    ectl = False
+    ectl = True
     if ectl:
         ex_dir = setup_experiment(
             QQubeSwingUpSim.name,
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     # embedding = DynamicTimeWarpingEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
     # )
-    embedding_hparam = dict(hidden_size=10, num_recurrent_layers=1, output_size=1, downsampling_factor=1)
+    embedding_hparam = dict(hidden_size=20, num_recurrent_layers=1, output_size=5, downsampling_factor=1)
     embedding = RNNEmbedding(
         env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     )
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         max_iter=1,
         num_real_rollouts=4,
         num_sim_per_round=5000,
-        num_sbi_rounds=1,
+        num_sbi_rounds=2,
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=1000,
@@ -190,7 +190,7 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
         num_workers=10,
     )
     algo = NPDR(

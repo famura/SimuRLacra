@@ -52,7 +52,7 @@ if __name__ == "__main__":
     if args.dir is None:
         raise pyrado.ValueErr(msg="Please provide a directory using -d or --dir")
     if args.dt is None:
-        raise pyrado.ValueErr(msg="Please provide a time step size using --dt")
+        raise pyrado.ValueErr(msg="Please provide the time step size used during recoding via --dt")
 
     # Load the rollouts
     rollouts, file_names = load_rollouts_from_dir(args.dir)

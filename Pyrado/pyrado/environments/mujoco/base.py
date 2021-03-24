@@ -89,7 +89,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             model_tmp = mujoco_py.load_model_from_xml(xml_model_temp)
             frame_skip = dt / model_tmp.opt.timestep
             if frame_skip.is_integer():
-                self.frame_skip = frame_skip
+                self.frame_skip = int(frame_skip)
             elif dt > model_tmp.opt.timestep:
                 print_cbt(
                     f"The desired time step size is {dt} s, but solver's time step size in the MuJoCo config file is "

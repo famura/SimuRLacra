@@ -55,7 +55,7 @@ class WAMReal(RealEnv, ABC):
     Uses robcom 2.0 and specifically robcom's `ClosedLoopDirectControl` process to execute a trajectory
     given by desired joint positions.
 
-    The concrete control approach (step-based or episodic) is implemented by the sub class
+    The concrete control approach (step-based or episodic) is implemented by the subclass.
     """
 
     name: str = "wam"
@@ -72,7 +72,7 @@ class WAMReal(RealEnv, ABC):
 
         :param num_dof: number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used
         :param max_steps: maximum number of time steps
-        :param dt: sampling time interval
+        :param dt: sampling time interval, changing this value is highly discouraged
         :param ip: IP address of the PC controlling the Barrett WAM, pass `None` to skip connecting
         """
         # Make sure max_steps is reachable
@@ -152,12 +152,12 @@ class WAMReal(RealEnv, ABC):
         self._client.set(robcom.Streaming, 500.0)  # Hz
         dc = self._client.create(robcom.DirectControl, self._robot_group_name, "")
         dc.start()
-        if self.num_dof == 7:
-            dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_7dof.tolist())
-            dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_7dof.tolist())
-        else:
+        if self.num_dof == 4:
             dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_4dof.tolist())
             dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_4dof.tolist())
+        else:
+            dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_7dof.tolist())
+            dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_7dof.tolist())
         dc.send_updates()
         dc.stop()
 
@@ -165,7 +165,8 @@ class WAMReal(RealEnv, ABC):
         time.sleep(0.1)  # short active waiting because updates are sent in another thread
         pgains_des = self._jg.get_desired(robcom.JointDesState.P_GAIN)
         dgains_des = self._jg.get_desired(robcom.JointDesState.D_GAIN)
-        print_cbt(f"Desired PD gains are set to: {pgains_des} \t {dgains_des}", color="g")
+        print_cbt(f"Desired P-gains have been set to {pgains_des}", color="g")
+        print_cbt(f"Desired D-gains have been set to {dgains_des}", color="g")
 
         # Create robcom GoTo process
         gt = self._client.create(robcom.Goto, self._robot_group_name, "")

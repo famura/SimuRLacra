@@ -45,7 +45,7 @@ from pyrado.utils.input_output import print_cbt, completion_context
 class QQubeReal(QuanserReal, Serializable):
     """ Class for the real Quanser Qube a.k.a. Furuta pendulum """
 
-    name: str = "qq"
+    name: str = "qq-su"
 
     def __init__(
         self,

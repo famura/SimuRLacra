@@ -88,8 +88,10 @@ if __name__ == "__main__":
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom[name] * 0 for name in dp_mapping.values()]),
-        high=to.tensor([dp_nom[name] * 100 for name in dp_mapping.values()]),
+        # low=to.tensor([dp_nom[name] * 0 for name in dp_mapping.values()]),
+        # high=to.tensor([dp_nom[name] * 100 for name in dp_mapping.values()]),
+        low=to.zeros((7,)),
+        high=to.tensor([40, 40, 40, 40, 80, 40, 120]),
     )
     prior = utils.BoxUniform(**prior_hparam)
 
@@ -117,8 +119,8 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=3,
-        num_sim_per_round=2000,
+        num_real_rollouts=1,
+        num_sim_per_round=5000,
         num_sbi_rounds=2,
         simulation_batch_size=100,
         normalize_posterior=False,
