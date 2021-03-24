@@ -234,6 +234,7 @@ def _main():
         action="store_true",
         help="average over all loaded policies (default: False); create only a single heatmap",
     )
+    argparser.add_argument("--save_dir", help="if --average is set, the directory to save the plot to")
     args = argparser.parse_args()
 
     # Get the experiment's directory to load from
@@ -274,7 +275,7 @@ def _main():
         eval_dirs.append(eval_dir)
 
     if args.average:
-        _plot([sum(dataframes) / len(dataframes)], None, False)
+        _plot([sum(dataframes) / len(dataframes)], [args.save_dir], True)
     else:
         _plot(dataframes, eval_dirs, args.save)
 
