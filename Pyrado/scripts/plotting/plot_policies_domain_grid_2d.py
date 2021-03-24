@@ -55,6 +55,7 @@ def _plot_and_save(
     nominal: Optional[Tuple[float, float]] = None,
     save_figure: bool = False,
     save_dir: str = None,
+    show_figure: bool = True,
 ):
     if index in df.columns and column in df.columns:
         # Pivot table (by default averages over identical index / columns cells)
@@ -70,9 +71,10 @@ def _plot_and_save(
             x_label=column_label,
             add_colorbar=True,
         )
-
         if nominal:
             fig_hm.get_axes()[0].scatter(*nominal, s=100, marker="*", color="tab:green", label="")
+        if show_figure:
+            fig_hm.show()
 
         # Save heat map and color bar if desired
         if save_figure:
@@ -82,9 +84,157 @@ def _plot_and_save(
                 fig_cb.savefig(osp.join(save_dir, f"cb-{name}.pdf"))
 
 
-if __name__ == "__main__":
+def _plot(dataframes, save_dirs, save_figure):
+    # Commonly scale the colorbars of all plots
+    accnorm = AccNorm()
+
+    # Loop over all evaluations. Loop two times for first setting the bound of the colorbar and then saving the figures.
+    for sf, show_figure in zip((False, save_figure), (False, True)):
+        for df, save_dir in zip(dataframes, [None] * len(dataframes) if save_dirs is None else save_dirs):
+            """ QBallBalancerSim """
+
+            _plot_and_save(
+                df,
+                "m_ball",
+                "r_ball",
+                r"$m_{\mathrm{ball}}$",
+                r"$r_{\mathrm{ball}}$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "g",
+                "r_ball",
+                "$g$",
+                r"$r_{\mathrm{ball}}$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "J_l",
+                "J_m",
+                "$J_l$",
+                "$J_m$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "eta_g",
+                "eta_m",
+                r"$\eta_g$",
+                r"$\eta_m$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "k_m",
+                "R_m",
+                "$k_m$",
+                "$R_m$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "B_eq",
+                "c_frict",
+                r"$B_{\mathrm{eq}}$",
+                r"$c_{\mathrm{frict}}$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "V_thold_x_pos",
+                "V_thold_x_neg",
+                r"$V_{\mathrm{thold,x-}}$",
+                r"$V_{\mathrm{thold,x+}}$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "V_thold_y_pos",
+                "V_thold_y_neg",
+                r"$V_{\mathrm{thold,y-}}$",
+                r"$V_{\mathrm{thold,y+}}$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            _plot_and_save(
+                df,
+                "m_ball",
+                "act_delay",
+                r"$m_{\mathrm{ball}}$",
+                r"$a_{\mathrm{delay}}$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                show_figure=show_figure,
+            )
+
+            """ QQubeSwingUpSim """
+            _plot_and_save(
+                df,
+                "Dp",
+                "Dr",
+                r"$D_p$",
+                r"$D_r$",
+                add_sep_colorbar=True,
+                norm=accnorm,
+                save_figure=sf,
+                save_dir=save_dir,
+                nominal=(1e-6, 5e-6),
+                show_figure=show_figure,
+            )
+
+
+def _main():
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    argparser = get_argparser()
+    argparser.add_argument(
+        "--average",
+        action="store_true",
+        help="average over all loaded policies (default: False); create only a single heatmap",
+    )
+    args = argparser.parse_args()
 
     # Get the experiment's directory to load from
     if args.dir is None:
@@ -109,145 +259,25 @@ if __name__ == "__main__":
     else:
         list_eval_dirs = [osp.join(eval_parent_dir, "ENV_NAME", "ALGO_NAME") for eval_parent_dir in eval_parent_dirs]
 
-    # Commonly scale the colorbars of all plots
-    accnorm = AccNorm()
-    # Loop over all evaluations. Loop two times for first setting the bound of the colorbar and then saving the figures.
-    for save_figure in (False, args.save):
-        for eval_dir in list_eval_dirs:
-            assert osp.isdir(eval_dir)
+    dataframes, eval_dirs = [], []
+    for eval_dir in list_eval_dirs:
+        assert osp.isdir(eval_dir)
 
-            # Load the data
-            pickle_file = osp.join(eval_dir, "df_sp_grid_2d.pkl")
-            if not osp.isfile(pickle_file):
-                print(f"{pickle_file} is not a file! Skipping...")
-                continue
-            df = pd.read_pickle(pickle_file)
+        # Load the data
+        pickle_file = osp.join(eval_dir, "df_sp_grid_2d.pkl")
+        if not osp.isfile(pickle_file):
+            print(f"{pickle_file} is not a file! Skipping...")
+            continue
+        df = pd.read_pickle(pickle_file)
 
-            # Remove constant rows
-            # df = df.loc[:, df.apply(pd.Series.nunique) != 1]
+        dataframes.append(df)
+        eval_dirs.append(eval_dir)
 
-            """ QBallBalancerSim """
+    if args.average:
+        _plot([sum(dataframes) / len(dataframes)], None, False)
+    else:
+        _plot(dataframes, eval_dirs, args.save)
 
-            _plot_and_save(
-                df,
-                "m_ball",
-                "r_ball",
-                r"$m_{\mathrm{ball}}$",
-                r"$r_{\mathrm{ball}}$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
 
-            _plot_and_save(
-                df,
-                "g",
-                "r_ball",
-                "$g$",
-                r"$r_{\mathrm{ball}}$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            _plot_and_save(
-                df,
-                "J_l",
-                "J_m",
-                "$J_l$",
-                "$J_m$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            _plot_and_save(
-                df,
-                "eta_g",
-                "eta_m",
-                r"$\eta_g$",
-                r"$\eta_m$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            _plot_and_save(
-                df,
-                "k_m",
-                "R_m",
-                "$k_m$",
-                "$R_m$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            _plot_and_save(
-                df,
-                "B_eq",
-                "c_frict",
-                r"$B_{\mathrm{eq}}$",
-                r"$c_{\mathrm{frict}}$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            _plot_and_save(
-                df,
-                "V_thold_x_pos",
-                "V_thold_x_neg",
-                r"$V_{\mathrm{thold,x-}}$",
-                r"$V_{\mathrm{thold,x+}}$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            _plot_and_save(
-                df,
-                "V_thold_y_pos",
-                "V_thold_y_neg",
-                r"$V_{\mathrm{thold,y-}}$",
-                r"$V_{\mathrm{thold,y+}}$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            _plot_and_save(
-                df,
-                "m_ball",
-                "act_delay",
-                r"$m_{\mathrm{ball}}$",
-                r"$a_{\mathrm{delay}}$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-            )
-
-            """ QQubeSwingUpSim """
-            _plot_and_save(
-                df,
-                "Dp",
-                "Dr",
-                r"$D_p$",
-                r"$D_r$",
-                add_sep_colorbar=True,
-                norm=accnorm,
-                save_figure=save_figure,
-                save_dir=eval_dir,
-                nominal=(1e-6, 5e-6),
-            )
-
-    plt.show()
+if __name__ == "__main__":
+    _main()
