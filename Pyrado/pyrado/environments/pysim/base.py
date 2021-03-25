@@ -253,8 +253,8 @@ class SimPyEnv(SimEnv, Serializable):
                 self._rendering = mode.render  # only render if displaying the animation
                 if self._visualization is None:
                     self._init_anim()
-                    # Calculate number of frames that need to be skipped
-                    self._skip_frames = min(1, int(1 / self._fps / self._dt))
+                    # Calculate number of frames that need to be skippedz
+                    self._skip_frames = int(1 / self._fps / self._dt)
 
                 # Update the animation
                 self._update_anim()
@@ -277,7 +277,7 @@ class SimPyEnv(SimEnv, Serializable):
             # Render frame
             self._visualization.taskMgr.step()
             # Calculate number of frames that need to be skipped
-            self._skip_frames = min(1, int(1 / self._fps / self._dt))
+            self._skip_frames = int(1 / self._fps / self._dt)
 
     def _reset_anim(self):
         """
