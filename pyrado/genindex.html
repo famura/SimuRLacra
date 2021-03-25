@@ -1149,7 +1149,7 @@
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.evaluate">(StochasticActionExplStrat method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.evaluate">(TSPred static method)</a>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.evaluate">(TSPred static method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">(TwoHeadedRNNPolicyBase method)</a>
 </li>
@@ -2020,6 +2020,12 @@
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.udr">pyrado.algorithms.meta.udr</a>
 </li>
+        <li><a href="algorithms.regression.html#module-pyrado.algorithms.regression">pyrado.algorithms.regression</a>
+</li>
+        <li><a href="algorithms.regression.html#module-pyrado.algorithms.regression.nonlin_regression">pyrado.algorithms.regression.nonlin_regression</a>
+</li>
+        <li><a href="algorithms.regression.html#module-pyrado.algorithms.regression.timeseries_prediction">pyrado.algorithms.regression.timeseries_prediction</a>
+</li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based">pyrado.algorithms.step_based</a>
 </li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.a2c">pyrado.algorithms.step_based.a2c</a>
@@ -2037,8 +2043,6 @@
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.svpg">pyrado.algorithms.step_based.svpg</a>
 </li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.value_based">pyrado.algorithms.step_based.value_based</a>
-</li>
-        <li><a href="algorithms.html#module-pyrado.algorithms.timeseries_prediction">pyrado.algorithms.timeseries_prediction</a>
 </li>
         <li><a href="algorithms.html#module-pyrado.algorithms.utils">pyrado.algorithms.utils</a>
 </li>
@@ -2536,6 +2540,8 @@
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy.name">(NFPolicy attribute)</a>
 </li>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.name">(NonlinRegression attribute)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.name">(NPDR attribute)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.name">(OneMassOscillatorSim attribute)</a>
@@ -2620,7 +2626,7 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.name">(TraceableTimePolicy attribute)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.name">(TSPred attribute)</a>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.name">(TSPred attribute)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.name">(TwoDimGaussian attribute)</a>
 </li>
@@ -2696,6 +2702,8 @@
 </li>
       </ul></li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.nominal_dict">nominal_dict() (SVPGAdapter method)</a>
+</li>
+      <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression">NonlinRegression (class in pyrado.algorithms.regression.nonlin_regression)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat">NormalActNoiseExplStrat (class in pyrado.exploration.stochastic_action)</a>
 </li>
@@ -2981,7 +2989,7 @@
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO2">PPO2 (class in pyrado.algorithms.step_based.ppo)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.predict">predict() (TSPred static method)</a>
+      <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.predict">predict() (TSPred static method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.Experiment.prefix">prefix() (Experiment property)</a>
 
@@ -3218,6 +3226,27 @@
 </li>
       </ul></li>
       <li>
+    pyrado.algorithms.regression
+
+      <ul>
+        <li><a href="algorithms.regression.html#module-pyrado.algorithms.regression">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.regression.nonlin_regression
+
+      <ul>
+        <li><a href="algorithms.regression.html#module-pyrado.algorithms.regression.nonlin_regression">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.regression.timeseries_prediction
+
+      <ul>
+        <li><a href="algorithms.regression.html#module-pyrado.algorithms.regression.timeseries_prediction">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.algorithms.step_based
 
       <ul>
@@ -3278,13 +3307,6 @@
 
       <ul>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.value_based">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyrado.algorithms.timeseries_prediction
-
-      <ul>
-        <li><a href="algorithms.html#module-pyrado.algorithms.timeseries_prediction">module</a>
 </li>
       </ul></li>
       <li>
@@ -3546,6 +3568,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.pendulum">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_ball_balancer
 
@@ -3553,8 +3577,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.quanser_ball_balancer">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_cartpole
 
@@ -4473,8 +4495,6 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.desired_state.RadiallySymmDesStateTask">RadiallySymmDesStateTask (class in pyrado.tasks.desired_state)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.features.RandFourierFeat">RandFourierFeat (class in pyrado.policies.features)</a>
-</li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.randomize">randomize() (DomainRandomizer method)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper.randomizer">randomizer() (DomainRandWrapper property)</a>
@@ -4662,6 +4682,8 @@
 </li>
         <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv.reset">(MockEnv method)</a>
 </li>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.reset">(NonlinRegression method)</a>
+</li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper.reset">(ObsVelFiltWrapper method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.goalless.OptimProxyTask.reset">(OptimProxyTask method)</a>
@@ -4802,6 +4824,8 @@
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.rewards">rewards (StepSequence attribute)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.RewFcn">RewFcn (class in pyrado.tasks.reward_functions)</a>
+</li>
+      <li><a href="policies.html#pyrado.policies.features.RFFeat">RFFeat (class in pyrado.policies.features)</a>
 </li>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.RigidBodyTracker">RigidBodyTracker (class in pyrado.environments.barrett_wam.trackers)</a>
 </li>
@@ -4980,6 +5004,8 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.predefined_lqr.LQR.save_snapshot">(LQR method)</a>
 </li>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.save_snapshot">(NonlinRegression method)</a>
+</li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.save_snapshot">(ParameterExploring method)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.save_snapshot">(SAC method)</a>
@@ -4996,7 +5022,7 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.save_snapshot">(SysIdViaEpisodicRL method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">(TSPred method)</a>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.save_snapshot">(TSPred method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.udr.UDR.save_snapshot">(UDR method)</a>
 </li>
@@ -5288,6 +5314,8 @@
 </li>
         <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv.step">(MockEnv method)</a>
 </li>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.step">(NonlinRegression method)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.step">(NPDR method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.step">(ParameterExploring method)</a>
@@ -5316,7 +5344,7 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.step">(SysIdViaEpisodicRL method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.step">(TSPred method)</a>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.step">(TSPred method)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.step">(TwoDimGaussian method)</a>
 </li>
@@ -5379,6 +5407,8 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.stopping_criterion_met">(BayRn method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.predefined_lqr.LQR.stopping_criterion_met">(LQR method)</a>
+</li>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression.stopping_criterion_met">(NonlinRegression method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.stopping_criterion_met">(ParameterExploring method)</a>
 </li>
@@ -5775,6 +5805,8 @@
 </li>
       <li><a href="tests.html#tests.test_policies.test_rff_policy_serial">test_rff_policy_serial() (in module tests.test_policies)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_rff_regression">test_rff_regression() (in module tests.algorithms.test_algorithms)</a>
+</li>
       <li><a href="tests.html#tests.test_utils.test_rmse">test_rmse() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_environments.test_rollout">test_rollout() (in module tests.test_environments)</a>
@@ -5795,10 +5827,10 @@
 </li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_box_space">test_sample_contains_box_space() (in module tests.test_spaces)</a>
 </li>
-      <li><a href="tests.html#tests.test_spaces.test_sample_contains_discrete_space">test_sample_contains_discrete_space() (in module tests.test_spaces)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tests.html#tests.test_spaces.test_sample_contains_discrete_space">test_sample_contains_discrete_space() (in module tests.test_spaces)</a>
+</li>
       <li><a href="tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">test_sample_from_unit_sphere_surface() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect">test_sampler_collect() (in module tests.test_sampling)</a>
@@ -6209,7 +6241,7 @@
 </li>
       <li><a href="tests.html#tests.test_policies.tsdataset">tsdataset() (in module tests.test_policies)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred">TSPred (class in pyrado.algorithms.timeseries_prediction)</a>
+      <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred">TSPred (class in pyrado.algorithms.regression.timeseries_prediction)</a>
 </li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian">TwoDimGaussian (class in pyrado.environments.one_step.two_dim_gaussian)</a>
 </li>

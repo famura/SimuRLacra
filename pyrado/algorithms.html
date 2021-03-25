@@ -102,7 +102,6 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">algorithms</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.base">base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.timeseries_prediction">timeseries_prediction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.utils">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms">Module contents</a></li>
 </ul>
@@ -220,7 +219,7 @@
 Algorithms specify the way how the policy is updated as well as the exploration strategy used to acquire samples.</p>
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.clip_grad">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">clip_grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">module:</span> <span class="pre">torch.nn.modules.module.Module,</span> <span class="pre">max_grad_norm:</span> <span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">None]</span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.clip_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.clip_grad" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">clip_grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_grad_norm</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.clip_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.clip_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clip all gradients of the provided Module (e.g., a policy or an advantage estimator) by their L2 norm value.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -385,7 +384,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.stopping_criterion_met">
 <code class="sig-name descname"><span class="pre">stopping_criterion_met</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.stopping_criterion_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.stopping_criterion_met" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if one of the algorithms (characteristic) stopping criterions is met.</p>
+<dd><p>Checks if one of the algorithms (characteristic) stopping criteria is met.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This function can be overwritten by the subclasses to implement custom stopping behavior.</p>
@@ -467,77 +466,6 @@ Be sure to call this function if you override it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>curr</strong> – value to set the counter to, defaults to 0</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-pyrado.algorithms.timeseries_prediction">
-<span id="timeseries-prediction"></span><h2>timeseries_prediction<a class="headerlink" href="#module-pyrado.algorithms.timeseries_prediction" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pyrado.algorithms.timeseries_prediction.TSPred">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">TSPred</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">save_dir:</span> <span class="pre">str</span></em>, <em class="sig-param"><span class="pre">dataset:</span> <span class="pre">pyrado.utils.data_sets.TimeSeriesDataSet</span></em>, <em class="sig-param"><span class="pre">policy:</span> <span class="pre">pyrado.policies.base.Policy</span></em>, <em class="sig-param"><span class="pre">max_iter:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">windowed:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em>, <em class="sig-param"><span class="pre">cascaded:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em>, <em class="sig-param"><span class="pre">optim_class=&lt;class</span> <span class="pre">'torch.optim.adam.Adam'&gt;</span></em>, <em class="sig-param"><span class="pre">optim_hparam:</span> <span class="pre">Optional[dict]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">loss_fcn=MSELoss()</span></em>, <em class="sig-param"><span class="pre">lr_scheduler=None</span></em>, <em class="sig-param"><span class="pre">lr_scheduler_hparam:</span> <span class="pre">Optional[dict]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">num_workers:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></em>, <em class="sig-param"><span class="pre">logger:</span> <span class="pre">Optional[pyrado.logger.step.StepLogger]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
-<p>Train a policy to predict a time series of data.</p>
-<dl class="py method">
-<dt id="pyrado.algorithms.timeseries_prediction.TSPred.evaluate">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">evaluate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windowed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cascaded</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fcn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">MSELoss()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.algorithms.timeseries_prediction.TSPred.name">
-<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'tspred'</span></em><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.timeseries_prediction.TSPred.predict">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">policy:</span> <span class="pre">pyrado.policies.base.Policy</span></em>, <em class="sig-param"><span class="pre">inp_seq:</span> <span class="pre">torch.Tensor</span></em>, <em class="sig-param"><span class="pre">windowed:</span> <span class="pre">bool</span></em>, <em class="sig-param"><span class="pre">cascaded:</span> <span class="pre">bool</span></em>, <em class="sig-param"><span class="pre">hidden:</span> <span class="pre">Optional[torch.Tensor]</span> <span class="pre">=</span> <span class="pre">None)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'torch.Tensor'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset the hidden states, predict one output given a arbitrary long sequence of inputs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>policy</strong> – policy used to make the predictions</p></li>
-<li><p><strong>inp_seq</strong> – input sequence</p></li>
-<li><p><strong>hidden</strong> – initial hidden states, pass <cite>None</cite> to let the network pick its default hidden state</p></li>
-<li><p><strong>windowed</strong> – if <cite>True</cite>, one fixed-length (short) input sequence is provided to the policy which then
-predicts one sample, else the complete (long) input sequence is fed to the policy which then
-predicts an sequence of samples of equal length</p></li>
-<li><p><strong>cascaded</strong> – it <cite>True</cite>, the predictions are made based on previous predictions instead of the current input</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>predicted output and latest hidden state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">
-<code class="sig-name descname"><span class="pre">save_snapshot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
-Subclasses should call the base method to save the policy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a <cite>dict</cite> of information about the current iteration of the meta-algorithm</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.timeseries_prediction.TSPred.step">
-<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
-adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
-<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a dict of information about the current iteration of the meta-algorithm</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>

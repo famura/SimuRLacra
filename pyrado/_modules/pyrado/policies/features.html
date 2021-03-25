@@ -287,9 +287,9 @@
             <span class="c1"># We do not care about the number of observations</span>
             <span class="n">num_feat</span> <span class="o">=</span> <span class="n">num_feat</span> <span class="o">-</span> <span class="n">inp_flat_dim</span> <span class="o">+</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">RandFourierFeat</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">RFFeat</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">):</span>
             <span class="c1"># List all random fourier features</span>
-            <span class="n">rffs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">RandFourierFeat</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">]</span>  <span class="c1"># could be more that one rff</span>
+            <span class="n">rffs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">RFFeat</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">]</span>  <span class="c1"># could be more that one rff</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fcn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">):</span>
                 <span class="c1"># We do not care about the number of observations, but we added them before</span>
                 <span class="n">num_feat</span> <span class="o">-=</span> <span class="n">inp_flat_dim</span>
@@ -436,9 +436,9 @@
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_sin</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_cos</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># unsqueeze for later concatenation</span></div>
 
 
-<div class="viewcode-block" id="RandFourierFeat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.RandFourierFeat">[docs]</a><span class="k">class</span> <span class="nc">RandFourierFeat</span><span class="p">:</span>
+<div class="viewcode-block" id="RFFeat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.RFFeat">[docs]</a><span class="k">class</span> <span class="nc">RFFeat</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Random Fourier features</span>
+<span class="sd">    Random Fourier (RF) features</span>
 
 <span class="sd">    .. seealso::</span>
 <span class="sd">        [1] A. Rahimi and B. Recht &quot;Random Features for Large-Scale Kernel Machines&quot;, NIPS, 2007</span>
@@ -459,7 +459,7 @@
 <span class="sd">        :param num_feat_per_dim: number of random Fourier features, called $D$ in [1]. In contrast to the `RBFFeat`</span>
 <span class="sd">                                 class, the output dimensionality, thus the number of associated policy parameters is</span>
 <span class="sd">                                 `num_feat_per_dim` and not`num_feat_per_dim * inp_dim`.</span>
-<span class="sd">        :param bandwidth: scaling factor for the sampled frequencies. Pass a constant of for example</span>
+<span class="sd">        :param bandwidth: scaling factor for the sampled frequencies. Pass a constant scalar value, for example</span>
 <span class="sd">                          `env.obs_space.bound_up`. According to [1] and the note above we should use d here.</span>
 <span class="sd">                          Actually, it is not a bandwidth since it is not a frequency.</span>
 <span class="sd">        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU</span>
@@ -504,7 +504,10 @@
 
         <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;RBF class can only handle 1-dim or 2-dim input!&quot;</span><span class="p">)</span>
-        <span class="n">inp</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>  <span class="c1"># first dim is the batch size, the second dim it the actual input dimension</span>
+
+        <span class="c1"># Reshape to [batch_size, dim_input]</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">inp</span>  <span class="c1"># compensate for to.atleast_2d in case it was 1-dim</span>
 
         <span class="c1"># Resize if batched and return the feature value</span>
         <span class="n">shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>

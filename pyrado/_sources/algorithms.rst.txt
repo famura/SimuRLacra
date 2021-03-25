@@ -8,6 +8,7 @@ algorithms
    pyrado.algorithms.episodic
    pyrado.algorithms.inference
    pyrado.algorithms.meta
+   pyrado.algorithms.regression
    pyrado.algorithms.step_based
 
 
@@ -16,15 +17,6 @@ base
 ----
 
 .. automodule:: pyrado.algorithms.base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-timeseries\_prediction
-----------------------
-
-.. automodule:: pyrado.algorithms.timeseries_prediction
    :members:
    :undoc-members:
    :show-inheritance:

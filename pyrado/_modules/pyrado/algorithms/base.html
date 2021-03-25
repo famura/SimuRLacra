@@ -345,7 +345,7 @@
 
 <div class="viewcode-block" id="Algorithm.stopping_criterion_met"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.stopping_criterion_met">[docs]</a>    <span class="k">def</span> <span class="nf">stopping_criterion_met</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks if one of the algorithms (characteristic) stopping criterions is met.</span>
+<span class="sd">        Checks if one of the algorithms (characteristic) stopping criteria is met.</span>
 
 <span class="sd">        .. note::</span>
 <span class="sd">            This function can be overwritten by the subclasses to implement custom stopping behavior.</span>
@@ -452,6 +452,8 @@
                 <span class="sa">f</span><span class="s2">&quot;with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">num_param</span><span class="si">}</span><span class="s2"> parameters. </span><span class="si">{</span><span class="n">stopping_reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;g&quot;</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="c1"># Set dropout and batch normalization layers to evaluation mode</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> finished training. </span><span class="si">{</span><span class="n">stopping_reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span></div>
 
@@ -527,7 +529,7 @@
         <span class="k">return</span> <span class="n">algo</span></div>
 
 <div class="viewcode-block" id="Algorithm.clip_grad"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.clip_grad">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">clip_grad</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">max_grad_norm</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">clip_grad</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">max_grad_norm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clip all gradients of the provided Module (e.g., a policy or an advantage estimator) by their L2 norm value.</span>
 
