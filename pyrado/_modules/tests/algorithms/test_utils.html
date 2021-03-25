@@ -343,7 +343,7 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;max_iter&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;relentless&quot;</span><span class="p">,</span> <span class="s2">&quot;twice&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_until_thold_exceeded</span><span class="p">(</span><span class="n">thold</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">):</span>
     <span class="nd">@until_thold_exceeded</span><span class="p">(</span><span class="n">thold</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_trn_eval_fcn</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">_trn_eval_fcn</span><span class="p">(</span><span class="n">cnt_rep</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="c1"># Draw a random number to mimic a training and evaluation process</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 

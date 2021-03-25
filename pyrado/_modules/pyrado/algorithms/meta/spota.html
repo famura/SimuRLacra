@@ -571,18 +571,18 @@
 
             <span class="c1"># Load the policies (makes a difference for snapshot_mode = best)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">_policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
-                <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;cand&quot;</span><span class="p">),</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;cand&quot;</span><span class="p">,</span>
+                <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">_policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
-                <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ref_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ref_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="c1"># Loop over all domain realizations of the reference solutions</span>
@@ -659,11 +659,11 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># Load a reference solution different from the the k-th</span>
                     <span class="n">other_ref</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
-                        <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
-                        <span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ref_</span><span class="si">{</span><span class="n">other_k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                        <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ref_</span><span class="si">{</span><span class="n">other_k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="n">other_ref_ret</span> <span class="o">=</span> <span class="mi">0</span>
                     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nJ</span><span class="p">):</span>
@@ -698,8 +698,8 @@
 
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
-            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_dr</span><span class="p">,</span> <span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
-            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_dr</span><span class="o">.</span><span class="n">randomizer</span><span class="p">,</span> <span class="s2">&quot;randomizer&quot;</span><span class="p">,</span> <span class="s2">&quot;pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_dr</span><span class="p">,</span> <span class="s2">&quot;env.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_dr</span><span class="o">.</span><span class="n">randomizer</span><span class="p">,</span> <span class="s2">&quot;randomizer&quot;</span><span class="p">,</span> <span class="s2">&quot;pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not supposed be run as a subroutine!&quot;</span><span class="p">)</span></div></div>
 </pre></div>

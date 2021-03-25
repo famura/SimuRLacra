@@ -445,9 +445,27 @@
 <div class="viewcode-block" id="TSPred.save_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
 
-        <span class="c1"># Does not matter if this algorithm instance is a subroutine of another algorithm</span>
-        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
-        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;dataset.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is a subroutine of another algorithm</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
+                <span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suffix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span>
+                <span class="s2">&quot;dataset.pt&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suffix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="TSPred.evaluate"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.evaluate">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span>

@@ -373,19 +373,17 @@
             <span class="c1"># Save the target domain data</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Append the first set of data</span>
-                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span> <span class="s2">&quot;data_real&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Append and save all data</span>
-                <span class="n">prev_data</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;data_real&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+                <span class="n">prev_data</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
                 <span class="n">data_real_hist</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prev_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data_real_hist</span><span class="p">,</span> <span class="s2">&quot;data_real&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data_real_hist</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
 
             <span class="c1"># Initialize sbi simulator and prior</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setup_sbi</span><span class="p">(</span>
                 <span class="n">prior</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span><span class="p">,</span>
-                <span class="n">rollouts_real</span><span class="o">=</span><span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                    <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;rollouts_real&quot;</span><span class="p">,</span> <span class="s2">&quot;pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="p">),</span>
+                <span class="n">rollouts_real</span><span class="o">=</span><span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 1</span>
@@ -419,22 +417,18 @@
                 <span class="k">if</span> <span class="n">idx_r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
                         <span class="n">posterior</span><span class="p">,</span>
-                        <span class="s2">&quot;posterior&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
-                        <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-                        <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="c1"># Save the posterior tailored to each round</span>
                     <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
                         <span class="n">posterior</span><span class="p">,</span>
-                        <span class="s2">&quot;posterior&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
-                        <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="n">idx_r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-                        <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="n">idx_r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
 
                     <span class="c1"># Set proposal of the next round to focus on the next data set.</span>
@@ -442,13 +436,13 @@
                     <span class="n">proposal</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">set_default_x</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">)</span>
 
                 <span class="c1"># Override the latest posterior</span>
-                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="s2">&quot;posterior&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 2</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="c1"># Logging (the evaluation can be time-intensive)</span>
-            <span class="n">posterior</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;posterior&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+            <span class="n">posterior</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_curr_domain_param_eval</span><span class="p">,</span> <span class="n">log_probs</span> <span class="o">=</span> <span class="n">NPDR</span><span class="o">.</span><span class="n">eval_posterior</span><span class="p">(</span>
                 <span class="n">posterior</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span>

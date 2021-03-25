@@ -464,12 +464,9 @@
 <div class="viewcode-block" id="SNPEA.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
 
-        <span class="c1"># Save the posterior of the current meta iteration</span>
-        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density_estimator</span><span class="p">,</span> <span class="s2">&quot;posterior&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
-            <span class="k">pass</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density_estimator</span><span class="p">,</span> <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is a subroutine of another algorithm</span>
@@ -479,12 +476,7 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_rounds</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># Save the posterior tailored to each round</span>
                 <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">density_estimator</span><span class="p">,</span>
-                    <span class="s2">&quot;posterior&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;pt&quot;</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
-                    <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_round_</span><span class="si">{</span><span class="n">idx_round</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
-                    <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">density_estimator</span><span class="p">,</span> <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_round_</span><span class="si">{</span><span class="n">idx_round</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span></div></div>
 </pre></div>
 

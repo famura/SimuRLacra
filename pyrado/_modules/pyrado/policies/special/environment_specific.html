@@ -281,6 +281,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">limit_rad</span> <span class="o">=</span> <span class="mf">0.52360</span>  <span class="c1"># limit for angle command; see the saturation block in the Simulink model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kp_servo</span> <span class="o">=</span> <span class="mf">14.0</span>  <span class="c1"># P-gain for the servo angle; see the saturation block the Simulink model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Kp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Kd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="c1"># Default initialization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="n">kp</span><span class="p">,</span> <span class="n">kd</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QBallBalancerPDCtrl.forward"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.environment_specific.QBallBalancerPDCtrl.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -366,7 +368,7 @@
                 <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">41.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">55.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">])</span>
             <span class="p">)</span>  <span class="c1"># former: [+41.8, 173.4, +46.1, 16.2], [34.1, 118.0, 43.4, 18.1]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_k_e_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">17.0</span><span class="p">))</span>  <span class="c1"># former: 24.5, 36.5, 19.5</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_log_k_p_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">4.0</span><span class="p">))</span>  <span class="c1"># former: 8.5, 2.25</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_k_p_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">8.0</span><span class="p">))</span>  <span class="c1"># former: 4.0, 8.5, 2.25</span>
 
         <span class="c1"># Define parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_u_max</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_u_max_init</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -374,6 +376,9 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">long</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_k_e</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_k_e_init</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_k_p</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_k_p_init</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Default initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">u_max</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -399,6 +404,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="n">init_values</span>
 
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_u_max</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_u_max_init</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_K_pd</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_K_pd_init</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">long</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log_k_e</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_k_e_init</span>
@@ -559,23 +565,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">acc_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">acc_max</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dp_nom</span> <span class="o">=</span> <span class="n">QQubeSwingUpSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
 
+        <span class="c1"># Default initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">E_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_E_ref</span><span class="p">)</span>
 
-    <span class="nd">@E_ref</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">E_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_E_ref</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_E_ref</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">new_E_ref</span><span class="p">)</span>
+    <span class="c1"># @E_ref.setter</span>
+    <span class="c1"># def E_ref(self, new_E_ref: float):</span>
+    <span class="c1">#     self._log_E_ref = to.log(new_E_ref)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">E_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot; Called $\mu$ by Quanser.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_E_gain</span><span class="p">)</span>
 
-    <span class="nd">@E_gain</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">E_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_mu</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot; Called $\mu$ by Quanser.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_E_gain</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">new_mu</span><span class="p">)</span>
+    <span class="c1"># @E_gain.setter</span>
+    <span class="c1"># def E_gain(self, new_mu):</span>
+    <span class="c1">#     r&quot;&quot;&quot; Called $\mu$ by Quanser.&quot;&quot;&quot;</span>
+    <span class="c1">#     self._log_E_gain = to.log(new_mu)</span>
 
 <div class="viewcode-block" id="QQubeEnergyCtrl.init_param"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.environment_specific.QQubeEnergyCtrl.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">init_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -651,6 +660,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">state_des</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">th_des</span><span class="p">,</span> <span class="n">al_des</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tols</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">tols</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Default initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QQubePDCtrl.init_param"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.environment_specific.QQubePDCtrl.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">init_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
