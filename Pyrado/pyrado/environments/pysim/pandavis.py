@@ -704,19 +704,19 @@ class QQubeVis(PandaVis):
         Lp = self._env.domain_param["Lp"]
 
         # Only for animation
-        arm_radius = 0.003
-        pole_radius = 0.0045
+        arm_radius = 0.0035
+        pole_radius = 0.005
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 20 / Lp
+        self._scale = 10 / Lp
 
         # Set window title
         self.windowProperties.setTitle("Quanser Qube")
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(-0.4 * self._scale, -1.3 * self._scale, 0.4 * self._scale)
-        self.cam.setHpr(-20, -10, 0)
+        self.cam.setPos(-0.45 * self._scale, -1.4 * self._scale, 0.35 * self._scale)
+        self.cam.setHpr(-20, -10, 0)  # roll, pitch, yaw in
 
         # Box
         self.box = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
