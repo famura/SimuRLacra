@@ -305,13 +305,11 @@ class RFFeat:
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
 
-        # Reshape to [batch_size, dim_input]
-        inp = to.atleast_2d(inp)
-        inp = inp.T if inp.shape[0] == 1 else inp  # compensate for to.atleast_2d in case it was 1-dim
+        inp = to.atleast_2d(inp)  # shape of [batch_size, dim_input]
 
         # Resize if batched and return the feature value
         shift = self.shift.repeat(inp.shape[0], 1)
-        return self.scale * to.cos(inp @ self.freq.t() + shift)
+        return self.scale * to.cos(to.mm(inp, self.freq.T) + shift)
 
 
 class RBFFeat:
