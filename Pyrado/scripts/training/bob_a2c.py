@@ -41,7 +41,7 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.features import FeatureStack, identity_feat, sin_feat, RandFourierFeat, RBFFeat
+from pyrado.policies.features import FeatureStack, identity_feat, sin_feat, RFFeat, RBFFeat
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 
@@ -65,8 +65,8 @@ if __name__ == "__main__":
     policy_hparam = dict(
         # feats=FeatureStack(
         #     [
-        #         RandFourierFeat(
-        #             env.obs_space.flat_dim, num_feat_per_dim=50, bandwidth=env.obs_space.bound_up, use_cuda=True
+        #         RFFeat(
+        #             env.obs_space.flat_dim, num_feat_per_dim=500, bandwidth=1/env.obs_space.bound_up, use_cuda=True
         #         )
         #     ]
         # )

@@ -30,12 +30,10 @@ import pytest
 import os.path as osp
 from torch import nn as nn
 
-from pyrado.algorithms.timeseries_prediction import TSPred
+from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.environments.base import Env
 from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.policies.special.time import PlaybackPolicy
-from pyrado.spaces import BoxSpace
-from pyrado.spaces.box import InfBoxSpace
 from pyrado.policies.base import Policy
 from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.policies.recurrent.base import default_unpack_hidden, default_pack_hidden
@@ -44,6 +42,8 @@ from pyrado.policies.features import *
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.spaces import BoxSpace
+from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import RenderMode, EnvSpec
 from pyrado.utils.functions import skyline
@@ -113,7 +113,7 @@ def test_mul_feat(obs_dim, idcs):
     "obs_dim, num_feat_per_dim", [(1, 1), (2, 1), (1, 4), (2, 4), (10, 100)], ids=["1_1", "2_1", "1_4", "2_4", "10_100"]
 )
 def test_rff_feat_serial(obs_dim, num_feat_per_dim):
-    rff = RandFourierFeat(
+    rff = RFFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
         bandwidth=np.ones(obs_dim),
@@ -131,7 +131,7 @@ def test_rff_feat_serial(obs_dim, num_feat_per_dim):
     "obs_dim, num_feat_per_dim", [(1, 1), (2, 1), (1, 4), (2, 4), (10, 100)], ids=["1_1", "2_1", "1_4", "2_4", "10_100"]
 )
 def test_rff_feat_batched(batch_size, obs_dim, num_feat_per_dim):
-    rff = RandFourierFeat(
+    rff = RFFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
         bandwidth=np.ones(obs_dim),
@@ -198,9 +198,7 @@ def test_rbf_feat_batched(batch_size, obs_dim, num_feat_per_dim, bounds):
 )
 @pytest.mark.parametrize("num_feat_per_dim", [4, 100], ids=["4", "100"])
 def test_rff_policy_serial(env, num_feat_per_dim):
-    rff = RandFourierFeat(
-        inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up
-    )
+    rff = RFFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up)
     policy = LinearPolicy(env.spec, FeatureStack([rff]))
     for _ in range(10):
         obs = env.obs_space.sample_uniform()
@@ -224,9 +222,7 @@ def test_rff_policy_serial(env, num_feat_per_dim):
     "batch_size, num_feat_per_dim", [(1, 4), (20, 4), (1, 100), (20, 100)], ids=["1_4", "20_4", "1_100", "20_100"]
 )
 def test_rff_policy_batch(env, batch_size, num_feat_per_dim):
-    rff = RandFourierFeat(
-        inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up
-    )
+    rff = RFFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up)
     policy = LinearPolicy(env.spec, FeatureStack([rff]))
     for _ in range(10):
         obs = env.obs_space.sample_uniform()

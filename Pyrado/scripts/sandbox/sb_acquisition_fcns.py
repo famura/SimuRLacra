@@ -38,7 +38,6 @@ from botorch.fit import fit_gpytorch_model
 from botorch.acquisition import UpperConfidenceBound, ExpectedImprovement, ProbabilityOfImprovement
 from botorch.optim import optimize_acqf
 from gpytorch.mlls import ExactMarginalLogLikelihood
-from matplotlib import gridspec
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 

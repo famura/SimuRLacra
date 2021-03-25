@@ -145,7 +145,7 @@ class Algorithm(ABC, LoggerAware):
 
     def stopping_criterion_met(self) -> bool:
         """
-        Checks if one of the algorithms (characteristic) stopping criterions is met.
+        Checks if one of the algorithms (characteristic) stopping criteria is met.
 
         .. note::
             This function can be overwritten by the subclasses to implement custom stopping behavior.
@@ -252,6 +252,8 @@ class Algorithm(ABC, LoggerAware):
                 f"with {self._policy.num_param} parameters. {stopping_reason}",
                 "g",
             )
+            # Set dropout and batch normalization layers to evaluation mode
+            self._policy.eval()
         else:
             print_cbt(f"{get_class_name(self)} finished training. {stopping_reason}", "g")
 
@@ -327,7 +329,7 @@ class Algorithm(ABC, LoggerAware):
         return algo
 
     @staticmethod
-    def clip_grad(module: nn.Module, max_grad_norm: [float, None]) -> float:
+    def clip_grad(module: nn.Module, max_grad_norm: Optional[float]) -> float:
         """
         Clip all gradients of the provided Module (e.g., a policy or an advantage estimator) by their L2 norm value.
 

@@ -38,7 +38,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 import pyrado
-from pyrado.algorithms.timeseries_prediction import TSPred
+from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.recurrent.adn import ADNPolicy

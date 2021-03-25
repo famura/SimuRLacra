@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     # Policy
     policy_hparam = dict(
-        # feats=FeatureStack([RandFourierFeat(env.obs_space.flat_dim, num_feat_per_dim=20, bandwidth=env.obs_space.bound_up)])
+        # feats=FeatureStack([RFFeat(env.obs_space.flat_dim, num_feat_per_dim=500, bandwidth=1/env.obs_space.bound_up)])
         feats=FeatureStack(
             [
                 const_feat,

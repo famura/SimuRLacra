@@ -29,6 +29,7 @@
 import pytest
 from copy import deepcopy
 
+from pyrado.algorithms.regression.nonlin_regression import NonlinRegression
 from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.dql import DQL
@@ -58,8 +59,10 @@ from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
 from pyrado.spaces import ValueFunctionSpace, BoxSpace
+from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
+from pyrado.utils.functions import noisy_nonlin_fcn
 
 
 @pytest.fixture
@@ -410,3 +413,25 @@ def test_soft_update(env, policy: Policy):
     # Do a second soft update to see the exponential decay
     SAC.soft_update(target, source, tau=0.8)
     assert to.allclose(target.param_values, 0.36 * to.ones_like(target.param_values))
+
+
+@pytest.mark.visualization
+@pytest.mark.parametrize("num_feat_per_dim", [1000], ids=[1000])
+@pytest.mark.parametrize("loss_fcn", [to.nn.MSELoss()], ids=["mse"])
+@pytest.mark.parametrize("algo_hparam", [dict(max_iter=50, max_iter_no_improvement=5)], ids=["casual"])
+def test_rff_regression(ex_dir, num_feat_per_dim: int, loss_fcn: Callable, algo_hparam: dict):
+    # Generate some data
+    inputs = to.linspace(-4.0, 4.0, 8001).view(-1, 1)
+    targets = noisy_nonlin_fcn(inputs, f=3.0, noise_std=0).view(-1, 1)
+
+    # Create the policy
+    rff = RFFeat(inp_dim=1, num_feat_per_dim=num_feat_per_dim, bandwidth=1 / 20)
+    policy = LinearPolicy(EnvSpec(InfBoxSpace(shape=(1,)), InfBoxSpace(shape=(1,))), FeatureStack([rff]))
+
+    # Create the algorithm, and train
+    loss_before = loss_fcn(policy(inputs), targets)
+    algo = NonlinRegression(ex_dir, inputs, targets, policy, **algo_hparam)
+    algo.train()
+    loss_after = loss_fcn(policy(inputs), targets)
+    assert loss_after < loss_before
+    assert algo.curr_iter >= algo_hparam["max_iter_no_improvement"]

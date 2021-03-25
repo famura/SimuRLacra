@@ -27,9 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-import matplotlib
 import pytest
-from torch.functional import Tensor
 import torch.nn as nn
 from functools import partial
 from math import ceil

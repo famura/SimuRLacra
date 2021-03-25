@@ -38,7 +38,7 @@ from pyrado.policies.recurrent.adn import ADNPolicy, pd_linear
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.timeseries_prediction import TSPred
+from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace

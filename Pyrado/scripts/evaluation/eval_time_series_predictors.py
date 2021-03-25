@@ -35,7 +35,7 @@ from matplotlib import pyplot as plt
 from pyrado.utils.argparser import get_argparser
 from warnings import warn
 
-from pyrado.algorithms.timeseries_prediction import TSPred
+from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.utils.checks import check_all_equal
 from pyrado.utils.experiments import load_experiment, read_csv_w_replace
 

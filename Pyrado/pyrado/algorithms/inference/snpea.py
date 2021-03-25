@@ -66,7 +66,7 @@ class SNPEA(Algorithm):
         num_eval_samples: Optional[int] = 50,
         batch_size: Optional[int] = 50,
         lr: Optional[int] = 5e-4,
-        max_grad_norm: Optional[int] = 5.0,
+        max_grad_norm: Optional[float] = 5.0,
         eval_every_n_sims: Optional[int] = 10,
         simulation_batch_size: Optional[int] = 10,
         use_gaussian_proposal: Optional[bool] = False,

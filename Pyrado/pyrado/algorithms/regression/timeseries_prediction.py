@@ -157,7 +157,7 @@ class TSPred(Algorithm):
                 targs_tst = self.dataset.data_tst_targ
             loss_tst = self.loss_fcn(targs_tst, preds_tst)
 
-        # Log metrics computed from the old/updated policy (loss value from update on this training sample)
+        # Log metrics computed from the old policy (loss value from update on this training sample)
         self.logger.add_value("trn loss", loss_trn, 6)
         self.logger.add_value("tst loss", loss_tst, 6)
         self.logger.add_value(

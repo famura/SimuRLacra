@@ -87,9 +87,9 @@ class FeatureStack:
             # We do not care about the number of observations
             num_feat = num_feat - inp_flat_dim + 1
 
-        if any(isinstance(f, RandFourierFeat) for f in self.feat_fcns):
+        if any(isinstance(f, RFFeat) for f in self.feat_fcns):
             # List all random fourier features
-            rffs = [isinstance(f, RandFourierFeat) for f in self.feat_fcns]  # could be more that one rff
+            rffs = [isinstance(f, RFFeat) for f in self.feat_fcns]  # could be more that one rff
             for i, fcn in enumerate(self.feat_fcns):
                 # We do not care about the number of observations, but we added them before
                 num_feat -= inp_flat_dim
@@ -236,9 +236,9 @@ class ATan2Feat:
         return to.atan2(inp[self._idx_sin], inp[self._idx_cos]).unsqueeze(0)  # unsqueeze for later concatenation
 
 
-class RandFourierFeat:
+class RFFeat:
     """
-    Random Fourier features
+    Random Fourier (RF) features
 
     .. seealso::
         [1] A. Rahimi and B. Recht "Random Features for Large-Scale Kernel Machines", NIPS, 2007
@@ -259,7 +259,7 @@ class RandFourierFeat:
         :param num_feat_per_dim: number of random Fourier features, called $D$ in [1]. In contrast to the `RBFFeat`
                                  class, the output dimensionality, thus the number of associated policy parameters is
                                  `num_feat_per_dim` and not`num_feat_per_dim * inp_dim`.
-        :param bandwidth: scaling factor for the sampled frequencies. Pass a constant of for example
+        :param bandwidth: scaling factor for the sampled frequencies. Pass a constant scalar value, for example
                           `env.obs_space.bound_up`. According to [1] and the note above we should use d here.
                           Actually, it is not a bandwidth since it is not a frequency.
         :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
@@ -304,7 +304,10 @@ class RandFourierFeat:
 
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
-        inp = to.atleast_2d(inp)  # first dim is the batch size, the second dim it the actual input dimension
+
+        # Reshape to [batch_size, dim_input]
+        inp = to.atleast_2d(inp)
+        inp = inp.T if inp.shape[0] == 1 else inp  # compensate for to.atleast_2d in case it was 1-dim
 
         # Resize if batched and return the feature value
         shift = self.shift.repeat(inp.shape[0], 1)

@@ -36,7 +36,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 import pyrado
-from pyrado.algorithms.timeseries_prediction import TSPred
+from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.rnn import LSTMPolicy
 from pyrado.spaces import BoxSpace
