@@ -106,7 +106,7 @@ if __name__ == "__main__":
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
     )
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(NormalDomainParam(name="g", mean=9.81, std=0.2)))
+    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(NormalDomainParam(name="g", mean=9.81, std=1.0)))
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
