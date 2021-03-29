@@ -360,10 +360,10 @@ class SAC(ValueBased):
         t1pi = kwargs.get("target1_param_init", None)
         t2pi = kwargs.get("target2_param_init", None)
 
-        if warmstart and t1pi is not None and t2pi is not None:
+        if warmstart and None not in (t1pi, t2pi):
             self.qfcn_targ_1.init_param(t1pi)
             self.qfcn_targ_2.init_param(t2pi)
-        elif warmstart and (t1pi is None or t2pi is None) and self._curr_iter > 0:
+        elif warmstart and None in (t1pi, t2pi) and self._curr_iter > 0:
             self.qfcn_targ_1 = pyrado.load(
                 "qfcn_target1.pt", self.save_dir, prefix=prefix, suffix=suffix, obj=self.qfcn_targ_1
             )

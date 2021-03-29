@@ -9,3 +9,4 @@ setup_docker.sh
 *.md
 **/.vscode
 .git
+thirdParty/libtorch

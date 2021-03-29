@@ -78,7 +78,7 @@ class ObsVelFiltWrapper(EnvWrapperObs, Serializable):
         # Parse selections for the positions to be filtered
         if mask_pos is not None:
             # Use explicit mask
-            self.mask_pos = np.array(mask_pos, dtype=np.bool)
+            self.mask_pos = np.array(mask_pos, dtype=bool)
             if not self.mask_pos.shape == wrapped_env.state_space.shape:
                 raise pyrado.ShapeErr(given=mask_pos, expected_match=wrapped_env.state_space)
         else:
@@ -90,7 +90,7 @@ class ObsVelFiltWrapper(EnvWrapperObs, Serializable):
         # Parse selections for the velocities to be replaced by the filtered positions
         if mask_vel is not None:
             # Use explicit mask
-            self.mask_vel = np.array(mask_vel, dtype=np.bool)
+            self.mask_vel = np.array(mask_vel, dtype=bool)
             if not self.mask_vel.shape == wrapped_env.obs_space.shape:
                 raise pyrado.ShapeErr(given=mask_vel, expected_match=wrapped_env.obs_space)
         else:

@@ -41,7 +41,7 @@ from typing import Optional, Callable, Type, Mapping, Tuple, List, Union, Dict
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
-from sbi.user_input.user_input_checks import prepare_for_sbi
+from sbi.utils.user_input_checks import prepare_for_sbi
 from sbi.utils import posterior_nn
 
 import pyrado

@@ -99,7 +99,8 @@ RUN if [ $OPTION == 'blackforest' ]; then\
     elif [ $OPTION == 'malakoff' ]; then\
     python setup_deps.py wo_rcs_w_pytorch -j$J &&\
     rm -fr Rcs RcsPySim;\
-    fi
+    fi;\
+    rm -fr ~/.cache 
 
 COPY --chown=user:user RcsPySim RcsPySim
 

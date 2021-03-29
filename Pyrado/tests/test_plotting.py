@@ -33,7 +33,7 @@ import torch as to
 from copy import deepcopy
 from matplotlib import pyplot as plt
 from sbi.inference import simulate_for_sbi, SNPE
-from sbi.user_input.user_input_checks import prepare_for_sbi
+from sbi.utils.user_input_checks import prepare_for_sbi
 from sbi.utils import posterior_nn, BoxUniform
 
 from pyrado.sampling.sbi_embeddings import Embedding

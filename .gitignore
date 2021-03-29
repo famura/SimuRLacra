@@ -88,3 +88,6 @@ chrome.json
 
 ### MuJoCo
 MUJOCO_LOG.*
+
+### sbi-logs
+Pyrado/sbi-logs/*

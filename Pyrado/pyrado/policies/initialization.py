@@ -93,8 +93,9 @@ def init_param(m, **kwargs):
             elif "bias" in name:
                 # b_ii, b_if, b_ig, b_io
                 if "t_max" in kwargs:
-                    if not isinstance(kwargs["t_max"], (float, int, to.Tensor)):
-                        raise pyrado.TypeErr(given=kwargs["t_max"], expected_type=[float, int, to.Tensor])
+                    assert isinstance(kwargs["t_max"], (float, int, to.Tensor)), pyrado.TypeErr(
+                        given=kwargs["t_max"], expected_type=[float, int, to.Tensor]
+                    )
                     # Initialize all biases to 0, but the bias of the forget and input gate using the chrono init
                     nn.init.constant_(param.data, val=0)
                     param.data[m.hidden_size : m.hidden_size * 2] = to.log(
@@ -140,10 +141,8 @@ def init_param(m, **kwargs):
 
     elif isinstance(m, IndiNonlinLayer):
         # Initialize all weights to 1 and all biases to 0 (if they exist)
-        if m.weight is not None:
-            init.normal_(m.weight, std=1.0 / sqrt(m.weight.nelement()))
-        if m.bias is not None:
-            init.normal_(m.bias, std=1.0 / sqrt(m.bias.nelement()))
-
+        for tensor in (m.weight, m.bias):
+            if tensor is not None:
+                init.normal_(tensor, std=1.0 / sqrt(tensor.nelement()))
     else:
         pass

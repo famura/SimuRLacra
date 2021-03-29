@@ -140,16 +140,12 @@ class DomainDistrParamPolicy(Policy):
                     if ddp[0] == dp.name and ddp[1] in dp.get_field_names():
                         # The domain parameter exists in the prior and in the mapping
                         val = getattr(dp, f"{ddp[1]}")
-                        if self.mask[idx]:
-                            # Sqrt-transform since it will later be squared
-                            self.params[idx].data.fill_(to.sqrt(to.tensor(val)))
-                        else:
-                            self.params[idx].data.fill_(to.tensor(val))
-                        if to.any(to.isnan(self.params[idx].data)):
-                            raise pyrado.ValueErr(
-                                msg="DomainDistrParamPolicy parameter became NaN during"
-                                "initialization! Check the mask and negative mean values."
-                            )
+                        # Sqrt-transform since it will later be squared
+                        self.params[idx].data.fill_(to.sqrt(to.tensor(val)) if self.mask[idx] else to.tensor(val))
+                        assert not to.any(to.isnan(self.params[idx].data)), pyrado.ValueErr(
+                            msg="DomainDistrParamPolicy parameter became NaN during"
+                            "initialization! Check the mask and negative mean values."
+                        )
 
         else:
             raise pyrado.ValueErr(

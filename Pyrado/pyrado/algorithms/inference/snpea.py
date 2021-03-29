@@ -30,7 +30,7 @@ import sys
 import torch as to
 from copy import deepcopy
 from sbi.inference import simulate_for_sbi
-from sbi.user_input.user_input_checks import prepare_for_sbi
+from sbi.utils.user_input_checks import prepare_for_sbi
 from torch.distributions import Distribution
 from torch.utils.data import BatchSampler, SubsetRandomSampler
 from tqdm import tqdm

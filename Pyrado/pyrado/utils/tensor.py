@@ -28,7 +28,7 @@
 
 import torch as to
 from copy import deepcopy
-from typing import Union
+from typing import TypeVar, Union
 
 import pyrado
 
@@ -90,7 +90,10 @@ def insert_tensor_col(x: to.Tensor, idx: int, col: to.Tensor) -> to.Tensor:
         return to.cat((x, col), dim=1)
 
 
-def deepcopy_or_clone(copy_from: Union[dict, list]) -> Union[dict, list]:
+CopyType = TypeVar("CopyType", dict, list)
+
+
+def deepcopy_or_clone(copy_from: CopyType) -> CopyType:
     """
     Unfortunately, deepcopy() only works for leave tensors right now. Thus, we need to iterate throught the input and
     clone the PyTorch tensors where possible.
