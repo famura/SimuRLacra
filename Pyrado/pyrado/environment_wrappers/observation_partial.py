@@ -55,7 +55,7 @@ class ObsPartialWrapper(EnvWrapperObs, Serializable):
         # Parse selection
         if mask is not None:
             # Use explicit mask
-            mask = np.array(mask, dtype=np.bool)
+            mask = np.array(mask, dtype=bool)
             if not mask.shape == wrapped_env.obs_space.shape:
                 raise pyrado.ShapeErr(given=mask, expected_match=wrapped_env.obs_space)
         else:

@@ -36,7 +36,7 @@ import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
 from sbi.inference import simulate_for_sbi, SNPE_C
-from sbi.user_input.user_input_checks import prepare_for_sbi
+from sbi.utils.user_input_checks import prepare_for_sbi
 from sbi.utils import posterior_nn
 
 import pyrado

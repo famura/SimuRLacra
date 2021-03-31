@@ -33,7 +33,7 @@ from torch.distributions.uniform import Uniform
 from torch.distributions.normal import Normal
 from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.bernoulli import Bernoulli
-from typing import Callable, Optional, Mapping
+from typing import Callable, Optional, Mapping, Union
 
 import pyrado
 from pyrado.domain_randomization.domain_parameter import (
@@ -145,7 +145,7 @@ class DomainRandomizer:
                 d[k] = v[i]
             self._params_pert_list.append(d)
 
-    def get_params(self, num_samples: int = -1, fmt: str = "list", dtype: str = "numpy") -> [list, dict]:
+    def get_params(self, num_samples: int = -1, fmt: str = "list", dtype: str = "numpy") -> Union[list, dict]:
         """
         Get the values in the data frame of the perturbed parameters.
 
@@ -165,24 +165,24 @@ class DomainRandomizer:
 
         copy = None
 
-        if num_samples == -1 and len(self._params_pert_list) > 1:
+        if num_samples == -1 and isinstance(self._params_pert_list, list) and len(self._params_pert_list) > 1:
             # Return all samples that the randomizer holds
             if fmt == "list":
                 # Return a list with all domain parameter sets
                 copy = deepcopy_or_clone(self._params_pert_list)
                 if dtype == "numpy":  # nothing to be done for torch
-                    for i in range(len(copy)):
-                        for k in copy[i].keys():
-                            copy[i][k] = copy[i][k].detach().numpy()
+                    for i, k in zip(range(len(copy)), self._params_pert_dict.keys()):
+                        copy[i][k] = copy[i][k].detach().numpy()
 
             elif fmt == "dict":
                 # Returns a dict (as many entries as parameters) with lists as values (as many entries as samples)
+                assert isinstance(self._params_pert_dict, dict)
                 copy = deepcopy_or_clone(self._params_pert_dict)
                 if dtype == "numpy":  # nothing to be done for torch
                     for key in copy.keys():
                         copy[key] = [samples.detach().numpy() for samples in copy[key]]
 
-        elif num_samples == 1 or len(self._params_pert_list) == 1:
+        elif num_samples == 1 or (isinstance(self._params_pert_list, list) and len(self._params_pert_list) == 1):
             # If only one sample is wanted or the internal list just contains 1 element
             copy = deepcopy_or_clone(self._params_pert_list[0])
             if dtype == "numpy":  # nothing to be done for torch
@@ -193,13 +193,12 @@ class DomainRandomizer:
 
         elif num_samples >= 1:
             # Return a subset of all samples that the randomizer holds
-            if fmt == "list":
+            if fmt == "list" and isinstance(self._params_pert_list, list):
                 copy = deepcopy_or_clone(self._params_pert_list[:num_samples])
                 # Return a list with the fist num_samples domain parameter sets
                 if dtype == "numpy":  # nothing to be done for torch
-                    for i in range(num_samples):
-                        for k in copy[i].keys():
-                            copy[i][k] = copy[i][k].detach().numpy()
+                    for i, k in zip(range(num_samples), self._params_pert_dict.keys()):
+                        copy[i][k] = copy[i][k].detach().numpy()
 
             elif fmt == "dict":
                 # Return a dict with as many keys as perturbed params and num_samples values for each of them
@@ -216,7 +215,7 @@ class DomainRandomizer:
         return copy
 
     def adapt_one_distr_param(
-        self, domain_param_name: str, domain_distr_param: str, domain_distr_param_value: [float, int]
+        self, domain_param_name: str, domain_distr_param: str, domain_distr_param_value: Union[float, int]
     ):
         """
         Update the randomizer's domain parameter distribution for one domain parameter.

@@ -30,8 +30,9 @@ import os
 import os.path as osp
 import numpy as np
 import torch as to
-from typing import Optional
 from init_args_serializer.serializable import Serializable
+from posix import listdir
+from typing import Optional
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
@@ -147,10 +148,9 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                     # Calculate cumulative running average
                     cma = np.zeros((2, 2))
                     i = 0.0
-                    for f in os.listdir(ex_dir):
-                        if f.endswith(".npy"):
-                            i += 1.0
-                            cma = cma + (np.load(osp.join(ex_dir, f)) - cma) / i
+                    for f in filter(lambda f: f.endswith(".npy"), os.listdir(".npy")):
+                        i += 1.0
+                        cma = cma + (np.load(osp.join(ex_dir, f)) - cma) / i
                     tholds["V_thold_x_pos"] = cma[0, 1]
                     tholds["V_thold_x_neg"] = cma[0, 0]
                     tholds["V_thold_y_pos"] = cma[1, 1]

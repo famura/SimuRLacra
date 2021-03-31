@@ -86,12 +86,12 @@ class LabeledMarkers:
                     np.all(self.positions <= pos_bounds[1][None, :], axis=1),
                 )
             else:
-                in_pos_bounds = np.ones_like(self.sizes, dtype=np.bool)
+                in_pos_bounds = np.ones_like(self.sizes, dtype=bool)
 
             if size_bounds is not None:
                 in_size_bounds = np.logical_and(self.sizes >= size_bounds[0], self.sizes <= size_bounds[1])
             else:
-                in_size_bounds = np.ones_like(self.sizes, dtype=np.bool)
+                in_size_bounds = np.ones_like(self.sizes, dtype=bool)
 
             if residual_bounds is not None:
                 in_residual_bounds = np.logical_and(
@@ -99,7 +99,7 @@ class LabeledMarkers:
                     self.residuals <= residual_bounds[1],
                 )
             else:
-                in_residual_bounds = np.ones_like(self.sizes, dtype=np.bool)
+                in_residual_bounds = np.ones_like(self.sizes, dtype=bool)
 
             in_bounds = np.logical_and(in_pos_bounds, in_residual_bounds, in_size_bounds)
             return (
