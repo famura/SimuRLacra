@@ -87,7 +87,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Examples:</span></p>
+              <p><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<p><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Environments:</span></p>
+<p><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Policies:</span></p>
+<p><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Utilities:</span></p>
+<p><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
@@ -340,16 +340,12 @@
                     <span class="k">if</span> <span class="n">ddp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">dp</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_field_names</span><span class="p">():</span>
                         <span class="c1"># The domain parameter exists in the prior and in the mapping</span>
                         <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
-                            <span class="c1"># Sqrt-transform since it will later be squared</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
-                        <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
-                            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
-                                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DomainDistrParamPolicy parameter became NaN during&quot;</span>
-                                <span class="s2">&quot;initialization! Check the mask and negative mean values.&quot;</span>
-                            <span class="p">)</span>
+                        <span class="c1"># Sqrt-transform since it will later be squared</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">else</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+                        <span class="k">assert</span> <span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)),</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DomainDistrParamPolicy parameter became NaN during&quot;</span>
+                            <span class="s2">&quot;initialization! Check the mask and negative mean values.&quot;</span>
+                        <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>

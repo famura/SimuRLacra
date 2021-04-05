@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>How to create a visualization &mdash; Pyrado 0.5 documentation</title>
@@ -89,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Examples:</span></p>
+              <p><span class="caption-text">Examples:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -105,7 +106,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<p><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms.episodic.html">episodic</a></li>
@@ -114,7 +115,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sampling.html">sampling</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Environments:</span></p>
+<p><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../environments.pysim.html">pysim</a></li>
@@ -127,14 +128,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tasks.html">tasks</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Policies:</span></p>
+<p><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../policies.special.html">special</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Utilities:</span></p>
+<p><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plotting.html">plotting</a></li>
@@ -207,7 +208,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="how-to-create-a-visualization">
+  <section id="how-to-create-a-visualization">
 <h1><strong>How to create a visualization</strong><a class="headerlink" href="#how-to-create-a-visualization" title="Permalink to this headline">¶</a></h1>
 <p>This file provides a step-by-step example of how to create an Panda3d-animation, based on an SimuRLacra-environment.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrado</span>
@@ -217,14 +218,14 @@
 <p>This process requires two rather separate Processes:</p>
 <p>1.Creating a concrete subclass of PandaVis as a visualization class</p>
 <p>2.Implementing animation-specific methods in your environment-class</p>
-<div class="section" id="part1-creating-a-concrete-subclass-of-pandavis">
+<section id="part1-creating-a-concrete-subclass-of-pandavis">
 <h2>Part1: Creating a concrete subclass of PandaVis<a class="headerlink" href="#part1-creating-a-concrete-subclass-of-pandavis" title="Permalink to this headline">¶</a></h2>
 <p>Start by creating a new class called &lt;&lt;YourEnvironment&gt;&gt;Vis inheriting from PandaVis, inside pandavis.py (Pyrado/pyrado/environments/pysim/pandavis.py)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">YourEnvironmentVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
 </pre></div>
 </div>
 <p>The following content is extracted from PandaVis.QCartPoleVis</p>
-<div class="section" id="implementing-init-method">
+<section id="implementing-init-method">
 <h3>Implementing __init__-method<a class="headerlink" href="#implementing-init-method" title="Permalink to this headline">¶</a></h3>
 <p>This method will only be called once, at the very start of the simulation. The parameter “env” represent the environment you want to visualize. The parameter “rendering” specifies if you want to use RenderPipeline as additional renderer (this will be specified as argument –render).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">rendering</span><span class="p">):</span>
@@ -289,8 +290,8 @@ This is due to the cameras unchangeable size. It is recommended to choose a valu
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">taskMgr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="implementing-update">
+</section>
+<section id="implementing-update">
 <h3>Implementing update()<a class="headerlink" href="#implementing-update" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
 <dt>The update-methode allows objects to move during the animation.</dt><dd><p>It is originally called every frame, but with this framerate being dependent on your monitors refreshrate,
@@ -347,9 +348,9 @@ You only need to calculate the last position of said part of your simulation and
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="part2-implementing-the-init-anim-method-in-your-environment-class">
+</section>
+</section>
+<section id="part2-implementing-the-init-anim-method-in-your-environment-class">
 <h2>Part2: Implementing the _init_anim-method in your environment-class<a class="headerlink" href="#part2-implementing-the-init-anim-method-in-your-environment-class" title="Permalink to this headline">¶</a></h2>
 <p>This is very convenient, as it only consists of two steps.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -363,8 +364,8 @@ You only need to calculate the last position of said part of your simulation and
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span> <span class="o">=</span> <span class="n">YourEnvironmentVis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

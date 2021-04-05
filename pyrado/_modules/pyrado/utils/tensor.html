@@ -87,7 +87,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Examples:</span></p>
+              <p><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<p><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Environments:</span></p>
+<p><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Policies:</span></p>
+<p><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Utilities:</span></p>
+<p><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
@@ -230,7 +230,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 
@@ -292,7 +292,10 @@
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="deepcopy_or_clone"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.tensor.deepcopy_or_clone">[docs]</a><span class="k">def</span> <span class="nf">deepcopy_or_clone</span><span class="p">(</span><span class="n">copy_from</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+<span class="n">CopyType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;CopyType&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="deepcopy_or_clone"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.tensor.deepcopy_or_clone">[docs]</a><span class="k">def</span> <span class="nf">deepcopy_or_clone</span><span class="p">(</span><span class="n">copy_from</span><span class="p">:</span> <span class="n">CopyType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CopyType</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unfortunately, deepcopy() only works for leave tensors right now. Thus, we need to iterate throught the input and</span>
 <span class="sd">    clone the PyTorch tensors where possible.</span>

@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>utils &mdash; Pyrado 0.5 documentation</title>
@@ -90,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Examples:</span></p>
+              <p><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -98,7 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<p><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
@@ -107,7 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Environments:</span></p>
+<p><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
@@ -120,14 +121,14 @@
 <li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Policies:</span></p>
+<p><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Utilities:</span></p>
+<p><span class="caption-text">Utilities:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
@@ -220,9 +221,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="utils">
+  <section id="utils">
 <h1>utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-pyrado.utils.argparser">
+<section id="module-pyrado.utils.argparser">
 <span id="argparser"></span><h2>argparser<a class="headerlink" href="#module-pyrado.utils.argparser" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.argparser.get_argparser">
@@ -230,8 +231,8 @@
 <dd><p>Return Pyrado’s default argument parser.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.averaging">
+</section>
+<section id="module-pyrado.utils.averaging">
 <span id="averaging"></span><h2>averaging<a class="headerlink" href="#module-pyrado.utils.averaging" title="Permalink to this headline">¶</a></h2>
 <p>Only tested for 1-dim inputs.</p>
 <dl class="py class">
@@ -265,8 +266,8 @@
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.checks">
+</section>
+<section id="module-pyrado.utils.checks">
 <span id="checks"></span><h2>checks<a class="headerlink" href="#module-pyrado.utils.checks" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.checks.check_all_equal">
@@ -371,8 +372,8 @@ implement the sequence protocol but do not inherit from <cite>collections.Sequen
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.data_processing">
+</section>
+<section id="module-pyrado.utils.data_processing">
 <span id="data-processing"></span><h2>data_processing<a class="headerlink" href="#module-pyrado.utils.data_processing" title="Permalink to this headline">¶</a></h2>
 <p>Only tested for 1-dim inputs, e.g. time series of rewards.</p>
 <dl class="py class">
@@ -529,8 +530,8 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.data_sets">
+</section>
+<section id="module-pyrado.utils.data_sets">
 <span id="data-sets"></span><h2>data_sets<a class="headerlink" href="#module-pyrado.utils.data_sets" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.utils.data_sets.TimeSeriesDataSet">
@@ -616,8 +617,8 @@ of the sequences afterwards.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.data_types">
+</section>
+<section id="module-pyrado.utils.data_types">
 <span id="data-types"></span><h2>data_types<a class="headerlink" href="#module-pyrado.utils.data_types" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.utils.data_types.DSSpec">
@@ -795,8 +796,8 @@ Convert a scalar to a float.
 :return: scalar number or list of floats</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.exceptions">
+</section>
+<section id="module-pyrado.utils.exceptions">
 <span id="exceptions"></span><h2>exceptions<a class="headerlink" href="#module-pyrado.utils.exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="py exception">
 <dt id="pyrado.utils.exceptions.BaseErr">
@@ -862,8 +863,8 @@ Convert a scalar to a float.
 <p>Class for exceptions raised by passing wrong values</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.experiments">
+</section>
+<section id="module-pyrado.utils.experiments">
 <span id="experiments"></span><h2>experiments<a class="headerlink" href="#module-pyrado.utils.experiments" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.experiments.fcn_from_str">
@@ -932,8 +933,8 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.functions">
+</section>
+<section id="module-pyrado.utils.functions">
 <span id="functions"></span><h2>functions<a class="headerlink" href="#module-pyrado.utils.functions" title="Permalink to this headline">¶</a></h2>
 <p>A small collection of well-known functions for testing or benchmarking</p>
 <dl class="py function">
@@ -990,8 +991,8 @@ long enough, i.e. <cite>dt * t_end</cite> samples.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.input_output">
+</section>
+<section id="module-pyrado.utils.input_output">
 <span id="input-output"></span><h2>input_output<a class="headerlink" href="#module-pyrado.utils.input_output" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.input_output.color_validity">
@@ -1119,8 +1120,8 @@ exception is raised).</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.math">
+</section>
+<section id="module-pyrado.utils.math">
 <span id="math"></span><h2>math<a class="headerlink" href="#module-pyrado.utils.math" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.utils.math.UnitCubeProjector">
@@ -1307,8 +1308,8 @@ One use case of this function is if you want to clip the parameter update by a r
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.nn_layers">
+</section>
+<section id="module-pyrado.utils.nn_layers">
 <span id="nn-layers"></span><h2>nn_layers<a class="headerlink" href="#module-pyrado.utils.nn_layers" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.utils.nn_layers.IndiNonlinLayer">
@@ -1496,8 +1497,8 @@ registered hooks while the latter silently ignores them.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.optimizers">
+</section>
+<section id="module-pyrado.utils.optimizers">
 <span id="optimizers"></span><h2>optimizers<a class="headerlink" href="#module-pyrado.utils.optimizers" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.utils.optimizers.GSS">
@@ -1525,8 +1526,8 @@ registered hooks while the latter silently ignores them.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.order">
+</section>
+<section id="module-pyrado.utils.order">
 <span id="order"></span><h2>order<a class="headerlink" href="#module-pyrado.utils.order" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.order.filter_los_by_lok">
@@ -1577,8 +1578,8 @@ registered hooks while the latter silently ignores them.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.properties">
+</section>
+<section id="module-pyrado.utils.properties">
 <span id="properties"></span><h2>properties<a class="headerlink" href="#module-pyrado.utils.properties" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.utils.properties.cached_property">
@@ -1589,8 +1590,8 @@ When the property is first accessed, the function is called to compute the value
 .. note:: Requires a <cite>__dict__</cite> field, so it won’t work on named tuples.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.saving_loading">
+</section>
+<section id="module-pyrado.utils.saving_loading">
 <span id="saving-loading"></span><h2>saving_loading<a class="headerlink" href="#module-pyrado.utils.saving_loading" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.saving_loading.load">
@@ -1640,12 +1641,12 @@ PyTorch modules (file_ext = ‘pt’) are saved.</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils.tensor">
+</section>
+<section id="module-pyrado.utils.tensor">
 <span id="tensor"></span><h2>tensor<a class="headerlink" href="#module-pyrado.utils.tensor" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.tensor.deepcopy_or_clone">
-<code class="sig-name descname"><span class="pre">deepcopy_or_clone</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy_from</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/utils/tensor.html#deepcopy_or_clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.tensor.deepcopy_or_clone" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">deepcopy_or_clone</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">copy_from</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CopyType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CopyType</span><a class="reference internal" href="_modules/pyrado/utils/tensor.html#deepcopy_or_clone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.tensor.deepcopy_or_clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unfortunately, deepcopy() only works for leave tensors right now. Thus, we need to iterate throught the input and
 clone the PyTorch tensors where possible.</p>
 <dl class="field-list simple">
@@ -1704,8 +1705,8 @@ clone the PyTorch tensors where possible.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-pyrado.utils">
+</section>
+<section id="module-pyrado.utils">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.utils.get_class_name">
@@ -1735,8 +1736,8 @@ clone the PyTorch tensors where possible.</p>
 </dl>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
