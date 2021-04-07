@@ -208,8 +208,12 @@ def draw_posterior_distr_1d(
         grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
         if not grid_bounds.shape == (1, 2):
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(1, 2))
-    elif isinstance(prior, BoxUniform) or isinstance(prior, Uniform):
-        grid_bounds = to.tensor([[prior.support.lower_bound[dim], prior.support.upper_bound[dim]]])
+    elif isinstance(prior, BoxUniform):
+        if not hasattr(prior, "base_dist"):
+            raise AttributeError(
+                "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
+            )
+        grid_bounds = to.tensor([[prior.base_dist.support.lower_bound[dim], prior.base_dist.support.upper_bound[dim]]])
     else:
         raise pyrado.ValueErr(msg="Neither an explicit grid nor a prior has been provided!")
     grid_x = to.linspace(grid_bounds[0, 0], grid_bounds[0, 1], grid_res)
@@ -396,11 +400,15 @@ def draw_posterior_distr_2d(
         grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
         if grid_bounds.shape != (2, 2):
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(2, 2))
-    elif isinstance(prior, BoxUniform) or isinstance(prior, Uniform):
+    elif isinstance(prior, BoxUniform):
+        if not hasattr(prior, "base_dist"):
+            raise AttributeError(
+                "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
+            )
         grid_bounds = to.tensor(
             [
-                [prior.support.lower_bound[dim_x], prior.support.upper_bound[dim_x]],
-                [prior.support.lower_bound[dim_y], prior.support.upper_bound[dim_y]],
+                [prior.base_dist.support.lower_bound[dim_x], prior.base_dist.support.upper_bound[dim_x]],
+                [prior.base_dist.support.lower_bound[dim_y], prior.base_dist.support.upper_bound[dim_y]],
             ]
         )
     else:
@@ -516,22 +524,32 @@ def draw_posterior_distr_2d(
     return fig, fig_cb, marginal_prob
 
 
-def _draw_prior(ax, prior, dim_x, dim_y, num_dim: int = 2, transposed: bool = False):
+def _draw_prior(ax, prior: BoxUniform, dim_x: int, dim_y: int, num_dim: int = 2, transposed: bool = False):
     """ Helper function to draw a rectangle for the prior (assuming uniform distribution) """
+    if not hasattr(prior, "base_dist"):
+        raise AttributeError(
+            "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
+        )
+
     if num_dim == 1:
         if transposed:
-            y = [prior.support.lower_bound[dim_x], prior.support.upper_bound[dim_x]]  # double-use of x
+            y = [
+                prior.base_dist.support.lower_bound[dim_x],
+                prior.base_dist.support.upper_bound[dim_x],
+            ]  # double-use of x
             ax.hlines(y, 0, 1, transform=ax.get_xaxis_transform(), lw=1, ls="--", edgecolor="gray", facecolor="none")
         else:
-            x = [prior.support.lower_bound[dim_x], prior.support.upper_bound[dim_x]]
+            x = [prior.base_dist.support.lower_bound[dim_x], prior.base_dist.support.upper_bound[dim_x]]
             ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), lw=1, ls="--", edgecolor="gray", facecolor="none")
+
     elif num_dim == 2:
-        x = prior.support.lower_bound[dim_x]
-        y = prior.support.lower_bound[dim_y]
-        dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
-        dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
+        x = prior.base_dist.support.lower_bound[dim_x]
+        y = prior.base_dist.support.lower_bound[dim_y]
+        dx = prior.base_dist.support.upper_bound[dim_x] - prior.base_dist.support.lower_bound[dim_x]
+        dy = prior.base_dist.support.upper_bound[dim_y] - prior.base_dist.support.lower_bound[dim_y]
         rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
         ax.add_patch(rect)
+
     else:
         return NotImplementedError
 
