@@ -87,11 +87,6 @@ def get_argparser() -> argparse.ArgumentParser:
         help="iteration to select for evaluation (default: -1 for all iterations)",
     )
     parser.add_argument(
-        "--layout",
-        default="outside",
-        help="plotting layout for plotting, e.g. inside or outside for plotting a posterior (default: outside)",
-    )
-    parser.add_argument(
         "--load_all",
         action="store_true",
         default=False,
@@ -136,8 +131,8 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--num_workers",
         type=int,
-        default=4,
-        help="number of environments to sample from in parallel (default: 4)",
+        default=8,
+        help="number of environments to sample from in parallel (default: 8)",
     )
     parser.add_argument(
         "--num_runs",
@@ -156,7 +151,8 @@ def get_argparser() -> argparse.ArgumentParser:
         "--quiet",
         dest="verbose",
         action="store_false",
-        help="display minimal information, the opposite of verbose (default: True)",
+        default=False,
+        help="display minimal information, the opposite of verbose (default: False)",
     )
     parser.add_argument(
         "--random_init_state",
@@ -171,28 +167,10 @@ def get_argparser() -> argparse.ArgumentParser:
         help="don't stop (e.g. continue simulating after done flag was raised)",
     )
     parser.add_argument(
-        "--render",
-        dest="render",
-        action="store_true",
-        help="show a rendered animation (default: True)",
-    )
-    parser.add_argument(
-        "--no_render",
-        dest="render",
-        action="store_false",
-    )
-    parser.set_defaults(render=False)
-    parser.add_argument(
         "--rescale",
         action="store_true",
         default=False,
         help="rescale sth (depending on the script), e.g. the posterior probabilities to be in ]0, 1] (default: False)",
-    )
-    parser.add_argument(
-        "--round",
-        type=int,
-        default=None,
-        help="round index, e.g. for the NPDR algorithm (default: None)",
     )
     parser.add_argument(
         "--policy_name",
@@ -231,9 +209,9 @@ def get_argparser() -> argparse.ArgumentParser:
         "--verbose",
         dest="verbose",
         action="store_true",
+        default=False,
         help="display additional information (default: False)",
     )
-    parser.set_defaults(verbose=False)
     parser.add_argument(
         "--vfcn_name",
         type=str,
@@ -258,22 +236,6 @@ def get_argparser() -> argparse.ArgumentParser:
         "--show_hparams",
         action="append",
         help="hyperparameters to show in the ask-for-experiment dialog; use this parameter multiple times to show multiple hyperparameters; e.g. to differentiate between experiments",
-    )
-
-    segment_group = parser.add_mutually_exclusive_group(required=False)
-    segment_group.add_argument(
-        "--num_segments",
-        type=int,
-        default=None,
-        help="number of the segments to split the rollouts into (default: None); "
-        "either use num_segments or len_segments but not both",
-    )
-    segment_group.add_argument(
-        "--len_segments",
-        type=int,
-        default=None,
-        help="length of the segments to split the rollouts into (default: None); "
-        "either use len_segments or num_segments but not both",
     )
 
     return parser
