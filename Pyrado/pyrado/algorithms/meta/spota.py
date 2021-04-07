@@ -499,6 +499,6 @@ class SPOTA(InterruptableAlgorithm):
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             pyrado.save(self.env_dr, "env.pkl", self.save_dir)
-            pyrado.save(self.env_dr.randomizer, "randomizer", "pkl", self.save_dir)
+            pyrado.save(self.env_dr.randomizer, "randomizer.pkl", self.save_dir)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
