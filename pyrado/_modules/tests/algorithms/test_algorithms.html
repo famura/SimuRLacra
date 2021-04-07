@@ -228,6 +228,7 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.regression.nonlin_regression</span> <span class="kn">import</span> <span class="n">NonlinRegression</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.regression.timeseries_prediction</span> <span class="kn">import</span> <span class="n">TSPred</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.a2c</span> <span class="kn">import</span> <span class="n">A2C</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.dql</span> <span class="kn">import</span> <span class="n">DQL</span>
@@ -261,6 +262,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.experiments</span> <span class="kn">import</span> <span class="n">load_experiment</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">noisy_nonlin_fcn</span>
+<span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
 
 
 <div class="viewcode-block" id="ex_dir"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_algorithms.ex_dir">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
@@ -633,6 +635,61 @@
     <span class="n">loss_after</span> <span class="o">=</span> <span class="n">loss_fcn</span><span class="p">(</span><span class="n">policy</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span> <span class="n">targets</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">loss_after</span> <span class="o">&lt;</span> <span class="n">loss_before</span>
     <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">&gt;=</span> <span class="n">algo_hparam</span><span class="p">[</span><span class="s2">&quot;max_iter_no_improvement&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="test_time_series_prediction"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_algorithms.test_time_series_prediction">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">recurrent_policy</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">MockEnv</span><span class="p">(</span><span class="n">obs_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">act_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">))])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="c1"># Two-headed policies are not supported</span>
+        <span class="s2">&quot;rnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lstm_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gru_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;adn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nf_policy&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;rnn&quot;</span><span class="p">,</span> <span class="s2">&quot;lstm&quot;</span><span class="p">,</span> <span class="s2">&quot;gru&quot;</span><span class="p">,</span> <span class="s2">&quot;adn&quot;</span><span class="p">,</span> <span class="s2">&quot;nf&quot;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;windowed&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;windowed&quot;</span><span class="p">,</span> <span class="s2">&quot;not_windowed&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;cascaded&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cascaded&quot;</span><span class="p">,</span> <span class="s2">&quot;not_cascaded&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_time_series_prediction</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">dataset_ts</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">MockEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">windowed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">cascaded</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">windowed</span><span class="o">=</span><span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="o">=</span><span class="n">cascaded</span><span class="p">,</span> <span class="n">optim_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">TSPred</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">dataset_ts</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+
+    <span class="c1"># Train</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
+        <span class="n">inp_seq</span> <span class="o">=</span> <span class="n">dataset_ts</span><span class="o">.</span><span class="n">data_trn_inp</span>
+        <span class="n">targ_seq</span> <span class="o">=</span> <span class="n">dataset_ts</span><span class="o">.</span><span class="n">data_trn_targ</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inp_seq</span> <span class="o">=</span> <span class="n">dataset_ts</span><span class="o">.</span><span class="n">data_trn_ws</span>
+        <span class="n">targ_seq</span> <span class="o">=</span> <span class="n">dataset_ts</span><span class="o">.</span><span class="n">data_trn_ws</span>
+
+    <span class="c1"># Make the predictions</span>
+    <span class="n">preds</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Check types</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="c1"># Check sizes</span>
+    <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">inp_seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span>
+    <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span>
+
+    <span class="n">preds</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+        <span class="n">policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">targ_seq</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="p">,</span> <span class="n">num_init_samples</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

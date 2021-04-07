@@ -260,7 +260,6 @@
         <span class="n">loss_fcn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
         <span class="n">lr_scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -279,7 +278,6 @@
 <span class="sd">        :param loss_fcn: loss function for training, by default `torch.nn.MSELoss()`</span>
 <span class="sd">        :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)</span>
 <span class="sd">        :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler</span>
-<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
 <span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">TimeSeriesDataSet</span><span class="p">):</span>
@@ -322,9 +320,10 @@
                 <span class="n">loss_trn_single</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
                 <span class="n">loss_trn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_trn_single</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
             <span class="n">loss_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">loss_trn</span><span class="p">))</span>
 
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Reset the gradients</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
@@ -352,14 +351,16 @@
                     <span class="p">]</span>
                 <span class="p">)</span>
                 <span class="n">targs_tst</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">targ</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">targ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_seqs</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
+
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">preds_tst</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">targs_tst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_targ</span>
+
             <span class="n">loss_tst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">targs_tst</span><span class="p">,</span> <span class="n">preds_tst</span><span class="p">)</span>
 
         <span class="c1"># Log metrics computed from the old policy (loss value from update on this training sample)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;trn loss&quot;</span><span class="p">,</span> <span class="n">loss_trn</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;tst loss&quot;</span><span class="p">,</span> <span class="n">loss_tst</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;trn loss&quot;</span><span class="p">,</span> <span class="n">loss_trn</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;tst loss&quot;</span><span class="p">,</span> <span class="n">loss_tst</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span>
             <span class="s2">&quot;min mag policy param&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">))]</span>
         <span class="p">)</span>

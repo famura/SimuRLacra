@@ -229,6 +229,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span>
@@ -259,6 +260,11 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.time</span> <span class="kn">import</span> <span class="n">TimePolicy</span><span class="p">,</span> <span class="n">TraceableTimePolicy</span>
 
 <span class="c1"># Set default torch dtype globally to avoid inconsistent errors depending on the test run order</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_sets</span> <span class="kn">import</span> <span class="n">TimeSeriesDataSet</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">skyline</span>
+
+
 <span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
 <span class="c1"># Check if RcsPySim, Bullet, and Vortex are available</span>
@@ -313,7 +319,7 @@
 
 
 <span class="c1"># --------------------</span>
-<span class="c1"># Environment fixtures</span>
+<span class="c1"># Environment Fixtures</span>
 <span class="c1"># --------------------</span>
 
 
@@ -837,7 +843,7 @@
 
 
 <span class="c1"># ---------------</span>
-<span class="c1"># Policy fixtures</span>
+<span class="c1"># Policy Fixtures</span>
 <span class="c1"># ---------------</span>
 
 
@@ -962,6 +968,28 @@
         <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mf">50.1</span><span class="p">),</span>
         <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;time_delay&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">roundint</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">MultivariateNormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;multidim&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">cov</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">11</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1"># --------------</span>
+<span class="c1"># Other Fixtures</span>
+<span class="c1"># --------------</span>
+
+
+<div class="viewcode-block" id="dataset_ts"><a class="viewcode-back" href="../../tests.html#tests.conftest.dataset_ts">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span>
+    <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">skyline</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)))[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;skyline_0.8_50_notstdized_scaled&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">dataset_ts</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TimeSeriesDataSet</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+        <span class="n">ratio_train</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">standardize_data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="n">scale_min_max_data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
     <span class="p">)</span></div>
 </pre></div>
 
