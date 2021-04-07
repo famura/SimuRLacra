@@ -87,7 +87,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
@@ -383,10 +383,10 @@
             <span class="n">eta_m</span><span class="o">=</span><span class="mf">0.69</span><span class="p">,</span>  <span class="c1"># motor efficiency [-]</span>
             <span class="n">B_eq</span><span class="o">=</span><span class="mf">0.015</span><span class="p">,</span>  <span class="c1"># equivalent viscous damping coefficient w.r.t. load [N*m*s/rad]</span>
             <span class="n">c_frict</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>  <span class="c1"># viscous friction coefficient [N*s/m]</span>
-            <span class="n">V_thold_x_pos</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_x_pos&quot;</span><span class="p">],</span>  <span class="c1"># voltage required to move the x servo in positive dir</span>
-            <span class="n">V_thold_x_neg</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_x_neg&quot;</span><span class="p">],</span>  <span class="c1"># voltage required to move the x servo in negative dir</span>
-            <span class="n">V_thold_y_pos</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_y_pos&quot;</span><span class="p">],</span>  <span class="c1"># voltage required to move the y servo in positive dir</span>
-            <span class="n">V_thold_y_neg</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_y_neg&quot;</span><span class="p">],</span>  <span class="c1"># voltage required to move the y servo in negative dir</span>
+            <span class="n">V_thold_x_pos</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_x_pos&quot;</span><span class="p">],</span>  <span class="c1"># min. voltage required to move the x servo in the pos. dir. [V]</span>
+            <span class="n">V_thold_x_neg</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_x_neg&quot;</span><span class="p">],</span>  <span class="c1"># min. voltage required to move the x servo in the neg. dir. [V]</span>
+            <span class="n">V_thold_y_pos</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_y_pos&quot;</span><span class="p">],</span>  <span class="c1"># min. voltage required to move the y servo in the pos. dir. [V]</span>
+            <span class="n">V_thold_y_neg</span><span class="o">=</span><span class="n">V_tholds</span><span class="p">[</span><span class="s2">&quot;V_thold_y_neg&quot;</span><span class="p">],</span>  <span class="c1"># min. voltage required to move the y servo in the neg. dir. [V]</span>
             <span class="n">offset_th_x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># angular offset of the x axis motor shaft [rad]</span>
             <span class="n">offset_th_y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="p">)</span>  <span class="c1"># angular offset of the y axis motor shaft [rad]</span></div>
@@ -446,13 +446,12 @@
         <span class="n">offset_th_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;offset_th_x&quot;</span><span class="p">]</span>
         <span class="n">offset_th_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;offset_th_y&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simple_dynamics</span><span class="p">:</span>
-            <span class="c1"># Apply a voltage dead zone (i.e. below a certain amplitude the system does not move). This is a very</span>
-            <span class="c1"># simple model of static friction. Experimentally evaluated the voltage required to get the plate moving.</span>
-            <span class="k">if</span> <span class="n">V_thold_x_neg</span> <span class="o">&lt;=</span> <span class="n">act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">V_thold_x_pos</span><span class="p">:</span>
-                <span class="n">act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="n">V_thold_y_neg</span> <span class="o">&lt;=</span> <span class="n">act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">V_thold_y_pos</span><span class="p">:</span>
-                <span class="n">act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move. This is a very</span>
+        <span class="c1"># simple model of static friction. Experimentally evaluated the voltage required to get the plate moving.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simple_dynamics</span> <span class="ow">and</span> <span class="n">V_thold_x_neg</span> <span class="o">&lt;=</span> <span class="n">act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">V_thold_x_pos</span><span class="p">:</span>
+            <span class="n">act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simple_dynamics</span> <span class="ow">and</span> <span class="n">V_thold_y_neg</span> <span class="o">&lt;=</span> <span class="n">act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">V_thold_y_pos</span><span class="p">:</span>
+            <span class="n">act</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># State</span>
         <span class="n">th_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">offset_th_x</span>  <span class="c1"># angle of the x axis servo (load)</span>

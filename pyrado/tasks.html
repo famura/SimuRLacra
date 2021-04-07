@@ -4,8 +4,7 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>tasks &mdash; Pyrado 0.5 documentation</title>
@@ -90,7 +89,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -98,7 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
@@ -107,7 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
@@ -136,14 +135,14 @@
 </ul>
 </li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
@@ -216,9 +215,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="tasks">
+  <div class="section" id="tasks">
 <h1>tasks<a class="headerlink" href="#tasks" title="Permalink to this headline">¶</a></h1>
-<section id="module-pyrado.tasks.base">
+<div class="section" id="module-pyrado.tasks.base">
 <span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.tasks.base" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.base.Task">
@@ -516,8 +515,8 @@ Only override this if the task has a desired state.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.condition_only">
+</div>
+<div class="section" id="module-pyrado.tasks.condition_only">
 <span id="condition-only"></span><h2>condition_only<a class="headerlink" href="#module-pyrado.tasks.condition_only" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.condition_only.ConditionOnlyTask">
@@ -606,8 +605,8 @@ if <cite>False</cite> the <cite>condition_fcn</cite> returns <cite>True</cite> f
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.desired_space">
+</div>
+<div class="section" id="module-pyrado.tasks.desired_space">
 <span id="desired-space"></span><h2>desired_space<a class="headerlink" href="#module-pyrado.tasks.desired_space" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.desired_space.DesSpaceTask">
@@ -688,8 +687,8 @@ Only override this if the task has a desired state.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.desired_state">
+</div>
+<div class="section" id="module-pyrado.tasks.desired_state">
 <span id="desired-state"></span><h2>desired_state<a class="headerlink" href="#module-pyrado.tasks.desired_state" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.desired_state.DesStateTask">
@@ -798,8 +797,8 @@ In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. a
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.endless_flipping">
+</div>
+<div class="section" id="module-pyrado.tasks.endless_flipping">
 <span id="endless-flipping"></span><h2>endless_flipping<a class="headerlink" href="#module-pyrado.tasks.endless_flipping" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.endless_flipping.FlippingTask">
@@ -871,8 +870,8 @@ old angle plus/minus a given angle delta, the new angle becomes the old one and 
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.final_reward">
+</div>
+<div class="section" id="module-pyrado.tasks.final_reward">
 <span id="final-reward"></span><h2>final_reward<a class="headerlink" href="#module-pyrado.tasks.final_reward" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.final_reward.BestStateFinalRewTask">
@@ -1027,8 +1026,8 @@ This might also include resetting the members of the reward function if there ar
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.goalless">
+</div>
+<div class="section" id="module-pyrado.tasks.goalless">
 <span id="goalless"></span><h2>goalless<a class="headerlink" href="#module-pyrado.tasks.goalless" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.goalless.GoallessTask">
@@ -1167,8 +1166,8 @@ This might also include resetting the members of the reward function if there ar
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.masked">
+</div>
+<div class="section" id="module-pyrado.tasks.masked">
 <span id="masked"></span><h2>masked<a class="headerlink" href="#module-pyrado.tasks.masked" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.masked.MaskedTask">
@@ -1304,8 +1303,8 @@ Only override this if the task has a desired state.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.parallel">
+</div>
+<div class="section" id="module-pyrado.tasks.parallel">
 <span id="parallel"></span><h2>parallel<a class="headerlink" href="#module-pyrado.tasks.parallel" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.parallel.ParallelTasks">
@@ -1399,8 +1398,8 @@ immediate sub-tasks.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.predefined">
+</div>
+<div class="section" id="module-pyrado.tasks.predefined">
 <span id="predefined"></span><h2>predefined<a class="headerlink" href="#module-pyrado.tasks.predefined" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.tasks.predefined.create_check_all_boundaries_task">
@@ -1609,8 +1608,8 @@ This task only looks at the X and Z coordinates.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.reward_functions">
+</div>
+<div class="section" id="module-pyrado.tasks.reward_functions">
 <span id="reward-functions"></span><h2>reward_functions<a class="headerlink" href="#module-pyrado.tasks.reward_functions" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.reward_functions.AbsErrRewFcn">
@@ -1768,8 +1767,8 @@ classical optimization problems into Pyrado, thus it is negative of the loss fun
 A positive or negative final reward can be specified on the Task-level.</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.sequential">
+</div>
+<div class="section" id="module-pyrado.tasks.sequential">
 <span id="sequential"></span><h2>sequential<a class="headerlink" href="#module-pyrado.tasks.sequential" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.sequential.SequentialTasks">
@@ -1863,8 +1862,8 @@ immediate sub-tasks.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks.utils">
+</div>
+<div class="section" id="module-pyrado.tasks.utils">
 <span id="utils"></span><h2>utils<a class="headerlink" href="#module-pyrado.tasks.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.tasks.utils.never_succeeded">
@@ -1890,11 +1889,11 @@ immediate sub-tasks.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.tasks">
+</div>
+<div class="section" id="module-pyrado.tasks">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.tasks" title="Permalink to this headline">¶</a></h2>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

@@ -4,8 +4,7 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>special &mdash; Pyrado 0.5 documentation</title>
@@ -91,7 +90,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -99,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
@@ -108,7 +107,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
@@ -121,7 +120,7 @@
 <li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
@@ -137,7 +136,7 @@
 </ul>
 </li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
@@ -210,9 +209,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="special">
+  <div class="section" id="special">
 <h1>special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h1>
-<section id="module-pyrado.policies.special.domain_distribution">
+<div class="section" id="module-pyrado.policies.special.domain_distribution">
 <span id="domain-distribution"></span><h2>domain_distribution<a class="headerlink" href="#module-pyrado.policies.special.domain_distribution" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.special.domain_distribution.DomainDistrParamPolicy">
@@ -279,8 +278,8 @@ parameter is learned in sqrt space. Moreover, the policy parameters can be scale
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.policies.special.dual_rfb">
+</div>
+<div class="section" id="module-pyrado.policies.special.dual_rfb">
 <span id="dual-rfb"></span><h2>dual_rfb<a class="headerlink" href="#module-pyrado.policies.special.dual_rfb" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.special.dual_rfb.DualRBFLinearPolicy">
@@ -311,8 +310,8 @@ time get the velocity information from the features, i.e. the derivative of the 
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.policies.special.dummy">
+</div>
+<div class="section" id="module-pyrado.policies.special.dummy">
 <span id="dummy"></span><h2>dummy<a class="headerlink" href="#module-pyrado.policies.special.dummy" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.special.dummy.DummyPolicy">
@@ -468,8 +467,8 @@ Change this string for value functions.</p></li>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.policies.special.environment_specific">
+</div>
+<div class="section" id="module-pyrado.policies.special.environment_specific">
 <span id="environment-specific"></span><h2>environment_specific<a class="headerlink" href="#module-pyrado.policies.special.environment_specific" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.special.environment_specific.QBallBalancerPDCtrl">
@@ -798,8 +797,8 @@ at every point in time</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.policies.special.mdn">
+</div>
+<div class="section" id="module-pyrado.policies.special.mdn">
 <span id="mdn"></span><h2>mdn<a class="headerlink" href="#module-pyrado.policies.special.mdn" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.special.mdn.MDNPolicy">
@@ -885,8 +884,8 @@ The posterior is normalized TODO: check this</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.policies.special.time">
+</div>
+<div class="section" id="module-pyrado.policies.special.time">
 <span id="time"></span><h2>time<a class="headerlink" href="#module-pyrado.policies.special.time" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.special.time.PlaybackPolicy">
@@ -1085,11 +1084,11 @@ registered hooks while the latter silently ignores them.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.policies.special">
+</div>
+<div class="section" id="module-pyrado.policies.special">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.policies.special" title="Permalink to this headline">¶</a></h2>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

@@ -87,7 +87,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
@@ -442,7 +442,7 @@
     <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">up_lo</span><span class="p">),</span> <span class="o">-</span><span class="n">up_lo</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="diff_coeffs"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.diff_coeffs">[docs]</a><span class="k">def</span> <span class="nf">diff_coeffs</span><span class="p">(</span>
+<div class="viewcode-block" id="numerical_differentiation_coeffs"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.numerical_differentiation_coeffs">[docs]</a><span class="k">def</span> <span class="nf">numerical_differentiation_coeffs</span><span class="p">(</span>
     <span class="n">stencils</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>

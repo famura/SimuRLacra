@@ -4,8 +4,7 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>environment_wrappers &mdash; Pyrado 0.5 documentation</title>
@@ -90,7 +89,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -98,7 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
@@ -107,7 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
@@ -136,14 +135,14 @@
 <li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
@@ -216,9 +215,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="environment-wrappers">
+  <div class="section" id="environment-wrappers">
 <h1>environment_wrappers<a class="headerlink" href="#environment-wrappers" title="Permalink to this headline">¶</a></h1>
-<section id="module-pyrado.environment_wrappers.action_delay">
+<div class="section" id="module-pyrado.environment_wrappers.action_delay">
 <span id="action-delay"></span><h2>action_delay<a class="headerlink" href="#module-pyrado.environment_wrappers.action_delay" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.action_delay.ActDelayWrapper">
@@ -249,8 +248,8 @@
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.action_noise">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.action_noise">
 <span id="action-noise"></span><h2>action_noise<a class="headerlink" href="#module-pyrado.environment_wrappers.action_noise" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.action_noise.GaussianActNoiseWrapper">
@@ -260,8 +259,8 @@
 This noise is independent for the potentially applied action-based exploration strategy.</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.action_normalization">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.action_normalization">
 <span id="action-normalization"></span><h2>action_normalization<a class="headerlink" href="#module-pyrado.environment_wrappers.action_normalization" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.action_normalization.ActNormWrapper">
@@ -270,8 +269,8 @@ This noise is independent for the potentially applied action-based exploration s
 <p>Environment wrapper which normalizes the action space, such that all action values are in range [-1, 1].</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.adversarial">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.adversarial">
 <span id="adversarial"></span><h2>adversarial<a class="headerlink" href="#module-pyrado.environment_wrappers.adversarial" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper">
@@ -404,8 +403,8 @@ env_info: contains diagnostic information about the environment</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.base">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.base">
 <span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.environment_wrappers.base" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.base.EnvWrapper">
@@ -649,8 +648,8 @@ env_info: contains diagnostic information about the environment</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.domain_randomization">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.domain_randomization">
 <span id="domain-randomization"></span><h2>domain_randomization<a class="headerlink" href="#module-pyrado.environment_wrappers.domain_randomization" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper">
@@ -797,8 +796,8 @@ called domain distribution parameters.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.downsampling">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.downsampling">
 <span id="downsampling"></span><h2>downsampling<a class="headerlink" href="#module-pyrado.environment_wrappers.downsampling" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.downsampling.DownsamplingWrapper">
@@ -840,8 +839,8 @@ i.e. send and receive at the real device’s sampling frequency.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.observation_noise">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.observation_noise">
 <span id="observation-noise"></span><h2>observation_noise<a class="headerlink" href="#module-pyrado.environment_wrappers.observation_noise" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.observation_noise.GaussianObsNoiseWrapper">
@@ -850,8 +849,8 @@ i.e. send and receive at the real device’s sampling frequency.</p>
 <p>Environment wrapper which adds normally distributed i.i.d. noise to all observations.</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.observation_normalization">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.observation_normalization">
 <span id="observation-normalization"></span><h2>observation_normalization<a class="headerlink" href="#module-pyrado.environment_wrappers.observation_normalization" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.observation_normalization.ObsNormWrapper">
@@ -888,8 +887,8 @@ and/or you want to specify a certain bound</p>
 hard-coded bounds, such that all values are in range [-1, 1]</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.observation_partial">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.observation_partial">
 <span id="observation-partial"></span><h2>observation_partial<a class="headerlink" href="#module-pyrado.environment_wrappers.observation_partial" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.observation_partial.ObsPartialWrapper">
@@ -898,8 +897,8 @@ hard-coded bounds, such that all values are in range [-1, 1]</p>
 <p>Environment wrapper which creates a partial observation by masking certain elements</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.observation_velfilter">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.observation_velfilter">
 <span id="observation-velfilter"></span><h2>observation_velfilter<a class="headerlink" href="#module-pyrado.environment_wrappers.observation_velfilter" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper">
@@ -937,8 +936,8 @@ received and it is non-zero. Otherwise the filter would assume a very high initi
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.state_augmentation">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.state_augmentation">
 <span id="state-augmentation"></span><h2>state_augmentation<a class="headerlink" href="#module-pyrado.environment_wrappers.state_augmentation" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper">
@@ -1012,8 +1011,8 @@ env_info: contains diagnostic information about the environment</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers.utils">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.utils">
 <span id="utils"></span><h2>utils<a class="headerlink" href="#module-pyrado.environment_wrappers.utils" title="Permalink to this headline">¶</a></h2>
 <p>Some helpers for wrapped environment chains.
 A ‘chain’ consists of an environment and multiple EnvWrappers wrapping it.
@@ -1141,11 +1140,11 @@ If the key is not found, nothing will be done and the original chain is returned
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.environment_wrappers">
+</div>
+<div class="section" id="module-pyrado.environment_wrappers">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.environment_wrappers" title="Permalink to this headline">¶</a></h2>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

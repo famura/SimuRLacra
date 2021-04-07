@@ -4,8 +4,7 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>sampling &mdash; Pyrado 0.5 documentation</title>
@@ -91,7 +90,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -99,7 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
@@ -126,7 +125,7 @@
 </ul>
 </li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
@@ -139,14 +138,14 @@
 <li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
@@ -219,9 +218,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="sampling">
+  <div class="section" id="sampling">
 <h1>sampling<a class="headerlink" href="#sampling" title="Permalink to this headline">¶</a></h1>
-<section id="module-pyrado.sampling.bootstrapping">
+<div class="section" id="module-pyrado.sampling.bootstrapping">
 <span id="bootstrapping"></span><h2>bootstrapping<a class="headerlink" href="#module-pyrado.sampling.bootstrapping" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.bootstrapping.bootstrap_ci">
@@ -265,8 +264,8 @@ Other estimates of the bias-correction factor than stat_emp possible, see [4].</
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.cvar_sampler">
+</div>
+<div class="section" id="module-pyrado.sampling.cvar_sampler">
 <span id="cvar-sampler"></span><h2>cvar_sampler<a class="headerlink" href="#module-pyrado.sampling.cvar_sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.cvar_sampler.CVaRSampler">
@@ -339,8 +338,8 @@ sampling runs, the sample() method takes care of this on it’s own.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.data_format">
+</div>
+<div class="section" id="module-pyrado.sampling.data_format">
 <span id="data-format"></span><h2>data_format<a class="headerlink" href="#module-pyrado.sampling.data_format" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.data_format.cat_to_format">
@@ -414,8 +413,8 @@ For dicts, the dict elements are stacked individually. A list of dicts is treate
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.hyper_sphere">
+</div>
+<div class="section" id="module-pyrado.sampling.hyper_sphere">
 <span id="hyper-sphere"></span><h2>hyper_sphere<a class="headerlink" href="#module-pyrado.sampling.hyper_sphere" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.hyper_sphere.sample_from_hyper_sphere_surface">
@@ -438,8 +437,8 @@ For dicts, the dict elements are stacked individually. A list of dicts is treate
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.parallel_evaluation">
+</div>
+<div class="section" id="module-pyrado.sampling.parallel_evaluation">
 <span id="parallel-evaluation"></span><h2>parallel_evaluation<a class="headerlink" href="#module-pyrado.sampling.parallel_evaluation" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.parallel_evaluation.eval_domain_params">
@@ -522,8 +521,8 @@ target domain segments</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.parallel_rollout_sampler">
+</div>
+<div class="section" id="module-pyrado.sampling.parallel_rollout_sampler">
 <span id="parallel-rollout-sampler"></span><h2>parallel_rollout_sampler<a class="headerlink" href="#module-pyrado.sampling.parallel_rollout_sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler">
@@ -576,8 +575,8 @@ initial state space</p></li>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.parameter_exploration_sampler">
+</div>
+<div class="section" id="module-pyrado.sampling.parameter_exploration_sampler">
 <span id="parameter-exploration-sampler"></span><h2>parameter_exploration_sampler<a class="headerlink" href="#module-pyrado.sampling.parameter_exploration_sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler">
@@ -687,8 +686,8 @@ On the other hand, this allows to query combined tensors of parameters and mean 
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.rollout">
+</div>
+<div class="section" id="module-pyrado.sampling.rollout">
 <span id="rollout"></span><h2>rollout<a class="headerlink" href="#module-pyrado.sampling.rollout" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.rollout.after_rollout_query">
@@ -734,8 +733,8 @@ This policy may be wrapped by an exploration strategy.</p></li>
 <p>:return paths of the observations, actions, rewards, and information about the environment as well as the policy</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.sampler">
+</div>
+<div class="section" id="module-pyrado.sampling.sampler">
 <span id="sampler"></span><h2>sampler<a class="headerlink" href="#module-pyrado.sampling.sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.sampler.SamplerBase">
@@ -797,8 +796,8 @@ sampling runs, the sample() method takes care of this on it’s own.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.sampler_pool">
+</div>
+<div class="section" id="module-pyrado.sampling.sampler_pool">
 <span id="sampler-pool"></span><h2>sampler_pool<a class="headerlink" href="#module-pyrado.sampling.sampler_pool" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.sampler_pool.GlobalNamespace">
@@ -909,8 +908,8 @@ There is no deterministic assignment of workers to arglist elements. Optionally 
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.sbi_embeddings">
+</div>
+<div class="section" id="module-pyrado.sampling.sbi_embeddings">
 <span id="sbi-embeddings"></span><h2>sbi_embeddings<a class="headerlink" href="#module-pyrado.sampling.sbi_embeddings" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.sbi_embeddings.AllStepsEmbedding">
@@ -1217,8 +1216,8 @@ compute features of the rollouts</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.sbi_rollout_sampler">
+</div>
+<div class="section" id="module-pyrado.sampling.sbi_rollout_sampler">
 <span id="sbi-rollout-sampler"></span><h2>sbi_rollout_sampler<a class="headerlink" href="#module-pyrado.sampling.sbi_rollout_sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.sbi_rollout_sampler.RealRolloutSamplerForSBI">
@@ -1280,8 +1279,8 @@ the inputs, it is necessary that all rollouts yield the same number of features,
 <p>Wrapper to make SimuRLacra’s simulation environments usable as simulators for the sbi package</p>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.sequences">
+</div>
+<div class="section" id="module-pyrado.sampling.sequences">
 <span id="sequences"></span><h2>sequences<a class="headerlink" href="#module-pyrado.sampling.sequences" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.sequences.sequence">
@@ -1414,8 +1413,8 @@ the inputs, it is necessary that all rollouts yield the same number of features,
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.step_sequence">
+</div>
+<div class="section" id="module-pyrado.sampling.step_sequence">
 <span id="step-sequence"></span><h2>step_sequence<a class="headerlink" href="#module-pyrado.sampling.step_sequence" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.step_sequence.DictIndexProxy">
@@ -1807,8 +1806,8 @@ Generalized Advantage Estimation’, ICLR 2016</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling.utils">
+</div>
+<div class="section" id="module-pyrado.sampling.utils">
 <span id="utils"></span><h2>utils<a class="headerlink" href="#module-pyrado.sampling.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.utils.gen_ordered_batch_idcs">
@@ -1887,11 +1886,11 @@ chunks</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-pyrado.sampling">
+</div>
+<div class="section" id="module-pyrado.sampling">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.sampling" title="Permalink to this headline">¶</a></h2>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

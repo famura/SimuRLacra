@@ -87,7 +87,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
@@ -236,6 +236,19 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
+
+
+<div class="viewcode-block" id="correct_atleast_2d"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.correct_atleast_2d">[docs]</a><span class="k">def</span> <span class="nf">correct_atleast_2d</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compensate for numpy&#39;s or PyTorch&#39;s `atleast_2d()` in case the input was 1-dimensional.</span>
+
+<span class="sd">    :param x: input</span>
+<span class="sd">    :return: potentially transposed input</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span></div>
 
 
 <div class="viewcode-block" id="scale_min_max"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.scale_min_max">[docs]</a><span class="k">def</span> <span class="nf">scale_min_max</span><span class="p">(</span>

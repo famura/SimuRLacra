@@ -122,10 +122,10 @@ optimizers
    :show-inheritance:
 
 
-order
------
+ordering
+--------
 
-.. automodule:: pyrado.utils.order
+.. automodule:: pyrado.utils.ordering
    :members:
    :undoc-members:
    :show-inheritance:

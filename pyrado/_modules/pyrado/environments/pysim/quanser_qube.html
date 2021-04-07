@@ -87,7 +87,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
@@ -232,7 +232,6 @@
 <span class="kn">from</span> <span class="nn">init_args_serializer.serializable</span> <span class="kn">import</span> <span class="n">Serializable</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.base</span> <span class="kn">import</span> <span class="n">SimPyEnv</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pandavis</span> <span class="kn">import</span> <span class="n">QQubeVis</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser</span> <span class="kn">import</span> <span class="n">max_act_qq</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
@@ -262,8 +261,10 @@
             <span class="n">Dr</span><span class="o">=</span><span class="mf">5e-6</span><span class="p">,</span>  <span class="c1"># rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6</span>
             <span class="n">Mp</span><span class="o">=</span><span class="mf">0.024</span><span class="p">,</span>  <span class="c1"># pendulum link mass [kg]</span>
             <span class="n">Lp</span><span class="o">=</span><span class="mf">0.129</span><span class="p">,</span>  <span class="c1"># pendulum link length [m]</span>
-            <span class="n">Dp</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
-        <span class="p">)</span>  <span class="c1"># pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6</span></div>
+            <span class="n">Dp</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>  <span class="c1"># pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6</span>
+            <span class="n">V_thold_neg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># min. voltage required to move the servo in negative the direction [V]</span>
+            <span class="n">V_thold_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># min. voltage required to move the servo in positive the direction [V]</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_calc_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">Mr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;Mr&quot;</span><span class="p">]</span>
@@ -323,6 +324,11 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">thd</span><span class="p">,</span> <span class="n">ald</span><span class="p">,</span> <span class="n">thdd</span><span class="p">,</span> <span class="n">aldd</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_step_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="c1"># Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.</span>
+        <span class="c1"># This is a very simple model of static friction.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;V_thold_neg&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">act</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;V_thold_pos&quot;</span><span class="p">]:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="mi">0</span>
+
         <span class="c1"># Compute the derivative</span>
         <span class="n">thd</span><span class="p">,</span> <span class="n">ald</span><span class="p">,</span> <span class="n">thdd</span><span class="p">,</span> <span class="n">aldd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dyn</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span>
 
@@ -340,7 +346,7 @@
 
     <span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Import PandaVis Class</span>
-        <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pandavis</span> <span class="kn">import</span> <span class="n">PandaVis</span>
+        <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pandavis</span> <span class="kn">import</span> <span class="n">QQubeVis</span>
 
         <span class="c1"># Create instance of PandaVis</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span> <span class="o">=</span> <span class="n">QQubeVis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span><span class="p">)</span></div>

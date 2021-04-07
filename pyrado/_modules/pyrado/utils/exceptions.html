@@ -87,7 +87,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
@@ -310,7 +310,7 @@
                 <span class="s2">&quot;message via the &#39;msg&#39; argument!&quot;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="o">!=</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">given_type_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">given</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">given</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;None&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expected_types</span> <span class="o">=</span> <span class="n">expected_type</span>
             <span class="c1"># Default error message</span>
@@ -370,7 +370,7 @@
                 <span class="ow">and</span> <span class="n">g_constraint</span> <span class="ow">is</span> <span class="kc">None</span>
                 <span class="ow">and</span> <span class="n">ge_constraint</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">),</span> <span class="s2">&quot;Specify at least one constraint!&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="o">!=</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">given_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eq_constraint_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">eq_constraint</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l_constraint_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">l_constraint</span><span class="p">)</span>
@@ -428,7 +428,7 @@
                 <span class="s2">&quot;message via the &#39;msg&#39; argument!&quot;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="o">!=</span> <span class="s2">&quot;__INVALID__&quot;</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">given_name</span> <span class="o">=</span> <span class="n">given_name</span> <span class="k">if</span> <span class="n">given_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">BaseErr</span><span class="o">.</span><span class="n">retrieve_var_name</span><span class="p">(</span><span class="n">given</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">given_shape</span><span class="p">,</span> <span class="n">gsn</span> <span class="o">=</span> <span class="n">ShapeErr</span><span class="o">.</span><span class="n">get_shape_and_name</span><span class="p">(</span><span class="n">given</span><span class="p">,</span> <span class="s2">&quot;given&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expected_shape</span><span class="p">,</span> <span class="n">esn</span> <span class="o">=</span> <span class="n">ShapeErr</span><span class="o">.</span><span class="n">get_shape_and_name</span><span class="p">(</span><span class="n">expected_match</span><span class="p">,</span> <span class="s2">&quot;expected_match&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span><span class="n">gsn</span><span class="p">,</span> <span class="n">esn</span><span class="p">)</span>
@@ -446,7 +446,7 @@
 <div class="viewcode-block" id="PathErr"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.PathErr">[docs]</a><span class="k">class</span> <span class="nc">PathErr</span><span class="p">(</span><span class="n">BaseErr</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Class for exceptions raised by passing wrong paths to folders or files &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">given</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">given</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;__INVALID__&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 

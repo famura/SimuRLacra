@@ -87,7 +87,7 @@
               
             
             
-              <p><span class="caption-text">Examples:</span></p>
+              <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
@@ -95,7 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/panda3d_basic_experiment.html"><strong>How to create a visualization</strong></a></li>
 </ul>
-<p><span class="caption-text">Algorithms:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
 </ul>
-<p><span class="caption-text">Environments:</span></p>
+<p class="caption"><span class="caption-text">Environments:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
@@ -117,14 +117,14 @@
 <li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
 </ul>
-<p><span class="caption-text">Policies:</span></p>
+<p class="caption"><span class="caption-text">Policies:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
 </ul>
-<p><span class="caption-text">Utilities:</span></p>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
@@ -634,12 +634,14 @@
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.copy">copy() (Space method)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.features.cos_feat">cos_feat() (in module pyrado.policies.features)</a>
+      <li><a href="utils.html#pyrado.utils.data_processing.correct_atleast_2d">correct_atleast_2d() (in module pyrado.utils.data_processing)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.math.cosine_similarity">cosine_similarity() (in module pyrado.utils.math)</a>
+      <li><a href="policies.html#pyrado.policies.features.cos_feat">cos_feat() (in module pyrado.policies.features)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="utils.html#pyrado.utils.math.cosine_similarity">cosine_similarity() (in module pyrado.utils.math)</a>
+</li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.CosOfOneEleRewFcn">CosOfOneEleRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.math.cov">cov() (in module pyrado.utils.math)</a>
@@ -903,8 +905,6 @@
       <li><a href="utils.html#pyrado.utils.data_types.dict_arraylike_to_float">dict_arraylike_to_float() (in module pyrado.utils.data_types)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.DictIndexProxy">DictIndexProxy (class in pyrado.sampling.step_sequence)</a>
-</li>
-      <li><a href="utils.html#pyrado.utils.math.diff_coeffs">diff_coeffs() (in module pyrado.utils.math)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.dilation">dilation (MirrConv1d attribute)</a>
 </li>
@@ -1214,7 +1214,7 @@
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.fill_list_of_arrays">fill_list_of_arrays() (in module pyrado.utils.data_types)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.order.filter_los_by_lok">filter_los_by_lok() (in module pyrado.utils.order)</a>
+      <li><a href="utils.html#pyrado.utils.ordering.filter_los_by_lok">filter_los_by_lok() (in module pyrado.utils.ordering)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.masked.MaskedTask.final_rew">final_rew() (MaskedTask method)</a>
 
@@ -1426,7 +1426,7 @@
 </li>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.LabeledMarkers.get_ids">get_ids() (LabeledMarkers method)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.order.get_immediate_subdirs">get_immediate_subdirs() (in module pyrado.utils.order)</a>
+      <li><a href="utils.html#pyrado.utils.ordering.get_immediate_subdirs">get_immediate_subdirs() (in module pyrado.utils.ordering)</a>
 </li>
       <li><a href="policies.special.html#pyrado.policies.special.environment_specific.get_lin_ctrl">get_lin_ctrl() (in module pyrado.policies.special.environment_specific)</a>
 </li>
@@ -2352,7 +2352,7 @@
 </li>
         <li><a href="utils.html#module-pyrado.utils.optimizers">pyrado.utils.optimizers</a>
 </li>
-        <li><a href="utils.html#module-pyrado.utils.order">pyrado.utils.order</a>
+        <li><a href="utils.html#module-pyrado.utils.ordering">pyrado.utils.ordering</a>
 </li>
         <li><a href="utils.html#module-pyrado.utils.properties">pyrado.utils.properties</a>
 </li>
@@ -2669,7 +2669,7 @@
 </li>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient">NatNetClient (class in pyrado.environments.barrett_wam.natnet_client)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.order.natural_sort">natural_sort() (in module pyrado.utils.order)</a>
+      <li><a href="utils.html#pyrado.utils.ordering.natural_sort">natural_sort() (in module pyrado.utils.ordering)</a>
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.nes.NES">NES (class in pyrado.algorithms.episodic.nes)</a>
 </li>
@@ -2736,6 +2736,8 @@
       <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_trn">num_samples_trn() (TimeSeriesDataSet property)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_tst">num_samples_tst() (TimeSeriesDataSet property)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.math.numerical_differentiation_coeffs">numerical_differentiation_coeffs() (in module pyrado.utils.math)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.numpy">numpy() (StepSequence method)</a>
 </li>
@@ -4390,10 +4392,10 @@
 </li>
       </ul></li>
       <li>
-    pyrado.utils.order
+    pyrado.utils.ordering
 
       <ul>
-        <li><a href="utils.html#module-pyrado.utils.order">module</a>
+        <li><a href="utils.html#module-pyrado.utils.ordering">module</a>
 </li>
       </ul></li>
       <li>
@@ -5600,6 +5602,8 @@
       <li><a href="tests.html#tests.test_spaces.test_copy_box_space">test_copy_box_space() (in module tests.test_spaces)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_copy_discrete_space">test_copy_discrete_space() (in module tests.test_spaces)</a>
+</li>
+      <li><a href="tests.html#tests.test_utils.test_correct_atleast_2d">test_correct_atleast_2d() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_cosine_similarity">test_cosine_similarity() (in module tests.test_utils)</a>
 </li>
