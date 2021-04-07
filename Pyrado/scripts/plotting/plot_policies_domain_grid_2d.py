@@ -72,7 +72,9 @@ def _plot_and_save(
             add_colorbar=True,
         )
         if nominal:
-            fig_hm.get_axes()[0].scatter(*nominal, s=100, marker="*", color="tab:green", label="")
+            fig_hm.get_axes()[0].scatter(
+                *nominal, s=150, marker="o", color="w", edgecolors="k", linewidths=4, label="Nominal"
+            )
         if show_figure:
             fig_hm.show()
 
@@ -224,6 +226,19 @@ def _plot(dataframes, save_dirs, save_figure):
                 nominal=(1e-6, 5e-6),
                 show_figure=show_figure,
             )
+            # _plot_and_save(
+            #     df,
+            #     "Mr",
+            #     "Mp",
+            #     r"$M_r$",
+            #     r"$M_p$",
+            #     add_sep_colorbar=True,
+            #     norm=accnorm,
+            #     save_figure=sf,
+            #     save_dir=save_dir,
+            #     nominal=(0.024, 0.095),
+            #     show_figure=show_figure,
+            # )
 
 
 def _main():
