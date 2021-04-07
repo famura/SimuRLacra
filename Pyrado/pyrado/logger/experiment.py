@@ -148,11 +148,11 @@ def setup_experiment(
     algo_name: str,
     extra_info: str = None,
     base_dir: str = pyrado.TEMP_DIR,
-    include_slurm_id_if_possible: bool = True,
+    include_slurm_id: bool = True,
 ):
     """ Setup a new experiment for recording. """
     # Create experiment object
-    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir, include_slurm_id=include_slurm_id_if_possible)
+    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir, include_slurm_id=include_slurm_id)
 
     # Create the folder
     os.makedirs(exp, exist_ok=True)
