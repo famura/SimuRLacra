@@ -240,7 +240,7 @@ def clamp_symm(inp: to.Tensor, up_lo: to.Tensor) -> to.Tensor:
     return to.max(to.min(inp.clone(), up_lo), -up_lo)
 
 
-def diff_coeffs(
+def numerical_differentiation_coeffs(
     stencils: Union[list, np.ndarray], order: int, step_size: Union[int, float] = 1
 ) -> Tuple[np.ndarray, int]:
     r"""

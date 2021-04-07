@@ -108,7 +108,7 @@ class TypeErr(BaseErr):
                 "message via the 'msg' argument!"
             )
         elif msg is None:
-            self.given_name = given_name if given_name != "__INVALID__" else BaseErr.retrieve_var_name(given)
+            self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
             self.given_type_name = type(given).__name__ if given is not None else "None"
             self.expected_types = expected_type
             # Default error message
@@ -168,7 +168,7 @@ class ValueErr(BaseErr):
                 and g_constraint is None
                 and ge_constraint is None
             ), "Specify at least one constraint!"
-        self.given_name = given_name if given_name != "__INVALID__" else BaseErr.retrieve_var_name(given)
+        self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
         self.given_str = str(given)
         self.eq_constraint_str = str(eq_constraint)
         self.l_constraint_str = str(l_constraint)
@@ -226,7 +226,7 @@ class ShapeErr(BaseErr):
                 "message via the 'msg' argument!"
             )
         elif msg is None:
-            self.given_name = given_name if given_name != "__INVALID__" else BaseErr.retrieve_var_name(given)
+            self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
             self.given_shape, gsn = ShapeErr.get_shape_and_name(given, "given")
             self.expected_shape, esn = ShapeErr.get_shape_and_name(expected_match, "expected_match")
             self.attributes = (gsn, esn)
@@ -244,7 +244,7 @@ class ShapeErr(BaseErr):
 class PathErr(BaseErr):
     """ Class for exceptions raised by passing wrong paths to folders or files """
 
-    def __init__(self, *, given: str = None, msg: Optional[str] = None):
+    def __init__(self, *, given: str = "__INVALID__", msg: Optional[str] = None):
         """
         Constructor
 

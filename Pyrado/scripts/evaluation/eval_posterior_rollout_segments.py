@@ -35,25 +35,28 @@ By default (args.iter = -1), the all iterations are evaluated.
 """
 import numpy as np
 import os.path as osp
+import sys
 from dtw import dtw, rabinerJuangStepPattern
 from matplotlib import pyplot as plt
-from pyrado.sampling.parallel_evaluation import eval_domain_params_with_segmentwise_reset
-from pyrado.sampling.sampler_pool import SamplerPool
-from pyrado.spaces.box import InfBoxSpace
-from pyrado.utils.input_output import print_cbt
 from tabulate import tabulate
+from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.rollout_based import plot_rollouts_segment_wise
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.argparser import get_argparser
+from pyrado.sampling.parallel_evaluation import eval_domain_params_with_segmentwise_reset
+from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import check_act_equal, StepSequence
+from pyrado.spaces.box import InfBoxSpace
+from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_types import repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
 from pyrado.utils.math import rmse
@@ -103,7 +106,7 @@ if __name__ == "__main__":
         policy = PlaybackPolicy(env_sim.spec, [ro.actions for ro in rollouts_real], no_reset=True)
 
     # Compute the most likely domain parameters for every target domain observation
-    domain_params_ml_all, _ = NPDR.get_ml_posterior_samples(
+    domain_params_ml_all, _ = SBIBase.get_ml_posterior_samples(
         algo.dp_mapping,
         posterior,
         data_real,
@@ -136,7 +139,7 @@ if __name__ == "__main__":
     # occurred during the rollout. This is necessary since we are running the evaluation in segments.
     env_sim.init_space = InfBoxSpace(shape=env_sim.init_space.shape)
 
-    if True:
+    if False:
         # Create a new sampler pool for every policy to synchronize the random seeds i.e. init states
         pool = SamplerPool(args.num_workers)
 
@@ -280,6 +283,7 @@ if __name__ == "__main__":
         use_rec=args.use_rec,
         idx_iter=args.iter,
         idx_round=args.round,
+        show_act=True,
         save_dir=ex_dir if args.save else None,
     )
 

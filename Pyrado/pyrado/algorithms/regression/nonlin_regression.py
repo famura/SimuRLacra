@@ -143,9 +143,9 @@ class NonlinRegression(Algorithm):
     def stopping_criterion_met(self) -> bool:
         """
         Keep track of the best validation performance and check if it does not improve for a given number of iterations.
-        
+
         :return: `True` if the performance on the validation set did not improve for, i.e. network has converged
-        """ ""
+        """
         if self._cnt_iter_no_improvement >= self._max_iter_no_improvement:
             # No improvement over on the validation set for self._max_iter_no_improvement iterations
             return True

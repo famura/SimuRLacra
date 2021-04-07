@@ -71,7 +71,7 @@ Create an anaconda environment (without PyTorch)
 conda create -y -n pyrado python=3.7
 conda activate pyrado
 conda install -y blas cmake lapack libgcc-ng mkl mkl-include patchelf pip pycairo setuptools -c conda-forge
-pip install argparse black box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna panda3d pandas pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm git+https://github.com/Xfel/init-args-serializer.git@master
+pip install argparse black box2d colorama coverage cython dtw-python glfw gym joblib prettyprinter matplotlib numpy optuna panda3d pandas pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm git+https://github.com/Xfel/init-args-serializer.git@master
 ```
 
 

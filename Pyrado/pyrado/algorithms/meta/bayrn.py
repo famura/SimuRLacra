@@ -55,7 +55,7 @@ from pyrado.spaces import BoxSpace
 from pyrado.utils.data_processing import standardize
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import UnitCubeProjector
-from pyrado.utils.order import natural_sort
+from pyrado.utils.ordering import natural_sort
 from tabulate import tabulate
 
 

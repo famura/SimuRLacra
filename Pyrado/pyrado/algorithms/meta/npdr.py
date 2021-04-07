@@ -243,7 +243,7 @@ class NPDR(SBIBase):
         if self.curr_checkpoint == 2:
             # Logging (the evaluation can be time-intensive)
             posterior = pyrado.load("posterior.pt", self._save_dir)
-            self._curr_domain_param_eval, log_probs = NPDR.eval_posterior(
+            self._curr_domain_param_eval, log_probs = SBIBase.eval_posterior(
                 posterior,
                 self._curr_data_real,
                 self.num_eval_samples,

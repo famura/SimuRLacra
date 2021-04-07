@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Quanser Qube environment using Neural Posterior Domain Randomization
+Domain parameter identification experiment on the Quanser Cart-Pole environment
+using Neural Posterior Domain Randomization
 """
 import os.path as osp
 import torch as to
@@ -36,11 +37,9 @@ from sbi import utils
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.special.dummy import DummyPolicy
-from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.policies.special.time import TimePolicy
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl, QCartPoleSwingUpAndBalanceCtrl
 from pyrado.sampling.sbi_embeddings import (
     BayesSimEmbedding,
     AllStepsEmbedding,
@@ -67,79 +66,84 @@ if __name__ == "__main__":
     use_rec_act = True
 
     # Experiment (set seed before creating the modules)
-    ectl = True
-    if ectl:
-        ex_dir = setup_experiment(
-            QQubeSwingUpSim.name,
-            f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}",
-            num_segs_str + len_seg_str + seed_str,
-        )
-        t_end = 6  # s
-    else:
-        ex_dir = setup_experiment(
-            QQubeSwingUpSim.name,
-            f"{NPDR.name}_{TimePolicy.name}",
-            num_segs_str + len_seg_str + seed_str,
-        )
-        t_end = 10  # s
+    ex_dir = setup_experiment(
+        QCartPoleSwingUpSim.name,
+        f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}",
+        num_segs_str + len_seg_str + seed_str,
+    )
+    t_end = 8  # s
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
-    env_sim = QQubeSwingUpSim(**env_sim_hparams)
+    env_sim = QCartPoleSwingUpSim(**env_sim_hparams)
 
     # Create the ground truth target domain and the behavioral policy
-    if ectl:
-        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz_filt")
-        policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
-    else:
-        env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
-        assert use_rec_act
-        policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
+    env_real = osp.join(pyrado.EVAL_DIR, "qcp-su_ectrl_250Hz_filt")
+    policy = QCartPoleSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
 
     # Define a mapping: index - domain parameter
-    # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
+    dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
+    # dp_mapping = {
+    #     0: "eta_m",
+    #     1: "eta_g",
+    #     2: "B_pole",
+    #     3: "B_eq",
+    #     4: "mu_cart",
+    #     5: "K_g",
+    #     6: "k_m",
+    #     7: "m_pole",
+    #     8: "l_pole",
+    # }
+    # g=9.81,  # gravity constant [m/s**2]
+    # m_cart=0.38,  # mass of the cart [kg]
+    # l_rail=0.814,  # length of the rail the cart is running on [m]
+    # eta_m=0.9,  # motor efficiency [-], default 1.
+    # eta_g=0.9,  # planetary gearbox efficiency [-], default 1.
+    # K_g=3.71,  # planetary gearbox gear ratio [-]
+    # J_m=3.9e-7,  # rotor inertia [kg*m**2]
+    # r_mp=6.35e-3,  # motor pinion radius [m]
+    # R_m=2.6,  # motor armature resistance [Ohm]
+    # k_m=7.67e-3,  # motor torque constant [N*m/A] = back-EMF constant [V*s/rad]
+    # B_pole=0.0024,  # viscous coefficient at the pole [N*s]
+    # B_eq=5.4,  # equivalent Viscous damping coefficient [N*s/m]
+    # m_pole=m_pole,  # mass of the pole [kg]
+    # l_pole=l_pole,  # half pole length [m]
+    # mu_cart=0.02,  # Coulomb friction coefficient cart-rail [-]
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        # low=to.tensor([-0.1, 0.0]),
-        # high=to.tensor([0.0, 0.1])
-        # low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
-        low=to.tensor(
-            [
-                dp_nom["Dr"] * 0,
-                dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.7,
-                dp_nom["km"] * 0.7,
-                dp_nom["Mr"] * 0.8,
-                dp_nom["Mp"] * 0.8,
-                dp_nom["Lr"] * 0.8,
-                dp_nom["Lp"] * 0.8,
-                dp_nom["g"] * 0.95,
-                0.0,
-            ]
-        ),
-        high=to.tensor(
-            [
-                dp_nom["Dr"] * 5,
-                dp_nom["Dp"] * 5,
-                dp_nom["Rm"] * 1.3,
-                dp_nom["km"] * 1.3,
-                dp_nom["Mr"] * 1.2,
-                dp_nom["Mp"] * 1.2,
-                dp_nom["Lr"] * 1.2,
-                dp_nom["Lp"] * 1.2,
-                dp_nom["g"] * 1.05,
-                5,
-            ]
-        ),
+        low=to.tensor([-1.0, 0.0]),
+        # low=to.tensor(
+        #     [
+        #         0.6,
+        #         0.6,
+        #         dp_nom["B_pole"] * 0.5,
+        #         dp_nom["B_eq"] * 0.5,
+        #         0,
+        #         dp_nom["K_g"] * 0.8,
+        #         dp_nom["k_m"] * 0.8,
+        #         dp_nom["m_pole"] * 0.9,
+        #         dp_nom["l_pole"] * 0.9,
+        #     ]
+        # ),
+        high=to.tensor([0.0, 1.0])
+        # high=to.tensor(
+        #     [
+        #         1,
+        #         1,
+        #         dp_nom["B_pole"] * 1.5,
+        #         dp_nom["B_eq"] * 1.5,
+        #         dp_nom["mu_cart"] * 5,
+        #         dp_nom["K_g"] * 1.2,
+        #         dp_nom["k_m"] * 1.2,
+        #         dp_nom["m_pole"] * 1.1,
+        #         dp_nom["l_pole"] * 1.1,
+        #     ]
+        # ),
     )
     prior = utils.BoxUniform(**prior_hparam)
 
@@ -150,8 +154,8 @@ if __name__ == "__main__":
     # embedding = AllStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
-    # embedding_hparam = dict(downsampling_factor=1)
-    # embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=2)
     # embedding = AllStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
@@ -160,10 +164,10 @@ if __name__ == "__main__":
     # embedding = DynamicTimeWarpingEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
     # )
-    embedding_hparam = dict(hidden_size=20, num_recurrent_layers=1, output_size=5, downsampling_factor=1)
-    embedding = RNNEmbedding(
-        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    )
+    # embedding_hparam = dict(hidden_size=20, num_recurrent_layers=1, output_size=5, downsampling_factor=1)
+    # embedding = RNNEmbedding(
+    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
+    # )
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
@@ -171,29 +175,29 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=4,
-        num_sim_per_round=10000,
-        num_sbi_rounds=3,
+        num_real_rollouts=1,
+        num_sim_per_round=2000,
+        num_sbi_rounds=2,
         simulation_batch_size=10,
         normalize_posterior=False,
-        num_eval_samples=1000,
+        num_eval_samples=10,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
         use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=20,  # default: 10
-            training_batch_size=100,  # default: 50
+            training_batch_size=50,  # default: 50
             learning_rate=3e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
             discard_prior_samples=False,  # default: False
-            use_combined_loss=True,  # default: False
+            use_combined_loss=False,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
         num_workers=20,
     )
     algo = NPDR(

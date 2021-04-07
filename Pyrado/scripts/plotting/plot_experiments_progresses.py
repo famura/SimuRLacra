@@ -39,7 +39,7 @@ import pyrado
 from pyrado.plotting.curve import draw_curve
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import read_csv_w_replace
-from pyrado.utils.order import get_immediate_subdirs, natural_sort
+from pyrado.utils.ordering import get_immediate_subdirs, natural_sort
 
 
 if __name__ == "__main__":

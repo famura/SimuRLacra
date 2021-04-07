@@ -254,7 +254,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         """ Get the embedding used to compute the features from the rollouts. """
         return self._embedding
 
-    def _setup_sbi(self, prior: Optional[Distribution] = None, rollouts_real: Optional[List[StepSequence]] = None):
+    def _setup_sbi(self, prior: Distribution, rollouts_real: Optional[List[StepSequence]] = None):
         """
         Prepare simulator and prior for usage in sbi.
 
@@ -272,8 +272,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
             rollouts_real,
             self.use_rec_act,
         )
-        if prior is None:
-            prior = pyrado.load("prior.pt", self._save_dir)
 
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)

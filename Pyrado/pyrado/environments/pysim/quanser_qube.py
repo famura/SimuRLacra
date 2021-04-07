@@ -32,7 +32,6 @@ from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.pysim.pandavis import QQubeVis
 from pyrado.environments.quanser import max_act_qq
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
@@ -62,8 +61,10 @@ class QQubeSim(SimPyEnv, Serializable):
             Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             Mp=0.024,  # pendulum link mass [kg]
             Lp=0.129,  # pendulum link length [m]
-            Dp=1e-6,
-        )  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
+            Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
+            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
+        )
 
     def _calc_constants(self):
         Mr = self.domain_param["Mr"]
@@ -123,6 +124,11 @@ class QQubeSim(SimPyEnv, Serializable):
         return np.array([thd, ald, thdd, aldd], dtype=np.float64)
 
     def _step_dynamics(self, act: np.ndarray):
+        # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
+        # This is a very simple model of static friction.
+        if self.domain_param["V_thold_neg"] <= act <= self.domain_param["V_thold_pos"]:
+            act = 0
+
         # Compute the derivative
         thd, ald, thdd, aldd = self._dyn(None, self.state, act)
 
@@ -140,7 +146,7 @@ class QQubeSim(SimPyEnv, Serializable):
 
     def _init_anim(self):
         # Import PandaVis Class
-        from pyrado.environments.pysim.pandavis import PandaVis
+        from pyrado.environments.pysim.pandavis import QQubeVis
 
         # Create instance of PandaVis
         self._visualization = QQubeVis(self, self._rendering)

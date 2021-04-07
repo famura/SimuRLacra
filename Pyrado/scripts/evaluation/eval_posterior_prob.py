@@ -38,6 +38,7 @@ import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
@@ -52,7 +53,7 @@ from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.order import natural_sort
+from pyrado.utils.ordering import natural_sort
 
 
 if __name__ == "__main__":
@@ -145,7 +146,7 @@ if __name__ == "__main__":
             # TODO @Theo, see how the extraction of the gt params can be move to the plotting function like for the
             # TODO others, moreover, could we use the ml domain params (see below) instead of running eval_posterior?
             # Use the latest posterior to sample domain parameters to obtain a condition
-            domain_params, log_probs = NPDR.eval_posterior(
+            domain_params, log_probs = SBIBase.eval_posterior(
                 posterior[-1] if args.mode.lower() == "evolution-iter" else posterior,
                 data_real,
                 args.num_samples,

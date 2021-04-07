@@ -36,6 +36,19 @@ from typing import Union, Tuple
 import pyrado
 
 
+def correct_atleast_2d(x: Union[np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
+    """
+    Compensate for numpy's or PyTorch's `atleast_2d()` in case the input was 1-dimensional.
+
+    :param x: input
+    :return: potentially transposed input
+    """
+    if not isinstance(x, (np.ndarray, to.Tensor)):
+        raise pyrado.TypeErr(given=x, expected_type=(np.ndarray, to.Tensor))
+
+    return x.T if x.shape[0] == 1 else x
+
+
 def scale_min_max(
     data: Union[np.ndarray, to.Tensor],
     bound_lo: Union[int, float, np.ndarray, to.Tensor],

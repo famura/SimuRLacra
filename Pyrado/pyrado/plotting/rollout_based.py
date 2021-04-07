@@ -44,6 +44,7 @@ from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.checks import check_all_lengths_equal
+from pyrado.utils.data_processing import correct_atleast_2d
 from pyrado.utils.data_types import fill_list_of_arrays
 from pyrado.utils.input_output import print_cbt
 
@@ -89,7 +90,7 @@ def plot_observations_actions_rewards(ro: StepSequence):
         num_rows, num_cols = num_rows_cols_from_length(dim_obs + dim_act + 1, transposed=True)
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(14, 10), tight_layout=True)
         axs = np.atleast_2d(axs)
-        axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case it was 1-dim
+        axs = correct_atleast_2d(axs)
         fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
@@ -142,7 +143,7 @@ def plot_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
 
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
         axs = np.atleast_2d(axs)
-        axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case it was 1-dim
+        axs = correct_atleast_2d(axs)
         fig.canvas.set_window_title("Observations over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_obs)))
 
@@ -192,7 +193,7 @@ def plot_features(ro: StepSequence, policy: Policy):
 
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
         axs = np.atleast_2d(axs)
-        axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case it was 1-dim
+        axs = correct_atleast_2d(axs)
         fig.canvas.set_window_title("Feature Values over Time")
         plt.subplots_adjust(hspace=0.5)
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_feat)))
@@ -446,7 +447,7 @@ def plot_mean_std_across_rollouts(
     num_rows, num_cols = num_rows_cols_from_length(dim_obs, transposed=True)
     fig_obs, axs_obs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
     axs_obs = np.atleast_2d(axs_obs)
-    axs_obs = axs_obs.T if axs_obs.shape[0] == 1 else axs_obs  # compensate for np.atleast_2d in case it was 1-dim
+    axs_obs = correct_atleast_2d(axs_obs)
     fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Observations over Time")
     colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs))
 
@@ -490,6 +491,8 @@ def plot_rollouts_segment_wise(
     idx_iter: int,
     idx_round: Optional[int] = None,
     state_labels: Optional[List[str]] = None,
+    act_labels: Optional[List[str]] = None,
+    show_act: Optional[bool] = False,
     save_dir: Optional[str] = None,
 ) -> List[plt.Figure]:
     r"""
@@ -505,6 +508,8 @@ def plot_rollouts_segment_wise(
     :param idx_iter: selected iteration
     :param idx_round: selected round
     :param state_labels: y-axes labels to override the default value which is extracted from the state space's labels
+    :param act_labels: y-axes labels to override the default value which is extracted from the action space's labels
+    :param show_act: if `True`, also plot the actions
     :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
     :return: list of handles to the created figures
     """
@@ -513,6 +518,7 @@ def plot_rollouts_segment_wise(
 
     # Extract the state dimension, and the number of most likely samples from the data
     dim_state = segments_ground_truth[0][0].get_data_values("states")[0, :].size
+    dim_act = segments_ground_truth[0][0].get_data_values("actions")[0, :].size
     num_samples = len(segments_multiple_envs[0][0])
 
     # Extract the state labels if not explicitly given
@@ -522,13 +528,20 @@ def plot_rollouts_segment_wise(
     else:
         if len(state_labels) != dim_state:
             raise pyrado.ShapeErr(given=state_labels, expected_match=(dim_state,))
+    if act_labels is None:
+        env_spec = segments_ground_truth[0][0].rollout_info.get("env_spec", None)
+        act_labels = env_spec.act_space.labels if env_spec is not None else np.empty(dim_act, dtype=object)
+    else:
+        if len(act_labels) != dim_act:
+            raise pyrado.ShapeErr(given=act_labels, expected_match=(dim_act,))
 
-    colors = plt.get_cmap("Reds")(np.linspace(0.5, 1.0, num_samples))
+    colors = plt.get_cmap("Reds")(np.linspace(0.6, 1.0, num_samples))
     fig_list = []
 
     for idx_r in range(len(segments_ground_truth)):
-        fig, axs = plt.subplots(nrows=dim_state, figsize=(16, 9), tight_layout=True, sharex="col")
+        fig, axs = plt.subplots(nrows=dim_state + dim_act, figsize=(16, 9), tight_layout=True, sharex="col")
 
+        # Plot the states
         for idx_state in range(dim_state):
             # Plot the real segments
             cnt_step = [0]
@@ -536,6 +549,7 @@ def plot_rollouts_segment_wise(
                 axs[idx_state].plot(
                     np.arange(cnt_step[-1], cnt_step[-1] + segment_gt.length),
                     segment_gt.get_data_values("states", truncate_last=True)[:, idx_state],
+                    zorder=0,
                     c="black",
                     label="target" if cnt_step[-1] == 0 else "",  # only print once
                 )
@@ -547,6 +561,7 @@ def plot_rollouts_segment_wise(
                     axs[idx_state].plot(
                         np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sdp.length),
                         sdp.get_data_values("states", truncate_last=True)[:, idx_state],
+                        zorder=2 if idx_dp == 0 else 0,  # most likely on top
                         c=colors[idx_dp],
                         ls="--",
                         label=f"ml sim {idx_dp}" if cnt_step[idx_seg] == 0 else "",  # only print once for each dp
@@ -574,7 +589,6 @@ def plot_rollouts_segment_wise(
                 for idx_seg in range(len(segments_multiple_envs[idx_r])):
                     m_i = states_mean[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
                     s_i = states_std[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
-
                     draw_curve(
                         "mean_std",
                         axs[idx_state],
@@ -591,12 +605,88 @@ def plot_rollouts_segment_wise(
                 axs[idx_state].plot(
                     np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sn.length),
                     sn.get_data_values("states", truncate_last=True)[:, idx_state],
+                    zorder=2,
                     c="steelblue",
                     ls="-.",
                     label="nom sim" if cnt_step[idx_seg] == 0 else "",  # only print once
                 )
 
             axs[idx_state].set_ylabel(state_labels[idx_state])
+
+        if show_act:
+            # Plot the actions
+            for idx_act in range(dim_act):
+                # Plot the real segments
+                cnt_step = [0]
+                for segment_gt in segments_ground_truth[idx_r]:
+                    axs[dim_state + idx_act].plot(
+                        np.arange(cnt_step[-1], cnt_step[-1] + segment_gt.length),
+                        segment_gt.get_data_values("actions", truncate_last=False)[:, idx_act],
+                        zorder=0,
+                        c="black",
+                        label="target" if cnt_step[-1] == 0 else "",  # only print once
+                    )
+                    cnt_step.append(cnt_step[-1] + segment_gt.length)
+
+                # Plot the maximum likely simulated segments
+                for idx_seg, sml in enumerate(segments_multiple_envs[idx_r]):
+                    for idx_dp, sdp in enumerate(sml):
+                        axs[dim_state + idx_act].plot(
+                            np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sdp.length),
+                            sdp.get_data_values("actions", truncate_last=False)[:, idx_act],
+                            zorder=2 if idx_dp == 0 else 0,  # most likely on top
+                            c=colors[idx_dp],
+                            ls="--",
+                            label=f"ml sim {idx_dp}" if cnt_step[idx_seg] == 0 else "",  # only print once for each dp
+                        )
+                        if plot_type.lower() != "samples":
+                            # Stop here, unless the rollouts of most likely all domain parameters should be plotted
+                            break
+
+                if plot_type.lower() == "confidence":
+                    len_segs = len(segments_multiple_envs[idx_r][0][0])
+                    assert check_all_lengths_equal(
+                        segments_multiple_envs[idx_r][0]
+                    )  # all segments need to be equally long
+
+                    acts_all = []
+                    for idx_dp in range(num_samples):
+                        # Reconstruct the step sequences for all domain parameters
+                        ss_dp = StepSequence.concat(
+                            [seg_dp[idx_dp] for seg_dp in [segs_ro for segs_ro in segments_multiple_envs[idx_r]]]
+                        )
+                        acts = ss_dp.get_data_values("actions", truncate_last=False)
+                        acts_all.append(acts)
+                    acts_all = np.stack(acts_all, axis=0)
+                    acts_mean = np.mean(acts_all, axis=0)
+                    acts_std = np.std(acts_all, axis=0)
+
+                    for idx_seg in range(len(segments_multiple_envs[idx_r])):
+                        m_i = acts_mean[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_act]
+                        s_i = acts_std[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_act]
+                        draw_curve(
+                            "mean_std",
+                            axs[dim_state + idx_act],
+                            pd.DataFrame(dict(mean=m_i, std=s_i)),
+                            x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
+                            show_legend=False,
+                            curve_label="ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
+                            area_label=None,
+                            plot_kwargs=dict(color="gray"),
+                        )
+
+                # Plot the nominal simulation's segments
+                for idx_seg, sn in enumerate(segments_nominal[idx_r]):
+                    axs[dim_state + idx_act].plot(
+                        np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sn.length),
+                        sn.get_data_values("actions", truncate_last=False)[:, idx_act],
+                        zorder=2,
+                        c="steelblue",
+                        ls="-.",
+                        label="nom sim" if cnt_step[idx_seg] == 0 else "",  # only print once
+                    )
+
+                axs[dim_state + idx_act].set_ylabel(act_labels[idx_act])
 
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
         use_rec = ", using rec actions" if use_rec else ""

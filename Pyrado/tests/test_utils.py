@@ -39,14 +39,20 @@ from pyrado.utils.checks import is_iterator, check_all_types_equal, check_all_le
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn, skyline
 from pyrado.utils.input_output import completion_context, print_cbt_once
-from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp, diff_coeffs
+from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp, numerical_differentiation_coeffs
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.optimizers import GSS
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
-from pyrado.utils.data_processing import RunningStandardizer, Standardizer, scale_min_max, MinMaxScaler
+from pyrado.utils.data_processing import (
+    RunningStandardizer,
+    Standardizer,
+    scale_min_max,
+    MinMaxScaler,
+    correct_atleast_2d,
+)
 from pyrado.utils.data_processing import RunningNormalizer, normalize
 from pyrado.logger.iteration import IterationTracker
 
@@ -621,7 +627,7 @@ def test_save_load(obj, file_ext: str, tmpdir, prefix: str, suffix: str, use_sta
     [1, 1e-4],
 )
 def test_diff_coeffs(s, d, h):
-    coeffs, order = diff_coeffs(s, d, h)
+    coeffs, order = numerical_differentiation_coeffs(s, d, h)
     assert sum(coeffs) == 0
     assert order > 0
 
@@ -728,9 +734,15 @@ def test_iteration_tracker():
     assert list(tracker) == [("meta", 1), ("sub", 42)]
     assert tracker.pop() == ("sub", 42)
     assert tracker.pop() == ("meta", 1)
-    assert tracker.get("magic") == None
+    assert tracker.get("magic") is None
     with tracker.iteration("meta", 1):
         assert tracker.peek() == ("meta", 1)
         with tracker.iteration("sub", 42):
             assert tracker.get("sub") == 42
             assert tracker.format() == "meta_1-sub_42"
+
+
+@pytest.mark.parametrize("x", [np.empty((7,)), np.empty((7, 1)), to.empty((7,)), to.empty((7, 1))])
+def test_correct_atleast_2d(x):
+    x_corrected = correct_atleast_2d(x)
+    assert x_corrected.shape[0] == len(x)

@@ -59,10 +59,6 @@ if __name__ == "__main__":
     # Generate real_world observations
     num_real_rollouts = 1
     num_segments = 1
-    # TODO delete below
-    # rollout_worker = SimRolloutSamplerForSBI(env_sim, policy, dp_mapping, embedding, num_segments=num_segments)
-    # dp_nom_to = to.tensor(list(dp_nom.values()))
-    # data_real = to.stack([rollout_worker(dp_nom_to).squeeze() for _ in range(num_real_rollouts)])
 
     # Algorithm
     algo_hparam = dict(

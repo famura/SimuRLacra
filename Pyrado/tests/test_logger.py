@@ -34,7 +34,7 @@ import shutil
 
 from pyrado import TEMP_DIR
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml, load_dict_from_yaml
-from pyrado.utils.order import get_immediate_subdirs
+from pyrado.utils.ordering import get_immediate_subdirs
 
 
 def test_experiment():

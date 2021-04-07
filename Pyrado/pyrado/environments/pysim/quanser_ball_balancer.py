@@ -183,10 +183,10 @@ class QBallBalancerSim(SimPyEnv, Serializable):
             eta_m=0.69,  # motor efficiency [-]
             B_eq=0.015,  # equivalent viscous damping coefficient w.r.t. load [N*m*s/rad]
             c_frict=0.05,  # viscous friction coefficient [N*s/m]
-            V_thold_x_pos=V_tholds["V_thold_x_pos"],  # voltage required to move the x servo in positive dir
-            V_thold_x_neg=V_tholds["V_thold_x_neg"],  # voltage required to move the x servo in negative dir
-            V_thold_y_pos=V_tholds["V_thold_y_pos"],  # voltage required to move the y servo in positive dir
-            V_thold_y_neg=V_tholds["V_thold_y_neg"],  # voltage required to move the y servo in negative dir
+            V_thold_x_pos=V_tholds["V_thold_x_pos"],  # min. voltage required to move the x servo in the pos. dir. [V]
+            V_thold_x_neg=V_tholds["V_thold_x_neg"],  # min. voltage required to move the x servo in the neg. dir. [V]
+            V_thold_y_pos=V_tholds["V_thold_y_pos"],  # min. voltage required to move the y servo in the pos. dir. [V]
+            V_thold_y_neg=V_tholds["V_thold_y_neg"],  # min. voltage required to move the y servo in the neg. dir. [V]
             offset_th_x=0.0,  # angular offset of the x axis motor shaft [rad]
             offset_th_y=0.0,
         )  # angular offset of the y axis motor shaft [rad]
@@ -246,13 +246,12 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         offset_th_x = self.domain_param["offset_th_x"]
         offset_th_y = self.domain_param["offset_th_y"]
 
-        if not self._simple_dynamics:
-            # Apply a voltage dead zone (i.e. below a certain amplitude the system does not move). This is a very
-            # simple model of static friction. Experimentally evaluated the voltage required to get the plate moving.
-            if V_thold_x_neg <= act[0] <= V_thold_x_pos:
-                act[0] = 0
-            if V_thold_y_neg <= act[1] <= V_thold_y_pos:
-                act[1] = 0
+        # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move. This is a very
+        # simple model of static friction. Experimentally evaluated the voltage required to get the plate moving.
+        if not self._simple_dynamics and V_thold_x_neg <= act[0] <= V_thold_x_pos:
+            act[0] = 0
+        if not self._simple_dynamics and V_thold_y_neg <= act[1] <= V_thold_y_pos:
+            act[1] = 0
 
         # State
         th_x = self.state[0] + offset_th_x  # angle of the x axis servo (load)

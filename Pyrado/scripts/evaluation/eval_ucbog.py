@@ -37,7 +37,7 @@ import pyrado
 from matplotlib import pyplot as plt
 from pyrado.logger.experiment import load_dict_from_yaml
 from pyrado.sampling.sequences import *
-from pyrado.utils.order import filter_los_by_lok
+from pyrado.utils.ordering import filter_los_by_lok
 
 
 if __name__ == "__main__":

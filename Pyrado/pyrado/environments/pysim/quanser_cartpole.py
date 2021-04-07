@@ -122,11 +122,15 @@ class QCartPoleSim(SimPyEnv, Serializable):
             r_mp=6.35e-3,  # motor pinion radius [m]
             R_m=2.6,  # motor armature resistance [Ohm]
             k_m=7.67e-3,  # motor torque constant [N*m/A] = back-EMF constant [V*s/rad]
-            B_pole=0.0024,  # viscous coefficient at the pole [N*s]
-            B_eq=5.4,  # equivalent Viscous damping coefficient [N*s/m]
+            B_pole=0.0024,  # viscous coefficient at the pole bearing [N*s]
+            B_eq=5.4,  # equivalent Viscous damping coefficient between cart and track [N*s/m]
+            # B_p is an approximation, since the friction torque should actually depend on the normal force between
+            # the cart and the pole. However, one could use one approx. equivalent mass for that force.
             m_pole=m_pole,  # mass of the pole [kg]
             l_pole=l_pole,  # half pole length [m]
             mu_cart=0.02,  # Coulomb friction coefficient cart-rail [-]
+            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _calc_constants(self):
@@ -161,6 +165,11 @@ class QCartPoleSim(SimPyEnv, Serializable):
         cos_th = np.cos(th)
         m_tot = m_c + m_p
 
+        # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
+        # This is a very simple model of static friction.
+        if not self._simple_dynamics and self.domain_param["V_thold_neg"] <= act <= self.domain_param["V_thold_pos"]:
+            act = 0
+
         # Actuation force coming from the carts motor torque
         f_act = (eta_g * K_g * eta_m * k_m) / (R_m * r_mp) * (eta_m * act - K_g * k_m * x_dot / r_mp)
 
@@ -172,10 +181,10 @@ class QCartPoleSim(SimPyEnv, Serializable):
             f_normal = m_tot * g - m_p * l_p / 2 * (sin_th * self._th_ddot + cos_th * th_dot ** 2)
             if f_normal < 0:
                 # The normal force on the cart is negative, i.e. it is lifted up. This can be cause by a very high
-                # angular momentum of the pole
+                # angular momentum of the pole. Here we neglect this effect.
                 f_c = 0.0
             else:
-                f_c = mu_c * f_normal * np.sign(f_normal * x_dot)
+                f_c = mu_c * f_normal * np.sign(x_dot)
             f_tot = float(f_act - f_c)
 
         M = np.array(
@@ -295,7 +304,7 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
         :param long: set to `True` if using the long pole, else `False`
-        :param simple_dynamics: if `True, use the simpler dynamics model from Quanser. If `False`, use a dynamics model
+        :param simple_dynamics: if `True`, use the simpler dynamics model from Quanser. If `False`, use a dynamics model
                                 which includes friction
         :param wild_init: if `True` the init state space is increased drastically, e.g. the initial pendulum angle
                           can be in $[-\pi, +\pi]$

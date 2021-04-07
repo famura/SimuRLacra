@@ -40,7 +40,7 @@ from matplotlib import pyplot as plt
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.order import get_immediate_subdirs, natural_sort
+from pyrado.utils.ordering import get_immediate_subdirs, natural_sort
 
 
 class ResultContainer:

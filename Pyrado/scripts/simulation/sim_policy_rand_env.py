@@ -31,7 +31,7 @@ Simulate (with animation) a rollout in a live perturbed environment.
 """
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.utils import print_domain_params
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     if algo.name in ["npdr", "bayessim"]:
         # Sample domain parameters from the posterior, and
-        domain_params, _ = NPDR.eval_posterior(
+        domain_params, _ = SBIBase.eval_posterior(
             kwout["posterior"],
             kwout["observations_real"],
             num_samples=args.num_samples,
@@ -79,7 +79,7 @@ if __name__ == "__main__":
             subrtn_sbi_sampling_hparam=None,
         )
         env = DomainRandWrapperBuffer(env, randomizer=None, selection="random")
-        NPDR.fill_domain_param_buffer(env, algo.dp_mapping, domain_params.squeeze(0))
+        SBIBase.fill_domain_param_buffer(env, algo.dp_mapping, domain_params.squeeze(0))
         print_cbt("Using loaded randomizer obtained from posterior.", "c")
 
     elif not isinstance(env, DomainRandWrapper):
