@@ -171,12 +171,12 @@ class DomainRandomizer:
                 # Return a list with all domain parameter sets
                 copy = deepcopy_or_clone(self._params_pert_list)
                 if dtype == "numpy":  # nothing to be done for torch
-                    for i, k in zip(range(len(copy)), self._params_pert_dict.keys()):
-                        copy[i][k] = copy[i][k].detach().numpy()
+                    for i in range(len(copy)):
+                        for k in copy[i].keys():
+                            copy[i][k] = copy[i][k].detach().numpy()
 
             elif fmt == "dict":
                 # Returns a dict (as many entries as parameters) with lists as values (as many entries as samples)
-                assert isinstance(self._params_pert_dict, dict)
                 copy = deepcopy_or_clone(self._params_pert_dict)
                 if dtype == "numpy":  # nothing to be done for torch
                     for key in copy.keys():
@@ -197,8 +197,9 @@ class DomainRandomizer:
                 copy = deepcopy_or_clone(self._params_pert_list[:num_samples])
                 # Return a list with the fist num_samples domain parameter sets
                 if dtype == "numpy":  # nothing to be done for torch
-                    for i, k in zip(range(num_samples), self._params_pert_dict.keys()):
-                        copy[i][k] = copy[i][k].detach().numpy()
+                    for i in range(num_samples):
+                        for k in copy[i].keys():
+                            copy[i][k] = copy[i][k].detach().numpy()
 
             elif fmt == "dict":
                 # Return a dict with as many keys as perturbed params and num_samples values for each of them
