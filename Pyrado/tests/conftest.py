@@ -31,6 +31,7 @@ This file is found by pytest and contains fixtures (i.e., common defaults) that 
 """
 import multiprocessing as mp
 import pytest
+import torch as to
 
 from pyrado.domain_randomization.domain_parameter import (
     MultivariateNormalDomainParam,
@@ -61,6 +62,11 @@ from pyrado.policies.special.dummy import DummyPolicy, IdlePolicy
 from pyrado.policies.special.time import TimePolicy, TraceableTimePolicy
 
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
+from pyrado.spaces import BoxSpace
+from pyrado.utils.data_sets import TimeSeriesDataSet
+from pyrado.utils.functions import skyline
+
+
 to.set_default_dtype(to.float32)
 
 # Check if RcsPySim, Bullet, and Vortex are available
@@ -115,7 +121,7 @@ mp.set_start_method("spawn", force=True)
 
 
 # --------------------
-# Environment fixtures
+# Environment Fixtures
 # --------------------
 
 
@@ -639,7 +645,7 @@ class DefaultEnvs:
 
 
 # ---------------
-# Policy fixtures
+# Policy Fixtures
 # ---------------
 
 
@@ -764,4 +770,26 @@ def default_randomizer():
         NormalDomainParam(name="length", mean=4, std=0.6, clip_up=50.1),
         UniformDomainParam(name="time_delay", mean=13, halfspan=6, clip_up=17, roundint=True),
         MultivariateNormalDomainParam(name="multidim", mean=10 * to.ones((2,)), cov=2 * to.eye(2), clip_up=11),
+    )
+
+
+# --------------
+# Other Fixtures
+# --------------
+
+
+@pytest.fixture(
+    scope="function",
+    params=[
+        (skyline(0.02, 20.0, BoxSpace(0.5, 3, shape=(1,)), BoxSpace(-2.0, 3.0, shape=(1,)))[1], 0.7, 50, False, True),
+    ],
+    ids=["skyline_0.8_50_notstdized_scaled"],
+)
+def dataset_ts(request):
+    return TimeSeriesDataSet(
+        data=to.from_numpy(request.param[0]).to(dtype=to.get_default_dtype()),
+        ratio_train=request.param[1],
+        window_size=request.param[2],
+        standardize_data=request.param[3],
+        scale_min_max_data=request.param[4],
     )

@@ -51,7 +51,8 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    data_set_name = "skyline"
+    # Select the data set
+    data_set_name = args.mode or "skyline"
 
     # Experiment
     ex_dir = setup_experiment(TSPred.name, NFPolicy.name)

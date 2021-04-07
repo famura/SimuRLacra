@@ -39,6 +39,7 @@ import pyrado
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.rnn import LSTMPolicy
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
@@ -51,7 +52,8 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    data_set_name = "skyline"
+    # Select the data set
+    data_set_name = args.mode or "skyline"
 
     # Experiment
     ex_dir = setup_experiment(TSPred.name, LSTMPolicy.name)
@@ -66,6 +68,13 @@ if __name__ == "__main__":
             dt=dt, t_end=20.0, t_intvl_space=BoxSpace(0.5, 3, shape=(1,)), val_space=BoxSpace(-2.0, 3.0, shape=(1,))
         )
         data = to.from_numpy(vals).view(-1, 1)
+    elif "qq-su" in data_set_name:
+        data = pyrado.load("rollout_real_2021-02-10_14-24-04.pkl", osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz"))
+        assert isinstance(data, StepSequence)
+        assert hasattr(data, "states")
+        states = to.from_numpy(data.states).to(dtype=to.get_default_dtype())
+        actions = to.from_numpy(data.actions).to(dtype=to.get_default_dtype())
+        data = to.cat([states[:-1], actions], dim=1)  # truncate final state
     else:
         data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "time_series", f"{data_set_name}.csv"))
         if data_set_name == "daily_min_temperatures":
@@ -77,24 +86,26 @@ if __name__ == "__main__":
         else:
             raise pyrado.ValueErr(
                 given=data_set_name,
-                eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
-                "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4",
+                eq_constraint="skyline, qq-su, daily_min_temperatures, monthly_sunspots, oscillation_50Hz_initpos-0.5, "
+                "or oscillation_100Hz_initpos-0.4",
             )
 
     # Dataset
     data_set_hparam = dict(
-        name=data_set_name, ratio_train=0.8, window_size=50, standardize_data=False, scale_min_max_data=True
+        name=data_set_name, ratio_train=0.9, window_size=1, standardize_data=False, scale_min_max_data=False
     )
     dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
     # Policy
-    policy_hparam = dict(hidden_size=20, num_recurrent_layers=1)
-    policy = LSTMPolicy(spec=EnvSpec(act_space=InfBoxSpace(shape=1), obs_space=InfBoxSpace(shape=1)), **policy_hparam)
+    policy_hparam = dict(hidden_size=50, num_recurrent_layers=1)
+    policy = LSTMPolicy(
+        spec=EnvSpec(act_space=InfBoxSpace(dataset.dim_data), obs_space=InfBoxSpace(dataset.dim_data)), **policy_hparam
+    )
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=1000,
-        windowed=True,
+        max_iter=2000,
+        windowed=False,
         cascaded=False,
         optim_class=optim.Adam,
         optim_hparam=dict(lr=1e-2, eps=1e-8, weight_decay=1e-4),  # momentum=0.7

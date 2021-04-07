@@ -30,6 +30,7 @@ import pytest
 from copy import deepcopy
 
 from pyrado.algorithms.regression.nonlin_regression import NonlinRegression
+from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.dql import DQL
@@ -63,6 +64,7 @@ from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.functions import noisy_nonlin_fcn
+from tests.environment_wrappers.mock_env import MockEnv
 
 
 @pytest.fixture
@@ -435,3 +437,58 @@ def test_rff_regression(ex_dir, num_feat_per_dim: int, loss_fcn: Callable, algo_
     loss_after = loss_fcn(policy(inputs), targets)
     assert loss_after < loss_before
     assert algo.curr_iter >= algo_hparam["max_iter_no_improvement"]
+
+
+@pytest.mark.recurrent_policy
+@pytest.mark.parametrize("env", [MockEnv(obs_space=InfBoxSpace(shape=1), act_space=InfBoxSpace(shape=1))])
+@pytest.mark.parametrize(
+    "policy",
+    [
+        # Two-headed policies are not supported
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+    ],
+    ids=["rnn", "lstm", "gru", "adn", "nf"],
+    indirect=True,
+)
+@pytest.mark.parametrize("windowed", [False, True], ids=["windowed", "not_windowed"])
+@pytest.mark.parametrize("cascaded", [False, True], ids=["cascaded", "not_cascaded"])
+def test_time_series_prediction(ex_dir, dataset_ts, env: MockEnv, policy: Policy, windowed: bool, cascaded: bool):
+    algo_hparam = dict(
+        max_iter=1, windowed=windowed, cascaded=cascaded, optim_hparam=dict(lr=1e-2, eps=1e-8, weight_decay=1e-4)
+    )
+    algo = TSPred(ex_dir, dataset_ts, policy, **algo_hparam)
+
+    # Train
+    algo.train()
+    assert algo.curr_iter == 1
+
+    if windowed:
+        inp_seq = dataset_ts.data_trn_inp
+        targ_seq = dataset_ts.data_trn_targ
+    else:
+        inp_seq = dataset_ts.data_trn_ws
+        targ_seq = dataset_ts.data_trn_ws
+
+    # Make the predictions
+    preds, hidden = TSPred.predict(policy, inp_seq, windowed, cascaded, hidden=None)
+
+    # Check types
+    assert isinstance(preds, to.Tensor)
+    assert isinstance(hidden, to.Tensor)
+    # Check sizes
+    if windowed:
+        assert preds.shape[0] == 1
+    else:
+        assert preds.shape[0] == inp_seq.shape[0]
+    assert preds.shape[1] == env.spec.act_space.flat_dim
+    assert hidden.numel() == policy.hidden_size
+
+    preds, loss = TSPred.evaluate(
+        policy, inp_seq, targ_seq, windowed, cascaded, num_init_samples=2, hidden=None, verbose=False
+    )
+    assert isinstance(preds, to.Tensor)
+    assert isinstance(loss, to.Tensor)

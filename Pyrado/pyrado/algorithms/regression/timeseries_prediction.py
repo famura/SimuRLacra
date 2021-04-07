@@ -60,7 +60,6 @@ class TSPred(Algorithm):
         loss_fcn=nn.MSELoss(),
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
-        num_workers: int = 1,
         logger: StepLogger = None,
     ):
         """
@@ -79,7 +78,6 @@ class TSPred(Algorithm):
         :param loss_fcn: loss function for training, by default `torch.nn.MSELoss()`
         :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)
         :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler
-        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(dataset, TimeSeriesDataSet):
@@ -122,9 +120,10 @@ class TSPred(Algorithm):
                 loss_trn_single.backward()
                 self.optim.step()
                 loss_trn.append(loss_trn_single.item())
+
             loss_trn = to.mean(to.tensor(loss_trn))
 
-        elif not self.windowed:
+        else:
             # Reset the gradients
             self.optim.zero_grad()
 
@@ -152,14 +151,16 @@ class TSPred(Algorithm):
                     ]
                 )
                 targs_tst = to.stack([targ.unsqueeze(0) for _, targ in self.dataset.data_tst_seqs])
-            elif not self.windowed:
+
+            else:
                 preds_tst = TSPred.predict(self._policy, self.dataset.data_tst_inp, self.windowed, self.cascaded)[0]
                 targs_tst = self.dataset.data_tst_targ
+
             loss_tst = self.loss_fcn(targs_tst, preds_tst)
 
         # Log metrics computed from the old policy (loss value from update on this training sample)
-        self.logger.add_value("trn loss", loss_trn, 6)
-        self.logger.add_value("tst loss", loss_tst, 6)
+        self.logger.add_value("trn loss", loss_trn, 8)
+        self.logger.add_value("tst loss", loss_tst, 8)
         self.logger.add_value(
             "min mag policy param", self._policy.param_values[to.argmin(abs(self._policy.param_values))]
         )

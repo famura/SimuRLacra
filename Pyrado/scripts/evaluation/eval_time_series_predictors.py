@@ -32,10 +32,10 @@ Compare potential based neural networks to classical recurrent networks for time
 import numpy as np
 import os.path as osp
 from matplotlib import pyplot as plt
-from pyrado.utils.argparser import get_argparser
 from warnings import warn
 
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_equal
 from pyrado.utils.experiments import load_experiment, read_csv_w_replace
 
@@ -45,10 +45,13 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Get the experiments' directories to load from
-    ex_dirs = [
-        # osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME', 'EX_NAME'),
-        ""
-    ]
+    ex_dirs = (
+        [
+            # osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME', 'EX_NAME'),
+        ]
+        if args.dir is None
+        else [args.dir]
+    )
 
     # Loading the policies data sets
     policies = []
@@ -65,10 +68,10 @@ if __name__ == "__main__":
     if not check_all_equal(datasets):
         warn("Not all data sets are equal.")
         [print(d) for d in datasets]
-        idx = int(input("Which data set should be selected? Enter 0-based index: "))
+        idx_p = int(input("Which data set should be selected? Enter 0-based index: "))
     else:
-        idx = 0  # we only need one since they are all equal
-    dataset = datasets[idx]
+        idx_p = 0  # we only need one since they are all equal
+    dataset = datasets[idx_p]
 
     # Adaptable settings
     num_init_samples = dataset.window_size
@@ -97,38 +100,59 @@ if __name__ == "__main__":
     else:
         prefix = ""
 
-    # Plot training and testing predictions
-    fig_pred, axs_pred = plt.subplots(nrows=2, figsize=(16, 10))
-    fig_pred.canvas.set_window_title(dataset.name)
+    # Create the figures
+    fig_trn, axs_trn = plt.subplots(nrows=dataset.dim_data, figsize=(16, 10))
+    fig_tst, axs_tst = plt.subplots(nrows=dataset.dim_data, figsize=(16, 10))
+    fig_trn.canvas.set_window_title(dataset.name)
+    fig_tst.canvas.set_window_title(dataset.name)
 
-    for i in range(2):
-        targs = dataset.data_trn_targ if i == 0 else dataset.data_tst_targ
-        losses = loss_trn_list if i == 0 else loss_tst_list
+    # Plot the predictions on the training data
+    for idx_dim in range(dataset.dim_data):
+        axs_trn[idx_dim].plot(dataset.data_trn_targ[:, idx_dim].numpy(), lw=1.5, ls="--", c="gray", label="targ")
 
-        axs_pred[i].plot(targs.numpy(), label="target", c="gray", lw=1.5, ls="--")
-        for idx, policy in enumerate(policies):
-            preds = preds_trn_list[idx] if i == 0 else preds_tst_list[idx]
-            axs_pred[i].plot(
-                np.arange(num_init_samples, targs.shape[0]),
+        for idx_p, policy in enumerate(policies):
+            preds = preds_trn_list[idx_p][:, idx_dim]
+            axs_trn[idx_dim].plot(
+                np.arange(num_init_samples, dataset.data_trn_targ.shape[0]),
                 preds.detach().cpu().numpy(),
-                label=f"{policy.name} loss: {losses[idx].item():.2e}",
+                label=f"{policy.name} loss: {loss_trn_list[idx_p].item():.2e}",
             )
-        axs_pred[i].set_xlabel("samples")
-        axs_pred[i].set_ylabel(prefix + "values")
-        axs_pred[i].set_title("Training Data" if i == 0 else "Testing Data")
-        axs_pred[i].legend(ncol=len(policies) + 1)
+
+        # Annotate
+        axs_trn[idx_dim].set_ylabel(prefix + "values")
+        axs_trn[idx_dim].legend(ncol=len(policies) + 1)
+    axs_trn[0].set_title("Training Data")
+    axs_trn[-1].set_xlabel("samples")
+
+    # Plot the predictions on the testing data
+    for idx_dim in range(dataset.dim_data):
+        axs_tst[idx_dim].plot(dataset.data_tst_targ[:, idx_dim].numpy(), lw=1.5, ls="--", c="gray", label="targ")
+
+        for idx_p, policy in enumerate(policies):
+            preds = preds_tst_list[idx_p][:, idx_dim]
+            axs_tst[idx_dim].plot(
+                np.arange(num_init_samples, dataset.data_tst_targ.shape[0]),
+                preds.detach().cpu().numpy(),
+                label=f"{policy.name} loss: {loss_tst_list[idx_p].item():.2e}",
+            )
+
+        # Annotate
+        axs_tst[idx_dim].set_ylabel(prefix + "values")
+        axs_tst[idx_dim].legend(ncol=len(policies) + 1)
+    axs_tst[0].set_title("Testing Data")
+    axs_tst[-1].set_xlabel("samples")
 
     # Plot training and testing loss
     fig_loss, axs_loss = plt.subplots(nrows=2, figsize=(16, 10))
     fig_loss.canvas.set_window_title(dataset.name)
 
-    for i in range(2):
-        for idx, policy in enumerate(policies):
-            axs_loss[i].plot(logged_losses[idx][i], label=f"{policy.name}")
-        axs_loss[i].set_yscale("log")
-        axs_loss[i].set_xlabel("iteration")
-        axs_loss[i].set_ylabel("average MSE loss")
-        axs_loss[i].set_title("Training Loss" if i == 0 else "Testing Loss")
-        axs_loss[i].legend(ncol=len(policies))
+    for idx_dim in range(2):
+        for idx_p, policy in enumerate(policies):
+            axs_loss[idx_dim].plot(logged_losses[idx_p][idx_dim], label=f"{policy.name}")
+        axs_loss[idx_dim].set_yscale("log")
+        axs_loss[idx_dim].set_xlabel("iteration")
+        axs_loss[idx_dim].set_ylabel("average MSE loss")
+        axs_loss[idx_dim].set_title("Training Loss" if idx_dim == 0 else "Testing Loss")
+        axs_loss[idx_dim].legend(ncol=len(policies))
 
     plt.show()

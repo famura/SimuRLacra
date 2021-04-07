@@ -80,7 +80,7 @@ class TimeSeriesDataSet(Dataset):
         ratio_train: float,
         standardize_data: bool = False,
         scale_min_max_data: bool = False,
-        name: str = "Unnamed data set",
+        name: str = "UnnamedDataSet",
     ):
         r"""
         Constructor
@@ -105,7 +105,7 @@ class TimeSeriesDataSet(Dataset):
         if standardize_data and scale_min_max_data:
             raise pyrado.ValueErr(msg="Scaling and normalizing the data at the same time is not supported!")
 
-        self.data_all_raw = to.atleast_2d(data).T if data.ndimension() == 1 else data  # samples along rows
+        self.data_all_raw = to.atleast_2d(data).T if data.ndim == 1 else data  # samples along rows
         self._ratio_train = ratio_train
         self._window_size = window_size
         self.name = name
@@ -126,12 +126,12 @@ class TimeSeriesDataSet(Dataset):
         self.data_tst = self.data_all[self.num_samples_trn :]
 
         # Targets are the next time steps
-        self.data_all_inp = self.data_all[:-1, :]
-        self.data_trn_inp = self.data_trn[:-1, :]
-        self.data_tst_inp = self.data_tst[:-1, :]
-        self.data_all_targ = self.data_all[1:, :]
-        self.data_trn_targ = self.data_trn[1:, :]
-        self.data_tst_targ = self.data_tst[1:, :]
+        self.data_all_inp = self.data_all[:-1]
+        self.data_trn_inp = self.data_trn[:-1]
+        self.data_tst_inp = self.data_tst[:-1]
+        self.data_all_targ = self.data_all[1:]
+        self.data_trn_targ = self.data_trn[1:]
+        self.data_tst_targ = self.data_tst[1:]
 
         # Create sequences
         self.data_trn_ws = self.cut_to_window_size(self.data_trn, self._window_size)
@@ -147,7 +147,7 @@ class TimeSeriesDataSet(Dataset):
 
     def __getitem__(self, idx: Union[int, slice]):
         """ Get one sample from the complete data set (not split into sequences). """
-        return self.data_all[idx, :]
+        return self.data_all[idx]
 
     def __eq__(self, other) -> bool:
         """ Check if two data sets are equal by comparing the data and properties. """
@@ -176,6 +176,13 @@ class TimeSeriesDataSet(Dataset):
     def window_size(self) -> int:
         """ Get the length of the sequences fed to the policy for predicting the next value. """
         return self._window_size
+
+    @property
+    def dim_data(self) -> int:
+        """ Get the data's number of dimensions. """
+        if not self.data_all.ndim == 2:
+            raise pyrado.ShapeErr(given=self.data_all, expected_match=(-1, 2))
+        return self.data_all.shape[1]
 
     @property
     def num_samples_trn(self) -> int:

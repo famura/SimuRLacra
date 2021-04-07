@@ -42,31 +42,11 @@ from pyrado.policies.features import *
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
-from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
-from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import RenderMode, EnvSpec
-from pyrado.utils.functions import skyline
 from pyrado.utils.nn_layers import IndiNonlinLayer
 from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
 from tests.environment_wrappers.mock_env import MockEnv
-
-
-@pytest.fixture(
-    scope="function",
-    params=[
-        (skyline(0.02, 20.0, BoxSpace(0.5, 3, shape=(1,)), BoxSpace(-2.0, 3.0, shape=(1,)))[1], 0.7, 50, False, True),
-    ],
-    ids=["skyline_0.8_50_notstdized_scaled"],
-)
-def tsdataset(request):
-    return TimeSeriesDataSet(
-        data=to.from_numpy(request.param[0]),
-        ratio_train=request.param[1],
-        window_size=request.param[2],
-        standardize_data=request.param[3],
-        scale_min_max_data=request.param[4],
-    )
 
 
 @pytest.mark.features
@@ -844,43 +824,6 @@ def test_indi_nonlin_layer(in_features, same_nonlin, bias, weight):
     o = layer(i)
     assert isinstance(o, to.Tensor)
     assert i.shape == o.shape
-
-
-@pytest.mark.parametrize("env", [MockEnv(obs_space=InfBoxSpace(shape=1), act_space=InfBoxSpace(shape=1))])
-@pytest.mark.parametrize(
-    "policy",
-    [
-        # Two-headed policies are not supported
-        "rnn_policy",
-        "lstm_policy",
-        "gru_policy",
-        "adn_policy",
-        "nf_policy",
-    ],
-    ids=["rnn", "lstm", "gru", "adn", "nf"],
-    indirect=True,
-)
-@pytest.mark.parametrize("windowed", [True, False], ids=["windowed", "not_windowed"])
-@pytest.mark.parametrize("cascaded", [True, False], ids=["cascaded", "not_cascaded"])
-def test_tspred(tsdataset, env, policy, windowed, cascaded):
-    if windowed:
-        inp_seq = tsdataset.data_trn_inp
-    else:
-        inp_seq = tsdataset.data_trn_ws
-
-    # Make the predictions
-    preds, hidden = TSPred.predict(policy, inp_seq, windowed, cascaded, hidden=None)
-
-    # Check types
-    assert isinstance(preds, to.Tensor)
-    assert isinstance(hidden, to.Tensor)
-    # Check sizes
-    if windowed:
-        assert preds.shape[0] == 1
-    else:
-        assert preds.shape[0] == inp_seq.shape[0]
-    assert preds.shape[1] == env.spec.act_space.flat_dim
-    assert hidden.numel() == policy.hidden_size
 
 
 @to.no_grad()
