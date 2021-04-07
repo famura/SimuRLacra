@@ -77,27 +77,27 @@ if __name__ == "__main__":
         # Create the environment for evaluating
         env = QBallBalancerSim(dt=dt, max_steps=args.max_steps, load_experimental_tholds=True)
 
-        # param_spec["g"] = np.linspace(8.91, 12.91, num=11, endpoint=True)
-        # param_spec["m_ball"] = np.linspace(0.001, 0.033, num=11, endpoint=True)
-        # param_spec["r_ball"] = np.linspace(0.01, 0.1, num=11, endpoint=True)
-        # param_spec["r_arm"] = np.linspace(0.0254*0.3, 0.0254*1.7, num=11, endpoint=True)
-        # param_spec["l_plate"] = np.linspace(0.275*0.3, 0.275*1.7, num=11, endpoint=True)
-        # param_spec["J_l"] = np.linspace(5.2822e-5 * 0.5, 5.2822e-5 * 1.5, num=11, endpoint=True)
-        # param_spec["J_m"] = np.linspace(4.6063e-7*0.5, 4.6063e-7*1.5, num=11, endpoint=True)
-        # param_spec["K_g"] = np.linspace(70*0.5, 70*1.5, num=11, endpoint=True)
-        # param_spec["eta_g"] = np.linspace(0.6, 1.0, num=11, endpoint=True)
-        # param_spec["eta_m"] = np.linspace(0.49, 0.89, num=11, endpoint=True)
-        # param_spec["k_m"] = np.linspace(0.0077*0.3, 0.0077*1.7, num=11, endpoint=True)
-        # param_spec["k_m"] = np.linspace(0.004, 0.012, num=11, endpoint=True)
-        # param_spec["R_m"] = np.linspace(2.6*0.5, 2.6*1.5, num=11, endpoint=True)
-        # param_spec["B_eq"] = np.linspace(0.0, 0.2, num=11, endpoint=True)
-        # param_spec["c_frict"] = np.linspace(0, 0.15, num=11, endpoint=True)
-        # param_spec["V_thold_x_pos"] = np.linspace(0.0, 1.5, num=11, endpoint=True)
-        # param_spec["V_thold_x_neg"] = np.linspace(-1.5, 0.0, num=11, endpoint=True)
-        # param_spec["V_thold_y_pos"] = np.linspace(0.0, 1.5, num=11, endpoint=True)
-        # param_spec["V_thold_y_neg"] = np.linspace(-1.5, 0, num=11, endpoint=True)
-        # param_spec["offset_th_x"] = np.linspace(-15./180*np.pi, 15./180*np.pi, num=11, endpoint=True)
-        # param_spec["offset_th_y"] = np.linspace(-15./180*np.pi, 15./180*np.pi, num=11, endpoint=True)
+        # param_spec['g'] = np.linspace(8.91, 12.91, num=11, endpoint=True)
+        # param_spec['m_ball'] = np.linspace(0.001, 0.033, num=11, endpoint=True)
+        # param_spec['r_ball'] = np.linspace(0.01, 0.1, num=11, endpoint=True)
+        # param_spec['r_arm'] = np.linspace(0.0254*0.3, 0.0254*1.7, num=11, endpoint=True)
+        # param_spec['l_plate'] = np.linspace(0.275*0.3, 0.275*1.7, num=11, endpoint=True)
+        # param_spec['J_l'] = np.linspace(5.2822e-5 * 0.5, 5.2822e-5 * 1.5, num=11, endpoint=True)
+        # param_spec['J_m'] = np.linspace(4.6063e-7*0.5, 4.6063e-7*1.5, num=11, endpoint=True)
+        # param_spec['K_g'] = np.linspace(70*0.5, 70*1.5, num=11, endpoint=True)
+        # param_spec['eta_g'] = np.linspace(0.6, 1.0, num=11, endpoint=True)
+        # param_spec['eta_m'] = np.linspace(0.49, 0.89, num=11, endpoint=True)
+        # param_spec['k_m'] = np.linspace(0.0077*0.3, 0.0077*1.7, num=11, endpoint=True)
+        # param_spec['k_m'] = np.linspace(0.004, 0.012, num=11, endpoint=True)
+        # param_spec['R_m'] = np.linspace(2.6*0.5, 2.6*1.5, num=11, endpoint=True)
+        # param_spec['B_eq'] = np.linspace(0.0, 0.2, num=11, endpoint=True)
+        # param_spec['c_frict'] = np.linspace(0, 0.15, num=11, endpoint=True)
+        # param_spec['V_thold_x_pos'] = np.linspace(0.0, 1.5, num=11, endpoint=True)
+        # param_spec['V_thold_x_neg'] = np.linspace(-1.5, 0.0, num=11, endpoint=True)
+        # param_spec['V_thold_y_pos'] = np.linspace(0.0, 1.5, num=11, endpoint=True)
+        # param_spec['V_thold_y_neg'] = np.linspace(-1.5, 0, num=11, endpoint=True)
+        # param_spec['offset_th_x'] = np.linspace(-15./180*np.pi, 15./180*np.pi, num=11, endpoint=True)
+        # param_spec['offset_th_y'] = np.linspace(-15./180*np.pi, 15./180*np.pi, num=11, endpoint=True)
 
         # Get the experiments' directories to load from
         prefixes = [
@@ -117,20 +117,20 @@ if __name__ == "__main__":
         else:
             env = QCartPoleStabSim(dt=dt, max_steps=args.max_steps)
 
-        # param_spec["g"] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
+        # param_spec['g'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
         param_spec["m_cart"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
-        # param_spec["l_rail"] = np.linspace(0.841*0.7, 0.841*1.3, num=11, endpoint=True)
-        # param_spec["eta_m"] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
-        # param_spec["eta_g"] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
-        # param_spec["K_g"] = np.linspace(3.71*0.7, 3.71*1.3, num=11, endpoint=True)
-        # param_spec["J_m"] = np.linspace(3.9e-7*0.7, 3.9e-7*1.3, num=11, endpoint=True)
-        # param_spec["r_mp"] = np.linspace(6.35e-3*0.7, 6.35e-3*1.3, num=11, endpoint=True)
-        # param_spec["R_m"] = np.linspace(2.6*0.7, 2.6*1.3, num=11, endpoint=True)
-        # param_spec["k_m"] = np.linspace(7.67e-3*0.7, 7.67e-3*1.3, num=11, endpoint=True)
-        # param_spec["B_pole"] = np.linspace(0.0024*0.7, 0.0024*1.3, num=11, endpoint=True)
-        # param_spec["B_eq"] = np.linspace(5.4*0.7, 5.4*1.3, num=11, endpoint=True)
-        # param_spec["m_pole"] = np.linspace(0.127*0.7, 0.127*1.3, num=11, endpoint=True)
-        # param_spec["l_pole"] = np.linspace(0.641/2*0.7, 0.641/2*1.3, num=11, endpoint=True)
+        # param_spec['l_rail'] = np.linspace(0.841*0.7, 0.841*1.3, num=11, endpoint=True)
+        # param_spec['eta_m'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
+        # param_spec['eta_g'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
+        # param_spec['K_g'] = np.linspace(3.71*0.7, 3.71*1.3, num=11, endpoint=True)
+        # param_spec['J_m'] = np.linspace(3.9e-7*0.7, 3.9e-7*1.3, num=11, endpoint=True)
+        # param_spec['r_mp'] = np.linspace(6.35e-3*0.7, 6.35e-3*1.3, num=11, endpoint=True)
+        # param_spec['R_m'] = np.linspace(2.6*0.7, 2.6*1.3, num=11, endpoint=True)
+        # param_spec['k_m'] = np.linspace(7.67e-3*0.7, 7.67e-3*1.3, num=11, endpoint=True)
+        # param_spec['B_pole'] = np.linspace(0.0024*0.7, 0.0024*1.3, num=11, endpoint=True)
+        # param_spec['B_eq'] = np.linspace(5.4*0.7, 5.4*1.3, num=11, endpoint=True)
+        # param_spec['m_pole'] = np.linspace(0.127*0.7, 0.127*1.3, num=11, endpoint=True)
+        # param_spec['l_pole'] = np.linspace(0.641/2*0.7, 0.641/2*1.3, num=11, endpoint=True)
 
         # Get the experiments' directories to load from
         prefixes = [
@@ -146,15 +146,15 @@ if __name__ == "__main__":
     elif env_name == QQubeSwingUpSim.name:
         env = QQubeSwingUpSim(dt=dt, max_steps=args.max_steps)
 
-        param_spec["g"] = np.linspace(9.81 * 0.7, 9.81 * 1.3, num=11, endpoint=True)
-        # param_spec["Rm"] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
-        # param_spec["km"] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
-        # param_spec["Mr"] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
-        # param_spec["Lr"] = np.linspace(0.085*0.7, 0.085*1.3, num=11, endpoint=True)
-        # param_spec["Dr"] = np.linspace(5e-6*0.2, 5e-6*5, num=11, endpoint=True)  # 5e-6
-        # param_spec["Mp"] = np.linspace(0.024*0.7, 0.024*1.3, num=11, endpoint=True)
-        # param_spec["Lp"] = np.linspace(0.129*0.7, 0.129*1.3, num=11, endpoint=True)
-        # param_spec["Dp"] = np.linspace(1e-6*0.2, 1e-6n*5, num=11, endpoint=True)  # 1e-6
+        # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
+        # param_spec['Rm'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
+        # param_spec['km'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
+        # param_spec['Mr'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
+        # param_spec['Lr'] = np.linspace(0.085*0.7, 0.085*1.3, num=11, endpoint=True)
+        # param_spec['Dr'] = np.linspace(5e-6*0.2, 5e-6*5, num=11, endpoint=True)  # 5e-6
+        # param_spec['Mp'] = np.linspace(0.024*0.7, 0.024*1.3, num=11, endpoint=True)
+        # param_spec['Lp'] = np.linspace(0.129*0.7, 0.129*1.3, num=11, endpoint=True)
+        # param_spec['Dp'] = np.linspace(1e-6*0.2, 1e-6n*5, num=11, endpoint=True)  # 1e-6
 
         # Get the experiments' directories to load from
         prefixes = [
@@ -179,11 +179,8 @@ if __name__ == "__main__":
         env = ActDelayWrapper(env)
         # param_spec['act_delay'] = np.linspace(0, 60, num=21, endpoint=True, dtype=int)
 
-    if len(param_spec) != 1:
-        error_msg = "no" if len(param_spec) < 1 else len(param_spec)
-        raise pyrado.ValueErr(
-            msg=f"Vary exactly one domain parameter for this script (was varying {error_msg} parameters)!"
-        )
+    if not len(param_spec.keys()) == 1:
+        raise pyrado.ValueErr(msg="Do not vary more than one domain parameter for this script! (Check action delay.)")
     varied_param_key = "".join(param_spec.keys())  # to get a str
 
     if not check_all_lengths_equal([prefixes, ex_names, ex_labels]):

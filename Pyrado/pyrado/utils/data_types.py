@@ -29,11 +29,10 @@
 import collections
 import numpy as np
 import torch as to
-from copy import deepcopy
-from typing import Sequence, NamedTuple, Union, Any
+import typing
+from typing import Sequence, NamedTuple, Union
 
 import pyrado
-import typing
 from pyrado.spaces.base import Space
 from pyrado.spaces.empty import EmptySpace
 from pyrado.utils.checks import is_sequence

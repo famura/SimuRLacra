@@ -29,14 +29,13 @@
 import itertools
 import os
 import os.path as osp
+import pandas as pd
+import torch as to
 from typing import Callable, Any, Union, List, Optional, Tuple, Iterable
 
-import pandas as pd
 import pyrado
-import torch as to
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,
@@ -45,8 +44,7 @@ from pyrado.environment_wrappers.domain_randomization import (
 )
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.logger.experiment import load_hyperparameters
-from pyrado.policies.base import Policy
+from pyrado.logger.experiment import load_dict_from_yaml
 from pyrado.policies.recurrent.adn import (
     pd_linear,
     pd_cubic,
@@ -55,6 +53,7 @@ from pyrado.policies.recurrent.adn import (
     pd_capacity_32,
     pd_capacity_32_abs,
 )
+from pyrado.policies.base import Policy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_types_equal, is_iterable
@@ -80,7 +79,16 @@ def load_experiment(
         args = get_argparser().parse_args([])
 
     # Hyper-parameters
-    extra["hparams"] = load_hyperparameters(ex_dir)
+    hparams_file_name = "hyperparams.yaml"
+    try:
+        hparams = load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
+        extra["hparams"] = hparams
+    except (pyrado.PathErr, FileNotFoundError, KeyError):
+        print_cbt(
+            f"Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.",
+            "y",
+            bright=True,
+        )
 
     # Algorithm specific
     algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name="algo")
