@@ -138,7 +138,7 @@ class SimOpt(InterruptableAlgorithm):
         # Save initial environments and the prior
         self.save_snapshot(meta_info=None)
         pyrado.save(self._env_real, "env_real.pkl", self._save_dir)
-        pyrado.save(self._subrtn_distr.policy.prior, "prior", "pkl", self._save_dir)
+        pyrado.save(self._subrtn_distr.policy.prior, "prior.pkl", self._save_dir)
 
     @property
     def subroutine_policy(self) -> Algorithm:
