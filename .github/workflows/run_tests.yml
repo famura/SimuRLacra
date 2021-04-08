@@ -21,7 +21,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         run: |
           export COVPATH=$(realpath .)
-          docker run --rm -i -v $COVPATH:/cov simurlacra:test bash -c "pytest Pyrado --cov=./Pyrado --cov-report=xml --verbose -n 2 -m 'not visualization'; sudo cp ./coverage.xml /cov"
+          docker run --rm -i -v $COVPATH:/cov simurlacra:test bash -c "pytest Pyrado --cov=./Pyrado --cov-report=xml --verbose -n 3 -m 'not visualization'; sudo cp ./coverage.xml /cov"
           sudo mkdir /home/user/
           sudo mkdir /home/user/SimuRLacra
           sudo ln -s $COVPATH /home/user/SimuRLacra
