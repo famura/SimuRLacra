@@ -384,14 +384,14 @@ def setup_wm5():
 
 def setup_rcs():
     # we need to apply a patch to the ControllerBase.cpp file of Rcs
-    controller_file = osp.join(rcs_src_dir, 'src', 'RcsCore', 'ControllerBase.cpp')
+    controller_file = osp.join(rcs_src_dir, "src", "RcsCore", "ControllerBase.cpp")
     # open the file
     file = open(controller_file, "r")
 
     # apply patch to line 910
     replaced_content = ""
     for i, line in enumerate(file):
-        if i == 909 and line.strip() == 'if ((a_des==NULL) || (MatNd_get2(a_des, i, 0)>0.0))':
+        if i == 909 and line.strip() == "if ((a_des==NULL) || (MatNd_get2(a_des, i, 0)>0.0))":
             new_line = line.replace(")>0", ")!=0")
         else:
             new_line = line
