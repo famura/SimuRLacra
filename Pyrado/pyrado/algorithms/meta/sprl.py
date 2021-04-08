@@ -450,7 +450,7 @@ class SPRL(Algorithm):
                 param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
 
     def _train_subroutine_and_evaluate_perf(
-        self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False
+        self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False, **kwargs
     ) -> float:
         if reset_policy:
             self._subroutine.init_modules(False)
