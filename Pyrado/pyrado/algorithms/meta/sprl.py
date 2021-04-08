@@ -180,6 +180,10 @@ class SPRL(Algorithm):
     Self-Paced Reinforcement Leaner (SPRL)
 
     This algorithm wraps another algorithm. The main purpose is to apply self-paced RL (Klink et al, 2020).
+
+    .. seealso::
+        Pascal Klink, Hany Abdulsamad, Boris Belousov, Carlo D'Eramo, Jan Peters, Joni Pajarinen, "A Probabilistic Interpretation of Self-Paced Learning with Applications to Reinforcement Learning",
+        arXiv, 2021
     """
 
     name: str = "sprl"
@@ -203,6 +207,12 @@ class SPRL(Algorithm):
         :param env: Environment wrapped in a DomainRandWrapper.
         :param subroutine: Algorithm which performs the policy/value-function optimization.
         :param kl_constraints_ub: Upper bound for the KL-divergence
+        :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
+        :param performance_lower_bound: Lower bound for the performance SPRL tries to stay above during distribution updates
+        :param std_lower_bound: Clipping value for the standard deviation, necessary when using very small target variances
+        :param kl_threshold: Threshold for the KL-divergence until which std_lower_bound is enforced
+        :param optimize_mean: Whether the mean should be changed or considered fixed
+        :param optimize_cov: Whether the (co-)variance should be changed or considered fixed
         :param max_subrtn_retries: How often a failed (median performance < 30 % of performance_lower_bound) training attempt of the subroutine should be reattempted
         """
 
