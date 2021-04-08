@@ -383,12 +383,12 @@ def setup_wm5():
 
 
 def setup_rcs():
-    # we need to apply a patch to the ControllerBase.cpp file of Rcs
+    # We need to apply a patch to the ControllerBase.cpp file of Rcs
     controller_file = osp.join(rcs_src_dir, "src", "RcsCore", "ControllerBase.cpp")
-    # open the file
+    # Open the file
     file = open(controller_file, "r")
 
-    # apply patch to line 910
+    # Apply patch to line 910
     replaced_content = ""
     for i, line in enumerate(file):
         if i == 909 and line.strip() == "if ((a_des==NULL) || (MatNd_get2(a_des, i, 0)>0.0))":
@@ -398,10 +398,11 @@ def setup_rcs():
         replaced_content = replaced_content + new_line
     file.close()
 
-    # write the patched file
+    # Write the patched file
     write_file = open(controller_file, "w")
     write_file.write(replaced_content)
     write_file.close()
+    
     # Build Rcs. We already have it in the submodule
     buildCMakeProject(rcs_src_dir, rcs_build_dir, cmakeVars=rcs_cmake_vars)
 
