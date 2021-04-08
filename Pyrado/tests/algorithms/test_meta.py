@@ -51,7 +51,11 @@ from pyrado.domain_randomization.default_randomizers import (
     create_default_domain_param_map_qq,
     create_default_randomizer_qbb,
 )
-from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
+from pyrado.domain_randomization.domain_parameter import (
+    NormalDomainParam,
+    UniformDomainParam,
+    SelfPacedLearnerParameter,
+)
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
