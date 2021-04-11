@@ -59,16 +59,10 @@ if __name__ == "__main__":
         print_cbt(f"Set maximum number of time steps to {args.max_steps}", "y")
 
     # Get the experiment's directory to load from
-    if args.env_name is None:
-        print("No env_name was given, asking for experiment!")
-        experiment = ask_for_experiment(show_hparams=args.show_hparams)
-        env, policy, _ = load_experiment(experiment, args)
-        env_name = env.name
-        dt = env.dt
-    else:
-        experiment, env, policy = None, None, None
-        env_name = args.env_name
-        dt = args.dt
+    experiment = ask_for_experiment(hparam_list=args.show_hparams)
+    env, policy, _ = load_experiment(experiment, args)
+    env_name = env.name
+    dt = env.dt
 
     # Create one-dim evaluation grid
     param_spec = dict()

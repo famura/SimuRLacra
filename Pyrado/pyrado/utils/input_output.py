@@ -30,14 +30,13 @@ import contextlib
 import numpy as np
 import select
 import sys
-import typing
 from colorama import Fore, Style
-from typing import Sequence, Iterable, Callable
+from typing import Sequence, Iterable, Callable, TypeVar
 
 import pyrado
 from pyrado.utils import run_once
 
-T = typing.TypeVar("T")
+T = TypeVar("T")
 
 
 def input_timeout(prompt: str, t_timeout: [float, int] = 30, default: str = None) -> str:

@@ -41,7 +41,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(show_hparams=args.show_hparams) if args.dir is None else args.dir
+    ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the
     hparams = load_dict_from_yaml(osp.join(ex_dir, "hyperparams.yaml"))
