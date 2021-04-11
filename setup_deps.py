@@ -402,7 +402,7 @@ def setup_rcs():
     write_file = open(controller_file, "w")
     write_file.write(replaced_content)
     write_file.close()
-    
+
     # Build Rcs. We already have it in the submodule
     buildCMakeProject(rcs_src_dir, rcs_build_dir, cmakeVars=rcs_cmake_vars)
 
