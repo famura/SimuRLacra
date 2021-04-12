@@ -49,7 +49,7 @@ class TSPred(Algorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         dataset: TimeSeriesDataSet,
         policy: Policy,
         max_iter: int,

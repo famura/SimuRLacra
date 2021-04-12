@@ -248,11 +248,11 @@ class StepSequence(Sequence[Step]):
     def __init__(
         self,
         *,
-        complete: Optional[bool] = True,
+        complete: bool = True,
         rollout_info=None,
         data_format: Optional[str] = None,
         done: Optional[np.ndarray] = None,
-        continuous: Optional[bool] = True,
+        continuous: bool = True,
         rollout_bounds=None,
         rewards: Sequence,
         observations: Sequence,
@@ -482,7 +482,7 @@ class StepSequence(Sequence[Step]):
         # No truncation
         return entry
 
-    def add_data(self, name: str, value=None, item_shape: tuple = None, with_after_last: Optional[bool] = False):
+    def add_data(self, name: str, value=None, item_shape: tuple = None, with_after_last: bool = False):
         """
         Add a new data field to the step sequence.
 
@@ -521,7 +521,7 @@ class StepSequence(Sequence[Step]):
         self._data_names.append(name)
         self.__dict__[name] = value
 
-    def get_data_values(self, name: str, truncate_last: Optional[bool] = False):
+    def get_data_values(self, name: str, truncate_last: bool = False):
         """
         Return the data tensor stored under the given name.
 
@@ -664,7 +664,7 @@ class StepSequence(Sequence[Step]):
             for b in gen_ordered_batch_idcs(batch_size, self.length, sorted=True):
                 yield self[b]
 
-    def split_shuffled_batches(self, batch_size: int, complete_rollouts: Optional[bool] = False):
+    def split_shuffled_batches(self, batch_size: int, complete_rollouts: bool = False):
         """
         Batch generation. Split the step collection into random mini-batches of size batch_size.
 
@@ -735,9 +735,7 @@ class StepSequence(Sequence[Step]):
             return np.dot(self.rewards, (gamma ** np.arange(self.length)))
 
     @classmethod
-    def concat(
-        cls, parts: Sequence["StepSequence"], data_format: Optional[str] = None, truncate_last: Optional[bool] = True
-    ):
+    def concat(cls, parts: Sequence["StepSequence"], data_format: Optional[str] = None, truncate_last: bool = True):
         """
         Concatenate multiple step sequences into one, truncating the last observation.
 

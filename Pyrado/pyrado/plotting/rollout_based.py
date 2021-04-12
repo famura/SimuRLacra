@@ -489,11 +489,11 @@ def plot_rollouts_segment_wise(
     segments_nominal: List[List[StepSequence]],
     use_rec: bool,
     idx_iter: int,
-    idx_round: Optional[int] = None,
+    idx_round: int = -1,
     state_labels: Optional[List[str]] = None,
     act_labels: Optional[List[str]] = None,
-    show_act: Optional[bool] = False,
-    save_dir: Optional[str] = None,
+    show_act: bool = False,
+    save_dir: Optional[pyrado.PathLike] = None,
 ) -> List[plt.Figure]:
     r"""
     Plot the different rollouts in separate figures and the different state dimensions along the columns.
@@ -539,7 +539,8 @@ def plot_rollouts_segment_wise(
     fig_list = []
 
     for idx_r in range(len(segments_ground_truth)):
-        fig, axs = plt.subplots(nrows=dim_state + dim_act, figsize=(16, 9), tight_layout=True, sharex="col")
+        num_rows = dim_state + dim_act if show_act else dim_state
+        fig, axs = plt.subplots(nrows=num_rows, figsize=(16, 9), tight_layout=True, sharex="col")
 
         # Plot the states
         for idx_state in range(dim_state):
@@ -690,7 +691,7 @@ def plot_rollouts_segment_wise(
 
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
         use_rec = ", using rec actions" if use_rec else ""
-        rnd = f"round {idx_round}, " if idx_round is not None else ""
+        rnd = f"round {idx_round}, " if idx_round != -1 else ""
         fig.canvas.set_window_title(
             f"Target Domain and Simulated Rollouts (iteration {idx_iter}, {rnd}rollout {idx_r}{use_rec})"
         )
@@ -708,7 +709,7 @@ def plot_rollouts_segment_wise(
                 os.makedirs(os.path.join(save_dir, "plots"), exist_ok=True)
                 len_seg_str = f"seglen_{segments_ground_truth[0][0].length}"
                 use_rec = "_use_rec" if use_rec else ""
-                rnd = f"_round_{idx_round}" if idx_round is not None else ""
+                rnd = f"_round_{idx_round}" if idx_round != -1 else ""
                 fig.savefig(
                     os.path.join(
                         save_dir,

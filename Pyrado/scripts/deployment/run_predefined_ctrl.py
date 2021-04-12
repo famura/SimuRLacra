@@ -36,7 +36,7 @@ from datetime import datetime
 import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleSwingUpReal, QCartPoleStabReal
-from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.special.environment_specific import (
     QBallBalancerPDCtrl,
     QCartPoleSwingUpAndBalanceCtrl,
@@ -67,16 +67,16 @@ if __name__ == "__main__":
         policy = QCartPoleSwingUpAndBalanceCtrl(env.spec)
         print_cbt("Set up controller for the QCartPoleSwingUpReal environment.", "c")
 
-    elif args.env_name == QQubeReal.name:
-        env = QQubeReal(args.dt, args.max_steps)
+    elif args.env_name == QQubeSwingUpReal.name:
+        env = QQubeSwingUpReal(args.dt, args.max_steps)
         policy = QQubeSwingUpAndBalanceCtrl(env.spec)
-        print_cbt("Set up controller for the QQubeReal environment.", "c")
+        print_cbt("Set up controller for the QQubeSwingUpReal environment.", "c")
 
     else:
         raise pyrado.ValueErr(
             given=args.env_name,
             eq_constraint=f"{QBallBalancerReal.name}, {QCartPoleSwingUpReal.name}, "
-            f"{QCartPoleStabReal.name}, or {QQubeReal.name}",
+            f"{QCartPoleStabReal.name}, or {QQubeSwingUpReal.name}",
         )
 
     # Run on device

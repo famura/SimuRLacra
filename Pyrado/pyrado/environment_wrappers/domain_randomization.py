@@ -261,13 +261,13 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         state_dict["buffer"] = self._buffer
         state_dict["ring_idx"] = self._ring_idx
 
-    def _set_state(self, state_dict: dict, copying: Optional[bool] = False):
+    def _set_state(self, state_dict: dict, copying: bool = False):
         super()._set_state(state_dict, copying)
         self._buffer = state_dict["buffer"]
         self._ring_idx = state_dict["ring_idx"]
 
 
-def remove_all_dr_wrappers(env: Env, verbose: Optional[bool] = False):
+def remove_all_dr_wrappers(env: Env, verbose: bool = False):
     """
     Go through the environment chain and remove all wrappers of type `DomainRandWrapper` (and subclasses).
 

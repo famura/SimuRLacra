@@ -47,7 +47,7 @@ class NonlinRegression(Algorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         inputs: to.Tensor,
         targets: to.Tensor,
         policy: Policy,

@@ -283,7 +283,7 @@ if __name__ == "__main__":
         use_rec=args.use_rec,
         idx_iter=args.iter,
         idx_round=args.round,
-        show_act=True,
+        show_act=False,
         save_dir=ex_dir if args.save else None,
     )
 

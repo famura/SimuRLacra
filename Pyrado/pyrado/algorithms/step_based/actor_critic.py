@@ -44,7 +44,9 @@ from pyrado.utils.input_output import print_cbt
 class ActorCritic(Algorithm, ABC):
     """ Base class of all actor critic algorithms """
 
-    def __init__(self, env: Env, actor: Policy, critic: GAE, save_dir: str, max_iter: int, logger: StepLogger = None):
+    def __init__(
+        self, env: Env, actor: Policy, critic: GAE, save_dir: pyrado.PathLike, max_iter: int, logger: StepLogger = None
+    ):
         """
         Constructor
 

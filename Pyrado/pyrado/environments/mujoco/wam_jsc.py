@@ -36,8 +36,6 @@ import pyrado
 from pyrado.environments.barrett_wam import (
     init_qpos_des_7dof,
     init_qpos_des_4dof,
-    torque_space_wam_7dof,
-    torque_space_wam_4dof,
     wam_pgains_7dof,
     wam_dgains_7dof,
     wam_pgains_4dof,
@@ -45,7 +43,7 @@ from pyrado.environments.barrett_wam import (
     act_space_jsc_7dof,
     act_space_jsc_4dof,
 )
-from pyrado.environments.mujoco.base import MujocoSimEnv
+from pyrado.environments.mujoco.wam_base import WAMSim
 from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.singular import SingularStateSpace
@@ -54,7 +52,7 @@ from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.reward_functions import ZeroPerStepRewFcn
 
 
-class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
+class WAMJointSpaceCtrlSim(WAMSim, Serializable):
     """
     WAM robotic arm from Barrett technologies, controlled by a PD controller.
 
@@ -73,7 +71,7 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
         num_dof: int,
         frame_skip: int = 4,
         dt: Optional[float] = None,
-        max_steps: Optional[int] = pyrado.inf,
+        max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
     ):
         """
@@ -91,7 +89,6 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
         Serializable._init(self, locals())
 
         # Initialize num DoF specific variables
-        self._num_dof = num_dof
         if num_dof == 4:
             graph_file_name = "wam_4dof_base.xml"
             self.qpos_des_init = init_qpos_des_4dof
@@ -106,27 +103,11 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
         model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, graph_file_name)
-        super().__init__(model_path, frame_skip, dt, max_steps, task_args)
+        super().__init__(num_dof, model_path, frame_skip, dt, max_steps, task_args)
 
         # Fixed initial state space
         init_state = np.concatenate([self.init_qpos, self.init_qvel])
         self._init_space = SingularStateSpace(init_state)
-
-        self.camera_config = dict(
-            trackbodyid=0,  # id of the body to track
-            elevation=-30,  # camera rotation around the axis in the plane
-            azimuth=-90,  # camera rotation around the camera's vertical axis
-        )
-
-    @property
-    def num_dof(self) -> int:
-        """ Get the number of degrees of freedom. """
-        return self._num_dof
-
-    @property
-    def torque_space(self) -> Space:
-        """ Get the space of joint torques. """
-        return torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
 
     @property
     def state_space(self) -> Space:
@@ -141,39 +122,6 @@ class WAMJointSpaceCtrlSim(MujocoSimEnv, Serializable):
     def act_space(self) -> Space:
         # Running a PD controller on joint positions and velocities
         return act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
-
-    @classmethod
-    def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
-        if num_dof == 7:
-            return dict(
-                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_5_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_6_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_7_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
-                joint_5_dryfriction=0.4,  # dry friction coefficient of motor joint 5 [-]
-                joint_6_dryfriction=0.4,  # dry friction coefficient of motor joint 6 [-]
-                joint_7_dryfriction=0.4,  # dry friction coefficient of motor joint 7 [-]
-            )
-        elif num_dof == 4:
-            return dict(
-                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
-            )
-        else:
-            raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
     def _create_task(self, task_args: Optional[dict] = None) -> Task:
         state_des = np.concatenate([self.init_qpos, self.init_qvel])

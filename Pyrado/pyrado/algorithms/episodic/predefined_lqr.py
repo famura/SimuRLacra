@@ -50,7 +50,7 @@ class LQR(Algorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: SimEnv,
         policy: Policy,
         min_rollouts: int = None,

@@ -411,7 +411,7 @@ class AugmentedSafeLoader(yaml.SafeLoader):
 AugmentedSafeLoader.add_constructor("tag:yaml.org,2002:python/tuple", AugmentedSafeLoader.construct_python_tuple)
 
 
-def save_dicts_to_yaml(*dicts: dict, save_dir: str, file_name: str = "hyperparams"):
+def save_dicts_to_yaml(*dicts: dict, save_dir: pyrado.PathLike, file_name: str = "hyperparams"):
     """
     Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.
 

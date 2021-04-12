@@ -27,12 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
+import os
 import os.path as osp
 import platform
 import random
 import torch as to
 from colorama import init
-from typing import Union
+from typing import TypeVar, Optional
 
 
 # Pyrado version number
@@ -71,6 +72,7 @@ inf = float("inf")
 nan = float("nan")
 sym_success = "\u2714"
 sym_failure = "\u2716"
+PathLike = TypeVar("PathLike", str, bytes, os.PathLike)  # PEP 519
 
 # Include error classes
 from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr
@@ -116,6 +118,7 @@ __all__ = [
     "use_pgf",
     "inf",
     "nan",
+    "PathLike",
     "sym_success",
     "sym_failure",
     "set_seed",
@@ -124,7 +127,7 @@ __all__ = [
 ]
 
 
-def set_seed(seed: Union[int, None], verbose: bool = False):
+def set_seed(seed: Optional[int], verbose: bool = False):
     """
     Set the seed for the random number generators
 

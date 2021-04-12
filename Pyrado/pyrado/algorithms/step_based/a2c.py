@@ -53,7 +53,7 @@ class A2C(ActorCritic):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Policy,
         critic: GAE,

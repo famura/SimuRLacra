@@ -111,7 +111,7 @@ class SVPG(Algorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         particle_hparam: dict,
         max_iter: int,

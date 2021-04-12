@@ -59,7 +59,7 @@ class MDNPolicy(Policy):
         hidden_nonlin: [Callable, Sequence[Callable]],
         dropout: Optional[float] = 0.0,
         init_param_kwargs: Optional[dict] = None,
-        use_cuda: Optional[bool] = False,
+        use_cuda: bool = False,
     ):
         """
 

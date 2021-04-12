@@ -37,7 +37,11 @@ from sbi import utils
 
 import pyrado
 from pyrado.sampling.sbi_embeddings import (
-    AllStepsEmbedding,
+    LastStepEmbedding,
+    DeltaStepsEmbedding,
+    BayesSimEmbedding,
+    DynamicTimeWarpingEmbedding,
+    RNNEmbedding,
 )
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
@@ -55,8 +59,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}", "sin")
 
     # Set seed if desired
-    pyrado.set_seed(0, verbose=True)
-    # pyrado.set_seed(args.seed, verbose=True)
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1 / 50.0, max_steps=400)
@@ -64,12 +67,12 @@ if __name__ == "__main__":
 
     # Create a fake ground truth target domain
     env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(m_pole=1 / 1.2 ** 2, l_pole=1.2)
+    env_real.domain_param = dict(m_pole=1 / 1.3 ** 2, l_pole=1.3)
 
     # Define a mapping: index - domain parameter
     dp_mapping = {0: "m_pole", 1: "l_pole"}
 
-    # Prior and Posterior (normalizing flow)
+    # Prior
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
         low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
@@ -80,29 +83,29 @@ if __name__ == "__main__":
     # Time series embedding
     # embedding_hparam = dict()
     # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    embedding_hparam = dict(downsampling_factor=20)
-    embedding = AllStepsEmbedding(
-        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    )
+    # embedding_hparam = dict(downsampling_factor=10)
+    # embedding = DeltaStepsEmbedding(
+    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
+    # )
     # embedding_hparam = dict(downsampling_factor=1)
     # embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = DynamicTimeWarpingEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
-    # )
+    embedding_hparam = dict(downsampling_factor=2)
+    embedding = DynamicTimeWarpingEmbedding(
+        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
+    )
     # embedding_hparam = dict(hidden_size=10, num_recurrent_layers=2, output_size=1, downsampling_factor=10)
     # embedding = RNNEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
+    posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=4)
 
     # Behavioral policy
     policy_hparam = dict(tau_max=dp_nom["tau_max"], f_sin=0.5)
 
     def fcn_of_time(t: float):
-        act = policy_hparam["tau_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"]) + np.random.randn(1) / 50
+        act = policy_hparam["tau_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"])
         return act.repeat(env_sim.act_space.flat_dim)
 
     num_real_rollouts = 1
@@ -116,11 +119,11 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=400,
-        num_sbi_rounds=3,
+        num_sim_per_round=200,
+        num_sbi_rounds=5,
         simulation_batch_size=10,
         normalize_posterior=False,
-        num_eval_samples=100,
+        num_eval_samples=1000,
         # num_segments=1,
         len_segments=100,
         posterior_hparam=posterior_hparam,
@@ -137,7 +140,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=4,
+        num_workers=6,
     )
     algo = NPDR(
         ex_dir,

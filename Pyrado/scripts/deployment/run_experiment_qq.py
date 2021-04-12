@@ -36,7 +36,7 @@ from datetime import datetime
 
 import pyrado
 from pyrado.algorithms.meta.bayrn import BayRn
-from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.experiments import load_experiment
 from pyrado.domain_randomization.utils import wrap_like_other_env
@@ -60,8 +60,8 @@ if __name__ == "__main__":
     # Create real-world counterpart
     max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
     dt = args.dt if args.dt is not None else env_sim.dt
-    env_real = QQubeReal(dt, max_steps)
-    print_cbt(f"Set up the QQubeReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.", "c")
+    env_real = QQubeSwingUpReal(dt, max_steps)
+    print_cbt(f"Set up the QQubeSwingUpReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.", "c")
 
     # Finally wrap the env in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)

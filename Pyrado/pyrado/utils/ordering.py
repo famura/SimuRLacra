@@ -84,3 +84,13 @@ def natural_sort(lst: list):
         return [_convert(c) for c in re.split("([0-9]+)", key)]
 
     return sorted(lst, key=_alphanum_key)
+
+
+def remove_none_from_list(lst: list):
+    """
+    Create a new list from the given one without `None` entries.
+
+    :param lst: list to remove the `None` entries from
+    :return: list without `None` entries from
+    """
+    return [item for item in lst if item is not None]

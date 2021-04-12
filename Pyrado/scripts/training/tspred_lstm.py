@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     # Dataset
     data_set_hparam = dict(
-        name=data_set_name, ratio_train=0.9, window_size=1, standardize_data=False, scale_min_max_data=False
+        name=data_set_name, ratio_train=0.90, window_size=50, standardize_data=False, scale_min_max_data=False
     )
     dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
@@ -105,10 +105,10 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=2000,
-        windowed=False,
+        windowed=True,
         cascaded=False,
         optim_class=optim.Adam,
-        optim_hparam=dict(lr=1e-2, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
+        optim_hparam=dict(lr=5e-3, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
         loss_fcn=nn.MSELoss(),
     )
     algo = TSPred(ex_dir, dataset, policy, **algo_hparam)

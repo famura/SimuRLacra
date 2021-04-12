@@ -65,7 +65,7 @@ class SimOpt(InterruptableAlgorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env_sim: MetaDomainRandWrapper,
         env_real: Union[RealEnv, EnvWrapper],
         subrtn_policy: Algorithm,
@@ -159,7 +159,7 @@ class SimOpt(InterruptableAlgorithm):
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
         :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)
-        :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :param prefix: set a prefix to the saved file name, use "" for no prefix
         :param cnt_rep: current repetition count, coming from the wrapper function
         :return: estimated return of the trained policy in the target domain
         """
@@ -194,7 +194,7 @@ class SimOpt(InterruptableAlgorithm):
         `SysIdViaEpisodicRL` is minimized.
 
         :param rollouts_real: recorded real-world rollouts
-        :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :param prefix: set a prefix to the saved file name, use "" for no prefix
         :return: average system identification loss
         """
         # Reset the subroutine algorithm which includes resetting the exploration

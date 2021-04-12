@@ -77,7 +77,7 @@ class BayRn(InterruptableAlgorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env_sim: MetaDomainRandWrapper,
         env_real: Union[RealEnv, EnvWrapper],
         subrtn: Algorithm,
@@ -209,7 +209,7 @@ class BayRn(InterruptableAlgorithm):
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
         :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)
-        :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :param prefix: set a prefix to the saved file name, use "" for no prefix
         :param cnt_rep: current repetition count, coming from the wrapper function
         :return: estimated return of the trained policy in the target domain
         """
@@ -303,7 +303,7 @@ class BayRn(InterruptableAlgorithm):
 
     @staticmethod
     def eval_policy(
-        save_dir: Optional[str],
+        save_dir: Optional[pyrado.PathLike],
         env: [RealEnv, SimEnv, MetaDomainRandWrapper],
         policy: Policy,
         mc_estimator: bool,
@@ -525,7 +525,7 @@ class BayRn(InterruptableAlgorithm):
 
     @staticmethod
     def train_argmax_policy(
-        load_dir: str,
+        load_dir: pyrado.PathLike,
         env_sim: MetaDomainRandWrapper,
         subrtn: Algorithm,
         num_restarts: int,

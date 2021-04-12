@@ -49,7 +49,7 @@ from pyrado.environments.pysim.quanser_cartpole import QCartPoleStabSim, QCartPo
 from pyrado.environments.pysim.quanser_qube import QQubeStabSim, QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
-from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.features import *
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
@@ -641,7 +641,7 @@ class DefaultEnvs:
     @staticmethod
     @m_needs_bullet
     def default_qq_real():
-        return QQubeReal(dt=1 / 500.0, max_steps=500)
+        return QQubeSwingUpReal(dt=1 / 500.0, max_steps=500)
 
 
 # ---------------

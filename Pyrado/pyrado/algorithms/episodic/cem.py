@@ -57,7 +57,7 @@ class CEM(ParameterExploring):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Policy,
         max_iter: int,

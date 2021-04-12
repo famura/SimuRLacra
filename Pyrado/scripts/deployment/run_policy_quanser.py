@@ -32,7 +32,7 @@ Load and run a policy on the associated real-world Quanser environment
 import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleReal
-from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSim
 from pyrado.environments.pysim.quanser_qube import QQubeSim
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     elif isinstance(inner_env(env_sim), QCartPoleSim):
         env_real = QCartPoleReal(dt=args.dt, max_steps=args.max_steps)
     elif isinstance(inner_env(env_sim), QQubeSim):
-        env_real = QQubeReal(dt=args.dt, max_steps=args.max_steps)
+        env_real = QQubeSwingUpReal(dt=args.dt, max_steps=args.max_steps)
     else:
         raise pyrado.TypeErr(given=env_sim, expected_type=[QBallBalancerSim, QCartPoleSim, QQubeSim])
 

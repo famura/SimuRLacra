@@ -40,7 +40,7 @@ from pyrado.plotting.utils import draw_sep_cbar
 
 
 def _setup_index_axis(
-    ax: plt.Axes, index: pd.Index, use_index_labels: Optional[bool] = False, tick_label_precision: Optional[int] = 3
+    ax: plt.Axes, index: pd.Index, use_index_labels: bool = False, tick_label_precision: Optional[int] = 3
 ):
     """
     Prepare the index axis for `plot_heatmap`.
@@ -137,13 +137,13 @@ def draw_heatmap(
     ax_hm: Optional[plt.Axes] = None,
     cmap: Optional[colors.Colormap] = None,
     norm: Optional[colors.Normalize] = colors.Normalize(),
-    annotate: Optional[bool] = True,
+    annotate: bool = True,
     annotation_valfmt: Optional[str] = "{x:.0f}",
-    add_sep_colorbar: Optional[bool] = False,
+    add_sep_colorbar: bool = False,
     ax_cb: Optional[plt.Axes] = None,
     colorbar_label: Optional[str] = None,
     colorbar_orientation: Optional[str] = "vertical",
-    use_index_labels: Optional[bool] = False,
+    use_index_labels: bool = False,
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
     fig_canvas_title: Optional[str] = None,

@@ -69,7 +69,7 @@ class REPS(ParameterExploring):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Policy,
         max_iter: int,
@@ -79,13 +79,13 @@ class REPS(ParameterExploring):
         expl_std_init: float,
         expl_std_min: Optional[float] = 0.01,
         num_domains: Optional[int] = 1,
-        symm_sampling: Optional[bool] = False,
-        softmax_transform: Optional[bool] = False,
-        use_map: Optional[bool] = True,
+        symm_sampling: bool = False,
+        softmax_transform: bool = False,
+        use_map: bool = True,
         optim_mode: Optional[str] = "scipy",
         num_epoch_dual: Optional[int] = 1000,
         lr_dual: Optional[float] = 5e-4,
-        num_workers: Optional[int] = 4,
+        num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         r"""

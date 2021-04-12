@@ -65,7 +65,7 @@ class BayesSim(Algorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env_sim: SimEnv,
         env_real: Union[Env, str],
         policy: Policy,
@@ -77,14 +77,14 @@ class BayesSim(Algorithm):
         num_sim_per_round: int,
         num_segments: int = None,
         len_segments: int = None,
-        num_sbi_rounds: Optional[int] = 1,
+        num_sbi_rounds: int = 1,
         num_eval_samples: Optional[int] = None,
         posterior_hparam: Optional[dict] = None,
         subrtn_sbi_training_hparam: Optional[dict] = None,
         subrtn_sbi_snapshot_mode: Optional[str] = "latest",
         subrtn_policy: Optional[Algorithm] = None,
-        subrtn_policy_snapshot_mode: Optional[str] = "latest",
-        thold_succ_subrtn: Optional[float] = -pyrado.inf,
+        subrtn_policy_snapshot_mode: str = "latest",
+        thold_succ_subrtn: float = -pyrado.inf,
         num_workers: Optional[int] = 1,
         logger: Optional[StepLogger] = None,
     ):
@@ -303,7 +303,7 @@ class BayesSim(Algorithm):
 
         :param domain_params: domain parameters sampled from the posterior [shape N x D where N is the number of
                               samples and D is the number of domain parameters]
-        :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :param prefix: set a prefix to the saved file name, use "" for no prefix
         :return: estimated return of the trained policy in the target domain
         """
         if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):

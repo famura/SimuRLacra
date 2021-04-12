@@ -55,15 +55,15 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
     def __init__(
         self,
         model_path: str,
-        frame_skip: Optional[int] = 1,
+        frame_skip: int = 1,
         dt: Optional[float] = None,
-        max_steps: Optional[int] = pyrado.inf,
+        max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
     ):
         """
         Constructor
 
-        :param model_path: model path
+        :param model_path: path to the MuJoCo xml model config file
         :param frame_skip: number of simulation frames for which the same action is held, results in a multiplier of
                            the time step size `dt`
         :param dt: by default the time step size is the one from the mujoco config file multiplied by the number of

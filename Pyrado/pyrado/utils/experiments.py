@@ -168,15 +168,11 @@ def load_experiment(
         policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
         # Extra (prior, posterior, data)
         extra["prior"] = pyrado.load("prior.pt", ex_dir, verbose=True)
-        if args.iter == -1:
-            # Load the latest posterior and the complete data
-            extra["posterior"] = pyrado.load("posterior.pt", ex_dir, verbose=True)
-            extra["data_real"] = pyrado.load("data_real.pt", ex_dir, verbose=True)
-        else:
-            # Load only one iteration
-            rnd = f"_round_{args.round}" if args.round is not None else ""
-            extra["posterior"] = pyrado.load("posterior.pt", ex_dir, prefix=f"iter_{args.iter}{rnd}", verbose=True)
-            extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=f"iter_{args.iter}", verbose=True)
+        # By default load the latest posterior (latest iteration and the last round)
+        extra["posterior"] = algo.load_posterior(ex_dir, args.iter, args.iter, obj=None, verbose=True)
+        # Load the complete data or the data of the given iteration
+        prefix = "" if args.iter == -1 else f"iter_{args.iter}"
+        extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
 
     elif algo.name in ["a2c", "ppo", "ppo2"]:
         # Environment
