@@ -276,8 +276,8 @@ def create_experiment_formatter(
     Returns an experiment formatter (i.e. a function that takes an experiment and produces a string) to be used in the
     ask-for-experiments dialog. It produces useful information like the timestamp based on the experiments' data.
 
-    :param show_hparams: list of "paths" to hyperparameters that to be shown in the selection dialog; sub-dicts can be references with a dot, e.g. :code:`env.dt`
-    :param show_extra_info: whether to show the information stored in the :code:`extra_info` field of the experiment
+    :param show_hparams: list of "paths" to hyperparameters that to be shown in the selection dialog; sub-dicts can be references with a dot, e.g. `env.dt`
+    :param show_extra_info: whether to show the information stored in the `extra_info` field of the experiment
     :return: a function that serves as the formatter
     """
 
@@ -507,9 +507,9 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
 def load_hyperparameters(ex_dir, raise_error: bool = False) -> Union[dict, Optional[dict]]:
     """
     Loads the hyperparameters-dict from the given experiment directory. The hyperparameters file is assumed to be
-    named :code:`hyperparams.yaml`.
+    named `hyperparams.yaml`.
 
-    :param raise_error: whether to raise an error if one occurs; if false, :code:`None` is returned and an error
+    :param raise_error: whether to raise an error if one occurs; if false, `None` is returned and an error
                         message is printed
     """
     hparams_file_name = "hyperparams.yaml"
