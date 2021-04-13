@@ -58,6 +58,7 @@ if __name__ == "__main__":
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
+
 def evaluate_policy(args, ex_dir):
     env, policy, _ = load_experiment(ex_dir, args)
 
