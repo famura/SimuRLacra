@@ -57,7 +57,7 @@ class HopperSim(MujocoSimEnv, Serializable):
 
     def __init__(
         self,
-        frame_skip: Optional[int] = 5,
+        frame_skip: int = 5,
         dt: Optional[float] = None,
         max_steps: Optional[int] = 1000,
         task_args: Optional[dict] = None,

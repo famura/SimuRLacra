@@ -25,18 +25,19 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from abc import ABC, abstractmethod
 
 import numpy as np
+import os
 import sys
 import torch as to
+from abc import ABC, abstractmethod
 from colorama import Style, Fore
 from copy import deepcopy
 from tabulate import tabulate
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from typing import Optional, Callable, Type, Mapping, Tuple, List, Union, Dict
+from typing import Optional, Callable, Type, Mapping, Tuple, List, Union, Dict, Any
 
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
@@ -64,7 +65,9 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.discrete import DiscreteSpace
+from pyrado.utils.data_types import merge_dicts
 from pyrado.utils.input_output import print_cbt, completion_context
+from pyrado.utils.ordering import natural_sort
 
 
 class SBIBase(InterruptableAlgorithm, ABC):
@@ -81,7 +84,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
     def __init__(
         self,
         num_checkpoints: int,
-        save_dir: str,
+        init_checkpoint: int,
+        save_dir: pyrado.PathLike,
         env_sim: SimEnv,
         env_real: Union[Env, str],
         policy: Policy,
@@ -94,24 +98,26 @@ class SBIBase(InterruptableAlgorithm, ABC):
         num_sim_per_round: int,
         num_segments: int = None,
         len_segments: int = None,
-        use_rec_act: Optional[bool] = True,
-        num_sbi_rounds: Optional[int] = 1,
+        use_rec_act: bool = True,
+        num_sbi_rounds: int = 1,
         num_eval_samples: Optional[int] = None,
         posterior_hparam: Optional[dict] = None,
         subrtn_sbi_training_hparam: Optional[dict] = None,
         subrtn_sbi_sampling_hparam: Optional[dict] = None,
-        simulation_batch_size: Optional[int] = 1,
+        simulation_batch_size: int = 1,
         normalize_posterior: bool = True,
         subrtn_policy: Optional[Algorithm] = None,
-        subrtn_policy_snapshot_mode: Optional[str] = "latest",
-        thold_succ_subrtn: Optional[float] = -pyrado.inf,
-        num_workers: Optional[int] = 4,
+        subrtn_policy_snapshot_mode: str = "latest",
+        thold_succ_subrtn: float = -pyrado.inf,
+        num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         """
         Constructor
 
         :param num_checkpoints: total number of checkpoints
+        :param init_checkpoint: initial value of the cyclic counter, defaults to 0, use negative values can to mark
+                                sections that should only be executed once
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env_sim: randomized simulation environment a.k.a. source domain
         :param env_real: real-world environment a.k.a. target domain, this can be a `RealEnv` (sim-to-real setting), a
@@ -174,7 +180,12 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Call InterruptableAlgorithm's constructor
         super().__init__(
-            num_checkpoints=num_checkpoints, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger
+            num_checkpoints=num_checkpoints,
+            init_checkpoint=init_checkpoint,
+            save_dir=save_dir,
+            max_iter=max_iter,
+            policy=policy,
+            logger=logger,
         )
 
         self._env_sim_sbi = env_sim  # will be randomized explicitly by sbi
@@ -283,7 +294,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
     @staticmethod
     @to.no_grad()
     def collect_data_real(
-        save_dir: Optional[str],
+        save_dir: Optional[pyrado.PathLike],
         env: Union[Env, str],
         policy: Policy,
         embedding: Embedding,
@@ -338,7 +349,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             data_real.append(data)
             rollouts_real.append(rollout)
 
-        # Stacked to tensor with shape [1, num_rollouts * dim_feat]
+        # Stacked to tensor of shape [1, num_rollouts * dim_feat]
         data_real = to.cat(data_real, dim=1)
         if data_real.shape != (1, num_rollouts * embedding.dim_output):
             raise pyrado.ShapeErr(given=data_real, expected_match=(1, num_rollouts * embedding.dim_output))
@@ -351,13 +362,87 @@ class SBIBase(InterruptableAlgorithm, ABC):
         return data_real, rollouts_real
 
     @staticmethod
+    def load_posterior(
+        load_dir: pyrado.PathLike,
+        idx_iter: int = -1,
+        idx_round: int = -1,
+        obj: Optional[Any] = None,
+        verbose: bool = False,
+    ) -> Optional[DirectPosterior]:
+        """
+        Load the posterior of a given iteration (and round).
+
+        :param load_dir: experiment's directory to crawl through
+        :param idx_iter: iteration to load, to load the latest pass -1
+        :param idx_round: round to load, to load the latest pass -1, ignored if the experiment was not multi-round
+        :param obj: object for state dict loading, forwarded to `pyrado.load()`, by default no state dict loading
+        :param verbose: if `True`, print the path of what has been loaded, forwarded to `pyrado.load()`
+        :return: loaded sbi posterior, or `None` if there is no posterior with the given iteration / round index
+        """
+        if not os.path.isdir(load_dir):
+            raise pyrado.PathErr(given=load_dir)
+        if not isinstance(idx_iter, int):
+            raise pyrado.TypeErr(given=idx_iter, expected_type=int)
+        if not isinstance(idx_round, int):
+            raise pyrado.TypeErr(given=idx_round, expected_type=int)
+
+        if idx_iter == -1:
+            # Check what is the latest iteration
+            cnt_iter_max = -1
+            for root, dirs, files in os.walk(load_dir):
+                dirs.clear()  # prevents walk() from going into subdirectories
+                for f in files:
+                    if f.startswith("iter_") and f.endswith("_posterior.pt"):
+                        cnt_iter = int(f[f.find("iter_") + len("iter_")])
+                        cnt_iter_max = cnt_iter if cnt_iter > cnt_iter_max else cnt_iter_max
+            idx_iter = cnt_iter_max
+
+        # Check if the experiment was run in a multi-round setting
+        multi_round_setting = False
+        for root, dirs, files in os.walk(load_dir):
+            dirs.clear()  # prevents walk() from going into subdirectories
+            for f in files:
+                if f.startswith(f"iter_") and "round" in f:
+                    multi_round_setting = True
+                    break
+
+        if multi_round_setting:
+            if idx_round == -1:
+                # Check what is the latest round
+                cnt_round_max = -1
+                for root, dirs, files in os.walk(load_dir):
+                    dirs.clear()  # prevents walk() from going into subdirectories
+                    for f in files:
+                        if f.startswith("iter_") and "round" in f and f.endswith("_posterior.pt"):
+                            cnt_round = int(f[f.find("round_") + len("round_")])
+                            cnt_round_max = cnt_round if cnt_round > cnt_round_max else cnt_round_max
+                idx_round = cnt_round_max
+
+        # Check before loading
+        if idx_iter == -1:
+            raise pyrado.ValueErr(msg=f"Invalid iteration index {idx_iter}!")
+        if idx_round == -1:
+            raise pyrado.ValueErr(msg=f"Invalid round index {idx_round}!")
+
+        # Load the current posterior
+        str_round = f"_round_{idx_round}" if multi_round_setting else ""
+        try:
+            posterior = pyrado.load(
+                name=f"iter_{idx_iter}{str_round}_posterior.pt", load_dir=load_dir, obj=obj, verbose=verbose
+            )
+        except FileNotFoundError:
+            posterior = None
+
+        return posterior
+
+    @staticmethod
     @to.no_grad()
     def eval_posterior(
         posterior: DirectPosterior,
         data_real: to.Tensor,
         num_samples: int,
-        calculate_log_probs: Optional[bool] = True,
-        normalize_posterior: Optional[bool] = True,
+        calculate_log_probs: bool = True,
+        normalize_posterior: bool = True,
         subrtn_sbi_sampling_hparam: Optional[dict] = None,
     ) -> Tuple[to.Tensor, Optional[to.Tensor]]:
         r"""
@@ -381,7 +466,10 @@ class SBIBase(InterruptableAlgorithm, ABC):
         batch_size, _ = data_real.shape
 
         # Sample domain parameters for all batches and stack them
-        subrtn_sbi_sampling_hparam = subrtn_sbi_sampling_hparam if subrtn_sbi_sampling_hparam is not None else dict()
+        default_sampling_hparam = dict(
+            mcmc_method="slice_np", mcmc_parameters=dict(warmup_steps=30)  # default: slice_np, 20
+        )
+        subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
         domain_params = to.stack(
             [posterior.sample((num_samples,), x=x_o, **subrtn_sbi_sampling_hparam) for x_o in data_real],
             dim=0,
@@ -422,11 +510,11 @@ class SBIBase(InterruptableAlgorithm, ABC):
         posterior: DirectPosterior,
         data_real: to.Tensor,
         num_eval_samples: int,
-        num_ml_samples: Optional[int] = 1,
-        calculate_log_probs: Optional[bool] = True,
-        normalize_posterior: Optional[bool] = True,
+        num_ml_samples: int = 1,
+        calculate_log_probs: bool = True,
+        normalize_posterior: bool = True,
         subrtn_sbi_sampling_hparam: Optional[dict] = None,
-        return_as_tensor: Optional[bool] = False,
+        return_as_tensor: bool = False,
     ) -> Tuple[Union[List[List[Dict]], to.Tensor], Optional[to.Tensor]]:
         r"""
         Evaluate the posterior conditioned on the data `data_real`, and extract the `num_ml_samples` most likely
@@ -497,12 +585,12 @@ class SBIBase(InterruptableAlgorithm, ABC):
     @staticmethod
     @to.no_grad()
     def eval_policy(
-        save_dir: Optional[str],
+        save_dir: Optional[pyrado.PathLike],
         env: Env,
         policy: Policy,
         prefix: str,
         num_rollouts: int,
-        num_workers: Optional[int] = 1,
+        num_workers: int = 1,
     ) -> to.Tensor:
         """
         Evaluate a policy either in the source or in the target domain.
@@ -581,12 +669,12 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         :param domain_params: domain parameters sampled from the posterior [shape N x D where N is the number of
                               samples and D is the number of domain parameters]
-        :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :param prefix: set a prefix to the saved file name, use "" for no prefix
         :param cnt_rep: current repetition count, coming from the wrapper function
         :return: estimated return of the trained policy in the target domain
         """
         if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):
-            raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, 2))
+            raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, len(self.dp_mapping)))
 
         # Insert the domain parameters into the wrapped environment's buffer
         self.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)

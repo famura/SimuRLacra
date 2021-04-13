@@ -30,6 +30,7 @@ import numpy as np
 import torch as to
 from typing import Optional
 
+import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
@@ -54,7 +55,7 @@ class NES(ParameterExploring):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Policy,
         max_iter: int,
@@ -67,7 +68,7 @@ class NES(ParameterExploring):
         eta_std: Optional[float] = None,
         symm_sampling: bool = False,
         transform_returns: bool = True,
-        num_workers: Optional[int] = 4,
+        num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         """

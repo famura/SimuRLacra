@@ -67,7 +67,7 @@ class SAC(ValueBased):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: TwoHeadedPolicy,
         qfcn_1: Policy,
@@ -78,10 +78,10 @@ class SAC(ValueBased):
         num_updates_per_step: Optional[int] = None,
         tau: Optional[float] = 0.995,
         ent_coeff_init: Optional[float] = 0.2,
-        learn_ent_coeff: Optional[bool] = True,
+        learn_ent_coeff: bool = True,
         target_update_intvl: Optional[int] = 1,
         num_init_memory_steps: Optional[int] = None,
-        standardize_rew: Optional[bool] = True,
+        standardize_rew: bool = True,
         rew_scale: Union[int, float] = 1.0,
         min_rollouts: Optional[int] = None,
         min_steps: Optional[int] = None,
@@ -91,7 +91,7 @@ class SAC(ValueBased):
         lr: Optional[float] = 3e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
-        num_workers: Optional[int] = 4,
+        num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         r"""

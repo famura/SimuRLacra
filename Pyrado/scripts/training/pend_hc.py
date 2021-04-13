@@ -64,6 +64,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=10,
         pop_size=10 * policy.num_param,
+        num_domains=1,
         num_init_states_per_domain=1,
         expl_factor=1.05,
         expl_std_init=1.0,

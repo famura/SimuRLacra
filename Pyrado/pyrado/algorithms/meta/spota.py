@@ -69,7 +69,7 @@ class SPOTA(InterruptableAlgorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: DomainRandWrapperBuffer,
         subrtn_cand: Algorithm,
         subrtn_refs: Algorithm,

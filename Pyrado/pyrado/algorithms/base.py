@@ -54,7 +54,7 @@ class Algorithm(ABC, LoggerAware):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         max_iter: int,
         policy: Optional[Policy],
         logger: Optional[StepLogger] = None,
@@ -94,7 +94,7 @@ class Algorithm(ABC, LoggerAware):
         return self._save_dir
 
     @save_dir.setter
-    def save_dir(self, save_dir: str):
+    def save_dir(self, save_dir: pyrado.PathLike):
         """ Set the directory where the data is saved to. """
         if not osp.isdir(save_dir):
             raise pyrado.PathErr(given=save_dir)
@@ -307,7 +307,7 @@ class Algorithm(ABC, LoggerAware):
         joblib.dump(self, osp.join(self.save_dir, f"{self._save_name}.pkl"))
 
     @staticmethod
-    def load_snapshot(load_dir: str, load_name: str = "algo"):
+    def load_snapshot(load_dir: pyrado.PathLike, load_name: str = "algo"):
         """
         Load an algorithm from file, i.e. unpickle it.
 

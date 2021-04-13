@@ -60,15 +60,15 @@ from pyrado.utils.input_output import print_cbt, color_validity
 def rollout(
     env: Env,
     policy: Union[nn.Module, Policy, Callable],
-    eval: Optional[bool] = False,
+    eval: bool = False,
     max_steps: Optional[int] = None,
     reset_kwargs: Optional[dict] = None,
     render_mode: Optional[RenderMode] = RenderMode(),
     render_step: Optional[int] = 1,
-    no_reset: Optional[bool] = False,
-    no_close: Optional[bool] = False,
-    record_dts: Optional[bool] = False,
-    stop_on_done: Optional[bool] = True,
+    no_reset: bool = False,
+    no_close: bool = False,
+    record_dts: bool = False,
+    stop_on_done: bool = True,
     seed: Optional[int] = None,
 ) -> StepSequence:
     """

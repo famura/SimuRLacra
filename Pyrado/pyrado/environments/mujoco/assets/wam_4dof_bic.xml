@@ -144,7 +144,7 @@
       <!--<geom class="z_axis"/>-->
 
       <body name="wam/shoulder_yaw_link" pos="0 0 0.160" euler="0 0 -1.570796327">
-        <inertial pos="-0.00443422 -0.00066489 -0.12189039" mass="10.76768767" fullinertia="0.50739925 0.46298222 0.11328369 0.00012485 -0.00213041 0.00068555"/>
+        <inertial pos="-0.00443422 -0.00066489 -0.12189039" mass="[link_1_mass]" fullinertia="0.50739925 0.46298222 0.11328369 0.00012485 -0.00213041 0.00068555"/>
         <joint name="wam/base_yaw_joint" range="-2.6 2.6" frictionloss="[joint_1_dryfriction]" damping="[joint_1_damping]"/>
         <geom class="viz" mesh="shoulder_link_fine" pos="0 0 0.186"/>
         <geom class="col" mesh="shoulder_link_convex_decomposition_p1" pos="0 0 0.186"/>
@@ -152,13 +152,13 @@
         <geom class="col" mesh="shoulder_link_convex_decomposition_p3" pos="0 0 0.186"/>
 
         <body name="wam/shoulder_pitch_link" pos="0 0 0.184" quat="0.707107 -0.707107 0 0">
-          <inertial pos="-0.00236983 -0.01542114 0.03105614" mass="3.87493756" fullinertia="0.02140958 0.01558906 0.01377875 0.00002461 -0.00027172 -0.00181920"/>
+          <inertial pos="-0.00236983 -0.01542114 0.03105614" mass="[link_2_mass]" fullinertia="0.02140958 0.01558906 0.01377875 0.00002461 -0.00027172 -0.00181920"/>
           <joint name="wam/shoulder_pitch_joint" range="-1.985 1.985" frictionloss="[joint_2_dryfriction]" damping="[joint_2_damping]"/>
           <geom class="viz" mesh="shoulder_pitch_link_fine"/>
           <geom class="col" mesh="shoulder_pitch_link_convex"/>
 
           <body name="wam/upper_arm_link" pos="0 -0.505 0" quat="0.707107 0.707107 0 0">
-            <inertial pos="0.03825858 0.00003309 -0.20750770" mass="1.80228141" fullinertia="0.06276039 0.06656967 0.00689512 -0.00000738 -0.00614574 -0.00001767"/>
+            <inertial pos="0.03825858 0.00003309 -0.20750770" mass="[link_3_mass]" fullinertia="0.06276039 0.06656967 0.00689512 -0.00000738 -0.00614574 -0.00001767"/>
             <joint name="wam/shoulder_yaw_joint" range="-2.8 2.8" frictionloss="[joint_3_dryfriction]" damping="[joint_3_damping]"/>
             <geom class="viz" mesh="upper_arm_link_fine" pos="0 0 -0.505"/>
             <geom class="col" mesh="upper_arm_link_convex_decomposition_p1" pos="0 0 -0.505"/>
@@ -166,7 +166,7 @@
 
             <body name="wam/forearm_link" pos="0.045 0 0.045" quat="0.707107 -0.707107 0 0">
               <!-- The inertial and mass changed compared to 7dof -->
-              <inertial pos="-0.03404529 -0.14053900 -0.00022942" mass="1.06513649" fullinertia="0.01848577 0.0045 0.01968956 -0.00150604 -0.00001741 -0.00002109"/>
+              <inertial pos="-0.03404529 -0.14053900 -0.00022942" mass="[link_4_mass]" fullinertia="0.01848577 0.0045 0.01968956 -0.00150604 -0.00001741 -0.00002109"/>
               <joint name="wam/elbow_pitch_joint" range="-0.9 3.14159" frictionloss="[joint_4_dryfriction]" damping="[joint_4_damping]"/>
               <geom class="viz" mesh="elbow_link_fine"/>
               <geom class="col" mesh="elbow_link_convex"/>

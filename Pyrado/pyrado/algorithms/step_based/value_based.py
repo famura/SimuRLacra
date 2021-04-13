@@ -49,7 +49,7 @@ class ValueBased(Algorithm, ABC):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Union[Policy, TwoHeadedPolicy],
         memory_size: int,

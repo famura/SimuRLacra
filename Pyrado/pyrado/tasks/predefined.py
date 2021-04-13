@@ -201,7 +201,7 @@ def create_flipping_task(
     env_spec: EnvSpec,
     obs_labels: Sequence[str],
     des_angle_delta: Optional[float] = np.pi / 2.0,
-    endless: Optional[bool] = True,
+    endless: bool = True,
 ) -> MaskedTask:
     """
     Create a task for rotating an object.

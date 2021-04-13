@@ -48,7 +48,7 @@ class QuanserReal(RealEnv, ABC):
         rcv_dim: int,
         snd_dim: int,
         dt: Optional[float] = 1 / 500.0,
-        max_steps: Optional[int] = pyrado.inf,
+        max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
     ):
         """

@@ -43,7 +43,7 @@ from pyrado.utils.input_output import print_cbt
 class SimPyEnv(SimEnv, Serializable):
     """ Base class for simulated environments implemented in pure Python """
 
-    def __init__(self, dt: float, max_steps: Optional[int] = pyrado.inf, task_args: Optional[dict] = None):
+    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: Optional[dict] = None):
         """
         Constructor
 

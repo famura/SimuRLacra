@@ -144,7 +144,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         num_segments: int = None,
         len_segments: int = None,
         rollouts_real: Optional[List[StepSequence]] = None,
-        use_rec_act: Optional[bool] = True,
+        use_rec_act: bool = True,
     ):
         """
         Constructor
@@ -309,7 +309,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
             # Compute the features from all time series
             data_sim_all = to.stack(data_sim_all, dim=0)
             data_sim_all = data_sim_all.unsqueeze(1)  # equivalent to only one target domain rollout
-            data_sim_all = self._embedding(Embedding.pack(data_sim_all))
+            data_sim_all = self._embedding(Embedding.pack(data_sim_all))  # shape [batch_size,  dim_feat]
 
             # Check
             if data_sim_all.shape != (dp_values.shape[0], self._embedding.dim_output):
@@ -383,7 +383,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         embedding: Embedding,
         num_segments: int = None,
         len_segments: int = None,
-        rand_init_rollout: Optional[bool] = True,
+        rand_init_rollout: bool = True,
     ):
         """
         Constructor

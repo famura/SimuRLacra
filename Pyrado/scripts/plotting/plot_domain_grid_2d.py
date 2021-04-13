@@ -53,7 +53,7 @@ def _plot_and_save(
     add_sep_colorbar: bool = True,
     norm: colors.Normalize = None,
     save_figure: bool = False,
-    save_dir: str = None,
+    save_dir: pyrado.PathLike = None,
 ):
     if index in df.columns and column in df.columns:
         # Pivot table (by default averages over identical index / columns cells)

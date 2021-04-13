@@ -61,14 +61,14 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=50,
-        pop_size=20,
+        max_iter=5,
+        pop_size=50,
+        num_init_states_per_domain=4,
+        num_domains=20,
         num_is_samples=10,
-        num_init_states_per_domain=8,
-        expl_std_init=0.5,
+        expl_std_init=2.0,
         expl_std_min=0.02,
-        symm_sampling=False,
-        num_workers=12,
+        num_workers=20,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 

@@ -29,6 +29,7 @@
 import torch as to
 from typing import Optional
 
+import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
@@ -55,7 +56,7 @@ class PoWER(ParameterExploring):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Policy,
         max_iter: int,

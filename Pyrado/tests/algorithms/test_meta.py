@@ -73,7 +73,7 @@ from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceC
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import (
     LastStepEmbedding,
-    AllStepsEmbedding,
+    DeltaStepsEmbedding,
     BayesSimEmbedding,
     DynamicTimeWarpingEmbedding,
     RNNEmbedding,
@@ -503,7 +503,7 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
     "embedding_name",
     [
         LastStepEmbedding.name,
-        AllStepsEmbedding.name,
+        DeltaStepsEmbedding.name,
         BayesSimEmbedding.name,
         DynamicTimeWarpingEmbedding.name,
         RNNEmbedding.name,
@@ -552,8 +552,8 @@ def test_npdr(
     embedding_hparam = dict()
     if embedding_name == LastStepEmbedding.name:
         embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam)
-    elif embedding_name == AllStepsEmbedding.name:
-        embedding = AllStepsEmbedding(
+    elif embedding_name == DeltaStepsEmbedding.name:
+        embedding = DeltaStepsEmbedding(
             env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, **embedding_hparam
         )
     elif embedding_name == BayesSimEmbedding.name:

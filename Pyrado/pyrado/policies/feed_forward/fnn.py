@@ -51,7 +51,7 @@ class FNN(nn.Module):
         dropout: Optional[float] = 0.0,
         output_nonlin: Optional[Callable] = None,
         init_param_kwargs: Optional[dict] = None,
-        use_cuda: Optional[bool] = False,
+        use_cuda: bool = False,
     ):
         """
         Constructor
@@ -172,7 +172,7 @@ class FNNPolicy(Policy):
         dropout: Optional[float] = 0.0,
         output_nonlin: Optional[Callable] = None,
         init_param_kwargs: Optional[dict] = None,
-        use_cuda: Optional[bool] = False,
+        use_cuda: bool = False,
     ):
         """
         Constructor
@@ -219,9 +219,7 @@ class DiscreteActQValPolicy(Policy):
 
     name: str = "discrqval"
 
-    def __init__(
-        self, spec: EnvSpec, net: nn.Module, init_param_kwargs: Optional[dict] = None, use_cuda: Optional[bool] = False
-    ):
+    def __init__(self, spec: EnvSpec, net: nn.Module, init_param_kwargs: Optional[dict] = None, use_cuda: bool = False):
         """
         Constructor
 

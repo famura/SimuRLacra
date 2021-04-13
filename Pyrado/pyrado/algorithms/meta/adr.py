@@ -62,7 +62,7 @@ class ADR(Algorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         subrtn: Algorithm,
         max_iter: int,

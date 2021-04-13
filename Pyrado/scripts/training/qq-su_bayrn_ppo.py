@@ -43,7 +43,7 @@ from pyrado.domain_randomization.default_randomizers import (
 )
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
-from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     env_real_hparams = dict(dt=1 / 500.0, max_steps=3000)
-    env_real = QQubeReal(**env_real_hparams)
+    env_real = QQubeSwingUpReal(**env_real_hparams)
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy

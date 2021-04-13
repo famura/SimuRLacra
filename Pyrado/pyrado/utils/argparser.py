@@ -84,7 +84,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "--iter",
         type=int,
         default=-1,
-        help="iteration to select for evaluation (default: -1 for all iterations)",
+        help="iteration to select for evaluation (default: -1)",
     )
     parser.add_argument(
         "--layout",
@@ -191,8 +191,8 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--round",
         type=int,
-        default=None,
-        help="round index, e.g. for the NPDR algorithm (default: None)",
+        default=-1,
+        help="round index, e.g. for the NPDR algorithm (default: -1)",
     )
     parser.add_argument(
         "--policy_name",

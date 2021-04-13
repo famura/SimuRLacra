@@ -55,7 +55,7 @@ class ARPL(Algorithm):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: [SimEnv, StateAugmentationWrapper],
         subrtn: Algorithm,
         policy: Policy,

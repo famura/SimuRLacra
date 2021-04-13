@@ -38,7 +38,7 @@ from pyrado.algorithms.episodic.nes import NES
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
-from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     # Environments
     env_hparams = dict(dt=1 / 100.0, max_steps=600)
-    env_real = QQubeReal(**env_hparams)
+    env_real = QQubeSwingUpReal(**env_hparams)
 
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(

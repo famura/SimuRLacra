@@ -53,7 +53,7 @@ from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.ordering import natural_sort
+from pyrado.utils.ordering import remove_none_from_list
 
 
 if __name__ == "__main__":
@@ -83,30 +83,15 @@ if __name__ == "__main__":
         args.iter = algo.curr_iter
         print_cbt("Set the evaluation iteration to the latest iteration of the algorithm.", "y")
 
+    algo.load_posterior(ex_dir)
+
     # Load the sequence of posteriors if desired
-    if args.mode.lower() in ["evolution-iter", "evolution-round"]:
-        # Crawl through the experiment's directory
-        for root, dirs, files in os.walk(ex_dir):
-            dirs.clear()  # prevents walk() from going into subdirectories
-            files = natural_sort(files)
-            posterior = []
-            for f in files:
-                load_curr = False
-                if args.mode.lower() == "evolution-iter":
-                    if f.startswith("iter_") and f.endswith("_posterior.pt") and "round" not in f:
-                        load_curr = True
-                elif args.mode.lower() == "evolution-round":
-                    if f.startswith(f"iter_{args.iter}") and f.endswith("_posterior.pt") and "round" in f:
-                        load_curr = True
-                if load_curr:
-                    # Load the current posterior
-                    posterior.append(pyrado.load(name=f, load_dir=root))
-            # Check
-            if not posterior:
-                raise pyrado.ValueErr(
-                    msg="No posterior found! Most likely they have not been saved every round. "
-                    "Use a different plotting mode."
-                )
+    if args.mode.lower() == "evolution-iter":
+        posterior = [SBIBase.load_posterior(ex_dir, idx_iter=i, verbose=True) for i in range(algo.max_iter)]
+        posterior = remove_none_from_list(posterior)  # in case the algorithm terminated early
+    elif args.mode.lower() == "evolution-round":
+        posterior = [SBIBase.load_posterior(ex_dir, idx_round=i, verbose=True) for i in range(algo.num_sbi_rounds)]
+        posterior = remove_none_from_list(posterior)  # in case the algorithm terminated early
 
     if "evolution" in args.mode.lower() and data_real.shape[0] > len(posterior):
         print_cbt(
@@ -267,7 +252,7 @@ if __name__ == "__main__":
     if args.save:
         for fmt in ["pdf", "pgf", "png"]:
             os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
-            rnd = f"_round_{args.round}" if args.round is not None else ""
+            rnd = f"_round_{args.round}" if args.round != -1 else ""
             fig.savefig(
                 os.path.join(ex_dir, "plots", f"posterior_prob_iter_{args.iter}{rnd}_{args.mode}.{fmt}"),
                 dpi=500,

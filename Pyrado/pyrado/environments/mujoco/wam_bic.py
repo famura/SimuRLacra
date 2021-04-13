@@ -42,14 +42,12 @@ from pyrado.environments.barrett_wam import (
     act_space_bic_7dof,
     wam_q_limits_up_7dof,
     wam_q_limits_lo_7dof,
-    torque_space_wam_4dof,
-    torque_space_wam_7dof,
     wam_pgains_7dof,
     wam_dgains_7dof,
     wam_pgains_4dof,
     wam_dgains_4dof,
 )
-from pyrado.environments.mujoco.base import MujocoSimEnv
+from pyrado.environments.mujoco.wam_base import WAMSim
 from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.singular import SingularStateSpace
@@ -66,7 +64,7 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt
 
 
-class WAMBallInCupSim(MujocoSimEnv, Serializable):
+class WAMBallInCupSim(WAMSim, Serializable):
     """
     WAM robotic arm from Barrett technologies for the ball-in-the-cup task, controlled by a PD controller.
 
@@ -117,7 +115,6 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         self.observe_cup = observe_cup
 
         # Initialize num DoF specific variables
-        self._num_dof = num_dof
         if num_dof == 4:
             graph_file_name = "wam_4dof_bic.xml"
             self.qpos_des_init = init_qpos_des_4dof
@@ -136,7 +133,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
         model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, graph_file_name)
-        super().__init__(model_path, frame_skip, dt, max_steps, task_args)
+        super().__init__(num_dof, model_path, frame_skip, dt, max_steps, task_args)
 
         # Actual initial joint position (when the WAM moved to the home position)
         if num_dof == 4:
@@ -177,25 +174,9 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         # We access a private attribute since a method like 'model.geom_names[geom_id]' cannot be used because
         # not every geom has a name
         self._collision_geom_ids = [self.model._geom_name2id[name] for name in ["cup_geom1", "cup_geom2"]]
-
         self.stop_on_collision = stop_on_collision
 
-        self.camera_config = dict(
-            distance=2.7,
-            trackbodyid=0,  # id of the body to track
-            elevation=-30,  # camera rotation around the axis in the plane
-            azimuth=-90,  # camera rotation around the camera's vertical axis
-        )
-
-    @property
-    def num_dof(self) -> int:
-        """ Get the number of degrees of freedom. """
-        return self._num_dof
-
-    @property
-    def torque_space(self) -> Space:
-        """ Get the space of joint torques. """
-        return torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
+        self.camera_config.update(dict(distance=2.7))
 
     @property
     def state_space(self) -> Space:
@@ -230,44 +211,16 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
     @classmethod
     def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
-        if num_dof == 7:
-            return dict(
+        domain_param = super().get_nominal_domain_param()
+        domain_param.update(
+            dict(
                 cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
                 rope_length=0.41,  # length of the rope [m]
                 ball_mass=0.024,  # mass of the ball [kg]
-                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_5_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_6_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_7_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
-                joint_5_dryfriction=0.4,  # dry friction coefficient of motor joint 5 [-]
-                joint_6_dryfriction=0.4,  # dry friction coefficient of motor joint 6 [-]
-                joint_7_dryfriction=0.4,  # dry friction coefficient of motor joint 7 [-]
                 rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
             )
-        elif num_dof == 4:
-            return dict(
-                cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
-                rope_length=0.41,  # length of the rope [m]
-                ball_mass=0.024,  # mass of the ball [kg]
-                joint_1_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_2_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_3_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_4_damping=0.05,  # damping of motor joints [N/s] (default value is small)
-                joint_1_dryfriction=0.4,  # dry friction coefficient of motor joint 1 [-]
-                joint_2_dryfriction=0.4,  # dry friction coefficient of motor joint 2 [-]
-                joint_3_dryfriction=0.4,  # dry friction coefficient of motor joint 3 [-]
-                joint_4_dryfriction=0.4,  # dry friction coefficient of motor joint 4 [-]
-                rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
-            )
-        else:
-            raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
+        )
+        return domain_param
 
     def _create_task(self, task_args: dict) -> Task:
         if task_args.get("sparse_rew_fcn", False):

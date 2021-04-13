@@ -37,6 +37,10 @@ from sbi import utils
 import pyrado
 from pyrado.sampling.sbi_embeddings import (
     LastStepEmbedding,
+    DeltaStepsEmbedding,
+    BayesSimEmbedding,
+    DynamicTimeWarpingEmbedding,
+    RNNEmbedding,
 )
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
@@ -63,7 +67,7 @@ if __name__ == "__main__":
     env_sim = ActDelayWrapper(env_sim)
 
     # Create a fake ground truth target domain
-    num_real_rollouts = 5
+    num_real_rollouts = 2
     env_real = deepcopy(env_sim)
     dp_nom = env_sim.get_nominal_domain_param()
     env_real.domain_param = dict(
@@ -93,8 +97,8 @@ if __name__ == "__main__":
         # high=to.tensor([5.0]),
         low=to.tensor(
             [
-                1e-8,
-                1e-8,
+                dp_nom["Dr"] * 0,
+                dp_nom["Dp"] * 0,
                 dp_nom["Rm"] * 0.8,
                 dp_nom["km"] * 0.8,
                 dp_nom["Mr"] * 0.9,
@@ -121,13 +125,13 @@ if __name__ == "__main__":
     prior = utils.BoxUniform(**prior_hparam)
 
     # Time series embedding
-    embedding_hparam = dict()
-    embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict()
-    # embedding = AllStepsEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-    # embedding_hparam = dict(downsampling_factor=1)
+    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
+    embedding_hparam = dict(downsampling_factor=20)
+    embedding = DeltaStepsEmbedding(
+        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
+    )
+    # embedding_hparam = dict(downsampling_factor=10)
     # embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=1)
     # embedding = DynamicTimeWarpingEmbedding(
@@ -145,7 +149,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=1,
-        num_sim_per_round=200,
+        num_sim_per_round=500,
         num_sbi_rounds=5,
         simulation_batch_size=10,
         normalize_posterior=False,
@@ -155,7 +159,7 @@ if __name__ == "__main__":
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
-            training_batch_size=100,  # default: 50
+            training_batch_size=50,  # default: 50
             learning_rate=3e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
@@ -165,8 +169,8 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=8,
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
+        num_workers=20,
     )
     algo = NPDR(
         ex_dir,

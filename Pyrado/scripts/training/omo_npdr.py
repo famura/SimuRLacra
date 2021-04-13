@@ -37,9 +37,10 @@ from copy import deepcopy
 
 import pyrado
 from pyrado.sampling.sbi_embeddings import (
-    AllStepsEmbedding,
+    DeltaStepsEmbedding,
     LastStepEmbedding,
     BayesSimEmbedding,
+    RNNEmbedding,
 )
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
@@ -57,10 +58,10 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{NPDR.name}")
 
     # Set seed if desired
-    pyrado.set_seed(11, verbose=True)
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=200)
+    env_hparams = dict(dt=1 / 100.0, max_steps=400)
     env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake ground truth target domain
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     # embedding_hparam = dict()
     # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=10)
-    # embedding = AllStepsEmbedding(
+    # embedding = DeltaStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
     embedding_hparam = dict(downsampling_factor=1)

@@ -27,13 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from numpy.core import numeric
-from typing import List, Sequence, TypeVar, Union
+from typing import List, Sequence, Union
 
 from pyrado.spaces import BoxSpace
-
-
-SpaceType = TypeVar("SpaceType", List[Union[int, float]], np.ndarray)
 
 
 class Polar2DPosSpace(BoxSpace):
@@ -44,8 +40,8 @@ class Polar2DPosSpace(BoxSpace):
 
     def __init__(
         self,
-        bound_lo: SpaceType,
-        bound_up: SpaceType,
+        bound_lo: Union[List[Union[int, float]], np.ndarray],
+        bound_up: Union[List[Union[int, float]], np.ndarray],
         shape: Union[tuple, int] = None,
         labels: Sequence[str] = None,
     ):
@@ -61,6 +57,7 @@ class Polar2DPosSpace(BoxSpace):
             assert len(bound_lo) == len(bound_up) == 2
         elif isinstance(bound_lo, np.ndarray):
             assert bound_lo.size == bound_up.size == 2
+
         # Actually, this space is a BoxSpace
         super().__init__(bound_lo, bound_up, shape, labels=labels)
 

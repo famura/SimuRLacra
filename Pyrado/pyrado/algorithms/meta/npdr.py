@@ -35,6 +35,7 @@ from typing import Optional, Type, Mapping, Union
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.sbi_base import SBIBase
+from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environments.base import Env
@@ -51,8 +52,8 @@ class NPDR(SBIBase):
 
     def __init__(
         self,
-        save_dir: str,
-        env_sim: SimEnv,
+        save_dir: pyrado.PathLike,
+        env_sim: Union[SimEnv, EnvWrapper],
         env_real: Union[Env, str],
         policy: Policy,
         dp_mapping: Mapping[int, str],
@@ -64,18 +65,18 @@ class NPDR(SBIBase):
         num_sim_per_round: int,
         num_segments: int = None,
         len_segments: int = None,
-        use_rec_act: Optional[bool] = True,
-        num_sbi_rounds: Optional[int] = 1,
+        use_rec_act: bool = True,
+        num_sbi_rounds: int = 1,
         num_eval_samples: Optional[int] = None,
         posterior_hparam: Optional[dict] = None,
         subrtn_sbi_training_hparam: Optional[dict] = None,
         subrtn_sbi_sampling_hparam: Optional[dict] = None,
-        simulation_batch_size: Optional[int] = 1,
+        simulation_batch_size: int = 1,
         normalize_posterior: bool = True,
         subrtn_policy: Optional[Algorithm] = None,
-        subrtn_policy_snapshot_mode: Optional[str] = "latest",
-        thold_succ_subrtn: Optional[float] = -pyrado.inf,
-        num_workers: Optional[int] = 4,
+        subrtn_policy_snapshot_mode: str = "latest",
+        thold_succ_subrtn: float = -pyrado.inf,
+        num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         """
@@ -94,7 +95,8 @@ class NPDR(SBIBase):
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_real_rollouts: number of real-world rollouts received by sbi, i.e. from every rollout exactly one
                                   data set is computed
-        :param num_sim_per_round: number of simulations done by sbi per round (i.e. iteration over the same target domain data set)
+        :param num_sim_per_round: number of simulations done by sbi per round (i.e. iteration over the same target
+                                  domain data set)
         :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                             state of the simulation is reset, and thus for every set the features of the trajectories
                             are computed separately. Either specify `num_segments` or `len_segments`.
@@ -126,6 +128,7 @@ class NPDR(SBIBase):
         # Call SBIBase's constructor
         super().__init__(
             num_checkpoints=3,
+            init_checkpoint=-1,
             save_dir=save_dir,
             env_sim=env_sim,
             env_real=env_real,
@@ -157,6 +160,12 @@ class NPDR(SBIBase):
     def step(self, snapshot_mode: str = None, meta_info: dict = None):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
+
+        if self.curr_checkpoint == -1:
+            if self._subrtn_policy is not None:
+                # Train the behavioral policy using the nominal domain parameters
+                self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode)  # overrides policy.pt
+            self.reached_checkpoint()  # setting counter to 0
 
         if self.curr_checkpoint == 0:
             self._curr_data_real, _ = NPDR.collect_data_real(

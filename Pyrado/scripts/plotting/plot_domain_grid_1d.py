@@ -67,7 +67,7 @@ def _plot_and_save(
     y_lim: list = None,
     show_legend: bool = True,
     save_figure: bool = False,
-    save_dir: str = None,
+    save_dir: pyrado.PathLike = None,
 ):
     if "policy" in df.columns and domain_param in df.columns:
         # Pivot table with multiple aggregation functions

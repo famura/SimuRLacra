@@ -223,7 +223,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         self,
         init_states: Optional[List[np.ndarray]] = None,
         domain_params: Optional[List[dict]] = None,
-        eval: Optional[bool] = False,
+        eval: bool = False,
     ) -> List[StepSequence]:
         """
         Do the sampling according to the previously given environment, policy, and number of steps/rollouts.

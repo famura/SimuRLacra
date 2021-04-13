@@ -30,12 +30,46 @@ import torch as to
 import torch.nn as nn
 from abc import ABC, abstractmethod
 from torch.nn.utils import convert_parameters as cp
+from torch.utils.data import Dataset, DataLoader
 from typing import Optional
 from warnings import warn
 
 import pyrado
 from pyrado.policies.initialization import init_param
 from pyrado.utils.data_types import merge_dicts, EnvSpec
+
+
+# class SingleTensorDataset(Dataset[to.Tensor]):
+#     """
+#     Custom subclass of the`Dataset` class wrapping a single PyTorch tensor
+#
+#     .. note::
+#         Use in combination with `collate_fn=lambda x: x` in the `DataLoader` constructor.
+#     """
+#
+#     tensor: to.Tensor
+#
+#     def __init__(self, tensor: to.Tensor) -> None:
+#         """
+#         Constructor
+#
+#         :param tensor: input tensor of at least 2 dimensions
+#         """
+#         if not isinstance(tensor, to.Tensor):
+#             raise pyrado.TypeErr(given=tensor, expected_type=to.Tensor)
+#         if not tensor.ndim == 4:
+#             raise pyrado.ShapeErr(
+#                 msg=f"The input tensor must at have exactly 4 dimensions, but its shape is {tensor.shape}!"
+#             )
+#         self.tensor = tensor.reshape(-1, tensor.shape[2], tensor.shape[3])
+#
+#     def __getitem__(self, idx: int):
+#         """ Get a slice though the 1-st dimension, i.e. the combined batch and rollout dimension. """
+#         return self.tensor[idx]
+#
+#     def __len__(self):
+#         """ Get the length of the data set, i.e. batch_size * num_rollouts. """
+#         return self.tensor.shape[0]
 
 
 class Embedding(ABC, nn.Module):
@@ -55,7 +89,7 @@ class Embedding(ABC, nn.Module):
         spec: EnvSpec,
         dim_data: int,
         downsampling_factor: Optional[int] = 1,
-        use_cuda: Optional[bool] = False,
+        use_cuda: bool = False,
     ):
         """
         Constructor
@@ -155,8 +189,8 @@ class Embedding(ABC, nn.Module):
 
     def forward_one_batch(self, data_batch: to.Tensor) -> to.Tensor:
         """
-        Iterate over all data batches and compute the features for each rollout separately, then average the features
-        over the rollouts
+        Iterate over all rollouts and compute the features for each rollout separately, then average the features
+        over the rollouts.
 
         :param data_batch: data batch of shape [num_rollouts, len_time_series, dim_data]
         :return: concatenation of the features for each rollout
@@ -168,8 +202,8 @@ class Embedding(ABC, nn.Module):
         Transforms rollouts into the observations used for likelihood-free inference.
         Currently a state-representation as well as state-action summary-statistics are available.
 
-        :param data: packed data to be fed into the embedding
-        :return: features of the data extracted from the embedding
+        :param data: packed data of shape [batch_size, num_rollouts, len_time_series, dim_data]
+        :return: features of the data extracted from the embedding of shape [[batch_size, num_rollouts * dim_feat]
         """
         data = data.to(device=self.device, dtype=to.get_default_dtype())
 
@@ -179,8 +213,31 @@ class Embedding(ABC, nn.Module):
         if self.downsampling_factor > 1:
             data = data[:, :, :: self.downsampling_factor, :]
 
+        # from time import time
+        # t0 = time()
+        #
+        # dataset = SingleTensorDataset(data)
+        # dataloader = DataLoader(
+        #     dataset,
+        #     batch_size=data.shape[1],  # get num_rollout samples per batch
+        #     drop_last=False,
+        #     collate_fn=lambda x: x,
+        #     # sampler=SequentialSampler(dataset),
+        # )
+        # x2 = []
+        # for data_batch in dataloader:
+        #     x2.append(to.cat([self.summary_statistic(d) for d in data_batch], dim=0))
+        # x2 = to.stack(x2, dim=0)
+        #
+        # t1 = time()
+
         # Iterate over all data batches computing the features from the data
         x = to.stack([self.forward_one_batch(batch) for batch in data], dim=0)
+
+        # t2 = time()
+        #
+        # assert to.allclose(x, x2)
+        # print(f"dt1 {t1 - t0}:.4f      dt2 {t2 - t1}:.4f")
 
         # Check the shape
         if not x.shape == (data.shape[0], data.shape[1] * self.dim_output):
@@ -212,13 +269,13 @@ class LastStepEmbedding(Embedding):
         return data[-1, : self._env_spec.state_space.flat_dim].reshape(-1)
 
 
-class AllStepsEmbedding(Embedding):
+class DeltaStepsEmbedding(Embedding):
     """
-    Embedding for simulation-based inference with time series data which selects the states of all time steps of
-    the rollouts
+    Embedding for simulation-based inference with time series data which returns the change in the states between
+    consecutive time steps of the rollouts
     """
 
-    name: str = "asemb"
+    name: str = "dsemb"
     requires_target_domain_data: bool = False
 
     def __init__(
@@ -227,7 +284,7 @@ class AllStepsEmbedding(Embedding):
         dim_data: int,
         len_rollouts: int,
         downsampling_factor: Optional[int] = 1,
-        use_cuda: Optional[bool] = False,
+        use_cuda: bool = False,
     ):
         """
         Constructor
@@ -238,7 +295,8 @@ class AllStepsEmbedding(Embedding):
                          target domain data.
         :param len_rollouts: number of time steps per rollout without considering a potential downsampling later
                              (must be the same for all rollouts)
-        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default
+        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
+                                    base class before calling `summary_statistic()`
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(len_rollouts, int) or len_rollouts < 0:
@@ -251,7 +309,7 @@ class AllStepsEmbedding(Embedding):
 
     @property
     def dim_output(self) -> int:
-        return self._len_rollouts * self._env_spec.state_space.flat_dim
+        return (self._len_rollouts - 1) * self._env_spec.state_space.flat_dim
 
     @to.no_grad()
     def summary_statistic(self, data: to.Tensor) -> to.Tensor:
@@ -261,8 +319,13 @@ class AllStepsEmbedding(Embedding):
         :param data: states and actions of a rollout or segment to be transformed for inference
         :return: all states as a flattened vector
         """
-        # Extract the states
-        return data[:, : self._env_spec.state_space.flat_dim].reshape(-1)
+        if data.shape[0] < 2:
+            raise pyrado.ShapeErr(msg="The data tensor needs to contain at least two samples!")
+
+        # Extract the states, and compute the deltas
+        states = data[:, : self._env_spec.state_space.flat_dim]
+        states_diff = states[1:] - states[:-1]
+        return states_diff.reshape(-1)
 
 
 class BayesSimEmbedding(Embedding):
@@ -333,7 +396,7 @@ class RNNEmbedding(Embedding):
         dropout: Optional[float] = 0.0,
         init_param_kwargs: Optional[dict] = None,
         downsampling_factor: Optional[int] = 1,
-        use_cuda: Optional[bool] = False,
+        use_cuda: bool = False,
         **recurrent_net_kwargs,
     ):
         """
@@ -352,7 +415,8 @@ class RNNEmbedding(Embedding):
         :param dropout: dropout probability, default = 0 deactivates dropout
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net's constructor
-        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default
+        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
+                                    base class before calling `summary_statistic()`
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(len_rollouts, int) or len_rollouts < 0:
@@ -439,7 +503,7 @@ class DynamicTimeWarpingEmbedding(Embedding):
         dim_data: int,
         step_pattern: Optional[str] = None,
         downsampling_factor: Optional[int] = 1,
-        use_cuda: Optional[bool] = False,
+        use_cuda: bool = False,
     ):
         """
         Constructor
@@ -451,7 +515,8 @@ class DynamicTimeWarpingEmbedding(Embedding):
         :param step_pattern: method passed to dtw-python for computing the distance, e.g. `"symmetric2"` to use
                              dtw-python's default. Here, the default is set to the Rabiner-Juang type VI-c unsmoothed
                              recursion step pattern
-        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default
+        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
+                                    base class before calling `summary_statistic()`
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         from dtw.stepPattern import rabinerJuangStepPattern

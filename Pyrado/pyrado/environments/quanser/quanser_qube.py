@@ -42,7 +42,7 @@ from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 from pyrado.utils.input_output import print_cbt, completion_context
 
 
-class QQubeReal(QuanserReal, Serializable):
+class QQubeSwingUpReal(QuanserReal, Serializable):
     """ Class for the real Quanser Qube a.k.a. Furuta pendulum """
 
     name: str = "qq-su"
@@ -50,7 +50,7 @@ class QQubeReal(QuanserReal, Serializable):
     def __init__(
         self,
         dt: Optional[float] = 1 / 500.0,
-        max_steps: Optional[int] = pyrado.inf,
+        max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
         ip: str = "192.168.2.17",
     ):

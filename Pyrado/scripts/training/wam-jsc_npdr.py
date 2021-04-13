@@ -36,7 +36,7 @@ from sbi.inference import SNPE_C
 from sbi import utils
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import AllStepsEmbedding, BayesSimEmbedding, RNNEmbedding
+from pyrado.sampling.sbi_embeddings import DeltaStepsEmbedding, BayesSimEmbedding, RNNEmbedding
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
@@ -71,13 +71,20 @@ if __name__ == "__main__":
     #         6: "joint_7_damping",
     #     }
     dp_mapping = {
-        0: "joint_1_dryfriction",
-        1: "joint_2_dryfriction",
-        2: "joint_3_dryfriction",
-        3: "joint_4_dryfriction",
-        4: "joint_5_dryfriction",
-        5: "joint_6_dryfriction",
-        6: "joint_7_dryfriction",
+        0: "link_1_mass",
+        1: "link_2_mass",
+        2: "link_3_mass",
+        3: "link_4_mass",
+        4: "link_5_mass",
+        5: "link_6_mass",
+        6: "link_7_mass",
+        7: "joint_1_dryfriction",
+        8: "joint_2_dryfriction",
+        9: "joint_3_dryfriction",
+        10: "joint_4_dryfriction",
+        11: "joint_5_dryfriction",
+        12: "joint_6_dryfriction",
+        13: "joint_7_dryfriction",
     }
     # dp_mapping = create_damping_dryfriction_domain_param_map_wamjsc()
 
@@ -90,8 +97,42 @@ if __name__ == "__main__":
     prior_hparam = dict(
         # low=to.tensor([dp_nom[name] * 0 for name in dp_mapping.values()]),
         # high=to.tensor([dp_nom[name] * 100 for name in dp_mapping.values()]),
-        low=to.zeros((7,)),
-        high=to.tensor([40, 40, 40, 40, 80, 40, 120]),
+        low=to.tensor(
+            [
+                dp_nom["link_1_mass"] * 0.5,
+                dp_nom["link_2_mass"] * 0.5,
+                dp_nom["link_3_mass"] * 0.5,
+                dp_nom["link_4_mass"] * 0.5,
+                dp_nom["link_5_mass"] * 0.5,
+                dp_nom["link_6_mass"] * 0.5,
+                dp_nom["link_7_mass"] * 0.5,
+                dp_nom["joint_1_dryfriction"] * 0.1,
+                dp_nom["joint_2_dryfriction"] * 0.1,
+                dp_nom["joint_3_dryfriction"] * 0.1,
+                dp_nom["joint_4_dryfriction"] * 0.1,
+                dp_nom["joint_5_dryfriction"] * 0.1,
+                dp_nom["joint_6_dryfriction"] * 0.1,
+                dp_nom["joint_7_dryfriction"] * 0.1,
+            ]
+        ),
+        high=to.tensor(
+            [
+                dp_nom["link_1_mass"] * 1.5,
+                dp_nom["link_2_mass"] * 1.5,
+                dp_nom["link_3_mass"] * 1.5,
+                dp_nom["link_4_mass"] * 1.5,
+                dp_nom["link_5_mass"] * 1.5,
+                dp_nom["link_6_mass"] * 1.5,
+                dp_nom["link_7_mass"] * 1.5,
+                40,
+                40,
+                40,
+                40,
+                80,
+                40,
+                120,
+            ]
+        ),
     )
     prior = utils.BoxUniform(**prior_hparam)
 
@@ -99,7 +140,7 @@ if __name__ == "__main__":
     # embedding_hparam = dict()
     # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=10)
-    # embedding = AllStepsEmbedding(
+    # embedding = DeltaStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
     embedding_hparam = dict(downsampling_factor=1)
@@ -114,24 +155,24 @@ if __name__ == "__main__":
     # )
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
+    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=8)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=1,
-        num_sim_per_round=5000,
-        num_sbi_rounds=2,
-        simulation_batch_size=100,
+        num_sim_per_round=2000,
+        num_sbi_rounds=3,
+        simulation_batch_size=50,
         normalize_posterior=False,
         num_eval_samples=10,
         # num_segments=5,
-        len_segments=50,
+        len_segments=100,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
-            learning_rate=3e-4,  # default: 5e-4
+            learning_rate=5e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
             discard_prior_samples=False,  # default: False
@@ -141,7 +182,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        num_workers=12,
+        num_workers=20,
     )
     algo = NPDR(
         ex_dir,

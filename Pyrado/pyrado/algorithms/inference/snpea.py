@@ -69,7 +69,7 @@ class SNPEA(Algorithm):
         max_grad_norm: Optional[float] = 5.0,
         eval_every_n_sims: Optional[int] = 10,
         simulation_batch_size: Optional[int] = 10,
-        use_gaussian_proposal: Optional[bool] = False,
+        use_gaussian_proposal: bool = False,
         num_workers: Optional[int] = 1,
         logger: Optional[StepLogger] = None,
     ):
@@ -221,8 +221,8 @@ class SNPEA(Algorithm):
     #     posterior: MDNPolicy,
     #     data_real: to.Tensor,
     #     num_samples: int,
-    #     calculate_log_probs: Optional[bool] = True,
-    #     disable: Optional[bool] = False,
+    #     calculate_log_probs: bool = True,
+    #     disable: bool = False,
     #     **kwargs,
     # ):
     #     r"""

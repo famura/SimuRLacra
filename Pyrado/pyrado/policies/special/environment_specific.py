@@ -483,7 +483,8 @@ class QQubePDCtrl(Policy):
         elif all(to.abs(err) > self.tols) and self.state_des[0] == self.state_des[1] == 0.0:
             # In case of initializing the Qube, increase the P-gain over time. This is useful since the resistance from
             # the Qube's cable can be too strong for the PD controller to reach the steady state, like a fake I-gain.
-            self.pd_gains[0] = min(self.pd_gains[0] + 0.01, to.tensor(20.0))
+            self.pd_gains.data = self.pd_gains + to.tensor([0.01, 0.0, 0.0, 0.0])  # no in-place op because of grad
+            self.pd_gains.data = to.min(self.pd_gains, to.tensor([20.0, pyrado.inf, pyrado.inf, pyrado.inf]))
 
         # PD control
         return to.atleast_1d(self.pd_gains.dot(err))

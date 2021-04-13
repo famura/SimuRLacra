@@ -42,7 +42,7 @@ from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl, QCartPoleSwingUpAndBalanceCtrl
 from pyrado.sampling.sbi_embeddings import (
     BayesSimEmbedding,
-    AllStepsEmbedding,
+    DeltaStepsEmbedding,
     RNNEmbedding,
     DynamicTimeWarpingEmbedding,
 )
@@ -151,13 +151,13 @@ if __name__ == "__main__":
     # embedding_hparam = dict()
     # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=10)
-    # embedding = AllStepsEmbedding(
+    # embedding = DeltaStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
     embedding_hparam = dict(downsampling_factor=1)
     embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
     # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = AllStepsEmbedding(
+    # embedding = DeltaStepsEmbedding(
     #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
     # )
     # embedding_hparam = dict(downsampling_factor=2)

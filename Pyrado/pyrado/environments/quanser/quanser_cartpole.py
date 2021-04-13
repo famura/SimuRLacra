@@ -163,7 +163,7 @@ class QCartPoleStabReal(QCartPoleReal):
     def __init__(
         self,
         dt: Optional[float] = 1 / 500.0,
-        max_steps: Optional[int] = pyrado.inf,
+        max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
         ip: Optional[str] = "192.168.2.38",
     ):
@@ -266,7 +266,7 @@ class QCartPoleSwingUpReal(QCartPoleReal):
     def __init__(
         self,
         dt: Optional[float] = 1 / 500.0,
-        max_steps: Optional[int] = pyrado.inf,
+        max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
         ip: Optional[str] = "192.168.2.38",
     ):

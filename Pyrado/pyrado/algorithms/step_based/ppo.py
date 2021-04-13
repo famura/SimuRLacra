@@ -61,7 +61,7 @@ class PPO(ActorCritic):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Policy,
         critic: GAE,
@@ -249,7 +249,7 @@ class PPO2(ActorCritic):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: Policy,
         critic: GAE,

@@ -179,7 +179,7 @@ class StepLogger:
         self.pop_prefix()
 
 
-def create_csv_step_logger(save_dir: str, file_name: str = "progress.csv") -> StepLogger:
+def create_csv_step_logger(save_dir: pyrado.PathLike, file_name: str = "progress.csv") -> StepLogger:
     """
     Create a step-based logger which only safes to a csv-file.
 
@@ -332,7 +332,7 @@ class LoggerAware:
 
     # Set these in the constructor of subclasses like Algorithm
     _logger: StepLogger = None
-    _save_dir: str = None
+    _save_dir: pyrado.PathLike = None
 
     @property
     def logger(self) -> StepLogger:

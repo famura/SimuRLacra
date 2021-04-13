@@ -28,12 +28,16 @@
 
 import joblib
 import numpy as np
+import os
+import os.path as osp
 import torch as to
-from os import path as osp
-from typing import Optional
+from typing import TypeVar
 
 from pyrado.utils.exceptions import PathErr, TypeErr, ValueErr
 from pyrado.utils.input_output import print_cbt
+
+# Repeat definition since we can not import pyrado here
+PathLike = TypeVar("PathLike", str, bytes, os.PathLike)  # PEP 519
 
 
 def _save_fcn(obj, path, extension):
@@ -61,7 +65,7 @@ def _load_fcn(path, extension):
     return obj
 
 
-def save(obj, name: str, save_dir: str, prefix: str = "", suffix: str = "", use_state_dict: bool = False):
+def save(obj, name: str, save_dir: PathLike, prefix: str = "", suffix: str = "", use_state_dict: bool = False):
     """
     Save an object object using a prefix or suffix, depending on the meta information.
 
@@ -112,7 +116,7 @@ def save(obj, name: str, save_dir: str, prefix: str = "", suffix: str = "", use_
     _save_fcn(obj_, osp.join(save_dir, f"{prefix}{name_wo_file_ext}{suffix}.{file_ext}"), file_ext)
 
 
-def load(name: str, load_dir: str, prefix: str = "", suffix: str = "", obj=None, verbose: Optional[bool] = False):
+def load(name: str, load_dir: PathLike, prefix: str = "", suffix: str = "", obj=None, verbose: bool = False):
     """
     Load an object object using a prefix or suffix, depending on the meta information.
 

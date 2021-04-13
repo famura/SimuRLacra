@@ -55,7 +55,7 @@ class DQL(ValueBased):
 
     def __init__(
         self,
-        save_dir: str,
+        save_dir: pyrado.PathLike,
         env: Env,
         policy: DiscreteActQValPolicy,
         memory_size: int,
@@ -74,7 +74,7 @@ class DQL(ValueBased):
         lr: Optional[float] = 5e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
-        num_workers: Optional[int] = 4,
+        num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         r"""

@@ -38,7 +38,7 @@ from pyrado.environments.barrett_wam.wam_bic import WAMReal
 from pyrado.environments.barrett_wam.wam_jsc import WAMJointSpaceCtrlRealStepBased
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.special.environment_specific import wam_jsp_7dof_sin
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -58,14 +58,14 @@ if __name__ == "__main__":
     max_amp = 1.0  # max. amplitude [V]
 
     # Create the simulated and real environments
-    if args.env_name == QQubeReal.name:
+    if args.env_name == QQubeSwingUpReal.name:
         env_sim = QQubeSwingUpSim(dt, max_steps)
-        env_real = QQubeReal(dt, max_steps)
+        env_real = QQubeSwingUpReal(dt, max_steps)
     elif args.env_name == WAMReal.name:
         env_sim = WAMJointSpaceCtrlSim(frame_skip=4, num_dof=7, max_steps=max_steps)
         env_real = WAMJointSpaceCtrlRealStepBased(num_dof=7, max_steps=max_steps)
     else:
-        raise pyrado.ValueErr(given=args.mode, eq_constraint=f"{QQubeReal.name} or {WAMReal.name}")
+        raise pyrado.ValueErr(given=args.mode, eq_constraint=f"{QQubeSwingUpReal.name} or {WAMReal.name}")
     print_cbt(f"Set the {env_real.name} environment.", "g")
 
     # Create the policy
