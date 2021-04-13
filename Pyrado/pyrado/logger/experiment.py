@@ -36,11 +36,12 @@ import yaml
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Sequence, Union, Iterable, List
+from typing import Sequence, Union, Iterable, List, Callable, Optional
 
 import pyrado
 from pyrado.logger import set_log_prefix_dir
 from pyrado.utils import get_class_name
+from pyrado.utils.data_types import dict_path_access
 from pyrado.utils.input_output import select_query, print_cbt
 
 
@@ -61,6 +62,7 @@ class Experiment:
         exp_id: str = None,
         timestamp: datetime = None,
         base_dir: str = pyrado.TEMP_DIR,
+        include_slurm_id: bool = True,
     ):
         """
         Constructor
@@ -71,8 +73,25 @@ class Experiment:
         :param exp_id: combined timestamp and extra_info, usually the final folder name
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
+        :param include_slurm_id: If a SLURM ID is present in the environment variables, include them in the experiment ID.
         """
-        if exp_id is not None:
+
+        slurm_id = None
+        if include_slurm_id and "SLURM_JOB_ID" in os.environ:
+            slurm_id = str(os.environ["SLURM_JOB_ID"])
+            if "SLURM_ARRAY_TASK_ID" in os.environ:
+                slurm_id += "_" + str(os.environ["SLURM_ARRAY_TASK_ID"])
+        if exp_id is None:
+            # Create exp id from timestamp and info
+            if timestamp is None:
+                timestamp = datetime.now()
+            exp_id = timestamp.strftime(pyrado.timestamp_format)
+
+            if extra_info is not None:
+                exp_id = exp_id + "--" + extra_info
+            if slurm_id is not None:
+                exp_id += "--SLURM:" + slurm_id
+        else:
             # Try to parse extra_info from exp id
             sd = exp_id.split("--", 1)
             if len(sd) == 1:
@@ -84,14 +103,6 @@ class Experiment:
                 timestamp = datetime.strptime(timestr, pyrado.timestamp_format)
             else:
                 timestamp = datetime.strptime(timestr, pyrado.timestamp_date_format)
-        else:
-            # Create exp id from timestamp and info
-            if timestamp is None:
-                timestamp = datetime.now()
-            exp_id = timestamp.strftime(pyrado.timestamp_format)
-
-            if extra_info is not None:
-                exp_id = exp_id + "--" + extra_info
 
         # Store values
         self.env_name = env_name
@@ -132,10 +143,25 @@ class Experiment:
             return self.env_name == env_name and self.algo_name == algo_name and self.exp_id == eid
 
 
-def setup_experiment(env_name: str, algo_name: str, extra_info: str = None, base_dir: str = pyrado.TEMP_DIR):
-    """ Setup a new experiment for recording. """
+def setup_experiment(
+    env_name: str,
+    algo_name: str,
+    extra_info: str = None,
+    base_dir: str = pyrado.TEMP_DIR,
+    include_slurm_id: bool = True,
+):
+    """
+    Setup a new experiment for recording.
+
+    :param env_name: environment trained on
+    :param algo_name: algorithm trained with, usually also includes the policy type, e.g. 'a2c_fnn'
+    :param extra_info: additional information on the experiment (free form)
+    :param base_dir: base storage directory
+    :param include_slurm_id: If a SLURM ID is present in the environment variables, include them in the experiment ID.
+    """
+
     # Create experiment object
-    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir)
+    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir, include_slurm_id=include_slurm_id)
 
     # Create the folder
     os.makedirs(exp, exist_ok=True)
@@ -243,6 +269,38 @@ def select_by_hint(exps: Sequence[Experiment], hint: str):
     return sl
 
 
+def create_experiment_formatter(
+    show_hparams: Optional[List[str]] = None, show_extra_info: bool = True
+) -> Callable[[Experiment], str]:
+    """
+    Returns an experiment formatter (i.e. a function that takes an experiment and produces a string) to be used in the
+    ask-for-experiments dialog. It produces useful information like the timestamp based on the experiments' data.
+
+    :param show_hparams: list of "paths" to hyperparameters that to be shown in the selection dialog; sub-dicts can be references with a dot, e.g. `env.dt`
+    :param show_extra_info: whether to show the information stored in the `extra_info` field of the experiment
+    :return: a function that serves as the formatter
+    """
+
+    def formatter(exp: Experiment) -> str:
+        result = f"({exp.timestamp}) {exp.prefix}"
+        if show_hparams:
+            hyper_parameters = load_hyperparameters(exp, raise_error=True)
+            result += " {"
+            first = True
+            for param in show_hparams:
+                value = dict_path_access(hyper_parameters, param, default="None")
+                if not first:
+                    result += ","
+                result += f" {param}={value}"
+                first = False
+            result += " }"
+        if show_extra_info and exp.extra_info is not None:
+            result += f" ({exp.extra_info})"
+        return result
+
+    return formatter
+
+
 def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
     """
     Split a path at the point where the machine-dependent and the machine-independent part can be separated.
@@ -291,11 +349,15 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
     return custom, common
 
 
-def ask_for_experiment(latest_only: bool = False):
+def ask_for_experiment(
+    latest_only: bool = False, max_display: int = 10, hparam_list: Optional[List[str]] = None
+) -> Experiment:
     """
     Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.
 
     :param latest_only: only select the latest experiment of each type (environment-algorithm combination)
+    :param max_display: only display this many items
+    :param hparam_list: load the hyperparams file and show the parameters in this list; sub-dicts can be separated with a dot
     :return: query asking the user for an experiment
     """
     # Scan for experiment list
@@ -319,9 +381,10 @@ def ask_for_experiment(latest_only: bool = False):
     return select_query(
         sel_exp_by_prefix,
         fallback=lambda hint: select_by_hint(all_exps, hint),
-        item_formatter=lambda exp: f"({exp.timestamp}) {exp.prefix}",
+        item_formatter=create_experiment_formatter(show_hparams=hparam_list),
         header="Available experiments:",
         footer="Enter experiment number or a partial path to an experiment.",
+        max_display=max_display,
     )
 
 
@@ -439,3 +502,25 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
     with open(yaml_file, "r") as yaml_file:
         data = yaml.load(yaml_file, Loader=AugmentedSafeLoader)
     return data
+
+
+def load_hyperparameters(ex_dir, raise_error: bool = False) -> Union[dict, Optional[dict]]:
+    """
+    Loads the hyperparameters-dict from the given experiment directory. The hyperparameters file is assumed to be
+    named `hyperparams.yaml`.
+
+    :param raise_error: whether to raise an error if one occurs; if false, `None` is returned and an error
+                        message is printed
+    """
+    hparams_file_name = "hyperparams.yaml"
+    try:
+        return load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
+    except (pyrado.PathErr, FileNotFoundError, KeyError):
+        print_cbt(
+            f"Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.",
+            "y",
+            bright=True,
+        )
+        if raise_error:
+            raise
+        return None

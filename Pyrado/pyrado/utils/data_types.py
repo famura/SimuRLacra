@@ -29,13 +29,15 @@
 import collections
 import numpy as np
 import torch as to
-from copy import deepcopy
-from typing import Sequence, NamedTuple, Union
+import typing
+from typing import Sequence, NamedTuple, Union, TypeVar
 
 import pyrado
 from pyrado.spaces.base import Space
 from pyrado.spaces.empty import EmptySpace
 from pyrado.utils.checks import is_sequence
+
+T = TypeVar("T")
 
 
 class EnvSpec(NamedTuple):
@@ -261,3 +263,34 @@ def fill_list_of_arrays(loa: Sequence[np.ndarray], des_len: int, fill_ele=np.nan
 
     # Return the modified copy
     return loa_c
+
+
+def dict_path_access(
+    d: dict, path: str, default: typing.Optional[T] = None, default_for_last_layer_only: bool = False
+) -> T:
+    """
+    Gets a dict entry using a jq-like naming system. To get the entry `foo` from the topmost
+    dictionary, use the path `foo`. To access an entry `baz` in a dictionary that is stored in the
+    top dictionary under the key `bar`, use the path `bar.baz`.
+
+    :param d: the dictionary
+    :param path: the path
+    :param default: if no entry corresponding to the key was found, this value is returned
+    :param default_for_last_layer_only: if `True`, only return the default value if the entry was
+                                        not found in the last dictionary, but the previous
+                                        dictionaries where found (e.g. for `bar.baz`, `d['bar']`
+                                        exists, but `d['bar']['baz']` does not; if those where not
+                                        found, an error is raised; if `False`, also return the
+                                        default value of non-existent dictionaries along the path
+    :return: the entry, if found; if any part of the path except for the last does not exist, and
+             `default_for_last_layer_only` is `True`, an error is raised; in all other cases, the
+             default value is returned
+    """
+
+    result = d
+    path_split = path.split(".")
+    for i, part in enumerate(path_split):
+        if part not in result and (i == len(path_split) - 1 or not default_for_last_layer_only):
+            return default
+        result = result[part]
+    return result

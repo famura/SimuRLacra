@@ -41,7 +41,7 @@ from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCar
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml, ask_for_experiment
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
@@ -58,12 +58,18 @@ if __name__ == "__main__":
         args.max_steps = 2000
         print_cbt(f"Set maximum number of time steps to {args.max_steps}", "y")
 
+    # Get the experiment's directory to load from
+    experiment = ask_for_experiment(hparam_list=args.show_hparams)
+    env, policy, _ = load_experiment(experiment, args)
+    env_name = env.name
+    dt = env.dt
+
     # Create one-dim evaluation grid
     param_spec = dict()
 
-    if args.env_name == QBallBalancerSim.name:
+    if env_name == QBallBalancerSim.name:
         # Create the environment for evaluating
-        env = QBallBalancerSim(dt=args.dt, max_steps=args.max_steps, load_experimental_tholds=True)
+        env = QBallBalancerSim(dt=dt, max_steps=args.max_steps, load_experimental_tholds=True)
 
         # param_spec['g'] = np.linspace(8.91, 12.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.001, 0.033, num=11, endpoint=True)
@@ -98,12 +104,12 @@ if __name__ == "__main__":
             "",
         ]
 
-    elif args.env_name in [QCartPoleStabSim.name, QCartPoleSwingUpSim.name]:
+    elif env_name in [QCartPoleStabSim.name, QCartPoleSwingUpSim.name]:
         # Create the environment for evaluating
-        if args.env_name == QCartPoleSwingUpSim.name:
-            env = QCartPoleSwingUpSim(dt=args.dt, max_steps=args.max_steps)
+        if env_name == QCartPoleSwingUpSim.name:
+            env = QCartPoleSwingUpSim(dt=dt, max_steps=args.max_steps)
         else:
-            env = QCartPoleStabSim(dt=args.dt, max_steps=args.max_steps)
+            env = QCartPoleStabSim(dt=dt, max_steps=args.max_steps)
 
         # param_spec['g'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
         param_spec["m_cart"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
@@ -131,8 +137,8 @@ if __name__ == "__main__":
             "",
         ]
 
-    elif args.env_name == QQubeSwingUpSim.name:
-        env = QQubeSwingUpSim(dt=args.dt, max_steps=args.max_steps)
+    elif env_name == QQubeSwingUpSim.name:
+        env = QQubeSwingUpSim(dt=dt, max_steps=args.max_steps)
 
         # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
         # param_spec['Rm'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
@@ -157,7 +163,7 @@ if __name__ == "__main__":
 
     else:
         raise pyrado.ValueErr(
-            given=args.env_name,
+            given=env_name,
             eq_constraint=f"{QBallBalancerSim.name}, {QCartPoleStabSim.name},"
             f"{QCartPoleSwingUpSim.name}, or {QQubeSwingUpSim.name}",
         )
@@ -177,13 +183,19 @@ if __name__ == "__main__":
             f"but they are {len(prefixes)}, {len(ex_names)}, and {len(ex_labels)}!"
         )
 
-    # Loading the policies
-    ex_dirs = [osp.join(p, e) for p, e in zip(prefixes, ex_names)]
-    env_sim_list = []
-    policy_list = []
-    for ex_dir in ex_dirs:
-        _, policy, _ = load_experiment(ex_dir, args)
-        policy_list.append(policy)
+    if experiment and env and policy:
+        # Load only the single policy if it was set by asking for the policy.
+        ex_dirs = [str(experiment)]
+        env_sim_list = [env]
+        policy_list = [policy]
+    else:
+        # Loading the policies
+        ex_dirs = [osp.join(p, e) for p, e in zip(prefixes, ex_names)]
+        env_sim_list = []
+        policy_list = []
+        for ex_dir in ex_dirs:
+            _, policy, _ = load_experiment(ex_dir, args)
+            policy_list.append(policy)
 
     # Create one-dim results grid and ensure right number of rollouts
     param_list = param_grid(param_spec)
@@ -235,7 +247,7 @@ if __name__ == "__main__":
     pprint(metrics, indent=4)
 
     # Create subfolder and save
-    save_dir = setup_experiment("multiple_policies", args.env_name, varied_param_key, base_dir=pyrado.EVAL_DIR)
+    save_dir = setup_experiment("multiple_policies", env_name, varied_param_key, base_dir=pyrado.EVAL_DIR)
 
     save_dicts_to_yaml(
         {"ex_dirs": ex_dirs},
@@ -243,7 +255,7 @@ if __name__ == "__main__":
             "varied_param": varied_param_key,
             "num_rpp": args.num_rollouts_per_config,
             "seed": args.seed,
-            "dt": args.dt,
+            "dt": dt,
             "max_steps": args.max_steps,
         },
         {"metircs": dict_arraylike_to_float(metrics)},

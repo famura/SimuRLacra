@@ -31,10 +31,12 @@ import numpy as np
 import select
 import sys
 from colorama import Fore, Style
-from typing import Sequence, Iterable, Callable, Any
+from typing import Sequence, Iterable, Callable, TypeVar
 
 import pyrado
 from pyrado.utils import run_once
+
+T = TypeVar("T")
 
 
 def input_timeout(prompt: str, t_timeout: [float, int] = 30, default: str = None) -> str:
@@ -102,11 +104,11 @@ def print_cbt_once(msg: str, color: str = "", bright: bool = False, tag: str = "
 def select_query(
     items: Sequence,
     max_display: int = 10,
-    fallback: Callable = None,
-    item_formatter: Callable[[Any], str] = str,
+    fallback: Callable[[], T] = None,
+    item_formatter: Callable[[T], str] = str,
     header: str = "Available options:",
     footer: str = "Please enter the number of the option to use.",
-):
+) -> T:
     """
     Ask the user to select an item out of the given list.
 

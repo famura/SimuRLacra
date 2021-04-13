@@ -253,6 +253,12 @@ def get_argparser() -> argparse.ArgumentParser:
         action="store_false",
         help="the opposite of 'warmstart'",
     )
+    parser.add_argument(
+        "-p",
+        "--show_hparams",
+        action="append",
+        help="hyperparameters to show in the ask-for-experiment dialog; use this parameter multiple times to show multiple hyperparameters; e.g. to differentiate between experiments",
+    )
 
     segment_group = parser.add_mutually_exclusive_group(required=False)
     segment_group.add_argument(
