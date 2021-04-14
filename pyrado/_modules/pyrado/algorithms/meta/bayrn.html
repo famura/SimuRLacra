@@ -277,7 +277,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
         <span class="n">env_sim</span><span class="p">:</span> <span class="n">MetaDomainRandWrapper</span><span class="p">,</span>
         <span class="n">env_real</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
         <span class="n">subrtn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
@@ -409,7 +409,7 @@
 <span class="sd">        Train a policy in simulation for given hyper-parameters from the domain randomizer.</span>
 
 <span class="sd">        :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</span>
-<span class="sd">        :param prefix: set a prefix to the saved file name by passing it to `meta_info`</span>
+<span class="sd">        :param prefix: set a prefix to the saved file name, use &quot;&quot; for no prefix</span>
 <span class="sd">        :param cnt_rep: current repetition count, coming from the wrapper function</span>
 <span class="sd">        :return: estimated return of the trained policy in the target domain</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -503,7 +503,7 @@
 
 <div class="viewcode-block" id="BayRn.eval_policy"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.eval_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">eval_policy</span><span class="p">(</span>
-        <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span>
         <span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">MetaDomainRandWrapper</span><span class="p">],</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
         <span class="n">mc_estimator</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -725,7 +725,7 @@
 
 <div class="viewcode-block" id="BayRn.train_argmax_policy"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_argmax_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">train_argmax_policy</span><span class="p">(</span>
-        <span class="n">load_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">load_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
         <span class="n">env_sim</span><span class="p">:</span> <span class="n">MetaDomainRandWrapper</span><span class="p">,</span>
         <span class="n">subrtn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
         <span class="n">num_restarts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>

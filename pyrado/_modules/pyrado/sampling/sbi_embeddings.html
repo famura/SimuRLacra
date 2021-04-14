@@ -230,12 +230,46 @@
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">torch.nn.utils</span> <span class="kn">import</span> <span class="n">convert_parameters</span> <span class="k">as</span> <span class="n">cp</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.initialization</span> <span class="kn">import</span> <span class="n">init_param</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span><span class="p">,</span> <span class="n">EnvSpec</span>
+
+
+<span class="c1"># class SingleTensorDataset(Dataset[to.Tensor]):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Custom subclass of the`Dataset` class wrapping a single PyTorch tensor</span>
+<span class="c1">#</span>
+<span class="c1">#     .. note::</span>
+<span class="c1">#         Use in combination with `collate_fn=lambda x: x` in the `DataLoader` constructor.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     tensor: to.Tensor</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, tensor: to.Tensor) -&gt; None:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Constructor</span>
+<span class="c1">#</span>
+<span class="c1">#         :param tensor: input tensor of at least 2 dimensions</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         if not isinstance(tensor, to.Tensor):</span>
+<span class="c1">#             raise pyrado.TypeErr(given=tensor, expected_type=to.Tensor)</span>
+<span class="c1">#         if not tensor.ndim == 4:</span>
+<span class="c1">#             raise pyrado.ShapeErr(</span>
+<span class="c1">#                 msg=f&quot;The input tensor must at have exactly 4 dimensions, but its shape is {tensor.shape}!&quot;</span>
+<span class="c1">#             )</span>
+<span class="c1">#         self.tensor = tensor.reshape(-1, tensor.shape[2], tensor.shape[3])</span>
+<span class="c1">#</span>
+<span class="c1">#     def __getitem__(self, idx: int):</span>
+<span class="c1">#         &quot;&quot;&quot; Get a slice though the 1-st dimension, i.e. the combined batch and rollout dimension. &quot;&quot;&quot;</span>
+<span class="c1">#         return self.tensor[idx]</span>
+<span class="c1">#</span>
+<span class="c1">#     def __len__(self):</span>
+<span class="c1">#         &quot;&quot;&quot; Get the length of the data set, i.e. batch_size * num_rollouts. &quot;&quot;&quot;</span>
+<span class="c1">#         return self.tensor.shape[0]</span>
 
 
 <div class="viewcode-block" id="Embedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding">[docs]</a><span class="k">class</span> <span class="nc">Embedding</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -255,7 +289,7 @@
         <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
         <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">use_cuda</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -355,8 +389,8 @@
 
 <div class="viewcode-block" id="Embedding.forward_one_batch"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward_one_batch">[docs]</a>    <span class="k">def</span> <span class="nf">forward_one_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Iterate over all data batches and compute the features for each rollout separately, then average the features</span>
-<span class="sd">        over the rollouts</span>
+<span class="sd">        Iterate over all rollouts and compute the features for each rollout separately, then average the features</span>
+<span class="sd">        over the rollouts.</span>
 
 <span class="sd">        :param data_batch: data batch of shape [num_rollouts, len_time_series, dim_data]</span>
 <span class="sd">        :return: concatenation of the features for each rollout</span>
@@ -368,8 +402,8 @@
 <span class="sd">        Transforms rollouts into the observations used for likelihood-free inference.</span>
 <span class="sd">        Currently a state-representation as well as state-action summary-statistics are available.</span>
 
-<span class="sd">        :param data: packed data to be fed into the embedding</span>
-<span class="sd">        :return: features of the data extracted from the embedding</span>
+<span class="sd">        :param data: packed data of shape [batch_size, num_rollouts, len_time_series, dim_data]</span>
+<span class="sd">        :return: features of the data extracted from the embedding of shape [[batch_size, num_rollouts * dim_feat]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
 
@@ -379,8 +413,31 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsampling_factor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span> <span class="bp">self</span><span class="o">.</span><span class="n">downsampling_factor</span><span class="p">,</span> <span class="p">:]</span>
 
+        <span class="c1"># from time import time</span>
+        <span class="c1"># t0 = time()</span>
+        <span class="c1">#</span>
+        <span class="c1"># dataset = SingleTensorDataset(data)</span>
+        <span class="c1"># dataloader = DataLoader(</span>
+        <span class="c1">#     dataset,</span>
+        <span class="c1">#     batch_size=data.shape[1],  # get num_rollout samples per batch</span>
+        <span class="c1">#     drop_last=False,</span>
+        <span class="c1">#     collate_fn=lambda x: x,</span>
+        <span class="c1">#     # sampler=SequentialSampler(dataset),</span>
+        <span class="c1"># )</span>
+        <span class="c1"># x2 = []</span>
+        <span class="c1"># for data_batch in dataloader:</span>
+        <span class="c1">#     x2.append(to.cat([self.summary_statistic(d) for d in data_batch], dim=0))</span>
+        <span class="c1"># x2 = to.stack(x2, dim=0)</span>
+        <span class="c1">#</span>
+        <span class="c1"># t1 = time()</span>
+
         <span class="c1"># Iterate over all data batches computing the features from the data</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">forward_one_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># t2 = time()</span>
+        <span class="c1">#</span>
+        <span class="c1"># assert to.allclose(x, x2)</span>
+        <span class="c1"># print(f&quot;dt1 {t1 - t0}:.4f      dt2 {t2 - t1}:.4f&quot;)</span>
 
         <span class="c1"># Check the shape</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_output</span><span class="p">):</span>
@@ -412,13 +469,13 @@
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="AllStepsEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding">[docs]</a><span class="k">class</span> <span class="nc">AllStepsEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+<div class="viewcode-block" id="DeltaStepsEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding">[docs]</a><span class="k">class</span> <span class="nc">DeltaStepsEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Embedding for simulation-based inference with time series data which selects the states of all time steps of</span>
-<span class="sd">    the rollouts</span>
+<span class="sd">    Embedding for simulation-based inference with time series data which returns the change in the states between</span>
+<span class="sd">    consecutive time steps of the rollouts</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;asemb&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dsemb&quot;</span>
     <span class="n">requires_target_domain_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -427,7 +484,7 @@
         <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">len_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">use_cuda</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -438,7 +495,8 @@
 <span class="sd">                         target domain data.</span>
 <span class="sd">        :param len_rollouts: number of time steps per rollout without considering a potential downsampling later</span>
 <span class="sd">                             (must be the same for all rollouts)</span>
-<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
+<span class="sd">                                    base class before calling `summary_statistic()`</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_rollouts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -451,9 +509,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
 
-<div class="viewcode-block" id="AllStepsEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<div class="viewcode-block" id="DeltaStepsEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the last states of the rollout as a vector.</span>
@@ -461,8 +519,13 @@
 <span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
 <span class="sd">        :return: all states as a flattened vector</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Extract the states</span>
-        <span class="k">return</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor needs to contain at least two samples!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract the states, and compute the deltas</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
+        <span class="n">states_diff</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">states</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">states_diff</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="BayesSimEmbedding"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding">[docs]</a><span class="k">class</span> <span class="nc">BayesSimEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
@@ -533,7 +596,7 @@
         <span class="n">dropout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">use_cuda</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -552,7 +615,8 @@
 <span class="sd">        :param dropout: dropout probability, default = 0 deactivates dropout</span>
 <span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
 <span class="sd">        :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net&#39;s constructor</span>
-<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
+<span class="sd">                                    base class before calling `summary_statistic()`</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_rollouts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -639,7 +703,7 @@
         <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">step_pattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">use_cuda</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -651,7 +715,8 @@
 <span class="sd">        :param step_pattern: method passed to dtw-python for computing the distance, e.g. `&quot;symmetric2&quot;` to use</span>
 <span class="sd">                             dtw-python&#39;s default. Here, the default is set to the Rabiner-Juang type VI-c unsmoothed</span>
 <span class="sd">                             recursion step pattern</span>
-<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default</span>
+<span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
+<span class="sd">                                    base class before calling `summary_statistic()`</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">dtw.stepPattern</span> <span class="kn">import</span> <span class="n">rabinerJuangStepPattern</span>

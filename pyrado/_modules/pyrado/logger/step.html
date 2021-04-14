@@ -381,7 +381,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pop_prefix</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="create_csv_step_logger"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.create_csv_step_logger">[docs]</a><span class="k">def</span> <span class="nf">create_csv_step_logger</span><span class="p">(</span><span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;progress.csv&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
+<div class="viewcode-block" id="create_csv_step_logger"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.create_csv_step_logger">[docs]</a><span class="k">def</span> <span class="nf">create_csv_step_logger</span><span class="p">(</span><span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;progress.csv&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a step-based logger which only safes to a csv-file.</span>
 
@@ -534,7 +534,7 @@
 
     <span class="c1"># Set these in the constructor of subclasses like Algorithm</span>
     <span class="n">_logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>

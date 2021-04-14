@@ -271,7 +271,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">LastStepEmbedding</span><span class="p">,</span>
-    <span class="n">AllStepsEmbedding</span><span class="p">,</span>
+    <span class="n">DeltaStepsEmbedding</span><span class="p">,</span>
     <span class="n">BayesSimEmbedding</span><span class="p">,</span>
     <span class="n">DynamicTimeWarpingEmbedding</span><span class="p">,</span>
     <span class="n">RNNEmbedding</span><span class="p">,</span>
@@ -701,7 +701,7 @@
     <span class="s2">&quot;embedding_name&quot;</span><span class="p">,</span>
     <span class="p">[</span>
         <span class="n">LastStepEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">AllStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">DeltaStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
         <span class="n">BayesSimEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
         <span class="n">DynamicTimeWarpingEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
         <span class="n">RNNEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
@@ -750,8 +750,8 @@
     <span class="n">embedding_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">LastStepEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
         <span class="n">embedding</span> <span class="o">=</span> <span class="n">LastStepEmbedding</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span> <span class="o">**</span><span class="n">embedding_hparam</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">AllStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-        <span class="n">embedding</span> <span class="o">=</span> <span class="n">AllStepsEmbedding</span><span class="p">(</span>
+    <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">DeltaStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">DeltaStepsEmbedding</span><span class="p">(</span>
             <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span> <span class="o">**</span><span class="n">embedding_hparam</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">BayesSimEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>

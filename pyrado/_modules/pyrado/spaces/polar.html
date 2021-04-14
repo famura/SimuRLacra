@@ -227,13 +227,9 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy.core</span> <span class="kn">import</span> <span class="n">numeric</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
-
-
-<span class="n">SpaceType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;SpaceType&quot;</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Polar2DPosSpace"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.polar.Polar2DPosSpace">[docs]</a><span class="k">class</span> <span class="nc">Polar2DPosSpace</span><span class="p">(</span><span class="n">BoxSpace</span><span class="p">):</span>
@@ -244,8 +240,8 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">bound_lo</span><span class="p">:</span> <span class="n">SpaceType</span><span class="p">,</span>
-        <span class="n">bound_up</span><span class="p">:</span> <span class="n">SpaceType</span><span class="p">,</span>
+        <span class="n">bound_lo</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">bound_up</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
         <span class="n">shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -261,6 +257,7 @@
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">bound_up</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">bound_lo</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">bound_up</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span>
+
         <span class="c1"># Actually, this space is a BoxSpace</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">,</span> <span class="n">bound_up</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 

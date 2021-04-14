@@ -265,7 +265,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
         <span class="n">env_sim</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
         <span class="n">env_real</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
@@ -277,14 +277,14 @@
         <span class="n">num_sim_per_round</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">num_eval_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">posterior_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subrtn_sbi_training_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subrtn_sbi_snapshot_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
         <span class="n">subrtn_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Algorithm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">subrtn_policy_snapshot_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
-        <span class="n">thold_succ_subrtn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">subrtn_policy_snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+        <span class="n">thold_succ_subrtn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -503,7 +503,7 @@
 
 <span class="sd">        :param domain_params: domain parameters sampled from the posterior [shape N x D where N is the number of</span>
 <span class="sd">                              samples and D is the number of domain parameters]</span>
-<span class="sd">        :param prefix: set a prefix to the saved file name by passing it to `meta_info`</span>
+<span class="sd">        :param prefix: set a prefix to the saved file name, use &quot;&quot; for no prefix</span>
 <span class="sd">        :return: estimated return of the trained policy in the target domain</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">domain_params</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span><span class="p">)):</span>

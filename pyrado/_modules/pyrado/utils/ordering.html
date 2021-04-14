@@ -286,6 +286,16 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">_convert</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;([0-9]+)&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span>
 
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_alphanum_key</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_none_from_list"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.ordering.remove_none_from_list">[docs]</a><span class="k">def</span> <span class="nf">remove_none_from_list</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a new list from the given one without `None` entries.</span>
+
+<span class="sd">    :param lst: list to remove the `None` entries from</span>
+<span class="sd">    :return: list without `None` entries from</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span></div>
 </pre></div>
 
            </div>

@@ -235,6 +235,7 @@
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.sbi_base</span> <span class="kn">import</span> <span class="n">SBIBase</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="n">Embedding</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">until_thold_exceeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
@@ -251,8 +252,8 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">env_sim</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">env_sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
         <span class="n">env_real</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
         <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
@@ -264,18 +265,18 @@
         <span class="n">num_sim_per_round</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">use_rec_act</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">use_rec_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">num_eval_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">posterior_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subrtn_sbi_training_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">simulation_batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">simulation_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">subrtn_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Algorithm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">subrtn_policy_snapshot_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
-        <span class="n">thold_succ_subrtn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">subrtn_policy_snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+        <span class="n">thold_succ_subrtn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -294,7 +295,8 @@
 <span class="sd">        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs</span>
 <span class="sd">        :param num_real_rollouts: number of real-world rollouts received by sbi, i.e. from every rollout exactly one</span>
 <span class="sd">                                  data set is computed</span>
-<span class="sd">        :param num_sim_per_round: number of simulations done by sbi per round (i.e. iteration over the same target domain data set)</span>
+<span class="sd">        :param num_sim_per_round: number of simulations done by sbi per round (i.e. iteration over the same target</span>
+<span class="sd">                                  domain data set)</span>
 <span class="sd">        :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial</span>
 <span class="sd">                            state of the simulation is reset, and thus for every set the features of the trajectories</span>
 <span class="sd">                            are computed separately. Either specify `num_segments` or `len_segments`.</span>
@@ -326,6 +328,7 @@
         <span class="c1"># Call SBIBase&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">num_checkpoints</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">init_checkpoint</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span>
             <span class="n">env_sim</span><span class="o">=</span><span class="n">env_sim</span><span class="p">,</span>
             <span class="n">env_real</span><span class="o">=</span><span class="n">env_real</span><span class="p">,</span>
@@ -357,6 +360,12 @@
 <div class="viewcode-block" id="NPDR.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Save snapshot to save the correct iteration count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Train the behavioral policy using the nominal domain parameters</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy_snapshot_mode</span><span class="p">)</span>  <span class="c1"># overrides policy.pt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">NPDR</span><span class="o">.</span><span class="n">collect_data_real</span><span class="p">(</span>

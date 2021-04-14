@@ -228,8 +228,6 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.a2c.A2C">A2C (class in pyrado.algorithms.step_based.a2c)</a>
-</li>
       <li><a href="policies.html#pyrado.policies.features.abs_feat">abs_feat() (in module pyrado.policies.features)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.AbsErrRewFcn">AbsErrRewFcn (class in pyrado.tasks.reward_functions)</a>
@@ -345,8 +343,6 @@
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.all_envs">all_envs() (in module pyrado.environment_wrappers.utils)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.base.all_tasks">all_tasks() (in module pyrado.tasks.base)</a>
-</li>
-      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding">AllStepsEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewMode.always_negative">always_negative() (FinalRewMode property)</a>
 </li>
@@ -517,7 +513,7 @@
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.calibrate">calibrate() (QCartPoleReal method)</a>
 
       <ul>
-        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeReal.calibrate">(QQubeReal method)</a>
+        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal.calibrate">(QQubeSwingUpReal method)</a>
 </li>
       </ul></li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy.capacity">capacity() (ADNPolicy property)</a>
@@ -638,10 +634,10 @@
 </li>
       <li><a href="policies.html#pyrado.policies.features.cos_feat">cos_feat() (in module pyrado.policies.features)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils.html#pyrado.utils.math.cosine_similarity">cosine_similarity() (in module pyrado.utils.math)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.CosOfOneEleRewFcn">CosOfOneEleRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.math.cov">cov() (in module pyrado.utils.math)</a>
@@ -703,6 +699,8 @@
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_empty_randomizer">create_empty_randomizer() (in module pyrado.domain_randomization.default_randomizers)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_example_randomizer_cata">create_example_randomizer_cata() (in module pyrado.domain_randomization.default_randomizers)</a>
+</li>
+      <li><a href="logger.html#pyrado.logger.experiment.create_experiment_formatter">create_experiment_formatter() (in module pyrado.logger.experiment)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.create_extract_ball_task">create_extract_ball_task() (in module pyrado.environments.rcspysim.ball_in_tube)</a>
 </li>
@@ -880,6 +878,8 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.action_delay.ActDelayWrapper.delay">delay() (ActDelayWrapper property)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding">DeltaStepsEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.features.RBFFeat.derivative">derivative() (RBFFeat method)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.desired_space.DesSpaceTask">DesSpaceTask (class in pyrado.tasks.desired_space)</a>
@@ -906,16 +906,18 @@
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.dict_arraylike_to_float">dict_arraylike_to_float() (in module pyrado.utils.data_types)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.data_types.dict_path_access">dict_path_access() (in module pyrado.utils.data_types)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.DictIndexProxy">DictIndexProxy (class in pyrado.sampling.step_sequence)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.dilation">dilation (MirrConv1d attribute)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.dim_data">dim_data() (TimeSeriesDataSet property)</a>
 </li>
-      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.dim_output">dim_output() (AllStepsEmbedding property)</a>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.dim_output">dim_output() (BayesSimEmbedding property)</a>
 
       <ul>
-        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.dim_output">(BayesSimEmbedding property)</a>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.dim_output">(DeltaStepsEmbedding property)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.dim_output">(DynamicTimeWarpingEmbedding property)</a>
 </li>
@@ -1110,10 +1112,10 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.eval">eval() (EpsGreedyExplStrat method)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
+</li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_ddp_policy">eval_ddp_policy() (SimOpt static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">eval_domain_params() (in module pyrado.sampling.parallel_evaluation)</a>
@@ -1158,12 +1160,8 @@
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">(TwoHeadedRNNPolicyBase method)</a>
 </li>
       </ul></li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.ex_dir">ex_dir() (in module tests.algorithms.test_algorithms)</a>
-
-      <ul>
-        <li><a href="tests.algorithms.html#tests.algorithms.test_meta.ex_dir">(in module tests.algorithms.test_meta)</a>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_meta.ex_dir">ex_dir() (in module tests.algorithms.test_meta)</a>
 </li>
-      </ul></li>
       <li><a href="logger.html#pyrado.logger.experiment.Experiment">Experiment (class in pyrado.logger.experiment)</a>
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.expl_strat">expl_strat() (ActorCritic property)</a>
@@ -1862,6 +1860,10 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="logger.html#pyrado.logger.experiment.load_hyperparameters">load_hyperparameters() (in module pyrado.logger.experiment)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_posterior">load_posterior() (SBIBase static method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.experiments.load_rollouts_from_dir">load_rollouts_from_dir() (in module pyrado.utils.experiments)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">load_snapshot() (Algorithm static method)</a>
@@ -1880,11 +1882,9 @@
 </li>
       <li><a href="utils.html#pyrado.utils.math.logmeanexp">logmeanexp() (in module pyrado.utils.math)</a>
 </li>
-      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.a2c.A2C.loss_fcn">loss_fcn() (A2C method)</a>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.loss_fcn">loss_fcn() (DQL static method)</a>
 
       <ul>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.loss_fcn">(DQL static method)</a>
-</li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO.loss_fcn">(PPO method)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO2.loss_fcn">(PPO2 method)</a>
@@ -2031,8 +2031,6 @@
         <li><a href="algorithms.regression.html#module-pyrado.algorithms.regression.timeseries_prediction">pyrado.algorithms.regression.timeseries_prediction</a>
 </li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based">pyrado.algorithms.step_based</a>
-</li>
-        <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.a2c">pyrado.algorithms.step_based.a2c</a>
 </li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.actor_critic">pyrado.algorithms.step_based.actor_critic</a>
 </li>
@@ -2368,8 +2366,6 @@
 </li>
         <li><a href="tests.algorithms.html#module-tests.algorithms">tests.algorithms</a>
 </li>
-        <li><a href="tests.algorithms.html#module-tests.algorithms.test_algorithms">tests.algorithms.test_algorithms</a>
-</li>
         <li><a href="tests.algorithms.html#module-tests.algorithms.test_meta">tests.algorithms.test_meta</a>
 </li>
         <li><a href="tests.algorithms.html#module-tests.algorithms.test_utils">tests.algorithms.test_utils</a>
@@ -2443,16 +2439,12 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.a2c.A2C.name">name (A2C attribute)</a>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy.name">name (ADNPolicy attribute)</a>
 
       <ul>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy.name">(ADNPolicy attribute)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.name">(ADR attribute)</a>
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.name">(Algorithm attribute)</a>
-</li>
-        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.name">(AllStepsEmbedding attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.name">(ARPL attribute)</a>
 </li>
@@ -2499,6 +2491,8 @@
         <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.name">(CatapultSim attribute)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.cem.CEM.name">(CEM attribute)</a>
+</li>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.name">(DeltaStepsEmbedding attribute)</a>
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.name">(DiscreteActQValPolicy attribute)</a>
 </li>
@@ -2594,11 +2588,11 @@
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.quanser_qube.QQubeRcsSim.name">(QQubeRcsSim attribute)</a>
 </li>
-        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeReal.name">(QQubeReal attribute)</a>
-</li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeStabSim.name">(QQubeStabSim attribute)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.name">(QQubeSwingUpAndBalanceCtrl attribute)</a>
+</li>
+        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal.name">(QQubeSwingUpReal attribute)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim.name">(QQubeSwingUpSim attribute)</a>
 </li>
@@ -2792,9 +2786,9 @@
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.observe">(QCartPoleSim method)</a>
 </li>
-        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeReal.observe">(QQubeReal method)</a>
-</li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeStabSim.observe">(QQubeStabSim method)</a>
+</li>
+        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal.observe">(QQubeSwingUpReal method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim.observe">(QQubeSwingUpSim method)</a>
 </li>
@@ -3260,13 +3254,6 @@
 </li>
       </ul></li>
       <li>
-    pyrado.algorithms.step_based.a2c
-
-      <ul>
-        <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.a2c">module</a>
-</li>
-      </ul></li>
-      <li>
     pyrado.algorithms.step_based.actor_critic
 
       <ul>
@@ -3574,8 +3561,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.pendulum">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_ball_balancer
 
@@ -3583,6 +3568,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.quanser_ball_balancer">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_cartpole
 
@@ -4471,13 +4458,13 @@
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.quanser_qube.QQubeRcsSim">QQubeRcsSim (class in pyrado.environments.rcspysim.quanser_qube)</a>
 </li>
-      <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeReal">QQubeReal (class in pyrado.environments.quanser.quanser_qube)</a>
-</li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSim">QQubeSim (class in pyrado.environments.pysim.quanser_qube)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeStabSim">QQubeStabSim (class in pyrado.environments.pysim.quanser_qube)</a>
 </li>
       <li><a href="policies.special.html#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl">QQubeSwingUpAndBalanceCtrl (class in pyrado.policies.special.environment_specific)</a>
+</li>
+      <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal">QQubeSwingUpReal (class in pyrado.environments.quanser.quanser_qube)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim">QQubeSwingUpSim (class in pyrado.environments.pysim.quanser_qube)</a>
 </li>
@@ -4571,6 +4558,8 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.remove_env">remove_env() (in module pyrado.environment_wrappers.utils)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.ordering.remove_none_from_list">remove_none_from_list() (in module pyrado.utils.ordering)</a>
+</li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.render">render() (CatapultSim method)</a>
 
       <ul>
@@ -4611,10 +4600,10 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.required_fields">required_fields (StepSequence attribute)</a>
 </li>
-      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.requires_target_domain_data">requires_target_domain_data (AllStepsEmbedding attribute)</a>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.requires_target_domain_data">requires_target_domain_data (BayesSimEmbedding attribute)</a>
 
       <ul>
-        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.requires_target_domain_data">(BayesSimEmbedding attribute)</a>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.requires_target_domain_data">(DeltaStepsEmbedding attribute)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.requires_target_domain_data">(DynamicTimeWarpingEmbedding attribute)</a>
 </li>
@@ -4718,7 +4707,7 @@
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal.reset">(QCartPoleSwingUpReal method)</a>
 </li>
-        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeReal.reset">(QQubeReal method)</a>
+        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal.reset">(QQubeSwingUpReal method)</a>
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.reset">(QuanserReal method)</a>
 </li>
@@ -5461,10 +5450,10 @@
         <li><a href="spaces.html#pyrado.spaces.base.Space.subspace">(Space method)</a>
 </li>
       </ul></li>
-      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.AllStepsEmbedding.summary_statistic">summary_statistic() (AllStepsEmbedding method)</a>
+      <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.summary_statistic">summary_statistic() (BayesSimEmbedding method)</a>
 
       <ul>
-        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.summary_statistic">(BayesSimEmbedding method)</a>
+        <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.summary_statistic">(DeltaStepsEmbedding method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.summary_statistic">(DynamicTimeWarpingEmbedding method)</a>
 </li>
@@ -5512,7 +5501,7 @@
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.task">(QCartPoleReal property)</a>
 </li>
-        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeReal.task">(QQubeReal property)</a>
+        <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal.task">(QQubeSwingUpReal property)</a>
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.task">(QuanserReal property)</a>
 </li>
@@ -5546,8 +5535,6 @@
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_act_noise_simple">test_act_noise_simple() (in module tests.environment_wrappers.test_action_noise)</a>
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_action_statistics">test_action_statistics() (in module tests.algorithms.test_utils)</a>
-</li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_actor_critic">test_actor_critic() (in module tests.algorithms.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_add_data">test_add_data() (in module tests.test_rollout_result)</a>
 </li>
@@ -5735,8 +5722,6 @@
 </li>
       <li><a href="tests.html#tests.test_tasks.test_parallel_task_function">test_parallel_task_function() (in module tests.test_tasks)</a>
 </li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_param_expl">test_param_expl() (in module tests.algorithms.test_algorithms)</a>
-</li>
       <li><a href="tests.html#tests.test_sampling.test_param_expl_sampler">test_param_expl_sampler() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_param_grid">test_param_grid() (in module tests.test_domain_randomization)</a>
@@ -5813,8 +5798,6 @@
 </li>
       <li><a href="tests.html#tests.test_policies.test_rff_policy_serial">test_rff_policy_serial() (in module tests.test_policies)</a>
 </li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_rff_regression">test_rff_regression() (in module tests.algorithms.test_algorithms)</a>
-</li>
       <li><a href="tests.html#tests.test_utils.test_rmse">test_rmse() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_environments.test_rollout">test_rollout() (in module tests.test_environments)</a>
@@ -5829,12 +5812,12 @@
 </li>
       <li><a href="tests.html#tests.test_utils.test_running_mem_average">test_running_mem_average() (in module tests.test_utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_utils.test_running_normalizer">test_running_normalizer() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_running_standardizer">test_running_standardizer() (in module tests.test_utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_box_space">test_sample_contains_box_space() (in module tests.test_spaces)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_discrete_space">test_sample_contains_discrete_space() (in module tests.test_spaces)</a>
@@ -5877,10 +5860,6 @@
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_slice">test_slice() (in module tests.test_rollout_result)</a>
 </li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_snapshots_notmeta">test_snapshots_notmeta() (in module tests.algorithms.test_algorithms)</a>
-</li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_soft_update">test_soft_update() (in module tests.algorithms.test_algorithms)</a>
-</li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_normalization.test_space">test_space() (in module tests.environment_wrappers.test_action_normalization)</a>
 
       <ul>
@@ -5909,23 +5888,17 @@
 </li>
       <li><a href="tests.html#tests.test_plotting.test_surface">test_surface() (in module tests.test_plotting)</a>
 </li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_svpg">test_svpg() (in module tests.algorithms.test_algorithms)</a>
-</li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_sysidasrl_reps">test_sysidasrl_reps() (in module tests.algorithms.test_meta)</a>
 </li>
       <li><a href="tests.html#tests.test_step_logger.test_tb_logger_serializer">test_tb_logger_serializer() (in module tests.test_step_logger)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_time_policy_one_step">test_time_policy_one_step() (in module tests.test_policies)</a>
 </li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_time_series_prediction">test_time_series_prediction() (in module tests.algorithms.test_algorithms)</a>
-</li>
       <li><a href="tests.html#tests.test_sampling.test_to_format">test_to_format() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_torus2D">test_torus2D() (in module tests.test_spaces)</a>
 </li>
       <li><a href="tests.html#tests.test_tasks.test_tracking_task">test_tracking_task() (in module tests.test_tasks)</a>
-</li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_training_parameter_exploring">test_training_parameter_exploring() (in module tests.algorithms.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_truncate_rollouts">test_truncate_rollouts() (in module tests.test_rollout_result)</a>
 </li>
@@ -5953,13 +5926,6 @@
 
       <ul>
         <li><a href="tests.algorithms.html#module-tests.algorithms">module</a>
-</li>
-      </ul></li>
-      <li>
-    tests.algorithms.test_algorithms
-
-      <ul>
-        <li><a href="tests.algorithms.html#module-tests.algorithms.test_algorithms">module</a>
 </li>
       </ul></li>
       <li>
@@ -6295,11 +6261,9 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.until_thold_exceeded">until_thold_exceeded() (in module pyrado.algorithms.utils)</a>
 </li>
-      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.a2c.A2C.update">update() (A2C method)</a>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.update">update() (ActorCritic method)</a>
 
       <ul>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.update">(ActorCritic method)</a>
-</li>
         <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.update">(Algorithm method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.pandavis.BallOnBeamVis.update">(BallOnBeamVis method)</a>

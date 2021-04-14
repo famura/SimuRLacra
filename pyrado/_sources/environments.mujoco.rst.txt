@@ -32,6 +32,15 @@ openai\_hopper
    :show-inheritance:
 
 
+wam\_base
+---------
+
+.. automodule:: pyrado.environments.mujoco.wam_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 wam\_bic
 --------
 
