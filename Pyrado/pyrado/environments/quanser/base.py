@@ -89,7 +89,8 @@ class QuanserReal(RealEnv, ABC):
     def close(self):
         """ Sends a zero-step and closes the communication. """
         if self._qsoc.is_open():
-            self.step(np.zeros(self.act_space.shape))
+            for i in range(10):
+                self.step(np.zeros(self.act_space.shape))
             self._qsoc.close()
             print_cbt("Closed the connection to the Quanser device.", "c")
 

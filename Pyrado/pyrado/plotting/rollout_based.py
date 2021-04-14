@@ -401,8 +401,9 @@ def plot_statistic_across_rollouts(
 
 def plot_mean_std_across_rollouts(
     rollouts: Sequence[StepSequence],
-    idcs_obs: Sequence[int] = None,
-    idcs_act: Sequence[int] = None,
+    idcs_obs: Optional[Sequence[int]] = None,
+    idcs_act: Optional[Sequence[int]] = None,
+    show_applied_actions: bool = True,
 ):
     """
     Plot the mean and standard deviation across a selection of rollouts.
@@ -410,7 +411,10 @@ def plot_mean_std_across_rollouts(
     :param rollouts: list of rollouts, they can be of unequal length but are assumed to be from the same type of env
     :param idcs_obs: indices of the observations to process and plot, pass `None` to select all
     :param idcs_act: indices of the actions to process and plot, pass `None` to select all
+    :param show_applied_actions: if `True` show the actions applied to the environment insead of the commanded ones
     """
+    act_key = "actions_applied" if show_applied_actions else "actions"
+
     dim_obs = rollouts[0].observations.shape[1]  # assuming same for all rollouts
     dim_act = rollouts[0].actions.shape[1]  # assuming same for all rollouts
     if idcs_obs is None:
@@ -434,7 +438,9 @@ def plot_mean_std_across_rollouts(
         data_obs = pd.concat([data_obs, df], axis=1)
 
         # Extract actions
-        df = pd.DataFrame(ro.actions[:, idcs_act], columns=ro.rollout_info["env_spec"].act_space.labels[idcs_act])
+        df = pd.DataFrame(
+            ro.get_data_values(act_key)[:, idcs_act], columns=ro.rollout_info["env_spec"].act_space.labels[idcs_act]
+        )
         data_act = pd.concat([data_act, df], axis=1)
 
     # Compute statistics
@@ -443,7 +449,7 @@ def plot_mean_std_across_rollouts(
     means_act = data_act.groupby(by=data_act.columns, axis=1).mean()
     stds_act = data_act.groupby(by=data_act.columns, axis=1).std()
 
-    # Plot observations
+    # Create figure
     num_rows, num_cols = num_rows_cols_from_length(dim_obs, transposed=True)
     fig_obs, axs_obs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
     axs_obs = np.atleast_2d(axs_obs)
@@ -451,7 +457,11 @@ def plot_mean_std_across_rollouts(
     fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Observations over Time")
     colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs))
 
+    # Plot observations
     for idx_o, c in enumerate(data_obs.columns.unique()):
+        ax = axs_obs[idx_o // num_cols, idx_o % num_cols] if isinstance(axs_obs, np.ndarray) else axs_obs
+
+        # Plot means and stds
         draw_curve(
             "mean_std",
             axs_obs[idx_o // num_cols, idx_o % num_cols] if isinstance(axs_obs, np.ndarray) else axs_obs,
@@ -463,16 +473,23 @@ def plot_mean_std_across_rollouts(
             plot_kwargs=dict(color=colors[idx_o]),
         )
 
+        # Plot individual rollouts
+        ax.plot(time, data_obs[c], c="gray", ls="--")
+
     # Plot actions
     num_rows, num_cols = num_rows_cols_from_length(dim_act, transposed=True)
     fig_act, axs_act = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
+    axs_act = np.atleast_2d(axs_act)
+    axs_act = correct_atleast_2d(axs_act)
     fig_act.canvas.set_window_title("Mean And 2 Standard Deviations of the Actions over Time")
     colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
     for idx_a, c in enumerate(data_act.columns.unique()):
+        ax = axs_act[idx_a // num_cols, idx_a % num_cols] if isinstance(axs_act, np.ndarray) else axs_act
+
         draw_curve(
             "mean_std",
-            axs_act[idx_a // num_cols, idx_a % num_cols] if isinstance(axs_act, np.ndarray) else axs_act,
+            ax,
             pd.DataFrame(dict(mean=means_act[c], std=stds_act[c])),
             x_grid=time[:-1],
             show_legend=False,
@@ -480,6 +497,9 @@ def plot_mean_std_across_rollouts(
             y_label=str(c),
             plot_kwargs=dict(color=colors[idx_a]),
         )
+
+        # Plot individual rollouts
+        ax.plot(time[:-1], data_act[c], c="gray", ls="--")
 
 
 def plot_rollouts_segment_wise(

@@ -67,7 +67,6 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.data_types import merge_dicts
 from pyrado.utils.input_output import print_cbt, completion_context
-from pyrado.utils.ordering import natural_sort
 
 
 class SBIBase(InterruptableAlgorithm, ABC):
@@ -418,11 +417,11 @@ class SBIBase(InterruptableAlgorithm, ABC):
                             cnt_round_max = cnt_round if cnt_round > cnt_round_max else cnt_round_max
                 idx_round = cnt_round_max
 
-        # Check before loading
+        # Check before loading, and print a warning message if there can not be a posterior with the obtained indices
         if idx_iter == -1:
-            raise pyrado.ValueErr(msg=f"Invalid iteration index {idx_iter}!")
+            print_cbt(f"Invalid iteration index {idx_iter}! Check if there is a posterior in {load_dir}.", "r")
         if idx_round == -1:
-            raise pyrado.ValueErr(msg=f"Invalid round index {idx_round}!")
+            print_cbt(f"Invalid round index {idx_round}! Check if there is a posterior in {load_dir}.", "r")
 
         # Load the current posterior
         str_round = f"_round_{idx_round}" if multi_round_setting else ""
@@ -431,6 +430,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
                 name=f"iter_{idx_iter}{str_round}_posterior.pt", load_dir=load_dir, obj=obj, verbose=verbose
             )
         except FileNotFoundError:
+            print_cbt("No posterior was loaded.", "y")
             posterior = None
 
         return posterior

@@ -110,8 +110,8 @@ if __name__ == "__main__":
         algo.dp_mapping,
         posterior,
         data_real,
-        args.num_samples,
-        num_ml_samples,
+        num_eval_samples=args.num_samples,
+        num_ml_samples=num_ml_samples,
         normalize_posterior=args.normalize,
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=args.use_mcmc),
     )

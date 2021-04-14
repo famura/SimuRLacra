@@ -71,7 +71,7 @@ if __name__ == "__main__":
         f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}",
         num_segs_str + len_seg_str + seed_str,
     )
-    t_end = 8  # s
+    t_end = 7  # s
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)

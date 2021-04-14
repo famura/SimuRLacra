@@ -37,13 +37,17 @@ import pyrado
 from pyrado.environments.barrett_wam.wam_bic import WAMReal
 from pyrado.environments.barrett_wam.wam_jsc import WAMJointSpaceCtrlRealStepBased
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.quanser.quanser_cartpole import QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.special.environment_specific import wam_jsp_7dof_sin
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
+from pyrado.utils.functions import skyline
 from pyrado.utils.input_output import print_cbt
 
 
@@ -51,28 +55,42 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
     dt = args.dt or 1 / 500.0
-    t_end = 20.0  # s
+    t_end = 5.5  # s
     max_steps = int(t_end / dt)  # run for 5s
     check_in_sim = False
     # max_amp = 5.0 / 180 * np.pi  # max. amplitude [rad]
-    max_amp = 1.0  # max. amplitude [V]
+    max_amp = -3.5  # max. amplitude [V]
 
     # Create the simulated and real environments
     if args.env_name == QQubeSwingUpReal.name:
         env_sim = QQubeSwingUpSim(dt, max_steps)
         env_real = QQubeSwingUpReal(dt, max_steps)
+    elif args.env_name == QCartPoleSwingUpReal.name:
+        env_sim = QCartPoleSwingUpSim(dt, max_steps)
+        env_real = QCartPoleSwingUpReal(dt, max_steps)
     elif args.env_name == WAMReal.name:
         env_sim = WAMJointSpaceCtrlSim(frame_skip=4, num_dof=7, max_steps=max_steps)
         env_real = WAMJointSpaceCtrlRealStepBased(num_dof=7, max_steps=max_steps)
     else:
-        raise pyrado.ValueErr(given=args.mode, eq_constraint=f"{QQubeSwingUpReal.name} or {WAMReal.name}")
+        raise pyrado.ValueErr(
+            given=args.env_name, eq_constraint=f"{QQubeSwingUpReal.name}, {QCartPoleSwingUpReal.name} or {WAMReal.name}"
+        )
     print_cbt(f"Set the {env_real.name} environment.", "g")
 
     # Create the policy
     if args.mode.lower() == "chirp":
 
         def fcn_of_time(t: float):
-            act = max_amp * chirp(t, f0=5, f1=0, t1=t_end, method="linear")
+            act = max_amp * chirp(t, f0=3, f1=0, t1=t_end, method="linear")
+            return act.repeat(env_real.act_space.flat_dim)
+
+    elif args.mode.lower() == "skyline":
+        t_intvl_space = BoxSpace(dt, 100 * dt, shape=(1,))
+        val_space = BoxSpace(-abs(max_amp), abs(max_amp), shape=(1,))
+        act_predef = skyline(dt, t_end, t_intvl_space, val_space)[1]
+
+        def fcn_of_time(t: float):
+            act = act_predef[int(t / dt)]
             return act.repeat(env_real.act_space.flat_dim)
 
     elif args.mode.lower() == "sin":

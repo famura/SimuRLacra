@@ -104,6 +104,7 @@ def rollout(
     # Initialize the paths
     obs_hist = []
     act_hist = []
+    act_app_hist = []
     rew_hist = []
     state_hist = []
     env_info_hist = []
@@ -229,6 +230,9 @@ def rollout(
         state = env.state.copy()
         obs_next, rew, done, env_info = env.step(act)
 
+        # Get the potentially clipped action, i.e. the one that was actually done in the environment
+        act_app = env.limit_act(act)
+
         # Record time after the step i.e. the send and receive is completed
         if record_dts:
             t_post_step = time.time()
@@ -238,6 +242,7 @@ def rollout(
         # Record data
         obs_hist.append(obs)
         act_hist.append(act)
+        act_app_hist.append(act_app)
         rew_hist.append(rew)
         state_hist.append(state)
         env_info_hist.append(env_info)
@@ -297,6 +302,7 @@ def rollout(
     res = StepSequence(
         observations=obs_hist,
         actions=act_hist,
+        actions_applied=act_app_hist,
         rewards=rew_hist,
         states=state_hist,
         time=t_hist,
