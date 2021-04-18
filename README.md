@@ -164,9 +164,9 @@ After that you still need to install the robot-specific package in SL.
 We are following the Black code style and isort ordering for all Python files. The black package is already integrated to the `pyrado` anaconda environment, and configured by the `pyproject.toml` file.
 You can format your local code by running
 ```
-cd PATH_TO/SimuRLacra/Pyrado
-black . --check  # remove --check to actually do the changes
-isort . --check --diff  # remove --check to actually do the changes
+cd PATH_TO/SimuRLacra
+black Pyrado --check  # remove --check to actually do the changes
+isort Pyrado --check --diff  # remove --check to actually do the changes
 ```
 Moreover, you can install the pre-commit framework via
 ```
