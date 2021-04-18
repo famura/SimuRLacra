@@ -27,5 +27,7 @@ exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 120
+atomic = true
 multi_line_output = 3
+lines_after_imports = 2
 forced_separate = "pyrado"
