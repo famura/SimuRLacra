@@ -25,7 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Protocol, Tuple, Union
 
 import numpy as np
 import pyrado
@@ -289,11 +289,12 @@ class SPRL(Algorithm):
         target_distribution = ParameterAgnosticMultivariateNormalWrapper(
             target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
         )
-        rollouts = self._subroutine.rollouts
+
+        rollouts = self._subroutine.sampler.sample()
         contexts = to.tensor(
             np.array(
                 [
-                    [stepseq.rollout_info["domain_param"][param.name] for rollout in rollouts for stepseq in rollout]
+                    [rollout.rollout_info["domain_param"][param.name] for rollout in rollouts]
                     for param in self._spl_parameters
                 ]
             ),
@@ -305,11 +306,11 @@ class SPRL(Algorithm):
             previous_distribution.distribution, target_distribution.distribution
         )
 
-        values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
+        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
-        values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
+        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
-        values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
+        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
         def kl_constraint_fn(x):
             distribution = previous_distribution.from_stacked(x)
@@ -467,6 +468,6 @@ class SPRL(Algorithm):
         self._subroutine.reset()
 
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
-        rollouts = self._subroutine.rollouts
-        x = np.median([[ro.undiscounted_return() for ros in rollouts for ro in ros]])
+        rollouts = self._subroutine.sampler.sample()
+        x = np.median([[ros.undiscounted_return() for ros in rollouts]])
         return x

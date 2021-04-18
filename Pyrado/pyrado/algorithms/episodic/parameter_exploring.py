@@ -144,7 +144,6 @@ class ParameterExploring(Algorithm):
         with to.no_grad():
             # Sample rollouts using these parameters
             param_samp_res = self.sampler.sample(param_sets)
-            self.add_rollout(list([x for xx in param_samp_res.rollouts for x in xx]))
 
         # Evaluate the current policy (first one in list if include_nominal_params is True)
         ret_avg_curr = param_samp_res[0].mean_undiscounted_return

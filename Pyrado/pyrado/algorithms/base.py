@@ -30,16 +30,15 @@ import joblib
 import os.path as osp
 import torch.nn as nn
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Union, List
+from typing import Any, Optional, Union
 
 import pyrado
+from pyrado.logger.experiment import split_path_custom_common
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
-from pyrado.logger.experiment import split_path_custom_common
 from pyrado.logger.step import StepLogger, LoggerAware
 from pyrado.policies.base import Policy
 from pyrado import set_seed
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils import get_class_name
 from pyrado.utils.input_output import print_cbt
 
@@ -88,7 +87,6 @@ class Algorithm(ABC, LoggerAware):
         self._logger = logger
         self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf  # for snapshot_mode = 'best'
-        self._ros = []  # for storing rollouts to be used e.g. by sprl
 
     @property
     def save_dir(self) -> str:
@@ -145,14 +143,6 @@ class Algorithm(ABC, LoggerAware):
         """ Get the algorithm's exploration strategy. """
         return None
 
-    @property
-    def rollouts(self) -> List[List[StepSequence]]:
-        if not self._ros:
-            raise pyrado.ValueErr(
-                msg="No rollout sampled so far! Check if the algorithm adds the rollouts via add_rollout!"
-            )
-        return self._ros
-
     def stopping_criterion_met(self) -> bool:
         """
         Checks if one of the algorithms (characteristic) stopping criteria is met.
@@ -180,7 +170,6 @@ class Algorithm(ABC, LoggerAware):
         self._curr_iter = 0
         self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf
-        self._ros = []
 
         # Set all rngs' seeds
         if seed is not None:
@@ -283,10 +272,6 @@ class Algorithm(ABC, LoggerAware):
     def update(self, *args: Any, **kwargs: Any):
         """ Update the policy's (and value functions') parameters based on the collected rollout data. """
         pass
-
-    def add_rollout(self, rollout: List[StepSequence]) -> List[StepSequence]:
-        self._ros.append(rollout)
-        return rollout
 
     def make_snapshot(self, snapshot_mode: str, curr_avg_ret: float = None, meta_info: dict = None):
         """

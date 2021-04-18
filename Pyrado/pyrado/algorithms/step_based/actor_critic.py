@@ -28,7 +28,7 @@
 
 import numpy as np
 from abc import ABC, abstractmethod
-from typing import Sequence, List
+from typing import Sequence
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
@@ -93,7 +93,7 @@ class ActorCritic(Algorithm, ABC):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Sample rollouts
-        ros = self.add_rollout(self.sampler.sample())
+        ros = self.sampler.sample()
 
         # Log metrics computed from the old policy (before the update)
         all_lengths = np.array([ro.length for ro in ros])
