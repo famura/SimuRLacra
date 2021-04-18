@@ -160,18 +160,19 @@ python setup_deps.py robcom -j8
 ```
 After that you still need to install the robot-specific package in SL.
 
-### Python Code Formatting with Black (and pre-commit)
-We are following the Black code style for all Python files. The black package is already integrated to the `pyrado` anaconda environment, and configured by the `pyproject.toml` file.
+### Python Code Formatting with Black and isort (and pre-commit)
+We are following the Black code style and isort ordering for all Python files. The black package is already integrated to the `pyrado` anaconda environment, and configured by the `pyproject.toml` file.
 You can format your local code by running
 ```
 cd TOP_LEVEL_DIR_FOR_REFORMAT
-black . --check  # remove --check to actually do the changes
+black . --check         # remove --check to actually do the changes
+isort . --check --diff  # remove --check to actually do the changes
 ```
 Moreover, you can install the pre-commit framework via
 ```
 python setup_deps.py pre_commit
 ```
-which will reformat your code before every commit. Eventually the Black Github action will check with the code complies with the Black standard.
+which will reformat your code before every commit. The conformity with Black and isort is check using a GitHub action.
 
 <!--
 ### Docker Container (experimental)
