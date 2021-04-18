@@ -178,7 +178,7 @@ if __name__ == "__main__":
         g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir, followlinks=True) if "policy.pt" in tmp[2]]
 
     elif g_args.dir is None:
-        g_ex_dirs = [ask_for_experiment(show_hyper_parameters=g_args.show_hyperparameters, max_display=50)]
+        g_ex_dirs = [ask_for_experiment(hparam_list=g_args.show_hyperparameters, max_display=50)]
 
     else:
         g_ex_dirs = [g_args.dir]
