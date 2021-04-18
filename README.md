@@ -172,7 +172,7 @@ Moreover, you can install the pre-commit framework via
 ```
 python setup_deps.py pre_commit
 ```
-which will reformat your code before every commit. The conformity with Black and isort is check using a GitHub action.
+which will reformat your code before every commit. The conformity with Black and isort is checked using a GitHub action.
 
 <!--
 ### Docker Container (experimental)
