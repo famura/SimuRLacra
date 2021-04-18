@@ -34,7 +34,7 @@ import torch as to
 from pyrado.algorithms.meta.sprl import SPRL
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
-from pyrado.domain_randomization.domain_parameter import SelfPacedLearnerParameter
+from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
@@ -118,9 +118,7 @@ if __name__ == "__main__":
             context_cov_chol_flat=to.tensor([0.05]),
         )
     ]
-    env = DomainRandWrapperLive(
-        env, randomizer=DomainRandomizer(*[SelfPacedLearnerParameter(**p) for p in env_sprl_params])
-    )
+    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
 
     sprl_hparam = dict(
         kl_constraints_ub=8000,

@@ -65,11 +65,11 @@ def _plot_and_save(
         fig_hm, fig_cb = draw_heatmap(
             df_pivot,
             annotate=False,
-            add_sep_colorbar=add_sep_colorbar,
+            separate_cbar=add_sep_colorbar,
             norm=norm,
             y_label=index_label,
             x_label=column_label,
-            add_colorbar=True,
+            add_cbar=True,
         )
         if nominal:
             fig_hm.get_axes()[0].scatter(

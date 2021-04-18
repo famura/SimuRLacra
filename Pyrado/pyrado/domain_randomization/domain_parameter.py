@@ -26,11 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
-from torch.distributions.uniform import Uniform
-from torch.distributions.normal import Normal
-from torch.distributions.multivariate_normal import MultivariateNormal
-from torch.distributions.bernoulli import Bernoulli
 from typing import Sequence, Union, List, Optional
 
 import pyrado
@@ -315,7 +310,7 @@ class BernoulliDomainParam(DomainParam):
         return list(sample_tensor)
 
 
-class SelfPacedLearnerParameter(DomainParam):
+class SelfPacedDomainParam(DomainParam):
     def __init__(
         self,
         name: str,
@@ -324,10 +319,10 @@ class SelfPacedLearnerParameter(DomainParam):
         context_mean: to.Tensor,
         context_cov_chol_flat: to.Tensor,
     ):
-        assert target_mean.shape == context_mean.shape, "Target and context mean should have same shape!"
-        assert (
-            target_cov_chol_flat.shape == context_cov_chol_flat.shape
-        ), "Target and context cov chols should have same shape!"
+        if not (target_mean.shape == context_mean.shape):
+            raise pyrado.ShapeErr(msg="Target and context mean should have same shape!")
+        if not (target_cov_chol_flat.shape == context_cov_chol_flat.shape):
+            raise pyrado.ShapeErr(msg="Target and context cov chols should have same shape!")
 
         super().__init__(name=name)
 
@@ -338,8 +333,8 @@ class SelfPacedLearnerParameter(DomainParam):
 
         self.dim = target_mean.shape[0]
 
-        self._target_distribution = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
-        self._context_distribution = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
+        self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
+        self._context_distr = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
 
         self._sample_buffer = None
 
@@ -348,12 +343,12 @@ class SelfPacedLearnerParameter(DomainParam):
         return ["target_mean", "target_cov_chol_flat", "context_mean", "context_cov_chol_flat"]
 
     @property
-    def target_distribution(self):
-        return self._target_distribution
+    def target_distr(self):
+        return self._target_distr
 
     @property
-    def context_distribution(self):
-        return self._context_distribution
+    def context_distr(self):
+        return self._context_distr
 
     @property
     def target_cov(self):
@@ -374,7 +369,7 @@ class SelfPacedLearnerParameter(DomainParam):
         # Re-create the distributions, otherwise the changes will have no effect
         if domain_distr_param in ["target_mean", "target_cov_chol_flat"]:
             try:
-                self._target_distribution = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
+                self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
             except ValueError as err:
                 print_cbt(
                     f"Inputs that lead to the ValueError from PyTorch Distributions:\n"
@@ -383,7 +378,7 @@ class SelfPacedLearnerParameter(DomainParam):
                 raise err
         if domain_distr_param in ["context_mean", "context_cov_chol_flat"]:
             try:
-                self._context_distribution = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
+                self._context_distr = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
             except ValueError as err:
                 print_cbt(
                     f"Inputs that lead to the ValueError from PyTorch Distributions:\n"
@@ -392,8 +387,10 @@ class SelfPacedLearnerParameter(DomainParam):
                 raise err
 
     def sample(self, num_samples: int = 1) -> List[to.tensor]:
-        assert isinstance(num_samples, int) and num_samples > 0
-        samples = self._context_distribution.sample((num_samples,))
+        if not (num_samples > 0):
+            raise pyrado.ValueErr(given_name="num_samples", g_constraint=0)
+
+        samples = self._context_distr.sample((num_samples,))
         return list(samples.flatten())
 
     def reset(self):

@@ -32,7 +32,7 @@ import pyrado
 import torch as to
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
-from pyrado.domain_randomization.domain_parameter import SelfPacedLearnerParameter
+from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.algorithms.utils import until_thold_exceeded
@@ -240,7 +240,7 @@ class SPRL(Algorithm):
         self._performance_lower_bound_reached = False
 
         self._spl_parameters = [
-            param for param in env.randomizer.domain_params if isinstance(param, SelfPacedLearnerParameter)
+            param for param in env.randomizer.domain_params if isinstance(param, SelfPacedDomainParam)
         ]
 
         self._seed = None

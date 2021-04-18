@@ -54,7 +54,7 @@ from pyrado.domain_randomization.default_randomizers import (
 from pyrado.domain_randomization.domain_parameter import (
     NormalDomainParam,
     UniformDomainParam,
-    SelfPacedLearnerParameter,
+    SelfPacedDomainParam,
 )
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
