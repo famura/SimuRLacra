@@ -6,15 +6,12 @@ jobs:
   lint:
     name: Checking for code conformity with Black and isort
     runs-on: ubuntu-latest
-    env:
-      # Do not directly run in ./Pyrado as isort will not pick up the config file correctly.
-      working-directory: .
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+      - name: Lint isort
+        run: isort --check --diff Pyrado
       - name: Lint black
         uses: psf/black@stable
         with:
           args: "--check Pyrado"
-      - name: Lint isort
-        run: isort --check --diff Pyrado
