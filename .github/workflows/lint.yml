@@ -1,0 +1,19 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: Checking for code conformity with Black ans isort
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./Pyrado
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install dependencies
+        run: python -m pip install --upgrade isort
+      - name: Lint black
+        uses: psf/black@stable
+      - name: Lint isort
+        run: isort --check --diff .
