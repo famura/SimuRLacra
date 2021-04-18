@@ -444,15 +444,6 @@ class ExposedSampler:
     Implementors: Save the used sampler in the `self.sampler` property.
     """
 
-    @property
-    def sampler(self) -> SamplerBase:
-        """Returns the sampler of the algorithm
-
-        :return: The (initialized) sampler used by the algorithm
-        :rtype: SamplerBase
-        """
-        return self.sampler
-
     def sample(self, *args, **kwargs) -> List[StepSequence]:
         """Calls the sample method of the algorithm's sampler.
 

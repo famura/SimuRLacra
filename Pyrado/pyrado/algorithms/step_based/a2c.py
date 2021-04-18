@@ -33,6 +33,7 @@ from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
 from typing import Sequence, Optional
 
+import pyrado
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.utils import compute_action_statistics, num_iter_from_rollouts
