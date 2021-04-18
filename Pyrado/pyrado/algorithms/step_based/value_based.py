@@ -33,7 +33,8 @@ from math import ceil
 from typing import Union, Optional
 
 import pyrado
-from pyrado.algorithms.base import Algorithm, ExposedSampler
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.mixins import ExposedSampler
 from pyrado.algorithms.utils import ReplayMemory
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import SACExplStrat, EpsGreedyExplStrat

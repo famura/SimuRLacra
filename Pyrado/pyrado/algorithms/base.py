@@ -28,11 +28,9 @@
 
 import joblib
 import os.path as osp
-from pyrado.sampling.sampler import SamplerBase
-from pyrado.sampling.step_sequence import StepSequence
 import torch.nn as nn
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional, Union
+from typing import Any, Optional, Union
 
 import pyrado
 from pyrado.logger.experiment import split_path_custom_common
@@ -436,20 +434,3 @@ class InterruptableAlgorithm(Algorithm, ABC):
         self._curr_checkpoint = next % (self._num_checkpoints + 1) if next > 0 else next  # no modulo for negative count
 
         self.save_snapshot(meta_info)
-
-
-class ExposedSampler:
-    """A mixin class indicating that this algorithm exposes its sampler.
-
-    Implementors: Save the used sampler in the `self.sampler` property.
-    """
-
-    def sample(self, *args, **kwargs) -> List[StepSequence]:
-        """Calls the sample method of the algorithm's sampler.
-
-        :param *args: Arguments to be forwarded to the sample method
-        :param **kwargs: Keyword-Arguments to be forwarded to the sample method
-        :return: A list of `StepSequence`s, which are generated according to the algorithms parameters (e.g. number of workers, rollout length, ...)
-        :rtype: List[StepSequence]
-        """
-        return self.sampler.sample(*args, **kwargs)

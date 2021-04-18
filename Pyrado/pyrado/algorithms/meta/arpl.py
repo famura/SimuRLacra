@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pyrado
-from pyrado.algorithms.base import Algorithm, ExposedSampler
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.mixins import ExposedSampler
 from pyrado.environment_wrappers.adversarial import (
     AdversarialDynamicsWrapper,
     AdversarialStateWrapper,
@@ -42,7 +43,7 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.sequences import *
 
 
-class ARPL(Algorithm, ExposedSampler):
+class ARPL(Algorithm, ExposedExSampler):
     """
     Adversarially Robust Policy Learning (ARPL)
 
