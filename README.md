@@ -19,7 +19,7 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 [![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)](https://famura.github.io/SimuRLacra/)
 [![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra)
 [![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
 __Pros__  
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
@@ -164,15 +164,15 @@ After that you still need to install the robot-specific package in SL.
 We are following the Black code style and isort ordering for all Python files. The black package is already integrated to the `pyrado` anaconda environment, and configured by the `pyproject.toml` file.
 You can format your local code by running
 ```
-cd TOP_LEVEL_DIR_FOR_REFORMAT
-black . --check         # remove --check to actually do the changes
+cd PATH_TO/SimuRLacra
+black . --check  # remove --check to actually do the changes
 isort . --check --diff  # remove --check to actually do the changes
 ```
 Moreover, you can install the pre-commit framework via
 ```
 python setup_deps.py pre_commit
 ```
-which will reformat your code before every commit. The conformity with Black and isort is checked using a GitHub action.
+which will reformat your code before every commit. The conformity with Black and isort is check using a GitHub action.
 
 <!--
 ### Docker Container (experimental)
