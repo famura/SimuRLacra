@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import pytest
-from pyrado.environment_wrappers.action_discrete import ActDiscreteWrapper
+import numpy as np
 
+from pyrado.environment_wrappers.action_discrete import ActDiscreteWrapper
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.discrete import DiscreteSpace
 from tests.environment_wrappers.mock_env import MockEnv
@@ -37,7 +37,7 @@ from tests.environment_wrappers.mock_env import MockEnv
 
 @pytest.mark.wrapper
 @pytest.mark.parametrize("num_bins", list(range(1, 500 + 1)))
-def test_action_space_eles(num_bins):
+def test_action_space_eles(num_bins: int):
     mockenv = MockEnv(act_space=BoxSpace(-1.0, 1.0, shape=(1,)))
     wenv = ActDiscreteWrapper(mockenv, num_bins=num_bins)
 
