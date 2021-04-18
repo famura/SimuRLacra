@@ -60,11 +60,11 @@ def evaluate_policy(args, ex_dir):
     # Create multi-dim evaluation grid
     param_spec = dict()
     param_spec_dim = None
-    
+
     if isinstance(inner_env(env), BallOnPlateSim):
         param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
         param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
-        
+
     elif isinstance(inner_env(env), QQubeSwingUpSim):
         eval_num = 200
         # Use nominal values for all other parameters.
@@ -74,7 +74,7 @@ def evaluate_policy(args, ex_dir):
         param_spec["Dp"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
         param_spec["Dr"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
         param_spec_dim = 2
-        
+
     elif isinstance(inner_env(env), QBallBalancerSim):
         # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)
@@ -168,7 +168,7 @@ def evaluate_policy(args, ex_dir):
 if __name__ == "__main__":
     # Parse command line arguments
     g_args = get_argparser().parse_args()
-    
+
     if g_args.load_all:
         if not g_args.dir:
             raise pyrado.PathErr(msg="load_all was set but no dir was given")
@@ -176,10 +176,10 @@ if __name__ == "__main__":
             raise pyrado.PathErr(given=g_args.dir)
 
         g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir, followlinks=True) if "policy.pt" in tmp[2]]
-        
+
     elif g_args.dir is None:
         g_ex_dirs = [ask_for_experiment(show_hyper_parameters=g_args.show_hyperparameters, max_display=50)]
-        
+
     else:
         g_ex_dirs = [g_args.dir]
 
