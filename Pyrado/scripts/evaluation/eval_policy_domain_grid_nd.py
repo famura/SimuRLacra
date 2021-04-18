@@ -33,16 +33,17 @@ NOTE: the domain parameters have to be scalars, otherwise the generation of the 
 import datetime
 import os
 import os.path as osp
-
 import numpy as np
 import pandas as pd
-import pyrado
 from prettyprinter import pprint
+
+import pyrado
 from pyrado.domain_randomization.utils import param_grid
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, ask_for_experiment
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
@@ -51,25 +52,17 @@ from pyrado.utils.data_types import dict_arraylike_to_float
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
 
-if __name__ == "__main__":
-    # Parse command line arguments
-    args = get_argparser().parse_args()
-
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
-
 
 def evaluate_policy(args, ex_dir):
     env, policy, _ = load_experiment(ex_dir, args)
 
     # Create multi-dim evaluation grid
     param_spec = dict()
-    # if isinstance(inner_env(env), BallOnPlateSim):
-    #     param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
-    #     param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
-
     param_spec_dim = None
-    if isinstance(inner_env(env), QQubeSwingUpSim):
+    if isinstance(inner_env(env), BallOnPlateSim):
+        param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
+        param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
+    elif isinstance(inner_env(env), QQubeSwingUpSim):
         eval_num = 200
         # Use nominal values for all other parameters.
         for param, nominal_value in env.get_nominal_domain_param().items():
@@ -165,7 +158,7 @@ def evaluate_policy(args, ex_dir):
         save_dir=save_dir,
         file_name="summary",
     )
-    df.to_pickle(osp.join(save_dir, f"df_sp_grid_{len(param_spec) if param_spec_dim is None else param_spec_dim}d.pkl"))
+    pyrado.save(df, f"df_sp_grid_{len(param_spec) if param_spec_dim is None else param_spec_dim}d.pkl", save_dir)
 
 
 if __name__ == "__main__":

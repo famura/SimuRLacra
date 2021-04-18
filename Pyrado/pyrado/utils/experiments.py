@@ -29,14 +29,13 @@
 import itertools
 import os
 import os.path as osp
+import pandas as pd
+import torch as to
 from typing import Callable, Any, Union, List, Optional, Tuple, Iterable
 
-import pandas as pd
 import pyrado
-import torch as to
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,

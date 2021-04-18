@@ -135,7 +135,7 @@ def _annotate_heatmap(
 def draw_heatmap(
     data: pd.DataFrame,
     ax_hm: Optional[plt.Axes] = None,
-    cmap: Optional[colors.Colormap] = plt.get_cmap("coolwarm"),
+    cmap: Optional[colors.Colormap] = None,
     norm: Optional[colors.Normalize] = colors.Normalize(),
     annotate: bool = True,
     annotation_valfmt: Optional[str] = "{x:.0f}",

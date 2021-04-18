@@ -81,9 +81,10 @@ def _plot_and_save(
         # Save heat map and color bar if desired
         if save_figure:
             name = "-".join([index, column])
-            fig_hm.savefig(osp.join(save_dir, f"hm-{name}.pdf"))
-            if fig_cb is not None:
-                fig_cb.savefig(osp.join(save_dir, f"cb-{name}.pdf"))
+            for fmt in ["pdf"]:
+                fig_hm.savefig(osp.join(save_dir, f"hm-{name}.{fmt}"))
+                if fig_cb is not None:
+                    fig_cb.savefig(osp.join(save_dir, f"cb-{name}.{fmt}"))
 
 
 def _plot(dataframes, save_dirs, save_figure):

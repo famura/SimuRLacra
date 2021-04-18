@@ -31,12 +31,12 @@ Script to plot the results from the 2D domain parameter grid evaluations of a si
 """
 import os
 import os.path as osp
-from typing import Tuple, Optional
-
 import pandas as pd
-import pyrado
 from matplotlib import colors
 from matplotlib import pyplot as plt
+from typing import Tuple, Optional
+
+import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.heatmap import draw_heatmap
 from pyrado.plotting.utils import AccNorm
@@ -77,9 +77,10 @@ def _plot_and_save(
         # Save heat map and color bar if desired
         if save_figure:
             name = "-".join([index, column])
-            fig_hm.savefig(osp.join(save_dir, f"hm-{name}.pgf"))
-            if fig_cb is not None:
-                fig_cb.savefig(osp.join(save_dir, f"cb-{name}.pgf"))
+            for fmt in ["pdf"]:
+                fig_hm.savefig(osp.join(save_dir, f"hm-{name}.{fmt}"))
+                if fig_cb is not None:
+                    fig_cb.savefig(osp.join(save_dir, f"cb-{name}.{fmt}"))
 
 
 if __name__ == "__main__":

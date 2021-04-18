@@ -27,9 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-from pyrado.spaces import BoxSpace
-from pyrado.spaces.discrete import DiscreteSpace
-from torch.distributions import Categorical
 from torch.distributions.uniform import Uniform
 
 from pyrado.policies.base import Policy

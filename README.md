@@ -17,7 +17,6 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Maintainability](https://api.codeclimate.com/v1/badges/73ad23bdf05361b022b4/maintainability)](https://codeclimate.com/github/famura/SimuRLacra/maintainability)
 [![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)](https://famura.github.io/SimuRLacra/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-32CD32.svg)](https://github.com/psf/black)
 [![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra)
 [![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 

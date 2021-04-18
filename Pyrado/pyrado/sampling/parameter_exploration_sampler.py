@@ -189,7 +189,6 @@ class ParameterExplorationSampler(Serializable):
             mp.set_start_method("spawn", force=True)
 
         # Create parallel pool. We use one thread per environment because it's easier.
-        print(f"Parameter exploration sampler is using {num_workers} workers.")
         self.pool = SamplerPool(num_workers)
 
         # Set all rngs' seeds

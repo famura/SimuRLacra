@@ -29,44 +29,36 @@
 """
 Train an agent to solve the Quanser Qube swing-up task using Proximal Policy Optimization.
 """
-import pyrado
 import torch as to
-from pyrado.algorithms.meta.sprl import SPRL
+from torch.optim import lr_scheduler
+
+import pyrado
 from pyrado.algorithms.step_based.gae import GAE
+from pyrado.environment_wrappers.observation_velfilter import ObsVelFiltWrapper
+from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.step_based.ppo import PPO
-from pyrado.domain_randomization.domain_parameter import SelfPacedLearnerParameter
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
-from torch.optim import lr_scheduler
+
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = get_argparser()
-    parser.add_argument("--frequency", default=250, type=int)
-    parser.set_defaults(max_steps=600)
-    parser.add_argument("--ppo_iterations", default=150, type=int)
-    args = parser.parse_args()
+    args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(
-        QQubeSwingUpSim.name,
-        f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.ppo_iterations}PPOIter_seed_{args.seed}",
-    )
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PPO.name}_{FNNPolicy.name}", f"100Hz_seed_{args.seed}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
+    env_hparams = dict(dt=1 / 100.0, max_steps=600)
     env = QQubeSwingUpSim(**env_hparams)
+    # env = ObsVelFiltWrapper(env, idcs_pos=["theta", "alpha"], idcs_vel=["theta_dot", "alpha_dot"])
     env = ActNormWrapper(env)
 
     # Policy
@@ -95,7 +87,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=args.ppo_iterations,
+        max_iter=200,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,

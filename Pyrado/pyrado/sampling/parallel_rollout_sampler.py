@@ -186,8 +186,6 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
             mp.set_start_method("spawn", force=True)
 
         # Create parallel pool. We use one thread per env because it's easier.
-        if show_progress_bar:
-            print(f"Parallel rollout sampler is using {num_workers} workers.")
         self.pool = SamplerPool(num_workers)
 
         # Set all rngs' seeds
