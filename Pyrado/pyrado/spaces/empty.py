@@ -61,11 +61,6 @@ class EmptySpace(Space):
         # Check the candidate
         if not cand.shape == self.shape:
             raise pyrado.ShapeErr(given=cand, expected_match=self)
-        if np.isnan(cand).any():
-            raise pyrado.ValueErr(
-                msg=f"At least one value is NaN!"
-                + tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]], headers="firstrow")
-            )
         return True
 
     def sample_uniform(self, concrete_inf: float = 1e6) -> np.ndarray:

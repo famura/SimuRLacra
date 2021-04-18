@@ -35,7 +35,7 @@ from operator import itemgetter
 from typing import Union, Mapping, Optional, Tuple, List, ValuesView
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import Embedding
+from pyrado.environments.real_base import RealEnv
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
@@ -44,6 +44,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces import BoxSpace
 from pyrado.utils.data_types import EnvSpec
@@ -198,7 +199,9 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         if self.rollouts_real is not None:
             if self.use_rec_act:
                 # Create a policy that simply replays the recorded actions
-                policy = PlaybackPolicy(self._env.spec, [ro.actions for ro in self.rollouts_real], no_reset=True)
+                policy = PlaybackPolicy(
+                    self._env.spec, [ro.actions_applied for ro in self.rollouts_real], no_reset=True
+                )
             else:
                 # Use the current policy to generate the actions
                 policy = self._policy
@@ -245,21 +248,21 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                             stop_on_done=False,
                             max_steps=seg_real.length,
                         )
-                        # _check_domain_params(seg_sim, dp_value, self.dp_names)
+                        _check_domain_params(seg_sim, dp_value, self.dp_names)
                         if self.use_rec_act:
-                            check_act_equal(seg_real, seg_sim)
+                            check_act_equal(seg_real, seg_sim, check_applied=True)
 
                         # Increase step counter for next segment
                         cnt_step += seg_real.length
 
                         # Concatenate states and actions of the simulated and real segments
                         data_one_seg = np.concatenate(
-                            [seg_sim.states[: len(seg_real), :], seg_sim.actions[: len(seg_real), :]], axis=1
+                            [seg_sim.states[: len(seg_real), :], seg_sim.actions_applied[: len(seg_real), :]], axis=1
                         )
                         if self._embedding.requires_target_domain_data:
                             # The embedding is also using target domain data (the case for DTW distance)
                             data_one_seg_real = np.concatenate(
-                                [seg_real.states[: len(seg_real), :], seg_real.actions], axis=1
+                                [seg_real.states[: len(seg_real), :], seg_real.actions_applied], axis=1
                             )
                             data_one_seg = np.concatenate([data_one_seg, data_one_seg_real], axis=1)
                         data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
@@ -300,7 +303,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                 # _check_domain_params(ro_sim, dp_value, self.dp_names)
 
                 # Concatenate states and actions of the simulated segments
-                data_one_seg = np.concatenate([ro_sim.states[:-1, :], ro_sim.actions], axis=1)
+                data_one_seg = np.concatenate([ro_sim.states[:-1, :], ro_sim.actions_applied], axis=1)
                 if self._embedding.requires_target_domain_data:
                     data_one_seg = np.concatenate([data_one_seg, data_one_seg], axis=1)
                 data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
@@ -359,11 +362,19 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         :param dp_values: ignored, just here for the interface compatibility
         :return: features computed from the time series data, and the complete rollout
         """
-        # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
-        ro = rollout(self._env, self._policy, eval=True, stop_on_done=False)
+        ro = None
+        run_interactive_loop = True
+        while run_interactive_loop:
+            # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
+            ro = rollout(self._env, self._policy, eval=True, stop_on_done=False)
+            if not isinstance(self._env, RealEnv):
+                run_interactive_loop = False
+            else:
+                # Ask is the current rollout should be discarded and redone
+                run_interactive_loop = input("Continue with the next rollout y / n? ").lower() == "n"
         ro.torch()
 
-        data_real = to.cat([ro.states[:-1, :], ro.actions], dim=1)
+        data_real = to.cat([ro.states[:-1, :], ro.actions_applied], dim=1)
         if self._embedding.requires_target_domain_data:
             data_real = to.cat([data_real, data_real], dim=1)
 
@@ -453,7 +464,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         ro.torch()
         self._ring_idx = (self._ring_idx + 1) % self.num_rollouts
 
-        data_real = to.cat([ro.states[:-1, :], ro.actions], dim=1)
+        data_real = to.cat([ro.states[:-1, :], ro.actions_applied], dim=1)
         if self._embedding.requires_target_domain_data:
             data_real = to.cat([data_real, data_real], dim=1)
 

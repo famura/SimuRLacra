@@ -76,7 +76,7 @@ if __name__ == "__main__":
             f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}",
             num_segs_str + len_seg_str + seed_str,
         )
-        t_end = 6  # s
+        t_end = 5.5  # s
     else:
         ex_dir = setup_experiment(
             QQubeSwingUpSim.name,

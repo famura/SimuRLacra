@@ -42,6 +42,7 @@ from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.utils.input_output import print_cbt
 
 
 class NPDR(SBIBase):
@@ -168,26 +169,36 @@ class NPDR(SBIBase):
             self.reached_checkpoint()  # setting counter to 0
 
         if self.curr_checkpoint == 0:
-            self._curr_data_real, _ = NPDR.collect_data_real(
-                self.save_dir,
-                self._env_real,
-                self._policy,
-                self._embedding,
-                prefix=f"iter_{self._curr_iter}",
-                num_rollouts=self.num_real_rollouts,
-                num_segments=self.num_segments,
-                len_segments=self.len_segments,
-            )
+            try:
+                # Check if the rollout files already exist
+                self._curr_data_real = pyrado.load("data_real.pt", self._save_dir, prefix=f"iter_{self.curr_iter}")
+                pyrado.load("data_real.pt", self._save_dir)
+                pyrado.load("rollouts_real.pkl", self._save_dir, prefix=f"iter_{self._curr_iter}")
 
-            # Save the target domain data
-            if self._curr_iter == 0:
-                # Append the first set of data
-                pyrado.save(self._curr_data_real, "data_real.pt", self._save_dir)
-            else:
-                # Append and save all data
-                prev_data = pyrado.load("data_real.pt", self._save_dir)
-                data_real_hist = to.cat([prev_data, self._curr_data_real], dim=0)
-                pyrado.save(data_real_hist, "data_real.pt", self._save_dir)
+                print_cbt(f"Loaded existing rollout data for iteration {self.curr_iter}", "w", bright=True)
+
+            except FileNotFoundError:
+                # Rollout files do not exist yet (usual case)
+                self._curr_data_real, _ = NPDR.collect_data_real(
+                    self.save_dir,
+                    self._env_real,
+                    self._policy,
+                    self._embedding,
+                    prefix=f"iter_{self._curr_iter}",
+                    num_rollouts=self.num_real_rollouts,
+                    num_segments=self.num_segments,
+                    len_segments=self.len_segments,
+                )
+
+                # Save the target domain data
+                if self._curr_iter == 0:
+                    # Append the first set of data
+                    pyrado.save(self._curr_data_real, "data_real.pt", self._save_dir)
+                else:
+                    # Append and save all data
+                    prev_data = pyrado.load("data_real.pt", self._save_dir)
+                    data_real_hist = to.cat([prev_data, self._curr_data_real], dim=0)
+                    pyrado.save(data_real_hist, "data_real.pt", self._save_dir)
 
             # Initialize sbi simulator and prior
             self._setup_sbi(

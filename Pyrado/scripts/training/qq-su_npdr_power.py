@@ -70,7 +70,7 @@ if __name__ == "__main__":
         num_segs_str + len_seg_str + seed_str,
     )
 
-    t_end = 6  # s
+    t_end = 5.5  # s
     num_workers = 8
 
     # Set seed if desired
@@ -158,10 +158,10 @@ if __name__ == "__main__":
 
     # Policy optimization subroutine
     subrtn_policy_hparam = dict(
-        max_iter=10,
+        max_iter=5,
         pop_size=50,
         num_init_states_per_domain=4,
-        num_domains=20,
+        num_domains=50,
         num_is_samples=10,
         expl_std_init=2.0,
         expl_std_min=0.02,
@@ -178,7 +178,7 @@ if __name__ == "__main__":
         num_sbi_rounds=5,
         simulation_batch_size=10,
         normalize_posterior=False,
-        num_eval_samples=10,
+        num_eval_samples=50,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
         use_rec_act=True,

@@ -71,7 +71,15 @@ if __name__ == "__main__":
     env_real = deepcopy(env_sim)
     dp_nom = env_sim.get_nominal_domain_param()
     env_real.domain_param = dict(
-        Mp=dp_nom["Mp"] * 1.2, Mr=dp_nom["Mr"] * 1.1, Lp=dp_nom["Lp"] * 0.8, Lr=dp_nom["Lr"] * 0.9
+        Dr=dp_nom["Dr"] * 1.9,
+        Dp=dp_nom["Dp"] * 0.4,
+        Rm=dp_nom["Rm"] * 1.0,
+        km=dp_nom["km"] * 1.0,
+        Mp=dp_nom["Mp"] * 1.1,
+        Mr=dp_nom["Mr"] * 1.2,
+        Lp=dp_nom["Lp"] * 0.8,
+        Lr=dp_nom["Lr"] * 0.9,
+        g=dp_nom["g"] * 1.0,
     )
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="Dr", mean=dp_nom["Dr"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
@@ -101,11 +109,11 @@ if __name__ == "__main__":
                 dp_nom["Dp"] * 0,
                 dp_nom["Rm"] * 0.8,
                 dp_nom["km"] * 0.8,
-                dp_nom["Mr"] * 0.9,
-                dp_nom["Mp"] * 0.9,
-                dp_nom["Lr"] * 0.9,
-                dp_nom["Lp"] * 0.9,
-                dp_nom["g"] * 0.95,
+                dp_nom["Mr"] * 0.8,
+                dp_nom["Mp"] * 0.8,
+                dp_nom["Lr"] * 0.8,
+                dp_nom["Lp"] * 0.8,
+                dp_nom["g"] * 0.9,
             ]
         ),
         high=to.tensor(
@@ -114,11 +122,11 @@ if __name__ == "__main__":
                 2 * 0.0005,
                 dp_nom["Rm"] * 1.2,
                 dp_nom["km"] * 1.2,
-                dp_nom["Mr"] * 1.1,
-                dp_nom["Mp"] * 1.1,
-                dp_nom["Lr"] * 1.1,
-                dp_nom["Lp"] * 1.1,
-                dp_nom["g"] * 1.05,
+                dp_nom["Mr"] * 1.2,
+                dp_nom["Mp"] * 1.2,
+                dp_nom["Lr"] * 1.2,
+                dp_nom["Lp"] * 1.2,
+                dp_nom["g"] * 1.1,
             ]
         ),
     )
@@ -149,7 +157,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=1,
-        num_sim_per_round=500,
+        num_sim_per_round=1000,
         num_sbi_rounds=5,
         simulation_batch_size=10,
         normalize_posterior=False,

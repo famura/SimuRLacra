@@ -927,26 +927,34 @@ def gae_returns(rollout: StepSequence, gamma: float = 0.99, lamb: float = 0.95):
 
 
 def check_act_equal(
-    rollout_1: Union[StepSequence, List[StepSequence]], rollout_2: Union[StepSequence, List[StepSequence]]
+    rollout_1: Union[StepSequence, List[StepSequence]],
+    rollout_2: Union[StepSequence, List[StepSequence]],
+    check_applied: bool = False,
 ):
     """
     Check if the actions of two rollouts or pairwise two rollouts in in two lists are approximately the same
 
     :param rollout_1: rollouts or list of rollouts
     :param rollout_2: rollouts or list of rollouts
+    :param check_applied: if `True` check the actions applied to the environment instead of the commanded ones
     :return: `True` if the actions match
     """
+    act_key = "actions_applied" if check_applied else "actions"
+
     if isinstance(rollout_1, StepSequence) and isinstance(rollout_2, StepSequence):
         if not np.allclose(
-            rollout_1.actions[: min(rollout_1.length, rollout_2.length)],
-            rollout_2.actions[: min(rollout_1.length, rollout_2.length)],
+            rollout_1.get_data_values(act_key)[: min(rollout_1.length, rollout_2.length)],
+            rollout_2.get_data_values(act_key)[: min(rollout_1.length, rollout_2.length)],
         ):
             raise pyrado.ValueErr(msg="The actions in the rollouts to compare are not equal!")
 
     elif is_iterable(rollout_1) and is_iterable(rollout_2):
         if not all(
             [
-                np.allclose(r1.actions[: min(r1.length, r2.length)], r2.actions[: min(r1.length, r2.length)])
+                np.allclose(
+                    r1.get_data_values(act_key)[: min(r1.length, r2.length)],
+                    r2.get_data_values(act_key)[: min(r1.length, r2.length)],
+                )
                 for r1, r2 in zip(rollout_1, rollout_2)
             ]
         ):
