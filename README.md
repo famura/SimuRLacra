@@ -165,8 +165,8 @@ We are following the Black code style and isort ordering for all Python files. T
 You can format your local code by running
 ```
 cd PATH_TO/SimuRLacra
-black Pyrado --check  # remove --check to actually do the changes
 isort Pyrado --check --diff  # remove --check to actually do the changes
+black Pyrado --check  # remove --check to actually do the changes
 ```
 Moreover, you can install the pre-commit framework via
 ```
