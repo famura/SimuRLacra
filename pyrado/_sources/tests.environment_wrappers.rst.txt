@@ -23,6 +23,15 @@ test\_action\_delay
    :show-inheritance:
 
 
+test\_action\_discrete
+----------------------
+
+.. automodule:: tests.environment_wrappers.test_action_discrete
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 test\_action\_downsampling
 --------------------------
 

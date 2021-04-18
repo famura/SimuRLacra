@@ -116,6 +116,7 @@
 <li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">environment_wrappers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.action_delay">action_delay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.action_discrete">action_discrete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.action_noise">action_noise</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.action_normalization">action_normalization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environment_wrappers.adversarial">adversarial</a></li>
@@ -246,6 +247,16 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.environment_wrappers.action_discrete">
+<span id="action-discrete"></span><h2>action_discrete<a class="headerlink" href="#module-pyrado.environment_wrappers.action_discrete" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environment_wrappers.action_discrete.ActDiscreteWrapper">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ActDiscreteWrapper</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_bins</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/action_discrete.html#ActDiscreteWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.action_discrete.ActDiscreteWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperAct" title="pyrado.environment_wrappers.base.EnvWrapperAct"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperAct</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Environment wrapper that converts a one-dimensional continuous into a discrete action space.</p>
 </dd></dl>
 
 </div>
