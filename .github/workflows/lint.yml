@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   lint:
-    name: Checking for code conformity with Black ans isort
+    name: Checking for code conformity with Black and isort
     runs-on: ubuntu-latest
     env:
       working-directory: ./Pyrado
