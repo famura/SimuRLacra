@@ -114,8 +114,8 @@ if __name__ == "__main__":
             name="g",
             target_mean=to.tensor([9.81]),
             target_cov_chol_flat=to.tensor([1.0]),
-            context_mean=to.tensor([9.81]),
-            context_cov_chol_flat=to.tensor([0.05]),
+            init_mean=to.tensor([9.81]),
+            init_cov_chol_flat=to.tensor([0.05]),
         )
     ]
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
