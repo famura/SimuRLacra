@@ -30,7 +30,7 @@ import numpy as np
 import torch as to
 
 import pyrado
-from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.base import Algorithm, ExposedSampler
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.environment_wrappers.utils import inner_env
@@ -43,7 +43,7 @@ from pyrado.tasks.reward_functions import QuadrErrRewFcn
 from pyrado.utils.tensor import insert_tensor_col
 
 
-class LQR(Algorithm):
+class LQR(Algorithm, ExposedSampler):
     """ Linear Quadratic Regulator created using the control module """
 
     name: str = "lqr"

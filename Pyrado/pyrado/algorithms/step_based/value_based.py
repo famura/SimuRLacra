@@ -33,7 +33,7 @@ from math import ceil
 from typing import Union, Optional
 
 import pyrado
-from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.base import Algorithm, ExposedSampler
 from pyrado.algorithms.utils import ReplayMemory
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import SACExplStrat, EpsGreedyExplStrat
@@ -44,7 +44,7 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt_once
 
 
-class ValueBased(Algorithm, ABC):
+class ValueBased(Algorithm, ExposedSampler, ABC):
     """ Base class of all value-based algorithms """
 
     def __init__(

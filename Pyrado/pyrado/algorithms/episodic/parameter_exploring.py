@@ -33,7 +33,7 @@ from copy import deepcopy
 from typing import Optional
 
 import pyrado
-from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.base import Algorithm, ExposedSampler
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
@@ -42,7 +42,7 @@ from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSa
 from pyrado.utils.input_output import print_cbt
 
 
-class ParameterExploring(Algorithm):
+class ParameterExploring(Algorithm, ExposedSampler):
     """ Base for all algorithms that explore directly in the policy parameter space """
 
     def __init__(
