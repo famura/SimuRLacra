@@ -181,8 +181,7 @@ class QQubeSwingUpSim(QQubeSim):
         # It turned out that a higher penalty for the theta-displacement (the displacement of the rotary arm)
         # leads to policies that perform better on the real environment as it prevents the arm to crash into
         # the workspace boundaries.
-        # Former: Q = task_args.get("Q", np.diag([3e-1, 1.0, 2e-2, 5e-3]))
-        Q = task_args.get("Q", np.diag([1.0, 1.0, 2e-2, 5e-3]))
+        Q = task_args.get("Q", np.diag([1.0, 1.0, 2e-2, 5e-3]))  # former: [3e-1, 1.0, 2e-2, 5e-3]
         R = task_args.get("R", np.diag([4e-3]))
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
