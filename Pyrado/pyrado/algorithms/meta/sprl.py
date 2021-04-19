@@ -25,7 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from typing import Callable, List, Optional, Protocol, Tuple, Union
+from typing import Callable, List, Optional, Protocol, Tuple, Union, Annotated
 
 import numpy as np
 import pyrado
@@ -36,6 +36,7 @@ from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.sampling.expose_sampler import ExposedSampler
 from scipy.optimize import NonlinearConstraint, minimize, Bounds
 from torch import distributions
 from torch.distributions import MultivariateNormal
@@ -205,7 +206,7 @@ class SPRL(Algorithm):
         Constructor
 
         :param env: Environment wrapped in a DomainRandWrapper.
-        :param subroutine: Algorithm which performs the policy/value-function optimization.
+        :param subroutine: Algorithm which performs the policy/value-function optimization. Must also import `ExposedSampler`.
         :param kl_constraints_ub: Upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
         :param performance_lower_bound: Lower bound for the performance SPRL tries to stay above during distribution updates
@@ -217,15 +218,26 @@ class SPRL(Algorithm):
         """
 
         if not isinstance(subroutine, Algorithm):
-            raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
+            raise pyrado.TypeErr(
+                given=subroutine,
+                expected_type=Algorithm,
+                msg="Subroutine must inherit from *Algorithm* and ExposedSampler!",
+            )
+        if not isinstance(subroutine, ExposedSampler):
+            raise pyrado.TypeErr(
+                given=subroutine,
+                expected_type=ExposedSampler,
+                msg="Subroutine must inherit from Algorithm and *ExposedSampler*!",
+            )
         if not typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
-        self._subroutine = subroutine
-        self._subroutine.save_name = subroutine.name
+        # Using a Union here is not really correct, but it makes PyCharm's type hinting work suggest properties from both Algorithm and ExposedSampler.
+        self._subroutine: Union[Algorithm, ExposedSampler] = subroutine
+        self._subroutine.save_name = self._subroutine.name
 
         self._env = env
 
