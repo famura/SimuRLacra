@@ -109,6 +109,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.bootstrapping">bootstrapping</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.cvar_sampler">cvar_sampler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.data_format">data_format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.expose_sampler">expose_sampler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.hyper_sphere">hyper_sphere</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.parallel_evaluation">parallel_evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.parallel_rollout_sampler">parallel_rollout_sampler</a></li>
@@ -411,6 +412,22 @@ For dicts, the dict elements are stacked individually. A list of dicts is treate
 <dd class="field-even"><p>numpy.ndarray or torch.Tensor</p>
 </dd>
 </dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.expose_sampler">
+<span id="expose-sampler"></span><h2>expose_sampler<a class="headerlink" href="#module-pyrado.sampling.expose_sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.expose_sampler.ExposedSampler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ExposedSampler</span></code><a class="reference internal" href="_modules/pyrado/sampling/expose_sampler.html#ExposedSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.expose_sampler.ExposedSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A mixin class to expose an algorithm’s sampler</p>
+<dl class="py method">
+<dt id="pyrado.sampling.expose_sampler.ExposedSampler.sampler">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sampler</span></code><a class="headerlink" href="#pyrado.sampling.expose_sampler.ExposedSampler.sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the sampler.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

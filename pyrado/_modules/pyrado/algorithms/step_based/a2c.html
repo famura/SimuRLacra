@@ -233,6 +233,7 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
 
+<span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">compute_action_statistics</span><span class="p">,</span> <span class="n">num_iter_from_rollouts</span>
@@ -253,7 +254,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
         <span class="n">critic</span><span class="p">:</span> <span class="n">GAE</span><span class="p">,</span>
@@ -306,7 +307,7 @@
 
         <span class="c1"># Initialize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expl_strat</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">RMSprop</span><span class="p">(</span>

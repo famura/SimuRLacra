@@ -105,7 +105,7 @@
 <li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">meta</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.adr">adr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.arpl">arpl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arpl">arpl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayessim">bayessim</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayrn">bayrn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.epopt">epopt</a></li>
@@ -419,60 +419,8 @@ env_info: contains diagnostic information about the environment</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyrado.algorithms.meta.arpl">
-<span id="arpl"></span><h2>arpl<a class="headerlink" href="#module-pyrado.algorithms.meta.arpl" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pyrado.algorithms.meta.arpl.ARPL">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ARPL</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">save_dir:</span> <span class="pre">PathLike,</span> <span class="pre">env:</span> <span class="pre">[&lt;class</span> <span class="pre">'pyrado.environments.sim_base.SimEnv'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper'&gt;],</span> <span class="pre">subrtn:</span> <span class="pre">pyrado.algorithms.base.Algorithm,</span> <span class="pre">policy:</span> <span class="pre">pyrado.policies.base.Policy,</span> <span class="pre">expl_strat:</span> <span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat,</span> <span class="pre">max_iter:</span> <span class="pre">int,</span> <span class="pre">num_rollouts:</span> <span class="pre">Optional[int]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">steps_num:</span> <span class="pre">Optional[int]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">apply_dynamics_noise:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">dyn_eps:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.01,</span> <span class="pre">dyn_phi:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.1,</span> <span class="pre">halfspan:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.25,</span> <span class="pre">apply_proccess_noise:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">proc_eps:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.01,</span> <span class="pre">proc_phi:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.05,</span> <span class="pre">apply_observation_noise:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">obs_eps:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.01,</span> <span class="pre">obs_phi:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.05,</span> <span class="pre">torch_observation:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">num_workers:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4,</span> <span class="pre">logger:</span> <span class="pre">Optional[pyrado.logger.step.StepLogger]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/arpl.html#ARPL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.arpl.ARPL" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
-<p>Adversarially Robust Policy Learning (ARPL)</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p>A. Mandlekar, Y. Zhu, A. Garg, L. Fei-Fei, S. Savarese, “Adversarially Robust Policy Learning:
-Active Construction of Physically-Plausible Perturbations”, IROS, 2017</p>
-</div>
-<dl class="py attribute">
-<dt id="pyrado.algorithms.meta.arpl.ARPL.name">
-<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'arpl'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.arpl.ARPL.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.arpl.ARPL.sample_count">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sample_count</span></code><a class="headerlink" href="#pyrado.algorithms.meta.arpl.ARPL.sample_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the total number of samples, i.e. steps of a rollout, used for training so far.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.arpl.ARPL.save_snapshot">
-<code class="sig-name descname"><span class="pre">save_snapshot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/arpl.html#ARPL.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.arpl.ARPL.save_snapshot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
-Subclasses should call the base method to save the policy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a <cite>dict</cite> of information about the current iteration of the meta-algorithm</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.arpl.ARPL.step">
-<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/arpl.html#ARPL.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.arpl.ARPL.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
-adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
-<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a dict of information about the current iteration of the meta-algorithm</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="arpl">
+<h2>arpl<a class="headerlink" href="#arpl" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyrado.algorithms.meta.bayessim">
 <span id="bayessim"></span><h2>bayessim<a class="headerlink" href="#module-pyrado.algorithms.meta.bayessim" title="Permalink to this headline">¶</a></h2>

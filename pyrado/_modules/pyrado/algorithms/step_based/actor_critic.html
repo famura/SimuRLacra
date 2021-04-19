@@ -233,6 +233,7 @@
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.expose_sampler</span> <span class="kn">import</span> <span class="n">ExposedSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">NormalActNoiseExplStrat</span>
@@ -241,7 +242,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
 
-<div class="viewcode-block" id="ActorCritic"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic">[docs]</a><span class="k">class</span> <span class="nc">ActorCritic</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ActorCritic"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic">[docs]</a><span class="k">class</span> <span class="nc">ActorCritic</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">,</span> <span class="n">ExposedSampler</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Base class of all actor critic algorithms &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -271,7 +272,7 @@
 
         <span class="c1"># Initialize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_hparam</span> <span class="o">=</span> <span class="kc">None</span>
 

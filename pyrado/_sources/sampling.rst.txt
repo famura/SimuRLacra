@@ -32,6 +32,15 @@ data\_format
    :show-inheritance:
 
 
+expose\_sampler
+---------------
+
+.. automodule:: pyrado.sampling.expose_sampler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 hyper\_sphere
 -------------
 
