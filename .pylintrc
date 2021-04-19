@@ -15,7 +15,7 @@ extension-pkg-whitelist=numpy,torch
 fail-under=10.0
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore=CVS,scripts
+ignore=CVS
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths.
