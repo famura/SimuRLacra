@@ -43,7 +43,7 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.sequences import *
 
 
-class ARPL(Algorithm, ExposedExSampler):
+class ARPL(Algorithm, ExposedSampler):
     """
     Adversarially Robust Policy Learning (ARPL)
 
