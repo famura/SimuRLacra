@@ -33,7 +33,7 @@ from typing import Sequence
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.mixins import ExposedSampler
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat

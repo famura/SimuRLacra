@@ -28,7 +28,7 @@
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.mixins import ExposedSampler
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.environment_wrappers.adversarial import (
     AdversarialDynamicsWrapper,
     AdversarialStateWrapper,

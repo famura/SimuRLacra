@@ -34,7 +34,7 @@ from typing import Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.mixins import ExposedSampler
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
