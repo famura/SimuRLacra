@@ -76,10 +76,10 @@ class MultivariateNormalWrapper:
             raise pyrado.ValueErr(
                 msg="Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
             )
-            
+
         mean = stacked[:dim]
         cov_chol_flat = stacked[dim:]
-        
+
         return MultivariateNormalWrapper(to.tensor(mean).double(), to.tensor(cov_chol_flat).double())
 
     @property
@@ -97,7 +97,7 @@ class MultivariateNormalWrapper:
         """ Sets the mean. """
         if not (mean.shape == self.mean.shape):
             raise pyrado.ShapeErr(given_name="mean", expected_match=self.mean.shape)
-            
+
         self._mean = mean
         self._update_distribution()
 
@@ -119,7 +119,7 @@ class MultivariateNormalWrapper:
         """ Sets the standard deviations, shape `(k,)`. """
         if not (cov_chol_flat.shape == self.cov_chol_flat.shape):
             raise pyrado.ShapeErr(given_name="cov_chol_flat", expected_match=self.cov_chol_flat.shape)
-            
+
         self._cov_chol_flat = cov_chol_flat
         self._update_distribution()
 
@@ -177,7 +177,7 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         """
         if not (len(stacked.shape) == 1):
             raise pyrado.ValueErr(msg="Stacked has invalid shape! Must be 1-dimensional.")
-            
+
         expected_dim_multiplier = 0
         if self._mean_is_parameter:
             expected_dim_multiplier += 1
@@ -232,12 +232,12 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         :param return_mean_cov_indices: if `True`, additionally to just the parameters also the indices are returned
         :return: if `return_mean_cov_indices` is `True`, a tuple `(stacked, mean_indices, cov_indices)`, where the
                  latter two might be `None` if the respective value is not a parameter; if `return_mean_cov_indices`
-                 is `False`, just the stacked values; teh stacked values can have shape `(0,)`, `(k,)`, or `(2 * k,)`,
+                 is `False`, just the stacked values; the stacked values can have shape `(0,)`, `(k,)`, or `(2 * k,)`,
                  depending on if none, only mean/cov, or both are parameters, respectively
         """
         parameters = self.parameters()
         stacked = np.concatenate([p.detach().numpy() for p in parameters])
-        
+
         if return_mean_cov_indices:
             pointer = 0
             mean_indices, cov_indices = None, None
@@ -248,7 +248,7 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
                 cov_indices = list(range(pointer, pointer + self.dim))
                 pointer += self.dim
             return stacked, mean_indices, cov_indices
-        
+
         return stacked
 
 
@@ -256,7 +256,7 @@ class SPRL(Algorithm):
     """
     Self-Paced Reinforcement Leaner (SPRL)
 
-    This algorithm wraps another algorithm. The main purpose is to apply self-paced RL (Klink et al, 2020).
+    This algorithm wraps another algorithm. The main purpose is to apply self-paced RL [1].
 
     .. seealso::
         [1] P. Klink, H. Abdulsamad, B. Belousov, C. D'Eramo, J. Peters, and J. Pajarinen,
@@ -340,6 +340,7 @@ class SPRL(Algorithm):
 
     @property
     def sample_count(self) -> int:
+        """The amount of samples collected by the subalgorithm."""
         return self._subroutine.sample_count
 
     def train(self, snapshot_mode: str = "latest", seed: int = None, meta_info: dict = None):
@@ -507,7 +508,7 @@ class SPRL(Algorithm):
             )
         if result and result.success:
             self._adapt_parameters(result.x)
-            
+
         # We have a result but the optimization process was not a success
         elif result:
             old_f = objective_fn(previous_distribution.get_stacked())[0]
@@ -552,6 +553,16 @@ class SPRL(Algorithm):
     def _train_subroutine_and_evaluate_perf(
         self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False, **kwargs
     ) -> float:
+        """Internal method required by the `until_thold_exceeded` function.
+        The parameters are the same as for the regular `train()`
+        call and are explained there.
+
+        :param reset_policy: whether the policy should be reset before
+        training, defaults to False
+        :type reset_policy: bool, optional
+        :return: The median undiscounted return
+        :rtype: float
+        """
         if reset_policy:
             self._subroutine.init_modules(False)
         self._subroutine.reset()

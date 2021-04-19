@@ -326,8 +326,8 @@ class SelfPacedDomainParam(DomainParam):
         :param target_mean: target means of the contextual distribution
         :target_cov_chol_flat: target standard deviations of the contextual distribution; equivalent to the diagonal entries of
                                the Cholesky distribution of a diagonal covariance matrix
-        :context_mean: initial mean of the contextual distribution
-        :context_cov_chol_flat: initial standard deviations of the contextual distribution
+        :init_mean: initial mean of the contextual distribution
+        :init_cov_chol_flat: initial standard deviations of the contextual distribution
         """
 
         if not (target_mean.shape == init_mean.shape):
