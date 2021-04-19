@@ -281,16 +281,17 @@ class SPRL(Algorithm):
         """
         Constructor
 
-        :param env: Environment wrapped in a DomainRandWrapper.
-        :param subroutine: Algorithm which performs the policy/value-function optimization. Must also inherit from `ExposedSampler`.
-        :param kl_constraints_ub: Upper bound for the KL-divergence
+        :param env: environment wrapped in a DomainRandWrapper
+        :param subroutine: algorithm which performs the policy/value-function optimization. Must also inherit from `ExposedSampler`
+        :param kl_constraints_ub: upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
-        :param performance_lower_bound: Lower bound for the performance SPRL tries to stay above during distribution updates
-        :param std_lower_bound: Clipping value for the standard deviation, necessary when using very small target variances
-        :param kl_threshold: Threshold for the KL-divergence until which std_lower_bound is enforced
-        :param optimize_mean: Whether the mean should be changed or considered fixed
-        :param optimize_cov: Whether the (co-)variance should be changed or considered fixed
-        :param max_subrtn_retries: How often a failed (median performance < 30 % of performance_lower_bound) training attempt of the subroutine should be reattempted
+        :param performance_lower_bound: lower bound for the performance SPRL tries to stay above during distribution updates
+        :param std_lower_bound: clipping value for the standard deviation, necessary when using very small target variances
+        :param kl_threshold: threshold for the KL-divergence until which std_lower_bound is enforced
+        :param optimize_mean: whether the mean should be changed or considered fixed
+        :param optimize_cov: whether the (co-)variance should be changed or considered fixed
+        :param max_subrtn_retries: how often a failed (median performance < 30 % of performance_lower_bound) training attempt of
+                                   the subroutine should be reattempted
         """
         if not isinstance(subroutine, Algorithm):
             raise pyrado.TypeErr(
