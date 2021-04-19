@@ -25,96 +25,167 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from typing import Callable, List, Optional, Protocol, Tuple, Union, Annotated
+from typing import Callable, List, Optional, Tuple, Union
 
 import numpy as np
 import pyrado
 import torch as to
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.step_based.actor_critic import ActorCritic
+from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.sampling.expose_sampler import ExposedSampler
 from scipy.optimize import NonlinearConstraint, minimize, Bounds
-from torch import distributions
 from torch.distributions import MultivariateNormal
 
 
 class MultivariateNormalWrapper:
+    """
+    A wrapper for torch's multivariate normal distribution with diagonal covariance. It is used to get a SciPy-
+    optimizer-ready version of the parameters of a distribution, i.e. a vector that can be used as the target variable.
+    """
+
     def __init__(self, mean: to.Tensor, cov_chol_flat: to.Tensor):
+        """
+        Constructor.
+
+        :param mean: mean of the distribution; shape `(k,)`
+        :param cov_chol_flat: standard deviations of the distribution; shape `(k,)`
+        """
+
         self._mean = mean.clone().detach().requires_grad_(True)
         self._cov_chol_flat = cov_chol_flat.clone().detach().requires_grad_(True)
         self.distribution = MultivariateNormal(self.mean, self.cov)
 
     @staticmethod
     def from_stacked(dim: int, stacked: np.ndarray) -> "MultivariateNormalWrapper":
-        assert len(stacked.shape) == 1, "Stacked has invalid shape! Must be 1-dimensional."
-        assert (
-            stacked.shape[0] == 2 * dim
-        ), "Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
+        """
+        Creates an instance of this class from the given stacked NumPy array as generated e.g. by
+        `MultivariateNormalWrapper.get_stacked(self)`.
+
+        :param dim: dimensionality `k` of the random variable
+        :param stacked: array containing the mean and standard deviations; shape `(2 * k,)`, where the first `k`
+                        entries are the mean and the last `k` entries are the standard deviations
+        :return: a `MultivariateNormalWrapper` with the given mean/cov.
+        """
+
+        if not (len(stacked.shape) == 1):
+            raise pyrado.ValueErr(msg="Stacked has invalid shape! Must be 1-dimensional.")
+        if not (stacked.shape[0] == 2 * dim):
+            raise pyrado.ValueErr(
+                msg="Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
+            )
         mean = stacked[:dim]
         cov_chol_flat = stacked[dim:]
         return MultivariateNormalWrapper(to.tensor(mean).double(), to.tensor(cov_chol_flat).double())
 
     @property
     def dim(self):
+        """ Gets the size (dimensionality) of the random variable. """
         return self._mean.shape[0]
 
     @property
     def mean(self):
+        """ Gets the mean. """
         return self._mean
 
     @mean.setter
     def mean(self, mean: to.Tensor):
-        assert mean.shape == self.mean.shape, "New mean shape differs from current mean shape!"
+        """ Sets the mean. """
+        if not (mean.shape == self.mean.shape):
+            raise pyrado.ShapeErr(given_name="mean", expected_match=self.mean.shape)
         self._mean = mean
         self._update_distribution()
 
     @property
     def cov(self):
+        """ Gets the covariance matrix, shape `(k, k)`. """
         return (self._cov_chol_flat ** 2).diag()
 
     @property
     def cov_chol_flat(self):
+        """
+        Gets the standard deviations, i.e. the diagonal entries of the Cholesky decomposition of the covariance matrix,
+        shape `(k,)`.
+        """
         return self._cov_chol_flat
 
     @cov_chol_flat.setter
     def cov_chol_flat(self, cov_chol_flat: to.Tensor):
-        assert (
-            cov_chol_flat.shape == self.cov_chol_flat.shape
-        ), "New cov chol flat shape differs from current mean shape!"
+        """ Sets the standard deviations, shape `(k,)`. """
+        if not (cov_chol_flat.shape == self.cov_chol_flat.shape):
+            raise pyrado.ShapeErr(given_name="cov_chol_flat", expected_match=self.cov_chol_flat.shape)
         self._cov_chol_flat = cov_chol_flat
         self._update_distribution()
 
     def parameters(self) -> List[to.Tensor]:
+        """ Gets the parameters (mean and standard deviations) of this distribution. """
         return [self.mean, self.cov_chol_flat]
 
     def get_stacked(self) -> np.ndarray:
+        """
+        Gets numpy representations of the mean and standard deviations stacked on top of each other.
+
+        :return: stacked mean and standard deviations; shape `(k,)`
+        """
         return np.concatenate([self.mean.detach().numpy(), self.cov_chol_flat.detach().numpy()])
 
     def _update_distribution(self):
+        """
+        Updates `self.distribution` according to the current mean and covariance.
+
+        ..note: This is an internal utility function.
+        """
         self.distribution = MultivariateNormal(self.mean, self.cov)
 
 
 class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
+    """
+    Version of the `MultivariateNormalWrapper` that is able to exclude either the mean of the covariance from the
+    parameters and the stacking. This can be readily used for optimizing the mean or covariance while keeping the
+    other fixed.
+    """
+
     def __init__(self, mean: to.Tensor, cov_chol_flat: to.Tensor, mean_is_parameter: bool, cov_is_parameter: bool):
+        """
+        Constructor.
+
+        :param mean: mean of the distribution; shape `(k,)`
+        :param cov_chol_flat: standard deviations of the distribution; shape `(k,)`
+        :param mean_is_parameter: if `True`, the mean is treated as a parameter and returned from `get_stacked`
+                                  and similar methods.
+        :param cov_is_parameter: if `True`, the covariance is treated as a parameter and returned from `get_stacked`
+                                 and similar methods.
+        """
+
         super().__init__(mean, cov_chol_flat)
 
         self._mean_is_parameter = mean_is_parameter
         self._cov_is_parameter = cov_is_parameter
 
     def from_stacked(self, stacked: np.ndarray) -> "ParameterAgnosticMultivariateNormalWrapper":
-        assert len(stacked.shape) == 1, "Stacked has invalid shape! Must be 1-dimensional."
+        """
+        Builds a new `ParameterAgnosticMultivariateNormalWrapper` from the given stacked values. In contrast to
+        `MultivariateNormalWrapper.from_stacked(dim, stacked)`, this does not require a dimensionality as it is an
+        instance rather than a static method. Also, the stacked representations has to either contain the mean or the
+        standard deviations or both, according the the values originally passed to the constructor. If one of them is
+        not treated as a parameter, the current values is copied instead.
+
+        :param stacked: the stacked representation of the parameters according to the documentation above; can have
+                        either shape `(0,)`, `(k,)`, or `(2 * k)`
+        :return: a `ParameterAgnosticMultivariateNormalWrapper` with the new values for the parameters
+        """
+
+        if not (len(stacked.shape) == 1):
+            raise pyrado.ValueErr(msg="Stacked has invalid shape! Must be 1-dimensional.")
         expected_dim_multiplier = 0
         if self._mean_is_parameter:
             expected_dim_multiplier += 1
         if self._cov_is_parameter:
             expected_dim_multiplier += 1
-        assert (
-            stacked.shape[0] == expected_dim_multiplier * self.dim
-        ), f"Stacked has invalid size! Must be {expected_dim_multiplier}*dim."
+        if not (stacked.shape[0] == expected_dim_multiplier * self.dim):
+            raise pyrado.ValueErr(msg=f"Stacked has invalid size! Must be {expected_dim_multiplier}*dim.")
 
         if self._mean_is_parameter and self._cov_is_parameter:
             mean = stacked[: self.dim]
@@ -142,14 +213,31 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             cov_is_parameter=self._cov_is_parameter,
         )
 
-    def parameters(
-        self, return_mean_cov_indices: bool = False
-    ) -> Union[List[to.Tensor], Tuple[List[to.Tensor], Optional[List[int]], Optional[List[int]]]]:
+    def parameters(self) -> List[to.Tensor]:
+        """ Gets the list of parameters according to the values passed to the constructor. """
         params = []
         if self._mean_is_parameter:
             params.append(self.mean)
         if self._cov_is_parameter:
             params.append(self.cov_chol_flat)
+        return params
+
+    def get_stacked(
+        self, return_mean_cov_indices: bool = False
+    ) -> Union[np.ndarray, Tuple[np.ndarray, Optional[List[int]], Optional[List[int]]]]:
+        """
+        Like `MultivariateNormalWrapper.get_stacked(self)`, returns a numpy array with the mean and standard deviations
+        stacked on top of each other if the respective value is a parameter. Additionally, if `return_mean_cov_indices`
+        is `True`, also the indices of the mean/cov values are returned which can be used for addressing them.
+
+        :param return_mean_cov_indices: if `True`, additionally to just the parameters also the indices are returned
+        :return: if `return_mean_cov_indices` is `True`, a tuple `(stacked, mean_indices, cov_indices)`, where the
+                 latter two might be `None` if the respective value is not a parameter; if `return_mean_cov_indices`
+                 is `False`, just the stacked values; teh stacked values can have shape `(0,)`, `(k,)`, or `(2 * k,)`,
+                 depending on if none, only mean/cov, or both are parameters, respectively
+        """
+        parameters = self.parameters()
+        stacked = np.concatenate([p.detach().numpy() for p in parameters])
         if return_mean_cov_indices:
             pointer = 0
             mean_indices, cov_indices = None, None
@@ -159,19 +247,6 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             if self._cov_is_parameter:
                 cov_indices = list(range(pointer, pointer + self.dim))
                 pointer += self.dim
-            return params, mean_indices, cov_indices
-        return params
-
-    def get_stacked(
-        self, return_mean_cov_indices: bool = False
-    ) -> Union[np.ndarray, Tuple[np.ndarray, Optional[List[int]], Optional[List[int]]]]:
-        parameters = self.parameters(return_mean_cov_indices=return_mean_cov_indices)
-        if return_mean_cov_indices:
-            parameters, mean_indices, cov_indices = parameters
-        else:
-            mean_indices, cov_indices = None, None
-        stacked = np.concatenate([p.detach().numpy() for p in parameters])
-        if return_mean_cov_indices:
             return stacked, mean_indices, cov_indices
         return stacked
 
