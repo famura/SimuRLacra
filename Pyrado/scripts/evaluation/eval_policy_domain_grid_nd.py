@@ -28,7 +28,9 @@
 
 """
 Script to evaluate one policy in one environment for a n-dim grid (recommended: n=2) of domain parameters.
-NOTE: the domain parameters have to be scalars, otherwise the generation of the mesh grid breaks down.
+
+.. note::
+    The domain parameters have to be scalars, otherwise the generation of the mesh grid breaks down.
 """
 import datetime
 import os
@@ -76,26 +78,26 @@ def evaluate_policy(args, ex_dir):
         param_spec_dim = 2
 
     elif isinstance(inner_env(env), QBallBalancerSim):
-        # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
-        # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)
-        # param_spec['r_ball'] = np.linspace(0.01, 0.1, num=11, endpoint=True)
+        # param_spec["g"] = np.linspace(7.91, 11.91, num=11, endpoint=True)
+        # param_spec["m_ball"] = np.linspace(0.003, 0.3, num=11, endpoint=True)
+        # param_spec["r_ball"] = np.linspace(0.01, 0.1, num=11, endpoint=True)
         param_spec["l_plate"] = np.linspace(0.275, 0.275, num=11, endpoint=True)
         param_spec["r_arm"] = np.linspace(0.0254, 0.0254, num=11, endpoint=True)
-        # param_spec['J_l'] = np.linspace(5.2822e-5*0.5, 5.2822e-5*1.5, num=11, endpoint=True)
-        # param_spec['J_m'] = np.linspace(4.6063e-7*0.5, 4.6063e-7*1.5, num=11, endpoint=True)
-        # param_spec['K_g'] = np.linspace(60, 80, num=11, endpoint=True)
-        # param_spec['eta_g'] = np.linspace(0.6, 1.0, num=11, endpoint=True)
-        # param_spec['eta_m'] = np.linspace(0.49, 0.89, num=11, endpoint=True)
-        # param_spec['k_m'] = np.linspace(0.006, 0.066, num=11, endpoint=True)
-        # param_spec['R_m'] = np.linspace(2.6*0.5, 2.6*1.5, num=11, endpoint=True)
-        # param_spec['B_eq'] = np.linspace(0.0, 0.05, num=11, endpoint=True)
-        # param_spec['c_frict'] = np.linspace(0, 0.015, num=11, endpoint=True)
-        # param_spec['V_thold_x_pos'] = np.linspace(0.0, 1.0, num=11, endpoint=True)
-        # param_spec['V_thold_x_neg'] = np.linspace(-1., 0.0, num=11, endpoint=True)
-        # param_spec['V_thold_y_pos'] = np.linspace(0.0, 1.0, num=11, endpoint=True)
-        # param_spec['V_thold_y_neg'] = np.linspace(-1.0, 0, num=11, endpoint=True)
-        # param_spec['offset_th_x'] = np.linspace(-5/180*np.pi, 5/180*np.pi, num=11, endpoint=True)
-        # param_spec['offset_th_y'] = np.linspace(-5/180*np.pi, 5/180*np.pi, num=11, endpoint=True)
+        # param_spec["J_l"] = np.linspace(5.2822e-5*0.5, 5.2822e-5*1.5, num=11, endpoint=True)
+        # param_spec["J_m"] = np.linspace(4.6063e-7*0.5, 4.6063e-7*1.5, num=11, endpoint=True)
+        # param_spec["K_g"] = np.linspace(60, 80, num=11, endpoint=True)
+        # param_spec["eta_g"] = np.linspace(0.6, 1.0, num=11, endpoint=True)
+        # param_spec["eta_m"] = np.linspace(0.49, 0.89, num=11, endpoint=True)
+        # param_spec["k_m"] = np.linspace(0.006, 0.066, num=11, endpoint=True)
+        # param_spec["R_m"] = np.linspace(2.6*0.5, 2.6*1.5, num=11, endpoint=True)
+        # param_spec["B_eq"] = np.linspace(0.0, 0.05, num=11, endpoint=True)
+        # param_spec["c_frict"] = np.linspace(0, 0.015, num=11, endpoint=True)
+        # param_spec["V_thold_x_pos"] = np.linspace(0.0, 1.0, num=11, endpoint=True)
+        # param_spec["V_thold_x_neg"] = np.linspace(-1., 0.0, num=11, endpoint=True)
+        # param_spec["V_thold_y_pos"] = np.linspace(0.0, 1.0, num=11, endpoint=True)
+        # param_spec["V_thold_y_neg"] = np.linspace(-1.0, 0, num=11, endpoint=True)
+        # param_spec["offset_th_x"] = np.linspace(-5/180*np.pi, 5/180*np.pi, num=11, endpoint=True)
+        # param_spec["offset_th_y"] = np.linspace(-5/180*np.pi, 5/180*np.pi, num=11, endpoint=True)
 
     else:
         raise NotImplementedError
