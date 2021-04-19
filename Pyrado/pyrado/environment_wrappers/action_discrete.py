@@ -26,34 +26,39 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os
+import numpy as np
+from init_args_serializer import Serializable
 
-import pyrado
-from pyrado.utils.input_output import print_cbt
+from pyrado.environment_wrappers.base import EnvWrapperAct
+from pyrado.environments.base import Env
+from pyrado.spaces.base import Space
+from pyrado.spaces.discrete import DiscreteSpace
 
-try:
-    import mujoco_py
-except (ImportError, Exception):
-    # The ImportError is raised if mujoco-py is simply not installed
-    # The Exception catches the case that you have everything installed properly but your IDE does not set the
-    # LD_LIBRARY_PATH correctly (happens for PyCharm & CLion). To check this, try to run your script from the terminal.
-    ld_library_path = os.environ.get("LD_LIBRARY_PATH")
-    ld_preload = os.environ.get("LD_PRELOAD")
-    print_cbt(
-        "You are trying to use are MuJoCo-based environment, but the required mujoco_py module can not be imported.\n"
-        "Try adding\n"
-        "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/.mujoco/mujoco200/bin\n"
-        "export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so\n"
-        "to your shell's rc-file.\n"
-        "The current values of the environment variables are:\n"
-        f"LD_LIBRARY_PATH={ld_library_path}\n"
-        f"LD_PRELOAD={ld_preload}"
-        "If you are using PyCharm or CLion, also add the environment variables above to your run configurations. "
-        "Note that the IDE will not resolve $USER for some reason, so enter the user name directly, "
-        "or run it from your terminal.\n\n"
-        "Here comes the mujoco-py error message:\n\n",
-        "r",
-    )
-    pyrado.mujoco_loaded = False
-else:
-    pyrado.mujoco_loaded = True
+
+class ActDiscreteWrapper(EnvWrapperAct, Serializable):
+    """ Environment wrapper that converts a one-dimensional continuous into a discrete action space. """
+
+    def __init__(self, wrapped_env: Env, num_bins: int = 2):
+        """
+        Constructor
+
+        :param wrapped_env: environment to wrap
+        :param num_bins: number of actions to split the continuous (box) space into
+        """
+
+        Serializable._init(self, locals())
+
+        # Invoke base constructor
+        super().__init__(wrapped_env)
+
+        # Store parameter and initialize slot for queue
+        self._n_actions = num_bins
+        self._actions = np.linspace(
+            start=self.wrapped_env.act_space.bound_lo, stop=self.wrapped_env.act_space.bound_up, num=num_bins
+        )
+
+    def _process_act(self, act: np.ndarray):
+        return self._actions[int(act)]
+
+    def _process_act_space(self, space: Space):
+        return DiscreteSpace(list(range(self._n_actions)))

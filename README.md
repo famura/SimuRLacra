@@ -96,9 +96,9 @@ In all cases you will download Rcs, eigen3, pybind11, catch2, and mujoco-py, int
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.8.0
+pip install torch==1.8.1
 # or if CUDA support not needed
-# pip install torch==1.8.0+cpu torchvision==0.9.0+cpu torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
+# pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py wo_rcs_wo_pytorch -j8
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
@@ -126,9 +126,9 @@ If you can't install the libraries, you can still use the Python part of this fr
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.8.0
+pip install torch==1.8.1
 # or if CUDA support not needed
-# pip install torch==1.8.0+cpu torchvision==0.9.0+cpu torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
+# pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py w_rcs_wo_pytorch -j8
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.

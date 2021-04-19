@@ -204,7 +204,7 @@ wam_url = f"https://github.com/psclklnk/self-paced-rl/archive/{wam_repo_version}
 
 # PyTorch
 # NOTE: Assumes that the current environment does NOT already contain PyTorch!
-pytorch_version = "1.8.0"
+pytorch_version = "1.8.1"
 pytorch_git_repo = "https://github.com/pytorch/pytorch.git"
 pytorch_src_dir = osp.join(dependency_dir, "pytorch")
 
