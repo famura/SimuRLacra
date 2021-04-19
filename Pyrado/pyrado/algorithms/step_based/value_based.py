@@ -44,7 +44,7 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt_once
 
 
-class ValueBased(Algorith, ABC):
+class ValueBased(Algorithm, ABC):
     """ Base class of all value-based algorithms """
 
     def __init__(
