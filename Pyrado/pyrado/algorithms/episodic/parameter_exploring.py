@@ -34,6 +34,7 @@ from typing import Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
@@ -42,7 +43,7 @@ from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSa
 from pyrado.utils.input_output import print_cbt
 
 
-class ParameterExploring(Algorithm):
+class ParameterExploring(Algorithm, ExposedSampler):
     """ Base for all algorithms that explore directly in the policy parameter space """
 
     def __init__(
@@ -90,7 +91,7 @@ class ParameterExploring(Algorithm):
         self.pop_size = pop_size
 
         # Create sampler
-        self.sampler = ParameterExplorationSampler(
+        self._sampler = ParameterExplorationSampler(
             env,
             policy,
             num_init_states_per_domain=num_init_states_per_domain,

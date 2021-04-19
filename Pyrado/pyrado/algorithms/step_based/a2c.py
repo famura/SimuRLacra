@@ -33,6 +33,7 @@ from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
 from typing import Sequence, Optional
 
+import pyrado
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.utils import compute_action_statistics, num_iter_from_rollouts
@@ -106,7 +107,7 @@ class A2C(ActorCritic):
 
         # Initialize
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             env, self.expl_strat, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.optim = to.optim.RMSprop(
