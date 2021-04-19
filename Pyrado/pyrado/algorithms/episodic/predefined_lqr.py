@@ -85,7 +85,7 @@ class LQR(Algorithm, ExposedSampler):
         self._env = env
         self.ball_z_dim_mismatch = ball_z_dim_mismatch
 
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             env, self._policy, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.eigvals = np.array([pyrado.inf])  # initialize with sth positive

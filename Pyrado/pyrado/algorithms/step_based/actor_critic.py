@@ -72,7 +72,7 @@ class ActorCritic(Algorithm, ExposedSampler, ABC):
 
         # Initialize
         self._expl_strat = None
-        self.sampler = None
+        self._sampler = None
         self._lr_scheduler = None
         self._lr_scheduler_hparam = None
 

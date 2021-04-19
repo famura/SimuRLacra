@@ -118,7 +118,7 @@ class ARPL(Algorithm, ExposedExSampler):
             env = AdversarialObservationWrapper(env, self.policy, obs_eps, obs_phi)
 
         self.num_rollouts = num_rollouts
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             env,
             expl_strat,
             num_workers=num_workers,

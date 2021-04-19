@@ -107,7 +107,7 @@ class A2C(ActorCritic):
 
         # Initialize
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             env, self.expl_strat, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.optim = to.optim.RMSprop(

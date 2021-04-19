@@ -91,7 +91,7 @@ class ParameterExploring(Algorithm, ExposedSampler):
         self.pop_size = pop_size
 
         # Create sampler
-        self.sampler = ParameterExplorationSampler(
+        self._sampler = ParameterExplorationSampler(
             env,
             policy,
             num_init_states_per_domain=num_init_states_per_domain,
