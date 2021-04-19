@@ -206,7 +206,7 @@ class SPRL(Algorithm):
         Constructor
 
         :param env: Environment wrapped in a DomainRandWrapper.
-        :param subroutine: Algorithm which performs the policy/value-function optimization. Must also import `ExposedSampler`.
+        :param subroutine: Algorithm which performs the policy/value-function optimization. Must also inherit from `ExposedSampler`.
         :param kl_constraints_ub: Upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
         :param performance_lower_bound: Lower bound for the performance SPRL tries to stay above during distribution updates
