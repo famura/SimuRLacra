@@ -331,8 +331,6 @@ class SPRL(Algorithm):
             param for param in env.randomizer.domain_params if isinstance(param, SelfPacedDomainParam)
         ]
 
-        self._seed = None
-
     @property
     def sub_algorithm(self) -> Algorithm:
         """ Get the policy optimization subroutine. """
@@ -344,7 +342,6 @@ class SPRL(Algorithm):
         return self._subroutine.sample_count
 
     def train(self, snapshot_mode: str = "latest", seed: int = None, meta_info: dict = None):
-        self._seed = seed
         super().train(snapshot_mode, seed, meta_info)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
@@ -567,7 +564,7 @@ class SPRL(Algorithm):
             self._subroutine.init_modules(False)
         self._subroutine.reset()
 
-        self._subroutine.train(snapshot_mode, self._seed, meta_info)
+        self._subroutine.train(snapshot_mode, None, meta_info)
         rollouts = self._subroutine.sampler.sample()
         x = np.median([[ros.undiscounted_return() for ros in rollouts]])
         return x
