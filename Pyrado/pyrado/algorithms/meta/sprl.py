@@ -269,7 +269,7 @@ class SPRL(Algorithm):
         self,
         env: DomainRandWrapper,
         subroutine: Algorithm,
-        kl_constraints_ub,
+        kl_constraints_ub: float,
         max_iter: int,
         performance_lower_bound: float,
         std_lower_bound: float = 0.2,
@@ -395,10 +395,6 @@ class SPRL(Algorithm):
         kl_divergence = to.distributions.kl_divergence(
             previous_distribution.distribution, target_distribution.distribution
         )
-
-        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
-
-        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
         values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
