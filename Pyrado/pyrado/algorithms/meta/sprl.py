@@ -317,15 +317,19 @@ class SPRL(Algorithm):
 
         self._env = env
 
+        # Properties for the variance bound and kl constraint
         self._kl_constraints_ub = kl_constraints_ub
         self._std_lower_bound = std_lower_bound
         self._kl_threshold = kl_threshold
+
+        # Properties of the performance constraint
         self._performance_lower_bound = performance_lower_bound
+        self._performance_lower_bound_reached = False
+
         self._optimize_mean = optimize_mean
         self._optimize_cov = optimize_cov
-        self._max_subrtn_retries = max_subrtn_retries
 
-        self._performance_lower_bound_reached = False
+        self._max_subrtn_retries = max_subrtn_retries
 
         self._spl_parameters = [
             param for param in env.randomizer.domain_params if isinstance(param, SelfPacedDomainParam)
