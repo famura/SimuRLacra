@@ -349,6 +349,9 @@ class SPRL(Algorithm):
         super().train(snapshot_mode, seed, meta_info)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
+        """Perform a step of SPRL. This includes training the subroutine and updating the context distribution accordingly.
+        For a description of the parameters see :meth:`pyrado.algorithms.base.Algorithm.step`
+        """
         self.save_snapshot()
 
         context_mean = to.cat([spl_param.context_mean for spl_param in self._spl_parameters]).double()
@@ -529,15 +532,15 @@ class SPRL(Algorithm):
             # This algorithm instance is not a subroutine of another algorithm
             self._subroutine.save_snapshot(meta_info)
 
-    # This is the same operation as we do in part1 of the previous computation of the context loss
-    # But since we want to use it as a constraint, we have to calculate it here explicitly
     def _compute_expected_performance(
         self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor
     ) -> to.Tensor:
+        """Calculate the expected performance after an update step."""
         context_ratio = to.exp(distribution.distribution.log_prob(context) - old_log_prop)
         return to.mean(context_ratio * values)
 
     def _adapt_parameters(self, result: np.array) -> None:
+        """Update the parameters of the distribution based on the result of the optimization step and the general algorithm settings"""
         for i, param in enumerate(self._spl_parameters):
             if self._optimize_mean:
                 param.adapt("context_mean", to.tensor(result[i : i + param.dim]))
