@@ -641,7 +641,8 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
             init_cov_chol_flat=to.tensor([0.05]),
         )
     ]
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
+    radnomizer = DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params])
+    env = DomainRandWrapperLive(env, randomizer=radnomizer)
 
     policy = FNNPolicy(env.spec, hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
 
@@ -657,7 +658,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     )
     critic = GAE(vfcn, **critic_hparam)
 
-    algo_hparam = dict(
+    subrtn_hparam = dict(
         max_iter=1,
         eps_clip=0.12648736789309026,
         min_steps=10 * env.max_steps,
@@ -669,7 +670,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
         num_workers=1,
     )
 
-    sprl_hparam = dict(
+    algo_hparam = dict(
         kl_constraints_ub=8000,
         performance_lower_bound=500,
         std_lower_bound=0.4,
@@ -678,5 +679,6 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
         optimize_mean=optimize_mean,
     )
 
-    algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
+    algo = SPRL(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
     algo.train(snapshot_mode="latest")
+    assert algo.curr_iter == algo.max_iter
