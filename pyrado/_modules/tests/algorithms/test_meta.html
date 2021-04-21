@@ -224,9 +224,10 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">sbi</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">SNPE</span>
 
@@ -234,32 +235,23 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.sysid_via_episodic_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span><span class="p">,</span> <span class="n">SysIdViaEpisodicRL</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.npdr</span> <span class="kn">import</span> <span class="n">NPDR</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.arpl</span> <span class="kn">import</span> <span class="n">ARPL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.bayrn</span> <span class="kn">import</span> <span class="n">BayRn</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.epopt</span> <span class="kn">import</span> <span class="n">EPOpt</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.npdr</span> <span class="kn">import</span> <span class="n">NPDR</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.simopt</span> <span class="kn">import</span> <span class="n">SimOpt</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.udr</span> <span class="kn">import</span> <span class="n">UDR</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.sprl</span> <span class="kn">import</span> <span class="n">SPRL</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.udr</span> <span class="kn">import</span> <span class="n">UDR</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.ppo</span> <span class="kn">import</span> <span class="n">PPO</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">create_default_randomizer</span><span class="p">,</span>
-    <span class="n">create_zero_var_randomizer</span><span class="p">,</span>
     <span class="n">create_default_domain_param_map_qq</span><span class="p">,</span>
+    <span class="n">create_default_randomizer</span><span class="p">,</span>
     <span class="n">create_default_randomizer_qbb</span><span class="p">,</span>
+    <span class="n">create_zero_var_randomizer</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NormalDomainParam</span><span class="p">,</span>
-    <span class="n">UniformDomainParam</span><span class="p">,</span>
-    <span class="n">SelfPacedDomainParam</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NormalDomainParam</span><span class="p">,</span>
-    <span class="n">UniformDomainParam</span><span class="p">,</span>
-    <span class="n">SelfPacedDomainParam</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">NormalDomainParam</span><span class="p">,</span> <span class="n">SelfPacedDomainParam</span><span class="p">,</span> <span class="n">UniformDomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">wrap_like_other_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_delay</span> <span class="kn">import</span> <span class="n">ActDelayWrapper</span>
@@ -280,10 +272,10 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.environment_specific</span> <span class="kn">import</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">LastStepEmbedding</span><span class="p">,</span>
-    <span class="n">DeltaStepsEmbedding</span><span class="p">,</span>
     <span class="n">BayesSimEmbedding</span><span class="p">,</span>
+    <span class="n">DeltaStepsEmbedding</span><span class="p">,</span>
     <span class="n">DynamicTimeWarpingEmbedding</span><span class="p">,</span>
+    <span class="n">LastStepEmbedding</span><span class="p">,</span>
     <span class="n">RNNEmbedding</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_rollout_sampler</span> <span class="kn">import</span> <span class="n">RolloutSamplerForSBI</span>

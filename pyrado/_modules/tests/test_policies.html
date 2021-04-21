@@ -224,27 +224,28 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_libtorch</span><span class="p">,</span> <span class="n">m_needs_mujoco</span><span class="p">,</span> <span class="n">m_needs_rcs</span>
+<span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span> <span class="k">as</span> <span class="n">nn</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.regression.timeseries_prediction</span> <span class="kn">import</span> <span class="n">TSPred</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.base</span> <span class="kn">import</span> <span class="n">default_pack_hidden</span><span class="p">,</span> <span class="n">default_unpack_hidden</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedRNNPolicyBase</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.dual_rfb</span> <span class="kn">import</span> <span class="n">DualRBFLinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.mdn</span> <span class="kn">import</span> <span class="n">MDNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.time</span> <span class="kn">import</span> <span class="n">PlaybackPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.dual_rfb</span> <span class="kn">import</span> <span class="n">DualRBFLinearPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.base</span> <span class="kn">import</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedRNNPolicyBase</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span><span class="p">,</span> <span class="n">EnvSpec</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">RenderMode</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.nn_layers</span> <span class="kn">import</span> <span class="n">IndiNonlinLayer</span>
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span><span class="p">,</span> <span class="n">m_needs_rcs</span><span class="p">,</span> <span class="n">m_needs_libtorch</span>
-<span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
 
 
 <div class="viewcode-block" id="test_simple_feature_stack"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_simple_feature_stack">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">features</span>

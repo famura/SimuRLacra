@@ -227,8 +227,11 @@
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_cuda</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
@@ -245,9 +248,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
-<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
-
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_cuda</span>
 
 
 <div class="viewcode-block" id="test_sampler_pool"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_pool">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>

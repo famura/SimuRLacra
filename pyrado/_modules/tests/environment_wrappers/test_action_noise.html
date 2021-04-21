@@ -226,11 +226,11 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_vortex</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_noise</span> <span class="kn">import</span> <span class="n">GaussianActNoiseWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_vortex</span>
 
 
 <div class="viewcode-block" id="test_act_noise_simple"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_act_noise_simple">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>

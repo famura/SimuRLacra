@@ -224,34 +224,35 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">simulate_for_sbi</span><span class="p">,</span> <span class="n">SNPE</span>
+<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">SNPE</span><span class="p">,</span> <span class="n">simulate_for_sbi</span>
+<span class="kn">from</span> <span class="nn">sbi.utils</span> <span class="kn">import</span> <span class="n">BoxUniform</span><span class="p">,</span> <span class="n">posterior_nn</span>
 <span class="kn">from</span> <span class="nn">sbi.utils.user_input_checks</span> <span class="kn">import</span> <span class="n">prepare_for_sbi</span>
-<span class="kn">from</span> <span class="nn">sbi.utils</span> <span class="kn">import</span> <span class="n">posterior_nn</span><span class="p">,</span> <span class="n">BoxUniform</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="n">Embedding</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.categorical</span> <span class="kn">import</span> <span class="n">draw_categorical</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.curve</span> <span class="kn">import</span> <span class="n">draw_curve_from_data</span><span class="p">,</span> <span class="n">draw_dts</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.distribution</span> <span class="kn">import</span> <span class="n">draw_posterior_distr_pairwise</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.rollout_based</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">plot_observations_actions_rewards</span><span class="p">,</span>
-    <span class="n">plot_observations</span><span class="p">,</span>
     <span class="n">plot_actions</span><span class="p">,</span>
-    <span class="n">plot_rewards</span><span class="p">,</span>
-    <span class="n">plot_potentials</span><span class="p">,</span>
     <span class="n">plot_features</span><span class="p">,</span>
+    <span class="n">plot_observations</span><span class="p">,</span>
+    <span class="n">plot_observations_actions_rewards</span><span class="p">,</span>
+    <span class="n">plot_potentials</span><span class="p">,</span>
+    <span class="n">plot_rewards</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.surface</span> <span class="kn">import</span> <span class="n">draw_surface</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.potential_based</span> <span class="kn">import</span> <span class="n">PotentialBasedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="n">Embedding</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.singular</span> <span class="kn">import</span> <span class="n">SingularStateSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">rosenbrock</span>
 

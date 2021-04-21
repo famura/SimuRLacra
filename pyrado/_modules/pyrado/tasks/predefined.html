@@ -227,24 +227,25 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.empty</span> <span class="kn">import</span> <span class="n">EmptySpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.endless_flipping</span> <span class="kn">import</span> <span class="n">FlippingTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.final_reward</span> <span class="kn">import</span> <span class="n">FinalRewTask</span><span class="p">,</span> <span class="n">FinalRewMode</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.final_reward</span> <span class="kn">import</span> <span class="n">FinalRewMode</span><span class="p">,</span> <span class="n">FinalRewTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">RewFcn</span><span class="p">,</span>
-    <span class="n">ZeroPerStepRewFcn</span><span class="p">,</span>
     <span class="n">AbsErrRewFcn</span><span class="p">,</span>
     <span class="n">CosOfOneEleRewFcn</span><span class="p">,</span>
     <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span>
     <span class="n">QuadrErrRewFcn</span><span class="p">,</span>
+    <span class="n">RewFcn</span><span class="p">,</span>
+    <span class="n">ZeroPerStepRewFcn</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">never_succeeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">never_succeeded</span><span class="p">,</span> <span class="n">proximity_succeeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
 

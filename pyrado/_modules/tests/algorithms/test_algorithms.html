@@ -224,24 +224,26 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.hc</span> <span class="kn">import</span> <span class="n">HCHyper</span><span class="p">,</span> <span class="n">HCNormal</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.nes</span> <span class="kn">import</span> <span class="n">NES</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.pepg</span> <span class="kn">import</span> <span class="n">PEPG</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.regression.nonlin_regression</span> <span class="kn">import</span> <span class="n">NonlinRegression</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.regression.timeseries_prediction</span> <span class="kn">import</span> <span class="n">TSPred</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.a2c</span> <span class="kn">import</span> <span class="n">A2C</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.dql</span> <span class="kn">import</span> <span class="n">DQL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.hc</span> <span class="kn">import</span> <span class="n">HCNormal</span><span class="p">,</span> <span class="n">HCHyper</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.nes</span> <span class="kn">import</span> <span class="n">NES</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.pepg</span> <span class="kn">import</span> <span class="n">PEPG</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.ppo</span> <span class="kn">import</span> <span class="n">PPO</span><span class="p">,</span> <span class="n">PPO2</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.sac</span> <span class="kn">import</span> <span class="n">SAC</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.svpg</span> <span class="kn">import</span> <span class="n">SVPG</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
@@ -251,18 +253,17 @@
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span><span class="p">,</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">DiscreteActQValPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">DiscreteActQValPolicy</span><span class="p">,</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">ValueFunctionSpace</span><span class="p">,</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.experiments</span> <span class="kn">import</span> <span class="n">load_experiment</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">noisy_nonlin_fcn</span>
-<span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
 
 
 <div class="viewcode-block" id="ex_dir"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_algorithms.ex_dir">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>

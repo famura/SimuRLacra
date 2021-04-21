@@ -226,22 +226,23 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">sbi.inference.snpe</span> <span class="kn">import</span> <span class="n">PosteriorEstimator</span>
 <span class="kn">from</span> <span class="nn">sbi.inference.base</span> <span class="kn">import</span> <span class="n">simulate_for_sbi</span>
+<span class="kn">from</span> <span class="nn">sbi.inference.snpe</span> <span class="kn">import</span> <span class="n">PosteriorEstimator</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.sbi_base</span> <span class="kn">import</span> <span class="n">SBIBase</span>
-<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="n">Embedding</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">until_thold_exceeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="n">Embedding</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
 

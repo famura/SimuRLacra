@@ -224,14 +224,15 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+
 <span class="kn">from</span> <span class="nn">pyrado</span> <span class="kn">import</span> <span class="n">TEMP_DIR</span>
-<span class="kn">from</span> <span class="nn">pyrado.logger.experiment</span> <span class="kn">import</span> <span class="n">setup_experiment</span><span class="p">,</span> <span class="n">save_dicts_to_yaml</span><span class="p">,</span> <span class="n">load_dict_from_yaml</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.experiment</span> <span class="kn">import</span> <span class="n">load_dict_from_yaml</span><span class="p">,</span> <span class="n">save_dicts_to_yaml</span><span class="p">,</span> <span class="n">setup_experiment</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.ordering</span> <span class="kn">import</span> <span class="n">get_immediate_subdirs</span>
 
 

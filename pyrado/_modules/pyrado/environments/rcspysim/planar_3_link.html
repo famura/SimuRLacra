@@ -227,22 +227,23 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">rcsenv</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+
 <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.predefined</span> <span class="kn">import</span> <span class="n">create_check_all_boundaries_task</span><span class="p">,</span> <span class="n">create_task_space_discrepancy_task</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.final_reward</span> <span class="kn">import</span> <span class="n">FinalRewTask</span><span class="p">,</span> <span class="n">FinalRewMode</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span> <span class="n">ZeroPerStepRewFcn</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.sequential</span> <span class="kn">import</span> <span class="n">SequentialTasks</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.final_reward</span> <span class="kn">import</span> <span class="n">FinalRewMode</span><span class="p">,</span> <span class="n">FinalRewTask</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.parallel</span> <span class="kn">import</span> <span class="n">ParallelTasks</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.predefined</span> <span class="kn">import</span> <span class="n">create_check_all_boundaries_task</span><span class="p">,</span> <span class="n">create_task_space_discrepancy_task</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">AbsErrRewFcn</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span> <span class="n">ZeroPerStepRewFcn</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.sequential</span> <span class="kn">import</span> <span class="n">SequentialTasks</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
 

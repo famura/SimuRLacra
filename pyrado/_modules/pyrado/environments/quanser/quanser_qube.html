@@ -226,20 +226,21 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser</span> <span class="kn">import</span> <span class="n">max_act_qq</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.base</span> <span class="kn">import</span> <span class="n">QuanserReal</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.environment_specific</span> <span class="kn">import</span> <span class="n">QQubePDCtrl</span><span class="p">,</span> <span class="n">QQubeGoToLimCtrl</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.environment_specific</span> <span class="kn">import</span> <span class="n">QQubeGoToLimCtrl</span><span class="p">,</span> <span class="n">QQubePDCtrl</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">RadiallySymmDesStateTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span><span class="p">,</span> <span class="n">completion_context</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">completion_context</span><span class="p">,</span> <span class="n">print_cbt</span>
 
 
 <div class="viewcode-block" id="QQubeSwingUpReal"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.quanser_qube.QQubeSwingUpReal">[docs]</a><span class="k">class</span> <span class="nc">QQubeSwingUpReal</span><span class="p">(</span><span class="n">QuanserReal</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>

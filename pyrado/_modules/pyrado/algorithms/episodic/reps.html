@@ -226,28 +226,29 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">kl_divergence</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">get_grad_via_torch</span>
-<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.domain_distribution</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_params</span> <span class="kn">import</span> <span class="n">NormalParamNoise</span><span class="p">,</span> <span class="n">SymmParamExplStrat</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.domain_distribution</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterSamplingResult</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt_once</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">logmeanexp</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterSamplingResult</span>
 
 
 <div class="viewcode-block" id="REPS"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS">[docs]</a><span class="k">class</span> <span class="nc">REPS</span><span class="p">(</span><span class="n">ParameterExploring</span><span class="p">):</span>

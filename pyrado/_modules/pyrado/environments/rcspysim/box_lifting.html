@@ -226,21 +226,22 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">rcsenv</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+
 <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.parallel</span> <span class="kn">import</span> <span class="n">ParallelTasks</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.predefined</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">create_check_all_boundaries_task</span><span class="p">,</span>
-    <span class="n">create_lifting_task</span><span class="p">,</span>
-    <span class="n">create_forcemin_task</span><span class="p">,</span>
     <span class="n">create_flipping_task</span><span class="p">,</span>
+    <span class="n">create_forcemin_task</span><span class="p">,</span>
     <span class="n">create_home_pos_task</span><span class="p">,</span>
+    <span class="n">create_lifting_task</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.sequential</span> <span class="kn">import</span> <span class="n">SequentialTasks</span>
 

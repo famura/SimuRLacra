@@ -226,36 +226,37 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_delay</span> <span class="kn">import</span> <span class="n">ActDelayWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">typed_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.real_base</span> <span class="kn">import</span> <span class="n">RealEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
-<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">typed_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.curve</span> <span class="kn">import</span> <span class="n">draw_dts</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.policy_parameters</span> <span class="kn">import</span> <span class="n">draw_policy_params</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.rollout_based</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">plot_observations_actions_rewards</span><span class="p">,</span>
     <span class="n">plot_actions</span><span class="p">,</span>
-    <span class="n">plot_observations</span><span class="p">,</span>
-    <span class="n">plot_rewards</span><span class="p">,</span>
-    <span class="n">plot_potentials</span><span class="p">,</span>
     <span class="n">plot_features</span><span class="p">,</span>
+    <span class="n">plot_observations</span><span class="p">,</span>
+    <span class="n">plot_observations_actions_rewards</span><span class="p">,</span>
+    <span class="n">plot_potentials</span><span class="p">,</span>
+    <span class="n">plot_rewards</span><span class="p">,</span>
     <span class="n">plot_states</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">TwoHeadedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.potential_based</span> <span class="kn">import</span> <span class="n">PotentialBasedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span><span class="p">,</span> <span class="n">color_validity</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">color_validity</span><span class="p">,</span> <span class="n">print_cbt</span>
 
 
 <div class="viewcode-block" id="rollout"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.rollout.rollout">[docs]</a><span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span>

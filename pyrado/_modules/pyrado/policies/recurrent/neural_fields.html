@@ -227,9 +227,10 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
@@ -237,7 +238,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.potential_based</span> <span class="kn">import</span> <span class="n">PotentialBasedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.nn_layers</span> <span class="kn">import</span> <span class="n">MirrConv1d</span><span class="p">,</span> <span class="n">IndiNonlinLayer</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.nn_layers</span> <span class="kn">import</span> <span class="n">IndiNonlinLayer</span><span class="p">,</span> <span class="n">MirrConv1d</span>
 
 
 <div class="viewcode-block" id="NFPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy">[docs]</a><span class="k">class</span> <span class="nc">NFPolicy</span><span class="p">(</span><span class="n">PotentialBasedPolicy</span><span class="p">):</span>

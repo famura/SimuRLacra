@@ -226,10 +226,11 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Mapping</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
@@ -246,7 +247,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_rollout_sampler</span> <span class="kn">import</span> <span class="n">SimRolloutSamplerForSBI</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.discrete</span> <span class="kn">import</span> <span class="n">DiscreteSpace</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span><span class="p">,</span> <span class="n">EnvSpec</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">merge_dicts</span>
 
 
 <div class="viewcode-block" id="BayesSim"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim">[docs]</a><span class="k">class</span> <span class="nc">BayesSim</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>

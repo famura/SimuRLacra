@@ -224,11 +224,13 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">wrap_like_other_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_delay</span> <span class="kn">import</span> <span class="n">ActDelayWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_noise</span> <span class="kn">import</span> <span class="n">GaussianActNoiseWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
@@ -242,7 +244,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">wrap_like_other_env</span>
 
 
 <div class="viewcode-block" id="test_combination"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_combination.test_combination">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>

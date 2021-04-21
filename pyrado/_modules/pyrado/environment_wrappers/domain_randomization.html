@@ -226,18 +226,19 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randint</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
-<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randint</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">all_envs</span><span class="p">,</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">remove_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
-<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
-<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">all_envs</span><span class="p">,</span> <span class="n">remove_env</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span><span class="p">,</span> <span class="n">completion_context</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">completion_context</span><span class="p">,</span> <span class="n">print_cbt</span>
 
 
 <div class="viewcode-block" id="DomainRandWrapper"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper">[docs]</a><span class="k">class</span> <span class="nc">DomainRandWrapper</span><span class="p">(</span><span class="n">EnvWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>

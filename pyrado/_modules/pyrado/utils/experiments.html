@@ -231,9 +231,10 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
@@ -249,12 +250,12 @@
 <span class="kn">from</span> <span class="nn">pyrado.logger.experiment</span> <span class="kn">import</span> <span class="n">load_hyperparameters</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.adn</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">pd_linear</span><span class="p">,</span>
-    <span class="n">pd_cubic</span><span class="p">,</span>
-    <span class="n">pd_capacity_21_abs</span><span class="p">,</span>
     <span class="n">pd_capacity_21</span><span class="p">,</span>
+    <span class="n">pd_capacity_21_abs</span><span class="p">,</span>
     <span class="n">pd_capacity_32</span><span class="p">,</span>
     <span class="n">pd_capacity_32_abs</span><span class="p">,</span>
+    <span class="n">pd_cubic</span><span class="p">,</span>
+    <span class="n">pd_linear</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.argparser</span> <span class="kn">import</span> <span class="n">get_argparser</span>
