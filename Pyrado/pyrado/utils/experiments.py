@@ -44,7 +44,8 @@ from pyrado.environment_wrappers.domain_randomization import (
 )
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.logger.experiment import load_dict_from_yaml
+from pyrado.logger.experiment import load_hyperparameters
+from pyrado.policies.base import Policy
 from pyrado.policies.recurrent.adn import (
     pd_linear,
     pd_cubic,
@@ -53,7 +54,6 @@ from pyrado.policies.recurrent.adn import (
     pd_capacity_32,
     pd_capacity_32_abs,
 )
-from pyrado.policies.base import Policy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_types_equal, is_iterable
@@ -79,16 +79,7 @@ def load_experiment(
         args = get_argparser().parse_args([])
 
     # Hyper-parameters
-    hparams_file_name = "hyperparams.yaml"
-    try:
-        hparams = load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
-        extra["hparams"] = hparams
-    except (pyrado.PathErr, FileNotFoundError, KeyError):
-        print_cbt(
-            f"Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.",
-            "y",
-            bright=True,
-        )
+    extra["hparams"] = load_hyperparameters(ex_dir)
 
     # Algorithm specific
     algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name="algo")
@@ -217,6 +208,17 @@ def load_experiment(
         # Policy
         policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
 
+    elif algo.name == "sprl":
+        # Environment
+        env = pyrado.load(None, "env", "pkl", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
+        # Policy
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
+        # Extra (value function)
+        if isinstance(algo._subroutine, ActorCritic):
+            extra["vfcn"] = pyrado.load(algo._subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
     else:
         raise pyrado.TypeErr(msg="No matching algorithm name found during loading the experiment!")
 

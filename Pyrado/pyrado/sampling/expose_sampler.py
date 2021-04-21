@@ -26,13 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from abc import ABC
 from typing import List
 
 from pyrado.sampling.sampler import SamplerBase
 from pyrado.sampling.step_sequence import StepSequence
 
 
-class ExposedSampler:
+class ExposedSampler(ABC):
     """ A mixin class to expose an algorithm's sampler """
 
     @property
