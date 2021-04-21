@@ -31,20 +31,18 @@ Domain parameter identification experiment on the joint space controlled WAM env
 Domain Randomization
 """
 import torch as to
-from sbi.inference import SNPE_C
 from sbi import utils
+from sbi.inference import SNPE_C
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import (
-    BayesSimEmbedding,
-)
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.domain_randomization.default_randomizers import create_damping_dryfriction_domain_param_map_wamjsc
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.environment_specific import wam_jsp_7dof_sin
 from pyrado.policies.special.time import TimePolicy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 
 

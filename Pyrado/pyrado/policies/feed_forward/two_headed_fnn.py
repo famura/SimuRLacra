@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Callable, Sequence, Tuple
+
 import torch as to
 import torch.nn as nn
-from typing import Sequence, Callable, Tuple
 
+from pyrado.policies.base import TwoHeadedPolicy
 from pyrado.policies.feed_forward.fnn import FNN
 from pyrado.policies.initialization import init_param
 from pyrado.utils.data_types import EnvSpec
-from pyrado.policies.base import TwoHeadedPolicy
 
 
 class TwoHeadedFNNPolicy(TwoHeadedPolicy):

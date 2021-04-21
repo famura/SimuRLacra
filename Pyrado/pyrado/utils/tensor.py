@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
 from copy import deepcopy
 from typing import TypeVar, Union
+
+import torch as to
 
 import pyrado
 

@@ -28,14 +28,14 @@
 
 import numpy as np
 import torch as to
-import torch.optim as optim
 import torch.nn as nn
-
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
+import torch.optim as optim
 from matplotlib import pyplot as plt
+
+from pyrado import set_seed
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
-from pyrado import set_seed
 
 
 if __name__ == "__main__":

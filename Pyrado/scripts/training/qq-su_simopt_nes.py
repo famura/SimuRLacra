@@ -33,19 +33,19 @@ import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.episodic.nes import NES
-from pyrado.algorithms.step_based.ppo import PPO
-from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
-from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
-from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
+from pyrado.algorithms.meta.simopt import SimOpt
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

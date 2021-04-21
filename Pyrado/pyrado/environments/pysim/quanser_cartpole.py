@@ -26,18 +26,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from abc import abstractmethod
-from init_args_serializer.serializable import Serializable
 from typing import Optional
+
+import numpy as np
+from init_args_serializer.serializable import Serializable
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
 from pyrado.environments.quanser import max_act_qcp
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
-from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
+from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
 from pyrado.tasks.reward_functions import QuadrErrRewFcn
 
 

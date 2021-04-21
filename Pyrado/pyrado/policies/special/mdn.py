@@ -26,12 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Callable, Optional, Sequence, Tuple
+
 import numpy as np
 import torch as to
 import torch.nn as nn
-from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.categorical import Categorical
-from typing import Sequence, Callable, Optional, Tuple
+from torch.distributions.multivariate_normal import MultivariateNormal
 
 import pyrado
 from pyrado.policies.base import Policy

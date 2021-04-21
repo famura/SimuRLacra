@@ -35,12 +35,12 @@ from scipy.spatial.transform import Rotation
 
 import pyrado
 from pyrado.environments.barrett_wam import (
-    act_space_bic_7dof,
     act_space_bic_4dof,
-    wam_q_limits_lo_7dof,
-    wam_q_limits_up_7dof,
+    act_space_bic_7dof,
     cup_pos_init_sim_4dof,
     cup_pos_init_sim_7dof,
+    wam_q_limits_lo_7dof,
+    wam_q_limits_up_7dof,
     wam_qd_limits_lo_7dof,
     wam_qd_limits_up_7dof,
 )
@@ -50,10 +50,10 @@ from pyrado.environments.barrett_wam.wam_base import WAMReal
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
-from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
+from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
 from pyrado.tasks.goalless import GoallessTask
 from pyrado.tasks.reward_functions import ZeroPerStepRewFcn
-from pyrado.utils.input_output import print_cbt, completion_context, print_cbt_once
+from pyrado.utils.input_output import completion_context, print_cbt, print_cbt_once
 
 
 class WAMBallInCupRealEpisodic(WAMReal):

@@ -26,16 +26,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from functools import reduce
+from typing import Callable, Sequence, Tuple, Union
+from warnings import warn
+
 import numpy as np
 import torch as to
-from functools import reduce
-from typing import Sequence, Callable, Union, Tuple
-from warnings import warn
 
 import pyrado
 from pyrado.utils import get_class_name
-from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_processing import normalize
+from pyrado.utils.input_output import print_cbt
 
 
 class FeatureStack:

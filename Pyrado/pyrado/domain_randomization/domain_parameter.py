@@ -26,15 +26,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Sequence, Union, List, Optional
+from typing import List, Optional, Sequence, Union
 
-import pyrado
 import torch as to
-from pyrado.utils.input_output import print_cbt
 from torch.distributions.bernoulli import Bernoulli
 from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.normal import Normal
 from torch.distributions.uniform import Uniform
+
+import pyrado
+from pyrado.utils.input_output import print_cbt
 
 
 class DomainParam:

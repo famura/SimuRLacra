@@ -27,19 +27,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
-import numpy as np
 import operator
 import random
-import scipy.signal as signal
-import torch as to
 from collections.abc import Iterable
 from copy import deepcopy
 from math import ceil
-from typing import Sequence, Type, Optional, Union, Callable, Tuple, List
+from typing import Callable, List, Optional, Sequence, Tuple, Type, Union
+
+import numpy as np
+import scipy.signal as signal
+import torch as to
 
 import pyrado
-from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
-from pyrado.sampling.utils import gen_shuffled_batch_idcs, gen_ordered_batch_idcs
+from pyrado.sampling.data_format import cat_to_format, new_tuple, stack_to_format, to_format
+from pyrado.sampling.utils import gen_ordered_batch_idcs, gen_shuffled_batch_idcs
 from pyrado.utils.checks import check_all_equal, is_iterable
 
 

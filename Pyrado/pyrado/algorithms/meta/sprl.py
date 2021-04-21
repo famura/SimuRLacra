@@ -26,11 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Callable, Generator, List, Optional, Tuple, Union
+
 import numpy as np
 import torch as to
-from scipy.optimize import NonlinearConstraint, minimize, Bounds
+from scipy.optimize import Bounds, NonlinearConstraint, minimize
 from torch.distributions import MultivariateNormal
-from typing import Callable, Generator, List, Optional, Tuple, Union
 
 import pyrado
 from pyrado.algorithms.base import Algorithm

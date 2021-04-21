@@ -26,8 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import os.path as osp
+
+import joblib
 
 import pyrado
 from pyrado.algorithms.base import Algorithm

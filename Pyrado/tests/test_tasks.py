@@ -27,28 +27,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+
 import numpy as np
 import pytest
 
 import pyrado
+from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.condition_only import ConditionOnlyTask
 from pyrado.tasks.desired_space import DesSpaceTask
-from pyrado.utils.data_types import EnvSpec
-from pyrado.spaces.box import BoxSpace
-from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode, BestStateFinalRewTask
-from pyrado.tasks.sequential import SequentialTasks
-from pyrado.tasks.utils import proximity_succeeded
 from pyrado.tasks.desired_state import DesStateTask, RadiallySymmDesStateTask
+from pyrado.tasks.final_reward import BestStateFinalRewTask, FinalRewMode, FinalRewTask
 from pyrado.tasks.parallel import ParallelTasks
 from pyrado.tasks.reward_functions import (
     CompoundRewFcn,
     CosOfOneEleRewFcn,
     MinusOnePerStepRewFcn,
-    QuadrErrRewFcn,
-    ScaledExpQuadrErrRewFcn,
-    RewFcn,
     PlusOnePerStepRewFcn,
+    QuadrErrRewFcn,
+    RewFcn,
+    ScaledExpQuadrErrRewFcn,
 )
+from pyrado.tasks.sequential import SequentialTasks
+from pyrado.tasks.utils import proximity_succeeded
+from pyrado.utils.data_types import EnvSpec
 
 
 @pytest.fixture(scope="function")

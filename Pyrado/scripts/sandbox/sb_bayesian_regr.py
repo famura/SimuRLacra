@@ -30,17 +30,18 @@
 Test Bayesian Regression using Pyro and the One Mass Oscillator setup.
 See https://pyro.ai/examples/svi_part_i.html
 """
+import sys
+
 import pyro
 import pyro.distributions as distr
 import pyro.optim as optim
-import sys
 import torch as to
 from matplotlib import pyplot as plt
 from pyro.infer import SVI, Trace_ELBO
 from torch.distributions import constraints
 from tqdm import tqdm
 
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim, OneMassOscillatorDyn
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorDyn, OneMassOscillatorSim
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 

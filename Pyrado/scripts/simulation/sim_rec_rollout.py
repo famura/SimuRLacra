@@ -32,10 +32,10 @@ Replay a pre-recorded rollout using the simulations' renderer
 import time
 
 import pyrado
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.utils.experiments import load_rollouts_from_dir
 
 

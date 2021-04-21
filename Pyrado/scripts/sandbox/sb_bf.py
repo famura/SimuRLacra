@@ -30,18 +30,19 @@
 Script to test the simplified box flipping task using a hard-coded time-based policy
 """
 import rcsenv
+
 import pyrado
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.rcspysim.box_flipping import (
-    BoxFlippingVelDSSim,
-    BoxFlippingPosDSSim,
     BoxFlippingIKActivationSim,
+    BoxFlippingPosDSSim,
+    BoxFlippingVelDSSim,
 )
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.policies.special.time import TimePolicy
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 

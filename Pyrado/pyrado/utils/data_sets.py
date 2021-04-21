@@ -27,13 +27,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import random
+from typing import List, Tuple, Union
+
 import torch as to
 from tabulate import tabulate
 from torch.utils.data.dataset import Dataset
-from typing import List, Tuple, Union
 
 import pyrado
-from pyrado.utils.data_processing import standardize, scale_min_max
+from pyrado.utils.data_processing import scale_min_max, standardize
 from pyrado.utils.data_types import TimeSeriesDataPair
 from pyrado.utils.input_output import print_cbt
 

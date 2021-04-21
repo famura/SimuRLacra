@@ -29,8 +29,11 @@
 import random
 import time
 
-import pyrado
 import pytest
+from tests.conftest import m_needs_bullet, m_needs_cuda
+from torch.distributions.multivariate_normal import MultivariateNormal
+
+import pyrado
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
@@ -47,9 +50,6 @@ from pyrado.sampling.sampler_pool import *
 from pyrado.sampling.sequences import *
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
-from torch.distributions.multivariate_normal import MultivariateNormal
-
-from tests.conftest import m_needs_bullet, m_needs_cuda
 
 
 @pytest.mark.parametrize(

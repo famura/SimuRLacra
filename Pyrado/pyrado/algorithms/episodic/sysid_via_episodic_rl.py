@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
-import numpy as np
 import os.path as osp
 from collections.abc import Iterable
 from functools import partial
 from itertools import product
+from typing import Callable, Optional, Sequence, Tuple, Union
+
+import joblib
+import numpy as np
 from scipy.ndimage import gaussian_filter1d
-from typing import Callable, Sequence, Tuple, Union, Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -43,7 +44,7 @@ from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.policies.base import Policy
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
-from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult, ParameterSample
+from pyrado.sampling.parameter_exploration_sampler import ParameterSample, ParameterSamplingResult
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.utils import gen_ordered_batch_idcs
 from pyrado.utils.checks import check_all_equal

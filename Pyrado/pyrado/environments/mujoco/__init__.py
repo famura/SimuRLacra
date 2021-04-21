@@ -31,6 +31,7 @@ import os
 import pyrado
 from pyrado.utils.input_output import print_cbt
 
+
 try:
     import mujoco_py
 except (ImportError, Exception):

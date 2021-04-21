@@ -26,35 +26,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import os
 import sys
-import torch as to
 from abc import ABC, abstractmethod
-from colorama import Style, Fore
 from copy import deepcopy
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Union
+
+import numpy as np
+import torch as to
+from colorama import Fore, Style
+from sbi.inference import NeuralInference
+from sbi.inference.posteriors.direct_posterior import DirectPosterior
+from sbi.inference.snpe import PosteriorEstimator
+from sbi.utils import posterior_nn
+from sbi.utils.user_input_checks import prepare_for_sbi
 from tabulate import tabulate
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from typing import Optional, Callable, Type, Mapping, Tuple, List, Union, Dict, Any
-
-from sbi.inference import NeuralInference
-from sbi.inference.posteriors.direct_posterior import DirectPosterior
-from sbi.inference.snpe import PosteriorEstimator
-from sbi.utils.user_input_checks import prepare_for_sbi
-from sbi.utils import posterior_nn
 
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
-from pyrado.sampling.sbi_embeddings import Embedding
-from pyrado.sampling.sbi_rollout_sampler import (
-    SimRolloutSamplerForSBI,
-    RealRolloutSamplerForSBI,
-    RecRolloutSamplerForSBI,
-)
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapper
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper, DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
@@ -63,10 +57,16 @@ from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.sbi_embeddings import Embedding
+from pyrado.sampling.sbi_rollout_sampler import (
+    RealRolloutSamplerForSBI,
+    RecRolloutSamplerForSBI,
+    SimRolloutSamplerForSBI,
+)
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.data_types import merge_dicts
-from pyrado.utils.input_output import print_cbt, completion_context
+from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class SBIBase(InterruptableAlgorithm, ABC):

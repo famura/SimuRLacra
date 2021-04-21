@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from math import ceil, floor
+from typing import Any, Optional, Union
+
 import numpy as np
 import pandas as pd
-from math import floor, ceil
 from matplotlib import colors
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from pandas.core.indexes.numeric import NumericIndex
-from typing import Any, Optional, Union
 
 import pyrado
 from pyrado.plotting.utils import draw_sep_cbar

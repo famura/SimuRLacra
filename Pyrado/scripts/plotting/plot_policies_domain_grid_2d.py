@@ -31,12 +31,13 @@ Script to plot the results from the 2D domain parameter grid evaluations of a si
 """
 import os
 import os.path as osp
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import pandas as pd
-import pyrado
 from matplotlib import colors
 from matplotlib import pyplot as plt
+
+import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.heatmap import draw_heatmap
 from pyrado.plotting.utils import AccNorm

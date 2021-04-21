@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from copy import deepcopy
+
 import numpy as np
 import torch as to
-from copy import deepcopy
 from init_args_serializer import Serializable
 from torch.distributions import MultivariateNormal
 

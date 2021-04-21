@@ -30,10 +30,10 @@ import torch as to
 import torch.nn as nn
 
 import pyrado
-from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
 from pyrado.policies.features import FeatureStack
 from pyrado.policies.initialization import init_param
+from pyrado.utils.data_types import EnvSpec
 
 
 class LinearPolicy(Policy):

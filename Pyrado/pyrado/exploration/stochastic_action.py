@@ -25,17 +25,17 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from abc import ABC
 from typing import Union
 
 import torch as to
 import torch.nn as nn
-from abc import ABC
-from torch.distributions import Distribution, Bernoulli, Categorical
+from torch.distributions import Bernoulli, Categorical, Distribution
 
 import pyrado
-from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.exploration.normal_noise import DiagNormalNoise
 from pyrado.exploration.uniform_noise import UniformNoise
+from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.math import clamp
 

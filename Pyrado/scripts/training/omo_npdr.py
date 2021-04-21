@@ -29,24 +29,20 @@
 """
 Domain parameter identification experiment on the One-Mass-Oscillator environment using Neural Posterior Domain Randomization
 """
+from copy import deepcopy
+
 import numpy as np
 import torch as to
 from sbi import utils
 from sbi.inference import SNPE_C
-from copy import deepcopy
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import (
-    DeltaStepsEmbedding,
-    LastStepEmbedding,
-    BayesSimEmbedding,
-    RNNEmbedding,
-)
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, DeltaStepsEmbedding, LastStepEmbedding, RNNEmbedding
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 
 

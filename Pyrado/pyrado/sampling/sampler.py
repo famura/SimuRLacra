@@ -29,9 +29,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
+from pyrado.sampling.step_sequence import StepSequence
 
 
 class SamplerBase(ABC):

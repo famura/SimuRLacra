@@ -30,14 +30,14 @@ import os.path as osp
 from typing import Optional
 
 import numpy as np
+import rcsenv
 from init_args_serializer import Serializable
 
-import rcsenv
 import pyrado
 from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.tasks.base import Task
-from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
+from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)

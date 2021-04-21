@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import random
 from copy import deepcopy
+
+import numpy as np
 
 from pyrado.environments.pysim.base import SimEnv
 from pyrado.spaces.base import Space

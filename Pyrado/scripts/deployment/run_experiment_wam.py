@@ -36,13 +36,13 @@ from datetime import datetime
 
 import pyrado
 from pyrado.algorithms.meta.bayrn import BayRn
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.barrett_wam.wam_bic import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.utils.experiments import load_experiment
-from pyrado.domain_randomization.utils import wrap_like_other_env
-from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.experiments import load_experiment
+from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":

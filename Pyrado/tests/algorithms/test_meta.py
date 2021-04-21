@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from copy import deepcopy
+
 import pytest
 import torch.nn as nn
-from copy import deepcopy
 from sbi import utils
 from sbi.inference import SNPE
 
@@ -36,32 +37,23 @@ from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
-from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.meta.spota import SPOTA
-from pyrado.algorithms.meta.udr import UDR
 from pyrado.algorithms.meta.sprl import SPRL
+from pyrado.algorithms.meta.udr import UDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import (
-    create_default_randomizer,
-    create_zero_var_randomizer,
     create_default_domain_param_map_qq,
+    create_default_randomizer,
     create_default_randomizer_qbb,
+    create_zero_var_randomizer,
 )
-from pyrado.domain_randomization.domain_parameter import (
-    NormalDomainParam,
-    UniformDomainParam,
-    SelfPacedDomainParam,
-)
-from pyrado.domain_randomization.domain_parameter import (
-    NormalDomainParam,
-    UniformDomainParam,
-    SelfPacedDomainParam,
-)
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam, SelfPacedDomainParam, UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
@@ -82,10 +74,10 @@ from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import (
-    LastStepEmbedding,
-    DeltaStepsEmbedding,
     BayesSimEmbedding,
+    DeltaStepsEmbedding,
     DynamicTimeWarpingEmbedding,
+    LastStepEmbedding,
     RNNEmbedding,
 )
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI

@@ -32,13 +32,13 @@ Train an agent to solve the Hopper environment using Proximal Policy Optimizatio
 import torch as to
 
 import pyrado
-from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.mujoco.openai_hopper import HopperSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 

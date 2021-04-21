@@ -29,7 +29,7 @@
 import pytest
 
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, DomainRandWrapperBuffer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
 
 

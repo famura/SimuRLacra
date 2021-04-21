@@ -30,25 +30,26 @@
 Optimize the hyper-parameters of SimOpt for the Quanser Qube swing-up task.
 """
 import functools
-import optuna
 import os.path as osp
+
+import optuna
 import torch as to
 
 import pyrado
-from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.episodic.cem import CEM
-from pyrado.algorithms.step_based.ppo import PPO
-from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
+from pyrado.algorithms.meta.simopt import SimOpt
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser

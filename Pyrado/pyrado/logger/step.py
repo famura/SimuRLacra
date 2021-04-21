@@ -27,15 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import csv
-import numpy as np
 import os
 import os.path as osp
-import torch as to
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
+from typing import Optional
+
+import numpy as np
+import torch as to
 from tabulate import tabulate
 from torch.utils.tensorboard import SummaryWriter
-from typing import Optional
 
 import pyrado
 from pyrado.logger import resolve_log_path

@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
+
 import numpy as np
 import pytest
 

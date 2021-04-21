@@ -42,6 +42,7 @@ from urllib.request import urlretrieve
 
 import yaml
 
+
 # Get the project's root directory
 project_dir = osp.dirname(osp.abspath(__file__))
 

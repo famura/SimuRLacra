@@ -26,18 +26,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
-import robcom_python as robcom
 import time
 from typing import Optional
 
+import numpy as np
+import robcom_python as robcom
+
 import pyrado
 from pyrado.environments.barrett_wam import (
-    act_space_jsc_7dof,
     act_space_jsc_4dof,
+    act_space_jsc_7dof,
     wam_q_limits_lo_7dof,
-    wam_qd_limits_lo_7dof,
     wam_q_limits_up_7dof,
+    wam_qd_limits_lo_7dof,
     wam_qd_limits_up_7dof,
 )
 from pyrado.environments.barrett_wam.wam_base import WAMReal
@@ -46,7 +47,7 @@ from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.tasks.goalless import GoallessTask
 from pyrado.tasks.reward_functions import ZeroPerStepRewFcn
-from pyrado.utils.input_output import print_cbt, completion_context
+from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class WAMJointSpaceCtrlRealEpisodic(WAMReal):

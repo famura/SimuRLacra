@@ -29,9 +29,10 @@
 """
 Script to visually compare policy learning progress (e.g. over different random seeds)
 """
-import numpy as np
 import os
 import os.path as osp
+
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 

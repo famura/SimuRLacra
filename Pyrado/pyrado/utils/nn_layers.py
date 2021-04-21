@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
 from copy import deepcopy
 from math import ceil, sqrt
+from typing import Callable, Sequence
+
+import torch as to
 from torch import nn as nn
 from torch.nn import functional as F
 from torch.nn.modules.conv import _ConvNd
 from torch.nn.modules.utils import _single
-from typing import Callable, Sequence
 
 import pyrado
 from pyrado.utils.checks import is_iterable

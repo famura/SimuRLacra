@@ -28,11 +28,11 @@
 
 import numpy as np
 import pytest
+from tests.conftest import m_needs_bullet, m_needs_vortex
 
 import pyrado
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from tests.conftest import m_needs_bullet, m_needs_vortex
 
 
 @pytest.mark.wrapper

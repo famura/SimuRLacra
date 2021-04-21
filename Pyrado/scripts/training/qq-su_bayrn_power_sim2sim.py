@@ -35,16 +35,16 @@ import pyrado
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.domain_randomization.default_randomizers import (
-    create_zero_var_randomizer,
     create_default_domain_param_map_qq,
+    create_zero_var_randomizer,
 )
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.domain_randomization.utils import wrap_like_other_env
 
 
 if __name__ == "__main__":

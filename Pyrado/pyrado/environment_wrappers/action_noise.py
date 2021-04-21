@@ -31,8 +31,8 @@ import numpy as np
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.base import Env
 from pyrado.environment_wrappers.base import EnvWrapperAct
+from pyrado.environments.base import Env
 
 
 class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):

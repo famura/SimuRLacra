@@ -26,15 +26,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import os.path as osp
 import sys
+
+import numpy as np
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from panda3d.core import *
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
+
 
 # Configuration for panda3d-window
 confVars = """

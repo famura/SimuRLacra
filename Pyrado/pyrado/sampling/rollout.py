@@ -26,36 +26,37 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import time
+from typing import Callable, Optional, Tuple, Union
+
+import numpy as np
 import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
-from typing import Callable, Tuple, Optional, Union
 from tabulate import tabulate
 
 import pyrado
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
+from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
-from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.plotting.curve import draw_dts
 from pyrado.plotting.policy_parameters import draw_policy_params
 from pyrado.plotting.rollout_based import (
-    plot_observations_actions_rewards,
     plot_actions,
-    plot_observations,
-    plot_rewards,
-    plot_potentials,
     plot_features,
+    plot_observations,
+    plot_observations_actions_rewards,
+    plot_potentials,
+    plot_rewards,
     plot_states,
 )
 from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
-from pyrado.utils.input_output import print_cbt, color_validity
+from pyrado.utils.input_output import color_validity, print_cbt
 
 
 def rollout(

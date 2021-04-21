@@ -54,15 +54,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pickle
 import functools
-import numpy as np
+import pickle
 import sys
+from typing import Dict, List, Optional
+
+import numpy as np
 from tqdm import tqdm
-from typing import List, Dict, Optional
 
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers, DomainRandWrapperLive
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, remove_all_dr_wrappers
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_rollout_sampler import (

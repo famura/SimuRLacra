@@ -31,19 +31,19 @@ Train an agent to solve the Quanser Cart-Pole swing-up task using Relative Entro
 """
 import pyrado
 from pyrado.algorithms.episodic.reps import REPS
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.features import (
+    ATan2Feat,
     FeatureStack,
+    MultFeat,
+    abs_feat,
+    const_feat,
+    cubic_feat,
     identity_feat,
     sign_feat,
-    abs_feat,
     squared_feat,
-    const_feat,
-    MultFeat,
-    ATan2Feat,
-    cubic_feat,
 )
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser

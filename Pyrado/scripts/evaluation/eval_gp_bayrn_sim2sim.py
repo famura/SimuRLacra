@@ -29,17 +29,18 @@
 """
 Script for the paper plot the GP's posterior after a Bayesian Domain Randomization sim-to-sim experiment
 """
-import joblib
 import os
 import os.path as osp
+
+import joblib
 import seaborn as sns
 from matplotlib import pyplot as plt
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from mpl_toolkits.mplot3d import Axes3D
 
 import pyrado
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
-from pyrado.environment_wrappers.utils import typed_env, inner_env
+from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.gaussian_process import render_singletask_gp

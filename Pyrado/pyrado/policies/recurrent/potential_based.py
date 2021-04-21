@@ -26,17 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
-import torch.nn as nn
 from abc import ABC, abstractmethod
 from typing import Callable, Optional
 
+import torch as to
+import torch.nn as nn
+
 import pyrado
+from pyrado.policies.base import Policy
+from pyrado.policies.initialization import init_param
+from pyrado.policies.recurrent.base import RecurrentPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
-from pyrado.policies.base import Policy
-from pyrado.policies.recurrent.base import RecurrentPolicy
-from pyrado.policies.initialization import init_param
 
 
 class PotentialBasedPolicy(RecurrentPolicy, ABC):

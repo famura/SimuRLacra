@@ -27,9 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
+from typing import Optional, Tuple
+
 import numpy as np
-from matplotlib import colors as colors, pyplot as plt, colors, colorbar
-from typing import Tuple, Optional
+from matplotlib import colorbar
+from matplotlib import colors
+from matplotlib import colors as colors
+from matplotlib import pyplot as plt
 
 
 def num_rows_cols_from_length(n: int, transposed: bool = False) -> Tuple[int, int]:

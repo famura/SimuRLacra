@@ -32,7 +32,7 @@ Train an agent to solve the Qube swing-up task using Policy learning by Weightin
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.utils.argparser import get_argparser
 

@@ -29,8 +29,9 @@
 """
 Script to simulate 1-dimensional dynamical systems used in Activation Dynamic Networks (ADN) for different hyper-parameters
 """
-import torch as to
 import os.path as osp
+
+import torch as to
 from matplotlib import pyplot as plt
 
 import pyrado

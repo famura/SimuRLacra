@@ -28,11 +28,12 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
+
 from init_args_serializer import Serializable
 
 from pyrado.environments.base import Env
-from pyrado.utils.data_types import RenderMode
 from pyrado.spaces.base import Space
+from pyrado.utils.data_types import RenderMode
 
 
 class SimEnv(Env, ABC, Serializable):

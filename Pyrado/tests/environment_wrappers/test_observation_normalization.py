@@ -28,10 +28,10 @@
 
 import numpy as np
 import pytest
-
-from pyrado.spaces.box import BoxSpace
-from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from tests.environment_wrappers.mock_env import MockEnv
+
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
+from pyrado.spaces.box import BoxSpace
 
 
 @pytest.fixture(scope="function", ids=["mock_obs_space"])

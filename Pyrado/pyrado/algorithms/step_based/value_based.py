@@ -26,20 +26,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import os.path as osp
 from abc import ABC, abstractmethod
 from math import ceil
-from typing import Union, Optional
+from typing import Optional, Union
+
+import numpy as np
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import ReplayMemory
 from pyrado.environments.base import Env
-from pyrado.exploration.stochastic_action import SACExplStrat, EpsGreedyExplStrat
-from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter, TensorBoardPrinter
+from pyrado.exploration.stochastic_action import EpsGreedyExplStrat, SACExplStrat
+from pyrado.logger.step import ConsolePrinter, CSVPrinter, StepLogger, TensorBoardPrinter
 from pyrado.policies.base import Policy, TwoHeadedPolicy
-from pyrado.policies.special.dummy import RecurrentDummyPolicy, DummyPolicy
+from pyrado.policies.special.dummy import DummyPolicy, RecurrentDummyPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt_once
 

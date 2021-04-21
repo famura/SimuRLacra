@@ -28,13 +28,15 @@
 
 import itertools
 import multiprocessing as mp
-import numpy as np
 import pickle
 import sys
+from typing import List, NamedTuple, Optional, Sequence, Union
+
+import numpy as np
 import torch as to
 from init_args_serializer import Serializable
+from torch.nn.utils.convert_parameters import vector_to_parameters
 from tqdm import tqdm
-from typing import Sequence, List, NamedTuple, Union, Optional
 
 import pyrado
 from pyrado.environment_wrappers.base import EnvWrapper
@@ -43,15 +45,14 @@ from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,
     remove_all_dr_wrappers,
 )
+from pyrado.environment_wrappers.utils import attr_env_get, inner_env, typed_env
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
-from pyrado.sampling.step_sequence import StepSequence
-from torch.nn.utils.convert_parameters import vector_to_parameters
-from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.sampler_pool import SamplerPool
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.properties import cached_property
-from pyrado.environment_wrappers.utils import typed_env, attr_env_get, inner_env
 
 
 class ParameterSample(NamedTuple):

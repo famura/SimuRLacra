@@ -26,12 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 from typing import Union
+from warnings import warn
 
 import torch as to
 import torch.nn as nn
 from torch.distributions import Uniform
-from typing import Union
-from warnings import warn
 
 import pyrado
 

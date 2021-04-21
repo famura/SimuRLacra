@@ -34,8 +34,9 @@ import os.path as osp
 
 import numpy as np
 import pandas as pd
-import pyrado
 from matplotlib import pyplot as plt
+
+import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.utils import AccNorm
 from pyrado.utils.argparser import get_argparser

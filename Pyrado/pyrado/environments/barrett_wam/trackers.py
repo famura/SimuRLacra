@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from threading import Lock
+from typing import List, Sequence, Tuple, Union
+
+import numpy as np
 from scipy.spatial.transform import Rotation
-from typing import Sequence, Tuple, List, Union
 
 
 class RigidBodyTracker:

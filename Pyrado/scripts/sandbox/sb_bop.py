@@ -30,13 +30,14 @@
 Script to test the functionality of Rcs & RcsPySim & Pyrado using a robotic ball-on-plate setup
 """
 import math
+
 import numpy as np
+import rcsenv
 from matplotlib import pyplot as plt
 
-import rcsenv
-from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.domain_randomization.utils import print_domain_params
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode

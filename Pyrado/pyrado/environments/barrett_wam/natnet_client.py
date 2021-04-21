@@ -27,10 +27,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import numpy as np
 import socket
 import struct
 from threading import Thread
+
+import numpy as np
 
 
 # Create structs for reading various object types to speed up parsing.

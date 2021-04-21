@@ -26,13 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Callable, Union
+
 import matplotlib as mpl
 import numpy as np
 import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from typing import Callable, Union
 
 import pyrado
 from pyrado.utils.data_types import merge_dicts

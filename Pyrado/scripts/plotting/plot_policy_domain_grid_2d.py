@@ -31,10 +31,11 @@ Script to plot the results from the 2D domain parameter grid evaluations of a si
 """
 import os
 import os.path as osp
+from typing import Optional, Tuple
+
 import pandas as pd
 from matplotlib import colors
 from matplotlib import pyplot as plt
-from typing import Tuple, Optional
 
 import pyrado
 from pyrado.logger.experiment import ask_for_experiment

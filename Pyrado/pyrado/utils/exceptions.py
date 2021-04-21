@@ -28,7 +28,7 @@
 
 import inspect
 import os.path as osp
-from typing import Sequence, Union, Optional
+from typing import Optional, Sequence, Union
 
 
 class BaseErr(Exception):

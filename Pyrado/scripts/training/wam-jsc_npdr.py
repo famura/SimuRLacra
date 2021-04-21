@@ -30,18 +30,19 @@
 Domain parameter identification experiment on the joint space controlled WAM environment using Neural Posterior
 Domain Randomization
 """
-import torch as to
 import os.path as osp
-from sbi.inference import SNPE_C
+
+import torch as to
 from sbi import utils
+from sbi.inference import SNPE_C
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import DeltaStepsEmbedding, BayesSimEmbedding, RNNEmbedding
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.dummy import DummyPolicy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, DeltaStepsEmbedding, RNNEmbedding
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 
 

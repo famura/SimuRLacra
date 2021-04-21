@@ -29,8 +29,9 @@
 """
 Script to plot the training progress.
 """
-import numpy as np
 import os.path as osp
+
+import numpy as np
 from matplotlib import pyplot as plt
 from pandas import DataFrame
 

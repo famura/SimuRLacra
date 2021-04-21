@@ -34,23 +34,23 @@ import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.step_based.gae import GAE
-from pyrado.spaces import ValueFunctionSpace, BoxSpace
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import (
-    create_zero_var_randomizer,
     create_default_domain_param_map_qq,
+    create_zero_var_randomizer,
 )
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
-from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.algorithms.meta.bayrn import BayRn
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
-from pyrado.domain_randomization.utils import wrap_like_other_env
 
 
 if __name__ == "__main__":

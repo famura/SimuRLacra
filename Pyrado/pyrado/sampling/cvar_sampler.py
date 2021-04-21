@@ -26,8 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from typing import List, Optional
+
+import numpy as np
 
 from pyrado.environments.base import Env
 from pyrado.logger.step import LoggerAware

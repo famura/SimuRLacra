@@ -31,9 +31,10 @@ Optimize the hyper-parameters of Policy learning by Weighting Exploration with t
 for the Quanser Qube swing-up task.
 """
 import functools
-import optuna
 import os
 import os.path as osp
+
+import optuna
 from optuna.pruners import MedianPruner
 
 import pyrado
@@ -43,14 +44,14 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.features import (
+    ATan2Feat,
     FeatureStack,
+    MultFeat,
+    abs_feat,
+    cubic_feat,
     identity_feat,
     sign_feat,
-    abs_feat,
     squared_feat,
-    cubic_feat,
-    MultFeat,
-    ATan2Feat,
 )
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler

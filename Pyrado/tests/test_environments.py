@@ -26,17 +26,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
 import numpy as np
+import pytest
 import torch as to
+from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
 
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerKin, QBallBalancerSim
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim, QBallBalancerKin
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
-from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
 
 
 @pytest.mark.parametrize(

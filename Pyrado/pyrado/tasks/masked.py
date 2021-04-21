@@ -25,13 +25,14 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-import numpy as np
 from typing import Optional, Union
 
-from pyrado.utils.data_types import EnvSpec
+import numpy as np
+
 from pyrado.spaces.empty import EmptySpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import RewFcn
+from pyrado.utils.data_types import EnvSpec
 
 
 class MaskedTask(Task):

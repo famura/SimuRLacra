@@ -27,8 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
+from typing import Any, Callable
+
 from matplotlib import pyplot as plt
-from typing import Callable, Any
 
 
 class _LFMEntry:

@@ -26,12 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
-from init_args_serializer import Serializable
 from typing import Mapping, Optional, Union
 
+import numpy as np
+from init_args_serializer import Serializable
+
 import pyrado
-from pyrado.environment_wrappers.base import EnvWrapperObs, EnvWrapper
+from pyrado.environment_wrappers.base import EnvWrapper, EnvWrapperObs
 from pyrado.environments.base import Env
 from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_processing import RunningNormalizer

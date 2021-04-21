@@ -26,34 +26,35 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
+from copy import deepcopy
+
 import numpy as np
 import pandas as pd
+import pytest
 import torch as to
-from copy import deepcopy
 from matplotlib import pyplot as plt
-from sbi.inference import simulate_for_sbi, SNPE
+from sbi.inference import SNPE, simulate_for_sbi
+from sbi.utils import BoxUniform, posterior_nn
 from sbi.utils.user_input_checks import prepare_for_sbi
-from sbi.utils import posterior_nn, BoxUniform
 
-from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts
 from pyrado.plotting.distribution import draw_posterior_distr_pairwise
 from pyrado.plotting.rollout_based import (
-    plot_observations_actions_rewards,
-    plot_observations,
     plot_actions,
-    plot_rewards,
-    plot_potentials,
     plot_features,
+    plot_observations,
+    plot_observations_actions_rewards,
+    plot_potentials,
+    plot_rewards,
 )
 from pyrado.plotting.surface import draw_surface
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.spaces.singular import SingularStateSpace
 from pyrado.utils.functions import rosenbrock
 

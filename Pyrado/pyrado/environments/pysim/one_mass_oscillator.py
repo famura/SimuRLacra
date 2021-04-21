@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import sys
+from typing import Sequence
+
+import numpy as np
 import torch as to
 import torch.nn as nn
 from init_args_serializer.serializable import Serializable
 from tabulate import tabulate
 from tqdm import tqdm
-from typing import Sequence
 
 from pyrado.environments.pysim.base import SimPyEnv
 from pyrado.sampling.rollout import StepSequence
@@ -41,7 +42,7 @@ from pyrado.sampling.utils import gen_shuffled_batch_idcs
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
-from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
+from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
 from pyrado.tasks.reward_functions import QuadrErrRewFcn
 
 

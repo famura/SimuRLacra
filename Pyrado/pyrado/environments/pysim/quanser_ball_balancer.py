@@ -28,11 +28,12 @@
 
 import os
 import os.path as osp
+from posix import listdir
+from typing import Optional
+
 import numpy as np
 import torch as to
 from init_args_serializer.serializable import Serializable
-from posix import listdir
-from typing import Optional
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv

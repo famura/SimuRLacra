@@ -29,10 +29,10 @@
 import numpy as np
 
 import pyrado
-from pyrado.utils.data_types import EnvSpec
 from pyrado.tasks.base import Task
-from pyrado.tasks.utils import never_succeeded
 from pyrado.tasks.reward_functions import RewFcn
+from pyrado.tasks.utils import never_succeeded
+from pyrado.utils.data_types import EnvSpec
 
 
 class FlippingTask(Task):

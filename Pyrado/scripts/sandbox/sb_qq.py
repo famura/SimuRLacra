@@ -29,8 +29,8 @@
 """
 Test predefined energy-based swing-up controller on the Quanser Qube with observation noise.
 """
-from scipy.ndimage import gaussian_filter1d
 from matplotlib import pyplot as plt
+from scipy.ndimage import gaussian_filter1d
 
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim

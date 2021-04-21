@@ -30,8 +30,9 @@
 Optimize the hyper-parameters for a time series prediction task using a potential-based recurrent neural network.
 """
 import functools
-import optuna
 import os.path as osp
+
+import optuna
 import pandas as pd
 import torch as to
 import torch.nn as nn

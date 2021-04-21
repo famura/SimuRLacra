@@ -1,5 +1,6 @@
 from pyrado.environments.pysim.pandavis import PandaVis
 
+
 """This file provides a step-by-step example of how to create an Panda3d-animation inside an environment."""
 
 """

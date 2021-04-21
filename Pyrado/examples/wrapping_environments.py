@@ -45,6 +45,7 @@ from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 
+
 """
 Let's first create the basic simulator without any wrappers
 """

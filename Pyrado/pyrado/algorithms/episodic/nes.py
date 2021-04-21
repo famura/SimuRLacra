@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Optional
+
 import numpy as np
 import torch as to
-from typing import Optional
 
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring

@@ -30,9 +30,9 @@ import numpy as np
 
 import pyrado
 from pyrado.spaces.base import Space
-from pyrado.utils.data_types import EnvSpec
 from pyrado.tasks.base import Task
-from pyrado.tasks.reward_functions import RewFcn, ZeroPerStepRewFcn, MinusOnePerStepRewFcn, PlusOnePerStepRewFcn
+from pyrado.tasks.reward_functions import MinusOnePerStepRewFcn, PlusOnePerStepRewFcn, RewFcn, ZeroPerStepRewFcn
+from pyrado.utils.data_types import EnvSpec
 
 
 class DesSpaceTask(Task):

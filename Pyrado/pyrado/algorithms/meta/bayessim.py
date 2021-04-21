@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
 from copy import deepcopy
+from typing import Mapping, Optional, Union
+
+import torch as to
 from torch.distributions import Distribution
-from typing import Optional, Union, Mapping
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -46,7 +47,7 @@ from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.spaces.discrete import DiscreteSpace
-from pyrado.utils.data_types import merge_dicts, EnvSpec
+from pyrado.utils.data_types import EnvSpec, merge_dicts
 
 
 class BayesSim(Algorithm):

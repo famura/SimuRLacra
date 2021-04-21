@@ -26,23 +26,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Any, List, Mapping, Optional, Sequence, Tuple, Union
+
 import numpy as np
 import seaborn as sns
 import torch as to
-from matplotlib import pyplot as plt, patches
+from matplotlib import patches
+from matplotlib import pyplot as plt
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
 from torch.distributions import Distribution
 from torch.distributions.uniform import Uniform
-from typing import Sequence, Optional, Union, Mapping, Tuple, List, Any
 
 import pyrado
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.plotting.utils import draw_sep_cbar
-from pyrado.utils.checks import check_all_types_equal, is_iterable, check_all_lengths_equal
+from pyrado.policies.special.mdn import MDNPolicy
+from pyrado.utils.checks import check_all_lengths_equal, check_all_types_equal, is_iterable
 from pyrado.utils.data_types import merge_dicts
 from pyrado.utils.input_output import completion_context
 

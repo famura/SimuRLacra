@@ -27,8 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
-import numpy as np
 from collections import deque
+
+import numpy as np
 from init_args_serializer import Serializable
 
 from pyrado.environment_wrappers.base import EnvWrapper, EnvWrapperAct, EnvWrapperObs

@@ -4,13 +4,13 @@ Train an agent to solve the Qube swing-up task environment using Adversarially R
 import torch as to
 
 import pyrado
-from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.meta.arpl import ARPL
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser

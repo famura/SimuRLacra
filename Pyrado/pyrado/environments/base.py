@@ -26,11 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from abc import ABC, abstractmethod
+from typing import Optional, Union
+
+import numpy as np
 from colorama import Style
 from init_args_serializer import Serializable
-from typing import Optional, Union
 
 import pyrado
 from pyrado.spaces.base import Space

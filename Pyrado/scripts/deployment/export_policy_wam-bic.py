@@ -32,8 +32,9 @@ Export the policy in form of desired joint position and velocities.
 In addition, the actual joint position and velocities of the simulation are saved.
 """
 import os.path as osp
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 import pyrado
 from pyrado.domain_randomization.utils import print_domain_params

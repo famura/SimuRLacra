@@ -26,18 +26,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from abc import ABC, abstractmethod
 from typing import Sequence
 
+import numpy as np
+
 import pyrado
-from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
-from pyrado.sampling.expose_sampler import ExposedSampler
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.environments.base import Env
-from pyrado.logger.step import StepLogger
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
+from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.input_output import print_cbt
 

@@ -31,11 +31,11 @@ from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
 from pyrado.spaces.box import BoxSpace
-from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.spaces.compound import CompoundSpace
+from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.tasks.base import Task
-from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
+from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 
 
 class BallOnBeamSim(SimPyEnv, Serializable):

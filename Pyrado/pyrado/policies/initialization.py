@@ -26,13 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from math import ceil, sqrt
+
 import torch as to
 import torch.nn as nn
 import torch.nn.init as init
-from math import sqrt, ceil
 
 import pyrado
-from pyrado.utils.nn_layers import ScaleLayer, PositiveScaleLayer, IndiNonlinLayer, MirrConv1d
+from pyrado.utils.nn_layers import IndiNonlinLayer, MirrConv1d, PositiveScaleLayer, ScaleLayer
 
 
 def _apply_weights_conf(m, ls, ks):

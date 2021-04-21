@@ -26,11 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Optional, Sequence, Union
+
 import numpy as np
 import pandas as pd
 import torch as to
 from matplotlib import pyplot as plt
-from typing import Union, Sequence, Optional
 
 import pyrado
 from pyrado.sampling.bootstrapping import bootstrap_ci

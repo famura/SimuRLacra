@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
-import numpy as np
 import os.path as osp
-import torch as to
 import shutil
 
+import numpy as np
+import pytest
+import torch as to
+
 from pyrado import TEMP_DIR
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml, load_dict_from_yaml
+from pyrado.logger.experiment import load_dict_from_yaml, save_dicts_to_yaml, setup_experiment
 from pyrado.utils.ordering import get_immediate_subdirs
 
 

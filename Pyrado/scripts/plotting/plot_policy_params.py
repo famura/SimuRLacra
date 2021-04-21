@@ -30,6 +30,7 @@
 Script to plot the PyTorch parameters of a policy
 """
 import os.path as osp
+
 from matplotlib import pyplot as plt
 
 from pyrado.logger.experiment import ask_for_experiment

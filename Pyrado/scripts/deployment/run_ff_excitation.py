@@ -29,8 +29,9 @@
 """
 Excite the system using a sin or chirp signal on the actions
 """
-import numpy as np
 from datetime import datetime
+
+import numpy as np
 from scipy.signal import chirp
 
 import pyrado
@@ -43,7 +44,7 @@ from pyrado.environments.quanser.quanser_cartpole import QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.special.environment_specific import wam_jsp_7dof_sin
 from pyrado.policies.special.time import TimePolicy
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode

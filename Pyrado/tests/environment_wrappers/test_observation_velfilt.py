@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
 import numpy as np
+import pytest
 
 from pyrado.environment_wrappers.observation_velfilter import ObsVelFiltWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim

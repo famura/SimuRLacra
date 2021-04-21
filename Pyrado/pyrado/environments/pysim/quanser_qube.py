@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from abc import abstractmethod
+
 import numpy as np
 import torch as to
-from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv

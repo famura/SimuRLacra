@@ -27,12 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
+from init_args_serializer.serializable import Serializable
 
 import pyrado
-from pyrado.environments.base import Env
 from pyrado.environment_wrappers.base import EnvWrapperObs
+from pyrado.environments.base import Env
 from pyrado.spaces.base import Space
-from init_args_serializer.serializable import Serializable
 
 
 class ObsPartialWrapper(EnvWrapperObs, Serializable):

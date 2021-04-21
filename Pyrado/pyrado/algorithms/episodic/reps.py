@@ -26,28 +26,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import sys
-import torch as to
 from functools import partial
+from typing import Callable, Optional, Union
+
+import numpy as np
+import torch as to
 from scipy import optimize
 from torch.distributions import kl_divergence
 from torch.distributions.multivariate_normal import MultivariateNormal
 from tqdm import tqdm
-from typing import Callable, Union, Optional
 
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.utils import get_grad_via_torch
-from pyrado.logger.step import StepLogger
-from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
+from pyrado.logger.step import StepLogger
+from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
+from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
 from pyrado.utils.input_output import print_cbt_once
 from pyrado.utils.math import logmeanexp
-from pyrado.policies.base import Policy
-from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
 
 
 class REPS(ParameterExploring):

@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
 from abc import ABC, abstractmethod
 from typing import Sequence
 from warnings import warn
+
+import torch as to
 
 import pyrado
 from pyrado.exploration.normal_noise import DiagNormalNoise, FullNormalNoise

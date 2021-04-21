@@ -26,12 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import sys
+from typing import Optional, Sequence
+
+import numpy as np
 import torch as to
 from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
-from typing import Sequence, Optional
 
 import pyrado
 from pyrado.algorithms.step_based.actor_critic import ActorCritic

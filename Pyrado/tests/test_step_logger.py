@@ -28,8 +28,9 @@
 
 import csv
 import pickle
-import pytest
 import unittest.mock as mock
+
+import pytest
 
 import pyrado
 import pyrado.logger.step as uut

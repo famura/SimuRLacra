@@ -26,12 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from abc import ABC, abstractmethod
+from warnings import warn
+
 import torch as to
 import torch.nn as nn
-from abc import ABC, abstractmethod
-from torch.jit import ScriptModule, trace, script
+from torch.jit import ScriptModule, script, trace
 from torch.nn.utils import convert_parameters as cp
-from warnings import warn
 
 import pyrado
 from pyrado.sampling.step_sequence import StepSequence

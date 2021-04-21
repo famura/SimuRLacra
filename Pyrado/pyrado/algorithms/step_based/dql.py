@@ -26,13 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import sys
+from copy import deepcopy
+from typing import Optional
+
+import numpy as np
 import torch as to
 import torch.nn as nn
-from copy import deepcopy
 from tqdm import tqdm
-from typing import Optional
 
 import pyrado
 from pyrado.algorithms.step_based.value_based import ValueBased

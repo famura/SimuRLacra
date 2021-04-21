@@ -32,16 +32,17 @@ This script yields the values for the illustrative example in
 [1] F. Muratore, M. Gienger, J. Peters, "Assessing Transferability from Simulation to Reality for Reinforcement
     Learning", PAMI, 2019
 """
-import numpy as np
 import os
 import os.path as osp
+
+import numpy as np
+from matplotlib import pyplot as plt
 from scipy import special
 
 import pyrado
-from matplotlib import pyplot as plt
+from pyrado import set_seed
 from pyrado.environments.one_step.catapult import CatapultExample
 from pyrado.plotting.curve import render_data_mean_std
-from pyrado import set_seed
 from pyrado.utils.argparser import get_argparser
 
 

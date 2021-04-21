@@ -29,9 +29,10 @@
 import itertools
 import os
 import os.path as osp
+from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
+
 import pandas as pd
 import torch as to
-from typing import Callable, Any, Union, List, Optional, Tuple, Iterable
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -47,12 +48,12 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_hyperparameters
 from pyrado.policies.base import Policy
 from pyrado.policies.recurrent.adn import (
-    pd_linear,
-    pd_cubic,
-    pd_capacity_21_abs,
     pd_capacity_21,
+    pd_capacity_21_abs,
     pd_capacity_32,
     pd_capacity_32_abs,
+    pd_cubic,
+    pd_linear,
 )
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser

@@ -31,10 +31,11 @@ Script to evaluate the UCBOG and OG of multiple experiments
 """
 import os
 import os.path as osp
+
 import pandas as pd
+from matplotlib import pyplot as plt
 
 import pyrado
-from matplotlib import pyplot as plt
 from pyrado.logger.experiment import load_dict_from_yaml
 from pyrado.sampling.sequences import *
 from pyrado.utils.ordering import filter_los_by_lok

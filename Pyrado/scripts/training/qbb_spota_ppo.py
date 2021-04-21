@@ -31,23 +31,24 @@ Train an agent to solve the Quanser Ball-Balancer environment using
 Simulation-based Policy Optimization with Transferability Assessment.
 """
 from copy import deepcopy
+
 from numpy import pi
 
 import pyrado
-from pyrado.algorithms.step_based.gae import GAE
-from pyrado.spaces import ValueFunctionSpace
-from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.meta.spota import SPOTA
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import create_conservative_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.recurrent.rnn import GRUPolicy
 from pyrado.sampling.sequences import *
+from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 

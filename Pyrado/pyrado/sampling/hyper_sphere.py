@@ -27,8 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-from torch.distributions.uniform import Uniform
 from torch.distributions.normal import Normal
+from torch.distributions.uniform import Uniform
 
 import pyrado
 

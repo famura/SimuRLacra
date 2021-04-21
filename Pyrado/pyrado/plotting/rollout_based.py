@@ -27,16 +27,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
-import numpy as np
 import os
+from typing import List, Optional, Sequence
+
+import numpy as np
 import pandas as pd
 import torch as to
 from matplotlib import pyplot as plt
-from typing import Sequence, List, Optional
 
 import pyrado
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environment_wrappers.utils import typed_env, inner_env
+from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.base import Env
 from pyrado.plotting.curve import draw_curve
 from pyrado.plotting.utils import num_rows_cols_from_length

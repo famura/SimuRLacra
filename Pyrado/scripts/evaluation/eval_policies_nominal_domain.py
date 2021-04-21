@@ -30,20 +30,21 @@
 Script to evaluate multiple policies in one environment using the nominal domain parameters.
 """
 import os.path as osp
+
 import pandas as pd
 from prettyprinter import pprint
 
 import pyrado
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
-from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCartPoleStabSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleStabSim, QCartPoleSwingUpSim
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.sampling.parallel_evaluation import eval_nominal_domain
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_types import dict_arraylike_to_float
 from pyrado.utils.experiments import load_experiment
-from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
 
 

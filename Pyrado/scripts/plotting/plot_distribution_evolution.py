@@ -30,6 +30,7 @@
 Script to plot the evolution of the domain parameter distribution after a Bayesian Domain Randomization experiment
 """
 import os.path as osp
+
 import torch as to
 from matplotlib import pyplot as plt
 from torch.distributions import Normal, Uniform

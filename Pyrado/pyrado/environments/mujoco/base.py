@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import mujoco_py
-import numpy as np
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from init_args_serializer import Serializable
 from math import floor
-from mujoco_py.generated.const import RND_FOG
 from typing import Optional
+
+import mujoco_py
+import numpy as np
+from init_args_serializer import Serializable
+from mujoco_py.generated.const import RND_FOG
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv

@@ -27,10 +27,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pytest
-
-from pyrado.spaces.box import BoxSpace
-from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from tests.environment_wrappers.mock_env import MockEnv
+
+from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
+from pyrado.spaces.box import BoxSpace
 
 
 @pytest.mark.wrapper

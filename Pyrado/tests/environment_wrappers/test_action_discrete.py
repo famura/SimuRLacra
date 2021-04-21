@@ -26,13 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
 import numpy as np
+import pytest
+from tests.environment_wrappers.mock_env import MockEnv
 
 from pyrado.environment_wrappers.action_discrete import ActDiscreteWrapper
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.discrete import DiscreteSpace
-from tests.environment_wrappers.mock_env import MockEnv
 
 
 @pytest.mark.wrapper

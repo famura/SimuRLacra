@@ -39,9 +39,9 @@ from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environments.rcspysim.planar_insert import PlanarInsertTASim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNN
+from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.utils.argparser import get_argparser
 
 

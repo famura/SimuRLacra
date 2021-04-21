@@ -27,9 +27,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import multiprocessing as mp
+from typing import Callable
+
 import torch as to
 import torch.nn as nn
-from typing import Callable
 
 import pyrado
 from pyrado.policies.base import Policy
@@ -37,7 +38,7 @@ from pyrado.policies.initialization import init_param
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.nn_layers import MirrConv1d, IndiNonlinLayer
+from pyrado.utils.nn_layers import IndiNonlinLayer, MirrConv1d
 
 
 class NFPolicy(PotentialBasedPolicy):

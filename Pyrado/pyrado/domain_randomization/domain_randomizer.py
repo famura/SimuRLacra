@@ -26,22 +26,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
 from copy import deepcopy
+from typing import Callable, Mapping, Optional, Union
+
+import torch as to
 from tabulate import tabulate
-from torch.distributions.uniform import Uniform
-from torch.distributions.normal import Normal
-from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.bernoulli import Bernoulli
-from typing import Callable, Optional, Mapping, Union
+from torch.distributions.multivariate_normal import MultivariateNormal
+from torch.distributions.normal import Normal
+from torch.distributions.uniform import Uniform
 
 import pyrado
 from pyrado.domain_randomization.domain_parameter import (
+    BernoulliDomainParam,
     DomainParam,
+    MultivariateNormalDomainParam,
     NormalDomainParam,
     UniformDomainParam,
-    BernoulliDomainParam,
-    MultivariateNormalDomainParam,
 )
 from pyrado.utils.tensor import deepcopy_or_clone
 

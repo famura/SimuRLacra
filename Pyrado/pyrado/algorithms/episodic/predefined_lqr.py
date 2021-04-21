@@ -32,9 +32,9 @@ import torch as to
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.mixins import ExposedSampler
+from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
-from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
