@@ -85,17 +85,17 @@ class MultivariateNormalWrapper:
 
     @property
     def dim(self):
-        """ Gets the size (dimensionality) of the random variable. """
+        """ Get the size (dimensionality) of the random variable. """
         return self._mean.shape[0]
 
     @property
     def mean(self):
-        """ Gets the mean. """
+        """ Get the mean. """
         return self._mean
 
     @mean.setter
     def mean(self, mean: to.Tensor):
-        """ Sets the mean. """
+        """ Set the mean. """
         if not (mean.shape == self.mean.shape):
             raise pyrado.ShapeErr(given_name="mean", expected_match=self.mean.shape)
 
@@ -104,20 +104,20 @@ class MultivariateNormalWrapper:
 
     @property
     def cov(self):
-        """ Gets the covariance matrix, shape `(k, k)`. """
+        """ Get the covariance matrix, shape `(k, k)`. """
         return (self._cov_chol_flat ** 2).diag()
 
     @property
     def cov_chol_flat(self):
         """
-        Gets the standard deviations, i.e. the diagonal entries of the Cholesky decomposition of the covariance matrix,
+        Get the standard deviations, i.e. the diagonal entries of the Cholesky decomposition of the covariance matrix,
         shape `(k,)`.
         """
         return self._cov_chol_flat
 
     @cov_chol_flat.setter
     def cov_chol_flat(self, cov_chol_flat: to.Tensor):
-        """ Sets the standard deviations, shape `(k,)`. """
+        """ Set the standard deviations, shape `(k,)`. """
         if not (cov_chol_flat.shape == self.cov_chol_flat.shape):
             raise pyrado.ShapeErr(given_name="cov_chol_flat", expected_match=self.cov_chol_flat.shape)
 
@@ -125,7 +125,7 @@ class MultivariateNormalWrapper:
         self._update_distribution()
 
     def parameters(self) -> Generator[to.Tensor, None, None]:
-        """ Gets the parameters (mean and standard deviations) of this distribution. """
+        """ Get the parameters (mean and standard deviations) of this distribution. """
         yield self.mean
         yield self.cov_chol_flat
 
@@ -138,7 +138,7 @@ class MultivariateNormalWrapper:
         return np.concatenate([self.mean.detach().numpy(), self.cov_chol_flat.detach().numpy()])
 
     def _update_distribution(self):
-        """ Updates `self.distribution` according to the current mean and covariance. """
+        """ Update `self.distribution` according to the current mean and covariance. """
         self.distribution = MultivariateNormal(self.mean, self.cov)
 
 
@@ -215,7 +215,7 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         )
 
     def parameters(self) -> Generator[to.Tensor, None, None]:
-        """ Gets the list of parameters according to the values passed to the constructor. """
+        """ Get the list of parameters according to the values passed to the constructor. """
         if self._mean_is_parameter:
             yield self.mean
         if self._cov_is_parameter:
@@ -287,9 +287,9 @@ class SPRL(Algorithm):
         :param kl_constraints_ub: upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
         :param performance_lower_bound: lower bound for the performance SPRL tries to stay above
-         during distribution updates
-        :param std_lower_bound: clipping value for the standard deviation,
-         necessary when using very small target variances
+                                        during distribution updates
+        :param std_lower_bound: clipping value for the standard deviation,necessary when using
+                                         very small target variances
         :param kl_threshold: threshold for the KL-divergence until which std_lower_bound is enforced
         :param optimize_mean: whether the mean should be changed or considered fixed
         :param optimize_cov: whether the (co-)variance should be changed or considered fixed
@@ -315,7 +315,7 @@ class SPRL(Algorithm):
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
         # Using a Union here is not really correct, but it makes PyCharm's type hinting work
-        # suggest properties from both Algorithm and ExposedSampler.
+        # suggest properties from both Algorithm and ExposedSampler
         self._subroutine: Union[Algorithm, ExposedSampler] = subroutine
         self._subroutine.save_name = self._subroutine.name
 
@@ -346,7 +346,7 @@ class SPRL(Algorithm):
 
     @property
     def sample_count(self) -> int:
-        """The amount of samples collected by the subalgorithm."""
+        # Forward to subroutine
         return self._subroutine.sample_count
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
@@ -404,7 +404,7 @@ class SPRL(Algorithm):
         values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
         def kl_constraint_fn(x):
-            """Constraint for the kl divergence between current and proposed distribution"""
+            """ Compute the constraint for the KL-divergence between current and proposed distribution. """
             distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
@@ -412,7 +412,7 @@ class SPRL(Algorithm):
             return kl_divergence.detach().numpy()
 
         def kl_constraint_fn_prime(x):
-            """Derivative for the kl-constraint (used for scipy optimizer)"""
+            """ Compute the derivative for the KL-constraint (used for scipy optimizer). """
             distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
@@ -429,13 +429,13 @@ class SPRL(Algorithm):
         )
 
         def performance_constraint_fn(x):
-            """Constraint for the expected performance under the proposed distribution"""
+            """ Compute the constraint for the expected performance under the proposed distribution. """
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             return performance.detach().numpy()
 
         def performance_constraint_fn_prime(x):
-            """Derivative for the performance-constraint (used for scipy optimizer)"""
+            """ Compute the derivative for the performance-constraint (used for scipy optimizer). """
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             grads = to.autograd.grad(performance, distribution.parameters())
@@ -546,13 +546,13 @@ class SPRL(Algorithm):
     def _compute_expected_performance(
         self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor
     ) -> to.Tensor:
-        """Calculate the expected performance after an update step."""
+        """ Calculate the expected performance after an update step. """
         context_ratio = to.exp(distribution.distribution.log_prob(context) - old_log_prop)
         return to.mean(context_ratio * values)
 
     def _adapt_parameters(self, result: np.array) -> None:
-        """Update the parameters of the distribution based on the
-        result of the optimization step and the general algorithm settings"""
+        """Update the parameters of the distribution based on the result of
+        the optimization step and the general algorithm settings."""
         for i, param in enumerate(self._spl_parameters):
             if self._optimize_mean:
                 param.adapt("context_mean", to.tensor(result[i : i + param.dim]))
@@ -565,15 +565,12 @@ class SPRL(Algorithm):
     def _train_subroutine_and_evaluate_perf(
         self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False, **kwargs
     ) -> float:
-        """Internal method required by the `until_thold_exceeded` function.
-        The parameters are the same as for the regular `train()`
-        call and are explained there.
+        """
+        Internal method required by the `until_thold_exceeded` function.
+        The parameters are the same as for the regular `train()` call and are explained there.
 
-        :param reset_policy: whether the policy should be reset before
-        training, defaults to False
-        :type reset_policy: bool, optional
-        :return: The median undiscounted return
-        :rtype: float
+        :param reset_policy: if `True` the policy will be reset before training
+        :return: the median undiscounted return
         """
         if reset_policy:
             self._subroutine.init_modules(False)
