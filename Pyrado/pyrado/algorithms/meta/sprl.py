@@ -439,7 +439,7 @@ class SPRL(Algorithm):
             grads = to.autograd.grad(performance, distribution.parameters())
             return np.concatenate([g.detach().numpy() for g in grads])
 
-        performance_contraint = NonlinearConstraint(
+        performance_constraint = NonlinearConstraint(
             fun=performance_constraint_fn,
             lb=self._performance_lower_bound,
             ub=np.inf,
@@ -466,7 +466,7 @@ class SPRL(Algorithm):
         # Check whether we are already above our performance threshold
         if performance_constraint_fn(x0) >= self._performance_lower_bound:
             self._performance_lower_bound_reached = True
-            constraints = [kl_constraint, performance_contraint]
+            constraints = [kl_constraint, performance_constraint]
 
             # We now optimize based on the kl-divergence between target and context distribution by minimizing it
             def objective(x):
