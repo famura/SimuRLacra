@@ -30,17 +30,18 @@
 Optimize the hyper-parameters of Proximal Policy Optimization for the Quanser Ball-Balancer environment.
 """
 import functools
-import optuna
 import os.path as osp
+
+import optuna
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.step_based.gae import GAE
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.feed_forward.fnn import FNNPolicy, FNN
+from pyrado.policies.feed_forward.fnn import FNN, FNNPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import fcn_from_str

@@ -26,12 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import List, Optional, Sequence, Union
+
 import torch as to
-from torch.distributions.uniform import Uniform
-from torch.distributions.normal import Normal
-from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.bernoulli import Bernoulli
-from typing import Union, List, Optional
+from torch.distributions.multivariate_normal import MultivariateNormal
+from torch.distributions.normal import Normal
+from torch.distributions.uniform import Uniform
 
 import pyrado
 from pyrado.utils.input_output import print_cbt
@@ -80,7 +81,7 @@ class DomainParam:
         """ Get union of all hyper-parameters of all domain parameter distributions. """
         return ["name", "clip_lo", "clip_up", "roundint"]
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int, to.Tensor]):
         """
         Update this domain parameter.
 
@@ -308,3 +309,106 @@ class BernoulliDomainParam(DomainParam):
 
         # Convert the large tensor into a list of small tensors
         return list(sample_tensor)
+
+
+class SelfPacedDomainParam(DomainParam):
+    def __init__(
+        self,
+        name: str,
+        target_mean: to.Tensor,
+        target_cov_chol_flat: to.Tensor,
+        init_mean: to.Tensor,
+        init_cov_chol_flat: to.Tensor,
+    ):
+        """
+        Constructor.
+
+        :param name: name of the parameter
+        :param target_mean: target means of the contextual distribution
+        :target_cov_chol_flat: target standard deviations of the contextual distribution; equivalent to the diagonal entries of
+                               the Cholesky distribution of a diagonal covariance matrix
+        :init_mean: initial mean of the contextual distribution
+        :init_cov_chol_flat: initial standard deviations of the contextual distribution
+        """
+
+        if not (target_mean.shape == init_mean.shape):
+            raise pyrado.ShapeErr(msg="Target and init mean should have same shape!")
+        if not (target_cov_chol_flat.shape == init_cov_chol_flat.shape):
+            raise pyrado.ShapeErr(msg="Target and init standard deviations should have same shape!")
+
+        super().__init__(name=name)
+
+        self.target_mean = target_mean.double()
+        self.target_cov_chol_flat = target_cov_chol_flat.double()
+        self.context_mean = init_mean.double()
+        self.context_cov_chol_flat = init_cov_chol_flat.double()
+
+        self.dim = target_mean.shape[0]
+
+        self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
+        self._context_distr = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
+
+    @staticmethod
+    def get_field_names() -> Sequence[str]:
+        """ Get union of all hyper-parameters of all domain parameter distributions. """
+        return ["target_mean", "target_cov_chol_flat", "context_mean", "context_cov_chol_flat"]
+
+    @property
+    def target_distr(self) -> MultivariateNormal:
+        """ Get the target distribution. """
+        return self._target_distr
+
+    @property
+    def context_distr(self) -> MultivariateNormal:
+        """ Get the current contextual distribution. """
+        return self._context_distr
+
+    @property
+    def target_cov(self) -> to.Tensor:
+        """ Get the target covariance matrix. """
+        return to.diag(self.target_cov_chol_flat ** 2)
+
+    @property
+    def context_cov(self) -> to.Tensor:
+        """ Get the current covariance matrix. """
+        return to.diag(self.context_cov_chol_flat ** 2)
+
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
+        """
+        Update this domain parameter.
+
+        :param domain_distr_param: distribution parameter to update, e.g. mean or std
+        :param domain_distr_param_value: new value of the distribution parameter
+        """
+
+        # Set the attributes
+        super().adapt(domain_distr_param, domain_distr_param_value)
+
+        # Re-create the distributions, otherwise the changes will have no effect
+        if domain_distr_param in ["target_mean", "target_cov_chol_flat"]:
+            try:
+                self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
+            except ValueError as err:
+                print_cbt(
+                    f"Inputs that lead to the ValueError from PyTorch Distributions:\n"
+                    f"target_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.target_mean}\ncov = {self.target_cov}"
+                )
+                raise err
+        if domain_distr_param in ["context_mean", "context_cov_chol_flat"]:
+            try:
+                self._context_distr = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
+            except ValueError as err:
+                print_cbt(
+                    f"Inputs that lead to the ValueError from PyTorch Distributions:\n"
+                    f"init_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.context_mean}\ncov = {self.context_cov}"
+                )
+                raise err
+
+    def sample(self, num_samples: int = 1) -> List[to.tensor]:
+        """ Samples `num_samples` samples of the current context distribution. """
+
+        if not (num_samples > 0):
+            raise pyrado.ValueErr(given_name="num_samples", g_constraint=0)
+
+        samples = self._context_distr.sample((num_samples,))
+        return list(samples.flatten())

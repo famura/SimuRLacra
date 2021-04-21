@@ -31,14 +31,14 @@ Script to export a recurrent PyTorch-based policy to C++
 """
 import numpy as np
 import torch as to
+from rcsenv import ControlPolicy
 from torch.jit import script
 
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_capacity_21
+from pyrado.policies.recurrent.base import StatefulRecurrentNetwork
 from pyrado.policies.recurrent.rnn import RNNPolicy
 from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_types import EnvSpec
-from pyrado.policies.recurrent.base import StatefulRecurrentNetwork
-from rcsenv import ControlPolicy
 
 
 if __name__ == "__main__":

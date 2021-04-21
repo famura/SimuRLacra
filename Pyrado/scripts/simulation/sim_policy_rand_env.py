@@ -37,16 +37,16 @@ from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.domain_randomization import (
-    DomainRandWrapperLive,
     DomainRandWrapper,
     DomainRandWrapperBuffer,
+    DomainRandWrapperLive,
 )
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.sampling.rollout import after_rollout_query, rollout
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == "__main__":

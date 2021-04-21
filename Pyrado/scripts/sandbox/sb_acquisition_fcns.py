@@ -33,17 +33,17 @@ Plotting Script for evaluating different acquisition functions on a 1-dim toy fu
 - Upper Confidence Bound
 """
 import torch as to
-from botorch.models import SingleTaskGP
+from botorch.acquisition import ExpectedImprovement, ProbabilityOfImprovement, UpperConfidenceBound
 from botorch.fit import fit_gpytorch_model
-from botorch.acquisition import UpperConfidenceBound, ExpectedImprovement, ProbabilityOfImprovement
+from botorch.models import SingleTaskGP
 from botorch.optim import optimize_acqf
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from pyrado import set_seed
-from pyrado.utils.math import UnitCubeProjector
 from pyrado.utils.functions import noisy_nonlin_fcn
+from pyrado.utils.math import UnitCubeProjector
 
 
 if __name__ == "__main__":

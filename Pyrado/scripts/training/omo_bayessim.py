@@ -2,20 +2,22 @@
 Simple script which runs SNPE-A with one fixed observation.
 """
 
+from copy import deepcopy
+
 import numpy as np
 import torch as to
-from copy import deepcopy
 from sbi import utils
 
 import pyrado
 from pyrado.algorithms.meta.bayessim import BayesSim
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.policies.special.mdn import MDNPolicy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
+
 
 if __name__ == "__main__":
     # Parse command line arguments

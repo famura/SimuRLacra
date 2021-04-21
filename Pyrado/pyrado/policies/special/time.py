@@ -27,15 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import inspect
+from typing import Callable, List, Optional, Sequence, Union
+
 import numpy as np
 import torch as to
-from torch.jit import ScriptModule, script, export
+from torch.jit import ScriptModule, export, script
 from torch.nn import Module
-from typing import Callable, List, Sequence, Optional, Union
 
 import pyrado
-from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
+from pyrado.utils.data_types import EnvSpec
 
 
 class TimePolicy(Policy):

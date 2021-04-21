@@ -29,25 +29,26 @@
 """
 Domain parameter identification experiment on the Pendulum environment using Neural Posterior Domain Randomization
 """
+from copy import deepcopy
+
 import numpy as np
 import torch as to
-from copy import deepcopy
-from sbi.inference import SNPE_C
 from sbi import utils
+from sbi.inference import SNPE_C
 
 import pyrado
+from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.environments.pysim.pendulum import PendulumSim
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
+from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.sampling.sbi_embeddings import (
-    LastStepEmbedding,
-    DeltaStepsEmbedding,
     BayesSimEmbedding,
+    DeltaStepsEmbedding,
     DynamicTimeWarpingEmbedding,
+    LastStepEmbedding,
     RNNEmbedding,
 )
-from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
-from pyrado.environments.pysim.pendulum import PendulumSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.special.time import PlaybackPolicy
 from pyrado.utils.argparser import get_argparser
 
 

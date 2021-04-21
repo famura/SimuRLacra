@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from copy import deepcopy
+
 import pytest
 import torch.nn as nn
-from copy import deepcopy
 from sbi import utils
 from sbi.inference import SNPE
 
@@ -36,22 +37,23 @@ from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
-from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.meta.spota import SPOTA
+from pyrado.algorithms.meta.sprl import SPRL
 from pyrado.algorithms.meta.udr import UDR
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import (
-    create_default_randomizer,
-    create_zero_var_randomizer,
     create_default_domain_param_map_qq,
+    create_default_randomizer,
     create_default_randomizer_qbb,
+    create_zero_var_randomizer,
 )
-from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam, SelfPacedDomainParam, UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
@@ -72,10 +74,10 @@ from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import (
-    LastStepEmbedding,
-    DeltaStepsEmbedding,
     BayesSimEmbedding,
+    DeltaStepsEmbedding,
     DynamicTimeWarpingEmbedding,
+    LastStepEmbedding,
     RNNEmbedding,
 )
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
@@ -614,4 +616,61 @@ def test_npdr(
     )
 
     algo.train()
+    assert algo.curr_iter == algo.max_iter
+
+
+@pytest.mark.longtime
+@pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
+@pytest.mark.parametrize("optimize_mean", [False, True])
+def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
+    env = ActNormWrapper(env)
+    env_sprl_params = [
+        dict(
+            name="g",
+            target_mean=to.tensor([9.81]),
+            target_cov_chol_flat=to.tensor([1.0]),
+            init_mean=to.tensor([9.81]),
+            init_cov_chol_flat=to.tensor([0.05]),
+        )
+    ]
+    radnomizer = DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params])
+    env = DomainRandWrapperLive(env, randomizer=radnomizer)
+
+    policy = FNNPolicy(env.spec, hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic_hparam = dict(
+        gamma=0.9844534412010116,
+        lamda=0.9710614403461155,
+        num_epoch=10,
+        batch_size=150,
+        standardize_adv=False,
+        lr=0.00016985313083236645,
+    )
+    critic = GAE(vfcn, **critic_hparam)
+
+    subrtn_hparam = dict(
+        max_iter=1,
+        eps_clip=0.12648736789309026,
+        min_steps=10 * env.max_steps,
+        num_epoch=7,
+        batch_size=150,
+        std_init=0.7573286998997557,
+        lr=6.999956625305722e-04,
+        max_grad_norm=1.0,
+        num_workers=1,
+    )
+
+    algo_hparam = dict(
+        kl_constraints_ub=8000,
+        performance_lower_bound=500,
+        std_lower_bound=0.4,
+        kl_threshold=200,
+        max_iter=1,
+        optimize_mean=optimize_mean,
+    )
+
+    algo = SPRL(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
+    algo.train(snapshot_mode="latest")
     assert algo.curr_iter == algo.max_iter

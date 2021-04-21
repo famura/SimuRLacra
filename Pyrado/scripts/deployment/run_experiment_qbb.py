@@ -29,22 +29,23 @@
 """
 Script to run experiments on the Quanser Ball-Balancer
 """
-import joblib
-import numpy as np
 import os.path as osp
 
+import joblib
+import numpy as np
+
 import pyrado
-from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
-from pyrado.policies.special.environment_specific import QBallBalancerPDCtrl
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml, setup_experiment
+from pyrado.policies.special.environment_specific import QBallBalancerPDCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.spaces.polar import Polar2DPosSpace
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.experiments import load_experiment
-from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == "__main__":

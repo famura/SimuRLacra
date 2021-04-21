@@ -27,14 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-import numpy as np
 from typing import Any
+
+import numpy as np
 
 import pyrado
 from pyrado.spaces.base import Space
+from pyrado.tasks.reward_functions import RewFcn
 from pyrado.utils import get_class_name
 from pyrado.utils.data_types import EnvSpec
-from pyrado.tasks.reward_functions import RewFcn
 
 
 class Task(ABC):

@@ -33,15 +33,15 @@ import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 

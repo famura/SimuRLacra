@@ -26,17 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
-import torch.nn as nn
 from abc import ABC, abstractmethod
-from torch.nn.utils import convert_parameters as cp
-from torch.utils.data import Dataset, DataLoader
 from typing import Optional
 from warnings import warn
 
+import torch as to
+import torch.nn as nn
+from torch.nn.utils import convert_parameters as cp
+from torch.utils.data import DataLoader, Dataset
+
 import pyrado
 from pyrado.policies.initialization import init_param
-from pyrado.utils.data_types import merge_dicts, EnvSpec
+from pyrado.utils.data_types import EnvSpec, merge_dicts
 
 
 # class SingleTensorDataset(Dataset[to.Tensor]):

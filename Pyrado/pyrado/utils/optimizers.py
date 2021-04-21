@@ -27,8 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
-import torch as to
 from collections.abc import Callable
+
+import torch as to
 from torch.optim.optimizer import Optimizer
 
 import pyrado

@@ -31,6 +31,7 @@ Script to evaluate a posterior obtained using the sbi package.
 By default (args.iter = -1), the most recent iteration is evaluated.
 """
 import os
+
 import torch as to
 from matplotlib import pyplot as plt
 
@@ -44,9 +45,9 @@ from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.distribution import (
+    draw_posterior_distr_1d,
     draw_posterior_distr_2d,
     draw_posterior_distr_pairwise,
-    draw_posterior_distr_1d,
     draw_posterior_distr_pairwise_scatter,
 )
 from pyrado.plotting.utils import num_rows_cols_from_length

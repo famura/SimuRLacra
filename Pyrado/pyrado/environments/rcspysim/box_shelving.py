@@ -27,27 +27,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
-import numpy as np
 import os.path as osp
-from init_args_serializer import Serializable
 from typing import Sequence
 
+import numpy as np
 import rcsenv
+from init_args_serializer import Serializable
+
 from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.masked import MaskedTask
-from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, MinusOnePerStepRewFcn, AbsErrRewFcn
 from pyrado.tasks.parallel import ParallelTasks
-from pyrado.tasks.utils import proximity_succeeded
 from pyrado.tasks.predefined import (
-    create_goal_dist_task,
     create_check_all_boundaries_task,
-    create_task_space_discrepancy_task,
     create_collision_task,
+    create_goal_dist_task,
+    create_task_space_discrepancy_task,
 )
-from pyrado.utils.input_output import print_cbt
+from pyrado.tasks.reward_functions import AbsErrRewFcn, ExpQuadrErrRewFcn, MinusOnePerStepRewFcn
+from pyrado.tasks.utils import proximity_succeeded
 from pyrado.utils.data_types import EnvSpec
+from pyrado.utils.input_output import print_cbt
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)

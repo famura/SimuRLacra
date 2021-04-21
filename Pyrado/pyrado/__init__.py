@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import os
 import os.path as osp
 import platform
 import random
+from typing import Optional, TypeVar
+
+import numpy as np
 import torch as to
 from colorama import init
-from typing import TypeVar, Optional
 
 
 # Pyrado version number
@@ -78,7 +79,7 @@ PathLike = TypeVar("PathLike", str, bytes, os.PathLike)  # PEP 519
 from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr
 
 # Include saving and loading functions
-from pyrado.utils.saving_loading import save, load
+from pyrado.utils.saving_loading import load, save
 
 
 # Set style for printing and plotting

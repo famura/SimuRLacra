@@ -34,13 +34,13 @@ from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
-from pyrado.environment_wrappers.observation_velfilter import ObsVelFiltWrapper
-from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environment_wrappers.observation_velfilter import ObsVelFiltWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 

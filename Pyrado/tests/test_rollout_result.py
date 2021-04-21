@@ -29,21 +29,21 @@
 """
 NOTE: This file is not using to.testing.assert_allclose because most methods need to work for both torch and numpy.
 """
-import pytest
-import numpy as np
-import torch as to
 import itertools
 import pickle
-from scipy import signal
 from typing import NamedTuple
+
+import numpy as np
+import pytest
+import torch as to
+from scipy import signal
 
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import ReplayMemory
 from pyrado.policies.special.dummy import DummyPolicy
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.data_format import to_format
-from pyrado.sampling.step_sequence import discounted_value, gae_returns
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.step_sequence import StepSequence, discounted_value, gae_returns
 
 
 rewards = [

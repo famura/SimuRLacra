@@ -29,16 +29,17 @@
 """
 Load an Optuna study and print the best hyper-parameter set.
 """
-import numpy as np
-import optuna
 import os
 import os.path as osp
+
+import numpy as np
+import optuna
+from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from optuna.structs import StudyDirection
 from prettyprinter import pprint
 
 import pyrado
-from matplotlib import pyplot as plt
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt

@@ -26,21 +26,22 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Sequence
+
 import numpy as np
 import pandas as pd
 import torch as to
 from botorch.acquisition import PosteriorMean
-from botorch.models import SingleTaskGP
 from botorch.fit import fit_gpytorch_model
+from botorch.models import SingleTaskGP
 from botorch.optim import optimize_acqf
 from gpytorch.constraints import GreaterThan
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from matplotlib import colors
+from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from typing import Sequence
 
 import pyrado
-from matplotlib import pyplot as plt
 from pyrado.plotting.heatmap import draw_heatmap
 from pyrado.utils.input_output import print_cbt
 
@@ -286,7 +287,7 @@ def render_singletask_gp(
                 annotate=False,
                 fig_canvas_title="Returns",
                 tick_label_prec=2,
-                add_sep_colorbar=True,
+                separate_cbar=True,
                 cmap=heatmap_cmap,
                 colorbar_label=colorbar_label,
                 num_major_ticks_hm=3,
@@ -304,7 +305,7 @@ def render_singletask_gp(
                 annotate=False,
                 fig_canvas_title="Standard Deviations",
                 tick_label_prec=2,
-                add_sep_colorbar=True,
+                separate_cbar=True,
                 cmap=heatmap_cmap,
                 colorbar_label=colorbar_label,
                 num_major_ticks_hm=3,

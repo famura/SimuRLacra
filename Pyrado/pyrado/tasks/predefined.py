@@ -27,24 +27,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+from typing import Optional, Sequence, Union
+
 import numpy as np
-from typing import Sequence, Union, Optional
 
 import pyrado
 from pyrado.spaces.empty import EmptySpace
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.endless_flipping import FlippingTask
-from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
+from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
 from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.reward_functions import (
-    RewFcn,
-    ZeroPerStepRewFcn,
     AbsErrRewFcn,
     CosOfOneEleRewFcn,
     ExpQuadrErrRewFcn,
     QuadrErrRewFcn,
+    RewFcn,
+    ZeroPerStepRewFcn,
 )
-from pyrado.tasks.utils import proximity_succeeded, never_succeeded
+from pyrado.tasks.utils import never_succeeded, proximity_succeeded
 from pyrado.utils.data_types import EnvSpec
 
 

@@ -27,14 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import contextlib
-import numpy as np
 import select
 import sys
+from typing import Callable, Iterable, Sequence, TypeVar
+
+import numpy as np
 from colorama import Fore, Style
-from typing import Sequence, Iterable, Callable, TypeVar
 
 import pyrado
 from pyrado.utils import run_once
+
 
 T = TypeVar("T")
 

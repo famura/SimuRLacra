@@ -26,22 +26,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
-import numpy as np
-import torch as to
 from copy import deepcopy
+
+import numpy as np
+import pytest
+import torch as to
 from torch.distributions.normal import Normal
 
 from pyrado.algorithms.meta.adr import RewardGenerator
-from pyrado.algorithms.utils import compute_action_statistics, until_thold_exceeded, get_grad_via_torch
+from pyrado.algorithms.utils import compute_action_statistics, get_grad_via_torch, until_thold_exceeded
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer_omo
 from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
+from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.policies.base import TwoHeadedPolicy, Policy
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
-from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
 @to.no_grad()

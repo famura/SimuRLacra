@@ -26,17 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Callable, Iterable, Optional, Sequence, Tuple, Union
+
 import torch as to
-import torch.nn as nn
 import torch.cuda as cuda
+import torch.nn as nn
 from torch.nn.utils import convert_parameters as cp
-from typing import Sequence, Callable, Iterable, Tuple, Union, Optional
 
 import pyrado
-from pyrado.spaces.discrete import DiscreteSpace
-from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
 from pyrado.policies.initialization import init_param
+from pyrado.spaces.discrete import DiscreteSpace
+from pyrado.utils.data_types import EnvSpec
 
 
 class FNN(nn.Module):

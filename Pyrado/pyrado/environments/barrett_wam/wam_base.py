@@ -26,26 +26,27 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
-import robcom_python as robcom
 import time
 from abc import ABC, abstractmethod
 from typing import Optional
+
+import numpy as np
+import robcom_python as robcom
 
 import pyrado
 from pyrado.environments.barrett_wam import (
     init_qpos_des_4dof,
     init_qpos_des_7dof,
-    wam_pgains_7dof,
+    wam_dgains_4dof,
     wam_dgains_7dof,
     wam_pgains_4dof,
-    wam_dgains_4dof,
+    wam_pgains_7dof,
 )
 from pyrado.environments.real_base import RealEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.utils.data_types import RenderMode
-from pyrado.utils.input_output import print_cbt, completion_context
+from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class WAMReal(RealEnv, ABC):

@@ -29,25 +29,26 @@
 """
 Domain parameter identification experiment on the Quanser Qube environment using Neural Posterior Domain Randomization
 """
-import torch as to
 from copy import deepcopy
-from sbi.inference import SNPE_C
+
+import torch as to
 from sbi import utils
+from sbi.inference import SNPE_C
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import (
-    LastStepEmbedding,
-    DeltaStepsEmbedding,
-    BayesSimEmbedding,
-    DynamicTimeWarpingEmbedding,
-    RNNEmbedding,
-)
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.sampling.sbi_embeddings import (
+    BayesSimEmbedding,
+    DeltaStepsEmbedding,
+    DynamicTimeWarpingEmbedding,
+    LastStepEmbedding,
+    RNNEmbedding,
+)
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 
 

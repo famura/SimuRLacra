@@ -33,17 +33,17 @@ import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.utils.argparser import get_argparser
-from pyrado.utils.data_types import EnvSpec
 from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.gae import GAE
-from pyrado.spaces import ValueFunctionSpace
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.features import FeatureStack, identity_feat, sin_feat, RFFeat, RBFFeat
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
+from pyrado.policies.features import FeatureStack, RBFFeat, RFFeat, identity_feat, sin_feat
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.spaces import ValueFunctionSpace
+from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == "__main__":

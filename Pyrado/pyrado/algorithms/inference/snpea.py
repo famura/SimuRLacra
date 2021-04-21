@@ -27,20 +27,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import torch as to
 from copy import deepcopy
+from typing import Optional
+
+import torch as to
 from sbi.inference import simulate_for_sbi
 from sbi.utils.user_input_checks import prepare_for_sbi
 from torch.distributions import Distribution
 from torch.utils.data import BatchSampler, SubsetRandomSampler
 from tqdm import tqdm
-from typing import Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 from pyrado.logger.step import StepLogger
 from pyrado.policies.special.mdn import MDNPolicy
+from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 
 
 class SNPEA(Algorithm):

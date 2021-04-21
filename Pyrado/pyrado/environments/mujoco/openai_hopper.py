@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import os.path as osp
-from init_args_serializer import Serializable
 from typing import Optional
+
+import numpy as np
+from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
@@ -37,7 +38,7 @@ from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.goalless import GoallessTask
-from pyrado.tasks.reward_functions import ForwardVelocityRewFcn, CompoundRewFcn, PlusOnePerStepRewFcn
+from pyrado.tasks.reward_functions import CompoundRewFcn, ForwardVelocityRewFcn, PlusOnePerStepRewFcn
 
 
 class HopperSim(MujocoSimEnv, Serializable):

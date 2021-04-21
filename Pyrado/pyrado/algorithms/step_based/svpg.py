@@ -26,26 +26,26 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
-import torch as to
 from copy import deepcopy
-from scipy.spatial.distance import squareform, pdist
-from torch.distributions.kl import kl_divergence
 from typing import Sequence
 
+import numpy as np
+import torch as to
+from scipy.spatial.distance import pdist, squareform
+from torch.distributions.kl import kl_divergence
+
 import pyrado
-from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.step_based.gae import GAE, ValueFunctionSpace
 from pyrado.algorithms.utils import compute_action_statistics
 from pyrado.environments.base import Env
-from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.algorithms.step_based.gae import ValueFunctionSpace
-from pyrado.utils.data_types import EnvSpec
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.utils.data_types import EnvSpec
 
 
 class SVPGParticle(Policy):

@@ -27,11 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+from copy import deepcopy
+from typing import Optional, Union
+
 import torch as to
 import torch.nn as nn
-from copy import deepcopy
 from tqdm import tqdm
-from typing import Optional, Union
 
 import pyrado
 from pyrado.algorithms.step_based.value_based import ValueBased

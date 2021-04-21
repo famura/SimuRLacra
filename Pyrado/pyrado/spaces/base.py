@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from colorama import Style
 from copy import deepcopy
 from functools import reduce
-from tabulate import tabulate
 from typing import Tuple, Union
+
+import numpy as np
+from colorama import Style
+from tabulate import tabulate
 
 import pyrado
 from pyrado.utils import get_class_name

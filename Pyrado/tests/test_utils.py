@@ -27,34 +27,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-import pytest
-import torch.nn as nn
 from functools import partial
 from math import ceil
+
+import pytest
+import torch.nn as nn
 from tqdm import tqdm
 
-from pyrado.spaces import BoxSpace
-from pyrado.sampling.utils import gen_shuffled_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
-from pyrado.utils.checks import is_iterator, check_all_types_equal, check_all_lengths_equal, check_all_shapes_equal
-from pyrado.utils.data_types import *
-from pyrado.utils.functions import noisy_nonlin_fcn, skyline
-from pyrado.utils.input_output import completion_context, print_cbt_once
-from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp, numerical_differentiation_coeffs
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
+from pyrado.logger.iteration import IterationTracker
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
-from pyrado.utils.optimizers import GSS
+from pyrado.sampling.utils import gen_ordered_batch_idcs, gen_ordered_batches, gen_shuffled_batch_idcs
+from pyrado.spaces import BoxSpace
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
+from pyrado.utils.checks import check_all_lengths_equal, check_all_shapes_equal, check_all_types_equal, is_iterator
 from pyrado.utils.data_processing import (
+    MinMaxScaler,
+    RunningNormalizer,
     RunningStandardizer,
     Standardizer,
-    scale_min_max,
-    MinMaxScaler,
     correct_atleast_2d,
+    normalize,
+    scale_min_max,
 )
-from pyrado.utils.data_processing import RunningNormalizer, normalize
-from pyrado.logger.iteration import IterationTracker
+from pyrado.utils.data_types import *
+from pyrado.utils.functions import noisy_nonlin_fcn, skyline
+from pyrado.utils.input_output import completion_context, print_cbt_once
+from pyrado.utils.math import cosine_similarity, cov, logmeanexp, numerical_differentiation_coeffs, rmse
+from pyrado.utils.optimizers import GSS
 
 
 @pytest.mark.parametrize(

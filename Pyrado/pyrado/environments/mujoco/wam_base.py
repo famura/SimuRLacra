@@ -27,11 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from init_args_serializer import Serializable
 from typing import Optional
 
+from init_args_serializer import Serializable
+
 import pyrado
-from pyrado.environments.barrett_wam import torque_space_wam_7dof, torque_space_wam_4dof
+from pyrado.environments.barrett_wam import torque_space_wam_4dof, torque_space_wam_7dof
 from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.base import Space
 

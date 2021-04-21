@@ -26,24 +26,26 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
 from copy import deepcopy
 
+import pytest
+from tests.environment_wrappers.mock_env import MockEnv
+
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.episodic.hc import HCHyper, HCNormal
+from pyrado.algorithms.episodic.nes import NES
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
+from pyrado.algorithms.episodic.pepg import PEPG
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.regression.nonlin_regression import NonlinRegression
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.dql import DQL
 from pyrado.algorithms.step_based.gae import GAE
-from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.episodic.cem import CEM
-from pyrado.algorithms.episodic.hc import HCNormal, HCHyper
-from pyrado.algorithms.episodic.nes import NES
-from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
-from pyrado.algorithms.episodic.pepg import PEPG
-from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.step_based.ppo import PPO, PPO2
-from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.step_based.sac import SAC
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -53,18 +55,17 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNNPolicy, FNN, DiscreteActQValPolicy
-from pyrado.policies.recurrent.rnn import RNNPolicy
+from pyrado.policies.feed_forward.fnn import FNN, DiscreteActQValPolicy, FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.recurrent.rnn import RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
-from pyrado.spaces import ValueFunctionSpace, BoxSpace
+from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.functions import noisy_nonlin_fcn
-from tests.environment_wrappers.mock_env import MockEnv
 
 
 @pytest.fixture

@@ -26,22 +26,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Mapping, Optional, Type, Union
+
 import torch as to
-from sbi.inference.snpe import PosteriorEstimator
 from sbi.inference.base import simulate_for_sbi
+from sbi.inference.snpe import PosteriorEstimator
 from torch.distributions import Distribution
-from typing import Optional, Type, Mapping, Union
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.sbi_base import SBIBase
-from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.utils.input_output import print_cbt
 
 

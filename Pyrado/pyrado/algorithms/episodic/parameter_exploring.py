@@ -26,11 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
-import numpy as np
 from abc import abstractmethod
 from copy import deepcopy
 from typing import Optional
+
+import numpy as np
+import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -38,11 +39,12 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler, ParameterSamplingResult
 from pyrado.utils.input_output import print_cbt
 
 
-class ParameterExploring(Algorithm):
+class ParameterExploring(Algorithm, ExposedSampler):
     """ Base for all algorithms that explore directly in the policy parameter space """
 
     def __init__(
@@ -90,7 +92,7 @@ class ParameterExploring(Algorithm):
         self.pop_size = pop_size
 
         # Create sampler
-        self.sampler = ParameterExplorationSampler(
+        self._sampler = ParameterExplorationSampler(
             env,
             policy,
             num_init_states_per_domain=num_init_states_per_domain,

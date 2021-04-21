@@ -71,16 +71,12 @@ class DummyPolicy(Policy):
         """
         super().__init__(spec, use_cuda)
 
-        low = to.from_numpy(spec.act_space.bound_lo)
-        high = to.from_numpy(spec.act_space.bound_up)
-        self._distr = Uniform(low, high)
-
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         pass
 
     def forward(self, obs: to.Tensor = None) -> to.Tensor:
         # Observations are ignored
-        return self._distr.sample()
+        return to.tensor(self.env_spec.act_space.sample_uniform())
 
 
 class RecurrentDummyPolicy(RecurrentPolicy):

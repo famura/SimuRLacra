@@ -27,10 +27,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC
+
 import numpy as np
 import torch as to
-
 from init_args_serializer import Serializable
+
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env

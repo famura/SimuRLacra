@@ -29,7 +29,7 @@
 """
 Test model learning using PyTorch and the One Mass Oscillator setup.
 """
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim, OneMassOscillatorDomainParamEstimator
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorDomainParamEstimator, OneMassOscillatorSim
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt

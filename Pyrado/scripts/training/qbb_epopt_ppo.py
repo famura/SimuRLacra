@@ -32,19 +32,19 @@ Train an agent to solve the Quanser Ball-Balancer environment using Ensemble Pol
 from numpy import pi
 
 from pyrado.algorithms.meta.epopt import EPOpt
-from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.step_based.gae import GAE
-from pyrado.spaces import ValueFunctionSpace
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer_qbb
+from pyrado.domain_randomization.domain_parameter import UniformDomainParam
+from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.features import *
 from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 

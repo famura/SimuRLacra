@@ -29,9 +29,10 @@
 """
 A small collection of well-known functions for testing or benchmarking
 """
+from typing import Tuple, Union
+
 import numpy as np
 import torch as to
-from typing import Tuple, Union
 
 import pyrado
 from pyrado.spaces import BoxSpace

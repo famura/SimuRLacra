@@ -30,19 +30,20 @@
 Run a PD-controller with the parameter from Quanser on the real device.
 By default all controllers in this script run infinitely.
 """
-import torch as to
 from datetime import datetime
+
+import torch as to
 
 import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
-from pyrado.environments.quanser.quanser_cartpole import QCartPoleSwingUpReal, QCartPoleStabReal
+from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.special.environment_specific import (
     QBallBalancerPDCtrl,
     QCartPoleSwingUpAndBalanceCtrl,
     QQubeSwingUpAndBalanceCtrl,
 )
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

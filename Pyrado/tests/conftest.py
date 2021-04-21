@@ -30,6 +30,7 @@
 This file is found by pytest and contains fixtures (i.e., common defaults) that can be used for all tests.
 """
 import multiprocessing as mp
+
 import pytest
 import torch as to
 
@@ -72,6 +73,7 @@ to.set_default_dtype(to.float32)
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
     import rcsenv
+
     from pyrado.environments.rcspysim.ball_in_tube import BallInTubePosIKActivationSim, BallInTubeVelDSSim
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
     from pyrado.environments.rcspysim.box_flipping import BoxFlippingIKActivationSim, BoxFlippingVelDSSim
@@ -104,6 +106,7 @@ except (ImportError, ModuleNotFoundError):
 # Check if MuJoCo i.e. mujoco-py is available
 try:
     import mujoco_py
+
     from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
     from pyrado.environments.mujoco.openai_hopper import HopperSim
     from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim

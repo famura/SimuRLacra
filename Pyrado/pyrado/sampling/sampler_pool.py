@@ -28,11 +28,11 @@
 
 import traceback
 from copy import deepcopy
-
-import torch.multiprocessing as mp
 from enum import Enum, auto
 from queue import Empty
 from time import sleep
+
+import torch.multiprocessing as mp
 from tqdm import tqdm
 
 import pyrado

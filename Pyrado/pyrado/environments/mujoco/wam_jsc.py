@@ -26,22 +26,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os.path as osp
+from typing import Optional
+
 import mujoco_py
 import numpy as np
-import os.path as osp
 from init_args_serializer import Serializable
-from typing import Optional
 
 import pyrado
 from pyrado.environments.barrett_wam import (
-    init_qpos_des_7dof,
+    act_space_jsc_4dof,
+    act_space_jsc_7dof,
     init_qpos_des_4dof,
-    wam_pgains_7dof,
+    init_qpos_des_7dof,
+    wam_dgains_4dof,
     wam_dgains_7dof,
     wam_pgains_4dof,
-    wam_dgains_4dof,
-    act_space_jsc_7dof,
-    act_space_jsc_4dof,
+    wam_pgains_7dof,
 )
 from pyrado.environments.mujoco.wam_base import WAMSim
 from pyrado.spaces.base import Space

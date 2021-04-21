@@ -28,11 +28,11 @@
 
 import math
 from typing import Union
+from warnings import warn
 
 import torch as to
 import torch.nn as nn
-from torch.distributions import Normal, MultivariateNormal
-from warnings import warn
+from torch.distributions import MultivariateNormal, Normal
 
 import pyrado
 

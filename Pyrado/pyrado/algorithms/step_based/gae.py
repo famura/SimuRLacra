@@ -26,24 +26,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import sys
+from contextlib import ExitStack
+from typing import Optional, Sequence, Union
+
+import numpy as np
 import torch as to
 import torch.nn as nn
 from tqdm import tqdm
-from typing import Sequence, Union, Optional
-from contextlib import ExitStack
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.utils import num_iter_from_rollouts
 from pyrado.logger.step import LoggerAware
 from pyrado.policies.base import Policy
 from pyrado.policies.recurrent.base import RecurrentPolicy
 from pyrado.sampling.step_sequence import StepSequence, discounted_values
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.algorithms.utils import num_iter_from_rollouts
-from pyrado.utils.math import explained_var
 from pyrado.utils.data_processing import RunningStandardizer, standardize
+from pyrado.utils.math import explained_var
 
 
 class GAE(LoggerAware, nn.Module):

@@ -26,11 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
-import pytest
 from copy import deepcopy
 
+import numpy as np
+import pytest
+
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -44,7 +46,6 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
-from pyrado.domain_randomization.utils import wrap_like_other_env
 
 
 @pytest.mark.wrapper

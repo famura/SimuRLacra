@@ -26,26 +26,27 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os.path as osp
+from typing import Optional
+
 import mujoco_py
 import numpy as np
-import os.path as osp
 from init_args_serializer import Serializable
-from typing import Optional
 
 import pyrado
 from pyrado.environments.barrett_wam import (
+    act_space_bic_4dof,
+    act_space_bic_7dof,
     goal_pos_init_sim_4dof,
     goal_pos_init_sim_7dof,
     init_qpos_des_4dof,
     init_qpos_des_7dof,
-    act_space_bic_4dof,
-    act_space_bic_7dof,
-    wam_q_limits_up_7dof,
-    wam_q_limits_lo_7dof,
-    wam_pgains_7dof,
+    wam_dgains_4dof,
     wam_dgains_7dof,
     wam_pgains_4dof,
-    wam_dgains_4dof,
+    wam_pgains_7dof,
+    wam_q_limits_lo_7dof,
+    wam_q_limits_up_7dof,
 )
 from pyrado.environments.mujoco.wam_base import WAMSim
 from pyrado.spaces.base import Space
@@ -54,11 +55,11 @@ from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.condition_only import ConditionOnlyTask
 from pyrado.tasks.desired_state import DesStateTask
-from pyrado.tasks.final_reward import BestStateFinalRewTask, FinalRewTask, FinalRewMode
+from pyrado.tasks.final_reward import BestStateFinalRewTask, FinalRewMode, FinalRewTask
 from pyrado.tasks.goalless import GoallessTask
 from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.parallel import ParallelTasks
-from pyrado.tasks.reward_functions import ZeroPerStepRewFcn, ExpQuadrErrRewFcn, QuadrErrRewFcn
+from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, QuadrErrRewFcn, ZeroPerStepRewFcn
 from pyrado.tasks.sequential import SequentialTasks
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt

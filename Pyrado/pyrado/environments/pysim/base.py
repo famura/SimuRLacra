@@ -26,17 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from abc import abstractmethod
 from copy import deepcopy
-from init_args_serializer import Serializable
 from typing import Optional
+
+import numpy as np
+from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
-from pyrado.utils.data_types import RenderMode
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
+from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 

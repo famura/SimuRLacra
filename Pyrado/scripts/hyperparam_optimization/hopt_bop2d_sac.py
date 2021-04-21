@@ -30,8 +30,9 @@
 Optimize the hyper-parameters of Soft Actor-Critic for the Ball-on-Plate environment.
 """
 import functools
-import optuna
 import os.path as osp
+
+import optuna
 
 import pyrado
 from pyrado.algorithms.step_based.sac import SAC

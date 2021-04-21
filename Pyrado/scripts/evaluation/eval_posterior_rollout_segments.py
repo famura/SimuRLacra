@@ -33,9 +33,10 @@ Plot a real and the simulated rollout segments for evey initial state, i.e. ever
 Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
 By default (args.iter = -1), the all iterations are evaluated.
 """
-import numpy as np
 import os.path as osp
 import sys
+
+import numpy as np
 from dtw import dtw, rabinerJuangStepPattern
 from matplotlib import pyplot as plt
 from tabulate import tabulate
@@ -50,15 +51,15 @@ from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrapp
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.rollout_based import plot_rollouts_segment_wise
 from pyrado.policies.special.time import PlaybackPolicy
-from pyrado.sampling.rollout import rollout
-from pyrado.utils.argparser import get_argparser
 from pyrado.sampling.parallel_evaluation import eval_domain_params_with_segmentwise_reset
+from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sampler_pool import SamplerPool
-from pyrado.sampling.step_sequence import check_act_equal, StepSequence
+from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces.box import InfBoxSpace
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
+from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import rmse
 
 

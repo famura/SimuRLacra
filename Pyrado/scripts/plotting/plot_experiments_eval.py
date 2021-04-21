@@ -31,12 +31,13 @@ Script to visualize the (real-world) return of a selection of experiments as a b
 """
 import os
 import os.path as osp
+
 import numpy as np
 import torch as to
+from matplotlib import pyplot as plt
 from tabulate import tabulate
 
 import pyrado
-from matplotlib import pyplot as plt
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt

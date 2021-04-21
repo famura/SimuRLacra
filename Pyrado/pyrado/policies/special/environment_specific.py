@@ -27,22 +27,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
-import numpy as np
 import time
-import torch as to
-import torch.nn as nn
 from typing import Union
 
+import numpy as np
+import torch as to
+import torch.nn as nn
+
 import pyrado
-from pyrado.utils.data_types import EnvSpec
-from pyrado.environments.sim_base import SimEnv
+from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.math import clamp_symm
 from pyrado.utils.tensor import insert_tensor_col
 

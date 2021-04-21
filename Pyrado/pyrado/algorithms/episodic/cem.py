@@ -26,13 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
 from typing import Optional
+
+import torch as to
 
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
-from pyrado.exploration.normal_noise import FullNormalNoise, DiagNormalNoise
+from pyrado.exploration.normal_noise import DiagNormalNoise, FullNormalNoise
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy

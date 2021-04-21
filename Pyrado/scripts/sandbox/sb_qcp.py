@@ -30,9 +30,9 @@
 Test predefined energy-based controller to make the Quanser Cart-Pole swing up or balancing task.
 """
 import pyrado
-from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCartPoleStabSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleStabSim, QCartPoleSwingUpSim
 from pyrado.policies.special.environment_specific import QCartPoleSwingUpAndBalanceCtrl
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

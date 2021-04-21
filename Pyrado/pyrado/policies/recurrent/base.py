@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from abc import ABC, abstractmethod
+
 import torch as to
 import torch.nn as nn
-from abc import ABC, abstractmethod
-from torch.jit import ScriptModule, export, trace_module, script
+from torch.jit import ScriptModule, export, script, trace_module
 
 from pyrado.policies.base import Policy
 from pyrado.sampling.step_sequence import StepSequence

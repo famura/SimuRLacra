@@ -27,15 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+from copy import deepcopy
+from typing import Callable, NamedTuple, Optional, Sequence, Union
+
 import numpy as np
 import torch as to
-from copy import deepcopy
 from torch.distributions import Distribution
-from typing import NamedTuple, Union, Sequence, Callable, Optional
 
 import pyrado
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.input_output import print_cbt
 
 

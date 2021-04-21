@@ -26,12 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Optional
+
 import numpy as np
 import torch as to
 import torch.nn as nn
 from torch import optim
-from torch.utils.data import TensorDataset, DataLoader, SubsetRandomSampler
-from typing import Optional
+from torch.utils.data import DataLoader, SubsetRandomSampler, TensorDataset
 
 import pyrado
 from pyrado.algorithms.base import Algorithm

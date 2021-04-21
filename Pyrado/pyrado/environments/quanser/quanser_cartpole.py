@@ -26,11 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import time
 from abc import abstractmethod
-from init_args_serializer import Serializable
 from typing import Optional
+
+import numpy as np
+from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.quanser import max_act_qcp
@@ -39,10 +40,10 @@ from pyrado.policies.special.environment_specific import QCartPoleGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.compound import CompoundSpace
 from pyrado.tasks.base import Task
-from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
-from pyrado.tasks.reward_functions import UnderActuatedSwingUpRewFcn, QuadrErrRewFcn
-from pyrado.utils.input_output import print_cbt, completion_context
+from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
+from pyrado.tasks.reward_functions import QuadrErrRewFcn, UnderActuatedSwingUpRewFcn
+from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class QCartPoleReal(QuanserReal, Serializable):

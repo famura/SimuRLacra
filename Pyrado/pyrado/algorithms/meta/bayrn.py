@@ -31,7 +31,6 @@ import os.path as osp
 from typing import Optional, Union
 
 import numpy as np
-import pyrado
 import torch as to
 from botorch.acquisition import ExpectedImprovement, PosteriorMean, ProbabilityOfImprovement, UpperConfidenceBound
 from botorch.fit import fit_gpytorch_model
@@ -39,6 +38,9 @@ from botorch.models import SingleTaskGP
 from botorch.optim import optimize_acqf
 from gpytorch.constraints import GreaterThan
 from gpytorch.mlls import ExactMarginalLogLikelihood
+from tabulate import tabulate
+
+import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
@@ -56,7 +58,6 @@ from pyrado.utils.data_processing import standardize
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import UnitCubeProjector
 from pyrado.utils.ordering import natural_sort
-from tabulate import tabulate
 
 
 class BayRn(InterruptableAlgorithm):

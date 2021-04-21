@@ -26,19 +26,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import os.path as osp
-import torch.nn as nn
 from abc import ABC, abstractmethod
 from typing import Any, Optional, Union
 
+import joblib
+import torch.nn as nn
+
 import pyrado
-from pyrado.logger.experiment import split_path_custom_common
+from pyrado import set_seed
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
-from pyrado.logger.step import StepLogger, LoggerAware
+from pyrado.logger.experiment import split_path_custom_common
+from pyrado.logger.step import LoggerAware, StepLogger
 from pyrado.policies.base import Policy
-from pyrado import set_seed
 from pyrado.utils import get_class_name
 from pyrado.utils.input_output import print_cbt
 

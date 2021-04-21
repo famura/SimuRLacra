@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from abc import ABC, abstractmethod
 from typing import Optional
+
+import numpy as np
 
 import pyrado
 from pyrado.environments.quanser.quanser_common import QSocket
@@ -36,7 +37,7 @@ from pyrado.environments.real_base import RealEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.utils.data_types import RenderMode
-from pyrado.utils.input_output import print_cbt, completion_context
+from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class QuanserReal(RealEnv, ABC):

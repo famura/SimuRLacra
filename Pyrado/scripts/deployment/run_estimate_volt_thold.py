@@ -33,8 +33,9 @@ Script to determine the voltage offsets on the Quanser Ball-Balancer or Cart-pol
     Make sure that the cylinders are tightly connected to the plate.
     If the state is immediately out of bounds, stop the Simulink model, disconnect and connect again.
 """
-import numpy as np
 import os.path as osp
+
+import numpy as np
 
 import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal

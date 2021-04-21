@@ -26,16 +26,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
 from copy import deepcopy
+
+import pytest
 
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.sim_base import SimEnv
+from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.exploration.stochastic_params import NormalParamNoise
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
-from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 
 
 @pytest.mark.parametrize(

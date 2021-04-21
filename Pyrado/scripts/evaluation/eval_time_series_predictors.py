@@ -29,10 +29,11 @@
 """
 Compare potential based neural networks to classical recurrent networks for time series prediction.
 """
-import numpy as np
 import os.path as osp
-from matplotlib import pyplot as plt
 from warnings import warn
+
+import numpy as np
+from matplotlib import pyplot as plt
 
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.utils.argparser import get_argparser

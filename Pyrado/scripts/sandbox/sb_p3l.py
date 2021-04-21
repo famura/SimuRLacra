@@ -30,18 +30,19 @@
 Script to test the Planar-3-Link environment with different action models
 """
 import math
+
 import numpy as np
+import rcsenv
 import torch as to
 
-import rcsenv
 import pyrado
+from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environments.rcspysim.planar_3_link import (
-    Planar3LinkJointCtrlSim,
     Planar3LinkIKActivationSim,
+    Planar3LinkJointCtrlSim,
     Planar3LinkTASim,
 )
-from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.plotting.rollout_based import plot_potentials
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.policies.special.time import TimePolicy

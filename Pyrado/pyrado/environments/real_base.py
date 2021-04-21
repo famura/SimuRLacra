@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC
+
 from pyrado.environments.base import Env
 
 

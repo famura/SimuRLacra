@@ -32,7 +32,7 @@ Train an agent to solve the Ball-on-Beam environment using Cross-Entropy Method 
 import pyrado
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.environment_specific import QCartPoleSwingUpAndBalanceCtrl
 from pyrado.utils.argparser import get_argparser
 

@@ -26,19 +26,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from abc import abstractmethod
+from typing import Optional
+
 import numpy as np
 import torch as to
-from typing import Optional
 
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
+from pyrado.exploration.stochastic_params import HyperSphereParamNoise, NormalParamNoise
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.utils.input_output import print_cbt
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
-from pyrado.exploration.stochastic_params import HyperSphereParamNoise, NormalParamNoise
-from abc import abstractmethod
+from pyrado.utils.input_output import print_cbt
 
 
 class HC(ParameterExploring):

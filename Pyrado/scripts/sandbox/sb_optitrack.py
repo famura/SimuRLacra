@@ -29,8 +29,9 @@
 """
 Script to test the NatNet client in combination with OptiTrack
 """
-import numpy as np
 import time
+
+import numpy as np
 from scipy.spatial.transform import Rotation
 
 from pyrado.environments.barrett_wam.natnet_client import NatNetClient

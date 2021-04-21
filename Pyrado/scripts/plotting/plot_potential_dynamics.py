@@ -30,10 +30,11 @@
 Script to plot dynamical systems used in Activation Dynamic Networks (ADN)
 """
 import os
-import numpy as np
-import torch as to
-import pandas as pd
 import os.path as osp
+
+import numpy as np
+import pandas as pd
+import torch as to
 from matplotlib import pyplot as plt
 
 import pyrado

@@ -26,23 +26,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import os.path as osp
-from init_args_serializer import Serializable
 from typing import Sequence
 
+import numpy as np
 import rcsenv
+from init_args_serializer import Serializable
+
 from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.masked import MaskedTask
-from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, AbsErrRewFcn
 from pyrado.tasks.parallel import ParallelTasks
 from pyrado.tasks.predefined import (
     create_check_all_boundaries_task,
-    create_task_space_discrepancy_task,
     create_collision_task,
+    create_task_space_discrepancy_task,
 )
+from pyrado.tasks.reward_functions import AbsErrRewFcn, ExpQuadrErrRewFcn
 from pyrado.utils.data_types import EnvSpec
 
 

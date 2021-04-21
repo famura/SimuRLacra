@@ -30,10 +30,11 @@
 Script to test the different ways of continuously blending movement primitives
 """
 import math
+
 import numpy as np
+import rcsenv
 from matplotlib import pyplot as plt
 
-import rcsenv
 from pyrado.environments.rcspysim.mp_blending import MPBlendingSim
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout

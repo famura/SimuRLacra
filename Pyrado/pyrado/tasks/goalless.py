@@ -30,7 +30,7 @@ import numpy as np
 
 import pyrado
 from pyrado.tasks.base import Task
-from pyrado.tasks.reward_functions import StateBasedRewFcn, RewFcn
+from pyrado.tasks.reward_functions import RewFcn, StateBasedRewFcn
 from pyrado.utils.data_types import EnvSpec
 
 

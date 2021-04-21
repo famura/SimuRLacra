@@ -33,8 +33,9 @@ The plot always includes the trajectories from the MuJoCo simulation as baseline
     2) the desired trajectories specified by the policy.
 """
 import os.path as osp
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 import pyrado
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers

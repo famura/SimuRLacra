@@ -30,15 +30,16 @@
 Train a recurrent neural network to predict a time series of data
 """
 import os.path as osp
+
 import pandas as pd
 import torch as to
 import torch.nn as nn
 import torch.optim as optim
-from pyrado.policies.recurrent.neural_fields import NFPolicy
 
 import pyrado
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
+from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser

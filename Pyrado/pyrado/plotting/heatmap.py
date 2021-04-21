@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from math import ceil, floor
+from typing import Any, Optional, Union
+
 import numpy as np
 import pandas as pd
-from math import floor, ceil
 from matplotlib import colors
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from pandas.core.indexes.numeric import NumericIndex
-from typing import Any, Optional
 
 import pyrado
 from pyrado.plotting.utils import draw_sep_cbar
@@ -139,7 +140,8 @@ def draw_heatmap(
     norm: Optional[colors.Normalize] = colors.Normalize(),
     annotate: bool = True,
     annotation_valfmt: Optional[str] = "{x:.0f}",
-    add_sep_colorbar: bool = False,
+    add_cbar: bool = True,
+    separate_cbar: bool = False,
     ax_cb: Optional[plt.Axes] = None,
     colorbar_label: Optional[str] = None,
     colorbar_orientation: Optional[str] = "vertical",
@@ -169,7 +171,9 @@ def draw_heatmap(
     :param norm: colormap normalizer passed to `imshow()`
     :param annotate: select if the heat map should be annotated
     :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False
-    :param add_sep_colorbar: if `True`, add a color bar in a separate figure, else no color bar is plotted    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
+    :param add_cbar: if `True`, add a color bar in the same figure
+    :param separate_cbar: if `True`, the color bar is added in a seperate figure
+    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
     :param colorbar_label: label for the color bar
     :param colorbar_orientation: orientation of the color bar
     :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.
@@ -211,10 +215,12 @@ def draw_heatmap(
         data,
         cmap=cmap,
         norm=norm,
-        aspect=1.0 / ax_hm.get_data_ratio(),
         origin="lower",
         extent=[x.min(), x.max(), y.min(), y.max()],
     )
+    ax_hm.set_aspect(1.0 / ax_hm.get_data_ratio(), adjustable="box")
+    if add_cbar and not separate_cbar:
+        fig_hm.colorbar(img)
 
     # Set axes limits
     ax_hm.set_xlim(x.min(), x.max())
@@ -246,9 +252,8 @@ def draw_heatmap(
         ax_hm.set_ylabel(y_label)
 
     # Add color bar if requested
-    if add_sep_colorbar:
+    if add_cbar and separate_cbar:
         fig_cb = draw_sep_cbar(ax_cb, colorbar_label, colorbar_orientation, fig_size, cmap, norm, num_major_ticks_cb)
         return fig_hm, fig_cb
-
     else:
         return fig_hm, None

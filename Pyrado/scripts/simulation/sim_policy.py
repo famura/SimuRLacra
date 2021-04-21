@@ -35,11 +35,11 @@ import pyrado
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_types import RenderMode
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.data_types import RenderMode
 
 
 if __name__ == "__main__":

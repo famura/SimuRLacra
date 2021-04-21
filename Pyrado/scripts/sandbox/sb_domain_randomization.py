@@ -29,11 +29,11 @@
 import torch as to
 
 from pyrado.domain_randomization.domain_parameter import (
-    DomainParam,
     BernoulliDomainParam,
-    UniformDomainParam,
-    NormalDomainParam,
+    DomainParam,
     MultivariateNormalDomainParam,
+    NormalDomainParam,
+    UniformDomainParam,
 )
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 

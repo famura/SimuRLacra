@@ -26,11 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from warnings import warn
+
 import gym.envs
 import gym.spaces as gs
 import numpy as np
 from init_args_serializer import Serializable
-from warnings import warn
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv

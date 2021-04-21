@@ -30,6 +30,7 @@
 Script to filter and downsample recorded rollouts
 """
 import os
+
 from matplotlib import pyplot as plt
 from scipy import signal
 

@@ -30,17 +30,17 @@
 Testing the simulation-based inference (SBI) toolbox using a very basic example
 """
 import functools
+
 import numpy as np
 import sbi.utils as utils
 import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
-from sbi.inference import simulate_for_sbi, SNPE_C
-from sbi.utils.user_input_checks import prepare_for_sbi
+from sbi.inference import SNPE_C, simulate_for_sbi
 from sbi.utils import posterior_nn
+from sbi.utils.user_input_checks import prepare_for_sbi
 
 import pyrado
-from pyrado.sampling.sbi_embeddings import Embedding, LastStepEmbedding
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.distribution import draw_posterior_distr_2d
@@ -48,6 +48,7 @@ from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.policies.base import Policy
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.sbi_embeddings import Embedding, LastStepEmbedding
 from pyrado.spaces.singular import SingularStateSpace
 
 

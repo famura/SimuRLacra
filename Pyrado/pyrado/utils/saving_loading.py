@@ -26,15 +26,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
-import numpy as np
 import os
 import os.path as osp
-import torch as to
 from typing import TypeVar
+
+import joblib
+import numpy as np
+import torch as to
 
 from pyrado.utils.exceptions import PathErr, TypeErr, ValueErr
 from pyrado.utils.input_output import print_cbt
+
 
 # Repeat definition since we can not import pyrado here
 PathLike = TypeVar("PathLike", str, bytes, os.PathLike)  # PEP 519

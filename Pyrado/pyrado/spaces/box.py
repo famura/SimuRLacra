@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import List, Sequence, Union
+
 import numpy as np
 from tabulate import tabulate
-from typing import List, Sequence, Union
 
 import pyrado
 from pyrado.spaces.base import Space

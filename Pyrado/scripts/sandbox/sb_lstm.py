@@ -30,13 +30,13 @@
 This is a very basic script to test the functionality of Rcs & RcsPySim & Pyrado using a robotic ball-on-plate setup
 using an untrained recurrent policy.
 """
-import torch as to
-
 import rcsenv
+import torch as to
 from matplotlib import pyplot as plt
-from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+
 from pyrado.domain_randomization.utils import print_domain_params
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.policies.recurrent.rnn import LSTMPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode

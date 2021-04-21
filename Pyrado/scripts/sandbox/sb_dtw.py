@@ -32,6 +32,7 @@ Test dynamic time warping implementation from the dtw-python package
 import numpy as np
 from dtw import *
 
+
 if __name__ == "__main__":
     # A noisy sine wave as query
     idx = np.linspace(0, 6.28, num=100)

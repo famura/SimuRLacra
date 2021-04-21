@@ -39,7 +39,7 @@ from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.policies.special.dummy import IdlePolicy
-from pyrado.sampling.rollout import rollout, after_rollout_query
+from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

@@ -31,20 +31,21 @@ Domain parameter identification experiment on the Quanser Cart-Pole environment
 using Neural Posterior Domain Randomization
 """
 import os.path as osp
+
 import torch as to
-from sbi.inference import SNPE_C
 from sbi import utils
+from sbi.inference import SNPE_C
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl, QCartPoleSwingUpAndBalanceCtrl
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
+from pyrado.policies.special.environment_specific import QCartPoleSwingUpAndBalanceCtrl, QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.sbi_embeddings import (
     BayesSimEmbedding,
     DeltaStepsEmbedding,
-    RNNEmbedding,
     DynamicTimeWarpingEmbedding,
+    RNNEmbedding,
 )
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser

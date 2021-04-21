@@ -26,19 +26,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Optional
+
 import numpy as np
 import torch as to
 import torch.nn as nn
 from torch import optim
-from typing import Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
-from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.policies.recurrent.rnn import RNNPolicyBase
+from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.input_output import print_cbt
 
 

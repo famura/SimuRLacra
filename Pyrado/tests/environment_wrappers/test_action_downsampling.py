@@ -28,11 +28,11 @@
 
 import numpy as np
 import pytest
-
-from pyrado.spaces.box import BoxSpace
-from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
-from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from tests.environment_wrappers.mock_env import MockEnv
+
+from pyrado.environment_wrappers.action_delay import ActDelayWrapper
+from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
+from pyrado.spaces.box import BoxSpace
 
 
 @pytest.mark.wrapper

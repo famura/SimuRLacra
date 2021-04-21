@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 from pyrado import VERSION
 

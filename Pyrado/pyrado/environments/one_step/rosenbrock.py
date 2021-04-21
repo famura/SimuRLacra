@@ -161,6 +161,7 @@ class RosenSim(SimEnv, Serializable):
         # Render using pyplot
         if mode.video:
             from matplotlib import pyplot as plt
+
             from pyrado.plotting.surface import draw_surface
 
             plt.ion()

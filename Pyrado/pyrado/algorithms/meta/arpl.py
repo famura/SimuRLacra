@@ -30,19 +30,20 @@ import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.environment_wrappers.adversarial import (
     AdversarialDynamicsWrapper,
-    AdversarialStateWrapper,
     AdversarialObservationWrapper,
+    AdversarialStateWrapper,
 )
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.sequences import *
 
 
-class ARPL(Algorithm):
+class ARPL(Algorithm, ExposedSampler):
     """
     Adversarially Robust Policy Learning (ARPL)
 
@@ -117,7 +118,7 @@ class ARPL(Algorithm):
             env = AdversarialObservationWrapper(env, self.policy, obs_eps, obs_phi)
 
         self.num_rollouts = num_rollouts
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             env,
             expl_strat,
             num_workers=num_workers,

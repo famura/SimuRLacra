@@ -29,9 +29,12 @@
 from typing import Optional, Sequence
 
 import numpy as np
-import pyrado
 import torch as to
 from init_args_serializer import Serializable
+from torch import nn as nn
+from tqdm import tqdm
+
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.domain_randomization.domain_parameter import DomainParam
@@ -46,8 +49,6 @@ from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_types import EnvSpec
-from torch import nn as nn
-from tqdm import tqdm
 
 
 class ADR(Algorithm):

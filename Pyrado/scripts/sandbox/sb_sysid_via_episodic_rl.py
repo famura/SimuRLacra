@@ -30,7 +30,6 @@
 Script to test the algorithm in a sim-to-sim toy task
 """
 import torch as to
-from pyrado.utils.argparser import get_argparser
 
 import pyrado
 from pyrado.algorithms.episodic.cem import CEM
@@ -39,15 +38,16 @@ from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
-from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
 from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 
 

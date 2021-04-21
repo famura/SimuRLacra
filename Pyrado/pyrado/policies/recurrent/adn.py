@@ -26,9 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Callable, Sequence
+
 import torch as to
 import torch.nn as nn
-from typing import Callable, Sequence
 
 import pyrado
 from pyrado.policies.base import Policy

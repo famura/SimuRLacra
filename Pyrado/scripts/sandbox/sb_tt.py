@@ -29,11 +29,12 @@
 """
 Basic script to test the bi-manual activation based task using a hard-coded time-based policy
 """
-import numpy as np
 import os.path as osp
-from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
+import numpy as np
 import rcsenv
+
+from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 from pyrado.plotting.rollout_based import plot_rewards
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout

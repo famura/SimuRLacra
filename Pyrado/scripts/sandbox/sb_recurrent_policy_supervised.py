@@ -28,15 +28,15 @@
 
 import numpy as np
 import torch as to
-import torch.optim as optim
 import torch.nn as nn
-
+import torch.optim as optim
 from matplotlib import pyplot as plt
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.policies.special.dummy import IdlePolicy
-from pyrado.policies.recurrent.rnn import LSTMPolicy
-from pyrado.sampling.rollout import rollout
+
 from pyrado import set_seed
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
+from pyrado.policies.recurrent.rnn import LSTMPolicy
+from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 
 

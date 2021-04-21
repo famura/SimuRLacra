@@ -29,7 +29,7 @@
 import pytest
 import torch as to
 
-from pyrado.utils.tensor import stack_tensor_list, stack_tensor_dict_list, insert_tensor_col
+from pyrado.utils.tensor import insert_tensor_col, stack_tensor_dict_list, stack_tensor_list
 
 
 def test_stack_tensors():

@@ -31,12 +31,13 @@ Script to generate time series data sets.
 """
 import argparse
 import functools
-import numpy as np
 import os.path as osp
 from typing import Callable
 
-import pyrado
+import numpy as np
 from matplotlib import pyplot as plt
+
+import pyrado
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.policies.special.time import TimePolicy

@@ -26,15 +26,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import List, Optional, Tuple
+
 import numpy as np
+from init_args_serializer.serializable import Serializable
 from scipy import signal
-from typing import Optional, Tuple, List
 
 import pyrado
 from pyrado.environment_wrappers.base import EnvWrapperObs
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
-from init_args_serializer.serializable import Serializable
 
 
 class ObsVelFiltWrapper(EnvWrapperObs, Serializable):

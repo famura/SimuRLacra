@@ -30,7 +30,7 @@ import torch as to
 from torch import nn as nn
 
 import pyrado
-from pyrado.policies.features import RBFFeat, FeatureStack
+from pyrado.policies.features import FeatureStack, RBFFeat
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.data_types import EnvSpec
 

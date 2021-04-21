@@ -26,27 +26,28 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
 import os.path as osp
+
+import pytest
+from tests.conftest import m_needs_bullet, m_needs_libtorch, m_needs_mujoco, m_needs_rcs
+from tests.environment_wrappers.mock_env import MockEnv
 from torch import nn as nn
 
 from pyrado.algorithms.regression.timeseries_prediction import TSPred
 from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
+from pyrado.policies.features import *
+from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.recurrent.base import default_pack_hidden, default_unpack_hidden
+from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
+from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.policies.special.time import PlaybackPolicy
-from pyrado.policies.base import Policy
-from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
-from pyrado.policies.recurrent.base import default_unpack_hidden, default_pack_hidden
-from pyrado.policies.feed_forward.linear import LinearPolicy
-from pyrado.policies.features import *
-from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.box import InfBoxSpace
-from pyrado.utils.data_types import RenderMode, EnvSpec
+from pyrado.utils.data_types import EnvSpec, RenderMode
 from pyrado.utils.nn_layers import IndiNonlinLayer
-from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
-from tests.environment_wrappers.mock_env import MockEnv
 
 
 @pytest.mark.features

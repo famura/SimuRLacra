@@ -1,0 +1,25 @@
+name: Linting
+
+on: [push, pull_request]
+
+jobs:
+  black:
+    name: Checking Formatting with Black
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Run black
+        uses: psf/black@stable
+        with:
+          args: "--check Pyrado setup_deps.py RcsPySim/setup.py"
+  isort:
+    name: Checking Import Order with isort
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install dependencies
+        run: python -m pip install --upgrade isort
+      - name: Run isort
+        run: "isort --check --diff Pyrado setup_deps.py RcsPySim/setup.py"

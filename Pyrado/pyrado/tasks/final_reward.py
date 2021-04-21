@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import NamedTuple
+
 import numpy as np
 from colorama import Style
 from tabulate import tabulate
-from typing import NamedTuple
 
 import pyrado
 from pyrado.tasks.base import Task, TaskWrapper

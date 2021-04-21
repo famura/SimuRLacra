@@ -26,16 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Any
+
 import numpy as np
 import torch.nn as nn
-from matplotlib import ticker, colorbar
+from matplotlib import colorbar
 from matplotlib import pyplot as plt
-from typing import Any
+from matplotlib import ticker
 
 import pyrado
 from pyrado.plotting.utils import AccNorm
-from pyrado.policies.recurrent.adn import ADNPolicy
 from pyrado.policies.base import Policy
+from pyrado.policies.recurrent.adn import ADNPolicy
 from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt

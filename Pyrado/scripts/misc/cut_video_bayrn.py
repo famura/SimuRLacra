@@ -30,6 +30,7 @@
 Script to cut a video from the experiments footage
 """
 import os.path as osp
+
 from moviepy.editor import *
 
 import pyrado

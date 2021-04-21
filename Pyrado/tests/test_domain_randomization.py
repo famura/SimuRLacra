@@ -26,20 +26,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pytest
-import torch as to
-import numpy as np
 from copy import deepcopy
 
-from pyrado.environments.sim_base import SimEnv
+import numpy as np
+import pytest
+import torch as to
+from tests.conftest import m_needs_bullet, m_needs_mujoco
+
 from pyrado.domain_randomization.domain_parameter import (
-    NormalDomainParam,
-    MultivariateNormalDomainParam,
     BernoulliDomainParam,
+    MultivariateNormalDomainParam,
+    NormalDomainParam,
     UniformDomainParam,
 )
 from pyrado.domain_randomization.utils import param_grid
-from tests.conftest import m_needs_bullet, m_needs_mujoco
+from pyrado.environments.sim_base import SimEnv
 
 
 @pytest.mark.parametrize(

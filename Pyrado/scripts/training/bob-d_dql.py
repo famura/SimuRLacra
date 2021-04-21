@@ -37,8 +37,8 @@ import torch as to
 import pyrado
 from pyrado.algorithms.step_based.dql import DQL
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
-from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
-from pyrado.policies.feed_forward.fnn import DiscreteActQValPolicy, FNN
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
+from pyrado.policies.feed_forward.fnn import FNN, DiscreteActQValPolicy
 from pyrado.utils.argparser import get_argparser
 
 

@@ -29,8 +29,9 @@
 """
 Script to plot the results from the 1D domain parameter grid evaluations of multiple policies
 """
-import numpy as np
 import os.path as osp
+
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 

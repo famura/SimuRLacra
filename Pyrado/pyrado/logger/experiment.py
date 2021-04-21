@@ -27,22 +27,23 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import itertools
-import numpy as np
 import os
 import os.path as osp
-import torch as to
-import torch.nn as nn
-import yaml
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Sequence, Union, Iterable, List, Callable, Optional
+from typing import Callable, Iterable, List, Optional, Sequence, Union
+
+import numpy as np
+import torch as to
+import torch.nn as nn
+import yaml
 
 import pyrado
 from pyrado.logger import set_log_prefix_dir
 from pyrado.utils import get_class_name
 from pyrado.utils.data_types import dict_path_access
-from pyrado.utils.input_output import select_query, print_cbt
+from pyrado.utils.input_output import print_cbt, select_query
 
 
 class Experiment:
@@ -291,7 +292,10 @@ def create_experiment_formatter(
                 value = dict_path_access(hyper_parameters, param, default="None")
                 if not first:
                     result += ","
-                result += f" {param}={value}"
+                if param == "env.dt":
+                    result += f" env.dt=1/{1/value}"
+                else:
+                    result += f" {param}={value}"
                 first = False
             result += " }"
         if show_extra_info and exp.extra_info is not None:

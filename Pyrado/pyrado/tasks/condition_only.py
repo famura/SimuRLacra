@@ -26,13 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 from typing import Callable
 
+import numpy as np
+
 import pyrado
-from pyrado.utils.data_types import EnvSpec
 from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import RewFcn, ZeroPerStepRewFcn
+from pyrado.utils.data_types import EnvSpec
 
 
 class ConditionOnlyTask(Task):

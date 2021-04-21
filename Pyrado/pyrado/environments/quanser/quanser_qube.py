@@ -26,20 +26,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Optional
+
 import numpy as np
 import torch as to
 from init_args_serializer import Serializable
-from typing import Optional
 
 import pyrado
 from pyrado.environments.quanser import max_act_qq
 from pyrado.environments.quanser.base import QuanserReal
-from pyrado.policies.special.environment_specific import QQubePDCtrl, QQubeGoToLimCtrl
+from pyrado.policies.special.environment_specific import QQubeGoToLimCtrl, QQubePDCtrl
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
-from pyrado.utils.input_output import print_cbt, completion_context
+from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class QQubeSwingUpReal(QuanserReal, Serializable):

@@ -28,10 +28,10 @@
 
 import numpy as np
 import pytest
-
-from pyrado.spaces.box import BoxSpace
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from tests.environment_wrappers.mock_env import MockEnv
+
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.spaces.box import BoxSpace
 
 
 @pytest.mark.wrapper
