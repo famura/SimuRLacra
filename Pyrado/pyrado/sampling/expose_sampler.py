@@ -26,34 +26,22 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os
+from abc import ABC
+from typing import List
 
-import pyrado
-from pyrado.utils.input_output import print_cbt
+from pyrado.sampling.sampler import SamplerBase
+from pyrado.sampling.step_sequence import StepSequence
 
-try:
-    import mujoco_py
-except (ImportError, Exception):
-    # The ImportError is raised if mujoco-py is simply not installed
-    # The Exception catches the case that you have everything installed properly but your IDE does not set the
-    # LD_LIBRARY_PATH correctly (happens for PyCharm & CLion). To check this, try to run your script from the terminal.
-    ld_library_path = os.environ.get("LD_LIBRARY_PATH")
-    ld_preload = os.environ.get("LD_PRELOAD")
-    print_cbt(
-        "You are trying to use are MuJoCo-based environment, but the required mujoco_py module can not be imported.\n"
-        "Try adding\n"
-        "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/.mujoco/mujoco200/bin\n"
-        "export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so\n"
-        "to your shell's rc-file.\n"
-        "The current values of the environment variables are:\n"
-        f"LD_LIBRARY_PATH={ld_library_path}\n"
-        f"LD_PRELOAD={ld_preload}"
-        "If you are using PyCharm or CLion, also add the environment variables above to your run configurations. "
-        "Note that the IDE will not resolve $USER for some reason, so enter the user name directly, "
-        "or run it from your terminal.\n\n"
-        "Here comes the mujoco-py error message:\n\n",
-        "r",
-    )
-    pyrado.mujoco_loaded = False
-else:
-    pyrado.mujoco_loaded = True
+
+class ExposedSampler(ABC):
+    """ A mixin class to expose an algorithm's sampler """
+
+    @property
+    def sampler(self) -> SamplerBase:
+        """ Get the sampler. """
+        return self._sampler
+
+    @sampler.setter
+    def sampler(self, new_sampler: SamplerBase):
+        """ Set the sampler. """
+        self._sampler = new_sampler

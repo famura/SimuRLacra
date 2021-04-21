@@ -291,7 +291,10 @@ def create_experiment_formatter(
                 value = dict_path_access(hyper_parameters, param, default="None")
                 if not first:
                     result += ","
-                result += f" {param}={value}"
+                if param == "env.dt":
+                    result += f" env.dt=1/{1/value}"
+                else:
+                    result += f" {param}={value}"
                 first = False
             result += " }"
         if show_extra_info and exp.extra_info is not None:

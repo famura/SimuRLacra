@@ -31,6 +31,7 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.mixins import ExposedSampler
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.environment_wrappers.utils import inner_env
@@ -43,7 +44,7 @@ from pyrado.tasks.reward_functions import QuadrErrRewFcn
 from pyrado.utils.tensor import insert_tensor_col
 
 
-class LQR(Algorithm):
+class LQR(Algorithm, ExposedSampler):
     """ Linear Quadratic Regulator created using the control module """
 
     name: str = "lqr"
@@ -84,7 +85,7 @@ class LQR(Algorithm):
         self._env = env
         self.ball_z_dim_mismatch = ball_z_dim_mismatch
 
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             env, self._policy, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.eigvals = np.array([pyrado.inf])  # initialize with sth positive

@@ -33,6 +33,7 @@ from typing import Sequence
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
@@ -41,7 +42,7 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.input_output import print_cbt
 
 
-class ActorCritic(Algorithm, ABC):
+class ActorCritic(Algorithm, ExposedSampler, ABC):
     """ Base class of all actor critic algorithms """
 
     def __init__(
@@ -71,7 +72,7 @@ class ActorCritic(Algorithm, ABC):
 
         # Initialize
         self._expl_strat = None
-        self.sampler = None
+        self._sampler = None
         self._lr_scheduler = None
         self._lr_scheduler_hparam = None
 
