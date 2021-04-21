@@ -19,6 +19,7 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 [![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)](https://famura.github.io/SimuRLacra/)
 [![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra)
 [![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
 __Pros__  
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
@@ -71,7 +72,7 @@ Create an anaconda environment (without PyTorch)
 conda create -y -n pyrado python=3.7
 conda activate pyrado
 conda install -y blas cmake lapack libgcc-ng mkl mkl-include patchelf pip pycairo setuptools -c conda-forge
-pip install argparse black box2d colorama coverage cython dtw-python glfw gym joblib prettyprinter matplotlib numpy optuna panda3d pandas pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm git+https://github.com/Xfel/init-args-serializer.git@master
+pip install argparse black box2d colorama coverage cython dtw-python glfw gym isort joblib matplotlib numpy optuna panda3d pandas prettyprinter pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm git+https://github.com/Xfel/init-args-serializer.git@master
 ```
 
 
@@ -159,18 +160,19 @@ python setup_deps.py robcom -j8
 ```
 After that you still need to install the robot-specific package in SL.
 
-### Python Code Formatting with Black (and pre-commit)
-We are following the Black code style for all Python files. The black package is already integrated to the `pyrado` anaconda environment, and configured by the `pyproject.toml` file.
+### Python Code Formatting with Black and isort (and pre-commit)
+We are following the Black code style and isort ordering for all Python files. The black package is already integrated to the `pyrado` anaconda environment, and configured by the `pyproject.toml` file.
 You can format your local code by running
 ```
-cd TOP_LEVEL_DIR_FOR_REFORMAT
-black . --check  # remove --check to actually do the changes
+cd PATH_TO/SimuRLacra
+isort Pyrado --check --diff  # remove --check to actually do the changes
+black Pyrado --check  # remove --check to actually do the changes
 ```
 Moreover, you can install the pre-commit framework via
 ```
 python setup_deps.py pre_commit
 ```
-which will reformat your code before every commit. Eventually the Black Github action will check with the code complies with the Black standard.
+which will reformat your code before every commit. The conformity with Black and isort is checked using a GitHub action.
 
 <!--
 ### Docker Container (experimental)
