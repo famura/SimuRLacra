@@ -387,12 +387,10 @@ class SPRL(Algorithm):
 
         rollouts = self._subroutine.sampler.sample()
         contexts = to.tensor(
-            np.array(
-                [
-                    [rollout.rollout_info["domain_param"][param.name] for rollout in rollouts]
-                    for param in self._spl_parameters
-                ]
-            ),
+            [
+                [to.from_numpy(rollout.rollout_info["domain_param"][param.name]) for rollout in rollouts]
+                for param in self._spl_parameters
+            ],
             requires_grad=True,
         ).T
 
