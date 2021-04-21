@@ -282,7 +282,8 @@ class SPRL(Algorithm):
         Constructor
 
         :param env: environment wrapped in a DomainRandWrapper
-        :param subroutine: algorithm which performs the policy/value-function optimization. Must also inherit from `ExposedSampler`
+        :param subroutine: algorithm which performs the policy/value-function optimization, which
+                           must inherit from `ExposedSampler`
         :param kl_constraints_ub: upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
         :param performance_lower_bound: lower bound for the performance SPRL tries to stay above during distribution updates
@@ -290,8 +291,8 @@ class SPRL(Algorithm):
         :param kl_threshold: threshold for the KL-divergence until which std_lower_bound is enforced
         :param optimize_mean: whether the mean should be changed or considered fixed
         :param optimize_cov: whether the (co-)variance should be changed or considered fixed
-        :param max_subrtn_retries: how often a failed (median performance < 30 % of performance_lower_bound) training attempt of
-                                   the subroutine should be reattempted
+        :param max_subrtn_retries: how often a failed (median performance < 30 % of performance_lower_bound)
+                                   training attempt of the subroutine should be reattempted
         """
         if not isinstance(subroutine, Algorithm):
             raise pyrado.TypeErr(
@@ -311,7 +312,8 @@ class SPRL(Algorithm):
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
-        # Using a Union here is not really correct, but it makes PyCharm's type hinting work suggest properties from both Algorithm and ExposedSampler.
+        # Using a Union here is not really correct, but it makes PyCharm's type hinting work
+        # suggest properties from both Algorithm and ExposedSampler.
         self._subroutine: Union[Algorithm, ExposedSampler] = subroutine
         self._subroutine.save_name = self._subroutine.name
 
@@ -349,8 +351,9 @@ class SPRL(Algorithm):
         super().train(snapshot_mode, seed, meta_info)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        """Perform a step of SPRL. This includes training the subroutine and updating the context distribution accordingly.
-        For a description of the parameters see :meth:`pyrado.algorithms.base.Algorithm.step`
+        """
+        Perform a step of SPRL. This includes training the subroutine and updating the context distribution accordingly.
+        For a description of the parameters see `pyrado.algorithms.base.Algorithm.step`.
         """
         self.save_snapshot()
 
