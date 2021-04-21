@@ -113,6 +113,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.sbi_base">sbi_base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.simopt">simopt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.spota">spota</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.sprl">sprl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.udr">udr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta">Module contents</a></li>
 </ul>
@@ -1337,6 +1338,195 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dt id="pyrado.algorithms.meta.spota.SPOTA.subroutine_cand">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subroutine_cand</span></code><a class="headerlink" href="#pyrado.algorithms.meta.spota.SPOTA.subroutine_cand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the candidate subroutine.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.meta.sprl">
+<span id="sprl"></span><h2>sprl<a class="headerlink" href="#module-pyrado.algorithms.meta.sprl" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">MultivariateNormalWrapper</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cov_chol_flat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#MultivariateNormalWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A wrapper for PyTorch’s multivariate normal distribution with diagonal covariance.
+It is used to get a SciPy optimizer-ready version of the parameters of a distribution,
+i.e. a vector that can be used as the target variable.</p>
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">cov</span></code><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the covariance matrix, shape <cite>(k, k)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov_chol_flat">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">cov_chol_flat</span></code><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov_chol_flat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the standard deviations, i.e. the diagonal entries of the Cholesky decomposition of the covariance matrix,
+shape <cite>(k,)</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.dim">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the size (dimensionality) of the random variable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.from_stacked">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_stacked</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stacked</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper" title="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper"><span class="pre">pyrado.algorithms.meta.sprl.MultivariateNormalWrapper</span></a><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#MultivariateNormalWrapper.from_stacked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.from_stacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of this class from the given stacked numpy array as generated e.g. by
+<cite>MultivariateNormalWrapper.get_stacked(self)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim</strong> – dimensionality <cite>k</cite> of the random variable</p></li>
+<li><p><strong>stacked</strong> – array containing the mean and standard deviations of shape <cite>(2 * k,)</cite>, where the first <cite>k</cite>
+entries are the mean and the last <cite>k</cite> entries are the standard deviations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a <cite>MultivariateNormalWrapper</cite> with the given mean/cov.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.get_stacked">
+<code class="sig-name descname"><span class="pre">get_stacked</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#MultivariateNormalWrapper.get_stacked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.get_stacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the numpy representations of the mean and standard deviations stacked on top of each other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>stacked mean and standard deviations; shape <cite>(k,)</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.mean">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">mean</span></code><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the mean.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.parameters">
+<code class="sig-name descname"><span class="pre">parameters</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#MultivariateNormalWrapper.parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the parameters (mean and standard deviations) of this distribution.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ParameterAgnosticMultivariateNormalWrapper</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cov_chol_flat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_is_parameter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cov_is_parameter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#ParameterAgnosticMultivariateNormalWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper" title="pyrado.algorithms.meta.sprl.MultivariateNormalWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.meta.sprl.MultivariateNormalWrapper</span></code></a></p>
+<p>Version of the <cite>MultivariateNormalWrapper</cite> that is able to exclude either the mean of the covariance from the
+parameters and the stacking. This can be readily used for optimizing the mean or covariance while keeping the
+other fixed.</p>
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.from_stacked">
+<code class="sig-name descname"><span class="pre">from_stacked</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stacked</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper" title="pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper"><span class="pre">pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper</span></a><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#ParameterAgnosticMultivariateNormalWrapper.from_stacked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.from_stacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds a new <cite>ParameterAgnosticMultivariateNormalWrapper</cite> from the given stacked values. In contrast to
+<cite>MultivariateNormalWrapper.from_stacked(dim, stacked)</cite>, this does not require a dimensionality as it is an
+instance rather than a static method. Also, the stacked representations has to either contain the mean or the
+standard deviations or both, according the the values originally passed to the constructor. If one of them is
+not treated as a parameter, the current values is copied instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stacked</strong> – the stacked representation of the parameters according to the documentation above; can have
+either shape <cite>(0,)</cite>, <cite>(k,)</cite>, or <cite>(2 * k)</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a <cite>ParameterAgnosticMultivariateNormalWrapper</cite> with the new values for the parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.get_stacked">
+<code class="sig-name descname"><span class="pre">get_stacked</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_mean_cov_indices</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#ParameterAgnosticMultivariateNormalWrapper.get_stacked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.get_stacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <cite>MultivariateNormalWrapper.get_stacked(self)</cite>, returns a numpy array with the mean and standard deviations
+stacked on top of each other if the respective value is a parameter. Additionally, if <cite>return_mean_cov_indices</cite>
+is <cite>True</cite>, also the indices of the mean/cov values are returned which can be used for addressing them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>return_mean_cov_indices</strong> – if <cite>True</cite>, additionally to just the parameters also the indices are returned</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if <cite>return_mean_cov_indices</cite> is <cite>True</cite>, a tuple <cite>(stacked, mean_indices, cov_indices)</cite>, where the
+latter two might be <cite>None</cite> if the respective value is not a parameter; if <cite>return_mean_cov_indices</cite>
+is <cite>False</cite>, just the stacked values; the stacked values can have shape <cite>(0,)</cite>, <cite>(k,)</cite>, or <cite>(2 * k,)</cite>,
+depending on if none, only mean/cov, or both are parameters, respectively</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.parameters">
+<code class="sig-name descname"><span class="pre">parameters</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#ParameterAgnosticMultivariateNormalWrapper.parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.ParameterAgnosticMultivariateNormalWrapper.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of parameters according to the values passed to the constructor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.algorithms.meta.sprl.SPRL">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">SPRL</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper"><span class="pre">pyrado.environment_wrappers.domain_randomization.DomainRandWrapper</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subroutine</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><span class="pre">pyrado.algorithms.base.Algorithm</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kl_constraints_ub</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performance_lower_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_lower_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kl_threshold</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_cov</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_subrtn_retries</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#SPRL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<p>Self-Paced Reinforcement Leaner (SPRL)</p>
+<p>This algorithm wraps another algorithm. The main purpose is to apply self-paced RL [1].</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] P. Klink, H. Abdulsamad, B. Belousov, C. D’Eramo, J. Peters, and J. Pajarinen,
+“A Probabilistic Interpretation of Self-Paced Learning with Applications to Reinforcement Learning”, arXiv, 2021</p>
+</div>
+<dl class="py attribute">
+<dt id="pyrado.algorithms.meta.sprl.SPRL.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'sprl'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.SPRL.reset">
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#SPRL.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.SPRL.sample_count">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sample_count</span></code><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL.sample_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the total number of samples, i.e. steps of a rollout, used for training so far.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.SPRL.save_snapshot">
+<code class="sig-name descname"><span class="pre">save_snapshot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#SPRL.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a <cite>dict</cite> of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.SPRL.step">
+<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/sprl.html#SPRL.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a step of SPRL. This includes training the subroutine and updating the context distribution accordingly.
+For a description of the parameters see <cite>pyrado.algorithms.base.Algorithm.step</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.sprl.SPRL.sub_algorithm">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sub_algorithm</span></code><a class="headerlink" href="#pyrado.algorithms.meta.sprl.SPRL.sub_algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the policy optimization subroutine.</p>
 </dd></dl>
 
 </dd></dl>

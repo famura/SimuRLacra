@@ -226,15 +226,15 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">torch.distributions.uniform</span> <span class="kn">import</span> <span class="n">Uniform</span>
-<span class="kn">from</span> <span class="nn">torch.distributions.normal</span> <span class="kn">import</span> <span class="n">Normal</span>
-<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
-<span class="kn">from</span> <span class="nn">torch.distributions.bernoulli</span> <span class="kn">import</span> <span class="n">Bernoulli</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.bernoulli</span> <span class="kn">import</span> <span class="n">Bernoulli</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.normal</span> <span class="kn">import</span> <span class="n">Normal</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.uniform</span> <span class="kn">import</span> <span class="n">Uniform</span>
 
 
 <div class="viewcode-block" id="DomainParam"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam">[docs]</a><span class="k">class</span> <span class="nc">DomainParam</span><span class="p">:</span>
@@ -280,7 +280,7 @@
         <span class="sd">&quot;&quot;&quot; Get union of all hyper-parameters of all domain parameter distributions. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;clip_lo&quot;</span><span class="p">,</span> <span class="s2">&quot;clip_up&quot;</span><span class="p">,</span> <span class="s2">&quot;roundint&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="DomainParam.adapt"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+<div class="viewcode-block" id="DomainParam.adapt"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update this domain parameter.</span>
 
@@ -508,6 +508,109 @@
 
         <span class="c1"># Convert the large tensor into a list of small tensors</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_tensor</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SelfPacedDomainParam"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam">[docs]</a><span class="k">class</span> <span class="nc">SelfPacedDomainParam</span><span class="p">(</span><span class="n">DomainParam</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target_mean</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">target_cov_chol_flat</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">init_mean</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">init_cov_chol_flat</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param name: name of the parameter</span>
+<span class="sd">        :param target_mean: target means of the contextual distribution</span>
+<span class="sd">        :target_cov_chol_flat: target standard deviations of the contextual distribution; equivalent to the diagonal entries of</span>
+<span class="sd">                               the Cholesky distribution of a diagonal covariance matrix</span>
+<span class="sd">        :init_mean: initial mean of the contextual distribution</span>
+<span class="sd">        :init_cov_chol_flat: initial standard deviations of the contextual distribution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">target_mean</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">init_mean</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Target and init mean should have same shape!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">target_cov_chol_flat</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">init_cov_chol_flat</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Target and init standard deviations should have same shape!&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_mean</span> <span class="o">=</span> <span class="n">target_mean</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_cov_chol_flat</span> <span class="o">=</span> <span class="n">target_cov_chol_flat</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_mean</span> <span class="o">=</span> <span class="n">init_mean</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_cov_chol_flat</span> <span class="o">=</span> <span class="n">init_cov_chol_flat</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">target_mean</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_distr</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cov</span><span class="p">,</span> <span class="n">validate_args</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context_distr</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_cov</span><span class="p">,</span> <span class="n">validate_args</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SelfPacedDomainParam.get_field_names"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.get_field_names">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_field_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Get union of all hyper-parameters of all domain parameter distributions. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;target_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;target_cov_chol_flat&quot;</span><span class="p">,</span> <span class="s2">&quot;context_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;context_cov_chol_flat&quot;</span><span class="p">]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">target_distr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultivariateNormal</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the target distribution. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_distr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">context_distr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultivariateNormal</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the current contextual distribution. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_distr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">target_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the target covariance matrix. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cov_chol_flat</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">context_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the current covariance matrix. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_cov_chol_flat</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SelfPacedDomainParam.adapt"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update this domain parameter.</span>
+
+<span class="sd">        :param domain_distr_param: distribution parameter to update, e.g. mean or std</span>
+<span class="sd">        :param domain_distr_param_value: new value of the distribution parameter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Set the attributes</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">domain_distr_param</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">)</span>
+
+        <span class="c1"># Re-create the distributions, otherwise the changes will have no effect</span>
+        <span class="k">if</span> <span class="n">domain_distr_param</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;target_cov_chol_flat&quot;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_target_distr</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_cov</span><span class="p">,</span> <span class="n">validate_args</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">print_cbt</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Inputs that lead to the ValueError from PyTorch Distributions:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;target_distribution; domain_distr_param = </span><span class="si">{</span><span class="n">domain_distr_param</span><span class="si">}</span><span class="se">\n</span><span class="s2">loc = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_mean</span><span class="si">}</span><span class="se">\n</span><span class="s2">cov = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cov</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">err</span>
+        <span class="k">if</span> <span class="n">domain_distr_param</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;context_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;context_cov_chol_flat&quot;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_context_distr</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_cov</span><span class="p">,</span> <span class="n">validate_args</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">print_cbt</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Inputs that lead to the ValueError from PyTorch Distributions:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;init_distribution; domain_distr_param = </span><span class="si">{</span><span class="n">domain_distr_param</span><span class="si">}</span><span class="se">\n</span><span class="s2">loc = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">context_mean</span><span class="si">}</span><span class="se">\n</span><span class="s2">cov = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">context_cov</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">err</span></div>
+
+<div class="viewcode-block" id="SelfPacedDomainParam.sample"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Samples `num_samples` samples of the current context distribution. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">num_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given_name</span><span class="o">=</span><span class="s2">&quot;num_samples&quot;</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_distr</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span></div></div>
 </pre></div>
 
            </div>

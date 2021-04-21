@@ -235,7 +235,7 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">ticker</span>
 <span class="kn">from</span> <span class="nn">pandas.core.indexes.numeric</span> <span class="kn">import</span> <span class="n">NumericIndex</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.plotting.utils</span> <span class="kn">import</span> <span class="n">draw_sep_cbar</span>
@@ -341,7 +341,8 @@
     <span class="n">norm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">]</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(),</span>
     <span class="n">annotate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">annotation_valfmt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{x:.0f}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="n">add_sep_colorbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">add_cbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">separate_cbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">ax_cb</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">colorbar_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">colorbar_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
@@ -371,7 +372,9 @@
 <span class="sd">    :param norm: colormap normalizer passed to `imshow()`</span>
 <span class="sd">    :param annotate: select if the heat map should be annotated</span>
 <span class="sd">    :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False</span>
-<span class="sd">    :param add_sep_colorbar: if `True`, add a color bar in a separate figure, else no color bar is plotted    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created</span>
+<span class="sd">    :param add_cbar: if `True`, add a color bar in the same figure</span>
+<span class="sd">    :param separate_cbar: if `True`, the color bar is added in a seperate figure</span>
+<span class="sd">    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created</span>
 <span class="sd">    :param colorbar_label: label for the color bar</span>
 <span class="sd">    :param colorbar_orientation: orientation of the color bar</span>
 <span class="sd">    :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.</span>
@@ -413,10 +416,12 @@
         <span class="n">data</span><span class="p">,</span>
         <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
         <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
-        <span class="n">aspect</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">ax_hm</span><span class="o">.</span><span class="n">get_data_ratio</span><span class="p">(),</span>
         <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
         <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()],</span>
     <span class="p">)</span>
+    <span class="n">ax_hm</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">ax_hm</span><span class="o">.</span><span class="n">get_data_ratio</span><span class="p">(),</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">add_cbar</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">separate_cbar</span><span class="p">:</span>
+        <span class="n">fig_hm</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
     <span class="c1"># Set axes limits</span>
     <span class="n">ax_hm</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
@@ -448,10 +453,9 @@
         <span class="n">ax_hm</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">y_label</span><span class="p">)</span>
 
     <span class="c1"># Add color bar if requested</span>
-    <span class="k">if</span> <span class="n">add_sep_colorbar</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">add_cbar</span> <span class="ow">and</span> <span class="n">separate_cbar</span><span class="p">:</span>
         <span class="n">fig_cb</span> <span class="o">=</span> <span class="n">draw_sep_cbar</span><span class="p">(</span><span class="n">ax_cb</span><span class="p">,</span> <span class="n">colorbar_label</span><span class="p">,</span> <span class="n">colorbar_orientation</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">num_major_ticks_cb</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig_hm</span><span class="p">,</span> <span class="n">fig_cb</span>
-
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">fig_hm</span><span class="p">,</span> <span class="kc">None</span></div>
 </pre></div>

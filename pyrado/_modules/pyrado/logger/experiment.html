@@ -493,7 +493,10 @@
                 <span class="n">value</span> <span class="o">=</span> <span class="n">dict_path_access</span><span class="p">(</span><span class="n">hyper_parameters</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">first</span><span class="p">:</span>
                     <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;,&quot;</span>
-                <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;env.dt&quot;</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; env.dt=1/</span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot; }&quot;</span>
         <span class="k">if</span> <span class="n">show_extra_info</span> <span class="ow">and</span> <span class="n">exp</span><span class="o">.</span><span class="n">extra_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

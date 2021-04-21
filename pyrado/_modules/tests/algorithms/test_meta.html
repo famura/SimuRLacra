@@ -241,6 +241,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.simopt</span> <span class="kn">import</span> <span class="n">SimOpt</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.udr</span> <span class="kn">import</span> <span class="n">UDR</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.sprl</span> <span class="kn">import</span> <span class="n">SPRL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.ppo</span> <span class="kn">import</span> <span class="n">PPO</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="p">(</span>
@@ -249,7 +250,16 @@
     <span class="n">create_default_domain_param_map_qq</span><span class="p">,</span>
     <span class="n">create_default_randomizer_qbb</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">NormalDomainParam</span><span class="p">,</span> <span class="n">UniformDomainParam</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NormalDomainParam</span><span class="p">,</span>
+    <span class="n">UniformDomainParam</span><span class="p">,</span>
+    <span class="n">SelfPacedDomainParam</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NormalDomainParam</span><span class="p">,</span>
+    <span class="n">UniformDomainParam</span><span class="p">,</span>
+    <span class="n">SelfPacedDomainParam</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">wrap_like_other_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_delay</span> <span class="kn">import</span> <span class="n">ActDelayWrapper</span>
@@ -812,6 +822,63 @@
     <span class="p">)</span>
 
     <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+
+
+<div class="viewcode-block" id="test_sprl"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_sprl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;optimize_mean&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_sprl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">optimize_mean</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env_sprl_params</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+            <span class="n">target_mean</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">9.81</span><span class="p">]),</span>
+            <span class="n">target_cov_chol_flat</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]),</span>
+            <span class="n">init_mean</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">9.81</span><span class="p">]),</span>
+            <span class="n">init_cov_chol_flat</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.05</span><span class="p">]),</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">radnomizer</span> <span class="o">=</span> <span class="n">DomainRandomizer</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">SelfPacedDomainParam</span><span class="p">(</span><span class="o">**</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">env_sprl_params</span><span class="p">])</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="o">=</span><span class="n">radnomizer</span><span class="p">)</span>
+
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+
+    <span class="n">vfcn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">relu</span><span class="p">)</span>
+    <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">vfcn_hparam</span><span class="p">)</span>
+    <span class="n">critic_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9844534412010116</span><span class="p">,</span>
+        <span class="n">lamda</span><span class="o">=</span><span class="mf">0.9710614403461155</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">standardize_adv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">0.00016985313083236645</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+
+    <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.12648736789309026</span><span class="p">,</span>
+        <span class="n">min_steps</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.7573286998997557</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">6.999956625305722e-04</span><span class="p">,</span>
+        <span class="n">max_grad_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">kl_constraints_ub</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+        <span class="n">performance_lower_bound</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+        <span class="n">std_lower_bound</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">kl_threshold</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">optimize_mean</span><span class="o">=</span><span class="n">optimize_mean</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">SPRL</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">),</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
 </pre></div>
 
