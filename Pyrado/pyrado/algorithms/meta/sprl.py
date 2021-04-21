@@ -74,7 +74,8 @@ class MultivariateNormalWrapper:
             raise pyrado.ValueErr(msg="Stacked has invalid shape! Must be 1-dimensional.")
         if not (stacked.shape[0] == 2 * dim):
             raise pyrado.ValueErr(
-                msg="Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
+                msg="Stacked has invalid size!"
+                "Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
             )
 
         mean = stacked[:dim]
@@ -285,8 +286,10 @@ class SPRL(Algorithm):
                            must inherit from `ExposedSampler`
         :param kl_constraints_ub: upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
-        :param performance_lower_bound: lower bound for the performance SPRL tries to stay above during distribution updates
-        :param std_lower_bound: clipping value for the standard deviation, necessary when using very small target variances
+        :param performance_lower_bound: lower bound for the performance SPRL tries to stay above
+         during distribution updates
+        :param std_lower_bound: clipping value for the standard deviation,
+         necessary when using very small target variances
         :param kl_threshold: threshold for the KL-divergence until which std_lower_bound is enforced
         :param optimize_mean: whether the mean should be changed or considered fixed
         :param optimize_cov: whether the (co-)variance should be changed or considered fixed
@@ -548,7 +551,8 @@ class SPRL(Algorithm):
         return to.mean(context_ratio * values)
 
     def _adapt_parameters(self, result: np.array) -> None:
-        """Update the parameters of the distribution based on the result of the optimization step and the general algorithm settings"""
+        """Update the parameters of the distribution based on the
+        result of the optimization step and the general algorithm settings"""
         for i, param in enumerate(self._spl_parameters):
             if self._optimize_mean:
                 param.adapt("context_mean", to.tensor(result[i : i + param.dim]))
