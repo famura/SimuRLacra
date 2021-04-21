@@ -405,6 +405,7 @@ class SPRL(Algorithm):
         values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
         def kl_constraint_fn(x):
+            """Constraint for the kl divergence between current and proposed distribution"""
             distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
@@ -412,6 +413,7 @@ class SPRL(Algorithm):
             return kl_divergence.detach().numpy()
 
         def kl_constraint_fn_prime(x):
+            """Derivative for the kl-constraint (used for scipy optimizer)"""
             distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
@@ -428,11 +430,13 @@ class SPRL(Algorithm):
         )
 
         def performance_constraint_fn(x):
+            """Constraint for the expected performance under the proposed distribution"""
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             return performance.detach().numpy()
 
         def performance_constraint_fn_prime(x):
+            """Derivative for the performance-constraint (used for scipy optimizer)"""
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             grads = to.autograd.grad(performance, distribution.parameters())
@@ -469,6 +473,9 @@ class SPRL(Algorithm):
 
             # We now optimize based on the kl-divergence between target and context distribution by minimizing it
             def objective(x):
+                """Optimization objective before the minimum specified performance was reached.
+                Tries to find the minimum kl divergence between the current and the update distribution, which
+                still satisfies the minimum update constraint and the performance constraint."""
                 distribution = previous_distribution.from_stacked(x)
                 kl_divergence = to.distributions.kl_divergence(
                     distribution.distribution, target_distribution.distribution
@@ -488,6 +495,8 @@ class SPRL(Algorithm):
 
             # Now we optimize on the expected performance, meaning maximizing it
             def objective(x):
+                """Optimization objective when the minimum specified performance was reached.
+                Tries to maximizes performance while still satisfying the minimum kl update constraint."""
                 distribution = previous_distribution.from_stacked(x)
                 performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
                 grads = to.autograd.grad(performance, distribution.parameters())
