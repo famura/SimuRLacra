@@ -347,9 +347,6 @@ class SPRL(Algorithm):
         """The amount of samples collected by the subalgorithm."""
         return self._subroutine.sample_count
 
-    def train(self, snapshot_mode: str = "latest", seed: int = None, meta_info: dict = None):
-        super().train(snapshot_mode, seed, meta_info)
-
     def step(self, snapshot_mode: str, meta_info: dict = None):
         """
         Perform a step of SPRL. This includes training the subroutine and updating the context distribution accordingly.
