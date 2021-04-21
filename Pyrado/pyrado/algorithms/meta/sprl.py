@@ -30,7 +30,7 @@ import numpy as np
 import torch as to
 from scipy.optimize import NonlinearConstraint, minimize, Bounds
 from torch.distributions import MultivariateNormal
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, Generator, List, Optional, Tuple, Union
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -123,9 +123,10 @@ class MultivariateNormalWrapper:
         self._cov_chol_flat = cov_chol_flat
         self._update_distribution()
 
-    def parameters(self) -> List[to.Tensor]:
+    def parameters(self) -> Generator[to.Tensor, None, None]:
         """ Gets the parameters (mean and standard deviations) of this distribution. """
-        return [self.mean, self.cov_chol_flat]
+        yield self.mean
+        yield self.cov_chol_flat
 
     def get_stacked(self) -> np.ndarray:
         """
@@ -212,14 +213,12 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             cov_is_parameter=self._cov_is_parameter,
         )
 
-    def parameters(self) -> List[to.Tensor]:
+    def parameters(self) -> Generator[to.Tensor, None, None]:
         """ Gets the list of parameters according to the values passed to the constructor. """
-        params = []
         if self._mean_is_parameter:
-            params.append(self.mean)
+            yield self.mean
         if self._cov_is_parameter:
-            params.append(self.cov_chol_flat)
-        return params
+            yield self.cov_chol_flat
 
     def get_stacked(
         self, return_mean_cov_indices: bool = False
