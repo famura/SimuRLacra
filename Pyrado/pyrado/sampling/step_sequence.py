@@ -897,7 +897,7 @@ def discounted_values(rollouts: Sequence[StepSequence], gamma: float, data_forma
         # The ndarray.copy() is necessary due to (currently) unsupported negative strides
         return to.cat([to.from_numpy(discounted_value(ro, gamma).copy()).to(to.get_default_dtype()) for ro in rollouts])
     elif data_format == "numpy":
-        raise np.array([discounted_value(ro, gamma) for ro in rollouts])
+        return np.array([discounted_value(ro, gamma) for ro in rollouts])
     else:
         raise pyrado.ValueErr(given=data_format, eq_constraint="'torch' or 'numpy'")
 
