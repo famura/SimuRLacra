@@ -46,8 +46,8 @@ from pyrado.tasks.utils import proximity_succeeded
 from pyrado.utils.data_types import EnvSpec
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "PlanarInsert"))
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "PlanarInsert"))  # pylint: disable=no-member
 
 
 def create_insert_task(env_spec: EnvSpec, state_des: np.ndarray, rew_fcn: RewFcn, success_fcn: Callable):

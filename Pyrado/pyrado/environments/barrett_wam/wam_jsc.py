@@ -30,7 +30,7 @@ import time
 from typing import Optional
 
 import numpy as np
-import robcom_python as robcom
+import robcom_python as robcom  # pylint: disable=import-error
 
 import pyrado
 from pyrado.environments.barrett_wam import (

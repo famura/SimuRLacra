@@ -395,14 +395,14 @@ class EpsGreedyExplStrat(StochasticActionExplStrat):
 
     def eval(self):
         """ Call PyTorch's eval function and set the deny every exploration. """
-        super(Policy, self).eval()
+        super().eval()
         self._eps_old = self.eps.clone()
         self.eps.data = to.tensor(0.0)
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def train(self, mode=True):
         """ Call PyTorch's eval function and set the re-activate every exploration. """
-        super(Policy, self).train()
+        super().train()
         self.eps = nn.Parameter(self._eps_old, requires_grad=True)
         self.distr_eps = Bernoulli(probs=self.eps.data)
 

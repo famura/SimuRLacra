@@ -29,12 +29,14 @@
 from copy import deepcopy
 from typing import Mapping, Optional, Union
 
+import numpy as np
 import torch as to
 from torch.distributions import Distribution
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.inference.snpea import SNPEA
+from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper, DomainRandWrapperBuffer

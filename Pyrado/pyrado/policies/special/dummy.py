@@ -114,4 +114,4 @@ class RecurrentDummyPolicy(RecurrentPolicy):
         return self._distr.sample(), to.zeros(self._hidden_size)
 
     def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
-        raise NotImplemented
+        raise NotImplementedError()

@@ -240,7 +240,9 @@ class SysIdViaEpisodicRL(Algorithm):
         self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
 
         # Update the wrapped algorithm's update method
-        self._subrtn.update(param_samp_res, ret_avg_curr=param_samp_res[0].mean_undiscounted_return)
+        self._subrtn.update(
+            param_samp_res, ret_avg_curr=param_samp_res[0].mean_undiscounted_return
+        )  # pylint: disable=no-member
 
     @staticmethod
     def override_obs_bounds(bound_lo: np.ndarray, bound_up: np.ndarray, labels: np.ndarray) -> (np.ndarray, np.ndarray):

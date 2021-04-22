@@ -288,7 +288,7 @@ class BayRn(InterruptableAlgorithm):
 
         # Evaluate learned policies from random candidates on the target environment (real-world) system
         for i in range(num_init_cand):
-            policy = pyrado.load(self.policy, "policy.pt", self.save_dir, meta_info=dict(prefix=f"init_{i}"))
+            policy = pyrado.load("policy.pt", self.save_dir, prefix=f"init_{i}")
             cands_values[i] = self.eval_policy(
                 self.save_dir,
                 self._env_real,
@@ -435,7 +435,7 @@ class BayRn(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 2:
             # Evaluate the current policy in the target domain
-            policy = pyrado.load(self.policy, "policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}")
+            policy = pyrado.load("policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}")
             self.curr_cand_value = self.eval_policy(
                 self.save_dir,
                 self._env_real,

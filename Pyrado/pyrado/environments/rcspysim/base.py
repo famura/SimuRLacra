@@ -27,10 +27,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import abstractmethod
+from typing import Union
 
 import numpy as np
 from init_args_serializer import Serializable
-from rcsenv import JointLimitException, RcsSimEnv
+from rcsenv import JointLimitException, RcsSimEnv  # pylint: disable=no-name-in-module
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
@@ -41,7 +42,7 @@ from pyrado.tasks.base import Task
 from pyrado.utils.data_types import RenderMode
 
 
-def to_pyrado_space(space) -> [BoxSpace, EmptySpace]:
+def to_pyrado_space(space) -> Union[BoxSpace, EmptySpace]:
     """
     Convert the box space implementation from RcsPySim to the one of Pyrado.
 
@@ -49,7 +50,7 @@ def to_pyrado_space(space) -> [BoxSpace, EmptySpace]:
     :return: a Pyrado `BoxSpace` or an Pyrado`EmptySpace` if `None` was given
     """
     if space is None:
-        return EmptySpace
+        return EmptySpace()
     return BoxSpace(space.min, space.max, labels=space.names)
 
 
@@ -215,7 +216,7 @@ class RcsSim(SimEnv, Serializable):
         self.domain_param = state_dict["domain_param"]
         self.init_state = state_dict["init_state"]
 
-    def _disturbance_generator(self) -> (np.ndarray, None):
+    def _disturbance_generator(self) -> Union[np.ndarray, None]:
         """ Provide an artificial disturbance. For example a force on a body in the physics simulation. """
         return None
 
@@ -253,7 +254,7 @@ class RcsSim(SimEnv, Serializable):
         act = self.limit_act(act)
 
         # Get the disturbance to be applied on the Rcs side
-        disturbance = self._disturbance_generator()
+        disturbance = self._disturbance_generator()  # pylint: disable=assignment-from-none
 
         # Dynamics are calculated in the Rcs simulation
         try:

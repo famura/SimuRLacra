@@ -30,6 +30,7 @@ import logging
 import socket
 import struct
 from threading import Thread
+from typing import Callable, NoReturn, Optional
 
 import numpy as np
 
@@ -120,6 +121,10 @@ class NatNetClient:
     This code is based on work from Boris Belousov and Pascal Klink.
     """
 
+    rigidBodyListener: Optional[Callable[[int, str, Vector3, Quaternion], NoReturn]]
+    labeled_marker_listener: Optional[Callable[[LabeledMarkers], NoReturn]]
+    newFrameListener: Optional[Callable[[int, int, int, int, int, int, int, int, DoubleValue, bool, bool], NoReturn]]
+
     def __init__(
         self,
         ver=(3, 0, 0, 0),
@@ -152,7 +157,7 @@ class NatNetClient:
 
         # Logging
         if not quiet:
-            import coloredlogs
+            import coloredlogs  # pylint: disable=wrong-import-order
 
             coloredlogs.install(
                 level="INFO",
@@ -251,7 +256,7 @@ class NatNetClient:
         # Send information to any listener.
         if self.rigidBodyListener is not None:
             if rb_id in self.rb_map:
-                self.rigidBodyListener(rb_id, self.rb_map[rb_id], pos, rot)
+                self.rigidBodyListener(rb_id, self.rb_map[rb_id], pos, rot)  # pylint: disable=not-callable
 
         return offset
 
@@ -406,7 +411,7 @@ class NatNetClient:
 
             markers.finalize()
             if self.labeled_marker_listener is not None:
-                self.labeled_marker_listener(markers)
+                self.labeled_marker_listener(markers)  # pylint: disable=not-callable
 
         # ================ Force Plate data (version 2.9 and later)
         if ver[0] == 2 and ver[1] >= 9 or ver[0] > 2:
@@ -428,7 +433,7 @@ class NatNetClient:
         if ver[0] < 3:
             softwareLatency = FloatValue.unpack(data[offset : offset + 4])
             offset += 4
-            logging.info("Software latency: ".format(softwareLatency))
+            logging.info("Software latency: {}".format(softwareLatency))
 
         # Timecode
         timecode = int.from_bytes(data[offset : offset + 4], byteorder="little")
@@ -458,7 +463,8 @@ class NatNetClient:
             logging.info("Transmit timestamp: {}".format(stampTransmit))
 
         # ================ Frame parameters
-        isRecording = trackedModelsChanged = False
+        trackedModelsChanged = False
+        isRecording = trackedModelsChanged
         if ver[0] >= 3:
             (param,) = struct.unpack("h", data[offset : offset + 2])
             offset += 2
@@ -467,7 +473,7 @@ class NatNetClient:
 
         # Send information to any listener
         if self.newFrameListener is not None:
-            self.newFrameListener(
+            self.newFrameListener(  # pylint: disable=not-callable
                 frameNumber,
                 markerSetCount,
                 unlabeledMarkersCount,

@@ -46,8 +46,8 @@ from pyrado.tasks.predefined import (
 from pyrado.tasks.sequential import SequentialTasks
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxLifting"))
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxLifting"))  # pylint: disable=no-member
 
 
 class BoxLiftingSim(RcsSim, Serializable):

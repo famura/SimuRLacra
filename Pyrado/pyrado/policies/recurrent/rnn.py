@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Callable
+from typing import Callable, Optional
 
 import torch as to
 import torch.nn as nn
+from torch.nn import RNNBase
 
 import pyrado
 from pyrado.policies.initialization import init_param
@@ -42,7 +43,7 @@ class RNNPolicyBase(RecurrentPolicy):
     """ Base class for recurrent policies wrapping torch.nn.RNNBase subclasses """
 
     # Type of recurrent network. Is None in base class to force inheritance.
-    recurrent_network_type = None
+    recurrent_network_type: Optional[RNNBase] = None
 
     def __init__(
         self,
@@ -74,7 +75,7 @@ class RNNPolicyBase(RecurrentPolicy):
 
         # Create RNN layers
         assert self.recurrent_network_type is not None, "Can not instantiate RNNPolicyBase!"
-        self.rnn_layers = self.recurrent_network_type(
+        self.rnn_layers = self.recurrent_network_type(  # pylint: disable=not-callable
             input_size=spec.obs_space.flat_dim,
             hidden_size=hidden_size,
             num_layers=num_recurrent_layers,

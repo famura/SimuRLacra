@@ -31,7 +31,6 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.mixins import ExposedSampler
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
@@ -39,6 +38,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.tasks.reward_functions import QuadrErrRewFcn
 from pyrado.utils.tensor import insert_tensor_col
@@ -110,7 +110,7 @@ class LQR(Algorithm, ExposedSampler):
 
         elif isinstance(inner_env(self._env), QBallBalancerSim):
             # Since the control module can by tricky to install (recommended using anaconda), we only load it if needed
-            import control
+            import control  # pylint: disable=import-error,wrong-import-order
 
             # System modeling
             dp = self._env.domain_param

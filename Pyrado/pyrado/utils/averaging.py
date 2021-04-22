@@ -135,7 +135,7 @@ class RunningMemoryAverage:
                 self._memory = np.concatenate([self._memory, new], axis=0)
 
             # Drop surplus
-            self._memory = self._memory[-self.capacity :]
+            self._memory = self._memory[-self.capacity :]  # pylint: disable=invalid-unary-operand-type
 
             # Return current estimate
             return np.mean(self._memory, axis=0)
@@ -150,7 +150,7 @@ class RunningMemoryAverage:
                 self._memory = to.cat([self._memory, new], dim=0)
 
             # Drop surplus
-            self._memory = self._memory[-self.capacity :]
+            self._memory = self._memory[-self.capacity :]  # pylint: disable=invalid-unary-operand-type
 
             # Return current estimate
             return to.mean(self._memory, dim=0)

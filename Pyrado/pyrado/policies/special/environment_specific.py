@@ -715,7 +715,7 @@ def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) 
 
         elif ctrl_type.lower() == "lqr":
             # Since the control module can by tricky to install (recommended using anaconda), we only load it if needed
-            import control
+            import control  # pylint: disable=import-error,wrong-import-order
 
             # System modeling
             A = np.zeros((env.obs_space.flat_dim, env.obs_space.flat_dim))

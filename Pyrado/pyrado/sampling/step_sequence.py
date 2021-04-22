@@ -855,7 +855,9 @@ class StepSequence(Sequence[Step]):
             data_dict[name] = data
 
         # Create new object
-        return StepSequence(**data_dict, rollout_info=rollout.rollout_info, continuous=rollout.continuous)
+        return StepSequence(
+            **data_dict, rollout_info=rollout.rollout_info, continuous=rollout.continuous
+        )  # pylint: disable=missing-kwoa
 
 
 def discounted_reverse_cumsum(data, gamma: float):
@@ -897,7 +899,7 @@ def discounted_values(rollouts: Sequence[StepSequence], gamma: float, data_forma
         # The ndarray.copy() is necessary due to (currently) unsupported negative strides
         return to.cat([to.from_numpy(discounted_value(ro, gamma).copy()).to(to.get_default_dtype()) for ro in rollouts])
     elif data_format == "numpy":
-        raise np.array([discounted_value(ro, gamma) for ro in rollouts])
+        return np.array([discounted_value(ro, gamma) for ro in rollouts])
     else:
         raise pyrado.ValueErr(given=data_format, eq_constraint="'torch' or 'numpy'")
 

@@ -47,8 +47,8 @@ from pyrado.tasks.utils import proximity_succeeded
 from pyrado.utils.data_types import EnvSpec
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "Planar3Link"))
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "Planar3Link"))  # pylint: disable=no-member
 
 
 class Planar3LinkSim(RcsSim, Serializable):

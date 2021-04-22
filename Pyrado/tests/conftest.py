@@ -86,15 +86,18 @@ try:
     from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
     m_needs_vortex = pytest.mark.skipif(
-        not rcsenv.supportsPhysicsEngine("Vortex"), reason="Vortex physics engine is not supported in this setup."
+        not rcsenv.supportsPhysicsEngine("Vortex"),
+        reason="Vortex physics engine is not supported in this setup.",  # pylint: disable=no-member
     )
     m_needs_bullet = pytest.mark.skipif(
-        not rcsenv.supportsPhysicsEngine("Bullet"), reason="Bullet physics engine is not supported in this setup."
+        not rcsenv.supportsPhysicsEngine("Bullet"),
+        reason="Bullet physics engine is not supported in this setup.",  # pylint: disable=no-member
     )
     m_needs_rcs = pytest.mark.skipif(False, reason="rcsenv can be imported.")
 
     m_needs_libtorch = pytest.mark.skipif(
-        "torch" not in rcsenv.ControlPolicy.types, reason="Requires RcsPySim compiled locally with libtorch!"
+        "torch" not in rcsenv.ControlPolicy.types,
+        reason="Requires RcsPySim compiled locally with libtorch!",  # pylint: disable=no-member
     )
 
 except (ImportError, ModuleNotFoundError):

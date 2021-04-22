@@ -40,8 +40,8 @@ from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BallOnPlate"))
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BallOnPlate"))  # pylint: disable=no-member
 
 
 class BallOnPlateSim(RcsSim, Serializable):

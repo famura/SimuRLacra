@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import Callable, Sequence, Union
+from typing import Callable, Optional, Sequence, Union
 
 import numpy as np
 
@@ -246,6 +246,8 @@ class ExpQuadrErrRewFcn(QuadrErrRewFcn):
 class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
     """ Reward function that returns the exp of the scaled weighted sum of squared errors """
 
+    c_max: Optional[float]
+
     def __init__(
         self, Q: [np.ndarray, list], R: [np.ndarray, list], state_space: Space, act_space: Space, min_rew: float = 1e-4
     ):
@@ -277,7 +279,10 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
         quard_cost = super()._weighted_quadr_cost(err_s, err_a)
 
         # Calculate the scaled exponential
-        rew = np.exp(-self.c_max * quard_cost)  # c_max > 0, quard_cost >= 0
+        if self.c_max is None:
+            raise pyrado.ValueErr(msg="self.local_c_max is None")
+        # local_c_max > 0, quard_cost >= 0
+        rew = np.exp(-self.c_max * quard_cost)  # pylint: disable=invalid-unary-operand-type
         return float(rew)
 
     def reset(self, state_space: Space, act_space: Space, min_rew=1e-4, **kwargs):

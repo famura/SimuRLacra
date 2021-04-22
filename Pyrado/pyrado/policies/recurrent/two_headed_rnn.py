@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Callable, Tuple
+from typing import Callable, Optional, Tuple
 
 import torch as to
 from torch import nn as nn
+from torch.nn import RNNBase
 
 import pyrado
 from pyrado.policies.base import TwoHeadedPolicy
@@ -46,7 +47,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
     """
 
     # Type of recurrent network. Is None in base class to force inheritance.
-    recurrent_network_type = None
+    recurrent_network_type: Optional[RNNBase] = None
 
     def __init__(
         self,
@@ -83,7 +84,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
 
         # Create RNN layers
         assert self.recurrent_network_type is not None, "Can not instantiate RNNPolicyBase!"
-        self.shared = self.recurrent_network_type(
+        self.shared = self.recurrent_network_type(  # pylint: disable=not-callable
             input_size=spec.obs_space.flat_dim,
             hidden_size=shared_hidden_size,
             num_layers=shared_num_recurrent_layers,

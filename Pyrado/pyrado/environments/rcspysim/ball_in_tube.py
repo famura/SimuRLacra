@@ -47,8 +47,8 @@ from pyrado.tasks.reward_functions import AbsErrRewFcn, ExpQuadrErrRewFcn
 from pyrado.utils.data_types import EnvSpec
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BallInTube"))
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BallInTube"))  # pylint: disable=no-member
 
 
 def create_extract_ball_task(env_spec: EnvSpec, task_args: dict, des_state: np.ndarray):

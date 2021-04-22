@@ -344,7 +344,7 @@ class LoggerAware:
         else:
             # Try to delegate to parent
             if hasattr(self, "_logger_parent"):
-                return self._logger_parent.logger
+                return self._logger_parent.logger  # pylint: disable=no-member
             # Create a new one
             self._logger = self._create_default_logger()
         return self._logger
