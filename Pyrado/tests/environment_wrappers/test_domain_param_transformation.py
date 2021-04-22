@@ -102,7 +102,7 @@ def test_domain_param_transforms(env: SimEnv, trafo_class: Type):
     for _ in range(5):
         # Change the selected domain parameter
         new_dp_val = random.random() * env.get_nominal_domain_param()[sel_dp_change]
-        transformed_new_dp_val = wenv._forward(new_dp_val)
+        transformed_new_dp_val = wenv.forward(new_dp_val)
         wenv.domain_param = {sel_dp_change: transformed_new_dp_val}
         if not isinstance(inner_env(wenv), SimPyEnv):
             wenv.reset()  # the RcsPySim and MujocoSim classes need to be reset to apply the new domain param

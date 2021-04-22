@@ -30,12 +30,12 @@ from abc import abstractmethod
 from typing import Iterable, Optional, Union
 
 import numpy as np
+import torch as to
 from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environments.base import Env
-from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
@@ -181,6 +181,36 @@ class EnvWrapper(Env, Serializable):
         The domain parameters are automatically stored in attributes prefixed with '_'.
         """
         return self._wrapped_env.supported_domain_param
+
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        """
+        Recursively go though the stack of wrappers and try to apply the forward transformation.
+        This assumes that there is only one.
+
+        :param value: domain parameter value in the original space
+        :return: domain parameter value in the transformed space
+        """
+        forward_fcn = getattr(self._wrapped_env, "forward", None)
+        if callable(forward_fcn):
+            return forward_fcn(value)
+        else:
+            # Arrived at the inner env, no transformation found
+            return value
+
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        """
+        Recursively go though the stack of wrappers and try to apply the inverse transformation.
+        This assumes that there is only one.
+
+        :param value: domain parameter value in the transformed space
+        :return: domain parameter value in the original space
+        """
+        inverse_fcn = getattr(self._wrapped_env, "inverse", None)
+        if callable(inverse_fcn):
+            return inverse_fcn(value)
+        else:
+            # Arrived at the inner env, no transformation found
+            return value
 
     @property
     def randomizer(self) -> Optional[DomainRandomizer]:

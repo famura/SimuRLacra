@@ -44,7 +44,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
     Base class for all domain parameter transformations applied by the environment during setting and getting
 
     These transformations are useful for avoiding infeasible values such as negative masses. When set, a domain
-    parameter is transformed using the `inverse()` function i.e. taking the exp() of the given values. The reasoning
+    parameter is transformed using the `inverse_domain_param()` function i.e. taking the exp() of the given values. The reasoning
     behind this is that some learning methods work on the set of real numbers, thus we make them learn in the
     transformed space, here the log-space, without telling them.
     """
@@ -73,7 +73,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
             )
         self._mask = mask
 
-    def forward(self, domain_param: dict) -> dict:
+    def forward_domain_param(self, domain_param: dict) -> dict:
         """
         Map a domain parameter set to the transformed space.
 
@@ -81,16 +81,21 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
         :return: domain parameter set in the transformed space
         """
         for key, value in domain_param.items():
-            domain_param[key] = self._forward(value) if key in self._mask else value
+            domain_param[key] = self.forward(value) if key in self._mask else value
         return domain_param
 
     @staticmethod
     @abstractmethod
-    def _forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
-        """ Map a domain parameter value to the transformed space. """
+    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        """
+        Map a domain parameter value to the transformed space.
+
+        :param value: domain parameter value in the original space
+        :return: domain parameter value in the transformed space
+        """
         raise NotImplementedError
 
-    def inverse(self, domain_param: dict) -> dict:
+    def inverse_domain_param(self, domain_param: dict) -> dict:
         """
         Map a domain parameter set back from the transformed space.
 
@@ -98,13 +103,18 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
         :return: domain parameter set in the original space
         """
         for key, value in domain_param.items():
-            domain_param[key] = self._inverse(value) if key in self._mask else value
+            domain_param[key] = self.inverse(value) if key in self._mask else value
         return domain_param
 
     @staticmethod
     @abstractmethod
-    def _inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
-        """ Map a domain parameter value back from the transformed space. """
+    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        """
+        Map a domain parameter value back from the transformed space.
+
+        :param value: domain parameter value in the transformed space
+        :return: domain parameter value in the original space
+        """
         raise NotImplementedError
 
     @property
@@ -118,14 +128,14 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
     def domain_param(self, domain_param: dict):
         # From the outside, to transformed domain parameter values are set, thus we transform them back before setting.
         self._get_wrapper_domain_param(domain_param)  # see EnvWrapper
-        self._wrapped_env.domain_param = self.inverse(domain_param)
+        self._wrapped_env.domain_param = self.inverse_domain_param(domain_param)
 
 
 class LogDomainParamTransform(DomainParamTransform):
     """ Wrapper to make the domain parameters look like they are in log-space """
 
     @staticmethod
-    def _forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.exp(value)
         elif isinstance(value, to.Tensor):
@@ -134,7 +144,7 @@ class LogDomainParamTransform(DomainParamTransform):
             return math.exp(value)
 
     @staticmethod
-    def _inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.log(value)
         elif isinstance(value, to.Tensor):
@@ -147,7 +157,7 @@ class SqrtDomainParamTransform(DomainParamTransform):
     """ Wrapper to make the domain parameters look like they are in sqrt-space """
 
     @staticmethod
-    def _forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.power(value, 2)
         elif isinstance(value, to.Tensor):
@@ -156,7 +166,7 @@ class SqrtDomainParamTransform(DomainParamTransform):
             return math.pow(value, 2)
 
     @staticmethod
-    def _inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.sqrt(value)
         elif isinstance(value, to.Tensor):
