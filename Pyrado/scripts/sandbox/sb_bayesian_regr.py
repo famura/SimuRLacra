@@ -52,12 +52,6 @@ def model(states, actions, observations, prior):
         `pyro.plate` assumes that the observations are conditionally independent given the latents.
         `pyro.plate` is not appropriate for temporal models where each iteration of a loop depends on the previous
         iteration. In this case a `range` or `pyro.markov` should be used instead.
-
-    :param states:
-    :param actions:
-    :param observations:
-    :param prior:
-    :return:
     """
     # Priors (also defines the support)
     m = pyro.sample("m", distr.Normal(prior["m"], prior["m"] / 6.0))
@@ -86,11 +80,6 @@ def guide(states, actions, observations, prior):
 
     .. note::
         The guide must not contain `pyro.sample` statements with the `obs` argument.
-
-    :param states:
-    :param actions:
-    :param observations:
-    :param prior:
     """
     m_loc = pyro.param("m_loc", to.tensor(prior["m"]), constraint=constraints.positive)
     m_scale = pyro.param("m_scale", to.tensor(prior["m"] / 6.0), constraint=constraints.positive)
@@ -106,7 +95,7 @@ def guide(states, actions, observations, prior):
     pyro.sample("sigma", distr.Normal(sigma_loc, to.tensor(0.001)))  # scale is a sensitive parameter; < 1e-3
 
 
-def train(svi, rollouts, prior, num_epoch=2000, print_iter=100):
+def train(svi, rollouts, prior, num_epoch=2000):
     # A fresh new start
     pyro.clear_param_store()
 
@@ -123,7 +112,7 @@ def train(svi, rollouts, prior, num_epoch=2000, print_iter=100):
     sigma_hist = []
 
     # Train
-    for i in tqdm(range(num_epoch), total=num_epoch, desc="Training", unit="iteration", file=sys.stdout, leave=False):
+    for _ in tqdm(range(num_epoch), total=num_epoch, desc="Training", unit="iteration", file=sys.stdout, leave=False):
         # The args of step are forwarded to the model and the guide
         elbo_hist.append(svi.step(states_cat, actions_cat, targets_cat, prior))
 
