@@ -230,7 +230,7 @@
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 
 <span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span>
@@ -266,7 +266,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">skyline</span>
 
 
-<span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
 <span class="c1"># Check if RcsPySim, Bullet, and Vortex are available</span>
 <span class="k">try</span><span class="p">:</span>
@@ -324,6 +324,8 @@
 <span class="c1"># --------------------</span>
 <span class="c1"># Environment Fixtures</span>
 <span class="c1"># --------------------</span>
+
+<span class="n">VORTEX_ONLY_DOMAIN_PARAM_LIST</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;slip&quot;</span><span class="p">,</span> <span class="s2">&quot;compliance&quot;</span><span class="p">,</span> <span class="s2">&quot;linearvelocitydamping&quot;</span><span class="p">,</span> <span class="s2">&quot;angularvelocitydamping&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="env"><a class="viewcode-back" href="../../tests.html#tests.conftest.env">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>

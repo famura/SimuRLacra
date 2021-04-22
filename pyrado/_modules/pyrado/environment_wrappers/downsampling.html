@@ -293,7 +293,7 @@
         <span class="c1"># Also reset counter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cnt</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">_save_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_set_wrapper_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Store the downsampling factor in the domain parameter dict</span>
 
@@ -302,7 +302,7 @@
         <span class="c1"># Cast to integer for consistency</span>
         <span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;downsampling&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factor</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_wrapper_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the downsampling factor from the domain parameter dict</span>
 
@@ -314,7 +314,7 @@
 <div class="viewcode-block" id="DownsamplingWrapper.reset"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.downsampling.DownsamplingWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="c1"># Adapt _factor to the new act_downsampling if provided</span>
         <span class="k">if</span> <span class="n">domain_param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_load_domain_param</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_wrapper_domain_param</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
 
         <span class="c1"># Init last action memory and action counter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_act_last</span> <span class="o">=</span> <span class="kc">None</span>

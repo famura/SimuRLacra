@@ -32,6 +32,15 @@ domain\_randomizer
    :show-inheritance:
 
 
+transformations
+---------------
+
+.. automodule:: pyrado.domain_randomization.transformations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 utils
 -----
 

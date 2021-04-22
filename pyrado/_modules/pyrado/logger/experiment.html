@@ -482,7 +482,7 @@
 <span class="sd">    Returns an experiment formatter (i.e. a function that takes an experiment and produces a string) to be used in the</span>
 <span class="sd">    ask-for-experiments dialog. It produces useful information like the timestamp based on the experiments&#39; data.</span>
 
-<span class="sd">    :param show_hparams: list of &quot;paths&quot; to hyper-parameters that to be shown in the selection dialog; sub-dicts can be </span>
+<span class="sd">    :param show_hparams: list of &quot;paths&quot; to hyper-parameters that to be shown in the selection dialog; sub-dicts can be</span>
 <span class="sd">                         references with a dot, e.g. `env.dt`</span>
 <span class="sd">    :param show_extra_info: whether to show the information stored in the `extra_info` field of the experiment</span>
 <span class="sd">    :return: a function that serves as the formatter</span>
@@ -491,7 +491,7 @@
     <span class="k">def</span> <span class="nf">formatter</span><span class="p">(</span><span class="n">exp</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">show_hparams</span><span class="p">:</span>
-            <span class="n">hyper_parameters</span> <span class="o">=</span> <span class="n">load_hyper</span><span class="o">-</span><span class="n">parameters</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">hyper_parameters</span> <span class="o">=</span> <span class="n">load_hyper</span> <span class="o">-</span> <span class="n">parameters</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot; {&quot;</span>
             <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">show_hparams</span><span class="p">:</span>

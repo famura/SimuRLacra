@@ -68,6 +68,15 @@ test\_combination
    :show-inheritance:
 
 
+test\_domain\_param\_transformation
+-----------------------------------
+
+.. automodule:: tests.environment_wrappers.test_domain_param_transformation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 test\_domain\_randomization
 ---------------------------
 

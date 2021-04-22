@@ -565,6 +565,14 @@ env_info: contains diagnostic information about the environment</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyrado.environment_wrappers.base.EnvWrapper.supported_domain_param">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">supported_domain_param</span></code><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.supported_domain_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an iterable of all supported domain parameters.
+The default implementation takes the keys of <cite>get_nominal_domain_param()</cite>.
+The domain parameters are automatically stored in attributes prefixed with ‘_’.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyrado.environment_wrappers.base.EnvWrapper.task">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">task</span></code><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the task describing what the agent should do in the environment.</p>

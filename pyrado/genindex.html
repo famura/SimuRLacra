@@ -959,6 +959,8 @@
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.domain_param">domain_param() (CatapultSim property)</a>
 
       <ul>
+        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.domain_param">(DomainParamTransform property)</a>
+</li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.domain_param">(EnvWrapper property)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.openai_classical_control.GymEnv.domain_param">(GymEnv property)</a>
@@ -979,6 +981,8 @@
       <li><a href="policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy">DomainDistrParamPolicy (class in pyrado.policies.special.domain_distribution)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam">DomainParam (class in pyrado.domain_randomization.domain_parameter)</a>
+</li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform">DomainParamTransform (class in pyrado.domain_randomization.transformations)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer">DomainRandomizer (class in pyrado.domain_randomization.domain_randomizer)</a>
 </li>
@@ -1282,6 +1286,8 @@
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.forward">(DiscreteActQValPolicy method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.forward">(DomainDistrParamPolicy method)</a>
+</li>
+        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.forward">(DomainParamTransform method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dual_rfb.DualRBFLinearPolicy.forward">(DualRBFLinearPolicy method)</a>
 </li>
@@ -1776,6 +1782,8 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm">InterruptableAlgorithm (class in pyrado.algorithms.base)</a>
 </li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.inverse">inverse() (DomainParamTransform method)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.invoke_all">invoke_all() (SamplerPool method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.invoke_all_map">invoke_all_map() (SamplerPool method)</a>
@@ -1894,10 +1902,10 @@
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.load_experiment">load_experiment() (in module pyrado.utils.experiments)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="logger.html#pyrado.logger.experiment.load_hyperparameters">load_hyperparameters() (in module pyrado.logger.experiment)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_posterior">load_posterior() (SBIBase static method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.load_rollouts_from_dir">load_rollouts_from_dir() (in module pyrado.utils.experiments)</a>
@@ -1911,6 +1919,8 @@
 </li>
       </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.ActionStatistics.log_probs">log_probs() (ActionStatistics property)</a>
+</li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.LogDomainParamTransform">LogDomainParamTransform (class in pyrado.domain_randomization.transformations)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.step.LoggerAware.logger">logger() (LoggerAware property)</a>
 </li>
@@ -2095,6 +2105,8 @@
         <li><a href="domain_randomization.html#module-pyrado.domain_randomization.domain_parameter">pyrado.domain_randomization.domain_parameter</a>
 </li>
         <li><a href="domain_randomization.html#module-pyrado.domain_randomization.domain_randomizer">pyrado.domain_randomization.domain_randomizer</a>
+</li>
+        <li><a href="domain_randomization.html#module-pyrado.domain_randomization.transformations">pyrado.domain_randomization.transformations</a>
 </li>
         <li><a href="domain_randomization.html#module-pyrado.domain_randomization.utils">pyrado.domain_randomization.utils</a>
 </li>
@@ -2433,6 +2445,8 @@
         <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_action_normalization">tests.environment_wrappers.test_action_normalization</a>
 </li>
         <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_combination">tests.environment_wrappers.test_combination</a>
+</li>
+        <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_domain_param_transformation">tests.environment_wrappers.test_domain_param_transformation</a>
 </li>
         <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_domain_randomization">tests.environment_wrappers.test_domain_randomization</a>
 </li>
@@ -3404,6 +3418,13 @@
 
       <ul>
         <li><a href="domain_randomization.html#module-pyrado.domain_randomization.domain_randomizer">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.domain_randomization.transformations
+
+      <ul>
+        <li><a href="domain_randomization.html#module-pyrado.domain_randomization.transformations">module</a>
 </li>
       </ul></li>
       <li>
@@ -5269,10 +5290,10 @@
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.space_des">(TaskWrapper property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.html#pyrado.environments.base.Env.spec">spec() (Env property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager.spin">spin() (LiveFigureManager method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">split_ordered_batches() (StepSequence method)</a>
@@ -5284,6 +5305,8 @@
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA">SPOTA (class in pyrado.algorithms.meta.spota)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL">SPRL (class in pyrado.algorithms.meta.sprl)</a>
+</li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.SqrtDomainParamTransform">SqrtDomainParamTransform (class in pyrado.domain_randomization.transformations)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.features.squared_feat">squared_feat() (in module pyrado.policies.features)</a>
 </li>
@@ -5559,8 +5582,12 @@
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.summary_statistic">(RNNEmbedding method)</a>
 </li>
       </ul></li>
-      <li><a href="environments.html#pyrado.environments.sim_base.SimEnv.supported_domain_param">supported_domain_param() (SimEnv property)</a>
+      <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.supported_domain_param">supported_domain_param() (EnvWrapper property)</a>
+
+      <ul>
+        <li><a href="environments.html#pyrado.environments.sim_base.SimEnv.supported_domain_param">(SimEnv property)</a>
 </li>
+      </ul></li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG">SVPG (class in pyrado.algorithms.step_based.svpg)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter">SVPGAdapter (class in pyrado.algorithms.meta.adr)</a>
@@ -5677,6 +5704,8 @@
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_downsampling.test_combination_downsampling_delay">test_combination_downsampling_delay() (in module tests.environment_wrappers.test_action_downsampling)</a>
 </li>
+      <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_combination.test_combination_wrappers_domain_params">test_combination_wrappers_domain_params() (in module tests.environment_wrappers.test_combination)</a>
+</li>
       <li><a href="tests.html#tests.test_tasks.test_combined_reward_function_step">test_combined_reward_function_step() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.html#tests.test_tasks.test_composite_task_structure">test_composite_task_structure() (in module tests.test_tasks)</a>
@@ -5725,6 +5754,8 @@
         <li><a href="tests.html#tests.test_domain_randomization.test_domain_param">(in module tests.test_domain_randomization)</a>
 </li>
       </ul></li>
+      <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_param_transformation.test_domain_param_transforms">test_domain_param_transforms() (in module tests.environment_wrappers.test_domain_param_transformation)</a>
+</li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob">test_dr_wrapper_buffer_bob() (in module tests.environment_wrappers.test_domain_randomization)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">test_dr_wrapper_live_bob() (in module tests.environment_wrappers.test_domain_randomization)</a>
@@ -6135,6 +6166,13 @@
 
       <ul>
         <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_combination">module</a>
+</li>
+      </ul></li>
+      <li>
+    tests.environment_wrappers.test_domain_param_transformation
+
+      <ul>
+        <li><a href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_domain_param_transformation">module</a>
 </li>
       </ul></li>
       <li>
