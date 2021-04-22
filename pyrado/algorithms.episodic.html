@@ -748,13 +748,14 @@ Be sure to align and truncate the rollouts beforehand.</p>
 <dt id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">override_obs_bounds</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bound_lo:</span> <span class="pre">numpy.ndarray</span></em>, <em class="sig-param"><span class="pre">bound_up:</span> <span class="pre">numpy.ndarray</span></em>, <em class="sig-param"><span class="pre">labels:</span> <span class="pre">numpy.ndarray)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'numpy.ndarray'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.override_obs_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default overriding method for the bounds of an observation space. This is necessary when the observations
-are scaled with their range, e.g. to compare a deviation over different kinds of abservations like position and
+are scaled with their range, e.g. to compare a deviation over different kinds of observations like position and
 annular velocity. Thus, infinite bounds are not feasible.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bound_lo</strong> – lower bound of the observation space</p></li>
 <li><p><strong>bound_up</strong> – upper bound of the observation space</p></li>
+<li><p><strong>labels</strong> – label for each dimension of the observation space to override</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

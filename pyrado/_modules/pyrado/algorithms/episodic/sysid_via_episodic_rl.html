@@ -446,11 +446,12 @@
     <span class="k">def</span> <span class="nf">override_obs_bounds</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">bound_up</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Default overriding method for the bounds of an observation space. This is necessary when the observations</span>
-<span class="sd">        are scaled with their range, e.g. to compare a deviation over different kinds of abservations like position and</span>
+<span class="sd">        are scaled with their range, e.g. to compare a deviation over different kinds of observations like position and</span>
 <span class="sd">        annular velocity. Thus, infinite bounds are not feasible.</span>
 
 <span class="sd">        :param bound_lo: lower bound of the observation space</span>
 <span class="sd">        :param bound_up: upper bound of the observation space</span>
+<span class="sd">        :param labels: label for each dimension of the observation space to override</span>
 <span class="sd">        :return: clipped lower and upper bound</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bound_lo</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;theta_dot&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">},</span> <span class="n">labels</span><span class="p">)</span>
