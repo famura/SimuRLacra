@@ -249,7 +249,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
                 raise pyrado.TypeErr(given=self._buffer, expected_type=[dict, list])
         else:
             # Explicit specification of domain parameters
-            self._load_domain_param(domain_param)
+            self._get_wrapper_domain_param(domain_param)
 
         # Set the (new) domain params in the the wrapped env
         self._wrapped_env.domain_param = domain_param

@@ -32,7 +32,7 @@ This file is found by pytest and contains fixtures (i.e., common defaults) that 
 import multiprocessing as mp
 
 import pytest
-import torch as to
+import torch
 
 from pyrado.domain_randomization.domain_parameter import (
     MultivariateNormalDomainParam,
@@ -68,7 +68,7 @@ from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.functions import skyline
 
 
-to.set_default_dtype(to.float32)
+torch.set_default_dtype(to.float32)
 
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
@@ -126,6 +126,8 @@ mp.set_start_method("spawn", force=True)
 # --------------------
 # Environment Fixtures
 # --------------------
+
+VORTEX_ONLY_DOMAIN_PARAM_LIST = ["slip", "compliance", "linearvelocitydamping", "angularvelocitydamping"]
 
 
 @pytest.fixture(scope="function")

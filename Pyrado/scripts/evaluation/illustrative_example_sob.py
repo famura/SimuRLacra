@@ -42,7 +42,7 @@ from scipy import special
 import pyrado
 from pyrado import set_seed
 from pyrado.environments.one_step.catapult import CatapultExample
-from pyrado.plotting.curve import render_data_mean_std
+from pyrado.plotting.curve import draw_curve_from_data
 from pyrado.utils.argparser import get_argparser
 
 
@@ -200,44 +200,108 @@ if __name__ == "__main__":
     # Plot
     os.makedirs(ex_dir, exist_ok=True)
     fig_n, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
-    render_data_mean_std(ax, np.arange(1, N + 1), n_M_hist, "number of domains $n$", "samples per domain", "$n_M$")
-    render_data_mean_std(ax, np.arange(1, N + 1), n_V_hist, "number of domains $n$", "samples per domain", "$n_V$")
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
+        n_M_hist,
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="samples per domain",
+        curve_label="$n_M$",
+    )
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
+        n_V_hist,
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="samples per domain",
+        curve_label="$n_V$",
+    )
     ax.plot(np.arange(1, N + 1), np.arange(1, N + 1) * (1 - psi), c="C0", ls="--")
     ax.plot(np.arange(1, N + 1), np.arange(1, N + 1) * psi, c="C1", ls="--")
     ax.legend(loc="upper left", handletextpad=0.2)
 
     fig_theta, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
-    render_data_mean_std(
-        ax, np.arange(1, N + 1), th_n_opt_hist, "number of domains $n$", "policy parameter", r"$\theta_n^\star$"
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
+        th_n_opt_hist,
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="policy parameter",
+        curve_label=r"$\theta_n^\star$",
     )
-    render_data_mean_std(ax, np.arange(1, N + 1), th_c_hist, "number of domains $n$", "policy parameter", r"$\theta^c$")
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
+        th_c_hist,
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="policy parameter",
+        curve_label=r"$\theta^c$",
+    )
     ax.plot(np.arange(1, N + 1), np.ones(N) * th_true_opt, ls="--", label=r"$\theta^\star$")
     ax.legend(loc="lower right", ncol=3, handletextpad=0.2)
 
     fig_Jn, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
-    render_data_mean_std(
-        ax, np.arange(1, N + 1), Jhat_th_n_opt_hist, "number of domains $n$", "return", "$\\hat{J}_n(\\theta^\\star_n)$"
-    )
-    render_data_mean_std(
-        ax, np.arange(1, N + 1), Jhat_th_c_hist, "number of domains $n$", "return", "$\\hat{J}_n(\\theta^c)$"
-    )
-    render_data_mean_std(
+    draw_curve_from_data(
+        "ci_on_mean",
         ax,
+        Jhat_th_n_opt_hist,
         np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="return",
+        curve_label="$\\hat{J}_n(\\theta^\\star_n)$",
+    )
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
+        Jhat_th_c_hist,
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="return",
+        curve_label="$\\hat{J}_n(\\theta^c)$",
+    )
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
         Jhat_th_true_opt_hist,
-        "number of domains $n$",
-        "return",
-        "$\\hat{J}_n(\\theta^\\star)$",
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="return",
+        curve_label="$\\hat{J}_n(\\theta^\\star)$",
     )
     ax.legend(loc="lower right", ncol=3, handletextpad=0.2)
     plt.ylim(bottom=-70)
 
     fig_SOB, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
-    render_data_mean_std(
-        ax, np.arange(1, N + 1), G_true_hist, "number of domains $n$", "OG and SOB", r"$G_{}^{}(\theta^c)$"
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
+        G_true_hist,
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="OG and SOB",
+        curve_label=r"$G_{}^{}(\theta^c)$",
     )
-    render_data_mean_std(
-        ax, np.arange(1, N + 1), G_n_hist, "number of domains $n$", "OG and SOB", r"$\hat{G}_n^{}(\theta^c)$"
+    draw_curve_from_data(
+        "ci_on_mean",
+        ax,
+        G_n_hist,
+        np.arange(1, N + 1),
+        ax_calc=0,
+        x_label="number of domains $n$",
+        y_label="OG and SOB",
+        curve_label=r"$\hat{G}_n^{}(\theta^c)$",
     )
     ax.plot(np.arange(1, N + 1), np.mean(b_Jhat_n_hist, axis=0), label=r"$\mathrm{b}[J_n(\theta^\star_n)]$")
     ax.legend(loc="upper right", ncol=3, handletextpad=0.2)

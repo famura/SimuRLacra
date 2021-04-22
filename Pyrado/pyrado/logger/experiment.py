@@ -280,7 +280,7 @@ def create_experiment_formatter(
     Returns an experiment formatter (i.e. a function that takes an experiment and produces a string) to be used in the
     ask-for-experiments dialog. It produces useful information like the timestamp based on the experiments' data.
 
-    :param show_hparams: list of "paths" to hyper-parameters that to be shown in the selection dialog; sub-dicts can be 
+    :param show_hparams: list of "paths" to hyper-parameters that to be shown in the selection dialog; sub-dicts can be
                          references with a dot, e.g. `env.dt`
     :param show_extra_info: whether to show the information stored in the `extra_info` field of the experiment
     :return: a function that serves as the formatter
@@ -289,7 +289,7 @@ def create_experiment_formatter(
     def formatter(exp: Experiment) -> str:
         result = f"({exp.timestamp}) {exp.prefix}"
         if show_hparams:
-            hyper_parameters = load_hyper-parameters(exp, raise_error=True)
+            hyper_parameters = load_hyper - parameters(exp, raise_error=True)
             result += " {"
             first = True
             for param in show_hparams:

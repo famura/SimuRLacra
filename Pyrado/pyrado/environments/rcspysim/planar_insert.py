@@ -147,8 +147,8 @@ class PlanarInsertSim(RcsSim, Serializable):
             link3_mass=2.0,
             link4_mass=2.0,
             upperwall_pos_offset_x=0.0,
-            upperwall_friction=0.5,
-            effector_friction=0.8,
+            upperwall_friction_coefficient=0.5,
+            effector_friction_coefficient=0.8,
         )
 
     def _disturbance_generator(self) -> (np.ndarray, None):
