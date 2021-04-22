@@ -289,7 +289,7 @@ def create_experiment_formatter(
     def formatter(exp: Experiment) -> str:
         result = f"({exp.timestamp}) {exp.prefix}"
         if show_hparams:
-            hyper_parameters = load_hyper - parameters(exp, raise_error=True)
+            hyper_parameters = load_hyperparameters(exp, raise_error=True)
             result += " {"
             first = True
             for param in show_hparams:
