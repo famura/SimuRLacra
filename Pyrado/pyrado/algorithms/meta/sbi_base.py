@@ -207,7 +207,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.posterior_hparam = posterior_hparam or dict()
         self.thold_succ_subrtn = float(thold_succ_subrtn)
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
-        self.num_workers = num_workers
+        self.num_workers = int(num_workers)
 
         # Temporary containers
         self._curr_data_real = None

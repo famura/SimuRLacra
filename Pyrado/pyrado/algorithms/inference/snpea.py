@@ -110,7 +110,7 @@ class SNPEA(Algorithm):
         self.prior = prior
         self.proposal_prior = deepcopy(self.prior)
         self.rollout_sampler = rollout_sampler
-        self.num_workers = num_workers
+        self.num_workers = int(num_workers)
         self.simulation_batch_size = simulation_batch_size
 
         self._optim = to.optim.Adam([{"params": self.density_estimator.parameters()}], lr=lr, eps=1e-5)
