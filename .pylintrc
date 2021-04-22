@@ -15,7 +15,7 @@ extension-pkg-whitelist=numpy,torch
 fail-under=10.0
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore=CVS,scripts,tests
+ignore=CVS
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths.
@@ -23,7 +23,10 @@ ignore-patterns=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-#init-hook=
+init-hook=
+    sys.path.append(os.getcwd());
+    from pylint_ignore import PylintIgnorePaths;
+    PylintIgnorePaths('Pyrado/scripts/', 'Pyrado/tests/')
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
