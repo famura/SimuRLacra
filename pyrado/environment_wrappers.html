@@ -455,6 +455,21 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyrado.environment_wrappers.base.EnvWrapper.forward">
+<code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/base.html#EnvWrapper.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively go though the stack of wrappers and try to apply the forward transformation.
+This assumes that there is only one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – domain parameter value in the original space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>domain parameter value in the transformed space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyrado.environment_wrappers.base.EnvWrapper.get_nominal_domain_param">
 <code class="sig-name descname"><span class="pre">get_nominal_domain_param</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/base.html#EnvWrapper.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the nominal a.k.a. default domain parameters.</p>
@@ -468,6 +483,21 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dt id="pyrado.environment_wrappers.base.EnvWrapper.init_space">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">init_space</span></code><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.init_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the initial state space if it exists. Forwards to the wrapped environment.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environment_wrappers.base.EnvWrapper.inverse">
+<code class="sig-name descname"><span class="pre">inverse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/environment_wrappers/base.html#EnvWrapper.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environment_wrappers.base.EnvWrapper.inverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively go though the stack of wrappers and try to apply the inverse transformation.
+This assumes that there is only one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – domain parameter value in the transformed space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>domain parameter value in the original space</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

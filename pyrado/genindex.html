@@ -1287,13 +1287,15 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.forward">(DomainDistrParamPolicy method)</a>
 </li>
-        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.forward">(DomainParamTransform method)</a>
+        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.forward">(DomainParamTransform static method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dual_rfb.DualRBFLinearPolicy.forward">(DualRBFLinearPolicy method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy.forward">(DummyPolicy method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward">(Embedding method)</a>
+</li>
+        <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.forward">(EnvWrapper method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.forward">(EpsGreedyExplStrat method)</a>
 </li>
@@ -1308,6 +1310,8 @@
         <li><a href="utils.html#pyrado.utils.nn_layers.IndiNonlinLayer.forward">(IndiNonlinLayer method)</a>
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.forward">(LinearPolicy method)</a>
+</li>
+        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.LogDomainParamTransform.forward">(LogDomainParamTransform static method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.forward">(MDNPolicy method)</a>
 </li>
@@ -1345,6 +1349,8 @@
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.ScaleLayer.forward">(ScaleLayer method)</a>
 </li>
+        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.SqrtDomainParamTransform.forward">(SqrtDomainParamTransform static method)</a>
+</li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.forward">(StatefulRecurrentNetwork method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.forward">(StochasticActionExplStrat method)</a>
@@ -1368,6 +1374,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.forward_domain_param">forward_domain_param() (DomainParamTransform method)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward_one_batch">forward_one_batch() (Embedding method)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcn">ForwardVelocityRewFcn (class in pyrado.tasks.reward_functions)</a>
@@ -1782,7 +1790,17 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm">InterruptableAlgorithm (class in pyrado.algorithms.base)</a>
 </li>
-      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.inverse">inverse() (DomainParamTransform method)</a>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.inverse">inverse() (DomainParamTransform static method)</a>
+
+      <ul>
+        <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.inverse">(EnvWrapper method)</a>
+</li>
+        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.LogDomainParamTransform.inverse">(LogDomainParamTransform static method)</a>
+</li>
+        <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.SqrtDomainParamTransform.inverse">(SqrtDomainParamTransform static method)</a>
+</li>
+      </ul></li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.inverse_domain_param">inverse_domain_param() (DomainParamTransform method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.invoke_all">invoke_all() (SamplerPool method)</a>
 </li>

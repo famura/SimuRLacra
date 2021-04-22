@@ -357,15 +357,31 @@
             <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">acq_fc</span><span class="o">=</span><span class="s2">&quot;UCB&quot;</span><span class="p">,</span>
             <span class="n">acq_param</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span>
-            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="n">num_init_cand</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-            <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">num_eval_rollouts_sim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">num_init_cand</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">warmstart</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">mc_estimator</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_sim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
             <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">acq_fc</span><span class="o">=</span><span class="s2">&quot;EI&quot;</span><span class="p">,</span>
+            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">num_init_cand</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">mc_estimator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">thold_succ</span><span class="o">=</span><span class="mf">40.0</span><span class="p">,</span>
+            <span class="n">thold_succ_subrtn</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_sim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;casual_hparam&quot;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;typical_hparam&quot;</span><span class="p">,</span> <span class="s2">&quot;untypical_hparam&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_bayrn_power</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">bayrn_hparam</span><span class="p">):</span>
     <span class="c1"># Environments and domain randomization</span>
@@ -377,15 +393,15 @@
     <span class="n">env_real</span> <span class="o">=</span> <span class="n">wrap_like_other_env</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">)</span>
 
     <span class="c1"># Policy and subroutine</span>
-    <span class="n">policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">energy_gain</span><span class="o">=</span><span class="mf">0.587</span><span class="p">,</span> <span class="n">ref_energy</span><span class="o">=</span><span class="mf">0.827</span><span class="p">,</span> <span class="n">acc_max</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">energy_gain</span><span class="o">=</span><span class="mf">0.587</span><span class="p">,</span> <span class="n">ref_energy</span><span class="o">=</span><span class="mf">0.827</span><span class="p">)</span>
     <span class="n">policy</span> <span class="o">=</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">policy_hparam</span><span class="p">)</span>
     <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">pop_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
         <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="n">bayrn_hparam</span><span class="p">[</span><span class="s2">&quot;num_workers&quot;</span><span class="p">],</span>  <span class="c1"># dual use</span>
     <span class="p">)</span>
     <span class="n">subrtn</span> <span class="o">=</span> <span class="n">PoWER</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">)</span>
 
@@ -399,7 +415,7 @@
     <span class="c1"># Create algorithm and train</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">BayRn</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">env_real</span><span class="p">,</span> <span class="n">subrtn</span><span class="p">,</span> <span class="n">ddp_space</span><span class="p">,</span> <span class="o">**</span><span class="n">bayrn_hparam</span><span class="p">)</span>
     <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="test_arpl"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_arpl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_omo&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omo&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
