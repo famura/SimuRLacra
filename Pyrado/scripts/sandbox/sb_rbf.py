@@ -33,7 +33,7 @@ from matplotlib import ticker
 
 import pyrado
 from pyrado.policies.features import FeatureStack, RBFFeat
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.utils.data_types import EnvSpec
 

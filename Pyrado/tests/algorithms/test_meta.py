@@ -69,8 +69,8 @@ from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNN, FNNPolicy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.fnn import FNN, FNNPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import (

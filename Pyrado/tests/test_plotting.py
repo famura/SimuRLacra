@@ -51,7 +51,7 @@ from pyrado.plotting.rollout_based import (
 )
 from pyrado.plotting.surface import draw_surface
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import Embedding

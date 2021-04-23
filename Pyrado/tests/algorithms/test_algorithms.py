@@ -55,8 +55,8 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNN, DiscreteActQValPolicy, FNNPolicy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.fnn import FNN, DiscreteActQValPolicy, FNNPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.recurrent.rnn import RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout

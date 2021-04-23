@@ -40,7 +40,6 @@ from tqdm import tqdm
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.logger.step import StepLogger
-from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 
 

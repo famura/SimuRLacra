@@ -40,7 +40,7 @@ from pyrado.algorithms.step_based.value_based import ValueBased
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger
-from pyrado.policies.feed_forward.fnn import DiscreteActQValPolicy
+from pyrado.policies.feed_back.fnn import DiscreteActQValPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 

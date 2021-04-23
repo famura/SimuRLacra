@@ -50,16 +50,13 @@ from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.rollout_based import plot_rollouts_segment_wise
-from pyrado.policies.special.time import PlaybackPolicy
-from pyrado.sampling.parallel_evaluation import eval_domain_params_with_segmentwise_reset
+from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
-from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
-from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import rmse
 
 

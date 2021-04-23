@@ -42,7 +42,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.policies.features import FeatureStack, identity_feat
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.math import clamp_symm
 from pyrado.utils.tensor import insert_tensor_col

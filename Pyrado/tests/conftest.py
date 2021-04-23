@@ -52,15 +52,15 @@ from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.policies.feed_forward.linear import LinearPolicy
-from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
+from pyrado.policies.feed_back.two_headed_fnn import TwoHeadedFNNPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
+from pyrado.policies.feed_forward.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.policies.recurrent.rnn import GRUPolicy, LSTMPolicy, RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHeadedLSTMPolicy, TwoHeadedRNNPolicy
-from pyrado.policies.special.dummy import DummyPolicy, IdlePolicy
-from pyrado.policies.special.time import TimePolicy, TraceableTimePolicy
 
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
 from pyrado.spaces import BoxSpace

@@ -42,7 +42,6 @@ from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 from pyrado.spaces.box import InfBoxSpace

@@ -42,7 +42,7 @@ from pyrado.environments.base import Env
 from pyrado.plotting.curve import draw_curve
 from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_processing import correct_atleast_2d

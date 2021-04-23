@@ -27,14 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import inspect
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Callable, List, Optional, Sequence
 
-import numpy as np
 import torch as to
 from torch.jit import ScriptModule, export, script
 from torch.nn import Module
 
-import pyrado
 from pyrado.policies.base import Policy
 from pyrado.utils.data_types import EnvSpec
 
@@ -137,96 +135,3 @@ class TraceableTimePolicy(Module):
         act = to.tensor(self.fcn_of_time(self.current_time), dtype=to.double)
         self.current_time = self.current_time + self.dt
         return act
-
-
-class PlaybackPolicy(Policy):
-    """ A policy wish simply replays a sequence of actions. If more actions are requested, the policy  """
-
-    name: str = "pb"
-
-    def __init__(
-        self,
-        spec: EnvSpec,
-        act_recordings: List[Union[to.Tensor, np.array]],
-        no_reset: bool = False,
-        use_cuda: bool = False,
-    ):
-        """
-        Constructor
-
-        :param spec: environment specification
-        :param act_recordings: pre-recorded sequence of actions to be played back later
-        :param no_reset: `True` to turn `reset()` into a dummy function
-        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
-        """
-        if not isinstance(act_recordings, list):
-            raise pyrado.TypeErr(given=act_recordings, expected_type=list)
-
-        super().__init__(spec, use_cuda)
-
-        self._curr_rec = -1  # is increased before the first use
-        self._curr_step = 0
-        self._no_reset = no_reset
-        self._num_rec = len(act_recordings)
-        self._act_rec_buffer = [to.atleast_2d(to.as_tensor(ar)) for ar in act_recordings]
-        if not all(b.shape[1] == self.env_spec.act_space.flat_dim for b in self._act_rec_buffer):
-            raise pyrado.ShapeErr(
-                given=(-1, self._act_rec_buffer[0].shape[1]), expected_match=(-1, self.env_spec.act_space.flat_dim)
-            )
-
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
-
-    @property
-    def curr_step(self) -> int:
-        """ Get the number of the current replay step (0 for the initial step). """
-        return self._curr_step
-
-    @property
-    def no_reset(self) -> bool:
-        """ Returns `True` if the automatic reset is skipped, i.e. the reset has to be controlled manually. """
-        return self._no_reset
-
-    @curr_step.setter
-    def curr_step(self, curr_step: int):
-        """ Set the number of the current replay step (0 for the initial step). """
-        if not isinstance(curr_step, int) or not 0 <= curr_step < len(self._act_rec_buffer[self._curr_rec]):
-            raise pyrado.ValueErr(
-                given=curr_step, ge_constraint="0 (int)", l_constraint=len(self._act_rec_buffer[self._curr_rec])
-            )
-        self._curr_step = curr_step
-
-    @property
-    def curr_rec(self) -> int:
-        """ Get the pointer to the current recording. """
-        return self._curr_rec
-
-    @curr_rec.setter
-    def curr_rec(self, curr_rec: int):
-        """ Set the pointer to the current recording. """
-        if not isinstance(curr_rec, int) or not -1 <= curr_rec < len(self._act_rec_buffer):
-            raise pyrado.ValueErr(given=curr_rec, ge_constraint="-1 (int)", l_constraint=len(self._act_rec_buffer))
-        self._curr_rec = curr_rec
-
-    def reset_curr_rec(self):
-        """ Reset the pointer to the current recording. """
-        self._curr_rec = -1
-
-    def reset(self):
-        if not self._no_reset:
-            # Start at the beginning of the next recording
-            self._curr_rec = (self._curr_rec + 1) % self._num_rec
-            self._curr_step = 0
-
-    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
-        if self._curr_step < len(self._act_rec_buffer[self._curr_rec]):
-            # Asking for something that is available, return the stored action
-            act = self._act_rec_buffer[self._curr_rec][self._curr_step, :]
-        else:
-            # Asking for more actions than provided, return zeros
-            act = to.zeros(self.env_spec.act_space.shape)
-        self._curr_step += 1
-        return act
-
-    def script(self) -> ScriptModule:
-        raise NotImplementedError

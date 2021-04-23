@@ -40,8 +40,8 @@ from pyrado.algorithms.step_based.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.feed_back.two_headed_fnn import TwoHeadedFNNPolicy
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

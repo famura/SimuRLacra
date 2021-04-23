@@ -40,14 +40,8 @@ import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.special.time import PlaybackPolicy
-from pyrado.sampling.sbi_embeddings import (
-    BayesSimEmbedding,
-    DeltaStepsEmbedding,
-    DynamicTimeWarpingEmbedding,
-    LastStepEmbedding,
-    RNNEmbedding,
-)
+from pyrado.policies.feed_forward.playback import PlaybackPolicy
+from pyrado.sampling.sbi_embeddings import DynamicTimeWarpingEmbedding
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 

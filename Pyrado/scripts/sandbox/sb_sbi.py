@@ -46,7 +46,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.distribution import draw_posterior_distr_2d
 from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.policies.base import Policy
-from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import Embedding, LastStepEmbedding
 from pyrado.spaces.singular import SingularStateSpace

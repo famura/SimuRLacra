@@ -36,7 +36,7 @@ import rcsenv
 import pyrado
 from pyrado.environments.rcspysim.planar_insert import PlanarInsertIKActivationSim, PlanarInsertTASim
 from pyrado.plotting.rollout_based import plot_potentials
-from pyrado.policies.special.time import TimePolicy
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 

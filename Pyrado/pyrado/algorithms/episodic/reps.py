@@ -44,7 +44,7 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
 from pyrado.utils.input_output import print_cbt_once
