@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
+from typing import Optional, Union, Tuple
 from warnings import warn
 
 import torch as to
@@ -132,7 +133,7 @@ class Policy(nn.Module, ABC):
         """ Bool to signalise it the policy has a recurrent architecture. """
         return False
 
-    def init_hidden(self, batch_size: int = None) -> to.Tensor:
+    def init_hidden(self, batch_size: Optional[int] = None) -> to.Tensor:
         """
         Provide initial values for the hidden parameters. This should usually be a zero tensor.
         The default implementation will raise an error, to enforce override this function for recurrent policies.
@@ -146,7 +147,7 @@ class Policy(nn.Module, ABC):
         )
 
     @abstractmethod
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
+    def init_param(self, init_values: Optional[to.Tensor] = None, **kwargs):
         """
         Initialize the policy's parameters. By default the parameters are initialized randomly.
 
@@ -164,7 +165,7 @@ class Policy(nn.Module, ABC):
         pass  # this is used in rollout() even though your IDE might not link it
 
     @abstractmethod
-    def forward(self, *args, **kwargs) -> [to.Tensor, (to.Tensor, to.Tensor)]:
+    def forward(self, *args, **kwargs) -> Union[to.Tensor, Tuple[to.Tensor, to.Tensor]]:
         """
         Get the action according to the policy and the observations (forward pass).
 
@@ -187,7 +188,8 @@ class Policy(nn.Module, ABC):
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()
 
-        res = self(rollout.get_data_values("observations", truncate_last=True))  # all observations at once
+        # Pass all observations at once
+        res = self(rollout.get_data_values("observations", truncate_last=True))
 
         # Set policy, i.e. PyTorch nn.Module, back to training mode
         self.train()
@@ -234,9 +236,9 @@ class TwoHeadedPolicy(Policy, ABC):
     """ Base class for policies with a shared body and two separate heads. """
 
     @abstractmethod
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
+    def init_param(self, init_values: Optional[to.Tensor] = None, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
-    def forward(self, obs: to.Tensor) -> [to.Tensor, (to.Tensor, to.Tensor)]:
+    def forward(self, obs: to.Tensor) -> Union[to.Tensor, Tuple[to.Tensor, to.Tensor]]:
         raise NotImplementedError
