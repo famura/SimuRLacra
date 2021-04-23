@@ -33,6 +33,7 @@ import torch.nn as nn
 from sbi import utils
 from sbi.inference import SNPE_C
 
+from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
@@ -41,6 +42,7 @@ from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
 from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.algorithms.meta.pddr import PDDR
 from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.meta.spota import SPOTA
 from pyrado.algorithms.meta.sprl import SPRL
@@ -66,8 +68,10 @@ from pyrado.environment_wrappers.domain_randomization import (
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
+from pyrado.policies.base import Policy
 from pyrado.policies.features import *
 from pyrado.policies.feed_back.fnn import FNN, FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
@@ -84,6 +88,7 @@ from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.sampling.sequences import *
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
+from pyrado.utils.experiments import load_experiment
 
 
 @pytest.fixture
@@ -722,3 +727,59 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     algo = SPRL(env, PPO(ex_dir, env, policy, critic, **subrtn_hparam), **algo_hparam)
     algo.train(snapshot_mode="latest")
     assert algo.curr_iter == algo.max_iter
+
+
+@pytest.mark.longtime
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq-su"], indirect=True)
+@pytest.mark.parametrize("policy", ["fnn_policy"], ids=["fnn"], indirect=True)
+@pytest.mark.parametrize(
+    "algo_hparam",
+    [dict(max_iter=2, num_teachers=2)],
+    ids=["casual"],
+)
+def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
+    # Create algorithm and train
+    teacher_policy = deepcopy(policy)
+    critic = GAE(
+        vfcn=FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+    )
+    teacher_algo_hparam = dict(critic=critic, min_steps=1500, max_iter=2)
+    teacher_algo = PPO
+
+    # Wrapper
+    randomizer = create_default_randomizer(env)
+    env = DomainRandWrapperLive(env, randomizer)
+
+    # Subroutine
+    algo_hparam = dict(
+        max_iter=10,
+        min_steps=env.max_steps,
+        num_cpu=2,
+        std_init=0.15,
+        num_epochs=10,
+        num_teachers=2,
+        teacher_policy=teacher_policy,
+        teacher_algo=teacher_algo,
+        teacher_algo_hparam=teacher_algo_hparam,
+    )
+
+    algo = PDDR(ex_dir, env, policy, **algo_hparam)
+
+    algo.train()
+
+    assert algo.curr_iter == algo.max_iter
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir)
+    assert isinstance(algo_loaded, Algorithm)
+    policy_loaded = algo_loaded.policy
+
+    # Check
+    assert all(algo.policy.param_values == policy_loaded.param_values)
+
+    # Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.
+    env, policy, extra = load_experiment(ex_dir)
+    assert isinstance(env, Env)
+    assert isinstance(policy, Policy)
+    assert isinstance(extra, dict)

@@ -571,6 +571,88 @@ def test_recurrent_policy_evaluate(env, policy):
 
 
 @pytest.mark.recurrent_policy
+@pytest.mark.parametrize(
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
+    ],
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
+)
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+    ],
+    ids=["rnn", "lstm", "gru", "adn", "nf"],
+    indirect=True,
+)
+def test_recurrent_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
+    # Test packed padded sequence implementation against old implementation
+    def old_evaluate(rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
+        # Set policy, i.e. PyTorch nn.Module, to evaluation mode
+        policy.eval()
+
+        # The passed sample collection might contain multiple rollouts.
+        act_list = []
+        for ro in rollout.iterate_rollouts():
+            if hidden_states_name in rollout.data_names:
+                # Get initial hidden state from first step
+                hidden = policy._unpack_hidden(ro[0][hidden_states_name])
+            else:
+                # Let the network pick the default hidden state
+                hidden = None
+
+            # Reshape observations to match PyTorch's RNN sequence protocol
+            obs = ro.get_data_values("observations", True).unsqueeze(1)
+            obs = obs.to(device=policy.device, dtype=to.get_default_dtype())
+
+            # Pass the input through hidden RNN layers
+            out, _ = policy.rnn_layers(obs, hidden)
+
+            # And through the output layer
+            act = policy.output_layer(out.squeeze(1))
+            if policy.output_nonlin is not None:
+                act = policy.output_nonlin(act)
+
+            # Collect the actions
+            act_list.append(act)
+
+        # Set policy, i.e. PyTorch nn.Module, back to training mode
+        policy.train()
+
+        return to.cat(act_list)
+
+    # Get some rollouts
+    ros = []
+    for i in range(10):
+        ro = rollout(env, policy, eval=True, render_mode=RenderMode())
+        ro.torch(to.get_default_dtype())
+
+        # Perturb some hidden states
+        if i < 4:
+            ro[0].hidden_state[0] = i + 1.0
+
+        # Collect rollouts
+        ros.append(ro)
+
+    # Perform concatenation
+    cat = StepSequence.concat(ros)
+
+    # Evaluate old and new approaches
+    act_old = old_evaluate(cat)
+    act_new = policy.evaluate(cat)
+
+    to.testing.assert_allclose(act_old, act_new)
+
+
+@pytest.mark.recurrent_policy
 def test_hidden_state_packing_batch():
     num_layers = 2
     hidden_size = 2
