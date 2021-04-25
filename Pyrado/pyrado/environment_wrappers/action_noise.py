@@ -77,7 +77,7 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
         # Add it to the action
         return act + noise
 
-    def _save_domain_param(self, domain_param: dict):
+    def _set_wrapper_domain_param(self, domain_param: dict):
         """
         Store the action noise parameters in the domain parameter dict
 
@@ -86,7 +86,7 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
         domain_param["act_noise_mean"] = self._mean
         domain_param["act_noise_std"] = self._std
 
-    def _load_domain_param(self, domain_param: dict):
+    def _get_wrapper_domain_param(self, domain_param: dict):
         """
         Load the action noise parameters from the domain parameter dict
 

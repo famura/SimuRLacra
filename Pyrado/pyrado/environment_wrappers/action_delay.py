@@ -64,7 +64,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
             raise pyrado.ValueErr(given=delay, ge_constraint="0")
         self._delay = round(delay)  # round returns int
 
-    def _save_domain_param(self, domain_param: dict):
+    def _set_wrapper_domain_param(self, domain_param: dict):
         """
         Store the action delay in the domain parameter dict
 
@@ -72,7 +72,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         """
         domain_param["act_delay"] = self._delay
 
-    def _load_domain_param(self, domain_param: dict):
+    def _get_wrapper_domain_param(self, domain_param: dict):
         """
         Load the action delay from the domain parameter dict
 
@@ -84,7 +84,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Adapt _delay to the new act_delay if provided
         if domain_param is not None:
-            self._load_domain_param(domain_param)
+            self._get_wrapper_domain_param(domain_param)
 
         # Init action queue with the right amount of 0 actions
         self._act_queue = [np.zeros(self.act_space.shape)] * self._delay

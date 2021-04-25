@@ -161,7 +161,7 @@ class BayesSim(Algorithm):
         self.num_eval_samples = num_eval_samples or 10 * 2 ** len(dp_mapping)
         self.thold_succ_subrtn = float(thold_succ_subrtn)
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
-        self.num_workers = num_workers
+        self.num_workers = int(num_workers)
 
         # Create a rollout sampler
         self.rollout_sampler = SimRolloutSamplerForSBI(

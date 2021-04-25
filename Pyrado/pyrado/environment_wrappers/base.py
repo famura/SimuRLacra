@@ -27,15 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import abstractmethod
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
 import numpy as np
+import torch as to
 from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environments.base import Env
-from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
@@ -144,11 +144,11 @@ class EnvWrapper(Env, Serializable):
         run the physics simulation (e.g., masses, extents, or friction coefficients). The property domain_param includes
         all parameters that can be perturbed a.k.a. randomized, but there might also be additional parameters.
         """
-        if isinstance(self._wrapped_env, RealEnv):
-            raise pyrado.TypeErr(given=self._wrapped_env, expected_type=SimEnv)
+        if not isinstance(self._wrapped_env, (SimEnv, EnvWrapper)):
+            raise pyrado.TypeErr(given=self._wrapped_env, expected_type=(SimEnv, EnvWrapper))
         else:
             param = self._wrapped_env.domain_param
-            self._save_domain_param(param)
+            self._set_wrapper_domain_param(param)
             return param
 
     @domain_param.setter
@@ -158,7 +158,7 @@ class EnvWrapper(Env, Serializable):
 
         :param domain_param: new domain parameter set
         """
-        self._load_domain_param(domain_param)
+        self._get_wrapper_domain_param(domain_param)
         self._wrapped_env.domain_param = domain_param
 
     def get_nominal_domain_param(self) -> dict:
@@ -168,7 +168,49 @@ class EnvWrapper(Env, Serializable):
         .. note::
             This function is used to check which domain parameters exist.
         """
-        return self._wrapped_env.get_nominal_domain_param()
+        if not isinstance(self._wrapped_env, (SimEnv, EnvWrapper)):
+            raise pyrado.TypeErr(given=self._wrapped_env, expected_type=(SimEnv, EnvWrapper))
+        else:
+            return self._wrapped_env.get_nominal_domain_param()
+
+    @property
+    def supported_domain_param(self) -> Iterable:
+        """
+        Get an iterable of all supported domain parameters.
+        The default implementation takes the keys of `get_nominal_domain_param()`.
+        The domain parameters are automatically stored in attributes prefixed with '_'.
+        """
+        return self._wrapped_env.supported_domain_param
+
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        """
+        Recursively go though the stack of wrappers and try to apply the forward transformation.
+        This assumes that there is only one.
+
+        :param value: domain parameter value in the original space
+        :return: domain parameter value in the transformed space
+        """
+        forward_fcn = getattr(self._wrapped_env, "forward", None)
+        if callable(forward_fcn):
+            return forward_fcn(value)
+        else:
+            # Arrived at the inner env, no transformation found
+            return value
+
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        """
+        Recursively go though the stack of wrappers and try to apply the inverse transformation.
+        This assumes that there is only one.
+
+        :param value: domain parameter value in the transformed space
+        :return: domain parameter value in the original space
+        """
+        inverse_fcn = getattr(self._wrapped_env, "inverse", None)
+        if callable(inverse_fcn):
+            return inverse_fcn(value)
+        else:
+            # Arrived at the inner env, no transformation found
+            return value
 
     @property
     def randomizer(self) -> Optional[DomainRandomizer]:
@@ -184,7 +226,7 @@ class EnvWrapper(Env, Serializable):
         :return obs: initial observation of the state.
         """
         if domain_param is not None:
-            self._load_domain_param(domain_param)
+            self._get_wrapper_domain_param(domain_param)
         return self._wrapped_env.reset(init_state, domain_param)
 
     def step(self, act: np.ndarray) -> tuple:
@@ -206,11 +248,11 @@ class EnvWrapper(Env, Serializable):
     def close(self):
         return self._wrapped_env.close()
 
-    def _load_domain_param(self, param: dict):
+    def _get_wrapper_domain_param(self, param: dict):
         """ Called by the domain_param setter. Use to load wrapper-specific params. Does nothing by default. """
         pass
 
-    def _save_domain_param(self, param: dict):
+    def _set_wrapper_domain_param(self, param: dict):
         """ Called by the domain_param getter. Use to store wrapper-specific params. Does nothing by default. """
         pass
 

@@ -72,18 +72,18 @@ class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
         # Add it to the observation
         return obs + noise
 
-    def _save_domain_param(self, domain_param: dict):
+    def _set_wrapper_domain_param(self, domain_param: dict):
         """
-        Store the observation noise parameters in the domain parameter dict
+        Store the observation noise parameters in the domain parameter dict.
 
         :param domain_param: domain parameter dict
         """
         domain_param["obs_noise_mean"] = self._mean
         domain_param["obs_noise_std"] = self._std
 
-    def _load_domain_param(self, domain_param: dict):
+    def _get_wrapper_domain_param(self, domain_param: dict):
         """
-        Load the observation noise parameters from the domain parameter dict
+        Load the observation noise parameters from the domain parameter dict.
 
         :param domain_param: domain parameter dict
         """

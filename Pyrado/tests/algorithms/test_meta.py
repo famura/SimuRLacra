@@ -159,15 +159,31 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
             max_iter=2,
             acq_fc="UCB",
             acq_param=dict(beta=0.25),
-            acq_restarts=100,
-            acq_samples=100,
-            num_init_cand=3,
-            warmstart=True,
-            num_eval_rollouts_sim=10,
+            acq_restarts=50,
+            acq_samples=50,
+            num_init_cand=2,
+            warmstart=False,
+            mc_estimator=True,
+            num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
+            num_workers=1,
+        ),
+        dict(
+            max_iter=2,
+            acq_fc="EI",
+            acq_restarts=50,
+            acq_samples=50,
+            num_init_cand=2,
+            warmstart=True,
+            mc_estimator=False,
+            thold_succ=40.0,
+            thold_succ_subrtn=50.0,
+            num_eval_rollouts_sim=3,
+            num_eval_rollouts_real=2,  # sim-2-sim
+            num_workers=1,
         ),
     ],
-    ids=["casual_hparam"],
+    ids=["typical_hparam", "untypical_hparam"],
 )
 def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     # Environments and domain randomization
@@ -179,15 +195,15 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy and subroutine
-    policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.0)
+    policy_hparam = dict(energy_gain=0.587, ref_energy=0.827)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
         max_iter=1,
-        pop_size=20,
+        pop_size=10,
         num_init_states_per_domain=1,
-        num_is_samples=20,
-        expl_std_init=1.0,
-        num_workers=1,
+        num_is_samples=4,
+        expl_std_init=0.1,
+        num_workers=bayrn_hparam["num_workers"],  # dual use
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -201,7 +217,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     # Create algorithm and train
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
     algo.train()
-    assert algo.curr_iter == algo.max_iter
+    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
 
 
 @pytest.mark.parametrize("env", ["default_omo"], ids=["omo"], indirect=True)

@@ -248,11 +248,12 @@ class SysIdViaEpisodicRL(Algorithm):
     def override_obs_bounds(bound_lo: np.ndarray, bound_up: np.ndarray, labels: np.ndarray) -> (np.ndarray, np.ndarray):
         """
         Default overriding method for the bounds of an observation space. This is necessary when the observations
-        are scaled with their range, e.g. to compare a deviation over different kinds of abservations like position and
+        are scaled with their range, e.g. to compare a deviation over different kinds of observations like position and
         annular velocity. Thus, infinite bounds are not feasible.
 
         :param bound_lo: lower bound of the observation space
         :param bound_up: upper bound of the observation space
+        :param labels: label for each dimension of the observation space to override
         :return: clipped lower and upper bound
         """
         bound_lo = ObsNormWrapper.override_bounds(bound_lo, {"theta_dot": -20.0, "alpha_dot": -20.0}, labels)
