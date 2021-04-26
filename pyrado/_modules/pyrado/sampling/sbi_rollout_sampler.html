@@ -433,10 +433,11 @@
                     <span class="c1"># Iterate over segments of one target domain rollout</span>
                     <span class="n">cnt_step</span> <span class="o">=</span> <span class="mi">0</span>
                     <span class="k">for</span> <span class="n">seg_real</span> <span class="ow">in</span> <span class="n">segs_real</span><span class="p">:</span>
-                        <span class="c1"># Disabled the policy reset of PlaybackPolicy to do it here manually</span>
-                        <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">no_reset</span>
-                        <span class="n">policy</span><span class="o">.</span><span class="n">curr_rec</span> <span class="o">=</span> <span class="n">idx_r</span>
-                        <span class="n">policy</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">=</span> <span class="n">cnt_step</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_rec_act</span><span class="p">:</span>
+                            <span class="c1"># Disabled the policy reset of PlaybackPolicy to do it here manually</span>
+                            <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">no_reset</span>
+                            <span class="n">policy</span><span class="o">.</span><span class="n">curr_rec</span> <span class="o">=</span> <span class="n">idx_r</span>
+                            <span class="n">policy</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">=</span> <span class="n">cnt_step</span>
 
                         <span class="c1"># Do the rollout for a segment</span>
                         <span class="n">seg_sim</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span>

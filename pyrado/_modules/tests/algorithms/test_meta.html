@@ -229,7 +229,7 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">sbi</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">SNPE</span>
+<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">SNPE_C</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
@@ -726,12 +726,8 @@
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;laststep&quot;</span><span class="p">,</span> <span class="s2">&quot;allsteps&quot;</span><span class="p">,</span> <span class="s2">&quot;bayessim&quot;</span><span class="p">,</span> <span class="s2">&quot;dtw&quot;</span><span class="p">,</span> <span class="s2">&quot;rnn&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s2">&quot;num_segments, len_segments&quot;</span><span class="p">,</span>
-    <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">50</span><span class="p">)],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;num1-lenNone&quot;</span><span class="p">,</span> <span class="s2">&quot;num10-lenNone&quot;</span><span class="p">,</span> <span class="s2">&quot;numNone-len50&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_real_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1rollout&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_segments, len_segments&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">13</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;numsegs4&quot;</span><span class="p">,</span> <span class="s2">&quot;lensegs13&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_real_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;2ros&quot;</span><span class="p">])</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_sbi_rounds&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;2rounds&quot;</span><span class="p">])</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;use_rec_act&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;userecact&quot;</span><span class="p">,</span> <span class="s2">&quot;dontuserecact&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_npdr</span><span class="p">(</span>
@@ -744,23 +740,58 @@
     <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">use_rec_act</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 <span class="p">):</span>
+    <span class="c1"># Reduce the number of steps to make this test run faster</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">50</span>
+
     <span class="c1"># Create a fake ground truth target domain</span>
     <span class="n">env_real</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
-    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">k</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="n">v</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dp_nom</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-    <span class="p">}</span>  <span class="c1"># damping coefficients must be positive</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">Dr</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Dr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.9</span><span class="p">,</span>
+        <span class="n">Dp</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Dp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">Rm</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Rm&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">km</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;km&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">Mp</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span>
+        <span class="n">Mr</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span>
+        <span class="n">Lp</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">Lr</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">g</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># Policy</span>
     <span class="n">policy</span> <span class="o">=</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
 
     <span class="c1"># Define a mapping: index - domain parameter</span>
-    <span class="n">dp_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dp_nom</span><span class="o">.</span><span class="n">items</span><span class="p">())}</span>
+    <span class="n">dp_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;Dr&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Dp&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Rm&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;km&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;Mr&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s2">&quot;Mp&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;Lr&quot;</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="s2">&quot;Lp&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="s2">&quot;g&quot;</span><span class="p">}</span>
 
     <span class="c1"># Prior</span>
     <span class="n">prior_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">low</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.9</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()]),</span>
-        <span class="n">high</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.1</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()]),</span>
+        <span class="n">low</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Dr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Dp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Rm&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;km&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">),</span>
+        <span class="n">high</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="mi">2</span> <span class="o">*</span> <span class="mf">0.0015</span><span class="p">,</span>
+                <span class="mi">2</span> <span class="o">*</span> <span class="mf">0.0005</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Rm&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;km&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span>
+                <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">prior</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">(</span><span class="o">**</span><span class="n">prior_hparam</span><span class="p">)</span>
 
@@ -769,6 +800,7 @@
     <span class="k">if</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">LastStepEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
         <span class="n">embedding</span> <span class="o">=</span> <span class="n">LastStepEmbedding</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span> <span class="o">**</span><span class="n">embedding_hparam</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">DeltaStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">downsampling_factor</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
         <span class="n">embedding</span> <span class="o">=</span> <span class="n">DeltaStepsEmbedding</span><span class="p">(</span>
             <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span> <span class="o">**</span><span class="n">embedding_hparam</span>
         <span class="p">)</span>
@@ -792,8 +824,8 @@
     <span class="c1"># Algorithm</span>
     <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_sim_per_round</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
         <span class="n">num_real_rollouts</span><span class="o">=</span><span class="n">num_real_rollouts</span><span class="p">,</span>
-        <span class="n">num_sim_per_round</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
         <span class="n">num_sbi_rounds</span><span class="o">=</span><span class="n">num_sbi_rounds</span><span class="p">,</span>
         <span class="n">simulation_batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">normalize_posterior</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -805,16 +837,16 @@
         <span class="n">subrtn_sbi_training_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
             <span class="n">num_atoms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># default: 10</span>
             <span class="n">training_batch_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># default: 50</span>
-            <span class="n">learning_rate</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>  <span class="c1"># default: 5e-4</span>
-            <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># default: 0.1</span>
+            <span class="n">learning_rate</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">,</span>  <span class="c1"># default: 5e-4</span>
+            <span class="n">validation_fraction</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>  <span class="c1"># default: 0.1</span>
             <span class="n">stop_after_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>  <span class="c1"># default: 20</span>
             <span class="n">discard_prior_samples</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># default: False</span>
-            <span class="n">use_combined_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># default: False</span>
+            <span class="n">use_combined_loss</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># default: False</span>
             <span class="n">retrain_from_scratch_each_round</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># default: False</span>
             <span class="n">show_train_summary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># default: False</span>
             <span class="n">max_num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># default: None</span>
         <span class="p">),</span>
-        <span class="n">subrtn_sbi_sampling_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">sample_with_mcmc</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">subrtn_sbi_sampling_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">sample_with_mcmc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mcmc_parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">warmup_steps</span><span class="o">=</span><span class="mi">20</span><span class="p">)),</span>
         <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">NPDR</span><span class="p">(</span>
@@ -824,7 +856,7 @@
         <span class="n">policy</span><span class="p">,</span>
         <span class="n">dp_mapping</span><span class="p">,</span>
         <span class="n">prior</span><span class="p">,</span>
-        <span class="n">SNPE</span><span class="p">,</span>
+        <span class="n">SNPE_C</span><span class="p">,</span>
         <span class="n">embedding</span><span class="p">,</span>
         <span class="o">**</span><span class="n">algo_hparam</span><span class="p">,</span>
     <span class="p">)</span>
