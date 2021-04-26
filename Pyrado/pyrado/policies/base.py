@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple, Union
 from warnings import warn
 
 import torch as to

@@ -26,6 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Optional
+
 import torch as to
 import torch.nn as nn
 
@@ -43,7 +45,9 @@ class LinearPolicy(Policy):
 
     name: str = "lin"
 
-    def __init__(self, spec: EnvSpec, feats: FeatureStack, init_param_kwargs: dict = None, use_cuda: bool = False):
+    def __init__(
+        self, spec: EnvSpec, feats: FeatureStack, init_param_kwargs: Optional[dict] = None, use_cuda: bool = False
+    ):
         """
         Constructor
 

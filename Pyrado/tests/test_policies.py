@@ -29,7 +29,7 @@
 import os.path as osp
 
 import pytest
-from tests.conftest import m_needs_bullet, m_needs_libtorch, m_needs_mujoco, m_needs_rcs
+from tests.conftest import m_needs_bullet, m_needs_cuda, m_needs_libtorch, m_needs_mujoco, m_needs_rcs
 from torch import nn as nn
 
 from pyrado.environments.base import Env
@@ -38,6 +38,7 @@ from pyrado.policies.features import *
 from pyrado.policies.feed_back.dual_rfb import DualRBFLinearPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
+from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
 from pyrado.policies.recurrent.base import default_pack_hidden, default_unpack_hidden
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
 from pyrado.sampling.rollout import rollout
@@ -825,15 +826,7 @@ def test_indi_nonlin_layer(in_features, same_nonlin, bias, weight):
 
 
 @to.no_grad()
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_bob",
-        "default_qbb",
-    ],
-    ids=["bob", "qbb"],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["torch", "numpy"])
 def test_playback_policy(env: Env, dtype):
     # Create 2 recordings of different length
@@ -868,22 +861,41 @@ def test_playback_policy(env: Env, dtype):
     assert policy.curr_rec == -1
 
 
-@to.no_grad()
-@pytest.mark.parametrize(
-    "condition, dim_in",
-    [
-        (to.zeros((3, 4)), 4),
-        (to.zeros((1, 3)), 3),
-        (to.zeros((3,)), 3),
-    ],
-)
-@pytest.mark.parametrize("dim_out", [7], ids=["7out"])
-@pytest.mark.parametrize("num_comp", [5], ids=["5comp"])
-def test_poly_time_policy(condition: to.Tensor, dim_in: int, dim_out: int, num_comp: int):
+@pytest.mark.parametrize("env", ["default_pend", "default_qbb"], ids=["pend", "qbb"], indirect=True)
+@pytest.mark.parametrize("cond_lvl", ["vel", "acc"], ids=["vel", "acc"])
+@pytest.mark.parametrize("cond_final", ["zero", "one"], ids=["zero", "one"])
+@pytest.mark.parametrize("cond_init", [None], ids=["None"])
+@pytest.mark.parametrize("use_cuda", [False, pytest.param(True, marks=m_needs_cuda)], ids=["cpu", "cuda"])
+def test_poly_time_policy(env: Env, cond_lvl: str, cond_final: str, cond_init, use_cuda: bool):
+    order = 3 if cond_lvl == "vel" else 5
+    num_cond = (order + 1) // 2
+
+    if cond_final == "zero":
+        cond_final = to.zeros(num_cond, env.act_space.flat_dim)
+    elif cond_final == "one":
+        cond_final = to.zeros(num_cond, env.act_space.flat_dim)
+        cond_final[::num_cond] = 1.0
+
     # Create instance
-    policy = PolyTimePolicy(
-        spec=EnvSpec(obs_space=InfBoxSpace(dim_in), act_space=InfBoxSpace(dim_out)),
-        hidden_sizes=[5, 5],
-        hidden_nonlin=to.relu,
-        num_comp=num_comp,
+    policy = PolySplineTimePolicy(
+        spec=env.spec,
+        dt=env.dt,
+        t_end=int(env.max_steps * env.dt),
+        cond_lvl=cond_lvl,
+        cond_final=cond_final,
+        cond_init=cond_init,
+        use_cuda=use_cuda,
     )
+
+    policy.reset()
+
+    act_hist = []
+    for _ in range(env.max_steps):
+        act = policy(env.obs_space.sample_uniform())
+        act_hist.append(act.detach().cpu().numpy())
+
+        if cond_final == "zero":
+            assert act == pytest.approx(to.zeros_like(act))
+
+    if cond_final == "one":
+        assert act_hist[-1] == pytest.approx(to.ones_like(act))
