@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Replay a pre-recorded rollout using the simulations' renderer
+Replay a pre-recorded rollout using the simulations' renderer.
 """
 import time
 
@@ -54,18 +54,37 @@ if __name__ == "__main__":
             raise pyrado.TypeErr(given=args, expected_type=int)
         rollout = rollouts[args.iter]
 
-    # TODO in the future: select via rollout.rollout_info["env_name"]
-    if args.env_name.lower() == "wam-jsc":  # avoid loading mujoco
+    if hasattr(rollout, "rollout_info") and "env_name" in rollout.rollout_info:
+        env_name = rollout.rollout_info["env_name"]
+    elif args.env_name is not None:
+        env_name = args.env_name.lower()
+    else:
+        raise pyrado.ValueErr(
+            msg="There was no rollout_info field in the loaded rollout to infer the environment name from, neither has "
+            "it been specified explicitly! Please provide the environment's name using -e or --env_name."
+        )
+
+    if hasattr(rollout, "time"):
+        dt = rollout.time[1] - rollout.time[0]  # dt is constant
+    elif args.dt is not None:
+        dt = args.dt
+    else:
+        raise pyrado.ValueErr(
+            msg="There was no time field in the loaded rollout to infer the time step size from, neither has "
+            "it been specified explicitly! Please provide the time step size using --dt."
+        )
+
+    if env_name == "wam-jsc":  # avoid loading mujoco
         from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 
         env = WAMJointSpaceCtrlSim(num_dof=7)
         env.init_space = BoxSpace(-pyrado.inf, pyrado.inf, shape=env.init_space.shape)
 
-    elif args.env_name.lower() == QQubeSwingUpSim.name:
-        env = QQubeSwingUpSim(dt=1 / 50)
+    elif env_name == QQubeSwingUpSim.name:
+        env = QQubeSwingUpSim(dt=dt)
 
     else:
-        raise pyrado.ValueErr(given=args.env_name, eq_constraint=f"wam-jsc, or {QQubeSwingUpSim.name}")
+        raise pyrado.ValueErr(given=env_name, eq_constraint=f"wam-jsc, or {QQubeSwingUpSim.name}")
 
     done = False
     while not done:

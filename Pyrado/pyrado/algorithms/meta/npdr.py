@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os.path as osp
 from typing import Mapping, Optional, Type, Union
 
 import torch as to
@@ -170,15 +171,17 @@ class NPDR(SBIBase):
             self.reached_checkpoint()  # setting counter to 0
 
         if self.curr_checkpoint == 0:
-            try:
-                # Check if the rollout files already exist
+            # Check if the rollout files already exist
+            if (
+                osp.isfile(osp.join(self._save_dir, f"iter_{self.curr_iter}_data_real.pt"))
+                and osp.isfile(osp.join(self._save_dir, "data_real.pt"))
+                and osp.isfile(osp.join(self._save_dir, "rollouts_real.pkl"))
+            ):
+                # Rollout files do exist (can be when continuing a previous experiment)
                 self._curr_data_real = pyrado.load("data_real.pt", self._save_dir, prefix=f"iter_{self.curr_iter}")
-                pyrado.load("data_real.pt", self._save_dir)
-                pyrado.load("rollouts_real.pkl", self._save_dir, prefix=f"iter_{self._curr_iter}")
-
                 print_cbt(f"Loaded existing rollout data for iteration {self.curr_iter}", "w", bright=True)
 
-            except FileNotFoundError:
+            else:
                 # Rollout files do not exist yet (usual case)
                 self._curr_data_real, _ = NPDR.collect_data_real(
                     self.save_dir,
@@ -210,8 +213,10 @@ class NPDR(SBIBase):
             self.reached_checkpoint()  # setting counter to 1
 
         if self.curr_checkpoint == 1:
+            # Load the latest proposal, this can be the prior or the amortized posterior of the last iteration
+            proposal = self.get_latest_proposal()
+
             # Multi-round sbi
-            proposal = self._sbi_prior
             for idx_r in range(self.num_sbi_rounds):
                 # Sample parameters proposal, and simulate these parameters to obtain the data
                 domain_param, data_sim = simulate_for_sbi(

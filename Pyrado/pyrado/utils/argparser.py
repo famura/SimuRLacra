@@ -48,6 +48,13 @@ def get_argparser() -> argparse.ArgumentParser:
     )
     parser.set_defaults(animation=True)
     parser.add_argument(
+        "--cut_rollout",
+        nargs="+",
+        type=int,
+        default=None,
+        help="tuple of indices defining start and end index of the rollout",
+    )
+    parser.add_argument(
         "--dt",
         type=float,
         help="environments time step size in seconds (no default)",

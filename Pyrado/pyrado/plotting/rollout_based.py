@@ -28,7 +28,7 @@
 
 import functools
 import os
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -572,13 +572,15 @@ def plot_rollouts_segment_wise(
     idx_round: int = -1,
     state_labels: Optional[List[str]] = None,
     act_labels: Optional[List[str]] = None,
+    x_limits: Optional[Tuple[int]] = None,
     show_act: bool = False,
     save_dir: Optional[pyrado.PathLike] = None,
+    data_field: str = "states",
 ) -> List[plt.Figure]:
     r"""
     Plot the different rollouts in separate figures and the different state dimensions along the columns.
 
-    :param plot_type: tye of plot, pass "samples" to plot the rollouts of the most likely domain parameters as
+    :param plot_type: type of plot, pass "samples" to plot the rollouts of the most likely domain parameters as
                       individual lines, or pass "confidence" to plot the most likely one, and the mean $\pm$ 1 std
     :param segments_ground_truth: list of lists containing rollout segments from the ground truth environment
     :param segments_multiple_envs: list of lists of lists containing rollout segments from different environment
@@ -589,22 +591,30 @@ def plot_rollouts_segment_wise(
     :param idx_round: selected round
     :param state_labels: y-axes labels to override the default value which is extracted from the state space's labels
     :param act_labels: y-axes labels to override the default value which is extracted from the action space's labels
+    :param x_limits: tuple containing the lower and upper limits for the x-axis
     :param show_act: if `True`, also plot the actions
     :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
+    :param data_field: data field of the rollout, e.g. "states" or "observations"
     :return: list of handles to the created figures
     """
     if not plot_type.lower() in ["samples", "confidence"]:
         raise pyrado.ValueErr(given=plot_type, eq_constraint="samples or confidence")
+    if not data_field.lower() in ["states", "observations"]:
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="states or observations")
 
     # Extract the state dimension, and the number of most likely samples from the data
-    dim_state = segments_ground_truth[0][0].get_data_values("states")[0, :].size
+    dim_state = segments_ground_truth[0][0].get_data_values(data_field.lower())[0, :].size
     dim_act = segments_ground_truth[0][0].get_data_values("actions")[0, :].size
     num_samples = len(segments_multiple_envs[0][0])
 
     # Extract the state labels if not explicitly given
     if state_labels is None:
         env_spec = segments_ground_truth[0][0].rollout_info.get("env_spec", None)
-        state_labels = env_spec.state_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
+        if data_field.lower() == "states":
+            state_labels = env_spec.state_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
+        elif data_field.lower() == "observations":
+            state_labels = env_spec.obs_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
+
     else:
         if len(state_labels) != dim_state:
             raise pyrado.ShapeErr(given=state_labels, expected_match=(dim_state,))
@@ -629,7 +639,7 @@ def plot_rollouts_segment_wise(
             for segment_gt in segments_ground_truth[idx_r]:
                 axs[idx_state].plot(
                     np.arange(cnt_step[-1], cnt_step[-1] + segment_gt.length),
-                    segment_gt.get_data_values("states", truncate_last=True)[:, idx_state],
+                    segment_gt.get_data_values(data_field.lower(), truncate_last=True)[:, idx_state],
                     zorder=0,
                     c="black",
                     label="target" if cnt_step[-1] == 0 else "",  # only print once
@@ -641,7 +651,7 @@ def plot_rollouts_segment_wise(
                 for idx_dp, sdp in enumerate(sml):
                     axs[idx_state].plot(
                         np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sdp.length),
-                        sdp.get_data_values("states", truncate_last=True)[:, idx_state],
+                        sdp.get_data_values(data_field.lower(), truncate_last=True)[:, idx_state],
                         zorder=2 if idx_dp == 0 else 0,  # most likely on top
                         c=colors[idx_dp],
                         ls="--",
@@ -652,7 +662,6 @@ def plot_rollouts_segment_wise(
                         break
 
             if plot_type.lower() == "confidence":
-                len_segs = len(segments_multiple_envs[idx_r][0][0])
                 assert check_all_lengths_equal(segments_multiple_envs[idx_r][0])  # all segments need to be equally long
 
                 states_all = []
@@ -661,13 +670,14 @@ def plot_rollouts_segment_wise(
                     ss_dp = StepSequence.concat(
                         [seg_dp[idx_dp] for seg_dp in [segs_ro for segs_ro in segments_multiple_envs[idx_r]]]
                     )
-                    states = ss_dp.get_data_values("states", truncate_last=True)
+                    states = ss_dp.get_data_values(data_field.lower(), truncate_last=True)
                     states_all.append(states)
                 states_all = np.stack(states_all, axis=0)
                 states_mean = np.mean(states_all, axis=0)
                 states_std = np.std(states_all, axis=0)
 
                 for idx_seg in range(len(segments_multiple_envs[idx_r])):
+                    len_segs = min([len(seg) for seg in segments_multiple_envs[idx_r][idx_seg]])  # use shortest
                     m_i = states_mean[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
                     s_i = states_std[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
                     draw_curve(
@@ -685,7 +695,7 @@ def plot_rollouts_segment_wise(
             for idx_seg, sn in enumerate(segments_nominal[idx_r]):
                 axs[idx_state].plot(
                     np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sn.length),
-                    sn.get_data_values("states", truncate_last=True)[:, idx_state],
+                    sn.get_data_values(data_field.lower(), truncate_last=True)[:, idx_state],
                     zorder=2,
                     c="steelblue",
                     ls="-.",
@@ -768,6 +778,11 @@ def plot_rollouts_segment_wise(
                     )
 
                 axs[dim_state + idx_act].set_ylabel(act_labels[idx_act])
+
+        # Settings for all subplots
+        for idx_axs in range(num_rows):
+            if x_limits is not None:
+                axs[idx_axs].set_xlim(x_limits[0], x_limits[1])
 
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
         use_rec = ", using rec actions" if use_rec else ""

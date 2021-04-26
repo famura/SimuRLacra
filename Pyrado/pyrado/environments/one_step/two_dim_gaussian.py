@@ -46,7 +46,7 @@ from pyrado.utils.data_types import RenderMode
 
 class TwoDimGaussian(SimEnv, Serializable):
     """
-    A toy model with complex 2-dim Gaussian posterior as described in [1].
+    A toy model with complex 2-dim Gaussian posterior as described in [1]. This environment can be interpreted as a zero-step environment.
     We use the domain parameters to capture the
 
     .. seealso::
@@ -115,7 +115,7 @@ class TwoDimGaussian(SimEnv, Serializable):
 
     @property
     def act_space(self):
-        return EmptySpace()
+        return SingularStateSpace(np.zeros(1))
 
     def _create_task(self, task_args: dict = None) -> OptimProxyTask:
         # Dummy task
@@ -147,37 +147,28 @@ class TwoDimGaussian(SimEnv, Serializable):
         )
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
+        """
+        Resetting the environment generates the singular state which is of importance.
+        This environment can be interpreted as a zero-step environment, because it does not depend on an action.
+        """
+
         # Reset the domain parameters
         if domain_param is not None:
             self.domain_param = domain_param
             self._mean, self._covariance_matrix = self.calc_constants(self.domain_param)
 
-        # Reset the state
-        if init_state is None:
-            # Sample from the init state space
-            self.state = self.init_space.sample_uniform()
-        else:
-            if not init_state.shape == self.obs_space.shape:
-                raise pyrado.ShapeErr(given=init_state, expected_match=self.obs_space)
-            if isinstance(init_state, np.ndarray):
-                self.state = init_state.copy()
-            else:
-                try:
-                    self.state = np.asarray(init_state)
-                except Exception:
-                    raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
+        self.state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=4).flatten()
 
         # Reset time
         self._curr_step = 0
-
-        # No need to reset the task
 
         # Return perfect observation
         return self.observe(self.state)
 
     def step(self, act: np.ndarray = None) -> tuple:
         # Draw 4 samples from the 2-dim complex posterior
-        self.state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=4).flatten()
+        # self.state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=4).flatten()
+        self.state = self.init_space.sample_uniform()
 
         # Current reward depending on the state after the step (since there is only one step)
         self._curr_rew = self.task.step_rew(self.state)

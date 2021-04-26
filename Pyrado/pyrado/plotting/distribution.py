@@ -35,7 +35,7 @@ from matplotlib import patches
 from matplotlib import pyplot as plt
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
-from torch.distributions import Distribution
+from torch.distributions import Distribution, MultivariateNormal
 from torch.distributions.uniform import Uniform
 
 import pyrado
@@ -409,6 +409,11 @@ def draw_posterior_distr_2d(
                 [prior.base_dist.support.lower_bound[dim_y], prior.base_dist.support.upper_bound[dim_y]],
             ]
         )
+    elif isinstance(prior, MultivariateNormal):
+        # Construct a grid with +/-3 prior std around the prior mean
+        lb = prior.mean - 3 * to.sqrt(prior.variance)
+        ub = prior.mean + 3 * to.sqrt(prior.variance)
+        grid_bounds = to.tensor([[lb[dim_x], ub[dim_x]], [lb[dim_y], ub[dim_y]]])
     else:
         raise pyrado.ValueErr(msg="Neither an explicit grid nor a prior has been provided!")
     x = to.linspace(grid_bounds[0, 0].item(), grid_bounds[0, 1].item(), grid_res)  # 1 2 3

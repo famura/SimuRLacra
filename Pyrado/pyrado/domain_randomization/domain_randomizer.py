@@ -27,9 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
-from typing import Callable, Mapping, Optional, Union
+from typing import Mapping, Optional, Union
 
-import torch as to
 from tabulate import tabulate
 from torch.distributions.bernoulli import Bernoulli
 from torch.distributions.multivariate_normal import MultivariateNormal

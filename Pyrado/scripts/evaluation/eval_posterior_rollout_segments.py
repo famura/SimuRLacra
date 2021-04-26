@@ -51,12 +51,15 @@ from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrapp
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.rollout_based import plot_rollouts_segment_wise
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
+from pyrado.sampling.parallel_evaluation import eval_domain_params_with_segmentwise_reset
 from pyrado.sampling.rollout import rollout
+from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
+from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import rmse
 
 
@@ -70,6 +73,11 @@ if __name__ == "__main__":
     num_ml_samples = args.num_rollouts_per_config
     if not args.mode.lower() in ["samples", "confidence"]:
         raise pyrado.ValueErr(given=args, eq_constraint="samples or confidence")
+    if args.cut_rollout is not None:
+        if len(args.cut_rollout) != 2:
+            raise pyrado.ValueErr(given=args.cut_rollout, eq_constraint="tuple of integers")
+        else:
+            args.cut_rollout = tuple(args.cut_rollout)
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -137,7 +145,8 @@ if __name__ == "__main__":
     # occurred during the rollout. This is necessary since we are running the evaluation in segments.
     env_sim.init_space = InfBoxSpace(shape=env_sim.init_space.shape)
 
-    if False:
+    # Old solution with parallelization of the rollouts. Has been double-checked.
+    if True:
         # Create a new sampler pool for every policy to synchronize the random seeds i.e. init states
         pool = SamplerPool(args.num_workers)
 
@@ -153,6 +162,7 @@ if __name__ == "__main__":
             pool, env_sim, policy, segments_real_all, domain_params_ml_all, args.use_rec
         )
 
+    # Old solution without parallelization of the rollouts. Only use this when deeply mistrusting the one above.
     else:
         # Sample rollouts with the most likely domain parameter sets associated to that observation
         segments_ml_all = []  # all top max likelihood segments for all target domain rollouts
@@ -283,6 +293,8 @@ if __name__ == "__main__":
         idx_round=args.round,
         show_act=False,
         save_dir=ex_dir if args.save else None,
+        x_limits=args.cut_rollout,
+        data_field="states",
     )
 
     plt.show()

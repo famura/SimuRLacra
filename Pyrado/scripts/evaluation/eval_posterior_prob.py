@@ -129,8 +129,6 @@ if __name__ == "__main__":
         condition = None
     else:
         if args.mode.lower() == "pairwise-scatter":
-            # TODO @Theo, see how the extraction of the gt params can be move to the plotting function like for the
-            # TODO others, moreover, could we use the ml domain params (see below) instead of running eval_posterior?
             # Use the latest posterior to sample domain parameters to obtain a condition
             domain_params, log_probs = SBIBase.eval_posterior(
                 posterior[-1] if args.mode.lower() == "evolution-iter" else posterior,
@@ -150,6 +148,11 @@ if __name__ == "__main__":
                 dp_gt = to.atleast_2d(dp_gt)
             else:
                 dp_gt = None
+            reference_posterior_samples = None
+            for dirpath, dirnames, filenames in os.walk(ex_dir):
+                for f in filenames:
+                    if "reference_posterior_samples" in f:
+                        reference_posterior_samples = pyrado.load(f, ex_dir)
             condition = None
         else:
             # Get the most likely domain parameters per iteration
@@ -196,6 +199,13 @@ if __name__ == "__main__":
                 dp_samples = [domain_params_posterior]
                 if dp_gt is not None:
                     dp_samples.append(dp_gt)
+                if reference_posterior_samples is not None:
+                    # If there are more reference samples than num_samples, short the reference samples
+                    if args.num_samples < reference_posterior_samples.shape[0]:
+                        randperm = to.randperm(reference_posterior_samples.shape[0])
+                        reference_posterior_samples = reference_posterior_samples[randperm, :]
+                        reference_posterior_samples = reference_posterior_samples[: args.num_samples, :]
+                    dp_samples.append(reference_posterior_samples)
                 _ = draw_posterior_distr_pairwise_scatter(
                     axs,
                     dp_samples,
