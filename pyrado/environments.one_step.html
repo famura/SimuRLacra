@@ -520,7 +520,7 @@ When a terminal condition is met, the reset function is called.</p>
 <dt id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian">
 <em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">TwoDimGaussian</span></code><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
-<p>A toy model with complex 2-dim Gaussian posterior as described in [1].
+<p>A toy model with complex 2-dim Gaussian posterior as described in [1]. This environment can be interpreted as a zero-step environment.
 We use the domain parameters to capture the</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -607,18 +607,8 @@ The base version prints to console when the state exceeds its boundaries.</p>
 <dl class="py method">
 <dt id="pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.reset">
 <code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/environments/one_step/two_dim_gaussian.html#TwoDimGaussian.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
-<li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return obs</dt>
-<dd class="field-even"><p>initial observation of the state.</p>
-</dd>
-</dl>
+<dd><p>Resetting the environment generates the singular state which is of importance.
+This environment can be interpreted as a zero-step environment, because it does not depend on an action.</p>
 </dd></dl>
 
 <dl class="py method">

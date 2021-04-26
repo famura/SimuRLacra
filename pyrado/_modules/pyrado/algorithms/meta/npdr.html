@@ -226,6 +226,7 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -370,15 +371,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># Check if the rollout files already exist</span>
+            <span class="c1"># Check if the rollout files already exist</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span><span class="si">}</span><span class="s2">_data_real.pt&quot;</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">))</span>
+            <span class="p">):</span>
+                <span class="c1"># Rollout files do exist (can be when continuing a previous experiment)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
-                <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
                 <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded existing rollout data for iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Rollout files do not exist yet (usual case)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">NPDR</span><span class="o">.</span><span class="n">collect_data_real</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
@@ -410,8 +413,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Load the latest proposal, this can be the prior or the amortized posterior of the last iteration</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_latest_proposal</span><span class="p">()</span>
+
             <span class="c1"># Multi-round sbi</span>
-            <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span>
             <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span><span class="p">):</span>
                 <span class="c1"># Sample parameters proposal, and simulate these parameters to obtain the data</span>
                 <span class="n">domain_param</span><span class="p">,</span> <span class="n">data_sim</span> <span class="o">=</span> <span class="n">simulate_for_sbi</span><span class="p">(</span>

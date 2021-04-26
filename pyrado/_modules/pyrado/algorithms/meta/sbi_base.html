@@ -235,13 +235,12 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">colorama</span> <span class="kn">import</span> <span class="n">Fore</span><span class="p">,</span> <span class="n">Style</span>
+<span class="kn">from</span> <span class="nn">sbi</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">NeuralInference</span>
 <span class="kn">from</span> <span class="nn">sbi.inference.posteriors.direct_posterior</span> <span class="kn">import</span> <span class="n">DirectPosterior</span>
 <span class="kn">from</span> <span class="nn">sbi.inference.snpe</span> <span class="kn">import</span> <span class="n">PosteriorEstimator</span>
-<span class="kn">from</span> <span class="nn">sbi.utils</span> <span class="kn">import</span> <span class="n">posterior_nn</span>
 <span class="kn">from</span> <span class="nn">sbi.utils.user_input_checks</span> <span class="kn">import</span> <span class="n">prepare_for_sbi</span>
-<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
-<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
@@ -366,6 +365,10 @@
                 <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The given env_sim must be a non-randomized simulation environment, &quot;</span>
                 <span class="s2">&quot;except for wrappers that add a domain parameter!&quot;</span>
             <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="n">Normal</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The sbi framework requires MultivariateNormal instead of Normal distributions for the prior.&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">prior</span><span class="o">.</span><span class="n">event_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">prior</span><span class="o">.</span><span class="n">event_shape</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">dp_mapping</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">posterior_hparam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -419,7 +422,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_sbi</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
 
         <span class="c1"># Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE</span>
-        <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span>  <span class="c1"># embedding for nflows is always nn.Identity</span>
+        <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span>  <span class="c1"># embedding for nflows is always nn.Identity</span>
         <span class="n">summary_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">writer</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">summary_writer</span><span class="p">,</span> <span class="n">SummaryWriter</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_class</span><span class="p">(</span>
@@ -485,6 +488,18 @@
 
         <span class="c1"># Call sbi&#39;s preparation function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span> <span class="o">=</span> <span class="n">prepare_for_sbi</span><span class="p">(</span><span class="n">rollout_sampler</span><span class="p">,</span> <span class="n">prior</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SBIBase.get_latest_proposal"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_latest_proposal">[docs]</a>    <span class="k">def</span> <span class="nf">get_latest_proposal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">utils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the latest proposal. This is either the prior, or the (amortized) posterior from the previous iteration.</span>
+
+<span class="sd">        :return: latest proposal for simulating with sbi</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">proposal</span></div>
 
 <div class="viewcode-block" id="SBIBase.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.step">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -620,7 +635,7 @@
         <span class="c1"># Check before loading, and print a warning message if there can not be a posterior with the obtained indices</span>
         <span class="k">if</span> <span class="n">idx_iter</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid iteration index </span><span class="si">{</span><span class="n">idx_iter</span><span class="si">}</span><span class="s2">! Check if there is a posterior in </span><span class="si">{</span><span class="n">load_dir</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">idx_round</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">idx_round</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">multi_round_setting</span><span class="p">:</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid round index </span><span class="si">{</span><span class="n">idx_round</span><span class="si">}</span><span class="s2">! Check if there is a posterior in </span><span class="si">{</span><span class="n">load_dir</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 
         <span class="c1"># Load the current posterior</span>

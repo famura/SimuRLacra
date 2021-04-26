@@ -250,6 +250,13 @@
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">animation</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--cut_rollout&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;tuple of indices defining start and end index of the rollout&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--dt&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;environments time step size in seconds (no default)&quot;</span><span class="p">,</span>
