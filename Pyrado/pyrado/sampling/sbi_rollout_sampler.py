@@ -233,10 +233,11 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     # Iterate over segments of one target domain rollout
                     cnt_step = 0
                     for seg_real in segs_real:
-                        # Disabled the policy reset of PlaybackPolicy to do it here manually
-                        assert policy.no_reset
-                        policy.curr_rec = idx_r
-                        policy.curr_step = cnt_step
+                        if self.use_rec_act:
+                            # Disabled the policy reset of PlaybackPolicy to do it here manually
+                            assert policy.no_reset
+                            policy.curr_rec = idx_r
+                            policy.curr_step = cnt_step
 
                         # Do the rollout for a segment
                         seg_sim = rollout(
