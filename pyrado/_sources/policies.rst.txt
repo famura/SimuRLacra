@@ -5,6 +5,7 @@ policies
 
 .. toctree::
 
+   pyrado.policies.feed_back
    pyrado.policies.feed_forward
    pyrado.policies.recurrent
    pyrado.policies.special

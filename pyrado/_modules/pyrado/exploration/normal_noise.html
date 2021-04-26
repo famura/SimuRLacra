@@ -238,7 +238,7 @@
 
 
 <div class="viewcode-block" id="DiagNormalNoise"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise">[docs]</a><span class="k">class</span> <span class="nc">DiagNormalNoise</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Module for learnable additive Gaussian noise with a diagonal covariance matrix &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Module for learnable additive Gaussian noise with a diagonal covariance matrix&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -306,12 +306,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the device (CPU or GPU) on which the policy is stored. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the policy is stored.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the untransformed standard deviation from the log-transformed. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the untransformed standard deviation from the log-transformed.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_std</span><span class="p">)</span>
 
     <span class="nd">@std</span><span class="o">.</span><span class="n">setter</span>
@@ -324,7 +324,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_std</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">std</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_min</span><span class="p">))</span>
 
 <div class="viewcode-block" id="DiagNormalNoise.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset all parameters of the exploration strategy. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset all parameters of the exploration strategy.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_std</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_std_init</span><span class="p">)</span></div>
@@ -373,7 +373,7 @@
 
 
 <div class="viewcode-block" id="FullNormalNoise"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.normal_noise.FullNormalNoise">[docs]</a><span class="k">class</span> <span class="nc">FullNormalNoise</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Module for learnable additive Gaussian noise with a full covariance matrix &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Module for learnable additive Gaussian noise with a full covariance matrix&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -440,17 +440,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the device (CPU or GPU) on which the policy is stored. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the policy is stored.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
 
     <span class="nd">@property</span>
     <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the standard deviations from the internal covariance matrix. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the standard deviations from the internal covariance matrix.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">diag</span><span class="p">())</span>
 
 <div class="viewcode-block" id="FullNormalNoise.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.normal_noise.FullNormalNoise.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset all parameters of the exploration strategy. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset all parameters of the exploration strategy.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_init</span><span class="p">)</span></div>

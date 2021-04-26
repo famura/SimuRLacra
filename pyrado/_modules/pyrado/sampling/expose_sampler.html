@@ -234,16 +234,16 @@
 
 
 <div class="viewcode-block" id="ExposedSampler"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.expose_sampler.ExposedSampler">[docs]</a><span class="k">class</span> <span class="nc">ExposedSampler</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A mixin class to expose an algorithm&#39;s sampler &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A mixin class to expose an algorithm&#39;s sampler&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplerBase</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the sampler. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the sampler.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span>
 
     <span class="nd">@sampler</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_sampler</span><span class="p">:</span> <span class="n">SamplerBase</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the sampler. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the sampler.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">new_sampler</span></div>
 </pre></div>
 

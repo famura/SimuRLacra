@@ -234,7 +234,7 @@
 
 
 <div class="viewcode-block" id="BaseErr"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.BaseErr">[docs]</a><span class="k">class</span> <span class="nc">BaseErr</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Base class for exceptions in Pyrado &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for exceptions in Pyrado&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="BaseErr.retrieve_var_name"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.BaseErr.retrieve_var_name">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_var_name</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">stack_level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -286,7 +286,7 @@
 
 
 <div class="viewcode-block" id="TypeErr"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.TypeErr">[docs]</a><span class="k">class</span> <span class="nc">TypeErr</span><span class="p">(</span><span class="n">BaseErr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Class for exceptions raised by passing wrong data types &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for exceptions raised by passing wrong data types&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -330,7 +330,7 @@
 
 
 <div class="viewcode-block" id="ValueErr"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.ValueErr">[docs]</a><span class="k">class</span> <span class="nc">ValueErr</span><span class="p">(</span><span class="n">BaseErr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Class for exceptions raised by passing wrong values &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for exceptions raised by passing wrong values&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -397,7 +397,7 @@
 
 
 <div class="viewcode-block" id="ShapeErr"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.ShapeErr">[docs]</a><span class="k">class</span> <span class="nc">ShapeErr</span><span class="p">(</span><span class="n">BaseErr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Class for exceptions raised by passing wrong values &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for exceptions raised by passing wrong values&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ShapeErr.get_shape_and_name"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.ShapeErr.get_shape_and_name">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_shape_and_name</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
@@ -444,7 +444,7 @@
 
 
 <div class="viewcode-block" id="PathErr"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.PathErr">[docs]</a><span class="k">class</span> <span class="nc">PathErr</span><span class="p">(</span><span class="n">BaseErr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Class for exceptions raised by passing wrong paths to folders or files &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for exceptions raised by passing wrong paths to folders or files&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">given</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;__INVALID__&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -475,7 +475,7 @@
 
 
 <div class="viewcode-block" id="KeyErr"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.exceptions.KeyErr">[docs]</a><span class="k">class</span> <span class="nc">KeyErr</span><span class="p">(</span><span class="n">BaseErr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Class for exceptions raised asking for a keys in an object that does not exist &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for exceptions raised asking for a keys in an object that does not exist&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

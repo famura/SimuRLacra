@@ -274,7 +274,7 @@
 
 
 <div class="viewcode-block" id="TimeSeriesDataSet"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_sets.TimeSeriesDataSet">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesDataSet</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Class for storing time series data sets &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for storing time series data sets&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -345,22 +345,22 @@
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the length of the complete data set (not split into sequences) after removing superfluous samples. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the length of the complete data set (not split into sequences) after removing superfluous samples.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot; Get one sample from the complete data set (not split into sequences). &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get one sample from the complete data set (not split into sequences).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_all</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Check if two data sets are equal by comparing the data and properties. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if two data sets are equal by comparing the data and properties.&quot;&quot;&quot;</span>
         <span class="n">data_eq</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_all</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">data_all</span><span class="p">)</span>
         <span class="n">ratio_eq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_train</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">ratio_train</span>
         <span class="n">window_eq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">window_size</span>
         <span class="k">return</span> <span class="n">data_eq</span> <span class="ow">and</span> <span class="n">ratio_eq</span> <span class="ow">and</span> <span class="n">window_eq</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TimeSeriesDataSet (id </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">tabulate</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="p">[</span><span class="s2">&quot;num all samples&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)],</span>
@@ -372,29 +372,29 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ratio_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the ratio of the training samples w.r.t. the total sample count. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the ratio of the training samples w.r.t. the total sample count.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio_train</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">window_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the length of the sequences fed to the policy for predicting the next value. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the length of the sequences fed to the policy for predicting the next value.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window_size</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dim_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the data&#39;s number of dimensions. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the data&#39;s number of dimensions.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_all</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_all</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_samples_trn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the number of samples in the training subset. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the number of samples in the training subset.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ratio_train</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_samples_tst</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the number of samples in the testing subset. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the number of samples in the testing subset.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples_trn</span>
 
 <div class="viewcode-block" id="TimeSeriesDataSet.cut_to_window_size"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size">[docs]</a>    <span class="nd">@staticmethod</span>

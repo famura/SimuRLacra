@@ -317,20 +317,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">base_dir</span>
 
     <span class="k">def</span> <span class="nf">__fspath__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Allows to use the experiment object where the experiment path is needed. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Allows to use the experiment object where the experiment path is needed.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Combination of experiment and algorithm &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Combination of experiment and algorithm&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Experiment.matches"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.Experiment.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Check if this experiment matches the given hint. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if this experiment matches the given hint.&quot;&quot;&quot;</span>
         <span class="c1"># Split hint into &lt;env&gt;/&lt;algo&gt;/&lt;id&gt;</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">parts</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -379,7 +379,7 @@
 
 
 <span class="k">def</span> <span class="nf">_childdirs</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Yield only direct child directories. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Yield only direct child directories.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
         <span class="n">cp</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">cn</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cp</span><span class="p">):</span>
@@ -461,7 +461,7 @@
 
 
 <div class="viewcode-block" id="select_by_hint"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.select_by_hint">[docs]</a><span class="k">def</span> <span class="nf">select_by_hint</span><span class="p">(</span><span class="n">exps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Experiment</span><span class="p">],</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Select experiment by hint. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Select experiment by hint.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">hint</span><span class="p">):</span>
         <span class="c1"># Hint is a full experiment path</span>
         <span class="k">return</span> <span class="n">hint</span>
@@ -678,7 +678,7 @@
 
 <div class="viewcode-block" id="AugmentedSafeLoader"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.AugmentedSafeLoader">[docs]</a><span class="k">class</span> <span class="nc">AugmentedSafeLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
 <div class="viewcode-block" id="AugmentedSafeLoader.construct_python_tuple"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">[docs]</a>    <span class="k">def</span> <span class="nf">construct_python_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Use PyYAML method for constructing a sequence to construct a tuple. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Use PyYAML method for constructing a sequence to construct a tuple.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">construct_sequence</span><span class="p">(</span><span class="n">node</span><span class="p">))</span></div></div>
 
 

@@ -14,46 +14,10 @@ domain\_distribution
    :show-inheritance:
 
 
-dual\_rfb
----------
-
-.. automodule:: pyrado.policies.special.dual_rfb
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-dummy
------
-
-.. automodule:: pyrado.policies.special.dummy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 environment\_specific
 ---------------------
 
 .. automodule:: pyrado.policies.special.environment_specific
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-mdn
----
-
-.. automodule:: pyrado.policies.special.mdn
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-time
-----
-
-.. automodule:: pyrado.policies.special.time
    :members:
    :undoc-members:
    :show-inheritance:

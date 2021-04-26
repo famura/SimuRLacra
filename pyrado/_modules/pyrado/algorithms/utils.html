@@ -271,7 +271,7 @@
 
 
 <div class="viewcode-block" id="ReplayMemory"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.ReplayMemory">[docs]</a><span class="k">class</span> <span class="nc">ReplayMemory</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Base class for storing step transitions &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for storing step transitions&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -284,16 +284,16 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">memory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepSequence</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the replay buffer. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the replay buffer.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">isempty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Check if the replay buffer is empty. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if the replay buffer is empty.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="ow">is</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the number of transitions stored in the buffer. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the number of transitions stored in the buffer.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">length</span>
 
 <div class="viewcode-block" id="ReplayMemory.push"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.ReplayMemory.push">[docs]</a>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ros</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">],</span> <span class="n">truncate_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>

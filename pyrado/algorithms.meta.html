@@ -106,7 +106,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">meta</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.adr">adr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.arpl">arpl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayessim">bayessim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bayessim">bayessim</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayrn">bayrn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.epopt">epopt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.npdr">npdr</a></li>
@@ -475,105 +475,8 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyrado.algorithms.meta.bayessim">
-<span id="bayessim"></span><h2>bayessim<a class="headerlink" href="#module-pyrado.algorithms.meta.bayessim" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">BayesSim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_sim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_real</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_mapping</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.distributions.distribution.Distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding" title="pyrado.sampling.sbi_embeddings.BayesSimEmbedding"><span class="pre">pyrado.sampling.sbi_embeddings.BayesSimEmbedding</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_real_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_sim_per_round</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_sbi_rounds</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_eval_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posterior_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_sbi_training_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_sbi_snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><span class="pre">pyrado.algorithms.base.Algorithm</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn_policy_snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thold_succ_subrtn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">-</span> <span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayessim.html#BayesSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
-<p>BayesSim [1] using Sequential Neural Posterior Estimation (SNPE-A) [2]</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt>[1] F. Ramos, R.C. Possas, D. Fox, “BayesSim: adaptive domain randomization via probabilistic inference for</dt><dd><p>robotics simulators”, RSS, 2019</p>
-</dd>
-<dt>[2] G. Papamakarios, I. Murray. “Fast epsilon-free inference of simulation models with Bayesian conditional</dt><dd><p>density estimation.”, NIPS, 2016</p>
-</dd>
-</dl>
-</div>
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.embedding">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">embedding</span></code><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.embedding" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the embedding used to compute the features from the rollouts.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.iteration_key">
-<code class="sig-name descname"><span class="pre">iteration_key</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bayessim_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.iteration_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.name">
-<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bayessim'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.posterior">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">posterior</span></code><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.posterior" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the current (conditional) posterior density estimator.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.save_snapshot">
-<code class="sig-name descname"><span class="pre">save_snapshot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayessim.html#BayesSim.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.save_snapshot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
-Subclasses should call the base method to save the policy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a <cite>dict</cite> of information about the current iteration of the meta-algorithm</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.step">
-<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayessim.html#BayesSim.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
-adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
-<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a dict of information about the current iteration of the meta-algorithm</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.subroutine_distr">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subroutine_distr</span></code><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.subroutine_distr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the system identification subroutine coming from the sbi module.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.subroutine_policy">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subroutine_policy</span></code><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.subroutine_policy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the policy optimization subroutine.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.meta.bayessim.BayesSim.train_policy_sim">
-<code class="sig-name descname"><span class="pre">train_policy_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayessim.html#BayesSim.train_policy_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.train_policy_sim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>domain_params</strong> – domain parameters sampled from the posterior [shape N x D where N is the number of
-samples and D is the number of domain parameters]</p></li>
-<li><p><strong>prefix</strong> – set a prefix to the saved file name, use “” for no prefix</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>estimated return of the trained policy in the target domain</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="bayessim">
+<h2>bayessim<a class="headerlink" href="#bayessim" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyrado.algorithms.meta.bayrn">
 <span id="bayrn"></span><h2>bayrn<a class="headerlink" href="#module-pyrado.algorithms.meta.bayrn" title="Permalink to this headline">¶</a></h2>

@@ -238,6 +238,7 @@
     <span class="n">UniformDomainParam</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.one_step.catapult</span> <span class="kn">import</span> <span class="n">CatapultSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.one_step.rosenbrock</span> <span class="kn">import</span> <span class="n">RosenSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamDiscSim</span><span class="p">,</span> <span class="n">BallOnBeamSim</span>
@@ -250,15 +251,16 @@
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleStabReal</span><span class="p">,</span> <span class="n">QCartPoleSwingUpReal</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeSwingUpReal</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.two_headed_fnn</span> <span class="kn">import</span> <span class="n">TwoHeadedFNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.two_headed_fnn</span> <span class="kn">import</span> <span class="n">TwoHeadedFNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.poly_time</span> <span class="kn">import</span> <span class="n">PolySplineTimePolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.time</span> <span class="kn">import</span> <span class="n">TimePolicy</span><span class="p">,</span> <span class="n">TraceableTimePolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">pd_cubic</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.neural_fields</span> <span class="kn">import</span> <span class="n">NFPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">GRUPolicy</span><span class="p">,</span> <span class="n">LSTMPolicy</span><span class="p">,</span> <span class="n">RNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">,</span> <span class="n">TwoHeadedLSTMPolicy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.time</span> <span class="kn">import</span> <span class="n">TimePolicy</span><span class="p">,</span> <span class="n">TraceableTimePolicy</span>
 
 <span class="c1"># Set default torch dtype globally to avoid inconsistent errors depending on the test run order</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
@@ -867,75 +869,86 @@
         <span class="k">return</span> <span class="n">FeatureStack</span><span class="p">([</span><span class="n">const_feat</span><span class="p">,</span> <span class="n">identity_feat</span><span class="p">,</span> <span class="n">squared_feat</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.idle_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.idle_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">idle_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">idle_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">IdlePolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.dummy_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.dummy_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">dummy_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">dummy_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DummyPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.linear_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.linear_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">linear_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">linear_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">DefaultPolicies</span><span class="o">.</span><span class="n">default_fs</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.linear_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.linear_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">linear_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">linear_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">DefaultPolicies</span><span class="o">.</span><span class="n">default_fs</span><span class="p">(),</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.time_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.time_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">time_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">time_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">timefcn</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">TimePolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">fcn_of_time</span><span class="o">=</span><span class="n">timefcn</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.tracetime_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.tracetime_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">tracetime_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">tracetime_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">timefcn</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">TraceableTimePolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">fcn_of_time</span><span class="o">=</span><span class="n">timefcn</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="DefaultPolicies.pst_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.pst_policy">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">pst_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PolySplineTimePolicy</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">dt</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+            <span class="n">t_end</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">/</span> <span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">),</span>
+            <span class="n">cond_lvl</span><span class="o">=</span><span class="s2">&quot;acc&quot;</span><span class="p">,</span>
+            <span class="n">cond_final</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">),</span>
+            <span class="n">use_cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="DefaultPolicies.fnn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.fnn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">fnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.fnn_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.fnn_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">fnn_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fnn_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.rnn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.rnn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">rnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">RNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.rnn_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.rnn_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">rnn_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rnn_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">RNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.lstm_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.lstm_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">lstm_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lstm_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LSTMPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.lstm_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.lstm_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">lstm_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lstm_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LSTMPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.gru_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.gru_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">gru_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">gru_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GRUPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.gru_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.gru_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">gru_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">gru_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GRUPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.adn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.adn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">adn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">adn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ADNPolicy</span><span class="p">(</span>
             <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">activation_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">,</span> <span class="n">potentials_dyn_fcn</span><span class="o">=</span><span class="n">pd_cubic</span><span class="p">,</span> <span class="n">potential_init_learnable</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.nf_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.nf_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">nf_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nf_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">NFPolicy</span><span class="p">(</span>
             <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
             <span class="n">hidden_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
@@ -947,21 +960,21 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.thfnn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.thfnn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">thfnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">thfnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">TwoHeadedFNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">shared_hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">shared_hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">relu</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.thrnn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.thrnn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">thrnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">thrnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">TwoHeadedRNNPolicy</span><span class="p">(</span>
             <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">shared_hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">shared_num_recurrent_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shared_hidden_nonlin</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.thgru_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.thgru_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">thgru_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">thgru_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">shared_hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">shared_num_recurrent_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.thlstm_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.thlstm_policy">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">thlstm_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">thlstm_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">TwoHeadedLSTMPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">shared_hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">shared_num_recurrent_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div></div>
 
 

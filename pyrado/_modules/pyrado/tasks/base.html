@@ -247,7 +247,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">env_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the specification of environment the task is in. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the specification of environment the task is in.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@property</span>
@@ -285,13 +285,13 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">rew_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RewFcn</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the reward function. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the reward function.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@rew_fcn</span><span class="o">.</span><span class="n">setter</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">rew_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the reward function. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the reward function.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="Task.reset"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.base.Task.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
@@ -394,7 +394,7 @@
 
 
 <div class="viewcode-block" id="TaskWrapper"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.base.TaskWrapper">[docs]</a><span class="k">class</span> <span class="nc">TaskWrapper</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Base for all task wrappers. Delegates all environment methods to the wrapped environment. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base for all task wrappers. Delegates all environment methods to the wrapped environment.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

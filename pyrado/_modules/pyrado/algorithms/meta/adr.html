@@ -243,7 +243,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_evaluation</span> <span class="kn">import</span> <span class="n">eval_domain_params</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="n">SamplerPool</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
@@ -506,7 +506,7 @@
 
 
 <div class="viewcode-block" id="SVPGAdapter"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter">[docs]</a><span class="k">class</span> <span class="nc">SVPGAdapter</span><span class="p">(</span><span class="n">EnvWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Wrapper to encapsulate the domain parameter search as a reinforcement learning problem &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper to encapsulate the domain parameter search as a reinforcement learning problem&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

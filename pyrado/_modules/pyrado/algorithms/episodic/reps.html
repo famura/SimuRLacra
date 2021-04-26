@@ -244,7 +244,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_params</span> <span class="kn">import</span> <span class="n">NormalParamNoise</span><span class="p">,</span> <span class="n">SymmParamExplStrat</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.domain_distribution</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterSamplingResult</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt_once</span>
@@ -363,7 +363,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">eta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot; Get the Lagrange multiplier $\eta$. In [2], $/eta$ is called $/alpha$. &quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the Lagrange multiplier $\eta$. In [2], $/eta$ is called $/alpha$.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_eta</span><span class="p">)</span>
 
 <div class="viewcode-block" id="REPS.weights"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.weights">[docs]</a>    <span class="k">def</span> <span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rets</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>

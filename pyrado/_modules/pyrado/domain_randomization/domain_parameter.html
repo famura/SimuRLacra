@@ -239,7 +239,7 @@
 
 
 <div class="viewcode-block" id="DomainParam"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam">[docs]</a><span class="k">class</span> <span class="nc">DomainParam</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Class to store and manage a (single) domain parameter a.k.a. physics parameter a.k.a. simulator parameter &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class to store and manage a (single) domain parameter a.k.a. physics parameter a.k.a. simulator parameter&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -267,7 +267,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">distr</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># no randomization by default</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Check if two `DomainParam` are equal by comparing all attributes defined in `get_field_names()`. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if two `DomainParam` are equal by comparing all attributes defined in `get_field_names()`.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">DomainParam</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">other</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainParam</span><span class="p">)</span>
 
@@ -278,7 +278,7 @@
 
 <div class="viewcode-block" id="DomainParam.get_field_names"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam.get_field_names">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_field_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get union of all hyper-parameters of all domain parameter distributions. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get union of all hyper-parameters of all domain parameter distributions.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;clip_lo&quot;</span><span class="p">,</span> <span class="s2">&quot;clip_up&quot;</span><span class="p">,</span> <span class="s2">&quot;roundint&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="DomainParam.adapt"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
@@ -328,7 +328,7 @@
 
 
 <div class="viewcode-block" id="UniformDomainParam"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.UniformDomainParam">[docs]</a><span class="k">class</span> <span class="nc">UniformDomainParam</span><span class="p">(</span><span class="n">DomainParam</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Domain parameter sampled from a normal distribution &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Domain parameter sampled from a normal distribution&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">halfspan</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -365,7 +365,7 @@
 
 
 <div class="viewcode-block" id="NormalDomainParam"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.NormalDomainParam">[docs]</a><span class="k">class</span> <span class="nc">NormalDomainParam</span><span class="p">(</span><span class="n">DomainParam</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Domain parameter sampled from a normal distribution &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Domain parameter sampled from a normal distribution&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">std</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -401,7 +401,7 @@
 
 
 <div class="viewcode-block" id="MultivariateNormalDomainParam"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.MultivariateNormalDomainParam">[docs]</a><span class="k">class</span> <span class="nc">MultivariateNormalDomainParam</span><span class="p">(</span><span class="n">DomainParam</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Domain parameter sampled from a normal distribution &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Domain parameter sampled from a normal distribution&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">cov</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -442,7 +442,7 @@
 
 
 <div class="viewcode-block" id="BernoulliDomainParam"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.BernoulliDomainParam">[docs]</a><span class="k">class</span> <span class="nc">BernoulliDomainParam</span><span class="p">(</span><span class="n">DomainParam</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Domain parameter sampled from a Bernoulli distribution &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Domain parameter sampled from a Bernoulli distribution&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val_0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">val_1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">prob_1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -550,27 +550,27 @@
 
 <div class="viewcode-block" id="SelfPacedDomainParam.get_field_names"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.get_field_names">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_field_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get union of all hyper-parameters of all domain parameter distributions. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get union of all hyper-parameters of all domain parameter distributions.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;target_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;target_cov_chol_flat&quot;</span><span class="p">,</span> <span class="s2">&quot;context_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;context_cov_chol_flat&quot;</span><span class="p">]</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">target_distr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultivariateNormal</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the target distribution. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the target distribution.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_distr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">context_distr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultivariateNormal</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the current contextual distribution. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the current contextual distribution.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_distr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">target_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the target covariance matrix. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the target covariance matrix.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_cov_chol_flat</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">context_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the current covariance matrix. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the current covariance matrix.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_cov_chol_flat</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SelfPacedDomainParam.adapt"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
@@ -605,7 +605,7 @@
                 <span class="k">raise</span> <span class="n">err</span></div>
 
 <div class="viewcode-block" id="SelfPacedDomainParam.sample"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Samples `num_samples` samples of the current context distribution. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Samples `num_samples` samples of the current context distribution.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">num_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given_name</span><span class="o">=</span><span class="s2">&quot;num_samples&quot;</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>

@@ -215,12 +215,12 @@ There are many valid possibilities to deviate from this scheme. However, the fol
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 </pre></div>
 </div>
-<p>Start by creating a new experiment which’s folder will be placed in <cite>Pyrado/data/temp</cite> by default. You can change this
-by passing any directory as <cite>base_dir</cite>. In Pyrado, the folders are structured like this:
-<cite>environment_name/algorithm_name/datetime_and_info</cite>. This rule is only required for the automatic search for experiments
-(e.g. used in <cite>sim_policy()</cite>). This search function requires the individual experiment folders to start with <cite>date_time</cite>.
-Aside from this, you can name your experiments and folders however you like. Use the <cite>load_experiment()</cite> function to
-later oad your results. It will look for an environment as well as a policy file in the provided path.</p>
+<p>First, we create an <cite>Experiment</cite>, which basically is a folder (by default in <cite>Pyrado/data/temp</cite>). The experiments are
+stored using the following scheme: &lt;base_dir&gt;/&lt;env_name&gt;/&lt;algo_name&gt;/&lt;timestamp&gt;–&lt;extra_info&gt;.
+This rule is only required for the automatic search for experiments (e.g. used in <cite>sim_policy()</cite>). This search function
+requires the individual experiment folders to start with <cite>date_time</cite>. Aside from this, you can name your experiments
+and folders however you like. Use the <cite>load_experiment()</cite> function to later oad your results. It will look for an
+environment as well as a policy file in the provided path.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ex_dir</span> <span class="o">=</span> <span class="n">setup_experiment</span><span class="p">(</span><span class="n">BallOnBeamSim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">HCNormal</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">LinearPolicy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;ident-sin&#39;</span><span class="p">)</span>
 </pre></div>
 </div>

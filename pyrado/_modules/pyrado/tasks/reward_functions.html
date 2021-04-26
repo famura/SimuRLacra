@@ -236,7 +236,7 @@
 
 
 <div class="viewcode-block" id="RewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.RewFcn">[docs]</a><span class="k">class</span> <span class="nc">RewFcn</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Base class for all reward functions &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all reward functions&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -259,7 +259,7 @@
 
 
 <div class="viewcode-block" id="CompoundRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.CompoundRewFcn">[docs]</a><span class="k">class</span> <span class="nc">CompoundRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Combine multiple reward functions &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Combine multiple reward functions&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rew_fcns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -288,7 +288,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; None of the inputs matter. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">0.0</span></div>
 
 
@@ -299,7 +299,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; None of the inputs matter. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">1.0</span></div>
 
 
@@ -310,7 +310,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; None of the inputs matter. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;None of the inputs matter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span></div>
 
 
@@ -346,7 +346,7 @@
 
 
 <div class="viewcode-block" id="AbsErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.AbsErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">AbsErrRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Reward function that returns the negative weighted sum of the absolute errors. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Reward function that returns the negative weighted sum of the absolute errors.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -374,7 +374,7 @@
 
 
 <div class="viewcode-block" id="QuadrErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.QuadrErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">QuadrErrRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Reward function that returns the exp of the weighted sum of squared errors. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the weighted sum of squared errors.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -422,7 +422,7 @@
 
 
 <div class="viewcode-block" id="ExpQuadrErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ExpQuadrErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">QuadrErrRewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Reward function that returns the exp of the weighted sum of squared errors &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the weighted sum of squared errors&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -444,7 +444,7 @@
 
 
 <div class="viewcode-block" id="ScaledExpQuadrErrRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.ScaledExpQuadrErrRewFcn">[docs]</a><span class="k">class</span> <span class="nc">ScaledExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">QuadrErrRewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Reward function that returns the exp of the scaled weighted sum of squared errors &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Reward function that returns the exp of the scaled weighted sum of squared errors&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">R</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">state_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">act_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">min_rew</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span>
@@ -614,7 +614,7 @@
 
 
 <div class="viewcode-block" id="QCartPoleSwingUpRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.QCartPoleSwingUpRewFcn">[docs]</a><span class="k">class</span> <span class="nc">QCartPoleSwingUpRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Custom reward function for QCartPoleSwingUpSim. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Custom reward function for QCartPoleSwingUpSim.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

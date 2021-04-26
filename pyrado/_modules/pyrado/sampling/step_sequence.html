@@ -257,7 +257,7 @@
 
 
 <div class="viewcode-block" id="DictIndexProxy"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.DictIndexProxy">[docs]</a><span class="k">class</span> <span class="nc">DictIndexProxy</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Views a slice through a dict of lists or tensors. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Views a slice through a dict of lists or tensors.&quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;__dict__&quot;</span><span class="p">,</span> <span class="s2">&quot;_obj&quot;</span><span class="p">,</span> <span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="s2">&quot;_prefix&quot;</span><span class="p">)</span>
 
@@ -542,12 +542,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the name of data format (&#39;torch&#39; or &#39;numpy&#39;). &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the name of data format (&#39;torch&#39; or &#39;numpy&#39;).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get the list of data attribute names. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the list of data attribute names.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span>
 
     <span class="nd">@property</span>
@@ -557,21 +557,21 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rollout_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Count the number of sub-rollouts inside this step sequence. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Count the number of sub-rollouts inside this step sequence.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sub-rollouts are only supported on continuous data.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rollout_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Lengths of sub-rollouts. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Lengths of sub-rollouts.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sub-rollouts are only supported on continuous data.&quot;</span><span class="p">)</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span>
         <span class="k">return</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">bounds</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get the step sequence&#39;s length. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the step sequence&#39;s length.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -803,7 +803,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">start_step</span><span class="p">:</span><span class="n">end_step</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="StepSequence.iterate_rollouts"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.iterate_rollouts">[docs]</a>    <span class="k">def</span> <span class="nf">iterate_rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Iterate over all sub-rollouts of a concatenated rollout. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over all sub-rollouts of a concatenated rollout.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sub-rollouts are only supported on continuous data.&quot;</span><span class="p">)</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span>
@@ -1013,7 +1013,7 @@
 
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">fcn</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">recursive_wrapper</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; Wrap the processing function to call it recursivelyy for nested data structures. &quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;Wrap the processing function to call it recursivelyy for nested data structures.&quot;&quot;&quot;</span>
             <span class="c1"># Add to actual data input to the keyword arguments to make calling the function easier</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">fcn_arg_name</span><span class="p">:</span> <span class="n">inp</span><span class="p">})</span>
 
@@ -1117,7 +1117,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_next_value</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">Step</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Helper to return `next_value = 0` for last step &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Helper to return `next_value = 0` for last step&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">done</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
         <span class="k">return</span> <span class="n">step</span><span class="o">.</span><span class="n">next_value</span>

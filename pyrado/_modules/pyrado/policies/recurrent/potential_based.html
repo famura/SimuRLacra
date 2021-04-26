@@ -241,7 +241,7 @@
 
 
 <div class="viewcode-block" id="PotentialBasedPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy">[docs]</a><span class="k">class</span> <span class="nc">PotentialBasedPolicy</span><span class="p">(</span><span class="n">RecurrentPolicy</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Base class for policies that work with potential-based neutral networks &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for policies that work with potential-based neutral networks&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -347,12 +347,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the time scale parameter. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the time scale parameter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_tau</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kappa</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the cubic decay parameter. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the cubic decay parameter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PotentialBasedPolicy.potentials_dot"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.potentials_dot">[docs]</a>    <span class="nd">@abstractmethod</span>

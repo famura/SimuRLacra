@@ -236,7 +236,7 @@
 
 
 <div class="viewcode-block" id="UniformNoise"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.uniform_noise.UniformNoise">[docs]</a><span class="k">class</span> <span class="nc">UniformNoise</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Module for learnable additive uniform noise &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Module for learnable additive uniform noise&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -312,12 +312,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the device (CPU or GPU) on which the policy is stored. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the device (CPU or GPU) on which the policy is stored.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">halfspan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the untransformed standard deviation vector given the log-transformed. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the untransformed standard deviation vector given the log-transformed.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">halfspan_min</span><span class="p">)</span>
 
     <span class="nd">@halfspan</span><span class="o">.</span><span class="n">setter</span>
@@ -330,7 +330,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">halfspan</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">halfspan_min</span><span class="p">))</span>
 
 <div class="viewcode-block" id="UniformNoise.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.uniform_noise.UniformNoise.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset all parameters of the exploration strategy. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset all parameters of the exploration strategy.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_halfspan_init</span><span class="p">)</span></div>

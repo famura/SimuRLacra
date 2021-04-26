@@ -238,7 +238,7 @@
 
 
 <div class="viewcode-block" id="AdversarialWrapper"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialWrapper">[docs]</a><span class="k">class</span> <span class="nc">AdversarialWrapper</span><span class="p">(</span><span class="n">EnvWrapper</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Base class for adversarial wrappers (used in ARPL) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for adversarial wrappers (used in ARPL)&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
         <span class="n">EnvWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">)</span>
@@ -263,7 +263,7 @@
 
 
 <div class="viewcode-block" id="AdversarialObservationWrapper"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper">[docs]</a><span class="k">class</span> <span class="nc">AdversarialObservationWrapper</span><span class="p">(</span><span class="n">AdversarialWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;&quot; Wrapper to apply adversarial perturbations to the observations (used in ARPL) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; &quot; Wrapper to apply adversarial perturbations to the observations (used in ARPL)&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -294,7 +294,7 @@
 
 
 <div class="viewcode-block" id="AdversarialStateWrapper"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialStateWrapper">[docs]</a><span class="k">class</span> <span class="nc">AdversarialStateWrapper</span><span class="p">(</span><span class="n">AdversarialWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;&quot; Wrapper to apply adversarial perturbations to the state (used in ARPL) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; &quot; Wrapper to apply adversarial perturbations to the state (used in ARPL)&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">torch_observation</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -342,7 +342,7 @@
 
 
 <div class="viewcode-block" id="AdversarialDynamicsWrapper"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper">[docs]</a><span class="k">class</span> <span class="nc">AdversarialDynamicsWrapper</span><span class="p">(</span><span class="n">AdversarialWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;&quot; Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; &quot; Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL)&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

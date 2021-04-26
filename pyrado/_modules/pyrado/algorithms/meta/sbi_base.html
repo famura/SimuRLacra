@@ -446,22 +446,22 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subroutine_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Algorithm</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the policy optimization subroutine. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the policy optimization subroutine.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subroutine_sbi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NeuralInference</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the system identification subroutine coming from the sbi module. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the system identification subroutine coming from the sbi module.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sbi_simulator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get the simulator wrapped for sbi. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the simulator wrapped for sbi.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embedding</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the embedding used to compute the features from the rollouts. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the embedding used to compute the features from the rollouts.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span>
 
     <span class="k">def</span> <span class="nf">_setup_sbi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prior</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>

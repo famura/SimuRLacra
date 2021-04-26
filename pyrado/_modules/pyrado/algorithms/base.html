@@ -291,57 +291,57 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">save_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the directory where the data is saved to. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the directory where the data is saved to.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
 
     <span class="nd">@save_dir</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">save_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the directory where the data is saved to. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the directory where the data is saved to.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">save_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the name for saving this algorithm instance, e.g. &#39;algo&#39; if saved to &#39;algo.pkl&#39;. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the name for saving this algorithm instance, e.g. &#39;algo&#39; if saved to &#39;algo.pkl&#39;.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span>
 
     <span class="nd">@save_name</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">save_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the name for saving this algorithm instance, e.g. &#39;subrtn&#39; if saved to &#39;subrtn.pkl&#39;. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the name for saving this algorithm instance, e.g. &#39;subrtn&#39; if saved to &#39;subrtn.pkl&#39;.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">max_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the maximum number of iterations. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the maximum number of iterations.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span>
 
     <span class="nd">@max_iter</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">max_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the maximum number of iterations. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the maximum number of iterations.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">max_iter</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">curr_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the current iteration counter. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the current iteration counter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the total number of samples, i.e. steps of a rollout, used for training so far. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the total number of samples, i.e. steps of a rollout, used for training so far.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Policy</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the algorithm&#39;s policy. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the algorithm&#39;s policy.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">expl_strat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">StochasticActionExplStrat</span><span class="p">,</span> <span class="n">StochasticParamExplStrat</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get the algorithm&#39;s exploration strategy. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the algorithm&#39;s exploration strategy.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Algorithm.stopping_criterion_met"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.stopping_criterion_met">[docs]</a>    <span class="k">def</span> <span class="nf">stopping_criterion_met</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -471,7 +471,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="Algorithm.update"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update the policy&#39;s (and value functions&#39;) parameters based on the collected rollout data. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update the policy&#39;s (and value functions&#39;) parameters based on the collected rollout data.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="Algorithm.make_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.make_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">make_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">curr_avg_ret</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -605,7 +605,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">curr_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the current checkpoint counter. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the current checkpoint counter.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_checkpoint</span>
 
 <div class="viewcode-block" id="InterruptableAlgorithm.reset_checkpoint"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm.reset_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">reset_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>

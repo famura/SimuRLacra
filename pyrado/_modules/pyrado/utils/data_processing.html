@@ -340,7 +340,7 @@
 
 
 <div class="viewcode-block" id="Standardizer"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.Standardizer">[docs]</a><span class="k">class</span> <span class="nc">Standardizer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; A stateful standardizer that remembers the mean and standard deviation for later un-standardization &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A stateful standardizer that remembers the mean and standard deviation for later un-standardization&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="kc">None</span>
@@ -392,7 +392,7 @@
 
 
 <div class="viewcode-block" id="MinMaxScaler"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.MinMaxScaler">[docs]</a><span class="k">class</span> <span class="nc">MinMaxScaler</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">bound_lo</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">bound_up</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span>
@@ -495,16 +495,16 @@
 
 
 <div class="viewcode-block" id="RunningStandardizer"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.RunningStandardizer">[docs]</a><span class="k">class</span> <span class="nc">RunningStandardizer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Implementation of Welford&#39;s online algorithm &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Implementation of Welford&#39;s online algorithm&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Constructor &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_sq_diffs</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># a.k.a M2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="RunningStandardizer.reset"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.RunningStandardizer.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset internal variables. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset internal variables.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum_sq_diffs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span></div>
@@ -582,17 +582,17 @@
 
 
 <div class="viewcode-block" id="RunningNormalizer"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.RunningNormalizer">[docs]</a><span class="k">class</span> <span class="nc">RunningNormalizer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Normalizes given data based on the history of observed data, such that all outputs are in range [-1, 1] &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Normalizes given data based on the history of observed data, such that all outputs are in range [-1, 1]&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Constructor &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Constructor&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="RunningNormalizer.reset"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_processing.RunningNormalizer.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset internal variables. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset internal variables.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span></div>

@@ -243,7 +243,7 @@
 
 
 <div class="viewcode-block" id="EnvWrapper"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper">[docs]</a><span class="k">class</span> <span class="nc">EnvWrapper</span><span class="p">(</span><span class="n">Env</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Base for all environment wrappers. Delegates all environment methods to the wrapped environment. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base for all environment wrappers. Delegates all environment methods to the wrapped environment.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">:</span> <span class="n">Env</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -260,12 +260,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the wrapped environment&#39;s abbreviated name. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the wrapped environment&#39;s abbreviated name.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">wrapped_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the wrapped environment of this wrapper. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the wrapped environment of this wrapper.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span>
 
     <span class="nd">@property</span>
@@ -282,7 +282,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">init_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the initial state space if it exists. Forwards to the wrapped environment. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the initial state space if it exists. Forwards to the wrapped environment.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="p">,</span> <span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">init_space</span>
         <span class="k">else</span><span class="p">:</span>
@@ -290,7 +290,7 @@
 
     <span class="nd">@init_space</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">init_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the initial state space if it exists. Forwards to the wrapped environment. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the initial state space if it exists. Forwards to the wrapped environment.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="p">,</span> <span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">init_space</span> <span class="o">=</span> <span class="n">space</span>
         <span class="k">else</span><span class="p">:</span>
@@ -318,12 +318,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the state of the wrapped environment. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the state of the wrapped environment.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="nd">@state</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Set the state of the wrapped environment. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the state of the wrapped environment.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
@@ -414,7 +414,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">randomizer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DomainRandomizer</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get the wrapped environment&#39;s domain randomizer. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the wrapped environment&#39;s domain randomizer.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="p">,</span> <span class="s2">&quot;randomizer&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EnvWrapper.reset"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -449,11 +449,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_get_wrapper_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Called by the domain_param setter. Use to load wrapper-specific params. Does nothing by default. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called by the domain_param setter. Use to load wrapper-specific params. Does nothing by default.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_set_wrapper_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Called by the domain_param getter. Use to store wrapper-specific params. Does nothing by default. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Called by the domain_param getter. Use to store wrapper-specific params. Does nothing by default.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 

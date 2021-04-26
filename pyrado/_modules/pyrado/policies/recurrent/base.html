@@ -252,7 +252,7 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">hidden_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Get the number of hidden state variables. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the number of hidden state variables.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="RecurrentPolicy.init_hidden"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.init_hidden">[docs]</a>    <span class="k">def</span> <span class="nf">init_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -346,7 +346,7 @@
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork.reset"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.reset">[docs]</a>    <span class="nd">@export</span>
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset the hidden states. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset the hidden states.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># in most cases all zeros</span></div>
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork.forward"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>

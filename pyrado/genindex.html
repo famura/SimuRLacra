@@ -406,8 +406,6 @@
 </li>
       <li><a href="utils.html#pyrado.utils.exceptions.BaseErr">BaseErr</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim">BayesSim (class in pyrado.algorithms.meta.bayessim)</a>
-</li>
       <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding">BayesSimEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn">BayRn (class in pyrado.algorithms.meta.bayrn)</a>
@@ -762,17 +760,17 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.curr_iter">curr_iter() (Algorithm property)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.curr_rec">curr_rec() (PlaybackPolicy property)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.curr_rec">curr_rec() (PlaybackPolicy property)</a>
 </li>
       <li><a href="environments.html#pyrado.environments.base.Env.curr_step">curr_step() (Env property)</a>
 
       <ul>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.curr_step">(EnvWrapper property)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.curr_step">(PlaybackPolicy property)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.curr_step">(PlaybackPolicy property)</a>
 </li>
       </ul></li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.current_time">current_time (TraceableTimePolicy attribute)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy.current_time">current_time (TraceableTimePolicy attribute)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size">cut_to_window_size() (TimeSeriesDataSet static method)</a>
 </li>
@@ -905,7 +903,7 @@
       <ul>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.device">(Embedding property)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN.device">(FNN property)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNN.device">(FNN property)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.normal_noise.FullNormalNoise.device">(FullNormalNoise property)</a>
 </li>
@@ -952,7 +950,7 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.discounted_values">discounted_values() (in module pyrado.sampling.step_sequence)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy">DiscreteActQValPolicy (class in pyrado.policies.feed_forward.fnn)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy">DiscreteActQValPolicy (class in pyrado.policies.feed_back.fnn)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.discrete.DiscreteSpace">DiscreteSpace (class in pyrado.spaces.discrete)</a>
 </li>
@@ -1028,7 +1026,7 @@
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.DSSpec">DSSpec (class in pyrado.utils.data_types)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.dt">dt (TraceableTimePolicy attribute)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy.dt">dt (TraceableTimePolicy attribute)</a>
 </li>
       <li><a href="environments.html#pyrado.environments.base.Env.dt">dt() (Env property)</a>
 
@@ -1040,13 +1038,13 @@
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.dual_improvement">dual_improvement() (REPS method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.dual_rfb.DualRBFLinearPolicy">DualRBFLinearPolicy (class in pyrado.policies.special.dual_rfb)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy">DualRBFLinearPolicy (class in pyrado.policies.feed_back.dual_rfb)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.dummy_policy">dummy_policy() (DefaultPolicies static method)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.DummyNT">DummyNT (class in tests.test_rollout_result)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy">DummyPolicy (class in pyrado.policies.special.dummy)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.DummyPolicy">DummyPolicy (class in pyrado.policies.feed_forward.dummy)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding">DynamicTimeWarpingEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
@@ -1064,12 +1062,8 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding">Embedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.embedding">embedding() (BayesSim property)</a>
-
-      <ul>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.embedding">(SBIBase property)</a>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.embedding">embedding() (SBIBase property)</a>
 </li>
-      </ul></li>
       <li><a href="spaces.html#pyrado.spaces.empty.EmptySpace">EmptySpace (class in pyrado.spaces.empty)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.ensure_math_mode">ensure_math_mode() (in module pyrado.utils.input_output)</a>
@@ -1134,15 +1128,15 @@
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_ddp_policy">eval_ddp_policy() (SimOpt static method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">eval_domain_params() (in module pyrado.sampling.parallel_evaluation)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params_with_segmentwise_reset">eval_domain_params_with_segmentwise_reset() (in module pyrado.sampling.parallel_evaluation)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.eval_feats">eval_feats() (LinearPolicy method)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.eval_feats">eval_feats() (LinearPolicy method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.eval_init_policies">eval_init_policies() (BayRn method)</a>
 </li>
@@ -1165,7 +1159,7 @@
       <ul>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.evaluate">(PotentialBasedPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.evaluate">(RecurrentDummyPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.RecurrentDummyPolicy.evaluate">(RecurrentDummyPolicy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.evaluate">(RecurrentPolicy method)</a>
 </li>
@@ -1230,7 +1224,7 @@
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.fcn_from_str">fcn_from_str() (in module pyrado.utils.experiments)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.features">features() (LinearPolicy property)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.features">features() (LinearPolicy property)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.features.FeatureStack">FeatureStack (class in pyrado.policies.features)</a>
 </li>
@@ -1268,13 +1262,13 @@
       </ul></li>
       <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask">FlippingTask (class in pyrado.tasks.endless_flipping)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN">FNN (class in pyrado.policies.feed_forward.fnn)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNN">FNN (class in pyrado.policies.feed_back.fnn)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.fnn_policy">fnn_policy() (DefaultPolicies static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.fnn_policy_cuda">fnn_policy_cuda() (DefaultPolicies static method)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNNPolicy">FNNPolicy (class in pyrado.policies.feed_forward.fnn)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNNPolicy">FNNPolicy (class in pyrado.policies.feed_back.fnn)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.format">format() (IterationTracker method)</a>
 </li>
@@ -1283,15 +1277,15 @@
       <ul>
         <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.forward">(DiagNormalNoise method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.forward">(DiscreteActQValPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.forward">(DiscreteActQValPolicy method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.forward">(DomainDistrParamPolicy method)</a>
 </li>
         <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.DomainParamTransform.forward">(DomainParamTransform static method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dual_rfb.DualRBFLinearPolicy.forward">(DualRBFLinearPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy.forward">(DualRBFLinearPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy.forward">(DummyPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.DummyPolicy.forward">(DummyPolicy method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.forward">(Embedding method)</a>
 </li>
@@ -1299,21 +1293,19 @@
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.forward">(EpsGreedyExplStrat method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN.forward">(FNN method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNN.forward">(FNN method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNNPolicy.forward">(FNNPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNNPolicy.forward">(FNNPolicy method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.normal_noise.FullNormalNoise.forward">(FullNormalNoise method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.IdlePolicy.forward">(IdlePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.IdlePolicy.forward">(IdlePolicy method)</a>
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.IndiNonlinLayer.forward">(IndiNonlinLayer method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.forward">(LinearPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.forward">(LinearPolicy method)</a>
 </li>
         <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.LogDomainParamTransform.forward">(LogDomainParamTransform static method)</a>
-</li>
-        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.forward">(MDNPolicy method)</a>
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.forward">(MirrConv1d method)</a>
 </li>
@@ -1321,9 +1313,11 @@
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.forward">(OneMassOscillatorDomainParamEstimator method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.forward">(PlaybackPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.forward">(PlaybackPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.forward">(Policy method)</a>
+</li>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy.forward">(PolySplineTimePolicy method)</a>
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.PositiveScaleLayer.forward">(PositiveScaleLayer method)</a>
 </li>
@@ -1339,7 +1333,7 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.forward">(QQubeSwingUpAndBalanceCtrl method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.forward">(RecurrentDummyPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.RecurrentDummyPolicy.forward">(RecurrentDummyPolicy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.forward">(RecurrentPolicy method)</a>
 </li>
@@ -1357,13 +1351,13 @@
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPGParticle.forward">(SVPGParticle method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy.forward">(TimePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy.forward">(TimePolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.forward">(TraceableTimePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy.forward">(TraceableTimePolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.TracedPolicyWrapper.forward">(TracedPolicyWrapper method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.two_headed_fnn.TwoHeadedFNNPolicy.forward">(TwoHeadedFNNPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy.forward">(TwoHeadedFNNPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.TwoHeadedPolicy.forward">(TwoHeadedPolicy method)</a>
 </li>
@@ -1534,9 +1528,9 @@
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">get_params() (DomainRandomizer method)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.get_qfcn_input_size">get_qfcn_input_size() (DiscreteActQValPolicy static method)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.get_qfcn_input_size">get_qfcn_input_size() (DiscreteActQValPolicy static method)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.get_qfcn_output_size">get_qfcn_output_size() (DiscreteActQValPolicy static method)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.get_qfcn_output_size">get_qfcn_output_size() (DiscreteActQValPolicy static method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator.get_reward">get_reward() (RewardGenerator method)</a>
 </li>
@@ -1629,7 +1623,7 @@
       <ul>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.hidden_size">(PotentialBasedPolicy property)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.hidden_size">(RecurrentDummyPolicy property)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.RecurrentDummyPolicy.hidden_size">(RecurrentDummyPolicy property)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.hidden_size">(RecurrentPolicy property)</a>
 </li>
@@ -1652,7 +1646,7 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.idle_policy">idle_policy() (DefaultPolicies static method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.dummy.IdlePolicy">IdlePolicy (class in pyrado.policies.special.dummy)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.IdlePolicy">IdlePolicy (class in pyrado.policies.feed_forward.dummy)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.sequential.SequentialTasks.idx_curr">idx_curr() (SequentialTasks property)</a>
 </li>
@@ -1685,29 +1679,29 @@
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy.init_param">init_param() (ADNPolicy method)</a>
 
       <ul>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.init_param">(DiscreteActQValPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.init_param">(DiscreteActQValPolicy method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.init_param">(DomainDistrParamPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy.init_param">(DummyPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.DummyPolicy.init_param">(DummyPolicy method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN.init_param">(FNN method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNN.init_param">(FNN method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNNPolicy.init_param">(FNNPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNNPolicy.init_param">(FNNPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.IdlePolicy.init_param">(IdlePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.IdlePolicy.init_param">(IdlePolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.initialization.init_param">(in module pyrado.policies.initialization)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.init_param">(LinearPolicy method)</a>
-</li>
-        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.init_param">(MDNPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.init_param">(LinearPolicy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy.init_param">(NFPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.init_param">(PlaybackPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.init_param">(PlaybackPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.init_param">(Policy method)</a>
+</li>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy.init_param">(PolySplineTimePolicy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_param">(PotentialBasedPolicy method)</a>
 </li>
@@ -1721,7 +1715,7 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.init_param">(QQubeSwingUpAndBalanceCtrl method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.init_param">(RecurrentDummyPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.RecurrentDummyPolicy.init_param">(RecurrentDummyPolicy method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.init_param">(RNNEmbedding method)</a>
 </li>
@@ -1731,9 +1725,9 @@
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPGParticle.init_param">(SVPGParticle method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy.init_param">(TimePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy.init_param">(TimePolicy method)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.two_headed_fnn.TwoHeadedFNNPolicy.init_param">(TwoHeadedFNNPolicy method)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy.init_param">(TwoHeadedFNNPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.TwoHeadedPolicy.init_param">(TwoHeadedPolicy method)</a>
 </li>
@@ -1775,7 +1769,7 @@
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.input_size">input_size (StatefulRecurrentNetwork attribute)</a>
 
       <ul>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.input_size">(TraceableTimePolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy.input_size">(TraceableTimePolicy attribute)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.TracedPolicyWrapper.input_size">(TracedPolicyWrapper attribute)</a>
 </li>
@@ -1839,15 +1833,11 @@
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.iteration_key">iteration_key (Algorithm attribute)</a>
 
       <ul>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.iteration_key">(BayesSim attribute)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.iteration_key">(BayRn attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.iteration_key">(NPDR attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.iteration_key">(SimOpt attribute)</a>
-</li>
-        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.iteration_key">(SNPEA attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.iteration_key">(SPOTA attribute)</a>
 </li>
@@ -1906,7 +1896,7 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.linear_policy_cuda">linear_policy_cuda() (DefaultPolicies static method)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy">LinearPolicy (class in pyrado.policies.feed_forward.linear)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy">LinearPolicy (class in pyrado.policies.feed_back.linear)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.list_experiments">list_experiments() (in module pyrado.logger.experiment)</a>
 </li>
@@ -1920,22 +1910,18 @@
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.load_experiment">load_experiment() (in module pyrado.utils.experiments)</a>
 </li>
-      <li><a href="logger.html#pyrado.logger.experiment.load_hyperparameters">load_hyperparameters() (in module pyrado.logger.experiment)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="logger.html#pyrado.logger.experiment.load_hyperparameters">load_hyperparameters() (in module pyrado.logger.experiment)</a>
+</li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_posterior">load_posterior() (SBIBase static method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.load_rollouts_from_dir">load_rollouts_from_dir() (in module pyrado.utils.experiments)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">load_snapshot() (Algorithm static method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.log_prob">log_prob() (MDNPolicy method)</a>
-
-      <ul>
-        <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.log_prob">(TwoDimGaussian static method)</a>
+      <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.log_prob">log_prob() (TwoDimGaussian static method)</a>
 </li>
-      </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.ActionStatistics.log_probs">log_probs() (ActionStatistics property)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.transformations.LogDomainParamTransform">LogDomainParamTransform (class in pyrado.domain_randomization.transformations)</a>
@@ -1992,8 +1978,6 @@
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.max_steps">(EnvWrapper property)</a>
 </li>
       </ul></li>
-      <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy">MDNPolicy (class in pyrado.policies.special.mdn)</a>
-</li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.mean">mean() (MultivariateNormalWrapper property)</a>
 
       <ul>
@@ -2064,15 +2048,11 @@
 </li>
         <li><a href="algorithms.inference.html#module-pyrado.algorithms.inference">pyrado.algorithms.inference</a>
 </li>
-        <li><a href="algorithms.inference.html#module-pyrado.algorithms.inference.snpea">pyrado.algorithms.inference.snpea</a>
-</li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta">pyrado.algorithms.meta</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.adr">pyrado.algorithms.meta.adr</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.arpl">pyrado.algorithms.meta.arpl</a>
-</li>
-        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayessim">pyrado.algorithms.meta.bayessim</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayrn">pyrado.algorithms.meta.bayrn</a>
 </li>
@@ -2284,13 +2264,25 @@
 </li>
         <li><a href="policies.html#module-pyrado.policies.features">pyrado.policies.features</a>
 </li>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back">pyrado.policies.feed_back</a>
+</li>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.dual_rfb">pyrado.policies.feed_back.dual_rfb</a>
+</li>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.fnn">pyrado.policies.feed_back.fnn</a>
+</li>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.linear">pyrado.policies.feed_back.linear</a>
+</li>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.two_headed_fnn">pyrado.policies.feed_back.two_headed_fnn</a>
+</li>
         <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward">pyrado.policies.feed_forward</a>
 </li>
-        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.fnn">pyrado.policies.feed_forward.fnn</a>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.dummy">pyrado.policies.feed_forward.dummy</a>
 </li>
-        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.linear">pyrado.policies.feed_forward.linear</a>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.playback">pyrado.policies.feed_forward.playback</a>
 </li>
-        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.two_headed_fnn">pyrado.policies.feed_forward.two_headed_fnn</a>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.poly_time">pyrado.policies.feed_forward.poly_time</a>
+</li>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.time">pyrado.policies.feed_forward.time</a>
 </li>
         <li><a href="policies.html#module-pyrado.policies.initialization">pyrado.policies.initialization</a>
 </li>
@@ -2312,15 +2304,7 @@
 </li>
         <li><a href="policies.special.html#module-pyrado.policies.special.domain_distribution">pyrado.policies.special.domain_distribution</a>
 </li>
-        <li><a href="policies.special.html#module-pyrado.policies.special.dual_rfb">pyrado.policies.special.dual_rfb</a>
-</li>
-        <li><a href="policies.special.html#module-pyrado.policies.special.dummy">pyrado.policies.special.dummy</a>
-</li>
         <li><a href="policies.special.html#module-pyrado.policies.special.environment_specific">pyrado.policies.special.environment_specific</a>
-</li>
-        <li><a href="policies.special.html#module-pyrado.policies.special.mdn">pyrado.policies.special.mdn</a>
-</li>
-        <li><a href="policies.special.html#module-pyrado.policies.special.time">pyrado.policies.special.time</a>
 </li>
         <li><a href="sampling.html#module-pyrado.sampling">pyrado.sampling</a>
 </li>
@@ -2548,8 +2532,6 @@
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_on_plate.BallOnPlate5DSim.name">(BallOnPlate5DSim attribute)</a>
 </li>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.name">(BayesSim attribute)</a>
-</li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.name">(BayesSimEmbedding attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.name">(BayRn attribute)</a>
@@ -2578,15 +2560,15 @@
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DeltaStepsEmbedding.name">(DeltaStepsEmbedding attribute)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.name">(DiscreteActQValPolicy attribute)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.name">(DiscreteActQValPolicy attribute)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.name">(DomainDistrParamPolicy attribute)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.name">(DQL attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dual_rfb.DualRBFLinearPolicy.name">(DualRBFLinearPolicy attribute)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.dual_rfb.DualRBFLinearPolicy.name">(DualRBFLinearPolicy attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.DummyPolicy.name">(DummyPolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.DummyPolicy.name">(DummyPolicy attribute)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.name">(DynamicTimeWarpingEmbedding attribute)</a>
 </li>
@@ -2596,7 +2578,7 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.epopt.EPOpt.name">(EPOpt attribute)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNNPolicy.name">(FNNPolicy attribute)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNNPolicy.name">(FNNPolicy attribute)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.GRUPolicy.name">(GRUPolicy attribute)</a>
 </li>
@@ -2604,15 +2586,13 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.hc.HC.name">(HC attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.IdlePolicy.name">(IdlePolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.IdlePolicy.name">(IdlePolicy attribute)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.LastStepEmbedding.name">(LastStepEmbedding attribute)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy.name">(LinearPolicy attribute)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy.name">(LinearPolicy attribute)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.LSTMPolicy.name">(LSTMPolicy attribute)</a>
-</li>
-        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.name">(MDNPolicy attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.mp_blending.MPBlendingSim.name">(MPBlendingSim attribute)</a>
 </li>
@@ -2640,9 +2620,11 @@
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.planar_insert.PlanarInsertTASim.name">(PlanarInsertTASim attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.name">(PlaybackPolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.name">(PlaybackPolicy attribute)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.name">(Policy attribute)</a>
+</li>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy.name">(PolySplineTimePolicy attribute)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.name">(PotentialBasedPolicy attribute)</a>
 </li>
@@ -2678,7 +2660,7 @@
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim.name">(QQubeSwingUpSim attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.name">(RecurrentDummyPolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.RecurrentDummyPolicy.name">(RecurrentDummyPolicy attribute)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.name">(REPS attribute)</a>
 </li>
@@ -2692,8 +2674,6 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.name">(SimOpt attribute)</a>
 </li>
-        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.name">(SNPEA attribute)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.name">(SPOTA attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.name">(SPRL attribute)</a>
@@ -2704,15 +2684,15 @@
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.target_tracking.TargetTrackingSim.name">(TargetTrackingSim attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy.name">(TimePolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy.name">(TimePolicy attribute)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.name">(TraceableTimePolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy.name">(TraceableTimePolicy attribute)</a>
 </li>
         <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.name">(TSPred attribute)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.name">(TwoDimGaussian attribute)</a>
 </li>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.two_headed_fnn.TwoHeadedFNNPolicy.name">(TwoHeadedFNNPolicy attribute)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy.name">(TwoHeadedFNNPolicy attribute)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.name">(TwoHeadedGRUPolicy attribute)</a>
 </li>
@@ -2763,7 +2743,7 @@
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.neural_fields.NFPolicy">NFPolicy (class in pyrado.policies.recurrent.neural_fields)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.no_reset">no_reset() (PlaybackPolicy property)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.no_reset">no_reset() (PlaybackPolicy property)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.noise">noise() (NormalActNoiseExplStrat property)</a>
 
@@ -2912,7 +2892,7 @@
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.output_size">output_size (StatefulRecurrentNetwork attribute)</a>
 
       <ul>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.output_size">(TraceableTimePolicy attribute)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy.output_size">(TraceableTimePolicy attribute)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.TracedPolicyWrapper.output_size">(TracedPolicyWrapper attribute)</a>
 </li>
@@ -2943,7 +2923,7 @@
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.utils.param_grid">param_grid() (in module pyrado.domain_randomization.utils)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN.param_values">param_values() (FNN property)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNN.param_values">param_values() (FNN property)</a>
 
       <ul>
         <li><a href="policies.html#pyrado.policies.base.Policy.param_values">(Policy property)</a>
@@ -3019,7 +2999,7 @@
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin.plate_ang">plate_ang() (QBallBalancerKin method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy">PlaybackPolicy (class in pyrado.policies.special.time)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy">PlaybackPolicy (class in pyrado.policies.feed_forward.playback)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.rollout_based.plot_actions">plot_actions() (in module pyrado.plotting.rollout_based)</a>
 </li>
@@ -3055,18 +3035,14 @@
         <li><a href="tests.html#tests.conftest.policy">(in module tests.conftest)</a>
 </li>
       </ul></li>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy">PolySplineTimePolicy (class in pyrado.policies.feed_forward.poly_time)</a>
+</li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.pop">pop() (IterationTracker method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.step.StepLogger.pop_prefix">pop_prefix() (StepLogger method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.PositiveScaleLayer">PositiveScaleLayer (class in pyrado.utils.nn_layers)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.posterior">posterior() (BayesSim property)</a>
-
-      <ul>
-        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.posterior">(SNPEA property)</a>
-</li>
-      </ul></li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy">PotentialBasedPolicy (class in pyrado.policies.recurrent.potential_based)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy.potentials_dot">potentials_dot() (ADNPolicy method)</a>
@@ -3091,8 +3067,6 @@
         <li><a href="logger.html#pyrado.logger.step.StepLogger.prefix">(StepLogger method)</a>
 </li>
       </ul></li>
-      <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.pretrain_proposal">pretrain_proposal() (SNPEA method)</a>
-</li>
       <li><a href="utils.html#pyrado.utils.input_output.print_cbt">print_cbt() (in module pyrado.utils.input_output)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.print_cbt_once">print_cbt_once() (in module pyrado.utils.input_output)</a>
@@ -3128,6 +3102,8 @@
 </li>
       </ul></li>
       <li><a href="tasks.html#pyrado.tasks.utils.proximity_succeeded">proximity_succeeded() (in module pyrado.tasks.utils)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.pst_policy">pst_policy() (DefaultPolicies static method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.push">push() (IterationTracker method)</a>
 
@@ -3229,13 +3205,6 @@
 </li>
       </ul></li>
       <li>
-    pyrado.algorithms.inference.snpea
-
-      <ul>
-        <li><a href="algorithms.inference.html#module-pyrado.algorithms.inference.snpea">module</a>
-</li>
-      </ul></li>
-      <li>
     pyrado.algorithms.meta
 
       <ul>
@@ -3254,13 +3223,6 @@
 
       <ul>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.arpl">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyrado.algorithms.meta.bayessim
-
-      <ul>
-        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayessim">module</a>
 </li>
       </ul></li>
       <li>
@@ -3669,8 +3631,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.pandavis">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.pendulum
 
@@ -3685,6 +3645,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.quanser_ball_balancer">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_cartpole
 
@@ -4001,6 +3963,41 @@
 </li>
       </ul></li>
       <li>
+    pyrado.policies.feed_back
+
+      <ul>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.policies.feed_back.dual_rfb
+
+      <ul>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.dual_rfb">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.policies.feed_back.fnn
+
+      <ul>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.fnn">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.policies.feed_back.linear
+
+      <ul>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.linear">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.policies.feed_back.two_headed_fnn
+
+      <ul>
+        <li><a href="policies.feed_back.html#module-pyrado.policies.feed_back.two_headed_fnn">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.policies.feed_forward
 
       <ul>
@@ -4008,24 +4005,31 @@
 </li>
       </ul></li>
       <li>
-    pyrado.policies.feed_forward.fnn
+    pyrado.policies.feed_forward.dummy
 
       <ul>
-        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.fnn">module</a>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.dummy">module</a>
 </li>
       </ul></li>
       <li>
-    pyrado.policies.feed_forward.linear
+    pyrado.policies.feed_forward.playback
 
       <ul>
-        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.linear">module</a>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.playback">module</a>
 </li>
       </ul></li>
       <li>
-    pyrado.policies.feed_forward.two_headed_fnn
+    pyrado.policies.feed_forward.poly_time
 
       <ul>
-        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.two_headed_fnn">module</a>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.poly_time">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.policies.feed_forward.time
+
+      <ul>
+        <li><a href="policies.feed_forward.html#module-pyrado.policies.feed_forward.time">module</a>
 </li>
       </ul></li>
       <li>
@@ -4099,38 +4103,10 @@
 </li>
       </ul></li>
       <li>
-    pyrado.policies.special.dual_rfb
-
-      <ul>
-        <li><a href="policies.special.html#module-pyrado.policies.special.dual_rfb">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyrado.policies.special.dummy
-
-      <ul>
-        <li><a href="policies.special.html#module-pyrado.policies.special.dummy">module</a>
-</li>
-      </ul></li>
-      <li>
     pyrado.policies.special.environment_specific
 
       <ul>
         <li><a href="policies.special.html#module-pyrado.policies.special.environment_specific">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyrado.policies.special.mdn
-
-      <ul>
-        <li><a href="policies.special.html#module-pyrado.policies.special.mdn">module</a>
-</li>
-      </ul></li>
-      <li>
-    pyrado.policies.special.time
-
-      <ul>
-        <li><a href="policies.special.html#module-pyrado.policies.special.time">module</a>
 </li>
       </ul></li>
       <li>
@@ -4538,7 +4514,7 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.q_values_argmax">q_values_argmax() (DiscreteActQValPolicy method)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.q_values_argmax">q_values_argmax() (DiscreteActQValPolicy method)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin">QBallBalancerKin (class in pyrado.environments.pysim.quanser_ball_balancer)</a>
 </li>
@@ -4660,7 +4636,7 @@
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.recurrent_network_type">(TwoHeadedRNNPolicyBase attribute)</a>
 </li>
       </ul></li>
-      <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy">RecurrentDummyPolicy (class in pyrado.policies.special.dummy)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.dummy.RecurrentDummyPolicy">RecurrentDummyPolicy (class in pyrado.policies.feed_forward.dummy)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy">RecurrentPolicy (class in pyrado.policies.recurrent.base)</a>
 </li>
@@ -4811,9 +4787,11 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.reset">(ParameterExploring method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.reset">(PlaybackPolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.reset">(PlaybackPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.reset">(Policy method)</a>
+</li>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy.reset">(PolySplineTimePolicy method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.power.PoWER.reset">(PoWER method)</a>
 </li>
@@ -4873,9 +4851,9 @@
 </li>
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.reset">(TaskWrapper method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy.reset">(TimePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy.reset">(TimePolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.reset">(TraceableTimePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy.reset">(TraceableTimePolicy method)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.reset">(TwoDimGaussian method)</a>
 </li>
@@ -4888,7 +4866,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm.reset_checkpoint">reset_checkpoint() (InterruptableAlgorithm method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.reset_curr_rec">reset_curr_rec() (PlaybackPolicy method)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.reset_curr_rec">reset_curr_rec() (PlaybackPolicy method)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.reset_expl_params">reset_expl_params() (DiagNormalNoise method)</a>
 
@@ -5021,8 +4999,6 @@
 </li>
         <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam.sample">(DomainParam method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.sample">(MDNPolicy method)</a>
-</li>
         <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.sample">(ParallelRolloutSampler method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample">(ParameterExplorationSampler method)</a>
@@ -5119,8 +5095,6 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.save_snapshot">(ARPL method)</a>
 </li>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.save_snapshot">(BayesSim method)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.save_snapshot">(BayRn method)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.save_snapshot">(DQL method)</a>
@@ -5136,8 +5110,6 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.save_snapshot">(SBIBase method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.save_snapshot">(SimOpt method)</a>
-</li>
-        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.save_snapshot">(SNPEA method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.save_snapshot">(SPOTA method)</a>
 </li>
@@ -5170,14 +5142,14 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.schedule_eps">schedule_eps() (EpsGreedyExplStrat method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.PlaybackPolicy.script">script() (PlaybackPolicy method)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy.script">script() (PlaybackPolicy method)</a>
 
       <ul>
         <li><a href="policies.html#pyrado.policies.base.Policy.script">(Policy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.script">(RecurrentPolicy method)</a>
 </li>
-        <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy.script">(TimePolicy method)</a>
+        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy.script">(TimePolicy method)</a>
 </li>
       </ul></li>
       <li><a href="logger.html#pyrado.logger.experiment.select_by_hint">select_by_hint() (in module pyrado.logger.experiment)</a>
@@ -5211,8 +5183,6 @@
       <li><a href="tasks.html#pyrado.tasks.sequential.SequentialTasks">SequentialTasks (class in pyrado.tasks.sequential)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.set_adv">set_adv() (StateAugmentationWrapper method)</a>
-</li>
-      <li><a href="policies.special.html#pyrado.policies.special.mdn.MDNPolicy.set_default_x">set_default_x() (MDNPolicy method)</a>
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.VelocityFilter.set_initial_state">set_initial_state() (VelocityFilter method)</a>
 </li>
@@ -5289,8 +5259,6 @@
       <li><a href="utils.html#pyrado.utils.functions.skyline">skyline() (in module pyrado.utils.functions)</a>
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.snd_rcv">snd_rcv() (QSocket method)</a>
-</li>
-      <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA">SNPEA (class in pyrado.algorithms.inference.snpea)</a>
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.soft_update">soft_update() (SAC static method)</a>
 </li>
@@ -5421,8 +5389,6 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.step">(ARPL method)</a>
 </li>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.step">(BayesSim method)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.step">(BayRn method)</a>
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.step">(CatapultSim method)</a>
@@ -5460,8 +5426,6 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.step">(SimOpt method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.step">(SimPyEnv method)</a>
-</li>
-        <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.step">(SNPEA method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.step">(SPOTA method)</a>
 </li>
@@ -5558,17 +5522,11 @@
       </ul></li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.subroutine_cand">subroutine_cand() (SPOTA property)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.subroutine_distr">subroutine_distr() (BayesSim property)</a>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.subroutine_distr">subroutine_distr() (SimOpt property)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.subroutine_policy">subroutine_policy() (SBIBase property)</a>
 
       <ul>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.subroutine_distr">(SimOpt property)</a>
-</li>
-      </ul></li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.subroutine_policy">subroutine_policy() (BayesSim property)</a>
-
-      <ul>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.subroutine_policy">(SBIBase property)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.subroutine_policy">(SimOpt property)</a>
 </li>
       </ul></li>
@@ -5840,8 +5798,6 @@
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_mask_invert">test_mask_invert() (in module tests.environment_wrappers.test_observation_partial)</a>
 </li>
-      <li><a href="tests.html#tests.test_policies.test_mdn_policy">test_mdn_policy() (in module tests.test_policies)</a>
-</li>
       <li><a href="tests.html#tests.test_utils.test_merge_lod_var_dtype">test_merge_lod_var_dtype() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_minmaxscaler">test_minmaxscaler() (in module tests.test_utils)</a>
@@ -5891,6 +5847,8 @@
       <li><a href="tests.html#tests.test_rollout_result.test_pickle">test_pickle() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_playback_policy">test_playback_policy() (in module tests.test_policies)</a>
+</li>
+      <li><a href="tests.html#tests.test_policies.test_poly_time_policy">test_poly_time_policy() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_step_logger.test_prefix">test_prefix() (in module tests.test_step_logger)</a>
 </li>
@@ -5974,10 +5932,10 @@
 </li>
       <li><a href="tests.html#tests.test_utils.test_running_normalizer">test_running_normalizer() (in module tests.test_utils)</a>
 </li>
-      <li><a href="tests.html#tests.test_utils.test_running_standardizer">test_running_standardizer() (in module tests.test_utils)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tests.html#tests.test_utils.test_running_standardizer">test_running_standardizer() (in module tests.test_utils)</a>
+</li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_box_space">test_sample_contains_box_space() (in module tests.test_spaces)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_discrete_space">test_sample_contains_discrete_space() (in module tests.test_spaces)</a>
@@ -6326,7 +6284,7 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.time_policy">time_policy() (DefaultPolicies static method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy">TimePolicy (class in pyrado.policies.special.time)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy">TimePolicy (class in pyrado.policies.feed_forward.time)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.TimeSeriesDataPair">TimeSeriesDataPair (class in pyrado.utils.data_types)</a>
 </li>
@@ -6340,7 +6298,7 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.torch">torch() (StepSequence method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy">TraceableTimePolicy (class in pyrado.policies.special.time)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TraceableTimePolicy">TraceableTimePolicy (class in pyrado.policies.feed_forward.time)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.base.TracedPolicyWrapper">TracedPolicyWrapper (class in pyrado.policies.base)</a>
 </li>
@@ -6360,22 +6318,18 @@
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_init_policies">train_init_policies() (BayRn method)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.train_policy_sim">train_policy_sim() (BayesSim method)</a>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim">train_policy_sim() (BayRn method)</a>
 
       <ul>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_policy_sim">(BayRn method)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.train_policy_sim">(SBIBase method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim">(SimOpt method)</a>
 </li>
       </ul></li>
-      <li><a href="algorithms.inference.html#pyrado.algorithms.inference.snpea.SNPEA.train_posterior">train_posterior() (SNPEA method)</a>
-</li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.training">training (DiagNormalNoise attribute)</a>
 
       <ul>
-        <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNN.training">(FNN attribute)</a>
+        <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.FNN.training">(FNN attribute)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.normal_noise.FullNormalNoise.training">(FullNormalNoise attribute)</a>
 </li>
@@ -6412,7 +6366,7 @@
 </li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian">TwoDimGaussian (class in pyrado.environments.one_step.two_dim_gaussian)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.two_headed_fnn.TwoHeadedFNNPolicy">TwoHeadedFNNPolicy (class in pyrado.policies.feed_forward.two_headed_fnn)</a>
+      <li><a href="policies.feed_back.html#pyrado.policies.feed_back.two_headed_fnn.TwoHeadedFNNPolicy">TwoHeadedFNNPolicy (class in pyrado.policies.feed_back.two_headed_fnn)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy">TwoHeadedGRUPolicy (class in pyrado.policies.recurrent.two_headed_rnn)</a>
 </li>

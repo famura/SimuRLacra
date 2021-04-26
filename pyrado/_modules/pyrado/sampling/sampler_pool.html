@@ -239,7 +239,7 @@
 
 
 <div class="viewcode-block" id="GlobalNamespace"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.GlobalNamespace">[docs]</a><span class="k">class</span> <span class="nc">GlobalNamespace</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Type of the worker&#39;s global namespace &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Type of the worker&#39;s global namespace&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
@@ -398,12 +398,12 @@
 
 
 <span class="k">def</span> <span class="nf">_run_set_seed</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Ignore global space, and forward to `pyrado.set_seed()` &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Ignore global space, and forward to `pyrado.set_seed()`&quot;&quot;&quot;</span>
     <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_run_collect</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">counter</span><span class="p">,</span> <span class="n">run_counter</span><span class="p">,</span> <span class="n">lock</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">min_runs</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Worker function for run_collect &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Worker function for run_collect&quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="c1"># Invoke once</span>
@@ -460,7 +460,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_G</span> <span class="o">=</span> <span class="n">GlobalNamespace</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SamplerPool.stop"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.SamplerPool.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Terminate all workers. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Terminate all workers.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">:</span>
                 <span class="n">w</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>

@@ -257,7 +257,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">feat_fcns</span><span class="p">)</span>  <span class="c1"># TODO concat var number of input args</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
         <span class="n">feat_fcn_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="n">callable</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">]</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> [&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">feat_fcn_names</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
 
@@ -377,7 +377,7 @@
 
 
 <div class="viewcode-block" id="MultFeat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.MultFeat">[docs]</a><span class="k">class</span> <span class="nc">MultFeat</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Feature that multiplies two dimensions of the given input / observation &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Feature that multiplies two dimensions of the given input / observation&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idcs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -393,7 +393,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_idcs</span> <span class="o">=</span> <span class="n">idcs</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> (indices &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -407,7 +407,7 @@
 
 
 <div class="viewcode-block" id="ATan2Feat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.ATan2Feat">[docs]</a><span class="k">class</span> <span class="nc">ATan2Feat</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Feature that computes the atan2 from two dimensions of the given input / observation. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Feature that computes the atan2 from two dimensions of the given input / observation.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx_sin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx_cos</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -424,7 +424,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_idx_cos</span> <span class="o">=</span> <span class="n">idx_cos</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> (index for numerator </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_sin</span><span class="si">}</span><span class="s2">, index for denominator </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_cos</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -514,7 +514,7 @@
 
 
 <div class="viewcode-block" id="RBFFeat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.RBFFeat">[docs]</a><span class="k">class</span> <span class="nc">RBFFeat</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Normalized Gaussian radial basis function features &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Normalized Gaussian radial basis function features&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
