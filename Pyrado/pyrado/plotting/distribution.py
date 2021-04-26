@@ -523,7 +523,7 @@ def draw_posterior_distr_2d(
 
 
 def _draw_prior(ax, prior: BoxUniform, dim_x: int, dim_y: int, num_dim: int = 2, transposed: bool = False):
-    """ Helper function to draw a rectangle for the prior (assuming uniform distribution) """
+    """Helper function to draw a rectangle for the prior (assuming uniform distribution)"""
     if not hasattr(prior, "base_dist"):
         raise AttributeError(
             "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."

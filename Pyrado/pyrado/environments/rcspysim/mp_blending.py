@@ -43,7 +43,7 @@ rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "MPBlending"))
 
 
 class MPBlendingSim(RcsSim, Serializable):
-    """ Sandbox class for testing different ways of combining a set of movement primitives """
+    """Sandbox class for testing different ways of combining a set of movement primitives"""
 
     name: str = "mpb"
 

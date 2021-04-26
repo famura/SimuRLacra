@@ -136,7 +136,7 @@ def check_feat_equality():
 
 
 def eval_damping():
-    """ Plot joint trajectories for different joint damping parameters """
+    """Plot joint trajectories for different joint damping parameters"""
     # Environment
     env = WAMBallInCupSim(num_dof=7, max_steps=1500)
 
@@ -180,7 +180,7 @@ def eval_damping():
 
 
 def eval_dryfriction():
-    """ Plot joint trajectories for different joint stiction parameters """
+    """Plot joint trajectories for different joint stiction parameters"""
     # Environment
     env = WAMBallInCupSim(num_dof=7, max_steps=1500)
 

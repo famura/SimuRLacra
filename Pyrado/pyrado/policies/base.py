@@ -55,7 +55,7 @@ def _get_or_create_grad(t):
 
 
 class Policy(nn.Module, ABC):
-    """ Base class for all policies in Pyrado """
+    """Base class for all policies in Pyrado"""
 
     name: str = None  # unique identifier
 
@@ -85,12 +85,12 @@ class Policy(nn.Module, ABC):
 
     @property
     def device(self) -> str:
-        """ Get the device (CPU or GPU) on which the policy is stored. """
+        """Get the device (CPU or GPU) on which the policy is stored."""
         return self._device
 
     @property
     def env_spec(self) -> EnvSpec:
-        """ Get the specification of environment the policy acts in. """
+        """Get the specification of environment the policy acts in."""
         return self._env_spec
 
     @property
@@ -104,7 +104,7 @@ class Policy(nn.Module, ABC):
 
     @param_values.setter
     def param_values(self, param: to.Tensor):
-        """ Set the policy parameters from an 1d array. """
+        """Set the policy parameters from an 1d array."""
         if not self.param_values.shape == param.shape:
             raise pyrado.ShapeErr(given=param, expected_match=self.param_values)
         cp.vector_to_parameters(param, self.parameters())
@@ -120,17 +120,17 @@ class Policy(nn.Module, ABC):
 
     @param_grad.setter
     def param_grad(self, param):
-        """ Set the policy parameter gradient from an 1d array. """
+        """Set the policy parameter gradient from an 1d array."""
         cp.vector_to_parameters(param, (_get_or_create_grad(p) for p in self.parameters()))
 
     @property
     def num_param(self) -> int:
-        """ Get the number of policy parameters. """
+        """Get the number of policy parameters."""
         return sum(p.data.numel() for p in self.parameters())
 
     @property
     def is_recurrent(self) -> bool:
-        """ Bool to signalise it the policy has a recurrent architecture. """
+        """Bool to signalise it the policy has a recurrent architecture."""
         return False
 
     def init_hidden(self, batch_size: Optional[int] = None) -> to.Tensor:
@@ -208,7 +208,7 @@ class Policy(nn.Module, ABC):
 
 
 class TracedPolicyWrapper(nn.Module):
-    """ Wrapper for a traced policy. Mainly used to add `input_size` and `output_size` attributes. """
+    """Wrapper for a traced policy. Mainly used to add `input_size` and `output_size` attributes."""
 
     # Attributes
     input_size: int
@@ -233,7 +233,7 @@ class TracedPolicyWrapper(nn.Module):
 
 
 class TwoHeadedPolicy(Policy, ABC):
-    """ Base class for policies with a shared body and two separate heads. """
+    """Base class for policies with a shared body and two separate heads."""
 
     @abstractmethod
     def init_param(self, init_values: Optional[to.Tensor] = None, **kwargs):

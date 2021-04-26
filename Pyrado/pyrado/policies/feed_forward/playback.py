@@ -38,7 +38,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class PlaybackPolicy(Policy):
-    """ A policy wish simply replays a sequence of actions. If more actions are requested, the policy  """
+    """A policy wish simply replays a sequence of actions. If more actions are requested, the policy"""
 
     name: str = "pb"
 
@@ -77,17 +77,17 @@ class PlaybackPolicy(Policy):
 
     @property
     def curr_step(self) -> int:
-        """ Get the number of the current replay step (0 for the initial step). """
+        """Get the number of the current replay step (0 for the initial step)."""
         return self._curr_step
 
     @property
     def no_reset(self) -> bool:
-        """ Returns `True` if the automatic reset is skipped, i.e. the reset has to be controlled manually. """
+        """Returns `True` if the automatic reset is skipped, i.e. the reset has to be controlled manually."""
         return self._no_reset
 
     @curr_step.setter
     def curr_step(self, curr_step: int):
-        """ Set the number of the current replay step (0 for the initial step). """
+        """Set the number of the current replay step (0 for the initial step)."""
         if not isinstance(curr_step, int) or not 0 <= curr_step < len(self._act_rec_buffer[self._curr_rec]):
             raise pyrado.ValueErr(
                 given=curr_step, ge_constraint="0 (int)", l_constraint=len(self._act_rec_buffer[self._curr_rec])
@@ -96,18 +96,18 @@ class PlaybackPolicy(Policy):
 
     @property
     def curr_rec(self) -> int:
-        """ Get the pointer to the current recording. """
+        """Get the pointer to the current recording."""
         return self._curr_rec
 
     @curr_rec.setter
     def curr_rec(self, curr_rec: int):
-        """ Set the pointer to the current recording. """
+        """Set the pointer to the current recording."""
         if not isinstance(curr_rec, int) or not -1 <= curr_rec < len(self._act_rec_buffer):
             raise pyrado.ValueErr(given=curr_rec, ge_constraint="-1 (int)", l_constraint=len(self._act_rec_buffer))
         self._curr_rec = curr_rec
 
     def reset_curr_rec(self):
-        """ Reset the pointer to the current recording. """
+        """Reset the pointer to the current recording."""
         self._curr_rec = -1
 
     def reset(self):

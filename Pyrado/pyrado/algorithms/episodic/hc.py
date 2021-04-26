@@ -123,7 +123,7 @@ class HC(ParameterExploring):
 
 
 class HCNormal(HC):
-    """ Hill Climbing variant using an exploration strategy with normally distributed noise on the policy parameters """
+    """Hill Climbing variant using an exploration strategy with normally distributed noise on the policy parameters"""
 
     def __init__(self, *args, **kwargs):
         """
@@ -166,7 +166,7 @@ class HCNormal(HC):
 
 
 class HCHyper(HC):
-    """ Hill Climbing variant using an exploration strategy that samples policy parameters from a hyper-sphere """
+    """Hill Climbing variant using an exploration strategy that samples policy parameters from a hyper-sphere"""
 
     def __init__(self, *args, **kwargs):
         """

@@ -38,7 +38,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class DesStateTask(Task):
-    """ Task class for moving to a desired state. Operates on the error in state and action. """
+    """Task class for moving to a desired state. Operates on the error in state and action."""
 
     def __init__(self, env_spec: EnvSpec, state_des: np.ndarray, rew_fcn: RewFcn, success_fcn: Callable = None):
         """

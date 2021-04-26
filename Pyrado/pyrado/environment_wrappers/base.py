@@ -43,7 +43,7 @@ from pyrado.utils.data_types import RenderMode
 
 
 class EnvWrapper(Env, Serializable):
-    """ Base for all environment wrappers. Delegates all environment methods to the wrapped environment. """
+    """Base for all environment wrappers. Delegates all environment methods to the wrapped environment."""
 
     def __init__(self, wrapped_env: Env):
         """
@@ -60,12 +60,12 @@ class EnvWrapper(Env, Serializable):
 
     @property
     def name(self) -> str:
-        """ Get the wrapped environment's abbreviated name. """
+        """Get the wrapped environment's abbreviated name."""
         return self._wrapped_env.name
 
     @property
     def wrapped_env(self) -> Env:
-        """ Get the wrapped environment of this wrapper. """
+        """Get the wrapped environment of this wrapper."""
         return self._wrapped_env
 
     @property
@@ -82,7 +82,7 @@ class EnvWrapper(Env, Serializable):
 
     @property
     def init_space(self) -> Space:
-        """ Get the initial state space if it exists. Forwards to the wrapped environment. """
+        """Get the initial state space if it exists. Forwards to the wrapped environment."""
         if isinstance(self._wrapped_env, (SimEnv, EnvWrapper)):
             return self._wrapped_env.init_space
         else:
@@ -90,7 +90,7 @@ class EnvWrapper(Env, Serializable):
 
     @init_space.setter
     def init_space(self, space: Space):
-        """ Set the initial state space if it exists. Forwards to the wrapped environment. """
+        """Set the initial state space if it exists. Forwards to the wrapped environment."""
         if isinstance(self._wrapped_env, (SimEnv, EnvWrapper)):
             self._wrapped_env.init_space = space
         else:
@@ -118,12 +118,12 @@ class EnvWrapper(Env, Serializable):
 
     @property
     def state(self) -> np.ndarray:
-        """ Get the state of the wrapped environment. """
+        """Get the state of the wrapped environment."""
         return self._wrapped_env.state.copy()
 
     @state.setter
     def state(self, state: np.ndarray):
-        """ Set the state of the wrapped environment. """
+        """Set the state of the wrapped environment."""
         if not isinstance(state, np.ndarray):
             raise pyrado.TypeErr(given=state, expected_type=np.ndarray)
         if not state.shape == self._wrapped_env.state.shape:
@@ -214,7 +214,7 @@ class EnvWrapper(Env, Serializable):
 
     @property
     def randomizer(self) -> Optional[DomainRandomizer]:
-        """ Get the wrapped environment's domain randomizer. """
+        """Get the wrapped environment's domain randomizer."""
         return getattr(self._wrapped_env, "randomizer", None)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
@@ -249,11 +249,11 @@ class EnvWrapper(Env, Serializable):
         return self._wrapped_env.close()
 
     def _get_wrapper_domain_param(self, param: dict):
-        """ Called by the domain_param setter. Use to load wrapper-specific params. Does nothing by default. """
+        """Called by the domain_param setter. Use to load wrapper-specific params. Does nothing by default."""
         pass
 
     def _set_wrapper_domain_param(self, param: dict):
-        """ Called by the domain_param getter. Use to store wrapper-specific params. Does nothing by default. """
+        """Called by the domain_param getter. Use to store wrapper-specific params. Does nothing by default."""
         pass
 
 

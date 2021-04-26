@@ -52,7 +52,7 @@ class RecurrentPolicy(Policy, ABC):
     @property
     @abstractmethod
     def hidden_size(self) -> int:
-        """ Get the number of hidden state variables. """
+        """Get the number of hidden state variables."""
         raise NotImplementedError
 
     def init_hidden(self, batch_size: int = None) -> to.Tensor:
@@ -146,7 +146,7 @@ class StatefulRecurrentNetwork(nn.Module):
 
     @export
     def reset(self):
-        """ Reset the hidden states. """
+        """Reset the hidden states."""
         self.hidden.data.copy_(self.net.init_hidden().data)  # in most cases all zeros
 
     def forward(self, inp):

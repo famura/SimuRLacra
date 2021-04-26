@@ -45,7 +45,7 @@ rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BallOnPlate"))
 
 
 class BallOnPlateSim(RcsSim, Serializable):
-    """ Base class for the ball-on-plate environments simulated in Rcs using the Vortex or Bullet physics engine """
+    """Base class for the ball-on-plate environments simulated in Rcs using the Vortex or Bullet physics engine"""
 
     def __init__(self, task_args: dict, init_ball_vel: np.ndarray = None, max_dist_force: float = None, **kwargs):
         """
@@ -140,7 +140,7 @@ class BallOnPlateSim(RcsSim, Serializable):
 
 
 class BallOnPlate2DSim(BallOnPlateSim, Serializable):
-    """ Ball-on-plate environment with 2-dim actions """
+    """Ball-on-plate environment with 2-dim actions"""
 
     name: str = "bop2d"
 
@@ -175,7 +175,7 @@ class BallOnPlate2DSim(BallOnPlateSim, Serializable):
 
 
 class BallOnPlate5DSim(BallOnPlateSim, Serializable):
-    """ Ball-on-plate environment with 5-dim actions """
+    """Ball-on-plate environment with 5-dim actions"""
 
     name: str = "bop5d"
 

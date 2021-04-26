@@ -135,7 +135,7 @@ class RolloutSamplerForSBI(ABC, Serializable):
 
 
 class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
-    """ Wrapper to make SimuRLacra's simulation environments usable as simulators for the sbi package """
+    """Wrapper to make SimuRLacra's simulation environments usable as simulators for the sbi package"""
 
     def __init__(
         self,
@@ -325,7 +325,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
 
 class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
-    """ Wrapper to make SimuRLacra's real environments similar to the sbi simulator """
+    """Wrapper to make SimuRLacra's real environments similar to the sbi simulator"""
 
     def __init__(
         self,
@@ -387,7 +387,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
 
 class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
-    """ Wrapper to yield pre-recorded rollouts similar to the sbi simulator """
+    """Wrapper to yield pre-recorded rollouts similar to the sbi simulator"""
 
     def __init__(
         self,
@@ -433,19 +433,19 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
 
     @property
     def ring_idx(self) -> int:
-        """ Get the buffer's index. """
+        """Get the buffer's index."""
         return self._ring_idx
 
     @ring_idx.setter
     def ring_idx(self, idx: int):
-        """ Set the buffer's index. """
+        """Set the buffer's index."""
         if not (isinstance(idx, int) or not 0 <= idx < self.num_rollouts):
             raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=self.num_rollouts)
         self._ring_idx = idx
 
     @property
     def num_rollouts(self) -> int:
-        """ Get the number of stored rollouts. """
+        """Get the number of stored rollouts."""
         return len(self.rollouts_rec)
 
     def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:

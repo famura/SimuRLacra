@@ -52,7 +52,7 @@ rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "Planar3Link"))
 
 
 class Planar3LinkSim(RcsSim, Serializable):
-    """ Base class for the Planar 3-link environments simulated in Rcs using the Vortex or Bullet physics engine """
+    """Base class for the Planar 3-link environments simulated in Rcs using the Vortex or Bullet physics engine"""
 
     def __init__(self, task_args: dict, max_dist_force: float = None, **kwargs):
         """
@@ -187,7 +187,7 @@ class Planar3LinkSim(RcsSim, Serializable):
 
 
 class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
-    """ Planar 3-link robot controlled by directly setting the joint angles """
+    """Planar 3-link robot controlled by directly setting the joint angles"""
 
     name: str = "p3l-jt"
 
@@ -210,7 +210,7 @@ class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
 
 
 class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
-    """ Planar 3-link robot environment controlled by setting the input to an Rcs IK-based controller """
+    """Planar 3-link robot environment controlled by setting the input to an Rcs IK-based controller"""
 
     name: str = "p3l-ika"
 
@@ -249,7 +249,7 @@ class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
 
 
 class Planar3LinkTASim(Planar3LinkSim, Serializable):
-    """ Planar 3-link robot controlled by setting the task activation of a Rcs control task """
+    """Planar 3-link robot controlled by setting the task activation of a Rcs control task"""
 
     name: str = "p3l-ta"
 

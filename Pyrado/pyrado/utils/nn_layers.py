@@ -41,7 +41,7 @@ from pyrado.utils.checks import is_iterable
 
 
 class ScaleLayer(nn.Module):
-    """ Layer which scales the output of the input using a learnable scaling factor """
+    """Layer which scales the output of the input using a learnable scaling factor"""
 
     def __init__(self, in_features: int, init_weight: float = 1.0):
         """
@@ -62,7 +62,7 @@ class ScaleLayer(nn.Module):
 
 
 class PositiveScaleLayer(nn.Module):
-    """ Layer which scales (strictly positive) the input using a learnable scaling factor """
+    """Layer which scales (strictly positive) the input using a learnable scaling factor"""
 
     def __init__(self, in_features: int, init_weight: float = 1.0):
         """

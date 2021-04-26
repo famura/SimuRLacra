@@ -57,7 +57,7 @@ class TwoDimGaussian(SimEnv, Serializable):
     name: str = "2dg"
 
     def __init__(self):
-        """ Constructor """
+        """Constructor"""
         Serializable._init(self, locals())
 
         # Call SimEnv's constructor

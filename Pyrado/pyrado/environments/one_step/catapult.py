@@ -221,7 +221,7 @@ class CatapultExample:
     """
 
     def __init__(self, m, g_M, k_M, x_M, g_V, k_V, x_V):
-        """ Constructor """
+        """Constructor"""
         # Store parameters
         self.m = m
         self.g_M, self.k_M, self.x_M = g_M, k_M, x_M

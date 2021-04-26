@@ -33,7 +33,7 @@ from matplotlib import pyplot as plt
 
 
 class _LFMEntry:
-    """ One plot managed by the LiveFigureManager """
+    """One plot managed by the LiveFigureManager"""
 
     def __init__(self, update_fcn, title):
         """
@@ -123,12 +123,12 @@ class LiveFigureManager:
         return wrapper
 
     def _plot_all(self):
-        """ Load the data and plot all registered figures. """
+        """Load the data and plot all registered figures."""
         data = self._data_loader(self._file_path)
         self._figure_list[:] = [pl for pl in self._figure_list if pl.update(data, self._args)]
 
     def spin(self):
-        """ Run the plot update loop.  """
+        """Run the plot update loop."""
         # Create all plots
         plt.ion()
         self._plot_all()

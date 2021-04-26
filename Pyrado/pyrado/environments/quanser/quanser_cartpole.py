@@ -47,7 +47,7 @@ from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class QCartPoleReal(QuanserReal, Serializable):
-    """ Base class for the real Quanser Cart-Pole """
+    """Base class for the real Quanser Cart-Pole"""
 
     def __init__(self, dt: float, max_steps: int, task_args: Optional[dict] = None, ip: Optional[str] = "192.168.2.38"):
         """
@@ -124,7 +124,7 @@ class QCartPoleReal(QuanserReal, Serializable):
         self._calibrated = True
 
     def _center_cart(self):
-        """ Move the cart to the center (x = 0). """
+        """Move the cart to the center (x = 0)."""
         # Initialize
         t_max, t_start = 10.0, time.time()
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
@@ -157,7 +157,7 @@ class QCartPoleReal(QuanserReal, Serializable):
 
 
 class QCartPoleStabReal(QCartPoleReal):
-    """ Stabilization task on the real Quanser Cart-Pole """
+    """Stabilization task on the real Quanser Cart-Pole"""
 
     name: str = "qcp-st"
 
@@ -202,7 +202,7 @@ class QCartPoleStabReal(QCartPoleReal):
         )
 
     def _wait_for_upright_pole(self):
-        """ Waiting until the user manually set the pole upright """
+        """Waiting until the user manually set the pole upright"""
         with completion_context("Centering the cart", color="c", bright=True):
             # Initialize
             t_max, t_start = 15.0, time.time()
@@ -260,7 +260,7 @@ class QCartPoleStabReal(QCartPoleReal):
 
 
 class QCartPoleSwingUpReal(QCartPoleReal):
-    """ Swing-up task on the real Quanser Cart-Pole """
+    """Swing-up task on the real Quanser Cart-Pole"""
 
     name: str = "qcp-su"
 

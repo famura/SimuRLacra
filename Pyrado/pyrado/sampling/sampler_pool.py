@@ -39,7 +39,7 @@ import pyrado
 
 
 class GlobalNamespace:
-    """ Type of the worker's global namespace """
+    """Type of the worker's global namespace"""
 
     pass
 
@@ -198,12 +198,12 @@ class _WorkerInfo:
 
 
 def _run_set_seed(G, seed):
-    """ Ignore global space, and forward to `pyrado.set_seed()` """
+    """Ignore global space, and forward to `pyrado.set_seed()`"""
     pyrado.set_seed(seed)
 
 
 def _run_collect(G, counter, run_counter, lock, n, min_runs, func, args, kwargs):
-    """ Worker function for run_collect """
+    """Worker function for run_collect"""
     result = []
     while True:
         # Invoke once
@@ -260,7 +260,7 @@ class SamplerPool:
         self._G = GlobalNamespace()
 
     def stop(self):
-        """ Terminate all workers. """
+        """Terminate all workers."""
         if self._n_threads > 1:
             for w in self._workers:
                 w.stop()

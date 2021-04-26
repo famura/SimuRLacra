@@ -32,7 +32,7 @@ from typing import Optional, Sequence, Union
 
 
 class BaseErr(Exception):
-    """ Base class for exceptions in Pyrado """
+    """Base class for exceptions in Pyrado"""
 
     @staticmethod
     def retrieve_var_name(var, stack_level: Optional[int] = 2) -> str:
@@ -84,7 +84,7 @@ class BaseErr(Exception):
 
 
 class TypeErr(BaseErr):
-    """ Class for exceptions raised by passing wrong data types """
+    """Class for exceptions raised by passing wrong data types"""
 
     def __init__(
         self,
@@ -128,7 +128,7 @@ class TypeErr(BaseErr):
 
 
 class ValueErr(BaseErr):
-    """ Class for exceptions raised by passing wrong values """
+    """Class for exceptions raised by passing wrong values"""
 
     def __init__(
         self,
@@ -195,7 +195,7 @@ class ValueErr(BaseErr):
 
 
 class ShapeErr(BaseErr):
-    """ Class for exceptions raised by passing wrong values """
+    """Class for exceptions raised by passing wrong values"""
 
     @staticmethod
     def get_shape_and_name(obj, var):
@@ -242,7 +242,7 @@ class ShapeErr(BaseErr):
 
 
 class PathErr(BaseErr):
-    """ Class for exceptions raised by passing wrong paths to folders or files """
+    """Class for exceptions raised by passing wrong paths to folders or files"""
 
     def __init__(self, *, given: str = "__INVALID__", msg: Optional[str] = None):
         """
@@ -273,7 +273,7 @@ class PathErr(BaseErr):
 
 
 class KeyErr(BaseErr):
-    """ Class for exceptions raised asking for a keys in an object that does not exist """
+    """Class for exceptions raised asking for a keys in an object that does not exist"""
 
     def __init__(self, *, keys: Union[str, Sequence[str]] = None, container=None, msg: Optional[str] = None):
         """

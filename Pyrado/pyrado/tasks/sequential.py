@@ -40,7 +40,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class SequentialTasks(Task):
-    """ Task class for a sequence of tasks a.k.a. goals """
+    """Task class for a sequence of tasks a.k.a. goals"""
 
     def __init__(
         self, tasks: Sequence[Task], start_idx: int = 0, hold_rew_when_done: bool = False, verbose: bool = False
@@ -75,52 +75,52 @@ class SequentialTasks(Task):
 
     @property
     def tasks(self) -> Sequence[Task]:
-        """ Get the list of tasks. """
+        """Get the list of tasks."""
         return deepcopy(self._tasks)
 
     @property
     def idx_curr(self) -> int:
-        """ Get the index of the currently active task. """
+        """Get the index of the currently active task."""
         return self._idx_curr
 
     @idx_curr.setter
     def idx_curr(self, idx: int):
-        """ Set the index of the currently active task. """
+        """Set the index of the currently active task."""
         if not (0 <= idx < len(self)):
             raise pyrado.ValueErr(given=idx, ge_constraint="0", le_constraint=f"{len(self) - 1}")
         self._idx_curr = idx
 
     @property
     def state_des(self) -> np.ndarray:
-        """ Get the desired state the current task. """
+        """Get the desired state the current task."""
         return self._tasks[self._idx_curr].state_des
 
     @state_des.setter
     def state_des(self, state_des: np.ndarray):
-        """ Set the desired state the current task. """
+        """Set the desired state the current task."""
         if not isinstance(state_des, np.ndarray):
             raise pyrado.TypeErr(given=state_des, expected_type=np.ndarray)
         self._tasks[self._idx_curr].state_des = state_des
 
     @property
     def space_des(self) -> Space:
-        """ Get the desired space the current task. """
+        """Get the desired space the current task."""
         return self._tasks[self._idx_curr].space_des
 
     @space_des.setter
     def space_des(self, space_des: Space):
-        """ Set the desired space the current task. """
+        """Set the desired space the current task."""
         if not isinstance(space_des, Space):
             raise pyrado.TypeErr(given=space_des, expected_type=Space)
         self._tasks[self._idx_curr].space_des = space_des
 
     @property
     def rew_fcn(self) -> RewFcn:
-        """ Get the reward function of the current task. """
+        """Get the reward function of the current task."""
         return self._tasks[self._idx_curr].rew_fcn
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int) -> float:
-        """ Get the step reward from the current task. """
+        """Get the step reward from the current task."""
         step_rew = 0.0
         if self.hold_rew_when_done:
             for i in range(len(self)):
@@ -157,7 +157,7 @@ class SequentialTasks(Task):
         return sum_final_rew
 
     def reset(self, **kwargs):
-        """ Reset all tasks. """
+        """Reset all tasks."""
         self.idx_curr = 0
         for s in self._tasks:
             s.reset(**kwargs)

@@ -56,19 +56,19 @@ from pyrado.utils.properties import cached_property
 
 
 class ParameterSample(NamedTuple):
-    """ Stores policy parameters and associated rollouts. """
+    """Stores policy parameters and associated rollouts."""
 
     params: to.Tensor
     rollouts: List[StepSequence]
 
     @property
     def mean_undiscounted_return(self) -> float:
-        """ Get the mean of the undiscounted returns over all rollouts. """
+        """Get the mean of the undiscounted returns over all rollouts."""
         return np.mean([r.undiscounted_return() for r in self.rollouts]).item()
 
     @property
     def num_rollouts(self) -> int:
-        """ Get the number of rollouts. """
+        """Get the number of rollouts."""
         return len(self.rollouts)
 
 
@@ -101,33 +101,33 @@ class ParameterSamplingResult(Sequence[ParameterSample]):
 
     @cached_property
     def parameters(self) -> to.Tensor:
-        """ Get all policy parameters as NxP matrix, where N is the number of samples and P is the policy param dim. """
+        """Get all policy parameters as NxP matrix, where N is the number of samples and P is the policy param dim."""
         return to.stack([s.params for s in self._samples])
 
     @cached_property
     def mean_returns(self) -> np.ndarray:
-        """ Get all parameter sample means return as a N-dim vector, where N is the number of samples. """
+        """Get all parameter sample means return as a N-dim vector, where N is the number of samples."""
         return np.array([s.mean_undiscounted_return for s in self._samples])
 
     @cached_property
     def rollouts(self) -> list:
-        """ Get all rollouts for all samples, i.e. a list of pop_size items, each a list of nom_rollouts rollouts. """
+        """Get all rollouts for all samples, i.e. a list of pop_size items, each a list of nom_rollouts rollouts."""
         return [s.rollouts for s in self._samples]
 
     @cached_property
     def num_rollouts(self) -> int:
-        """ Get the total number of rollouts for all samples. """
+        """Get the total number of rollouts for all samples."""
         return int(np.sum([s.num_rollouts for s in self._samples]))
 
 
 def _pes_init(G, env, policy):
-    """ Store pickled (and thus copied) environment and policy. """
+    """Store pickled (and thus copied) environment and policy."""
     G.env = pickle.loads(env)
     G.policy = pickle.loads(policy)
 
 
 def _pes_sample_one(G, param):
-    """ Sample one rollout with the current setting. """
+    """Sample one rollout with the current setting."""
     pol_param, dom_param, init_state = param
     vector_to_parameters(pol_param, G.policy.parameters())
 
@@ -142,7 +142,7 @@ def _pes_sample_one(G, param):
 
 
 class ParameterExplorationSampler(Serializable):
-    """ Parallel sampler for parameter exploration """
+    """Parallel sampler for parameter exploration"""
 
     def __init__(
         self,
@@ -201,11 +201,11 @@ class ParameterExplorationSampler(Serializable):
 
     @property
     def num_rollouts_per_param(self) -> int:
-        """ Get the number of rollouts per policy parameter set. """
+        """Get the number of rollouts per policy parameter set."""
         return self.num_init_states_per_domain * self.num_domains
 
     def _sample_domain_params(self) -> list:
-        """ Sample domain parameters from the cached domain randomization wrapper. """
+        """Sample domain parameters from the cached domain randomization wrapper."""
         if self._dr_wrapper is None:
             # There was no randomizer, thus do not set any domain parameters
             return [None] * self.num_domains

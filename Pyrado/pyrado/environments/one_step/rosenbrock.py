@@ -40,12 +40,12 @@ from pyrado.utils.functions import rosenbrock
 
 
 class RosenSim(SimEnv, Serializable):
-    """ This environment wraps the Rosenbrock function to use it as a test case for Pyrado algorithms. """
+    """This environment wraps the Rosenbrock function to use it as a test case for Pyrado algorithms."""
 
     name: str = "rosen"
 
     def __init__(self):
-        """ Constructor """
+        """Constructor"""
         Serializable._init(self, locals())
 
         # Initialize basic variables

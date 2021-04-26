@@ -91,57 +91,57 @@ class Algorithm(ABC, LoggerAware):
 
     @property
     def save_dir(self) -> str:
-        """ Get the directory where the data is saved to. """
+        """Get the directory where the data is saved to."""
         return self._save_dir
 
     @save_dir.setter
     def save_dir(self, save_dir: pyrado.PathLike):
-        """ Set the directory where the data is saved to. """
+        """Set the directory where the data is saved to."""
         if not osp.isdir(save_dir):
             raise pyrado.PathErr(given=save_dir)
         self._save_dir = save_dir
 
     @property
     def save_name(self) -> str:
-        """ Get the name for saving this algorithm instance, e.g. 'algo' if saved to 'algo.pkl'. """
+        """Get the name for saving this algorithm instance, e.g. 'algo' if saved to 'algo.pkl'."""
         return self._save_name
 
     @save_name.setter
     def save_name(self, name: str):
-        """ Set the name for saving this algorithm instance, e.g. 'subrtn' if saved to 'subrtn.pkl'. """
+        """Set the name for saving this algorithm instance, e.g. 'subrtn' if saved to 'subrtn.pkl'."""
         if not isinstance(name, str):
             raise pyrado.TypeErr(given=name, expected_type=str)
         self._save_name = name
 
     @property
     def max_iter(self) -> int:
-        """ Get the maximum number of iterations. """
+        """Get the maximum number of iterations."""
         return self._max_iter
 
     @max_iter.setter
     def max_iter(self, max_iter: int):
-        """ Set the maximum number of iterations. """
+        """Set the maximum number of iterations."""
         assert max_iter > 0
         self._max_iter = max_iter
 
     @property
     def curr_iter(self) -> int:
-        """ Get the current iteration counter. """
+        """Get the current iteration counter."""
         return self._curr_iter
 
     @property
     def sample_count(self) -> int:
-        """ Get the total number of samples, i.e. steps of a rollout, used for training so far. """
+        """Get the total number of samples, i.e. steps of a rollout, used for training so far."""
         return self._cnt_samples
 
     @property
     def policy(self) -> Policy:
-        """ Get the algorithm's policy. """
+        """Get the algorithm's policy."""
         return self._policy
 
     @property
     def expl_strat(self) -> Union[StochasticActionExplStrat, StochasticParamExplStrat, None]:
-        """ Get the algorithm's exploration strategy. """
+        """Get the algorithm's exploration strategy."""
         return None
 
     def stopping_criterion_met(self) -> bool:
@@ -271,7 +271,7 @@ class Algorithm(ABC, LoggerAware):
         raise NotImplementedError
 
     def update(self, *args: Any, **kwargs: Any):
-        """ Update the policy's (and value functions') parameters based on the collected rollout data. """
+        """Update the policy's (and value functions') parameters based on the collected rollout data."""
         pass
 
     def make_snapshot(self, snapshot_mode: str, curr_avg_ret: float = None, meta_info: dict = None):
@@ -405,7 +405,7 @@ class InterruptableAlgorithm(Algorithm, ABC):
 
     @property
     def curr_checkpoint(self) -> int:
-        """ Get the current checkpoint counter. """
+        """Get the current checkpoint counter."""
         return self._curr_checkpoint
 
     def reset_checkpoint(self, curr: int = 0):

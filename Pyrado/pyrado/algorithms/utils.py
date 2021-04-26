@@ -71,7 +71,7 @@ def compute_action_statistics(steps: StepSequence, expl_strat: StochasticActionE
 
 
 class ReplayMemory:
-    """ Base class for storing step transitions """
+    """Base class for storing step transitions"""
 
     def __init__(self, capacity: int):
         """
@@ -84,16 +84,16 @@ class ReplayMemory:
 
     @property
     def memory(self) -> StepSequence:
-        """ Get the replay buffer. """
+        """Get the replay buffer."""
         return self._memory
 
     @property
     def isempty(self) -> bool:
-        """ Check if the replay buffer is empty. """
+        """Check if the replay buffer is empty."""
         return self._memory is None
 
     def __len__(self) -> int:
-        """ Get the number of transitions stored in the buffer. """
+        """Get the number of transitions stored in the buffer."""
         return self._memory.length
 
     def push(self, ros: Union[list, StepSequence], truncate_last: bool = True):

@@ -43,7 +43,7 @@ T = TypeVar("T")
 
 
 class EnvSpec(NamedTuple):
-    """ The specification of an environment's input and output space """
+    """The specification of an environment's input and output space"""
 
     obs_space: Space
     act_space: Space
@@ -51,7 +51,7 @@ class EnvSpec(NamedTuple):
 
 
 class RenderMode(NamedTuple):
-    """ The specification of a render mode, do not print or render anything by default """
+    """The specification of a render mode, do not print or render anything by default"""
 
     text: bool = False
     video: bool = False
@@ -59,7 +59,7 @@ class RenderMode(NamedTuple):
 
 
 class TimeSeriesDataPair(NamedTuple):
-    """ Pair of an input sequence and an associated target value for training time series prediction. """
+    """Pair of an input sequence and an associated target value for training time series prediction."""
 
     inp_seq: to.Tensor
     targ: to.Tensor

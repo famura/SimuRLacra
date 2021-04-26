@@ -36,7 +36,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class IdlePolicy(Policy):
-    """ The most simple policy which simply does nothing """
+    """The most simple policy which simply does nothing"""
 
     name: str = "idle"
 
@@ -58,7 +58,7 @@ class IdlePolicy(Policy):
 
 
 class DummyPolicy(Policy):
-    """ Simple policy which samples random values form the action space """
+    """Simple policy which samples random values form the action space"""
 
     name: str = "dummy"
 

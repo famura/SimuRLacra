@@ -79,7 +79,7 @@ def create_box_upper_shelve_task(env_spec: EnvSpec, continuous_rew_fcn: bool, su
 
 
 class BoxShelvingSim(RcsSim, Serializable):
-    """ Base class for 2-armed humanoid robot putting a box into a shelve """
+    """Base class for 2-armed humanoid robot putting a box into a shelve"""
 
     def __init__(
         self, task_args: dict, ref_frame: str, position_mps: bool, tasks_left: [Sequence[dict], None], **kwargs
@@ -143,7 +143,7 @@ class BoxShelvingSim(RcsSim, Serializable):
 
 
 class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
-    """ Humanoid robot putting a box into a shelve using one arm and position-level movement primitives """
+    """Humanoid robot putting a box into a shelve using one arm and position-level movement primitives"""
 
     name: str = "bs-pos"
 
@@ -238,7 +238,7 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
 
 
 class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
-    """ Humanoid robot putting a box into a shelve using one arm and velocity-level movement primitives """
+    """Humanoid robot putting a box into a shelve using one arm and velocity-level movement primitives"""
 
     name: str = "bs-vel"
 

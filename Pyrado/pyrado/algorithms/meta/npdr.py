@@ -47,7 +47,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class NPDR(SBIBase):
-    """ Neural Posterior Domain Randomization (NPDR) """
+    """Neural Posterior Domain Randomization (NPDR)"""
 
     name: str = "npdr"
     iteration_key: str = "npdr_iteration"  # logger's iteration key

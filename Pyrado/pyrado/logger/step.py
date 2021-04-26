@@ -164,7 +164,7 @@ class StepLogger:
         self._prefix_str = "".join(self._prefix_stack)
 
     def pop_prefix(self):
-        """ Remove the last string from the key prefix stack. """
+        """Remove the last string from the key prefix stack."""
         self._prefix_stack.pop()
         self._prefix_str = "".join(self._prefix_stack)
 
@@ -196,7 +196,7 @@ def create_csv_step_logger(save_dir: pyrado.PathLike, file_name: str = "progress
 
 
 class StepLogPrinter(ABC):
-    """ Base class for log printers. Formats progress values for a step. """
+    """Base class for log printers. Formats progress values for a step."""
 
     @abstractmethod
     def print_values(self, values: dict, ordered_keys: list, first_step: bool):
@@ -210,7 +210,7 @@ class StepLogPrinter(ABC):
 
 
 class ConsolePrinter(StepLogPrinter):
-    """ Prints step data to the console """
+    """Prints step data to the console"""
 
     def print_values(self, values: dict, ordered_keys: list, first_step: bool):
         # One column with name, one column with value
@@ -219,7 +219,7 @@ class ConsolePrinter(StepLogPrinter):
 
 
 class CSVPrinter(StepLogPrinter):
-    """ Logs step data to a CSV file """
+    """Logs step data to a CSV file"""
 
     def __init__(self, file: str):
         """
@@ -274,7 +274,7 @@ class CSVPrinter(StepLogPrinter):
 
 
 class TensorBoardPrinter(StepLogPrinter):
-    """ Class for writing tensorboard logs """
+    """Class for writing tensorboard logs"""
 
     def __init__(self, dir):
         """
@@ -337,7 +337,7 @@ class LoggerAware:
 
     @property
     def logger(self) -> StepLogger:
-        """ Get or create the step logger to use for this object. """
+        """Get or create the step logger to use for this object."""
         if self._logger is not None:
             # There is already a logger object, so we can return it
             pass
@@ -357,7 +357,7 @@ class LoggerAware:
         super().__setattr__(key, value)
 
     def _create_default_logger(self) -> StepLogger:
-        """ Create a step-based logger which safes to a csv-file and prints to the console. """
+        """Create a step-based logger which safes to a csv-file and prints to the console."""
         logger = StepLogger()
         logger.printers.append(ConsolePrinter())
 

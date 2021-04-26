@@ -38,7 +38,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class TimePolicy(Policy):
-    """ A purely time-based policy, mainly useful for testing """
+    """A purely time-based policy, mainly useful for testing"""
 
     name: str = "time"
 

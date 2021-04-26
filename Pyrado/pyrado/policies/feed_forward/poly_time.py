@@ -37,7 +37,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class PolySplineTimePolicy(Policy):
-    """ A purely time-based policy, were the output is given by a pol """
+    """A purely time-based policy, were the output is given by a pol"""
 
     name: str = "pst"
 

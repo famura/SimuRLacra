@@ -45,7 +45,7 @@ from pyrado.utils.tensor import insert_tensor_col
 
 
 class LQR(Algorithm, ExposedSampler):
-    """ Linear Quadratic Regulator created using the control module """
+    """Linear Quadratic Regulator created using the control module"""
 
     name: str = "lqr"
 
@@ -181,7 +181,7 @@ class LQR(Algorithm, ExposedSampler):
         self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
 
     def stopping_criterion_met(self) -> bool:
-        """ Checks if the all eigenvalues of the closed loop system are negative. """
+        """Checks if the all eigenvalues of the closed loop system are negative."""
         return (self.eigvals < 0).all()
 
     def save_snapshot(self, meta_info: dict = None):

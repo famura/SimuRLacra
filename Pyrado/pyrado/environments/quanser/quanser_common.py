@@ -34,7 +34,7 @@ from scipy import signal
 
 
 class QSocket:
-    """ Handles the communication with Quarc (TCP/IP connection) """
+    """Handles the communication with Quarc (TCP/IP connection)"""
 
     def __init__(self, ip: str, x_len: int, u_len: int, port: int = 9095):
         """
@@ -74,7 +74,7 @@ class QSocket:
             self._soc = None
 
     def is_open(self) -> bool:
-        """ Return True is the socket connection os open and False if not. """
+        """Return True is the socket connection os open and False if not."""
         return False if self._soc is None else True
 
 

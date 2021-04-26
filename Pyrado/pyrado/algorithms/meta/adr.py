@@ -306,7 +306,7 @@ class ADR(Algorithm):
 
 
 class SVPGAdapter(EnvWrapper, Serializable):
-    """ Wrapper to encapsulate the domain parameter search as a reinforcement learning problem """
+    """Wrapper to encapsulate the domain parameter search as a reinforcement learning problem"""
 
     def __init__(
         self,

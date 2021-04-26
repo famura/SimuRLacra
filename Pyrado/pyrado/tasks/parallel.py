@@ -38,7 +38,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class ParallelTasks(Task):
-    """ Task class for a set of tasks a.k.a. goals which can be achieved in any order or parallel """
+    """Task class for a set of tasks a.k.a. goals which can be achieved in any order or parallel"""
 
     def __init__(
         self,
@@ -82,17 +82,17 @@ class ParallelTasks(Task):
 
     @property
     def tasks(self) -> Sequence[Task]:
-        """ Get the list of tasks. """
+        """Get the list of tasks."""
         return deepcopy(self._tasks)
 
     @property
     def state_des(self) -> list:
-        """ Get a list of all desired states. """
+        """Get a list of all desired states."""
         return [task.state_des for task in self._tasks if hasattr(task, "state_des")]
 
     @state_des.setter
     def state_des(self, states_des: Union[list, tuple]):
-        """ Set all desired states from a list of desired states. """
+        """Set all desired states from a list of desired states."""
         if not isinstance(states_des, (list, tuple)):
             # Explicitly require to use a list or tuple to avoid setting just one desired state
             raise pyrado.TypeErr(given=states_des, expected_type=[list, tuple])
@@ -106,12 +106,12 @@ class ParallelTasks(Task):
 
     @property
     def space_des(self) -> list:
-        """ Get a list of all desired spaces. """
+        """Get a list of all desired spaces."""
         return [task.space_des for task in self._tasks if hasattr(task, "space_des")]
 
     @space_des.setter
     def space_des(self, spaces_des: Sequence):
-        """ Set all desired spaces from a list of desired spaces. """
+        """Set all desired spaces from a list of desired spaces."""
         if not isinstance(spaces_des, (list, tuple)):
             # Explicitly require to use a list or tuple to avoid setting just one desired space
             raise pyrado.TypeErr(given=spaces_des, expected_type=[list, tuple])
@@ -125,11 +125,11 @@ class ParallelTasks(Task):
 
     @property
     def rew_fcn(self) -> list:
-        """ Get a list of all reward functions. """
+        """Get a list of all reward functions."""
         return [task.rew_fcn for task in self._tasks]
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int) -> float:
-        """ Get the step reward accumulated from every non-done task. """
+        """Get the step reward accumulated from every non-done task."""
         step_rew = 0.0
         for i in range(len(self)):
             if not (self.succeeded_tasks[i] or self.failed_tasks[i]):
@@ -165,7 +165,7 @@ class ParallelTasks(Task):
         return sum_final_rew
 
     def reset(self, **kwargs):
-        """ Reset all tasks. """
+        """Reset all tasks."""
         for task in self._tasks:
             task.reset(**kwargs)
 
@@ -235,7 +235,7 @@ class ParallelTasks(Task):
         return successful
 
     def has_failed(self, state: np.ndarray = None) -> bool:
-        """ Check if this task has failed. """
+        """Check if this task has failed."""
         if self.allow_failures:
             # The ParallelTasks fail if all of them fail
             return np.all(self.failed_tasks)

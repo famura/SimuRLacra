@@ -44,7 +44,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class ActorCritic(Algorithm, ExposedSampler, ABC):
-    """ Base class of all actor critic algorithms """
+    """Base class of all actor critic algorithms"""
 
     def __init__(
         self, env: Env, actor: Policy, critic: GAE, save_dir: pyrado.PathLike, max_iter: int, logger: StepLogger = None
@@ -79,12 +79,12 @@ class ActorCritic(Algorithm, ExposedSampler, ABC):
 
     @property
     def critic(self) -> GAE:
-        """ Get the critic. """
+        """Get the critic."""
         return self._critic
 
     @critic.setter
     def critic(self, critic: GAE):
-        """ Set the critic. """
+        """Set the critic."""
         if not isinstance(critic, GAE):
             pyrado.TypeErr(given=critic, expected_type=GAE)
         self._critic = critic

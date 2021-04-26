@@ -41,13 +41,13 @@ from pyrado.utils import get_class_name
 
 
 class Space(ABC):
-    """ Base class of all state, action, and init spaces in Pyrado """
+    """Base class of all state, action, and init spaces in Pyrado"""
 
     bound_lo: np.ndarray
     bound_up: np.ndarray
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return (
             f"{Style.BRIGHT}{get_class_name(self)}{Style.RESET_ALL}"
             + f"(id: {id(self)})\n"
@@ -60,38 +60,38 @@ class Space(ABC):
 
     @property
     def bounds(self) -> Tuple[np.ndarray, np.ndarray]:
-        """ Get the lower (first element) and upper bound (second element) of the space. """
+        """Get the lower (first element) and upper bound (second element) of the space."""
         return self.bound_lo, self.bound_up
 
     @property
     def bound_abs_up(self) -> np.ndarray:
-        """ Get the upper bound in terms of absolute values. """
+        """Get the upper bound in terms of absolute values."""
         return np.max(np.stack([np.abs(self.bound_lo), np.abs(self.bound_up)], axis=0), axis=0)
 
     @property
     def ele_dim(self) -> int:
-        """ Get the dimension of an element of the space. """
+        """Get the dimension of an element of the space."""
         return self.bound_lo.shape[0]
 
     @property
     @abstractmethod
     def shape(self) -> tuple:
-        """ Get the shape of the full space. """
+        """Get the shape of the full space."""
         raise NotImplementedError
 
     @property
     def flat_dim(self) -> int:
-        """ Get the dimension of the flattened space. """
+        """Get the dimension of the flattened space."""
         return reduce((lambda x, y: x * y), self.shape)
 
     @property
     def labels(self) -> Union[np.ndarray, None]:
-        """ Get the labels for space entries, or `None` if not supported. """
+        """Get the labels for space entries, or `None` if not supported."""
         return None
 
     @abstractmethod
     def _members(self) -> tuple:
-        """ Return a tuple of members relevant for equals. """
+        """Return a tuple of members relevant for equals."""
         raise NotImplementedError
 
     def __eq__(self, other):
@@ -134,7 +134,7 @@ class Space(ABC):
         return mask
 
     def copy(self):
-        """ Create a deep copy (recursively copy values of a compound object). """
+        """Create a deep copy (recursively copy values of a compound object)."""
         return deepcopy(self)
 
     def subspace(self, idcs: Union[np.ndarray, int, slice]):

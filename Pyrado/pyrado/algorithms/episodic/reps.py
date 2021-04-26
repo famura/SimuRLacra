@@ -163,7 +163,7 @@ class REPS(ParameterExploring):
 
     @property
     def eta(self) -> to.Tensor:
-        r""" Get the Lagrange multiplier $\eta$. In [2], $/eta$ is called $/alpha$. """
+        r"""Get the Lagrange multiplier $\eta$. In [2], $/eta$ is called $/alpha$."""
         return to.exp(self._log_eta)
 
     def weights(self, rets: to.Tensor) -> to.Tensor:

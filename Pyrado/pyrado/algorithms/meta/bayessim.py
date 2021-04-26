@@ -214,22 +214,22 @@ class BayesSim(Algorithm):
 
     @property
     def subroutine_policy(self) -> Algorithm:
-        """ Get the policy optimization subroutine. """
+        """Get the policy optimization subroutine."""
         return self._subrtn_policy
 
     @property
     def subroutine_distr(self) -> SNPEA:
-        """ Get the system identification subroutine coming from the sbi module. """
+        """Get the system identification subroutine coming from the sbi module."""
         return self._subrtn_sbi
 
     @property
     def embedding(self) -> BayesSimEmbedding:
-        """ Get the embedding used to compute the features from the rollouts. """
+        """Get the embedding used to compute the features from the rollouts."""
         return self._embedding
 
     @property
     def posterior(self) -> MDNPolicy:
-        """ Get the current (conditional) posterior density estimator. """
+        """Get the current (conditional) posterior density estimator."""
         return self._subrtn_sbi.posterior
 
     def step(self, snapshot_mode: str, meta_info: dict = None):

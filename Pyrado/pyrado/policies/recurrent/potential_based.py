@@ -41,7 +41,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class PotentialBasedPolicy(RecurrentPolicy, ABC):
-    """ Base class for policies that work with potential-based neutral networks """
+    """Base class for policies that work with potential-based neutral networks"""
 
     name: str = None
 
@@ -147,12 +147,12 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
 
     @property
     def tau(self) -> to.Tensor:
-        """ Get the time scale parameter. """
+        """Get the time scale parameter."""
         return to.exp(self._log_tau)
 
     @property
     def kappa(self) -> to.Tensor:
-        """ Get the cubic decay parameter. """
+        """Get the cubic decay parameter."""
         return to.exp(self._log_kappa)
 
     @abstractmethod

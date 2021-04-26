@@ -37,7 +37,7 @@ from pyrado.environments.sim_base import SimEnv
 
 
 class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
-    """ Environment wrapper which adds normally distributed i.i.d. noise to all observations. """
+    """Environment wrapper which adds normally distributed i.i.d. noise to all observations."""
 
     def __init__(
         self,

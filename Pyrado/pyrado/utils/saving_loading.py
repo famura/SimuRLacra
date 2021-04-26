@@ -43,7 +43,7 @@ PathLike = TypeVar("PathLike", str, bytes, os.PathLike)  # PEP 519
 
 
 def _save_fcn(obj, path, extension):
-    """ Actual saving function, which handles the cases specified in `save()`. """
+    """Actual saving function, which handles the cases specified in `save()`."""
     if extension == "pt":
         to.save(obj, path)
     elif extension == "npy":
@@ -55,7 +55,7 @@ def _save_fcn(obj, path, extension):
 
 
 def _load_fcn(path, extension):
-    """ Actual loading function, which handles the cases specified in `load()`. """
+    """Actual loading function, which handles the cases specified in `load()`."""
     if extension == "pt":
         obj = to.load(path)
     elif extension == "npy":

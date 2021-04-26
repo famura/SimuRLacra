@@ -141,7 +141,7 @@ class QBallBalancerPDCtrl(Policy):
 
 
 class QCartPoleSwingUpAndBalanceCtrl(Policy):
-    """ Swing-up and balancing controller for the Quanser Cart-Pole """
+    """Swing-up and balancing controller for the Quanser Cart-Pole"""
 
     name: str = "qcp-sub"
 
@@ -330,7 +330,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
 
 
 class QQubeEnergyCtrl(Policy):
-    """ Energy-based controller used to swing the pendulum up """
+    """Energy-based controller used to swing the pendulum up"""
 
     def __init__(
         self,
@@ -379,7 +379,7 @@ class QQubeEnergyCtrl(Policy):
 
     @property
     def E_gain(self):
-        r""" Called $\mu$ by Quanser."""
+        r"""Called $\mu$ by Quanser."""
         return to.exp(self._log_E_gain)
 
     # @E_gain.setter
@@ -492,7 +492,7 @@ class QQubePDCtrl(Policy):
 
 
 class QCartPoleGoToLimCtrl:
-    """ Controller for going to one of the joint limits (part of the calibration routine) """
+    """Controller for going to one of the joint limits (part of the calibration routine)"""
 
     def __init__(self, init_state: np.ndarray, positive: bool = True):
         """
@@ -545,7 +545,7 @@ class QCartPoleGoToLimCtrl:
 
 
 class QQubeGoToLimCtrl:
-    """ Controller for going to one of the joint limits (part of the calibration routine) """
+    """Controller for going to one of the joint limits (part of the calibration routine)"""
 
     def __init__(self, positive: bool = True, cnt_done: int = 250):
         """

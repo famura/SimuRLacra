@@ -46,12 +46,12 @@ class SimEnv(Env, ABC, Serializable):
     @property
     @abstractmethod
     def init_space(self) -> Space:
-        """ Get the initial state space. """
+        """Get the initial state space."""
         raise NotImplementedError
 
     @init_space.setter
     def init_space(self, space: Space):
-        """ Set the initial state space. """
+        """Set the initial state space."""
         raise NotImplementedError
 
     @classmethod
@@ -109,7 +109,7 @@ class SimEnv(Env, ABC, Serializable):
             self.state_space.contains(self.state, verbose=True)
 
     def close(self):
-        """ For compatibility to `RealEnv` with the wrappers which are subclasses of `Env`. """
+        """For compatibility to `RealEnv` with the wrappers which are subclasses of `Env`."""
         pass
 
     def _get_state(self, state_dict: dict):

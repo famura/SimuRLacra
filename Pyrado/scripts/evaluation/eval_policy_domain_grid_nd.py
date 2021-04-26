@@ -57,7 +57,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 def evaluate_policy(args, ex_dir):
-    """ Helper function to evaluate the policy from an experiment in the associated environment. """
+    """Helper function to evaluate the policy from an experiment in the associated environment."""
     env, policy, _ = load_experiment(ex_dir, args)
 
     # Create multi-dim evaluation grid

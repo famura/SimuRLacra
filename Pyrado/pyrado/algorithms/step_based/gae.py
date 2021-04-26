@@ -120,12 +120,12 @@ class GAE(LoggerAware, nn.Module):
 
     @property
     def vfcn(self) -> [nn.Module, Policy]:
-        """ Get the value function approximator. """
+        """Get the value function approximator."""
         return self._vfcn
 
     @vfcn.setter
     def vfcn(self, vfcn: Union[nn.Module, Policy]):
-        """ Set the value function approximator. """
+        """Set the value function approximator."""
         if not isinstance(vfcn, (nn.Module, Policy)):
             raise pyrado.TypeErr(given=vfcn, expected_type=[nn.Module, Policy])
         self._vfcn = vfcn

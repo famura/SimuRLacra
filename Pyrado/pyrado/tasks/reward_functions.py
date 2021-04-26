@@ -36,7 +36,7 @@ from pyrado.spaces.base import Space
 
 
 class RewFcn(ABC):
-    """ Base class for all reward functions """
+    """Base class for all reward functions"""
 
     @abstractmethod
     def __call__(self, s: np.ndarray, a: np.ndarray, remaining_steps: int) -> float:
@@ -59,7 +59,7 @@ class RewFcn(ABC):
 
 
 class CompoundRewFcn(RewFcn):
-    """ Combine multiple reward functions """
+    """Combine multiple reward functions"""
 
     def __init__(self, rew_fcns: Sequence):
         """
@@ -88,7 +88,7 @@ class ZeroPerStepRewFcn(RewFcn):
     """
 
     def __call__(self, err_s: np.ndarray = None, err_a: np.ndarray = None, remaining_steps: int = None) -> float:
-        """ None of the inputs matter. """
+        """None of the inputs matter."""
         return 0.0
 
 
@@ -99,7 +99,7 @@ class PlusOnePerStepRewFcn(RewFcn):
     """
 
     def __call__(self, err_s: np.ndarray = None, err_a: np.ndarray = None, remaining_steps: int = None) -> float:
-        """ None of the inputs matter. """
+        """None of the inputs matter."""
         return 1.0
 
 
@@ -110,7 +110,7 @@ class MinusOnePerStepRewFcn(RewFcn):
     """
 
     def __call__(self, err_s: np.ndarray = None, err_a: np.ndarray = None, remaining_steps: int = None) -> float:
-        """ None of the inputs matter. """
+        """None of the inputs matter."""
         return -1.0
 
 
@@ -146,7 +146,7 @@ class SSCosOfOneEleRewFcn(CosOfOneEleRewFcn):
 
 
 class AbsErrRewFcn(RewFcn):
-    """ Reward function that returns the negative weighted sum of the absolute errors. """
+    """Reward function that returns the negative weighted sum of the absolute errors."""
 
     def __init__(self, q: np.ndarray, r: np.ndarray):
         """
@@ -174,7 +174,7 @@ class AbsErrRewFcn(RewFcn):
 
 
 class QuadrErrRewFcn(RewFcn):
-    """ Reward function that returns the exp of the weighted sum of squared errors. """
+    """Reward function that returns the exp of the weighted sum of squared errors."""
 
     def __init__(self, Q: Union[np.ndarray, list], R: Union[np.ndarray, list]):
         """
@@ -222,7 +222,7 @@ class QuadrErrRewFcn(RewFcn):
 
 
 class ExpQuadrErrRewFcn(QuadrErrRewFcn):
-    """ Reward function that returns the exp of the weighted sum of squared errors """
+    """Reward function that returns the exp of the weighted sum of squared errors"""
 
     def __init__(self, Q: Union[np.ndarray, list], R: Union[np.ndarray, list]):
         """
@@ -244,7 +244,7 @@ class ExpQuadrErrRewFcn(QuadrErrRewFcn):
 
 
 class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
-    """ Reward function that returns the exp of the scaled weighted sum of squared errors """
+    """Reward function that returns the exp of the scaled weighted sum of squared errors"""
 
     def __init__(
         self, Q: [np.ndarray, list], R: [np.ndarray, list], state_space: Space, act_space: Space, min_rew: float = 1e-4
@@ -414,7 +414,7 @@ class ForwardVelocityRewFcn(RewFcn):
 
 
 class QCartPoleSwingUpRewFcn(RewFcn):
-    """ Custom reward function for QCartPoleSwingUpSim. """
+    """Custom reward function for QCartPoleSwingUpSim."""
 
     def __init__(self, factor: float = 0.9):
         """

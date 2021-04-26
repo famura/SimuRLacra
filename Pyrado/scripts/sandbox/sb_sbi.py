@@ -53,7 +53,7 @@ from pyrado.spaces.singular import SingularStateSpace
 
 
 def simple_omo_sim(domain_params: to.Tensor, env: SimEnv, policy: Policy, embedding: Embedding) -> to.Tensor:
-    """ The most simple interface of a simulation to sbi, see `SimRolloutSamplerForSBI` """
+    """The most simple interface of a simulation to sbi, see `SimRolloutSamplerForSBI`"""
     domain_params = to.atleast_2d(domain_params)
     data = []
     for dp in domain_params:

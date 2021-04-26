@@ -73,7 +73,7 @@ class LinearPolicy(Policy):
 
     @property
     def features(self) -> FeatureStack:
-        """ Get the (nonlinear) feature transformations. """
+        """Get the (nonlinear) feature transformations."""
         return self._feats
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):

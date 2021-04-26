@@ -72,7 +72,7 @@ def create_shuffled_sequences(data: to.Tensor, len_seq: int) -> List[Tuple]:
 
 
 class TimeSeriesDataSet(Dataset):
-    """ Class for storing time series data sets """
+    """Class for storing time series data sets"""
 
     def __init__(
         self,
@@ -143,22 +143,22 @@ class TimeSeriesDataSet(Dataset):
         print_cbt(f"Created {str(self)}", "w")
 
     def __len__(self) -> int:
-        """ Get the length of the complete data set (not split into sequences) after removing superfluous samples. """
+        """Get the length of the complete data set (not split into sequences) after removing superfluous samples."""
         return self.data_all.shape[0]
 
     def __getitem__(self, idx: Union[int, slice]):
-        """ Get one sample from the complete data set (not split into sequences). """
+        """Get one sample from the complete data set (not split into sequences)."""
         return self.data_all[idx]
 
     def __eq__(self, other) -> bool:
-        """ Check if two data sets are equal by comparing the data and properties. """
+        """Check if two data sets are equal by comparing the data and properties."""
         data_eq = to.allclose(self.data_all, other.data_all)
         ratio_eq = self.ratio_train == other.ratio_train
         window_eq = self.window_size == other.window_size
         return data_eq and ratio_eq and window_eq
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return f"TimeSeriesDataSet (id {id(self)})\n" + tabulate(
             [
                 ["num all samples", len(self)],
@@ -170,29 +170,29 @@ class TimeSeriesDataSet(Dataset):
 
     @property
     def ratio_train(self) -> float:
-        """ Get the ratio of the training samples w.r.t. the total sample count. """
+        """Get the ratio of the training samples w.r.t. the total sample count."""
         return self._ratio_train
 
     @property
     def window_size(self) -> int:
-        """ Get the length of the sequences fed to the policy for predicting the next value. """
+        """Get the length of the sequences fed to the policy for predicting the next value."""
         return self._window_size
 
     @property
     def dim_data(self) -> int:
-        """ Get the data's number of dimensions. """
+        """Get the data's number of dimensions."""
         if not self.data_all.ndim == 2:
             raise pyrado.ShapeErr(given=self.data_all, expected_match=(-1, 2))
         return self.data_all.shape[1]
 
     @property
     def num_samples_trn(self) -> int:
-        """ Get the number of samples in the training subset. """
+        """Get the number of samples in the training subset."""
         return int(len(self) * self._ratio_train)
 
     @property
     def num_samples_tst(self) -> int:
-        """ Get the number of samples in the testing subset. """
+        """Get the number of samples in the testing subset."""
         return len(self) - self.num_samples_trn
 
     @staticmethod

@@ -82,12 +82,12 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
 
     @property
     def factor(self):
-        """ Get the downsampling factor. """
+        """Get the downsampling factor."""
         return self._factor
 
     @factor.setter
     def factor(self, factor: int):
-        """ Set the downsampling factor. """
+        """Set the downsampling factor."""
         assert isinstance(factor, int) and factor >= 1
         self._factor = factor
         # Also reset counter

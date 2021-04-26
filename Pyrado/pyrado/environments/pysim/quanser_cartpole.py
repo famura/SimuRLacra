@@ -43,7 +43,7 @@ from pyrado.tasks.reward_functions import QuadrErrRewFcn
 
 
 class QCartPoleSim(SimPyEnv, Serializable):
-    """ Base Environment for the Quanser Cart-Pole swing-up and stabilization task """
+    """Base Environment for the Quanser Cart-Pole swing-up and stabilization task"""
 
     def __init__(
         self,

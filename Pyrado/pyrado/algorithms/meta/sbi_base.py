@@ -246,22 +246,22 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
     @property
     def subroutine_policy(self) -> Algorithm:
-        """ Get the policy optimization subroutine. """
+        """Get the policy optimization subroutine."""
         return self._subrtn_policy
 
     @property
     def subroutine_sbi(self) -> NeuralInference:
-        """ Get the system identification subroutine coming from the sbi module. """
+        """Get the system identification subroutine coming from the sbi module."""
         return self._subrtn_sbi
 
     @property
     def sbi_simulator(self) -> Optional[Callable]:
-        """ Get the simulator wrapped for sbi. """
+        """Get the simulator wrapped for sbi."""
         return self._sbi_simulator
 
     @property
     def embedding(self) -> Embedding:
-        """ Get the embedding used to compute the features from the rollouts. """
+        """Get the embedding used to compute the features from the rollouts."""
         return self._embedding
 
     def _setup_sbi(self, prior: Distribution, rollouts_real: Optional[List[StepSequence]] = None):
