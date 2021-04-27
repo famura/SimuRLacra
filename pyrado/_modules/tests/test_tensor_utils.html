@@ -274,16 +274,18 @@
         <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
         <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1_dim&quot;</span><span class="p">,</span> <span class="s2">&quot;3_dim&quot;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1x1&quot;</span><span class="p">,</span> <span class="s2">&quot;3x3&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_insert_tensor_col</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># also check appending case</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">insert_tensor_col</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+
         <span class="c1"># Check number of rows and columns</span>
         <span class="k">assert</span> <span class="n">orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">result</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">assert</span> <span class="n">orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">result</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+
         <span class="c1"># Check the values</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">result</span><span class="p">[:,</span> <span class="n">col_idx</span><span class="p">],</span> <span class="n">col</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span></div>
+        <span class="k">assert</span> <span class="n">to</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">result</span><span class="p">[:,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">==</span> <span class="n">col</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
