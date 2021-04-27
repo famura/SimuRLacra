@@ -33,6 +33,7 @@ import torch.nn as nn
 
 import pyrado
 from pyrado.policies.base import Policy
+from pyrado.utils.data_processing import correct_atleast_2d
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -89,10 +90,12 @@ class PolySplineTimePolicy(Policy):
             raise pyrado.ValueErr(given=cond_lvl, eq_constraint="'vel' or 'acc'")
         num_cond = (self._order + 1) // 2
         cond_final = to.as_tensor(cond_final, dtype=to.get_default_dtype())
+        cond_final = correct_atleast_2d(to.atleast_2d(cond_final))
         if cond_final.shape != (num_cond, spec.act_space.flat_dim):
             raise pyrado.ShapeErr(given=cond_final, expected_match=(num_cond, spec.act_space.flat_dim))
         if cond_init is not None:
             cond_init = to.as_tensor(cond_init, dtype=to.get_default_dtype())
+            cond_init = correct_atleast_2d(to.atleast_2d(cond_init))
             if cond_init.shape != (num_cond, spec.act_space.flat_dim):
                 raise pyrado.ShapeErr(given=cond_init, expected_match=(num_cond, spec.act_space.flat_dim))
         else:

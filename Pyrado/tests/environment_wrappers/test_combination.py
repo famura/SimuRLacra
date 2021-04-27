@@ -45,7 +45,7 @@ from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environment_wrappers.utils import inner_env, remove_env, typed_env
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.sim_base import SimEnv
-from pyrado.policies.feed_forward.dummy import DummyPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 
@@ -66,7 +66,7 @@ def test_combination_wrappers_domain_params(env: SimEnv):
 
 @pytest.mark.wrapper
 def test_combination():
-    env = QCartPoleSwingUpSim(dt=1 / 50.0, max_steps=20)
+    env = QCartPoleSwingUpSim(dt=1 / 100.0, max_steps=20)
 
     randomizer = create_default_randomizer(env)
     env_r = DomainRandWrapperBuffer(env, randomizer)
@@ -103,8 +103,7 @@ def test_combination():
         env_rnp, noise_mean=0.5 * np.ones(env_rnp.act_space.shape), noise_std=0.1 * np.ones(env_rnp.act_space.shape)
     )
     ro_rnpa = rollout(env_rnpa, DummyPolicy(env_rnpa.spec), eval=True, seed=0, render_mode=RenderMode())
-    assert np.allclose(ro_rnp.actions, ro_rnpa.actions)
-    assert not np.allclose(ro_rnp.observations, ro_rnpa.observations)
+    assert not np.allclose(ro_rnp.observations, ro_rnpa.observations)  # the action noise changed to rollout
 
     env_rnpd = ActDelayWrapper(env_rnp, delay=3)
     ro_rnpd = rollout(env_rnpd, DummyPolicy(env_rnpd.spec), eval=True, seed=0, render_mode=RenderMode())

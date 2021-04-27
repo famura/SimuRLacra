@@ -54,7 +54,7 @@ class IdlePolicy(Policy):
 
     def forward(self, obs: to.Tensor = None) -> to.Tensor:
         # Observations are ignored
-        return to.zeros(self._env_spec.act_space.shape)
+        return to.zeros(self._env_spec.act_space.shape, dtype=to.get_default_dtype(), device=self.device)
 
 
 class DummyPolicy(Policy):
@@ -76,7 +76,8 @@ class DummyPolicy(Policy):
 
     def forward(self, obs: to.Tensor = None) -> to.Tensor:
         # Observations are ignored
-        return to.tensor(self.env_spec.act_space.sample_uniform())
+        act = to.from_numpy(self.env_spec.act_space.sample_uniform())
+        return act.to(dtype=to.get_default_dtype(), device=self.device)
 
 
 class RecurrentDummyPolicy(RecurrentPolicy):

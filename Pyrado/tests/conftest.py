@@ -707,7 +707,7 @@ class DefaultPolicies:
             dt=env.dt,
             t_end=int(env.max_steps / env.dt),
             cond_lvl="acc",
-            cond_final=to.from_numpy(env.act_space.bound_up),
+            cond_final=to.zeros(3),
             use_cuda=False,
         )
 
