@@ -38,8 +38,8 @@ from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "QuanserQube"))  # pylint: disable=no-member
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "QuanserQube"))
 
 
 class QQubeRcsSim(RcsSim, Serializable):

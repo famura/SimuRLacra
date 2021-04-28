@@ -44,8 +44,8 @@ from pyrado.tasks.utils import never_succeeded
 from pyrado.utils.data_types import EnvSpec
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxFlipping"))  # pylint: disable=no-member
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxFlipping"))
 
 
 def create_task_space_discrepancy_task(env_spec: EnvSpec, rew_fcn: RewFcn) -> MaskedTask:

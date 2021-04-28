@@ -51,8 +51,8 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)  # pylint: disable=no-member
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxShelving"))  # pylint: disable=no-member
+rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxShelving"))
 
 
 def create_box_upper_shelve_task(env_spec: EnvSpec, continuous_rew_fcn: bool, succ_thold: float):
