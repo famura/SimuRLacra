@@ -4,7 +4,7 @@ from pylint.utils import utils
 
 
 class PylintIgnorePaths:  # pylint: disable=too-few-public-methods
-    """ Helper class for ignoring directories in PyLint. """
+    """Helper class for ignoring directories in PyLint."""
 
     def __init__(self, *paths):
         self.paths = paths
