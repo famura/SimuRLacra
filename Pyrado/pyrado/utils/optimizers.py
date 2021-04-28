@@ -36,7 +36,7 @@ import pyrado
 
 
 class GSS(Optimizer):
-    """ Golden Section Search optimizer """
+    """Golden Section Search optimizer"""
 
     def __init__(self, params, param_min: to.Tensor, param_max: to.Tensor):
         # assert all(group['params'].size() == 1 for group in params)  # only for scalar params

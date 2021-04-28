@@ -11,7 +11,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

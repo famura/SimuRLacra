@@ -44,7 +44,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class TSPred(Algorithm):
-    """ Train a policy to predict a time series of data. """
+    """Train a policy to predict a time series of data."""
 
     name: str = "tspred"  # unique identifier
 

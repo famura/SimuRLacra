@@ -39,7 +39,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class DomainParam:
-    """ Class to store and manage a (single) domain parameter a.k.a. physics parameter a.k.a. simulator parameter """
+    """Class to store and manage a (single) domain parameter a.k.a. physics parameter a.k.a. simulator parameter"""
 
     def __init__(
         self,
@@ -67,7 +67,7 @@ class DomainParam:
         self.distr = None  # no randomization by default
 
     def __eq__(self, other):
-        """ Check if two `DomainParam` are equal by comparing all attributes defined in `get_field_names()`. """
+        """Check if two `DomainParam` are equal by comparing all attributes defined in `get_field_names()`."""
         if not isinstance(other, DomainParam):
             raise pyrado.TypeErr(given=other, expected_type=DomainParam)
 
@@ -78,7 +78,7 @@ class DomainParam:
 
     @staticmethod
     def get_field_names() -> List[str]:
-        """ Get union of all hyper-parameters of all domain parameter distributions. """
+        """Get union of all hyper-parameters of all domain parameter distributions."""
         return ["name", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int, to.Tensor]):
@@ -128,7 +128,7 @@ class DomainParam:
 
 
 class UniformDomainParam(DomainParam):
-    """ Domain parameter sampled from a normal distribution """
+    """Domain parameter sampled from a normal distribution"""
 
     def __init__(self, mean: Union[int, float, to.Tensor], halfspan: Union[int, float, to.Tensor], **kwargs):
         """
@@ -165,7 +165,7 @@ class UniformDomainParam(DomainParam):
 
 
 class NormalDomainParam(DomainParam):
-    """ Domain parameter sampled from a normal distribution """
+    """Domain parameter sampled from a normal distribution"""
 
     def __init__(self, mean: Union[int, float, to.Tensor], std: Union[int, float, to.Tensor], **kwargs):
         """
@@ -201,7 +201,7 @@ class NormalDomainParam(DomainParam):
 
 
 class MultivariateNormalDomainParam(DomainParam):
-    """ Domain parameter sampled from a normal distribution """
+    """Domain parameter sampled from a normal distribution"""
 
     def __init__(self, mean: Union[int, float, to.Tensor], cov: Union[list, to.Tensor], **kwargs):
         """
@@ -242,7 +242,7 @@ class MultivariateNormalDomainParam(DomainParam):
 
 
 class BernoulliDomainParam(DomainParam):
-    """ Domain parameter sampled from a Bernoulli distribution """
+    """Domain parameter sampled from a Bernoulli distribution"""
 
     def __init__(self, val_0: Union[int, float], val_1: Union[int, float], prob_1: float, **kwargs):
         """
@@ -350,27 +350,27 @@ class SelfPacedDomainParam(DomainParam):
 
     @staticmethod
     def get_field_names() -> Sequence[str]:
-        """ Get union of all hyper-parameters of all domain parameter distributions. """
+        """Get union of all hyper-parameters of all domain parameter distributions."""
         return ["target_mean", "target_cov_chol_flat", "context_mean", "context_cov_chol_flat"]
 
     @property
     def target_distr(self) -> MultivariateNormal:
-        """ Get the target distribution. """
+        """Get the target distribution."""
         return self._target_distr
 
     @property
     def context_distr(self) -> MultivariateNormal:
-        """ Get the current contextual distribution. """
+        """Get the current contextual distribution."""
         return self._context_distr
 
     @property
     def target_cov(self) -> to.Tensor:
-        """ Get the target covariance matrix. """
+        """Get the target covariance matrix."""
         return to.diag(self.target_cov_chol_flat ** 2)
 
     @property
     def context_cov(self) -> to.Tensor:
-        """ Get the current covariance matrix. """
+        """Get the current covariance matrix."""
         return to.diag(self.context_cov_chol_flat ** 2)
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
@@ -405,7 +405,7 @@ class SelfPacedDomainParam(DomainParam):
                 raise err
 
     def sample(self, num_samples: int = 1) -> List[to.tensor]:
-        """ Samples `num_samples` samples of the current context distribution. """
+        """Samples `num_samples` samples of the current context distribution."""
 
         if not (num_samples > 0):
             raise pyrado.ValueErr(given_name="num_samples", g_constraint=0)

@@ -51,7 +51,7 @@ from pyrado.plotting.rollout_based import (
 )
 from pyrado.plotting.surface import draw_surface
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import Embedding
@@ -253,7 +253,7 @@ def test_rollout_based(env: SimEnv, policy: Policy):
 @pytest.mark.parametrize("x_labels, y_labels, prob_labels", [(None, None, None), ("", "", "")], ids=["None", "default"])
 def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels, prob_labels):
     def _simulator(dp: to.Tensor) -> to.Tensor:
-        """ The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope """
+        """The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope"""
         ro = rollout(env, policy, eval=True, reset_kwargs=dict(domain_param=dict(m=dp[0], k=dp[1], d=dp[2])))
         observation_sim = to.from_numpy(ro.observations[-1]).to(dtype=to.float32)
         return to.atleast_2d(observation_sim)

@@ -35,7 +35,7 @@ from matplotlib import patches
 from matplotlib import pyplot as plt
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
-from torch.distributions import Distribution
+from torch.distributions import Distribution, MultivariateNormal
 from torch.distributions.uniform import Uniform
 
 import pyrado
@@ -43,7 +43,6 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBu
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.utils import draw_sep_cbar
-from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.utils.checks import check_all_lengths_equal, check_all_types_equal, is_iterable
 from pyrado.utils.data_types import merge_dicts
 from pyrado.utils.input_output import completion_context
@@ -280,7 +279,7 @@ def draw_posterior_distr_1d(
 def draw_posterior_distr_2d(
     axs: plt.Axes,
     plot_type: str,
-    posterior: Union[DirectPosterior, List[DirectPosterior], MDNPolicy],
+    posterior: Union[DirectPosterior, List[DirectPosterior]],
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dims: Tuple[int, int],
@@ -359,13 +358,10 @@ def draw_posterior_distr_2d(
     else:
         raise pyrado.ValueErr(given=plot_type, eq_constraint="joint, separate, evolution-iter, or evolution-round")
     if plot_type in ["joint", "separate"]:
-        if not (isinstance(posterior, DirectPosterior) or isinstance(posterior, MDNPolicy)):
+        if not isinstance(posterior, DirectPosterior):
             raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
     elif "evolution" in plot_type:
-        if not (
-            is_iterable(posterior)
-            and (isinstance(posterior[0], DirectPosterior) or isinstance(posterior[0], MDNPolicy))
-        ):
+        if not (is_iterable(posterior) and isinstance(posterior[0], DirectPosterior)):
             raise pyrado.TypeErr(given=posterior[0], expected_type=DirectPosterior)
     if not isinstance(grid_res, int):
         raise pyrado.TypeErr(given=grid_res, expected_type=int)
@@ -413,6 +409,11 @@ def draw_posterior_distr_2d(
                 [prior.base_dist.support.lower_bound[dim_y], prior.base_dist.support.upper_bound[dim_y]],
             ]
         )
+    elif isinstance(prior, MultivariateNormal):
+        # Construct a grid with +/-3 prior std around the prior mean
+        lb = prior.mean - 3 * to.sqrt(prior.variance)
+        ub = prior.mean + 3 * to.sqrt(prior.variance)
+        grid_bounds = to.tensor([[lb[dim_x], ub[dim_x]], [lb[dim_y], ub[dim_y]]])
     else:
         raise pyrado.ValueErr(msg="Neither an explicit grid nor a prior has been provided!")
     x = to.linspace(grid_bounds[0, 0].item(), grid_bounds[0, 1].item(), grid_res)  # 1 2 3
@@ -527,7 +528,7 @@ def draw_posterior_distr_2d(
 
 
 def _draw_prior(ax, prior: BoxUniform, dim_x: int, dim_y: int, num_dim: int = 2, transposed: bool = False):
-    """ Helper function to draw a rectangle for the prior (assuming uniform distribution) """
+    """Helper function to draw a rectangle for the prior (assuming uniform distribution)"""
     if not hasattr(prior, "base_dist"):
         raise AttributeError(
             "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."

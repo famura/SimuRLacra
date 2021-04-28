@@ -17,12 +17,12 @@ There are many valid possibilities to deviate from this scheme. However, the fol
     from pyrado.utils.data_types import RenderMode
     from pyrado.utils.input_output import print_cbt
 
-Start by creating a new experiment which's folder will be placed in `Pyrado/data/temp` by default. You can change this
-by passing any directory as `base_dir`. In Pyrado, the folders are structured like this:
-`environment_name/algorithm_name/datetime_and_info`. This rule is only required for the automatic search for experiments
-(e.g. used in `sim_policy()`). This search function requires the individual experiment folders to start with `date_time`.
-Aside from this, you can name your experiments and folders however you like. Use the `load_experiment()` function to
-later oad your results. It will look for an environment as well as a policy file in the provided path.
+First, we create an `Experiment`, which basically is a folder (by default in `Pyrado/data/temp`). The experiments are
+stored using the following scheme: <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>.
+This rule is only required for the automatic search for experiments (e.g. used in `sim_policy()`). This search function
+requires the individual experiment folders to start with `date_time`. Aside from this, you can name your experiments
+and folders however you like. Use the `load_experiment()` function to later oad your results. It will look for an
+environment as well as a policy file in the provided path.
 
 .. code-block:: python
 

@@ -86,17 +86,17 @@ class MultivariateNormalWrapper:
 
     @property
     def dim(self):
-        """ Get the size (dimensionality) of the random variable. """
+        """Get the size (dimensionality) of the random variable."""
         return self._mean.shape[0]
 
     @property
     def mean(self):
-        """ Get the mean. """
+        """Get the mean."""
         return self._mean
 
     @mean.setter
     def mean(self, mean: to.Tensor):
-        """ Set the mean. """
+        """Set the mean."""
         if not (mean.shape == self.mean.shape):
             raise pyrado.ShapeErr(given_name="mean", expected_match=self.mean.shape)
 
@@ -105,7 +105,7 @@ class MultivariateNormalWrapper:
 
     @property
     def cov(self):
-        """ Get the covariance matrix, shape `(k, k)`. """
+        """Get the covariance matrix, shape `(k, k)`."""
         return (self._cov_chol_flat ** 2).diag()
 
     @property
@@ -118,7 +118,7 @@ class MultivariateNormalWrapper:
 
     @cov_chol_flat.setter
     def cov_chol_flat(self, cov_chol_flat: to.Tensor):
-        """ Set the standard deviations, shape `(k,)`. """
+        """Set the standard deviations, shape `(k,)`."""
         if not (cov_chol_flat.shape == self.cov_chol_flat.shape):
             raise pyrado.ShapeErr(given_name="cov_chol_flat", expected_match=self.cov_chol_flat.shape)
 
@@ -126,7 +126,7 @@ class MultivariateNormalWrapper:
         self._update_distribution()
 
     def parameters(self) -> Generator[to.Tensor, None, None]:
-        """ Get the parameters (mean and standard deviations) of this distribution. """
+        """Get the parameters (mean and standard deviations) of this distribution."""
         yield self.mean
         yield self.cov_chol_flat
 
@@ -139,7 +139,7 @@ class MultivariateNormalWrapper:
         return np.concatenate([self.mean.detach().numpy(), self.cov_chol_flat.detach().numpy()])
 
     def _update_distribution(self):
-        """ Update `self.distribution` according to the current mean and covariance. """
+        """Update `self.distribution` according to the current mean and covariance."""
         self.distribution = MultivariateNormal(self.mean, self.cov)
 
 
@@ -216,7 +216,7 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         )
 
     def parameters(self) -> Generator[to.Tensor, None, None]:
-        """ Get the list of parameters according to the values passed to the constructor. """
+        """Get the list of parameters according to the values passed to the constructor."""
         if self._mean_is_parameter:
             yield self.mean
         if self._cov_is_parameter:
@@ -342,7 +342,7 @@ class SPRL(Algorithm):
 
     @property
     def sub_algorithm(self) -> Algorithm:
-        """ Get the policy optimization subroutine. """
+        """Get the policy optimization subroutine."""
         return self._subroutine
 
     @property
@@ -403,7 +403,7 @@ class SPRL(Algorithm):
         values = to.tensor([ros.undiscounted_return() for ros in rollouts])
 
         def kl_constraint_fn(x):
-            """ Compute the constraint for the KL-divergence between current and proposed distribution. """
+            """Compute the constraint for the KL-divergence between current and proposed distribution."""
             distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
@@ -411,7 +411,7 @@ class SPRL(Algorithm):
             return kl_divergence.detach().numpy()
 
         def kl_constraint_fn_prime(x):
-            """ Compute the derivative for the KL-constraint (used for scipy optimizer). """
+            """Compute the derivative for the KL-constraint (used for scipy optimizer)."""
             distribution = previous_distribution.from_stacked(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
@@ -428,13 +428,13 @@ class SPRL(Algorithm):
         )
 
         def performance_constraint_fn(x):
-            """ Compute the constraint for the expected performance under the proposed distribution. """
+            """Compute the constraint for the expected performance under the proposed distribution."""
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             return performance.detach().numpy()
 
         def performance_constraint_fn_prime(x):
-            """ Compute the derivative for the performance-constraint (used for scipy optimizer). """
+            """Compute the derivative for the performance-constraint (used for scipy optimizer)."""
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             grads = to.autograd.grad(performance, distribution.parameters())
@@ -545,7 +545,7 @@ class SPRL(Algorithm):
     def _compute_expected_performance(
         self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor
     ) -> to.Tensor:
-        """ Calculate the expected performance after an update step. """
+        """Calculate the expected performance after an update step."""
         context_ratio = to.exp(distribution.distribution.log_prob(context) - old_log_prop)
         return to.mean(context_ratio * values)
 

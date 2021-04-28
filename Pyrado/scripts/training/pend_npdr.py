@@ -40,14 +40,8 @@ import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.special.time import PlaybackPolicy
-from pyrado.sampling.sbi_embeddings import (
-    BayesSimEmbedding,
-    DeltaStepsEmbedding,
-    DynamicTimeWarpingEmbedding,
-    LastStepEmbedding,
-    RNNEmbedding,
-)
+from pyrado.policies.feed_forward.playback import PlaybackPolicy
+from pyrado.sampling.sbi_embeddings import DynamicTimeWarpingEmbedding
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 
@@ -75,11 +69,16 @@ if __name__ == "__main__":
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()
+    # prior_hparam = dict(
+    #     low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
+    #     high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
+    # )
+    # prior = utils.BoxUniform(**prior_hparam)
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
-        high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
+        loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
+        covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = to.distributions.MultivariateNormal(**prior_hparam)
 
     # Time series embedding
     # embedding_hparam = dict()

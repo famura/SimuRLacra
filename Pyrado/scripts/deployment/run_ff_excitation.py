@@ -42,8 +42,8 @@ from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.policies.special.environment_specific import wam_jsp_7dof_sin
-from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser

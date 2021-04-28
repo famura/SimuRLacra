@@ -38,7 +38,7 @@ from pyrado.spaces.base import Space
 
 
 class WAMSim(MujocoSimEnv, ABC, Serializable):
-    """ Base class for WAM robotic arm from Barrett technologies"""
+    """Base class for WAM robotic arm from Barrett technologies"""
 
     def __init__(
         self,
@@ -76,12 +76,12 @@ class WAMSim(MujocoSimEnv, ABC, Serializable):
 
     @property
     def num_dof(self) -> int:
-        """ Get the number of degrees of freedom. """
+        """Get the number of degrees of freedom."""
         return self._num_dof
 
     @property
     def torque_space(self) -> Space:
-        """ Get the space of joint torques. """
+        """Get the space of joint torques."""
         return torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
 
     @property

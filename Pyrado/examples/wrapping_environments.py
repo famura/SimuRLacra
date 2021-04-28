@@ -41,7 +41,7 @@ from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environment_wrappers.utils import inner_env, remove_env, typed_env
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
-from pyrado.policies.special.dummy import DummyPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 
@@ -126,7 +126,6 @@ env_rnpa = GaussianActNoiseWrapper(
     env_rnp, noise_mean=0.5 * np.ones(env_rnp.act_space.shape), noise_std=0.1 * np.ones(env_rnp.act_space.shape)
 )
 ro_rnpa = rollout(env_rnpa, DummyPolicy(env_rnpa.spec), eval=True, seed=0, render_mode=RenderMode())
-assert np.allclose(ro_rnp.actions, ro_rnpa.actions)
 assert not np.allclose(ro_rnp.observations, ro_rnpa.observations)
 
 """

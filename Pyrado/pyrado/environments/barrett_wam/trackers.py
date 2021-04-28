@@ -78,11 +78,11 @@ class RigidBodyTracker:
         self.ts[name] = (pos, Rotation.from_quat(rot))
 
     def reset_offset(self):
-        """ Reset the Cartesian offset, e.g. before calibrating. """
+        """Reset the Cartesian offset, e.g. before calibrating."""
         self.offset = np.zeros(3)
 
     def initialized(self):
-        """ Check if all rigid bodies have been seen at least once. """
+        """Check if all rigid bodies have been seen at least once."""
         return len(self.names) == len(self.names_map)
 
     def get_current_estimate(self, names: Sequence[str]) -> [List[Tuple], Tuple]:

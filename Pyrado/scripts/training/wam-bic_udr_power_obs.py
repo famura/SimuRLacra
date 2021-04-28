@@ -40,7 +40,7 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
+from pyrado.policies.feed_back.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 

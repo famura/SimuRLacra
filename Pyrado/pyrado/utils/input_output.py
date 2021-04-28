@@ -99,7 +99,7 @@ def print_cbt(msg: str, color: str = "", bright: bool = False, tag: str = "", en
 
 @run_once
 def print_cbt_once(msg: str, color: str = "", bright: bool = False, tag: str = "", end="\n"):
-    """ Wrapped version of `print_cbt` that only prints once. """
+    """Wrapped version of `print_cbt` that only prints once."""
     return print_cbt(msg, color, bright, tag, end)
 
 

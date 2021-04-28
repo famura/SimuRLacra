@@ -57,7 +57,7 @@ def _index_to_int(idx, n):
 
 
 class DictIndexProxy:
-    """ Views a slice through a dict of lists or tensors. """
+    """Views a slice through a dict of lists or tensors."""
 
     __slots__ = ("__dict__", "_obj", "_index", "_prefix")
 
@@ -342,12 +342,12 @@ class StepSequence(Sequence[Step]):
 
     @property
     def data_format(self) -> str:
-        """ Get the name of data format ('torch' or 'numpy'). """
+        """Get the name of data format ('torch' or 'numpy')."""
         return self._data_format
 
     @property
     def data_names(self) -> Sequence[str]:
-        """ Get the list of data attribute names. """
+        """Get the list of data attribute names."""
         return self._data_names
 
     @property
@@ -357,21 +357,21 @@ class StepSequence(Sequence[Step]):
 
     @property
     def rollout_count(self):
-        """ Count the number of sub-rollouts inside this step sequence. """
+        """Count the number of sub-rollouts inside this step sequence."""
         if not self.continuous:
             raise pyrado.ValueErr(msg="Sub-rollouts are only supported on continuous data.")
         return len(self._rollout_bounds) - 1
 
     @property
     def rollout_lengths(self):
-        """ Lengths of sub-rollouts. """
+        """Lengths of sub-rollouts."""
         if not self.continuous:
             raise pyrado.ValueErr(msg="Sub-rollouts are only supported on continuous data.")
         bounds = self._rollout_bounds
         return bounds[1:] - bounds[:-1]
 
     def __len__(self):
-        """ Get the step sequence's length. """
+        """Get the step sequence's length."""
         return self.length
 
     def __getitem__(self, index):
@@ -603,7 +603,7 @@ class StepSequence(Sequence[Step]):
         return self[start_step:end_step]
 
     def iterate_rollouts(self):
-        """ Iterate over all sub-rollouts of a concatenated rollout. """
+        """Iterate over all sub-rollouts of a concatenated rollout."""
         if not self.continuous:
             raise pyrado.ValueErr(msg="Sub-rollouts are only supported on continuous data.")
         bounds = self._rollout_bounds
@@ -813,7 +813,7 @@ class StepSequence(Sequence[Step]):
 
         @functools.wraps(fcn)
         def recursive_wrapper(inp, **kwargs):
-            """ Wrap the processing function to call it recursivelyy for nested data structures. """
+            """Wrap the processing function to call it recursivelyy for nested data structures."""
             # Add to actual data input to the keyword arguments to make calling the function easier
             kwargs.update({fcn_arg_name: inp})
 
@@ -897,7 +897,7 @@ def discounted_values(rollouts: Sequence[StepSequence], gamma: float, data_forma
         # The ndarray.copy() is necessary due to (currently) unsupported negative strides
         return to.cat([to.from_numpy(discounted_value(ro, gamma).copy()).to(to.get_default_dtype()) for ro in rollouts])
     elif data_format == "numpy":
-        raise np.array([discounted_value(ro, gamma) for ro in rollouts])
+        return np.array([discounted_value(ro, gamma) for ro in rollouts])
     else:
         raise pyrado.ValueErr(given=data_format, eq_constraint="'torch' or 'numpy'")
 
@@ -917,7 +917,7 @@ def gae_returns(rollout: StepSequence, gamma: float = 0.99, lamb: float = 0.95):
     """
 
     def _next_value(step: Step) -> float:
-        """ Helper to return `next_value = 0` for last step """
+        """Helper to return `next_value = 0` for last step"""
         if step.done:
             return 0.0
         return step.next_value

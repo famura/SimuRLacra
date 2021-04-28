@@ -40,13 +40,13 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat, SACExplStrat
 from pyrado.logger.step import ConsolePrinter, CSVPrinter, StepLogger, TensorBoardPrinter
 from pyrado.policies.base import Policy, TwoHeadedPolicy
-from pyrado.policies.special.dummy import DummyPolicy, RecurrentDummyPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy, RecurrentDummyPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt_once
 
 
 class ValueBased(Algorithm, ABC):
-    """ Base class of all value-based algorithms """
+    """Base class of all value-based algorithms"""
 
     def __init__(
         self,
@@ -154,7 +154,7 @@ class ValueBased(Algorithm, ABC):
 
     @property
     def memory(self) -> ReplayMemory:
-        """ Get the replay memory. """
+        """Get the replay memory."""
         return self._memory
 
     def step(self, snapshot_mode: str, meta_info: dict = None):

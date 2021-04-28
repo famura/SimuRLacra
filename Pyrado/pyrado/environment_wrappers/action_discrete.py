@@ -36,7 +36,7 @@ from pyrado.spaces.discrete import DiscreteSpace
 
 
 class ActDiscreteWrapper(EnvWrapperAct, Serializable):
-    """ Environment wrapper that converts a one-dimensional continuous into a discrete action space. """
+    """Environment wrapper that converts a one-dimensional continuous into a discrete action space."""
 
     def __init__(self, wrapped_env: Env, num_bins: int = 2):
         """

@@ -244,7 +244,7 @@ sl_cmake_vars = {"IAS_DIR": ias_dir, "BUILD_barrett": "ON"}
 
 
 def mkdir_p(path):
-    """ Create directory and parents if it doesn't exist. """
+    """Create directory and parents if it doesn't exist."""
     try:
         os.makedirs(path)
     except OSError as exc:  # Python >2.5
@@ -255,7 +255,7 @@ def mkdir_p(path):
 
 
 def downloadAndExtract(url, destdir, archiveContentPath=None):
-    """ Download an archive and extract it to the given destination. """
+    """Download an archive and extract it to the given destination."""
     # Select archive format
     if url.endswith(".tar.gz"):
         suffix = ".tar.gz"

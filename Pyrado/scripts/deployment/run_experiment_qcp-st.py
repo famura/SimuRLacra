@@ -41,7 +41,7 @@ from pyrado.environments.quanser.base import QuanserReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml, setup_experiment
-from pyrado.policies.special.time import TimePolicy
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser

@@ -33,8 +33,8 @@ import rcsenv
 
 import pyrado
 from pyrado.environments.rcspysim.box_shelving import BoxShelvingPosDSSim, BoxShelvingVelDSSim
-from pyrado.policies.special.dummy import IdlePolicy
-from pyrado.policies.special.time import TimePolicy
+from pyrado.policies.feed_forward.dummy import IdlePolicy
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

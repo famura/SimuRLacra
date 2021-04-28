@@ -40,7 +40,6 @@ from tqdm import tqdm
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.logger.step import StepLogger
-from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 
 
@@ -110,14 +109,14 @@ class SNPEA(Algorithm):
         self.prior = prior
         self.proposal_prior = deepcopy(self.prior)
         self.rollout_sampler = rollout_sampler
-        self.num_workers = num_workers
+        self.num_workers = int(num_workers)
         self.simulation_batch_size = simulation_batch_size
 
         self._optim = to.optim.Adam([{"params": self.density_estimator.parameters()}], lr=lr, eps=1e-5)
 
     @property
     def posterior(self) -> MDNPolicy:
-        """ Return a copy of the posterior"""
+        """Return a copy of the posterior"""
         return deepcopy(self.density_estimator)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):

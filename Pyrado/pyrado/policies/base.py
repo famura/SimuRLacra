@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
+from typing import Optional, Tuple, Union
 from warnings import warn
 
 import torch as to
@@ -54,7 +55,7 @@ def _get_or_create_grad(t):
 
 
 class Policy(nn.Module, ABC):
-    """ Base class for all policies in Pyrado """
+    """Base class for all policies in Pyrado"""
 
     name: str = None  # unique identifier
 
@@ -84,12 +85,12 @@ class Policy(nn.Module, ABC):
 
     @property
     def device(self) -> str:
-        """ Get the device (CPU or GPU) on which the policy is stored. """
+        """Get the device (CPU or GPU) on which the policy is stored."""
         return self._device
 
     @property
     def env_spec(self) -> EnvSpec:
-        """ Get the specification of environment the policy acts in. """
+        """Get the specification of environment the policy acts in."""
         return self._env_spec
 
     @property
@@ -103,7 +104,7 @@ class Policy(nn.Module, ABC):
 
     @param_values.setter
     def param_values(self, param: to.Tensor):
-        """ Set the policy parameters from an 1d array. """
+        """Set the policy parameters from an 1d array."""
         if not self.param_values.shape == param.shape:
             raise pyrado.ShapeErr(given=param, expected_match=self.param_values)
         cp.vector_to_parameters(param, self.parameters())
@@ -119,20 +120,20 @@ class Policy(nn.Module, ABC):
 
     @param_grad.setter
     def param_grad(self, param):
-        """ Set the policy parameter gradient from an 1d array. """
+        """Set the policy parameter gradient from an 1d array."""
         cp.vector_to_parameters(param, (_get_or_create_grad(p) for p in self.parameters()))
 
     @property
     def num_param(self) -> int:
-        """ Get the number of policy parameters. """
+        """Get the number of policy parameters."""
         return sum(p.data.numel() for p in self.parameters())
 
     @property
     def is_recurrent(self) -> bool:
-        """ Bool to signalise it the policy has a recurrent architecture. """
+        """Bool to signalise it the policy has a recurrent architecture."""
         return False
 
-    def init_hidden(self, batch_size: int = None) -> to.Tensor:
+    def init_hidden(self, batch_size: Optional[int] = None) -> to.Tensor:
         """
         Provide initial values for the hidden parameters. This should usually be a zero tensor.
         The default implementation will raise an error, to enforce override this function for recurrent policies.
@@ -146,7 +147,7 @@ class Policy(nn.Module, ABC):
         )
 
     @abstractmethod
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
+    def init_param(self, init_values: Optional[to.Tensor] = None, **kwargs):
         """
         Initialize the policy's parameters. By default the parameters are initialized randomly.
 
@@ -164,7 +165,7 @@ class Policy(nn.Module, ABC):
         pass  # this is used in rollout() even though your IDE might not link it
 
     @abstractmethod
-    def forward(self, *args, **kwargs) -> [to.Tensor, (to.Tensor, to.Tensor)]:
+    def forward(self, *args, **kwargs) -> Union[to.Tensor, Tuple[to.Tensor, to.Tensor]]:
         """
         Get the action according to the policy and the observations (forward pass).
 
@@ -187,7 +188,8 @@ class Policy(nn.Module, ABC):
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()
 
-        res = self(rollout.get_data_values("observations", truncate_last=True))  # all observations at once
+        # Pass all observations at once
+        res = self(rollout.get_data_values("observations", truncate_last=True))
 
         # Set policy, i.e. PyTorch nn.Module, back to training mode
         self.train()
@@ -206,7 +208,7 @@ class Policy(nn.Module, ABC):
 
 
 class TracedPolicyWrapper(nn.Module):
-    """ Wrapper for a traced policy. Mainly used to add `input_size` and `output_size` attributes. """
+    """Wrapper for a traced policy. Mainly used to add `input_size` and `output_size` attributes."""
 
     # Attributes
     input_size: int
@@ -231,12 +233,12 @@ class TracedPolicyWrapper(nn.Module):
 
 
 class TwoHeadedPolicy(Policy, ABC):
-    """ Base class for policies with a shared body and two separate heads. """
+    """Base class for policies with a shared body and two separate heads."""
 
     @abstractmethod
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
+    def init_param(self, init_values: Optional[to.Tensor] = None, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
-    def forward(self, obs: to.Tensor) -> [to.Tensor, (to.Tensor, to.Tensor)]:
+    def forward(self, obs: to.Tensor) -> Union[to.Tensor, Tuple[to.Tensor, to.Tensor]]:
         raise NotImplementedError

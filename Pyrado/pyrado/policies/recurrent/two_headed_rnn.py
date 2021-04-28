@@ -222,7 +222,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
 
 
 class TwoHeadedRNNPolicy(TwoHeadedRNNPolicyBase):
-    """ Two-headed policy backed by a multi-layer RNN """
+    """Two-headed policy backed by a multi-layer RNN"""
 
     name: str = "thrnn"
 
@@ -273,7 +273,7 @@ class TwoHeadedRNNPolicy(TwoHeadedRNNPolicyBase):
 
 
 class TwoHeadedGRUPolicy(TwoHeadedRNNPolicyBase):
-    """ Two-headed policy backed by a multi-layer GRU """
+    """Two-headed policy backed by a multi-layer GRU"""
 
     name: str = "thgru"
 
@@ -281,7 +281,7 @@ class TwoHeadedGRUPolicy(TwoHeadedRNNPolicyBase):
 
 
 class TwoHeadedLSTMPolicy(TwoHeadedRNNPolicyBase):
-    """ Two-headed policy backed by a multi-layer LSTM """
+    """Two-headed policy backed by a multi-layer LSTM"""
 
     name: str = "thlstm"
 

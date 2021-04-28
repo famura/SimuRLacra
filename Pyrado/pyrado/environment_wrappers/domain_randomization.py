@@ -42,7 +42,7 @@ from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class DomainRandWrapper(EnvWrapper, Serializable):
-    """ Base class for environment wrappers which call a `DomainRandomizer` to randomize the domain parameters """
+    """Base class for environment wrappers which call a `DomainRandomizer` to randomize the domain parameters"""
 
     def __init__(self, wrapped_env: Union[SimEnv, EnvWrapper], randomizer: Optional[DomainRandomizer]):
         """
@@ -178,24 +178,24 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
 
     @property
     def ring_idx(self) -> int:
-        """ Get the buffer's index. """
+        """Get the buffer's index."""
         return self._ring_idx
 
     @ring_idx.setter
     def ring_idx(self, idx: int):
-        """ Set the buffer's index. """
+        """Set the buffer's index."""
         if not (isinstance(idx, int) or not 0 <= idx < len(self._buffer)):
             raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=len(self._buffer))
         self._ring_idx = idx
 
     @property
     def selection(self) -> str:
-        """ Get the selection method. """
+        """Get the selection method."""
         return self._selection
 
     @selection.setter
     def selection(self, selection: str):
-        """ Set the selection method. """
+        """Set the selection method."""
         if not selection.lower() in ["cyclic", "random"]:
             raise pyrado.ValueErr(given=selection, eq_constraint="cyclic or random")
         self._selection = selection.lower()
@@ -217,7 +217,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
 
     @property
     def buffer(self):
-        """ Get the domain parameter buffer. """
+        """Get the domain parameter buffer."""
         return self._buffer
 
     @buffer.setter
@@ -249,7 +249,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
                 raise pyrado.TypeErr(given=self._buffer, expected_type=[dict, list])
         else:
             # Explicit specification of domain parameters
-            self._load_domain_param(domain_param)
+            self._get_wrapper_domain_param(domain_param)
 
         # Set the (new) domain params in the the wrapped env
         self._wrapped_env.domain_param = domain_param

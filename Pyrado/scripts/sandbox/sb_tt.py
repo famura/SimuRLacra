@@ -36,7 +36,7 @@ import rcsenv
 
 from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 from pyrado.plotting.rollout_based import plot_rewards
-from pyrado.policies.special.time import TimePolicy
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 
 # rcsenv.setLogLevel(7)

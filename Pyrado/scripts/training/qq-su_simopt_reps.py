@@ -44,7 +44,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser

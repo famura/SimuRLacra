@@ -32,25 +32,41 @@ import numpy as np
 import pytest
 
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
+from pyrado.domain_randomization.transformations import LogDomainParamTransform
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
+from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper, ObsRunningNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environment_wrappers.utils import inner_env, remove_env, typed_env
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.sim_base import SimEnv
-from pyrado.policies.special.dummy import DummyPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 
 
 @pytest.mark.wrapper
+@pytest.mark.parametrize("env", ["default_bob"], indirect=True)
+def test_combination_wrappers_domain_params(env: SimEnv):
+    env_d = DownsamplingWrapper(env, factor=5)
+    env_do = GaussianObsNoiseWrapper(
+        env_d, noise_std=2 * np.ones(env_d.obs_space.shape), noise_mean=3 * np.ones(env_d.obs_space.shape)
+    )
+    env_dot = LogDomainParamTransform(env_do, mask=list(env_do.supported_domain_param))
+
+    assert env_dot.domain_param["downsampling"] == 5
+    assert np.all(env_dot.domain_param["obs_noise_std"] == 2 * np.ones(env_d.obs_space.shape))
+    assert np.all(env_dot.domain_param["obs_noise_mean"] == 3 * np.ones(env_d.obs_space.shape))
+
+
+@pytest.mark.wrapper
 def test_combination():
-    env = QCartPoleSwingUpSim(dt=1 / 50.0, max_steps=20)
+    env = QCartPoleSwingUpSim(dt=1 / 100.0, max_steps=20)
 
     randomizer = create_default_randomizer(env)
     env_r = DomainRandWrapperBuffer(env, randomizer)
@@ -87,8 +103,7 @@ def test_combination():
         env_rnp, noise_mean=0.5 * np.ones(env_rnp.act_space.shape), noise_std=0.1 * np.ones(env_rnp.act_space.shape)
     )
     ro_rnpa = rollout(env_rnpa, DummyPolicy(env_rnpa.spec), eval=True, seed=0, render_mode=RenderMode())
-    assert np.allclose(ro_rnp.actions, ro_rnpa.actions)
-    assert not np.allclose(ro_rnp.observations, ro_rnpa.observations)
+    assert not np.allclose(ro_rnp.observations, ro_rnpa.observations)  # the action noise changed to rollout
 
     env_rnpd = ActDelayWrapper(env_rnp, delay=3)
     ro_rnpd = rollout(env_rnpd, DummyPolicy(env_rnpd.spec), eval=True, seed=0, render_mode=RenderMode())

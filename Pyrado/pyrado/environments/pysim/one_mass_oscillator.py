@@ -47,7 +47,7 @@ from pyrado.tasks.reward_functions import QuadrErrRewFcn
 
 
 class OneMassOscillatorSim(SimPyEnv, Serializable):
-    """  Model of a linear one-mass-oscillator (spring-mass-damper system) without gravity influence """
+    """Model of a linear one-mass-oscillator (spring-mass-damper system) without gravity influence"""
 
     name: str = "omo"
 
@@ -161,7 +161,7 @@ class OneMassOscillatorDyn(Serializable):
 
 
 class OneMassOscillatorDomainParamEstimator(nn.Module):
-    """ Class to estimate the domain parameters of the OneMassOscillator environment """
+    """Class to estimate the domain parameters of the OneMassOscillator environment"""
 
     def __init__(self, dt: float, dp_init: dict, num_epoch: int, batch_size: int):
         super().__init__()

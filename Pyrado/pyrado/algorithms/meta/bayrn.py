@@ -98,6 +98,7 @@ class BayRn(InterruptableAlgorithm):
         policy_param_init: Optional[to.Tensor] = None,
         valuefcn_param_init: Optional[to.Tensor] = None,
         subrtn_snapshot_mode: str = "best",
+        num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         """
@@ -133,6 +134,7 @@ class BayRn(InterruptableAlgorithm):
         :param policy_param_init: initial policy parameter values for the subroutine, set `None` to be random
         :param valuefcn_param_init: initial value function parameter values for the subroutine, set `None` to be random
         :param subrtn_snapshot_mode: snapshot mode for saving during training of the subroutine
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if typed_env(env_sim, MetaDomainRandWrapper) is None:
@@ -178,10 +180,11 @@ class BayRn(InterruptableAlgorithm):
         self.num_eval_rollouts_real = num_eval_rollouts_real
         self.num_eval_rollouts_sim = num_eval_rollouts_sim
         self.subrtn_snapshot_mode = subrtn_snapshot_mode
-        self.thold_succ = to.tensor([thold_succ])
-        self.thold_succ_subrtn = to.tensor([thold_succ_subrtn])
+        self.thold_succ = to.tensor([thold_succ], dtype=to.get_default_dtype())
+        self.thold_succ_subrtn = to.tensor([thold_succ_subrtn], dtype=to.get_default_dtype())
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
         self.curr_cand_value = -pyrado.inf  # for the stopping criterion
+        self.num_workers = int(num_workers)
 
         if self.policy_param_init is not None:
             if to.is_tensor(self.policy_param_init):
@@ -195,7 +198,7 @@ class BayRn(InterruptableAlgorithm):
 
     @property
     def subroutine(self) -> Algorithm:
-        """ Get the policy optimization subroutine. """
+        """Get the policy optimization subroutine."""
         return self._subrtn
 
     @property
@@ -236,7 +239,13 @@ class BayRn(InterruptableAlgorithm):
 
         # Return the estimated return of the trained policy in simulation
         avg_ret_sim = self.eval_policy(
-            None, self._env_sim, self._subrtn.policy, self.mc_estimator, prefix, self.num_eval_rollouts_sim
+            None,
+            self._env_sim,
+            self._subrtn.policy,
+            self.mc_estimator,
+            prefix,
+            self.num_eval_rollouts_sim,
+            self.num_workers,
         )
         return float(avg_ret_sim)
 
@@ -288,7 +297,7 @@ class BayRn(InterruptableAlgorithm):
 
         # Evaluate learned policies from random candidates on the target environment (real-world) system
         for i in range(num_init_cand):
-            policy = pyrado.load(self.policy, "policy.pt", self.save_dir, meta_info=dict(prefix=f"init_{i}"))
+            policy = pyrado.load("policy.pt", self.save_dir, prefix=f"init_{i}", obj=self.policy)
             cands_values[i] = self.eval_policy(
                 self.save_dir,
                 self._env_real,
@@ -296,9 +305,10 @@ class BayRn(InterruptableAlgorithm):
                 self.mc_estimator,
                 prefix=f"init_{i}",
                 num_rollouts=self.num_eval_rollouts_real,
+                num_workers=self.num_workers,
             )
 
-        # Save candidates's and their returns into tensors (policy is saved during training or exists already)
+        # Save candidates and their returns into tensors (policy is saved during training or exists already)
         pyrado.save(cands_values, "candidates_values.pt", self.save_dir)
         self.cands, self.cands_values = cands, cands_values
 
@@ -435,7 +445,7 @@ class BayRn(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 2:
             # Evaluate the current policy in the target domain
-            policy = pyrado.load(self.policy, "policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}")
+            policy = pyrado.load("policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}", obj=self.policy)
             self.curr_cand_value = self.eval_policy(
                 self.save_dir,
                 self._env_real,
@@ -443,6 +453,7 @@ class BayRn(InterruptableAlgorithm):
                 self.mc_estimator,
                 f"iter_{self._curr_iter}",
                 self.num_eval_rollouts_real,
+                self.num_workers,
             )
             self.cands_values = to.cat([self.cands_values, self.curr_cand_value.view(1)], dim=0)
             pyrado.save(self.cands_values, "candidates_values.pt", self.save_dir)

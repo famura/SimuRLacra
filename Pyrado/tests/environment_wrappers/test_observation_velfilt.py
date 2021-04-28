@@ -31,7 +31,7 @@ import pytest
 
 from pyrado.environment_wrappers.observation_velfilter import ObsVelFiltWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.spaces.singular import SingularStateSpace
 from pyrado.utils.math import rmse

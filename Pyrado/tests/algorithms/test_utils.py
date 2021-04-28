@@ -39,7 +39,7 @@ from pyrado.domain_randomization.default_randomizers import create_default_rando
 from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.policies.base import Policy, TwoHeadedPolicy
-from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence

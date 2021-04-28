@@ -36,7 +36,7 @@ from pyrado.spaces.base import Space
 
 
 class ObsPartialWrapper(EnvWrapperObs, Serializable):
-    """ Environment wrapper which creates a partial observation by masking certain elements """
+    """Environment wrapper which creates a partial observation by masking certain elements"""
 
     def __init__(self, wrapped_env: Env, mask: list = None, idcs: list = None, keep_selected: bool = False):
         """

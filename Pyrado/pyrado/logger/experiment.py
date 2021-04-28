@@ -74,7 +74,8 @@ class Experiment:
         :param exp_id: combined timestamp and extra_info, usually the final folder name
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
-        :param include_slurm_id: If a SLURM ID is present in the environment variables, include them in the experiment ID.
+        :param include_slurm_id: if a SLURM ID is present in the environment variables,
+                                 include them in the experiment ID
         """
 
         slurm_id = None
@@ -114,20 +115,20 @@ class Experiment:
         self.base_dir = base_dir
 
     def __fspath__(self):
-        """ Allows to use the experiment object where the experiment path is needed. """
+        """Allows to use the experiment object where the experiment path is needed."""
         return osp.join(self.base_dir, self.env_name, self.algo_name, self.exp_id)
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return f"{self.env_name}/{self.algo_name}/{self.exp_id}"
 
     @property
     def prefix(self):
-        """ Combination of experiment and algorithm """
+        """Combination of experiment and algorithm"""
         return osp.join(self.env_name, self.algo_name)
 
     def matches(self, hint: str) -> bool:
-        """ Check if this experiment matches the given hint. """
+        """Check if this experiment matches the given hint."""
         # Split hint into <env>/<algo>/<id>
         parts = Path(hint).parts
         if len(parts) == 1:
@@ -142,6 +143,8 @@ class Experiment:
             # Filter by exp name only
             env_name, algo_name, eid = parts
             return self.env_name == env_name and self.algo_name == algo_name and self.exp_id == eid
+        else:
+            raise pyrado.ValueErr(msg=f"fThe hint int contains {len(parts)} parts, but should be <= 3!")
 
 
 def setup_experiment(
@@ -158,7 +161,7 @@ def setup_experiment(
     :param algo_name: algorithm trained with, usually also includes the policy type, e.g. 'a2c_fnn'
     :param extra_info: additional information on the experiment (free form)
     :param base_dir: base storage directory
-    :param include_slurm_id: If a SLURM ID is present in the environment variables, include them in the experiment ID.
+    :param include_slurm_id: if a SLURM ID is present in the environment variables, include them in the experiment ID
     """
 
     # Create experiment object
@@ -173,8 +176,8 @@ def setup_experiment(
     return exp
 
 
-# Only child directories
 def _childdirs(parent: str):
+    """Yield only direct child directories."""
     for cn in os.listdir(parent):
         cp = osp.join(parent, cn)
         if osp.isdir(cp):
@@ -256,7 +259,7 @@ def _select_all(exps: Iterable) -> Union[List[Experiment], None]:
 
 
 def select_by_hint(exps: Sequence[Experiment], hint: str):
-    """ Select experiment by hint. """
+    """Select experiment by hint."""
     if osp.isabs(hint):
         # Hint is a full experiment path
         return hint
@@ -277,7 +280,8 @@ def create_experiment_formatter(
     Returns an experiment formatter (i.e. a function that takes an experiment and produces a string) to be used in the
     ask-for-experiments dialog. It produces useful information like the timestamp based on the experiments' data.
 
-    :param show_hparams: list of "paths" to hyperparameters that to be shown in the selection dialog; sub-dicts can be references with a dot, e.g. `env.dt`
+    :param show_hparams: list of "paths" to hyper-parameters that to be shown in the selection dialog; sub-dicts can be
+                         references with a dot, e.g. `env.dt`
     :param show_extra_info: whether to show the information stored in the `extra_info` field of the experiment
     :return: a function that serves as the formatter
     """
@@ -299,7 +303,7 @@ def create_experiment_formatter(
                 first = False
             result += " }"
         if show_extra_info and exp.extra_info is not None:
-            result += f" ({exp.extra_info})"
+            result += f" {exp.extra_info}"
         return result
 
     return formatter
@@ -361,7 +365,8 @@ def ask_for_experiment(
 
     :param latest_only: only select the latest experiment of each type (environment-algorithm combination)
     :param max_display: only display this many items
-    :param hparam_list: load the hyperparams file and show the parameters in this list; sub-dicts can be separated with a dot
+    :param hparam_list: load the hyper-parameter file and show the parameters in this list,
+                        sub-dicts can be separated with a dot
     :return: query asking the user for an experiment
     """
     # Scan for experiment list
@@ -394,7 +399,7 @@ def ask_for_experiment(
 
 def _process_list_for_saving(l: [list, tuple]) -> [list, tuple]:
     """
-    The yaml.dump function can't save Tensors, ndarrays, or callables, so we cast them to types it can save.
+    The yaml.dump function can't save PyTorch tensors, numpy arrays, or callables, so we cast them to types it can save.
 
     :param l: list or tuple containing parameters to save
     :return: list or tuple with values processable by yaml.dump
@@ -471,7 +476,7 @@ def _process_dict_for_saving(d: dict) -> dict:
 
 class AugmentedSafeLoader(yaml.SafeLoader):
     def construct_python_tuple(self, node):
-        """ Use PyYAML method for constructing a sequence to construct a tuple. """
+        """Use PyYAML method for constructing a sequence to construct a tuple."""
         return tuple(self.construct_sequence(node))
 
 
@@ -508,11 +513,12 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
     return data
 
 
-def load_hyperparameters(ex_dir, raise_error: bool = False) -> Union[dict, Optional[dict]]:
+def load_hyperparameters(ex_dir: pyrado.PathLike, raise_error: bool = False) -> Union[dict, Optional[dict]]:
     """
-    Loads the hyperparameters-dict from the given experiment directory. The hyperparameters file is assumed to be
+    Loads the hyper-parameters-dict from the given experiment directory. The hyper-parameters file is assumed to be
     named `hyperparams.yaml`.
 
+    :param ex_dir: experiment's directory to load from
     :param raise_error: whether to raise an error if one occurs; if false, `None` is returned and an error
                         message is printed
     """

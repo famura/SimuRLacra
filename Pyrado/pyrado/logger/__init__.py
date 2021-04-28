@@ -36,7 +36,7 @@ _log_prefix_dir = None
 
 
 def set_log_prefix_dir(log_dir: str):
-    """ Set the log prefix directory for this session. """
+    """Set the log prefix directory for this session."""
     if not osp.exists(log_dir):
         os.makedirs(log_dir)
     else:
@@ -47,12 +47,12 @@ def set_log_prefix_dir(log_dir: str):
 
 
 def get_log_prefix_dir() -> Optional[str]:
-    """ Get the log prefix directory for this session. """
+    """Get the log prefix directory for this session."""
     return _log_prefix_dir
 
 
 def resolve_log_path(path) -> str:
-    """ Resolve path against the global log dir if path is relative. """
+    """Resolve path against the global log dir if path is relative."""
     if get_log_prefix_dir() is not None:
         # Join properly handles absolute path
         path = osp.join(get_log_prefix_dir(), path)

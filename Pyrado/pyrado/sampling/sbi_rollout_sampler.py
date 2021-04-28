@@ -43,7 +43,7 @@ from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
-from pyrado.policies.special.time import PlaybackPolicy
+from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
@@ -135,7 +135,7 @@ class RolloutSamplerForSBI(ABC, Serializable):
 
 
 class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
-    """ Wrapper to make SimuRLacra's simulation environments usable as simulators for the sbi package """
+    """Wrapper to make SimuRLacra's simulation environments usable as simulators for the sbi package"""
 
     def __init__(
         self,
@@ -233,10 +233,11 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     # Iterate over segments of one target domain rollout
                     cnt_step = 0
                     for seg_real in segs_real:
-                        # Disabled the policy reset of PlaybackPolicy to do it here manually
-                        assert policy.no_reset
-                        policy.curr_rec = idx_r
-                        policy.curr_step = cnt_step
+                        if self.use_rec_act:
+                            # Disabled the policy reset of PlaybackPolicy to do it here manually
+                            assert policy.no_reset
+                            policy.curr_rec = idx_r
+                            policy.curr_step = cnt_step
 
                         # Do the rollout for a segment
                         seg_sim = rollout(
@@ -325,7 +326,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
 
 class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
-    """ Wrapper to make SimuRLacra's real environments similar to the sbi simulator """
+    """Wrapper to make SimuRLacra's real environments similar to the sbi simulator"""
 
     def __init__(
         self,
@@ -387,7 +388,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
 
 class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
-    """ Wrapper to yield pre-recorded rollouts similar to the sbi simulator """
+    """Wrapper to yield pre-recorded rollouts similar to the sbi simulator"""
 
     def __init__(
         self,
@@ -433,19 +434,19 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
 
     @property
     def ring_idx(self) -> int:
-        """ Get the buffer's index. """
+        """Get the buffer's index."""
         return self._ring_idx
 
     @ring_idx.setter
     def ring_idx(self, idx: int):
-        """ Set the buffer's index. """
+        """Set the buffer's index."""
         if not (isinstance(idx, int) or not 0 <= idx < self.num_rollouts):
             raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=self.num_rollouts)
         self._ring_idx = idx
 
     @property
     def num_rollouts(self) -> int:
-        """ Get the number of stored rollouts. """
+        """Get the number of stored rollouts."""
         return len(self.rollouts_rec)
 
     def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:

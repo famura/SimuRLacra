@@ -137,7 +137,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
 
     @classmethod
     def get_V_tholds(cls, load_experiments: bool = True) -> dict:
-        """ If available, the voltage thresholds computed from measurements, else use default values. """
+        """If available, the voltage thresholds computed from measurements, else use default values."""
         # Hard-coded default thresholds
         tholds = dict(V_thold_x_pos=0.28, V_thold_x_neg=-0.10, V_thold_y_pos=0.28, V_thold_y_neg=-0.074)
 

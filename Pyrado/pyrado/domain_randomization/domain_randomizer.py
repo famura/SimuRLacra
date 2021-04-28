@@ -27,9 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
-from typing import Callable, Mapping, Optional, Union
+from typing import Mapping, Optional, Union
 
-import torch as to
 from tabulate import tabulate
 from torch.distributions.bernoulli import Bernoulli
 from torch.distributions.multivariate_normal import MultivariateNormal
@@ -48,7 +47,7 @@ from pyrado.utils.tensor import deepcopy_or_clone
 
 
 class DomainRandomizer:
-    """ Class for executing the domain randomization """
+    """Class for executing the domain randomization"""
 
     def __init__(self, *domain_params: DomainParam):
         """
@@ -62,7 +61,7 @@ class DomainRandomizer:
         self._params_pert_list = None  # list of domain param samples which are a dict with a key and one values
 
     def __str__(self):
-        """ Create a string that yields a table-like result for print. """
+        """Create a string that yields a table-like result for print."""
         # Collect all keys a.k.a. headers
         headers = []
         dps = deepcopy(self.domain_params)

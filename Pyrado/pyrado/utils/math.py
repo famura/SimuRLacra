@@ -37,7 +37,7 @@ from pyrado.utils.data_processing import normalize
 
 
 class UnitCubeProjector:
-    """ Project to a unit qube $[0, 1]^d$ and back using explicit bounds """
+    """Project to a unit qube $[0, 1]^d$ and back using explicit bounds"""
 
     def __init__(self, bound_lo: Union[np.ndarray, to.Tensor], bound_up: Union[np.ndarray, to.Tensor]):
         """

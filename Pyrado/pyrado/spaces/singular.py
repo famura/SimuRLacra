@@ -34,7 +34,7 @@ from pyrado.spaces import BoxSpace
 
 
 class SingularStateSpace(BoxSpace):
-    """ Space which always returns the same initial state (trivial space) """
+    """Space which always returns the same initial state (trivial space)"""
 
     def __init__(self, fixed_state: np.ndarray, labels: Sequence[str] = None):
         """

@@ -82,18 +82,18 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
 
     @property
     def factor(self):
-        """ Get the downsampling factor. """
+        """Get the downsampling factor."""
         return self._factor
 
     @factor.setter
     def factor(self, factor: int):
-        """ Set the downsampling factor. """
+        """Set the downsampling factor."""
         assert isinstance(factor, int) and factor >= 1
         self._factor = factor
         # Also reset counter
         self._cnt = 0
 
-    def _save_domain_param(self, domain_param: dict):
+    def _set_wrapper_domain_param(self, domain_param: dict):
         """
         Store the downsampling factor in the domain parameter dict
 
@@ -102,7 +102,7 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         # Cast to integer for consistency
         domain_param["downsampling"] = int(self._factor)
 
-    def _load_domain_param(self, domain_param: dict):
+    def _get_wrapper_domain_param(self, domain_param: dict):
         """
         Load the downsampling factor from the domain parameter dict
 
@@ -114,7 +114,7 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Adapt _factor to the new act_downsampling if provided
         if domain_param is not None:
-            self._load_domain_param(domain_param)
+            self._get_wrapper_domain_param(domain_param)
 
         # Init last action memory and action counter
         self._act_last = None

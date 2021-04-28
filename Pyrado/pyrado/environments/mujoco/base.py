@@ -235,7 +235,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         self.sim = mujoco_py.MjSim(self.model, nsubsteps=self.frame_skip)
 
     def configure_viewer(self):
-        """ Configure the camera when the viewer is initialized. You need to set `self.camera_config` before. """
+        """Configure the camera when the viewer is initialized. You need to set `self.camera_config` before."""
         # Render a fog around the scene by default
         if self.camera_config.pop("render_fog", True):
             self.viewer.scn.flags[RND_FOG] = 1

@@ -41,7 +41,7 @@ from pyrado.utils.data_types import EnvSpec, RenderMode
 
 
 class Env(ABC, Serializable):
-    """ Base class of all environments in Pyrado. Uses Serializable to facilitate proper serialization. """
+    """Base class of all environments in Pyrado. Uses Serializable to facilitate proper serialization."""
 
     name: str = None  # unique identifier
 
@@ -65,7 +65,7 @@ class Env(ABC, Serializable):
         self.state = None  # current state of the environment
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return (
             Style.BRIGHT
             + f"{get_class_name(self)}"
@@ -88,34 +88,34 @@ class Env(ABC, Serializable):
     @property
     @abstractmethod
     def state_space(self) -> Space:
-        """ Get the space of the states (used for describing the environment). """
+        """Get the space of the states (used for describing the environment)."""
         raise NotImplementedError
 
     @property
     @abstractmethod
     def obs_space(self) -> Space:
-        """ Get the space of the observations (agent's perception of the environment). """
+        """Get the space of the observations (agent's perception of the environment)."""
         raise NotImplementedError
 
     @property
     @abstractmethod
     def act_space(self) -> Space:
-        """ Get the space of the actions. """
+        """Get the space of the actions."""
         raise NotImplementedError
 
     @property
     def spec(self) -> EnvSpec:
-        """ Get the environment specification (generated on call). """
+        """Get the environment specification (generated on call)."""
         return EnvSpec(self.obs_space, self.act_space, self.state_space)
 
     @property
     def dt(self) -> float:
-        """ Get the time step size. """
+        """Get the time step size."""
         return self._dt
 
     @dt.setter
     def dt(self, dt: Union[int, float]):
-        """ Set the time step size. """
+        """Set the time step size."""
         if not dt > 0:
             raise pyrado.ValueErr(given=dt, g_constraint="0")
         if not isinstance(dt, (float, int)):
@@ -150,7 +150,7 @@ class Env(ABC, Serializable):
 
     @property
     def curr_step(self) -> int:
-        """ Get the number of the current simulation step (0 for the initial step). """
+        """Get the number of the current simulation step (0 for the initial step)."""
         return self._curr_step
 
     @abstractmethod
@@ -169,7 +169,7 @@ class Env(ABC, Serializable):
     @property
     @abstractmethod
     def task(self) -> Task:
-        """ Get the task describing what the agent should do in the environment. """
+        """Get the task describing what the agent should do in the environment."""
         raise NotImplementedError
 
     @abstractmethod
@@ -232,5 +232,5 @@ class Env(ABC, Serializable):
         raise NotImplementedError
 
     def close(self):
-        """ Disconnect from the device. """
+        """Disconnect from the device."""
         raise NotImplementedError

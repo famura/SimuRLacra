@@ -41,7 +41,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class DomainDistrParamPolicy(Policy):
-    """ A proxy to the Policy class in order to use the policy's parameters as domain distribution parameters """
+    """A proxy to the Policy class in order to use the policy's parameters as domain distribution parameters"""
 
     name: str = "ddp"
 

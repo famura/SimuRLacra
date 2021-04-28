@@ -39,7 +39,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class FinalRewMode(NamedTuple):
-    """ The specification of how the final state should be rewarded or punished """
+    """The specification of how the final state should be rewarded or punished"""
 
     state_dependent: bool = False
     time_dependent: bool = False
@@ -48,7 +48,7 @@ class FinalRewMode(NamedTuple):
     user_input: bool = False
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return (
             Style.BRIGHT
             + f"{get_class_name(self)}"
@@ -101,7 +101,7 @@ class FinalRewTask(TaskWrapper):
 
     @property
     def yielded_final_rew(self) -> bool:
-        """ Get the flag that signals if this instance already yielded its final reward. """
+        """Get the flag that signals if this instance already yielded its final reward."""
         return self._yielded_final_rew
 
     def reset(self, **kwargs):
@@ -297,7 +297,7 @@ class BestStateFinalRewTask(TaskWrapper):
 
     @property
     def yielded_final_rew(self) -> bool:
-        """ Get the flag that signals if this instance already yielded its final reward. """
+        """Get the flag that signals if this instance already yielded its final reward."""
         return self._yielded_final_rew
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int) -> float:

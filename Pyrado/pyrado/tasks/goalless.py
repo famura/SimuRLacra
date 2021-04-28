@@ -35,7 +35,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class GoallessTask(Task):
-    """ Task which has no desired state or desired space, this runs endlessly """
+    """Task which has no desired state or desired space, this runs endlessly"""
 
     def __init__(self, env_spec: EnvSpec, rew_fcn: RewFcn):
         """
@@ -83,7 +83,7 @@ class GoallessTask(Task):
 
 
 class OptimProxyTask(Task):
-    """ Task for wrapping classical optimization problems a.k.a. (nonlinear) programming into Pyrado """
+    """Task for wrapping classical optimization problems a.k.a. (nonlinear) programming into Pyrado"""
 
     def __init__(self, env_spec: EnvSpec, rew_fcn: StateBasedRewFcn):
         """

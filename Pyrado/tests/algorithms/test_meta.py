@@ -31,7 +31,7 @@ from copy import deepcopy
 import pytest
 import torch.nn as nn
 from sbi import utils
-from sbi.inference import SNPE
+from sbi.inference import SNPE_C
 
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.power import PoWER
@@ -69,8 +69,8 @@ from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNN, FNNPolicy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.fnn import FNN, FNNPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import (
@@ -159,15 +159,31 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
             max_iter=2,
             acq_fc="UCB",
             acq_param=dict(beta=0.25),
-            acq_restarts=100,
-            acq_samples=100,
-            num_init_cand=3,
-            warmstart=True,
-            num_eval_rollouts_sim=10,
+            acq_restarts=50,
+            acq_samples=50,
+            num_init_cand=2,
+            warmstart=False,
+            mc_estimator=True,
+            num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
+            num_workers=1,
+        ),
+        dict(
+            max_iter=2,
+            acq_fc="EI",
+            acq_restarts=50,
+            acq_samples=50,
+            num_init_cand=2,
+            warmstart=True,
+            mc_estimator=False,
+            thold_succ=40.0,
+            thold_succ_subrtn=50.0,
+            num_eval_rollouts_sim=3,
+            num_eval_rollouts_real=2,  # sim-2-sim
+            num_workers=1,
         ),
     ],
-    ids=["casual_hparam"],
+    ids=["typical_hparam", "untypical_hparam"],
 )
 def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     # Environments and domain randomization
@@ -179,15 +195,15 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy and subroutine
-    policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.0)
+    policy_hparam = dict(energy_gain=0.587, ref_energy=0.827)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
         max_iter=1,
-        pop_size=20,
+        pop_size=10,
         num_init_states_per_domain=1,
-        num_is_samples=20,
-        expl_std_init=1.0,
-        num_workers=1,
+        num_is_samples=4,
+        expl_std_init=0.1,
+        num_workers=bayrn_hparam["num_workers"],  # dual use
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -201,7 +217,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     # Create algorithm and train
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
     algo.train()
-    assert algo.curr_iter == algo.max_iter
+    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
 
 
 @pytest.mark.parametrize("env", ["default_omo"], ids=["omo"], indirect=True)
@@ -512,12 +528,8 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
     ],
     ids=["laststep", "allsteps", "bayessim", "dtw", "rnn"],
 )
-@pytest.mark.parametrize(
-    "num_segments, len_segments",
-    [(1, None), (10, None), (None, 50)],
-    ids=["num1-lenNone", "num10-lenNone", "numNone-len50"],
-)
-@pytest.mark.parametrize("num_real_rollouts", [1], ids=["1rollout"])
+@pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
+@pytest.mark.parametrize("num_real_rollouts", [2], ids=["2ros"])
 @pytest.mark.parametrize("num_sbi_rounds", [2], ids=["2rounds"])
 @pytest.mark.parametrize("use_rec_act", [True, False], ids=["userecact", "dontuserecact"])
 def test_npdr(
@@ -530,23 +542,58 @@ def test_npdr(
     num_sbi_rounds: int,
     use_rec_act: bool,
 ):
+    # Reduce the number of steps to make this test run faster
+    env.max_steps = 50
+
     # Create a fake ground truth target domain
     env_real = deepcopy(env)
     dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = {
-        k: max(v + v / 3 / 5 * np.random.randn(1).item(), 0) for k, v in dp_nom.items()
-    }  # damping coefficients must be positive
+    env_real.domain_param = dict(
+        Dr=dp_nom["Dr"] * 1.9,
+        Dp=dp_nom["Dp"] * 0.4,
+        Rm=dp_nom["Rm"] * 1.0,
+        km=dp_nom["km"] * 1.0,
+        Mp=dp_nom["Mp"] * 1.1,
+        Mr=dp_nom["Mr"] * 1.2,
+        Lp=dp_nom["Lp"] * 0.8,
+        Lr=dp_nom["Lr"] * 0.9,
+        g=dp_nom["g"] * 1.0,
+    )
 
     # Policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {i: k for i, (k, v) in enumerate(dp_nom.items())}
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
 
     # Prior
     prior_hparam = dict(
-        low=to.tensor([0.9 * dp_nom[v] for v in dp_mapping.values()]),
-        high=to.tensor([1.1 * dp_nom[v] for v in dp_mapping.values()]),
+        low=to.tensor(
+            [
+                dp_nom["Dr"] * 0,
+                dp_nom["Dp"] * 0,
+                dp_nom["Rm"] * 0.8,
+                dp_nom["km"] * 0.8,
+                dp_nom["Mr"] * 0.8,
+                dp_nom["Mp"] * 0.8,
+                dp_nom["Lr"] * 0.8,
+                dp_nom["Lp"] * 0.8,
+                dp_nom["g"] * 0.9,
+            ]
+        ),
+        high=to.tensor(
+            [
+                2 * 0.0015,
+                2 * 0.0005,
+                dp_nom["Rm"] * 1.2,
+                dp_nom["km"] * 1.2,
+                dp_nom["Mr"] * 1.2,
+                dp_nom["Mp"] * 1.2,
+                dp_nom["Lr"] * 1.2,
+                dp_nom["Lp"] * 1.2,
+                dp_nom["g"] * 1.1,
+            ]
+        ),
     )
     prior = utils.BoxUniform(**prior_hparam)
 
@@ -555,6 +602,7 @@ def test_npdr(
     if embedding_name == LastStepEmbedding.name:
         embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam)
     elif embedding_name == DeltaStepsEmbedding.name:
+        embedding_hparam = dict(downsampling_factor=20)
         embedding = DeltaStepsEmbedding(
             env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, **embedding_hparam
         )
@@ -578,8 +626,8 @@ def test_npdr(
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
+        num_sim_per_round=50,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=100,
         num_sbi_rounds=num_sbi_rounds,
         simulation_batch_size=1,
         normalize_posterior=False,
@@ -591,16 +639,16 @@ def test_npdr(
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
-            learning_rate=5e-4,  # default: 5e-4
-            validation_fraction=0.1,  # default: 0.1
+            learning_rate=3e-4,  # default: 5e-4
+            validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
             discard_prior_samples=False,  # default: False
-            use_combined_loss=True,  # default: False
+            use_combined_loss=False,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
             max_num_epochs=5,  # default: None
         ),
-        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),
         num_workers=1,
     )
     algo = NPDR(
@@ -610,7 +658,7 @@ def test_npdr(
         policy,
         dp_mapping,
         prior,
-        SNPE,
+        SNPE_C,
         embedding,
         **algo_hparam,
     )
