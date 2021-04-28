@@ -54,7 +54,7 @@ def q_95(x):
 
 
 def _reorder_for_qbb_experiment(df: pd.DataFrame) -> pd.DataFrame:
-    """ By default the entries are ordered alphabetically. We want SPOTA, EPOpt, PPO"""
+    """By default the entries are ordered alphabetically. We want SPOTA, EPOpt, PPO"""
     print("Changed the order")
     return df.iloc[[2, 0, 1]]
 

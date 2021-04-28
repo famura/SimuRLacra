@@ -138,7 +138,7 @@ def normalize(
 
 
 class Standardizer:
-    """ A stateful standardizer that remembers the mean and standard deviation for later un-standardization """
+    """A stateful standardizer that remembers the mean and standard deviation for later un-standardization"""
 
     def __init__(self):
         self.mean = None
@@ -190,7 +190,7 @@ class Standardizer:
 
 
 class MinMaxScaler:
-    """ A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling """
+    """A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling"""
 
     def __init__(
         self, bound_lo: Union[int, float, np.ndarray, to.Tensor], bound_up: Union[int, float, np.ndarray, to.Tensor]
@@ -293,16 +293,16 @@ class MinMaxScaler:
 
 
 class RunningStandardizer:
-    """ Implementation of Welford's online algorithm """
+    """Implementation of Welford's online algorithm"""
 
     def __init__(self):
-        """ Constructor """
+        """Constructor"""
         self.mean = None
         self.sum_sq_diffs = None  # a.k.a M2
         self.iter = 0
 
     def reset(self):
-        """ Reset internal variables. """
+        """Reset internal variables."""
         self.mean = None
         self.sum_sq_diffs = None
         self.iter = 0
@@ -380,17 +380,17 @@ class RunningStandardizer:
 
 
 class RunningNormalizer:
-    """ Normalizes given data based on the history of observed data, such that all outputs are in range [-1, 1] """
+    """Normalizes given data based on the history of observed data, such that all outputs are in range [-1, 1]"""
 
     def __init__(self):
-        """ Constructor """
+        """Constructor"""
         self.bound_lo = None
         self.bound_up = None
         self.eps = 1e-3
         self.iter = 0
 
     def reset(self):
-        """ Reset internal variables. """
+        """Reset internal variables."""
         self.bound_lo = None
         self.bound_up = None
         self.iter = 0

@@ -93,7 +93,7 @@ class EPOpt(Algorithm):
 
     @property
     def subroutine(self) -> Algorithm:
-        """ Get the policy optimization subroutine. """
+        """Get the policy optimization subroutine."""
         return self._subrtn
 
     @property

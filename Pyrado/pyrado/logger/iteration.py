@@ -30,10 +30,10 @@ from contextlib import contextmanager
 
 
 class IterationTracker:
-    """ Track the current iteration/step number on multiple levels (for meta-algorithms) """
+    """Track the current iteration/step number on multiple levels (for meta-algorithms)"""
 
     def __init__(self):
-        """ Constructor """
+        """Constructor"""
         self._iter_stack = []
 
     def push(self, label: str, num: int):
@@ -46,7 +46,7 @@ class IterationTracker:
         self._iter_stack.append((label, num))
 
     def pop(self) -> tuple:
-        """ Remove the last iteration scope. """
+        """Remove the last iteration scope."""
         return self._iter_stack.pop()
 
     def peek(self) -> tuple:
@@ -90,5 +90,5 @@ class IterationTracker:
         return scope_sep.join(l + label_num_sep + str(n) for l, n in self._iter_stack)
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return self.format()

@@ -39,7 +39,7 @@ from pyrado.environments.sim_base import SimEnv
 
 
 class ObsVelFiltWrapper(EnvWrapperObs, Serializable):
-    """ Environment wrapper which computes the velocities from the satets given a linear filter """
+    """Environment wrapper which computes the velocities from the satets given a linear filter"""
 
     def __init__(
         self,

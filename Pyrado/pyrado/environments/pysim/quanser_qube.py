@@ -41,7 +41,7 @@ from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
 
 class QQubeSim(SimPyEnv, Serializable):
-    """ Base Environment for the Quanser Qube swing-up and stabilization task """
+    """Base Environment for the Quanser Qube swing-up and stabilization task"""
 
     @abstractmethod
     def _create_task(self, task_args: dict) -> Task:

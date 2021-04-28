@@ -202,7 +202,7 @@ class SAC(ValueBased):
 
     @property
     def ent_coeff(self) -> to.Tensor:
-        """ Get the detached entropy coefficient. """
+        """Get the detached entropy coefficient."""
         return to.exp(self._log_ent_coeff.detach())
 
     @staticmethod
@@ -222,7 +222,7 @@ class SAC(ValueBased):
             targ_param.data = targ_param.data * tau + src_param.data * (1.0 - tau)
 
     def update(self):
-        """ Update the policy's and Q-functions' parameters on transitions sampled from the replay memory. """
+        """Update the policy's and Q-functions' parameters on transitions sampled from the replay memory."""
         # Containers for logging
         expl_strat_stds = to.zeros(self.num_batch_updates)
         qfcn_1_losses = to.zeros(self.num_batch_updates)

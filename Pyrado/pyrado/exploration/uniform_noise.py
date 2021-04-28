@@ -36,7 +36,7 @@ import pyrado
 
 
 class UniformNoise(nn.Module):
-    """ Module for learnable additive uniform noise """
+    """Module for learnable additive uniform noise"""
 
     def __init__(
         self,
@@ -112,12 +112,12 @@ class UniformNoise(nn.Module):
 
     @property
     def device(self) -> str:
-        """ Get the device (CPU or GPU) on which the policy is stored. """
+        """Get the device (CPU or GPU) on which the policy is stored."""
         return self._device
 
     @property
     def halfspan(self) -> to.Tensor:
-        """ Get the untransformed standard deviation vector given the log-transformed. """
+        """Get the untransformed standard deviation vector given the log-transformed."""
         return to.max(to.exp(self.log_halfspan), self.halfspan_min)
 
     @halfspan.setter
@@ -130,7 +130,7 @@ class UniformNoise(nn.Module):
         self.log_halfspan.data = to.log(to.max(halfspan, self.halfspan_min))
 
     def reset_expl_params(self):
-        """ Reset all parameters of the exploration strategy. """
+        """Reset all parameters of the exploration strategy."""
         if self.mean is not None:
             self.mean.data.zero_()
         self.log_halfspan.data.copy_(self.log_halfspan_init)

@@ -119,25 +119,25 @@ class WAMReal(RealEnv, ABC):
 
     @property
     def num_dof(self) -> int:
-        """ Get the number of degrees of freedom. """
+        """Get the number of degrees of freedom."""
         return self._num_dof
 
     @property
     @abstractmethod
     def state_space(self) -> Space:
-        """ Get the state space. """
+        """Get the state space."""
         raise NotImplementedError
 
     @property
     @abstractmethod
     def obs_space(self) -> Space:
-        """ Get the observation space. """
+        """Get the observation space."""
         raise NotImplementedError
 
     @property
     @abstractmethod
     def act_space(self) -> Space:
-        """ Get the action space. """
+        """Get the action space."""
         raise NotImplementedError
 
     @property

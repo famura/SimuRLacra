@@ -150,7 +150,7 @@ def test_combination_downsampling_delay():
 
 @pytest.mark.wrapper
 def test_combination_delay_downsampling():
-    """ After delay number of actions, the actions are downsampled by the factor """
+    """After delay number of actions, the actions are downsampled by the factor"""
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)), obs_space=BoxSpace(-1, 1, shape=(2,)))
     wenv_dl_ds = ActDelayWrapper(mockenv, delay=3)
     wenv_dl_ds = DownsamplingWrapper(wenv_dl_ds, factor=2)

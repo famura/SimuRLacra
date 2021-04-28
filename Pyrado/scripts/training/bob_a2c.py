@@ -39,8 +39,8 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.features import FeatureStack, RBFFeat, RFFeat, identity_feat, sin_feat
-from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

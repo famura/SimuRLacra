@@ -36,7 +36,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class CompoundSpace(Space):
-    """ Space consisting of other spaces """
+    """Space consisting of other spaces"""
 
     def __init__(self, spaces: Sequence[Space]):
         """

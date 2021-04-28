@@ -137,7 +137,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
 
 class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
-    """ Ball-on-beam simulation environment with discrete actions """
+    """Ball-on-beam simulation environment with discrete actions"""
 
     name: str = "bob-d"
 

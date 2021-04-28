@@ -38,7 +38,7 @@ from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
 
 class PendulumSim(SimPyEnv, Serializable):
-    """ Under-actuated inverted pendulum environment similar to the one from OpenAI Gym """
+    """Under-actuated inverted pendulum environment similar to the one from OpenAI Gym"""
 
     name: str = "pend"
 

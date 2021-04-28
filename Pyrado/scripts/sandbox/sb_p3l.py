@@ -44,8 +44,8 @@ from pyrado.environments.rcspysim.planar_3_link import (
     Planar3LinkTASim,
 )
 from pyrado.plotting.rollout_based import plot_potentials
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
-from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

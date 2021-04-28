@@ -40,7 +40,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class RNNPolicyBase(RecurrentPolicy):
-    """ Base class for recurrent policies wrapping torch.nn.RNNBase subclasses """
+    """Base class for recurrent policies wrapping torch.nn.RNNBase subclasses"""
 
     # Type of recurrent network. Is None in base class to force inheritance.
     recurrent_network_type: Optional[RNNBase] = None
@@ -216,7 +216,7 @@ class RNNPolicyBase(RecurrentPolicy):
 
 
 class RNNPolicy(RNNPolicyBase):
-    """ Policy backed by a multi-layer RNN """
+    """Policy backed by a multi-layer RNN"""
 
     name: str = "rnn"
 
@@ -258,7 +258,7 @@ class RNNPolicy(RNNPolicyBase):
 
 
 class GRUPolicy(RNNPolicyBase):
-    """ Policy backed by a multi-layer GRU """
+    """Policy backed by a multi-layer GRU"""
 
     name: str = "gru"
 
@@ -266,7 +266,7 @@ class GRUPolicy(RNNPolicyBase):
 
 
 class LSTMPolicy(RNNPolicyBase):
-    """ Policy backed by a multi-layer LSTM """
+    """Policy backed by a multi-layer LSTM"""
 
     name: str = "lstm"
 

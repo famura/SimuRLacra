@@ -37,7 +37,7 @@ from pyrado.utils.input_output import color_validity
 
 
 class EmptySpace(Space):
-    """ A space with no content """
+    """A space with no content"""
 
     def _members(self) -> tuple:
         # We're a singleton, compare by id

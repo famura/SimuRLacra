@@ -39,7 +39,7 @@ from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 
 
 class QBallBalancerReal(QuanserReal, Serializable):
-    """ Class for the real Quanser Ball-Balancer """
+    """Class for the real Quanser Ball-Balancer"""
 
     name: str = "qbb"
 

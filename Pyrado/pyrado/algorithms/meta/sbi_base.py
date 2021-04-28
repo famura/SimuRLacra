@@ -35,13 +35,12 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Un
 import numpy as np
 import torch as to
 from colorama import Fore, Style
+from sbi import utils as utils
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
-from sbi.utils import posterior_nn
 from sbi.utils.user_input_checks import prepare_for_sbi
-from tabulate import tabulate
-from torch.distributions import Distribution
+from torch.distributions import Distribution, Normal
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
@@ -166,6 +165,10 @@ class SBIBase(InterruptableAlgorithm, ABC):
                 msg="The given env_sim must be a non-randomized simulation environment, "
                 "except for wrappers that add a domain parameter!"
             )
+        if isinstance(prior, Normal):
+            raise pyrado.TypeErr(
+                msg="The sbi framework requires MultivariateNormal instead of Normal distributions for the prior."
+            )
         if not prior.event_shape[0] == len(dp_mapping):
             raise pyrado.ShapeErr(given=prior.event_shape, expected_match=dp_mapping)
         if posterior_hparam is None:
@@ -219,7 +222,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self._setup_sbi(prior=prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
-        density_estimator = posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
+        density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
         self._subrtn_sbi = self.subrtn_sbi_class(
@@ -246,22 +249,22 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
     @property
     def subroutine_policy(self) -> Algorithm:
-        """ Get the policy optimization subroutine. """
+        """Get the policy optimization subroutine."""
         return self._subrtn_policy
 
     @property
     def subroutine_sbi(self) -> NeuralInference:
-        """ Get the system identification subroutine coming from the sbi module. """
+        """Get the system identification subroutine coming from the sbi module."""
         return self._subrtn_sbi
 
     @property
     def sbi_simulator(self) -> Optional[Callable]:
-        """ Get the simulator wrapped for sbi. """
+        """Get the simulator wrapped for sbi."""
         return self._sbi_simulator
 
     @property
     def embedding(self) -> Embedding:
-        """ Get the embedding used to compute the features from the rollouts. """
+        """Get the embedding used to compute the features from the rollouts."""
         return self._embedding
 
     def _setup_sbi(self, prior: Distribution, rollouts_real: Optional[List[StepSequence]] = None):
@@ -285,6 +288,18 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
+
+    def get_latest_proposal(self) -> Union[utils.BoxUniform, DirectPosterior]:
+        """
+        Get the latest proposal. This is either the prior, or the (amortized) posterior from the previous iteration.
+
+        :return: latest proposal for simulating with sbi
+        """
+        if self._curr_iter == 0:
+            proposal = self._sbi_prior
+        else:
+            proposal = pyrado.load("posterior.pt", self._save_dir, prefix=f"iter_{self._curr_iter - 1}")
+        return proposal
 
     @abstractmethod
     def step(self, snapshot_mode: str, meta_info: dict = None):
@@ -420,7 +435,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # Check before loading, and print a warning message if there can not be a posterior with the obtained indices
         if idx_iter == -1:
             print_cbt(f"Invalid iteration index {idx_iter}! Check if there is a posterior in {load_dir}.", "r")
-        if idx_round == -1:
+        if idx_round == -1 and multi_round_setting:
             print_cbt(f"Invalid round index {idx_round}! Check if there is a posterior in {load_dir}.", "r")
 
         # Load the current posterior

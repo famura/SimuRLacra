@@ -36,7 +36,7 @@ from tqdm import tqdm
 
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.iteration import IterationTracker
-from pyrado.policies.special.dummy import DummyPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.utils import gen_ordered_batch_idcs, gen_ordered_batches, gen_shuffled_batch_idcs

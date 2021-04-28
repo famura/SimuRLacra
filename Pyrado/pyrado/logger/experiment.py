@@ -115,20 +115,20 @@ class Experiment:
         self.base_dir = base_dir
 
     def __fspath__(self):
-        """ Allows to use the experiment object where the experiment path is needed. """
+        """Allows to use the experiment object where the experiment path is needed."""
         return osp.join(self.base_dir, self.env_name, self.algo_name, self.exp_id)
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return f"{self.env_name}/{self.algo_name}/{self.exp_id}"
 
     @property
     def prefix(self):
-        """ Combination of experiment and algorithm """
+        """Combination of experiment and algorithm"""
         return osp.join(self.env_name, self.algo_name)
 
     def matches(self, hint: str) -> bool:
-        """ Check if this experiment matches the given hint. """
+        """Check if this experiment matches the given hint."""
         # Split hint into <env>/<algo>/<id>
         parts = Path(hint).parts
         if len(parts) == 1:
@@ -177,7 +177,7 @@ def setup_experiment(
 
 
 def _childdirs(parent: str):
-    """ Yield only direct child directories. """
+    """Yield only direct child directories."""
     for cn in os.listdir(parent):
         cp = osp.join(parent, cn)
         if osp.isdir(cp):
@@ -259,7 +259,7 @@ def _select_all(exps: Iterable) -> Union[List[Experiment], None]:
 
 
 def select_by_hint(exps: Sequence[Experiment], hint: str):
-    """ Select experiment by hint. """
+    """Select experiment by hint."""
     if osp.isabs(hint):
         # Hint is a full experiment path
         return hint
@@ -476,7 +476,7 @@ def _process_dict_for_saving(d: dict) -> dict:
 
 class AugmentedSafeLoader(yaml.SafeLoader):
     def construct_python_tuple(self, node):
-        """ Use PyYAML method for constructing a sequence to construct a tuple. """
+        """Use PyYAML method for constructing a sequence to construct a tuple."""
         return tuple(self.construct_sequence(node))
 
 

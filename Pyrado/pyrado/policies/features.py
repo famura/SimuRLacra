@@ -57,7 +57,7 @@ class FeatureStack:
         self.feat_fcns = tuple(feat_fcns)  # TODO concat var number of input args
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         feat_fcn_names = [f.__name__ if f is callable else str(f) for f in self.feat_fcns]
         return f"{get_class_name(self)} [" + ", ".join(feat_fcn_names) + "]"
 
@@ -177,7 +177,7 @@ def sincos_feat(inp: to.Tensor):
 
 
 class MultFeat:
-    """ Feature that multiplies two dimensions of the given input / observation """
+    """Feature that multiplies two dimensions of the given input / observation"""
 
     def __init__(self, idcs: Tuple):
         """
@@ -193,7 +193,7 @@ class MultFeat:
         self._idcs = idcs
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return f"{get_class_name(self)} (indices " + " ".join([str(i) for i in self._idcs]) + ")"
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
@@ -207,7 +207,7 @@ class MultFeat:
 
 
 class ATan2Feat:
-    """ Feature that computes the atan2 from two dimensions of the given input / observation. """
+    """Feature that computes the atan2 from two dimensions of the given input / observation."""
 
     def __init__(self, idx_sin: int, idx_cos: int):
         """
@@ -224,7 +224,7 @@ class ATan2Feat:
         self._idx_cos = idx_cos
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return f"{get_class_name(self)} (index for numerator {self._idx_sin}, index for denominator {self._idx_cos})"
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
@@ -314,7 +314,7 @@ class RFFeat:
 
 
 class RBFFeat:
-    """ Normalized Gaussian radial basis function features """
+    """Normalized Gaussian radial basis function features"""
 
     def __init__(
         self,

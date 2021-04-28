@@ -38,7 +38,7 @@ from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 
 
 class StochasticParamExplStrat(ABC):
-    """ Exploration strategy which samples policy parameters from a distribution. """
+    """Exploration strategy which samples policy parameters from a distribution."""
 
     def __init__(self, param_dim: int):
         """
@@ -133,7 +133,7 @@ class SymmParamExplStrat(StochasticParamExplStrat):
 
 
 class NormalParamNoise(StochasticParamExplStrat):
-    """ Sample parameters from a normal distribution. """
+    """Sample parameters from a normal distribution."""
 
     def __init__(
         self,
@@ -177,7 +177,7 @@ class NormalParamNoise(StochasticParamExplStrat):
 
     @property
     def noise(self) -> [FullNormalNoise, DiagNormalNoise]:
-        """ Get the exploration noise. """
+        """Get the exploration noise."""
         return self._noise
 
     def sample_param_set(self, nominal_params: to.Tensor) -> to.Tensor:
@@ -210,7 +210,7 @@ class NormalParamNoise(StochasticParamExplStrat):
 
 
 class HyperSphereParamNoise(StochasticParamExplStrat):
-    """ Sample parameters from a normal distribution. """
+    """Sample parameters from a normal distribution."""
 
     def __init__(self, param_dim: int, expl_r_init: float = 1.0):
         """
@@ -227,15 +227,15 @@ class HyperSphereParamNoise(StochasticParamExplStrat):
 
     @property
     def r(self) -> float:
-        """ Get the radius of the hypersphere. """
+        """Get the radius of the hypersphere."""
         return self._r
 
     def reset_expl_params(self):
-        """ Reset all parameters of the exploration strategy. """
+        """Reset all parameters of the exploration strategy."""
         self._r = self._r_init
 
     def adapt(self, r: float):
-        """ Set a new radius for the hyper sphere from which the policy parameters are sampled. """
+        """Set a new radius for the hyper sphere from which the policy parameters are sampled."""
         if not r > 0.0:
             pyrado.ValueErr(given=r, g_constraint="0")
         self._r = r

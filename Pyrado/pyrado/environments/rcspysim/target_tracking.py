@@ -45,7 +45,7 @@ rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
 
 
 class TargetTrackingSim(RcsSim, Serializable):
-    """ 2-armed humanoid robot going to a target position with both hands """
+    """2-armed humanoid robot going to a target position with both hands"""
 
     name: str = "tt"
 

@@ -61,7 +61,7 @@ def _to_pyrado_space(gym_space) -> [BoxSpace, DiscreteSpace]:
 
 
 class GymEnv(SimEnv, Serializable):
-    """ A Wrapper to use the classical control environments of OpenAI Gym like Pyrado environments """
+    """A Wrapper to use the classical control environments of OpenAI Gym like Pyrado environments"""
 
     name: str = "gym-cc"
 

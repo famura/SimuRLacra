@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
-from typing import TypeVar, Union
+from typing import TypeVar
 
 import torch as to
 
@@ -75,6 +75,8 @@ def insert_tensor_col(x: to.Tensor, idx: int, col: to.Tensor) -> to.Tensor:
     :param col: tensor to insert
     :return: tensor with new column at index idx
     """
+    col = to.atleast_2d(col)
+
     assert isinstance(x, to.Tensor)
     assert isinstance(idx, int) and -1 <= idx <= x.shape[1]
     assert isinstance(col, to.Tensor)

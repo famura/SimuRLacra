@@ -38,7 +38,7 @@ from pyrado.spaces.box import BoxSpace
 
 
 class StateAugmentationWrapper(EnvWrapper, Serializable):
-    """ Augments the observation of the wrapped environment by its physics configuration """
+    """Augments the observation of the wrapped environment by its physics configuration"""
 
     def __init__(self, wrapped_env: Env, domain_param: Sequence[str] = None, fixed: bool = False):
         """

@@ -95,7 +95,7 @@ def _plot(dataframes, save_dirs, save_figure):
     # Loop over all evaluations. Loop two times for first setting the bound of the colorbar and then saving the figures.
     for sf, show_figure in zip((False, save_figure), (False, True)):
         for df, save_dir in zip(dataframes, [None] * len(dataframes) if save_dirs is None else save_dirs):
-            """ QBallBalancerSim """
+            """QBallBalancerSim"""
 
             _plot_and_save(
                 df,

@@ -270,7 +270,7 @@ class ADNPolicy(PotentialBasedPolicy):
 
     @property
     def capacity(self) -> [None, to.Tensor]:
-        """ Get the capacity parameter (exists for capacity-based dynamics functions), else return `None`. """
+        """Get the capacity parameter (exists for capacity-based dynamics functions), else return `None`."""
         return None if self._log_capacity is None else to.exp(self._log_capacity)
 
     def potentials_dot(self, potentials: to.Tensor, stimuli: to.Tensor) -> to.Tensor:

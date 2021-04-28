@@ -90,7 +90,7 @@ def create_extract_slider_task(env_spec: EnvSpec, task_args: dict, des_state: np
 
 
 class BallInTubeSim(RcsSim, Serializable):
-    """ Base class for 2-armed humanoid robot fiddling a ball out of a tube """
+    """Base class for 2-armed humanoid robot fiddling a ball out of a tube"""
 
     def __init__(self, task_args: dict, ref_frame: str, **kwargs):
         """
@@ -168,7 +168,7 @@ class BallInTubeSim(RcsSim, Serializable):
 
 
 class BallInTubeIKSim(BallInTubeSim, Serializable):
-    """ Humanoid robot fiddling a ball out of a tube using two hooks and an position-level IK controller """
+    """Humanoid robot fiddling a ball out of a tube using two hooks and an position-level IK controller"""
 
     name: str = "bit-ik"
 
@@ -205,7 +205,7 @@ class BallInTubeIKSim(BallInTubeSim, Serializable):
 
 
 class BallInTubePosIKActivationSim(BallInTubeSim, Serializable):
-    """ Humanoid robot fiddling a ball out of a tube using two hooks and an position-level IK controller """
+    """Humanoid robot fiddling a ball out of a tube using two hooks and an position-level IK controller"""
 
     name: str = "bit-ika-pos"
 
@@ -254,7 +254,7 @@ class BallInTubePosIKActivationSim(BallInTubeSim, Serializable):
 
 
 class BallInTubePosDSSim(BallInTubeSim, Serializable):
-    """ Humanoid robot fiddling a ball out of a tube using two hooks and position-level movement primitives """
+    """Humanoid robot fiddling a ball out of a tube using two hooks and position-level movement primitives"""
 
     name: str = "bit-ds-pos"
 
@@ -342,7 +342,7 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
 
 
 class BallInTubeVelDSSim(BallInTubeSim, Serializable):
-    """ Humanoid robot fiddling a ball out of a tube using two hooks and velocity-level movement primitives """
+    """Humanoid robot fiddling a ball out of a tube using two hooks and velocity-level movement primitives"""
 
     name: str = "bit-ds-vel"
 

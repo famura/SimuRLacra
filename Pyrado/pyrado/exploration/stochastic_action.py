@@ -41,7 +41,7 @@ from pyrado.utils.math import clamp
 
 
 class StochasticActionExplStrat(Policy, ABC):
-    """ Explore by sampling actions from a distribution. """
+    """Explore by sampling actions from a distribution."""
 
     def __init__(self, policy: Policy):
         """
@@ -119,7 +119,7 @@ class StochasticActionExplStrat(Policy, ABC):
 
 
 class NormalActNoiseExplStrat(StochasticActionExplStrat):
-    """ Exploration strategy which adds Gaussian noise to the continuous policy actions """
+    """Exploration strategy which adds Gaussian noise to the continuous policy actions"""
 
     def __init__(
         self,
@@ -173,7 +173,7 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
 
     @property
     def noise(self) -> DiagNormalNoise:
-        """ Get the exploration noise. """
+        """Get the exploration noise."""
         return self._noise
 
     def action_dist_at(self, policy_output: to.Tensor) -> Distribution:
@@ -181,7 +181,7 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
 
 
 class UniformActNoiseExplStrat(StochasticActionExplStrat):
-    """ Exploration strategy which adds uniform noise to the continuous policy actions """
+    """Exploration strategy which adds uniform noise to the continuous policy actions"""
 
     def __init__(
         self,
@@ -213,7 +213,7 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
 
     @property
     def noise(self) -> UniformNoise:
-        """ Get the exploration noise. """
+        """Get the exploration noise."""
         return self._noise
 
     def action_dist_at(self, policy_output: to.Tensor) -> Distribution:
@@ -269,7 +269,7 @@ class SACExplStrat(StochasticActionExplStrat):
 
     @property
     def noise(self) -> DiagNormalNoise:
-        """ Get the exploration noise. """
+        """Get the exploration noise."""
         return self._noise
 
     def action_dist_at(self, policy_out_1: to.Tensor, policy_out_2: to.Tensor) -> Distribution:
@@ -370,7 +370,7 @@ class SACExplStrat(StochasticActionExplStrat):
 
 
 class EpsGreedyExplStrat(StochasticActionExplStrat):
-    """ Exploration strategy which selects discrete actions epsilon-greedily """
+    """Exploration strategy which selects discrete actions epsilon-greedily"""
 
     def __init__(self, policy: Policy, eps: float = 1.0, eps_schedule_gamma: float = 0.99, eps_final: float = 0.05):
         """
@@ -394,14 +394,14 @@ class EpsGreedyExplStrat(StochasticActionExplStrat):
         self.distr_act = Categorical(to.ones(flat_dim) / flat_dim)
 
     def eval(self):
-        """ Call PyTorch's eval function and set the deny every exploration. """
+        """Call PyTorch's eval function and set the deny every exploration."""
         super().eval()
         self._eps_old = self.eps.clone()
         self.eps.data = to.tensor(0.0)
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def train(self, mode=True):
-        """ Call PyTorch's eval function and set the re-activate every exploration. """
+        """Call PyTorch's eval function and set the re-activate every exploration."""
         super().train()
         self.eps = nn.Parameter(self._eps_old, requires_grad=True)
         self.distr_eps = Bernoulli(probs=self.eps.data)

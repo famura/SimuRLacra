@@ -44,7 +44,6 @@ from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 from pyrado.spaces.box import InfBoxSpace
@@ -217,22 +216,22 @@ class BayesSim(Algorithm):
 
     @property
     def subroutine_policy(self) -> Algorithm:
-        """ Get the policy optimization subroutine. """
+        """Get the policy optimization subroutine."""
         return self._subrtn_policy
 
     @property
     def subroutine_distr(self) -> SNPEA:
-        """ Get the system identification subroutine coming from the sbi module. """
+        """Get the system identification subroutine coming from the sbi module."""
         return self._subrtn_sbi
 
     @property
     def embedding(self) -> BayesSimEmbedding:
-        """ Get the embedding used to compute the features from the rollouts. """
+        """Get the embedding used to compute the features from the rollouts."""
         return self._embedding
 
     @property
     def posterior(self) -> MDNPolicy:
-        """ Get the current (conditional) posterior density estimator. """
+        """Get the current (conditional) posterior density estimator."""
         return self._subrtn_sbi.posterior
 
     def step(self, snapshot_mode: str, meta_info: dict = None):

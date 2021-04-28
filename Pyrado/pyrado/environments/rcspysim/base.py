@@ -55,7 +55,7 @@ def to_pyrado_space(space) -> Union[BoxSpace, EmptySpace]:
 
 
 class RcsSim(SimEnv, Serializable):
-    """ Base class for RcsPySim environments. Uses Serializable to facilitate proper serialization. """
+    """Base class for RcsPySim environments. Uses Serializable to facilitate proper serialization."""
 
     def __init__(
         self,
@@ -115,7 +115,7 @@ class RcsSim(SimEnv, Serializable):
 
     @property
     def state_space(self) -> Space:
-        """ Derives the state space from the observation space using _state_from_obs or state_mask. """
+        """Derives the state space from the observation space using _state_from_obs or state_mask."""
         obs_space = self.obs_space
         # Check if _state_from_obs was overridden
         if self._state_from_obs.__func__ != RcsSim._state_from_obs:
@@ -217,7 +217,7 @@ class RcsSim(SimEnv, Serializable):
         self.init_state = state_dict["init_state"]
 
     def _disturbance_generator(self) -> Union[np.ndarray, None]:
-        """ Provide an artificial disturbance. For example a force on a body in the physics simulation. """
+        """Provide an artificial disturbance. For example a force on a body in the physics simulation."""
         return None
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:

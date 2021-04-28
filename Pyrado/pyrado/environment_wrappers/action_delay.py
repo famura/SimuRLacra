@@ -35,7 +35,7 @@ from pyrado.environments.base import Env
 
 
 class ActDelayWrapper(EnvWrapperAct, Serializable):
-    """ Environment wrapper which delays actions by a fixed number of time steps. """
+    """Environment wrapper which delays actions by a fixed number of time steps."""
 
     def __init__(self, wrapped_env: Env, delay: int = 0):
         """

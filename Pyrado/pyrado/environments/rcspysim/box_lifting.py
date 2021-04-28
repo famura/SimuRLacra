@@ -51,7 +51,7 @@ rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxLifting"))  # p
 
 
 class BoxLiftingSim(RcsSim, Serializable):
-    """ Base class for 2-armed humanoid robot lifting a box out of a basket """
+    """Base class for 2-armed humanoid robot lifting a box out of a basket"""
 
     def __init__(self, task_args: dict, ref_frame: str, **kwargs):
         """
@@ -131,7 +131,7 @@ class BoxLiftingSim(RcsSim, Serializable):
 
 
 class BoxLiftingPosIKActivationSim(BoxLiftingSim, Serializable):
-    """ Humanoid robot lifting a box out of a basket using a position-level Rcs IK-based controller """
+    """Humanoid robot lifting a box out of a basket using a position-level Rcs IK-based controller"""
 
     name: str = "bl-ika-pos"
 
@@ -173,7 +173,7 @@ class BoxLiftingPosIKActivationSim(BoxLiftingSim, Serializable):
 
 
 class BoxLiftingVelIKActivationSim(BoxLiftingSim, Serializable):
-    """ Humanoid robot lifting a box out of a basket using a velocity-level Rcs IK-based controller """
+    """Humanoid robot lifting a box out of a basket using a velocity-level Rcs IK-based controller"""
 
     name: str = "bl-ika-vel"
 
@@ -217,7 +217,7 @@ class BoxLiftingVelIKActivationSim(BoxLiftingSim, Serializable):
 
 
 class BoxLiftingPosDSSim(BoxLiftingSim, Serializable):
-    """ Humanoid robot lifting a box out of a basket using two arms and position-level movement primitives """
+    """Humanoid robot lifting a box out of a basket using two arms and position-level movement primitives"""
 
     name: str = "bl-ds-pos"
 
@@ -349,7 +349,7 @@ class BoxLiftingPosDSSim(BoxLiftingSim, Serializable):
 
 
 class BoxLiftingVelDSSim(BoxLiftingSim, Serializable):
-    """ Humanoid robot lifting a box out of a basket using two arms and velocity-level movement primitives """
+    """Humanoid robot lifting a box out of a basket using two arms and velocity-level movement primitives"""
 
     name: str = "bl-ds-vel"
 

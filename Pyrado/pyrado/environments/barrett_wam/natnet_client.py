@@ -727,5 +727,5 @@ class NatNetClient:
         dataThread.start()
 
     def stop(self):
-        """ Stops receiving data from socket """
+        """Stops receiving data from socket"""
         self._stop = True

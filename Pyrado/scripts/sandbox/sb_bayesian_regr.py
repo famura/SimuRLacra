@@ -42,7 +42,7 @@ from torch.distributions import constraints
 from tqdm import tqdm
 
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorDyn, OneMassOscillatorSim
-from pyrado.policies.special.dummy import DummyPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 

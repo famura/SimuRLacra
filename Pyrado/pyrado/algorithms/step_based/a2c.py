@@ -49,7 +49,7 @@ from pyrado.utils.math import explained_var
 
 
 class A2C(ActorCritic):
-    """ Advantage Actor Critic (A2C) """
+    """Advantage Actor Critic (A2C)"""
 
     name: str = "a2c"
 

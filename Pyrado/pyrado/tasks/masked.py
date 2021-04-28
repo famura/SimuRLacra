@@ -36,7 +36,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class MaskedTask(Task):
-    """ Task using only a subset of state and actions """
+    """Task using only a subset of state and actions"""
 
     def __init__(
         self,

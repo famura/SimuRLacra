@@ -47,7 +47,7 @@ class Task(ABC):
 
     @property
     def env_spec(self) -> EnvSpec:
-        """ Get the specification of environment the task is in. """
+        """Get the specification of environment the task is in."""
         raise NotImplementedError
 
     @property
@@ -85,13 +85,13 @@ class Task(ABC):
     @property
     @abstractmethod
     def rew_fcn(self) -> RewFcn:
-        """ Get the reward function. """
+        """Get the reward function."""
         raise NotImplementedError
 
     @rew_fcn.setter
     @abstractmethod
     def rew_fcn(self, rew_fcn: RewFcn):
-        """ Set the reward function. """
+        """Set the reward function."""
         raise NotImplementedError
 
     def reset(self, **kwargs: Any):
@@ -194,7 +194,7 @@ def all_tasks(task):
 
 
 class TaskWrapper(Task):
-    """ Base for all task wrappers. Delegates all environment methods to the wrapped environment. """
+    """Base for all task wrappers. Delegates all environment methods to the wrapped environment."""
 
     def __init__(self, wrapped_task: Task):
         """

@@ -37,7 +37,7 @@ from pyrado.utils.input_output import color_validity
 
 
 class BoxSpace(Space):
-    """ Multidimensional box space. This class can also be used to describe a sphere. """
+    """Multidimensional box space. This class can also be used to describe a sphere."""
 
     def __init__(
         self,
@@ -208,7 +208,7 @@ class BoxSpace(Space):
 
 
 class InfBoxSpace(BoxSpace):
-    r""" Multidimensional box space where all limits are $\pm \inf$. """
+    r"""Multidimensional box space where all limits are $\pm \inf$."""
 
     def __init__(self, shape: Union[tuple, int], labels: Sequence[str] = None):
         """

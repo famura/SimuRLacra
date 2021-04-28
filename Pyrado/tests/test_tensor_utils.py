@@ -76,13 +76,15 @@ def test_stack_tensor_dicts():
         (to.rand((1, 1)), to.zeros(1, 1)),
         (to.rand((3, 3)), to.zeros(3, 1)),
     ],
-    ids=["1_dim", "3_dim"],
+    ids=["1x1", "3x3"],
 )
 def test_insert_tensor_col(orig, col):
     for col_idx in range(orig.shape[1] + 1):  # also check appending case
         result = insert_tensor_col(orig, col_idx, col)
+
         # Check number of rows and columns
         assert orig.shape[0] == result.shape[0]
         assert orig.shape[1] == result.shape[1] - 1
+
         # Check the values
-        to.testing.assert_allclose(result[:, col_idx], col.squeeze())
+        assert to.all(result[:, col_idx] == col)

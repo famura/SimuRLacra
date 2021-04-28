@@ -132,7 +132,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
 
 
 class LogDomainParamTransform(DomainParamTransform):
-    """ Wrapper to make the domain parameters look like they are in log-space """
+    """Wrapper to make the domain parameters look like they are in log-space"""
 
     @staticmethod
     def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
@@ -154,7 +154,7 @@ class LogDomainParamTransform(DomainParamTransform):
 
 
 class SqrtDomainParamTransform(DomainParamTransform):
-    """ Wrapper to make the domain parameters look like they are in sqrt-space """
+    """Wrapper to make the domain parameters look like they are in sqrt-space"""
 
     @staticmethod
     def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:

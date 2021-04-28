@@ -45,7 +45,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class ParameterExploring(Algorithm, ExposedSampler):
-    """ Base for all algorithms that explore directly in the policy parameter space """
+    """Base for all algorithms that explore directly in the policy parameter space"""
 
     def __init__(
         self,
@@ -112,7 +112,7 @@ class ParameterExploring(Algorithm, ExposedSampler):
 
     @property
     def env(self) -> Env:
-        """ Get the environment in which the algorithm exploration trains. """
+        """Get the environment in which the algorithm exploration trains."""
         return self._env
 
     @property

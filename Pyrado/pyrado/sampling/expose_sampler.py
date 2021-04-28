@@ -34,14 +34,14 @@ from pyrado.sampling.step_sequence import StepSequence
 
 
 class ExposedSampler(ABC):
-    """ A mixin class to expose an algorithm's sampler """
+    """A mixin class to expose an algorithm's sampler"""
 
     @property
     def sampler(self) -> SamplerBase:
-        """ Get the sampler. """
+        """Get the sampler."""
         return self._sampler
 
     @sampler.setter
     def sampler(self, new_sampler: SamplerBase):
-        """ Set the sampler. """
+        """Set the sampler."""
         self._sampler = new_sampler

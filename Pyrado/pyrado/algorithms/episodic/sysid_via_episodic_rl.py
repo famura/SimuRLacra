@@ -140,7 +140,7 @@ class SysIdViaEpisodicRL(Algorithm):
 
     @property
     def subrtn(self) -> ParameterExploring:
-        """ Get the subroutine used for updating the domain parameter distribution. """
+        """Get the subroutine used for updating the domain parameter distribution."""
         return self._subrtn
 
     def reset(self, seed: int = None):

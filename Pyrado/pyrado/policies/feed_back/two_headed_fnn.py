@@ -32,13 +32,13 @@ import torch as to
 import torch.nn as nn
 
 from pyrado.policies.base import TwoHeadedPolicy
-from pyrado.policies.feed_forward.fnn import FNN
+from pyrado.policies.feed_back.fnn import FNN
 from pyrado.policies.initialization import init_param
 from pyrado.utils.data_types import EnvSpec
 
 
 class TwoHeadedFNNPolicy(TwoHeadedPolicy):
-    """ Policy architecture which has a common body and two heads that have a separate last layer """
+    """Policy architecture which has a common body and two heads that have a separate last layer"""
 
     name: str = "thfnn"
 

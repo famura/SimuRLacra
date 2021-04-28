@@ -38,7 +38,7 @@ from pyrado.environment_wrappers.utils import inner_env, typed_env
 
 
 class AdversarialWrapper(EnvWrapper, ABC):
-    """ Base class for adversarial wrappers (used in ARPL) """
+    """Base class for adversarial wrappers (used in ARPL)"""
 
     def __init__(self, wrapped_env, policy, eps, phi):
         EnvWrapper.__init__(self, wrapped_env)
@@ -63,7 +63,7 @@ class AdversarialWrapper(EnvWrapper, ABC):
 
 
 class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
-    """" Wrapper to apply adversarial perturbations to the observations (used in ARPL) """
+    """ " Wrapper to apply adversarial perturbations to the observations (used in ARPL)"""
 
     def __init__(self, wrapped_env, policy, eps, phi):
         """
@@ -94,7 +94,7 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
 
 
 class AdversarialStateWrapper(AdversarialWrapper, Serializable):
-    """" Wrapper to apply adversarial perturbations to the state (used in ARPL) """
+    """ " Wrapper to apply adversarial perturbations to the state (used in ARPL)"""
 
     def __init__(self, wrapped_env, policy, eps, phi, torch_observation=False):
         """
@@ -142,7 +142,7 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
 
 
 class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
-    """" Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL) """
+    """ " Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL)"""
 
     def __init__(self, wrapped_env, policy, eps, phi, width=0.25):
         """

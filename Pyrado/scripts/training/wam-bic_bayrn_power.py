@@ -39,7 +39,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.barrett_wam.wam_bic import WAMBallInCupRealEpisodic
 from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
+from pyrado.policies.feed_back.dual_rfb import DualRBFLinearPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 

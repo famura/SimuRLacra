@@ -44,7 +44,7 @@ from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class QQubeSwingUpReal(QuanserReal, Serializable):
-    """ Class for the real Quanser Qube a.k.a. Furuta pendulum """
+    """Class for the real Quanser Qube a.k.a. Furuta pendulum"""
 
     name: str = "qq-su"
 
@@ -117,7 +117,7 @@ class QQubeSwingUpReal(QuanserReal, Serializable):
         return meas - self._sens_offset
 
     def _wait_for_pole_at_rest(self, thold_ang_vel: Optional[float] = 0.1 / 180.0 * np.pi):
-        """ Wait until the Qube's rotating pole is at rest """
+        """Wait until the Qube's rotating pole is at rest"""
         cnt = 0
         while cnt < 1.5 / self._dt:
             # Get next measurement
@@ -129,7 +129,7 @@ class QQubeSwingUpReal(QuanserReal, Serializable):
                 cnt = 0
 
     def calibrate(self):
-        """ Calibration routine to move to the init position and determine the sensor offset """
+        """Calibration routine to move to the init position and determine the sensor offset"""
         with completion_context("Estimating sensor offset", color="c", bright=True):
             # Reset calibration
             self._sens_offset = np.zeros(4)  # last two entries are never calibrated but useful for broadcasting

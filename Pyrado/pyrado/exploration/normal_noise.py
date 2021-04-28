@@ -38,7 +38,7 @@ import pyrado
 
 
 class DiagNormalNoise(nn.Module):
-    """ Module for learnable additive Gaussian noise with a diagonal covariance matrix """
+    """Module for learnable additive Gaussian noise with a diagonal covariance matrix"""
 
     def __init__(
         self,
@@ -106,12 +106,12 @@ class DiagNormalNoise(nn.Module):
 
     @property
     def device(self) -> str:
-        """ Get the device (CPU or GPU) on which the policy is stored. """
+        """Get the device (CPU or GPU) on which the policy is stored."""
         return self._device
 
     @property
     def std(self) -> to.Tensor:
-        """ Get the untransformed standard deviation from the log-transformed. """
+        """Get the untransformed standard deviation from the log-transformed."""
         return to.exp(self.log_std)
 
     @std.setter
@@ -124,7 +124,7 @@ class DiagNormalNoise(nn.Module):
         self.log_std.data = to.log(to.max(std, self.std_min))
 
     def reset_expl_params(self):
-        """ Reset all parameters of the exploration strategy. """
+        """Reset all parameters of the exploration strategy."""
         if self.mean is not None:
             self.mean.data.zero_()
         self.log_std.data.copy_(self.log_std_init)
@@ -173,7 +173,7 @@ class DiagNormalNoise(nn.Module):
 
 
 class FullNormalNoise(nn.Module):
-    """ Module for learnable additive Gaussian noise with a full covariance matrix """
+    """Module for learnable additive Gaussian noise with a full covariance matrix"""
 
     def __init__(
         self,
@@ -240,17 +240,17 @@ class FullNormalNoise(nn.Module):
 
     @property
     def device(self) -> str:
-        """ Get the device (CPU or GPU) on which the policy is stored. """
+        """Get the device (CPU or GPU) on which the policy is stored."""
         return self._device
 
     @property
     @to.no_grad()
     def std(self) -> to.Tensor:
-        """ Get the standard deviations from the internal covariance matrix. """
+        """Get the standard deviations from the internal covariance matrix."""
         return to.sqrt(self.cov.diag())
 
     def reset_expl_params(self):
-        """ Reset all parameters of the exploration strategy. """
+        """Reset all parameters of the exploration strategy."""
         if self.mean is not None:
             self.mean.data.zero_()
         self.cov.data.copy_(self.cov_init)

@@ -132,7 +132,7 @@ class Embedding(ABC, nn.Module):
 
     @property
     def device(self) -> str:
-        """ Get the device (CPU or GPU) on which the embedding is stored. """
+        """Get the device (CPU or GPU) on which the embedding is stored."""
         return self._device
 
     @abstractmethod

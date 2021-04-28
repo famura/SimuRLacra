@@ -43,7 +43,7 @@ from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrappe
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

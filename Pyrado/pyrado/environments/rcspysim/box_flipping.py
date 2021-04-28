@@ -70,7 +70,7 @@ def create_task_space_discrepancy_task(env_spec: EnvSpec, rew_fcn: RewFcn) -> Ma
 
 
 class BoxFlippingSim(RcsSim, Serializable):
-    """ Base class for simplified robotic manipulator flipping a box over and over again """
+    """Base class for simplified robotic manipulator flipping a box over and over again"""
 
     def __init__(
         self,
@@ -141,7 +141,7 @@ class BoxFlippingSim(RcsSim, Serializable):
 
 
 class BoxFlippingIKActivationSim(BoxFlippingSim, Serializable):
-    """ Simplified robotic manipulator flipping a box over and over again using a Rcs IK-based controller """
+    """Simplified robotic manipulator flipping a box over and over again using a Rcs IK-based controller"""
 
     name: str = "bf-ika"
 
@@ -179,7 +179,7 @@ class BoxFlippingIKActivationSim(BoxFlippingSim, Serializable):
 
 
 class BoxFlippingPosDSSim(BoxFlippingSim, Serializable):
-    """ Simplified robotic manipulator flipping a box over and over again using position-level movement primitives """
+    """Simplified robotic manipulator flipping a box over and over again using position-level movement primitives"""
 
     name: str = "bf-pos"
 
@@ -276,7 +276,7 @@ class BoxFlippingPosDSSim(BoxFlippingSim, Serializable):
 
 
 class BoxFlippingVelDSSim(BoxFlippingSim, Serializable):
-    """ Simplified robotic manipulator flipping a box over and over again using velocity-level movement primitives """
+    """Simplified robotic manipulator flipping a box over and over again using velocity-level movement primitives"""
 
     name: str = "bf-vel"
 

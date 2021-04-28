@@ -36,7 +36,7 @@ import pyrado
 
 
 class RunningExpDecayingAverage:
-    """ Implementation of an exponentially decaying average estimator """
+    """Implementation of an exponentially decaying average estimator"""
 
     def __init__(self, alpha: float):
         """
@@ -50,7 +50,7 @@ class RunningExpDecayingAverage:
         self._alpha = alpha
 
     def reset(self, alpha: float = None):
-        """ Reset internal variables. """
+        """Reset internal variables."""
         if alpha is not None:
             if not 0 <= alpha <= 1.0:
                 raise pyrado.ValueErr(given=alpha, ge_constraint="0", le_constraint="1")
@@ -90,7 +90,7 @@ class RunningExpDecayingAverage:
 
 
 class RunningMemoryAverage:
-    """ Implementation of an estimator that computes the average for a memorized buffer """
+    """Implementation of an estimator that computes the average for a memorized buffer"""
 
     def __init__(self, capacity: int):
         """
@@ -108,7 +108,7 @@ class RunningMemoryAverage:
         return self._memory
 
     def reset(self, capacity: float = None):
-        """ Reset internal variables. """
+        """Reset internal variables."""
         if capacity is not None:
             if not 1 <= capacity:
                 raise pyrado.ValueErr(given=capacity, ge_constraint="1")

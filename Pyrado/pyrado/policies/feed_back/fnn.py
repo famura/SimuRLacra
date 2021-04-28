@@ -41,7 +41,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 class FNN(nn.Module):
-    """ Feed-forward neural network """
+    """Feed-forward neural network"""
 
     def __init__(
         self,
@@ -97,7 +97,7 @@ class FNN(nn.Module):
 
     @property
     def device(self) -> str:
-        """ Get the device (CPU or GPU) on which the FNN is stored. """
+        """Get the device (CPU or GPU) on which the FNN is stored."""
         return self._device
 
     @property
@@ -110,7 +110,7 @@ class FNN(nn.Module):
 
     @param_values.setter
     def param_values(self, param):
-        """ Set the policy parameters from an 1d array. """
+        """Set the policy parameters from an 1d array."""
         cp.vector_to_parameters(param, self.parameters())
 
     def init_param(self, init_values: Optional[to.Tensor] = None, **kwargs):
@@ -161,7 +161,7 @@ class FNN(nn.Module):
 
 
 class FNNPolicy(Policy):
-    """ Feed-forward neural network policy """
+    """Feed-forward neural network policy"""
 
     name: str = "fnn"
 
@@ -216,7 +216,7 @@ class FNNPolicy(Policy):
 
 
 class DiscreteActQValPolicy(Policy):
-    """ State-action value (Q-value) feed-forward neural network policy for discrete actions """
+    """State-action value (Q-value) feed-forward neural network policy for discrete actions"""
 
     name: str = "discrqval"
 
@@ -253,12 +253,12 @@ class DiscreteActQValPolicy(Policy):
 
     @staticmethod
     def get_qfcn_input_size(spec: EnvSpec) -> int:
-        """ Get the flat input size. """
+        """Get the flat input size."""
         return spec.obs_space.flat_dim + spec.act_space.ele_dim
 
     @staticmethod
     def get_qfcn_output_size() -> int:
-        """ Get the flat output size. """
+        """Get the flat output size."""
         return 1
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):

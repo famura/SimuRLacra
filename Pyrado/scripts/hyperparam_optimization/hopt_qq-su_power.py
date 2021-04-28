@@ -53,7 +53,7 @@ from pyrado.policies.features import (
     sign_feat,
     squared_feat,
 )
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt

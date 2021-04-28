@@ -37,7 +37,7 @@ from pyrado.utils.input_output import color_validity
 
 
 class DiscreteSpace(Space):
-    """ Discrete space implemented as a ndarray containing all possible integer-valued elements (unsorted) """
+    """Discrete space implemented as a ndarray containing all possible integer-valued elements (unsorted)"""
 
     def __init__(self, eles: Union[np.ndarray, list], labels: Sequence[str] = None):
         """
@@ -72,7 +72,7 @@ class DiscreteSpace(Space):
             self._labels.fill(None)
 
     def __str__(self):
-        """ Get an information string. """
+        """Get an information string."""
         return f"DiscreteSpace id: {id(self)}\nelements: {self.eles}"
 
     @property

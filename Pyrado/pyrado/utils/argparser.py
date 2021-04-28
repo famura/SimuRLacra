@@ -30,7 +30,7 @@ import argparse
 
 
 def get_argparser() -> argparse.ArgumentParser:
-    """ Return Pyrado's default argument parser. """
+    """Return Pyrado's default argument parser."""
 
     parser = argparse.ArgumentParser(
         description="Pyrado's default argument parser",
@@ -47,6 +47,13 @@ def get_argparser() -> argparse.ArgumentParser:
         action="store_false",
     )
     parser.set_defaults(animation=True)
+    parser.add_argument(
+        "--cut_rollout",
+        nargs="+",
+        type=int,
+        default=None,
+        help="tuple of indices defining start and end index of the rollout",
+    )
     parser.add_argument(
         "--dt",
         type=float,

@@ -40,6 +40,7 @@ from pyrado.domain_randomization.domain_parameter import (
     UniformDomainParam,
 )
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.environments.base import Env
 from pyrado.environments.one_step.catapult import CatapultSim
 from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim, BallOnBeamSim
@@ -52,15 +53,16 @@ from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.policies.feed_forward.linear import LinearPolicy
-from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
+from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
+from pyrado.policies.feed_back.two_headed_fnn import TwoHeadedFNNPolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
+from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
+from pyrado.policies.feed_forward.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.policies.recurrent.rnn import GRUPolicy, LSTMPolicy, RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHeadedLSTMPolicy, TwoHeadedRNNPolicy
-from pyrado.policies.special.dummy import DummyPolicy, IdlePolicy
-from pyrado.policies.special.time import TimePolicy, TraceableTimePolicy
 
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
 from pyrado.spaces import BoxSpace
@@ -672,75 +674,86 @@ class DefaultPolicies:
         return FeatureStack([const_feat, identity_feat, squared_feat])
 
     @staticmethod
-    def idle_policy(env):
+    def idle_policy(env: Env):
         return IdlePolicy(env.spec)
 
     @staticmethod
-    def dummy_policy(env):
+    def dummy_policy(env: Env):
         return DummyPolicy(env.spec)
 
     @staticmethod
-    def linear_policy(env):
+    def linear_policy(env: Env):
         return LinearPolicy(env.spec, DefaultPolicies.default_fs())
 
     @staticmethod
-    def linear_policy_cuda(env):
+    def linear_policy_cuda(env: Env):
         return LinearPolicy(env.spec, DefaultPolicies.default_fs(), use_cuda=True)
 
     @staticmethod
-    def time_policy(env):
+    def time_policy(env: Env):
         def timefcn(t: float):
             return list(np.random.rand(env.spec.act_space.flat_dim))
 
         return TimePolicy(env.spec, dt=env.dt, fcn_of_time=timefcn)
 
     @staticmethod
-    def tracetime_policy(env):
+    def tracetime_policy(env: Env):
         def timefcn(t: float):
             return list(np.random.rand(env.spec.act_space.flat_dim))
 
         return TraceableTimePolicy(env.spec, dt=env.dt, fcn_of_time=timefcn)
 
     @staticmethod
-    def fnn_policy(env):
+    def pst_policy(env: Env):
+        return PolySplineTimePolicy(
+            env.spec,
+            dt=env.dt,
+            t_end=int(env.max_steps / env.dt),
+            cond_lvl="acc",
+            cond_final=to.zeros(3),
+            use_cuda=False,
+        )
+
+    @staticmethod
+    def fnn_policy(env: Env):
         return FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
 
     @staticmethod
-    def fnn_policy_cuda(env):
+    def fnn_policy_cuda(env: Env):
         return FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=True)
 
     @staticmethod
-    def rnn_policy(env):
+    def rnn_policy(env: Env):
         return RNNPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, hidden_nonlin="tanh")
 
     @staticmethod
-    def rnn_policy_cuda(env):
+    def rnn_policy_cuda(env: Env):
         return RNNPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, hidden_nonlin="tanh", use_cuda=True)
 
     @staticmethod
-    def lstm_policy(env):
+    def lstm_policy(env: Env):
         return LSTMPolicy(env.spec, hidden_size=8, num_recurrent_layers=2)
 
     @staticmethod
-    def lstm_policy_cuda(env):
+    def lstm_policy_cuda(env: Env):
         return LSTMPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, use_cuda=True)
 
     @staticmethod
-    def gru_policy(env):
+    def gru_policy(env: Env):
         return GRUPolicy(env.spec, hidden_size=8, num_recurrent_layers=2)
 
     @staticmethod
-    def gru_policy_cuda(env):
+    def gru_policy_cuda(env: Env):
         return GRUPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, use_cuda=True)
 
     @staticmethod
-    def adn_policy(env):
+    def adn_policy(env: Env):
         return ADNPolicy(
             env.spec, activation_nonlin=to.sigmoid, potentials_dyn_fcn=pd_cubic, potential_init_learnable=False
         )
 
     @staticmethod
-    def nf_policy(env):
+    def nf_policy(env: Env):
         return NFPolicy(
             env.spec,
             hidden_size=5,
@@ -752,21 +765,21 @@ class DefaultPolicies:
         )
 
     @staticmethod
-    def thfnn_policy(env):
+    def thfnn_policy(env: Env):
         return TwoHeadedFNNPolicy(env.spec, shared_hidden_sizes=[16, 16], shared_hidden_nonlin=to.relu)
 
     @staticmethod
-    def thrnn_policy(env):
+    def thrnn_policy(env: Env):
         return TwoHeadedRNNPolicy(
             env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1, shared_hidden_nonlin="tanh"
         )
 
     @staticmethod
-    def thgru_policy(env):
+    def thgru_policy(env: Env):
         return TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
 
     @staticmethod
-    def thlstm_policy(env):
+    def thlstm_policy(env: Env):
         return TwoHeadedLSTMPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
 
 

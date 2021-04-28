@@ -166,7 +166,7 @@ class SPOTA(InterruptableAlgorithm):
 
     @property
     def subroutine_cand(self) -> Algorithm:
-        """ Get the candidate subroutine. """
+        """Get the candidate subroutine."""
         return self._subrtn_cand
 
     @property

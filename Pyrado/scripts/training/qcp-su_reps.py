@@ -45,7 +45,7 @@ from pyrado.policies.features import (
     sign_feat,
     squared_feat,
 )
-from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 

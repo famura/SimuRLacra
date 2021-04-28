@@ -39,8 +39,8 @@ from matplotlib import pyplot as plt
 
 import pyrado
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.policies.special.dummy import IdlePolicy
-from pyrado.policies.special.time import TimePolicy
+from pyrado.policies.feed_forward.dummy import IdlePolicy
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 
 

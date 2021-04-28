@@ -42,7 +42,7 @@ from pyrado.utils.data_types import merge_dicts
 
 
 class NonlinRegression(Algorithm):
-    """ Train a policy using stochastic gradient descent to approximate the given data. """
+    """Train a policy using stochastic gradient descent to approximate the given data."""
 
     name: str = "regr"  # unique identifier
 

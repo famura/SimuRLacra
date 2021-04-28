@@ -41,7 +41,7 @@ from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class QuanserReal(RealEnv, ABC):
-    """ Base class of all real-world Quanser environments in Pyrado """
+    """Base class of all real-world Quanser environments in Pyrado"""
 
     def __init__(
         self,
@@ -84,11 +84,11 @@ class QuanserReal(RealEnv, ABC):
         self._task = self._create_task(task_args=dict() if task_args is None else task_args)
 
     def __del__(self):
-        """ Finalizer forwards to close function. """
+        """Finalizer forwards to close function."""
         self.close()
 
     def close(self):
-        """ Sends a zero-step and closes the communication. """
+        """Sends a zero-step and closes the communication."""
         if self._qsoc.is_open():
             for i in range(10):
                 self.step(np.zeros(self.act_space.shape))

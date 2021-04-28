@@ -49,13 +49,13 @@ from pyrado.spaces.box import InfBoxSpace
 
 
 def _ps_init(G, env, policy):
-    """ Store pickled (and thus copied) environment and policy. """
+    """Store pickled (and thus copied) environment and policy."""
     G.env = pickle.loads(env)
     G.policy = pickle.loads(policy)
 
 
 def _ps_update_policy(G, state):
-    """ Update policy state_dict. """
+    """Update policy state_dict."""
     G.policy.load_state_dict(state)
 
 
@@ -151,7 +151,7 @@ def _ps_run_one_reset_kwargs_segment(
 
 
 class ParallelRolloutSampler(SamplerBase, Serializable):
-    """ Class for sampling from multiple environments in parallel """
+    """Class for sampling from multiple environments in parallel"""
 
     def __init__(
         self,

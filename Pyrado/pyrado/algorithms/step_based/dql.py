@@ -40,7 +40,7 @@ from pyrado.algorithms.step_based.value_based import ValueBased
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger
-from pyrado.policies.feed_forward.fnn import DiscreteActQValPolicy
+from pyrado.policies.feed_back.fnn import DiscreteActQValPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
@@ -163,7 +163,7 @@ class DQL(ValueBased):
         return nn.functional.smooth_l1_loss(q_vals, expected_q_vals)
 
     def update(self):
-        """ Update the policy's and qfcn_targ Q-function's parameters on transitions sampled from the replay memory. """
+        """Update the policy's and qfcn_targ Q-function's parameters on transitions sampled from the replay memory."""
         losses = to.zeros(self.num_batch_updates)
         policy_grad_norm = to.zeros(self.num_batch_updates)
 

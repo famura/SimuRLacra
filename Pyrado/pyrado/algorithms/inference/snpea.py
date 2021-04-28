@@ -40,7 +40,6 @@ from tqdm import tqdm
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.logger.step import StepLogger
-from pyrado.policies.special.mdn import MDNPolicy
 from pyrado.sampling.sbi_rollout_sampler import SimRolloutSamplerForSBI
 
 
@@ -117,7 +116,7 @@ class SNPEA(Algorithm):
 
     @property
     def posterior(self) -> MDNPolicy:
-        """ Return a copy of the posterior"""
+        """Return a copy of the posterior"""
         return deepcopy(self.density_estimator)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
