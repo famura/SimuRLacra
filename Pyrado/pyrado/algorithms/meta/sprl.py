@@ -315,7 +315,7 @@ class SPRL(Algorithm):
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
-        # wrap the sampler of the subroutine with an rollout saving wrapper
+        # Wrap the sampler of the subroutine with an rollout saving wrapper
         ros = RolloutSavingWrapper(sampler=subroutine.sampler)
         subroutine.sampler = ros
 
@@ -390,13 +390,13 @@ class SPRL(Algorithm):
             target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
         )
 
-        rollouts = self._subroutine.sampler.rollouts
+        rollouts_all = self._subroutine.sampler.rollouts
         contexts = to.tensor(
             [
                 [
-                    to.from_numpy(stepseq.rollout_info["domain_param"][param.name])
-                    for rollout in rollouts
-                    for stepseq in rollout
+                    to.from_numpy(ro.rollout_info["domain_param"][param.name])
+                    for rollouts in rollouts_all
+                    for ro in rollouts
                 ]
                 for param in self._spl_parameters
             ],
@@ -408,7 +408,7 @@ class SPRL(Algorithm):
             previous_distribution.distribution, target_distribution.distribution
         )
 
-        values = to.tensor([stepsequence.undiscounted_return() for rollout in rollouts for stepsequence in rollout])
+        values = to.tensor([ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts])
 
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
@@ -586,6 +586,6 @@ class SPRL(Algorithm):
         self._subroutine.reset()
 
         self._subroutine.train(snapshot_mode, None, meta_info)
-        rollouts = self._subroutine.sampler.rollouts
-        x = np.median([[stepsequence.undiscounted_return() for rollout in rollouts for stepsequence in rollout]])
+        rollouts_all = self._subroutine.sampler.rollouts
+        x = np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]])
         return x
