@@ -752,7 +752,7 @@ def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=10,
+        max_iter=2,
         min_steps=env.max_steps,
         num_cpu=2,
         std_init=0.15,
