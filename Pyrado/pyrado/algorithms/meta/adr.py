@@ -204,7 +204,7 @@ class ADR(Algorithm):
 
         return params
 
-    def step(self, snapshot_mode: str, meta_info: dict = None, parallel: bool = True):
+    def step(self, snapshot_mode: str, meta_info: dict = None, parallel: bool = True):  # pylint: disable=arguments-differ
         rand_trajs = []
         ref_trajs = []
         ros = []
@@ -220,7 +220,7 @@ class ADR(Algorithm):
             rand_trajs_now = []
             if parallel:
                 with to.no_grad():
-                    for t in range(10):
+                    for _ in range(10):
                         action = (
                             self.svpg.expl_strats[i](to.as_tensor(state, dtype=to.get_default_dtype()))
                             .detach()

@@ -206,8 +206,8 @@ class MinMaxScaler:
         self._bound_up = bound_up
 
         # Initialize in scale_to()
-        self.data_min = None
-        self.data_span = None
+        self._data_min = None
+        self._data_span = None
 
     def _convert_bounds(
         self, data: Union[to.Tensor, np.ndarray]

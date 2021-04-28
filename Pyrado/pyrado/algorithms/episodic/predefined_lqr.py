@@ -114,11 +114,11 @@ class LQR(Algorithm, ExposedSampler):
 
             # System modeling
             dp = self._env.domain_param
-            dp["J_eq"] = self._env._J_eq
-            dp["B_eq_v"] = self._env._B_eq_v
-            dp["c_kin"] = self._env._c_kin
-            dp["zeta"] = self._env._zeta
-            dp["A_m"] = self._env._A_m
+            dp["J_eq"] = self._env._J_eq  # pylint: disable=protected-access
+            dp["B_eq_v"] = self._env._B_eq_v  # pylint: disable=protected-access
+            dp["c_kin"] = self._env._c_kin  # pylint: disable=protected-access
+            dp["zeta"] = self._env._zeta  # pylint: disable=protected-access
+            dp["A_m"] = self._env._A_m  # pylint: disable=protected-access
 
             A = np.zeros((self._env.obs_space.flat_dim, self._env.obs_space.flat_dim))
             A[: self._env.obs_space.flat_dim // 2, self._env.obs_space.flat_dim // 2 :] = np.eye(

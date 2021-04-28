@@ -100,7 +100,7 @@ class WAMSim(MujocoSimEnv, ABC, Serializable):
         raise NotImplementedError
 
     @classmethod
-    def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
+    def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:  # pylint: disable=arguments-differ
         if num_dof == 7:
             return dict(
                 link_1_mass=10.76768767,  # [kg]

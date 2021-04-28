@@ -54,10 +54,11 @@ def set_style(style_name: str = "default"):
     :param style_name: str containing the matplotlib style name, or 'default' for the Pyrado default style
     """
 
+    # noinspection PyBroadException
     try:
         font_manager.findSystemFonts(fontpaths=None, fontext="ttf")
         font_manager.findfont("serif", rebuild_if_missing=False)
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         pass
 
     if style_name == "default":

@@ -39,7 +39,7 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.nn_layers import IndiNonlinLayer
 
 
-def pd_linear(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs) -> to.Tensor:
+def pd_linear(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor) -> to.Tensor:
     r"""
     Basic proportional dynamics
 
@@ -49,7 +49,6 @@ def pd_linear(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs
     :param s: stimulus, higher values lead to larger changes of the potentials (depends on the dynamics function)
     :param h: resting level, a.k.a. constant offset
     :param tau: time scaling factor, higher values lead to slower changes of the potentials (linear dependency)
-    :param kwargs: additional parameters to the potential dynamics
     """
     if not all(tau > 0):
         raise pyrado.ValueErr(given=tau, g_constraint="0")
@@ -299,7 +298,7 @@ class ADNPolicy(PotentialBasedPolicy):
             init_param(self.pot_to_act_layer, **kwargs)
 
             # Initialize cubic decay and capacity if learnable
-            if self.potentials_dot_fcn == pd_cubic and self.kappa_learnable:
+            if self.potentials_dot_fcn == pd_cubic and self.kappa_learnable:  # pylint: disable=comparison-with-callable
                 self._log_kappa.data = self._log_kappa_init
             elif self.potentials_dot_fcn in [pd_capacity_21, pd_capacity_21_abs, pd_capacity_32, pd_capacity_32_abs]:
                 if self.capacity_learnable:

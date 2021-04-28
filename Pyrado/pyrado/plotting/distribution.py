@@ -270,7 +270,7 @@ def draw_posterior_distr_1d(
         ax.set_xlabel(f"${dp_mapping[dim]}$" if x_label == "" else x_label)
         ax.set_ylabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
     ax.set_aspect(1.0 / ax.get_data_ratio(), adjustable="box")
-    ax.set_title(f"")
+    ax.set_title("")
 
     return plt.gcf()
 
@@ -770,7 +770,7 @@ def draw_posterior_distr_pairwise_scatter(
     prob_labels: Optional[np.ndarray] = "",
     c_palette=sns.color_palette(),
     legend_labels=None,
-    label_mapping: dict = dict(),
+        label_mapping=None,
 ) -> plt.Figure:
     """
     Plot a 2-dim gird of pairwise slices of the posterior distribution evaluated with samples from the posterior
@@ -790,6 +790,8 @@ def draw_posterior_distr_pairwise_scatter(
     :return: figure containing the pair plot
     """
     # Check the inputs
+    if label_mapping is None:
+        label_mapping = dict()
     if marginal_layout == "inside":
         plot_shape = (len(dp_mapping), len(dp_mapping))
     elif marginal_layout == "outside":

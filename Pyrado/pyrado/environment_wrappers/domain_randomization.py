@@ -38,7 +38,7 @@ from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import all_envs, inner_env, remove_env
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.utils.input_output import completion_context, print_cbt
+from pyrado.utils.input_output import completion_context
 
 
 class DomainRandWrapper(EnvWrapper, Serializable):

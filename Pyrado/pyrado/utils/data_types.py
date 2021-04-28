@@ -213,16 +213,18 @@ def to_float_relentless(inp):
             return inp.astype(dtype=float).tolist()
     elif isinstance(inp, list):
         for i, x in enumerate(inp):
+            # noinspection PyBroadException
             try:
                 inp[i] = float(x)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
         return inp
     else:
         # Relentless
+        # noinspection PyBroadException
         try:
             inp = float(inp)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             pass
         return inp
 

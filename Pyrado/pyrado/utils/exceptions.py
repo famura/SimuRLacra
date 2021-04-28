@@ -66,7 +66,7 @@ class BaseErr(Exception):
                         for attr in dir(m_self):
                             # try to access attribute
                             yield attr, getattr(m_self, attr)
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-except
                         # Simply skip errors here, we only do this for error reporting
                         pass
 

@@ -90,7 +90,7 @@ class MaskedTask(Task):
     def rew_fcn(self, rew_fcn: RewFcn):
         self._wrapped_task.rew_fcn = rew_fcn
 
-    def reset(self, env_spec: EnvSpec, **kwargs):
+    def reset(self, env_spec: EnvSpec, **kwargs):  # pylint: disable=arguments-differ
         self._env_spec = env_spec
 
         # Determine the masks

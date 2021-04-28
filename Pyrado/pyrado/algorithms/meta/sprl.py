@@ -166,7 +166,7 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         self._mean_is_parameter = mean_is_parameter
         self._cov_is_parameter = cov_is_parameter
 
-    def from_stacked(self, stacked: np.ndarray) -> "ParameterAgnosticMultivariateNormalWrapper":
+    def from_stacked(self, stacked: np.ndarray) -> "ParameterAgnosticMultivariateNormalWrapper":  # pylint: disable=arguments-differ
         """
         Builds a new `ParameterAgnosticMultivariateNormalWrapper` from the given stacked values. In contrast to
         `MultivariateNormalWrapper.from_stacked(dim, stacked)`, this does not require a dimensionality as it is an
@@ -222,7 +222,7 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         if self._cov_is_parameter:
             yield self.cov_chol_flat
 
-    def get_stacked(
+    def get_stacked(  # pylint: disable=arguments-differ
         self, return_mean_cov_indices: bool = False
     ) -> Union[np.ndarray, Tuple[np.ndarray, Optional[List[int]], Optional[List[int]]]]:
         """
@@ -366,8 +366,6 @@ class SPRL(Algorithm):
         for param in self._spl_parameters:
             self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
-
-        dim = context_mean.shape[0]
 
         # If we are in the first iteration and have a bad performance,
         # we want to completely reset the policy if training is unsuccessful
@@ -529,7 +527,7 @@ class SPRL(Algorithm):
             if constraints_satisfied and std_ok and result.fun < old_f:
                 self._adapt_parameters(result.x)
             else:
-                print(f"Update unsuccessful, keeping old values spl parameters")
+                print("Update unsuccessful, keeping old values spl parameters")
 
     def reset(self, seed: int = None):
         # Forward to subroutine
@@ -562,7 +560,7 @@ class SPRL(Algorithm):
                 param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
 
     def _train_subroutine_and_evaluate_perf(
-        self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False, **kwargs
+        self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False
     ) -> float:
         """
         Internal method required by the `until_thold_exceeded` function.

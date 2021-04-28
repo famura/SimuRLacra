@@ -93,23 +93,23 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         # Also reset counter
         self._cnt = 0
 
-    def _set_wrapper_domain_param(self, domain_param: dict):
+    def _set_wrapper_domain_param(self, param: dict):
         """
         Store the downsampling factor in the domain parameter dict
 
-        :param domain_param: domain parameter dict
+        :param param: domain parameter dict
         """
         # Cast to integer for consistency
-        domain_param["downsampling"] = int(self._factor)
+        param["downsampling"] = int(self._factor)
 
-    def _get_wrapper_domain_param(self, domain_param: dict):
+    def _get_wrapper_domain_param(self, param: dict):
         """
         Load the downsampling factor from the domain parameter dict
 
-        :param domain_param: domain parameter dict
+        :param param: domain parameter dict
         """
         # Cast the factor value to int, since randomizer yields ndarrays or Tensors
-        self._factor = int(domain_param.get("downsampling", self._factor))
+        self._factor = int(param.get("downsampling", self._factor))
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Adapt _factor to the new act_downsampling if provided

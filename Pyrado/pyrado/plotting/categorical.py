@@ -126,7 +126,7 @@ def draw_categorical(
     # Postprocess
     if alpha < 1 and plot_type == "box":
         for patch in ax.artists:
-            r, g, b, a = patch.get_facecolor()
+            r, g, b, _ = patch.get_facecolor()
             patch.set_facecolor((r, g, b, alpha))
     elif alpha < 1 and plot_type == "violin":
         for violin in ax.collections[::2]:

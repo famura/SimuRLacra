@@ -72,24 +72,24 @@ class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
         # Add it to the observation
         return obs + noise
 
-    def _set_wrapper_domain_param(self, domain_param: dict):
+    def _set_wrapper_domain_param(self, param: dict):
         """
         Store the observation noise parameters in the domain parameter dict.
 
-        :param domain_param: domain parameter dict
+        :param param: domain parameter dict
         """
-        domain_param["obs_noise_mean"] = self._mean
-        domain_param["obs_noise_std"] = self._std
+        param["obs_noise_mean"] = self._mean
+        param["obs_noise_std"] = self._std
 
-    def _get_wrapper_domain_param(self, domain_param: dict):
+    def _get_wrapper_domain_param(self, param: dict):
         """
         Load the observation noise parameters from the domain parameter dict.
 
-        :param domain_param: domain parameter dict
+        :param param: domain parameter dict
         """
-        if "obs_noise_mean" in domain_param:
-            self._mean = np.array(domain_param["obs_noise_mean"])
+        if "obs_noise_mean" in param:
+            self._mean = np.array(param["obs_noise_mean"])
             assert self._mean.shape == self.obs_space.shape
-        if "obs_noise_std" in domain_param:
-            self._std = np.array(domain_param["obs_noise_std"])
+        if "obs_noise_std" in param:
+            self._std = np.array(param["obs_noise_std"])
             assert self._std.shape == self.obs_space.shape

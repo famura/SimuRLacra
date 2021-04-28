@@ -91,7 +91,7 @@ def draw_surface(
 
         if hasattr(z_fcn, "_fcn"):
             # Passed function was wrapped (e.g. by functools)
-            check_fcn = z_fcn._fcn
+            check_fcn = z_fcn._fcn  # pylint: disable=protected-access
         else:
             check_fcn = z_fcn
 

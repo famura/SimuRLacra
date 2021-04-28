@@ -85,7 +85,7 @@ class FlippingTask(Task):
             raise pyrado.TypeErr(given=rew_fcn, expected_type=RewFcn)
         self._rew_fcn = rew_fcn
 
-    def reset(self, env_spec: EnvSpec, **kwargs):
+    def reset(self, env_spec: EnvSpec, **kwargs):  # pylint: disable=arguments-differ
         """
         Reset the task.
 

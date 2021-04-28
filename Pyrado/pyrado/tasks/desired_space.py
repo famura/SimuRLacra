@@ -89,7 +89,7 @@ class DesSpaceTask(Task):
             raise pyrado.TypeErr(given=rew_fcn, expected_type=[ZeroPerStepRewFcn, MinusOnePerStepRewFcn])
         self._rew_fcn = rew_fcn
 
-    def reset(self, env_spec: EnvSpec, space_des: Space = None, **kwargs):
+    def reset(self, env_spec: EnvSpec, space_des: Space = None, **kwargs):  # pylint: disable=arguments-differ
         """
         Reset the task.
 

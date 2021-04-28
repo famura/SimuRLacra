@@ -71,7 +71,7 @@ class DictIndexProxy:
         else:
             self._prefix = ""
 
-    def _process_key(self, key: str, index: int, error_type: Type[Exception]):
+    def _process_key(self, key: str, index: int):
         return key, index
 
     def _get_keyed_value(self, key, error_type: Type[Exception] = RuntimeError):
@@ -109,7 +109,7 @@ class DictIndexProxy:
             raise error_type(f"Entry {self._prefix}{key} has un-gettable type {type(value)}")
 
     def _get_indexed_value(self, key, error_type: Type[Exception] = RuntimeError):
-        real_key, index = self._process_key(key, self._index, error_type)
+        real_key, index = self._process_key(key, self._index)
 
         # Obtain keyed value list from obj dict
         value = self._get_keyed_value(real_key, error_type=error_type)
@@ -117,7 +117,7 @@ class DictIndexProxy:
         return self._index_value(key, value, index, error_type)
 
     def _set_indexed_value(self, key, new_value, error_type: Type[Exception] = RuntimeError):
-        real_key, index = self._process_key(key, self._index, error_type)
+        real_key, index = self._process_key(key, self._index)
 
         # Obtain keyed value list from obj dict
         value = self._get_keyed_value(real_key, error_type=error_type)
@@ -197,7 +197,7 @@ class Step(DictIndexProxy):
 
         self._rollout = rollout
 
-    def _process_key(self, key: str, index: int, error_type: Type[Exception]):
+    def _process_key(self, key: str, index: int):
         if key.startswith("next_"):
             if not self._rollout.continuous:
                 raise error_type("Access to next element is not supported for non-continuous rollouts!")
@@ -662,7 +662,7 @@ class StepSequence(Sequence[Step]):
 
         else:
             # Split by steps
-            for b in gen_ordered_batch_idcs(batch_size, self.length, sorted=True):
+            for b in gen_ordered_batch_idcs(batch_size, self.length, sort=True):
                 yield self[b]
 
     def split_shuffled_batches(self, batch_size: int, complete_rollouts: bool = False):

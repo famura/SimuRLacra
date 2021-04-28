@@ -84,7 +84,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
             m=1.0, k=30.0, d=0.5  # object's mass [kg]  # spring stiffness constant [N/m]
         )  # damping constant [Ns/m]
 
-    def _calc_constants(self):
+    def _calc_constants(self):  # pylint: disable=arguments-differ
         m = self.domain_param["m"]
         k = self.domain_param["k"]
         d = self.domain_param["d"]
@@ -182,7 +182,6 @@ class OneMassOscillatorDomainParamEstimator(nn.Module):
 
     def update(self, rollouts: Sequence[StepSequence]):
         # Pre-process rollout data
-        [ro.torch(data_type=to.get_default_dtype()) for ro in rollouts]
         states_cat = to.cat([ro.observations[:-1] for ro in rollouts])
         actions_cat = to.cat([ro.actions for ro in rollouts])
         targets_cat = to.cat([(ro.observations[1:] - ro.observations[:-1]) for ro in rollouts])  # state deltas

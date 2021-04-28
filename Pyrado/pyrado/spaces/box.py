@@ -62,12 +62,12 @@ class BoxSpace(Space):
             # Cast the bounds into arrays if necessary
             try:
                 self.bound_lo = np.atleast_1d(np.array(bound_lo))
-            except TypeError:
-                raise pyrado.TypeErr(given=bound_lo, expected_type=[float, list, np.ndarray])
+            except TypeError as ex:
+                raise pyrado.TypeErr(given=bound_lo, expected_type=[float, list, np.ndarray]) from ex
             try:
                 self.bound_up = np.atleast_1d(np.array(bound_up))
-            except TypeError:
-                raise pyrado.TypeErr(given=bound_up, expected_type=[float, list, np.ndarray])
+            except TypeError as ex:
+                raise pyrado.TypeErr(given=bound_up, expected_type=[float, list, np.ndarray]) from ex
 
             if self.bound_lo.shape != self.bound_up.shape:
                 raise pyrado.ShapeErr(given=bound_lo, expected_match=bound_up)
@@ -141,7 +141,7 @@ class BoxSpace(Space):
             raise pyrado.ShapeErr(given=cand, expected_match=self)
         if np.isnan(cand).any():
             raise pyrado.ValueErr(
-                msg=f"At least one value is NaN!"
+                msg="At least one value is NaN!"
                 + tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]], headers="firstrow")
             )
 

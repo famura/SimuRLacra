@@ -41,8 +41,6 @@ import pyrado
 class GlobalNamespace:
     """Type of the worker's global namespace"""
 
-    pass
-
 
 _CMD_STOP = "stop"
 _RES_SUCCESS = "success"
@@ -71,9 +69,10 @@ def _pool_worker(from_master, to_master):
         func, args, kwargs = cmd
 
         # Invoke func
+        # noinspection PyBroadException
         try:
             res = func(G, *args, **kwargs)
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             msg = traceback.format_exc()
             to_master.put((_RES_ERROR, msg))
         except:
@@ -197,7 +196,7 @@ class _WorkerInfo:
                 self._process.kill()
 
 
-def _run_set_seed(G, seed):
+def _run_set_seed(seed):
     """Ignore global space, and forward to `pyrado.set_seed()`"""
     pyrado.set_seed(seed)
 

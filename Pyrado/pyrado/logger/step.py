@@ -276,16 +276,16 @@ class CSVPrinter(StepLogPrinter):
 class TensorBoardPrinter(StepLogPrinter):
     """Class for writing tensorboard logs"""
 
-    def __init__(self, dir):
+    def __init__(self, directory):
         """
         Constructor
 
-        :param dir: folder path name
+        :param directory: folder path name
         """
-        self.dir = dir
+        self.dir = directory
         self.step = 0
 
-        self.writer = SummaryWriter(log_dir=dir)
+        self.writer = SummaryWriter(log_dir=directory)
 
     def print_values(self, values: dict, ordered_keys: list, first_step: bool):
         for k in ordered_keys:

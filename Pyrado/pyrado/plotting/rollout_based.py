@@ -430,7 +430,7 @@ def plot_statistic_across_rollouts(
 
     # Create figure with sub-figures
     num_subplts = 2 if (obs_idcs is not None and act_idcs is not None) else 1
-    fix, axs = plt.subplots(num_subplts)
+    _, axs = plt.subplots(num_subplts)
 
     if stat_fcn_kwargs is not None:
         stat_fcn = functools.partial(stat_fcn, **stat_fcn_kwargs)
@@ -444,7 +444,7 @@ def plot_statistic_across_rollouts(
         obs_filled = fill_list_of_arrays(obs_sel, des_len=max_ro_len + 1)  # +1 since obs are of size ro.length+1
         obs_stat = stat_fcn(np.asarray(obs_filled))
 
-        for i, obs_idx in enumerate(obs_idcs):
+        for i, _ in enumerate(obs_idcs):
             axs[0].plot(obs_stat[:, i], label=_get_obs_label(rollouts[0], i), c=f"C{i%10}")
         axs[0].legend()
 
@@ -454,7 +454,7 @@ def plot_statistic_across_rollouts(
         act_filled = fill_list_of_arrays(act_sel, des_len=max_ro_len)
         act_stats = stat_fcn(np.asarray(act_filled))
 
-        for i, act_idx in enumerate(act_idcs):
+        for i, _ in enumerate(act_idcs):
             axs[1].plot(act_stats[:, i], label=_get_act_label(rollouts[0], i), c=f"C{i%10}")
         axs[1].legend()
 
@@ -686,7 +686,7 @@ def plot_rollouts_segment_wise(
                         pd.DataFrame(dict(mean=m_i, std=s_i)),
                         x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
                         show_legend=False,
-                        curve_label="ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
+                        curve_label=r"ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
                         area_label=None,
                         plot_kwargs=dict(color="gray"),
                     )
@@ -761,7 +761,7 @@ def plot_rollouts_segment_wise(
                             pd.DataFrame(dict(mean=m_i, std=s_i)),
                             x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
                             show_legend=False,
-                            curve_label="ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
+                            curve_label=r"ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
                             area_label=None,
                             plot_kwargs=dict(color="gray"),
                         )

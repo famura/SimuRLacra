@@ -279,7 +279,7 @@ class BayRn(InterruptableAlgorithm):
         The number of initial policies to evaluate is the number of found policies.
         """
         # Crawl through the experiment's directory
-        for root, dirs, files in os.walk(self.save_dir):
+        for _, dirs, files in os.walk(self.save_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             found_policies = [p for p in files if p.startswith("init_") and p.endswith("_policy.pt")]
             found_cands = [c for c in files if c.startswith("init_") and c.endswith("_candidate.pt")]

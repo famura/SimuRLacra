@@ -29,7 +29,8 @@
 import numpy as np
 
 
-def never_succeeded(err: np.ndarray = None) -> bool:
+# noinspection PyUnusedLocal
+def never_succeeded(err: np.ndarray = None) -> bool:  # pylint: disable=unused-argument
     """The task is never marked successful, i.e. runs until the environments state or time is out of bounds."""
     return False
 

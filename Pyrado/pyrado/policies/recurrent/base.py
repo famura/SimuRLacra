@@ -68,7 +68,7 @@ class RecurrentPolicy(Policy, ABC):
             return to.zeros(batch_size, self.hidden_size, device=self.device)
 
     @abstractmethod
-    def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
+    def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):  # pylint: disable=arguments-differ
         """
         :param obs: observation from the environment
 

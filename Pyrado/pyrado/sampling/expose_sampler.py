@@ -27,10 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC
-from typing import List
 
 from pyrado.sampling.sampler import SamplerBase
-from pyrado.sampling.step_sequence import StepSequence
 
 
 class ExposedSampler(ABC):

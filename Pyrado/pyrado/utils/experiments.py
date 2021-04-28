@@ -164,7 +164,7 @@ def load_experiment(
         extra["posterior"] = algo.load_posterior(ex_dir, args.iter, args.round, obj=None, verbose=True)
         # Load the complete data or the data of the given iteration
         prefix = "" if args.iter == -1 else f"iter_{args.iter}"
-        extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
+        extra["data_real"] = pyrado.load("data_real.pt", ex_dir, prefix=prefix, verbose=True)
 
     elif algo.name in ["a2c", "ppo", "ppo2"]:
         # Environment
@@ -200,7 +200,7 @@ def load_experiment(
         # Policy
         policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
         # Extra (particles)
-        for idx, p in enumerate(algo.particles):
+        for idx, _ in enumerate(algo.particles):
             extra[f"particle{idx}"] = pyrado.load(f"particle_{idx}.pt", ex_dir, obj=algo.particles[idx], verbose=True)
 
     elif algo.name == "tspred":
@@ -217,8 +217,8 @@ def load_experiment(
         policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (value function)
-        if isinstance(algo._subroutine, ActorCritic):
-            extra["vfcn"] = pyrado.load(algo._subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
+        if isinstance(algo.sub_algorithm, ActorCritic):
+            extra["vfcn"] = pyrado.load(algo.sub_algorithm.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
             print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
     else:
         raise pyrado.TypeErr(msg="No matching algorithm name found during loading the experiment!")

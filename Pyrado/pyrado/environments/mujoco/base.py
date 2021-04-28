@@ -203,7 +203,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         :return: adapted model file where the placeholders are filled with numerical values
         """
         # The mesh dir is not resolved when later passed as a string, thus we do it manually
-        xml_model = xml_model.replace(f"[ASSETS_DIR]", pyrado.MUJOCO_ASSETS_DIR)
+        xml_model = xml_model.replace("[ASSETS_DIR]", pyrado.MUJOCO_ASSETS_DIR)
 
         # Replace all occurrences of the domain parameter placeholder with its value
         for key, value in domain_param.items():
@@ -263,8 +263,8 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             # Make sure init state is a numpy array
             try:
                 init_state = np.asarray(init_state)
-            except Exception:
-                raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
+            except Exception as ex:
+                raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray) from ex
         if not self.init_space.contains(init_state, verbose=True):
             raise pyrado.ValueErr(msg="The init state must be within init state space!")
 

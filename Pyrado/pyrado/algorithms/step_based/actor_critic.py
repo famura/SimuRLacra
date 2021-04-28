@@ -116,7 +116,7 @@ class ActorCritic(Algorithm, ExposedSampler, ABC):
         self.update(ros)
 
     @abstractmethod
-    def update(self, rollouts: Sequence[StepSequence]):
+    def update(self, rollouts: Sequence[StepSequence]):  # pylint: disable=arguments-differ
         """
         Update the actor and critic parameters from the given batch of rollouts.
 

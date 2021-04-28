@@ -171,7 +171,7 @@ class SysIdViaEpisodicRL(Algorithm):
         # but we need to adapt the randomizer (and not just the domain parameters) por every policy param set
         param_samples = []
         loss_hist = []
-        for idx_ps, ps in enumerate(param_sets):
+        for _, ps in enumerate(param_sets):
             # Update the randomizer to use the new
             new_ddp_vals = self._subrtn.policy.transform_to_ddp_space(ps)
             self._subrtn.env.adapt_randomizer(domain_distr_param_values=new_ddp_vals.detach().cpu().numpy())
@@ -184,7 +184,7 @@ class SysIdViaEpisodicRL(Algorithm):
 
             # Iterate over simulated rollout with the same initial state
             for idx_real, idcs_sim in enumerate(
-                gen_ordered_batch_idcs(self.num_rollouts_per_distr, len(rollouts_sim), sorted=True)
+                gen_ordered_batch_idcs(self.num_rollouts_per_distr, len(rollouts_sim), sort=True)
             ):
                 # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
                 ros_real_tr, ros_sim_tr = self.truncate_rollouts(

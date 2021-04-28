@@ -163,7 +163,7 @@ class PolySplineTimePolicy(Policy):
     def reset(self):
         self._curr_time = self._t_init
 
-    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
+    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:  # pylint: disable=arguments-differ,unused-argument
         # Get a vector of powers of the current time
         t_powers = to.tensor([self._curr_time ** o for o in range(self._order + 1)], dtype=to.get_default_dtype())
 

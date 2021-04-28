@@ -28,7 +28,6 @@
 
 import os
 import os.path as osp
-from posix import listdir
 from typing import Optional
 
 import numpy as np
@@ -68,7 +67,6 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
         simple_dynamics: bool = False,
-        load_experimental_tholds: bool = True,
     ):
         """
         Constructor
@@ -77,7 +75,6 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
         :param simple_dynamics: if `True, use a dynamics model without Coriolis forces and without friction effects
-        :param load_experimental_tholds: use the voltage thresholds determined from experiments
         """
         Serializable._init(self, locals())
 
@@ -192,7 +189,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
             offset_th_y=0.0,
         )  # angular offset of the y axis motor shaft [rad]
 
-    def _calc_constants(self):
+    def _calc_constants(self):  # pylint: disable=arguments-differ
         l_plate = self.domain_param["l_plate"]
         m_ball = self.domain_param["m_ball"]
         r_ball = self.domain_param["r_ball"]
@@ -267,13 +264,11 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         th_x_ddot = (self.A_m * act[0] - self.B_eq_v * th_x_dot) / self.J_eq
         th_y_ddot = (self.A_m * act[1] - self.B_eq_v * th_y_dot) / self.J_eq
 
-        """
-        THIS IS TIME INTENSIVE
-        if not self._simple_dynamics:
-            # Get the plate angles from inverse kinematics
-            self.plate_angs[0] = self._kin(self.state[0] + self.offset_th_x)
-            self.plate_angs[1] = self._kin(self.state[1] + self.offset_th_y)
-        """
+        # THIS IS TIME INTENSIVE
+        # if not self._simple_dynamics:
+        #     # Get the plate angles from inverse kinematics
+        #     self.plate_angs[0] = self._kin(self.state[0] + self.offset_th_x)
+        #     self.plate_angs[1] = self._kin(self.state[1] + self.offset_th_y)
 
         # Plate (not part of the state since it is a redundant information)
         # The definition of th_y is opposing beta, i.e.
@@ -403,7 +398,7 @@ class QBallBalancerKin(Serializable):
         tip = to.tensor(tip_init, requires_grad=True)
 
         optim = to.optim.SGD([tip], lr=0.01, momentum=0.9)
-        for i in range(self.num_opt_iter):
+        for _ in range(self.num_opt_iter):
             optim.zero_grad()
             loss = self._loss_fcn(tip, th)
             loss.backward()

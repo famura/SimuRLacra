@@ -247,7 +247,7 @@ class REPS(ParameterExploring):
         """
         if self.optim_mode == "scipy":
             # Use scipy optimizers
-            if loss_fcn == self.dual_evaluation:
+            if loss_fcn == self.dual_evaluation:  # pylint: disable=comparison-with-callable
                 res = optimize.minimize(
                     partial(self.dual_evaluation, rets=rets.numpy()),
                     jac=partial(get_grad_via_torch, fcn_to=partial(self.dual_evaluation, rets=rets)),
@@ -255,7 +255,7 @@ class REPS(ParameterExploring):
                     method="SLSQP",
                     bounds=((1e-8, 1e8),),
                 )
-            elif loss_fcn == self.dual_improvement:
+            elif loss_fcn == self.dual_improvement:  # pylint: disable=comparison-with-callable
                 res = optimize.minimize(
                     partial(self.dual_improvement, param_samples=param_samples, w=w),
                     jac=partial(
@@ -275,16 +275,16 @@ class REPS(ParameterExploring):
             for _ in tqdm(
                 range(self.num_epoch_dual),
                 total=self.num_epoch_dual,
-                desc=f"Minimizing dual",
+                desc="Minimizing dual",
                 unit="epochs",
                 file=sys.stdout,
                 leave=False,
             ):
                 # Use PyTorch optimizers
                 self.optim_dual.zero_grad()
-                if loss_fcn == self.dual_evaluation:
+                if loss_fcn == self.dual_evaluation:  # pylint: disable=comparison-with-callable
                     loss = self.dual_evaluation(self.eta, rets)
-                elif loss_fcn == self.dual_improvement:
+                elif loss_fcn == self.dual_improvement:  # pylint: disable=comparison-with-callable
                     loss = self.dual_improvement(self.eta, param_samples, w)
                 else:
                     raise pyrado.TypeErr(msg="Received an improper loss function in REPS.minimize()!")
@@ -292,7 +292,7 @@ class REPS(ParameterExploring):
                 self.optim_dual.step()
 
         if to.isnan(self._log_eta):
-            raise RuntimeError(f"The dual's optimization parameter _log_eta became NaN!")
+            raise RuntimeError("The dual's optimization parameter _log_eta became NaN!")
 
     def wml(self, eta: to.Tensor, param_samples: to.Tensor, w: to.Tensor):
         """

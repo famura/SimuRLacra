@@ -59,7 +59,7 @@ class LabeledMarkers:
     def __len__(self):
         return len(self.idx_dict)
 
-    def add(self, idx, pos, size, res):
+    def add(self, idx, pos, size):
         self.idcs.append(idx)
         self.positions.append(pos)
         self.sizes.append(size)
@@ -182,18 +182,18 @@ class NatNetClient:
     def __unpackMarkerSet(self, data):
         offset = 0
         # Model name
-        modelName, separator, remainder = bytes(data[offset:]).partition(b"\0")
+        modelName, _, _ = bytes(data[offset:]).partition(b"\0")
         offset += len(modelName) + 1
-        logging.info("\tModel Name: {}".format(modelName.decode("utf-8")))
+        logging.info(f"\tModel Name: {modelName.decode('utf-8')}")
         # Marker count
         markerCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tMarker Count: {}".format(markerCount))
+        logging.info(f"\tMarker Count: {markerCount}")
         # Markers
         for j in range(markerCount):
             pos = Vector3.unpack(data[offset : offset + 12])
             offset += 12
-            logging.info("\t\tMarker {}: {}".format(j, pos))
+            logging.info(f"\t\tMarker {j}: {pos}")
         return offset
 
     def __unpackRigidBody(self, data):
@@ -202,15 +202,15 @@ class NatNetClient:
         # ID (4 bytes)
         rb_id = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tID: {}".format(rb_id))
+        logging.info(f"\tID: {rb_id}")
 
         # Position and orientation
         pos = Vector3.unpack(data[offset : offset + 12])
         offset += 12
-        logging.info("\t\tPosition: {}".format(pos))
+        logging.info(f"\t\tPosition: {pos}")
         rot = Quaternion.unpack(data[offset : offset + 16])
         offset += 16
-        logging.info("\t\tOrientation: {}".format(rot))
+        logging.info(f"\t\tOrientation: {rot}")
 
         # After Version 3.0, marker data is in description
         ver = self.__natNetStreamVersion
@@ -218,40 +218,40 @@ class NatNetClient:
             # Marker count (4 bytes)
             markerCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            logging.info("\t\tMarker Count: {}".format(markerCount))
+            logging.info(f"\t\tMarker Count: {markerCount}")
             markerCountRange = range(markerCount)
 
             # Marker positions
             for i in markerCountRange:
                 pos = Vector3.unpack(data[offset : offset + 12])
                 offset += 12
-                logging.info("\t\t\tMarker {}: {}".format(i, pos))
+                logging.info(f"\t\t\tMarker {i}: {pos}")
 
             if ver[0] >= 2:
                 # Marker ID's
                 for i in markerCountRange:
                     marker_id = int.from_bytes(data[offset : offset + 4], byteorder="little")
                     offset += 4
-                    logging.info("\t\t\tMarker {} ID {}".format(i, marker_id))
+                    logging.info(f"\t\t\tMarker {i} ID {marker_id}")
 
                 # Marker sizes
                 for i in markerCountRange:
                     size = FloatValue.unpack(data[offset : offset + 4])
                     offset += 4
-                    logging.info("\t\t\tMarker {} Size {}".format(i, size))
+                    logging.info(f"\t\t\tMarker {i} Size {size}")
 
         # NatNet version 2.0 and later
         if ver[0] >= 2:
             (markerError,) = FloatValue.unpack(data[offset : offset + 4])
             offset += 4
-            logging.info("\t\tMean marker error: {}".format(markerError))
+            logging.info(f"\t\tMean marker error: {markerError}")
 
         # Version 2.6 and later
         if ver[0] == 2 and ver[1] >= 6 or ver[0] > 2:
             (param,) = struct.unpack("h", data[offset : offset + 2])
             offset += 2
             trackingValid = (param & 0x01) != 0
-            logging.info("\t\tTracking Valid: {}".format(trackingValid))
+            logging.info(f"\t\tTracking Valid: {trackingValid}")
 
         # Send information to any listener.
         if self.rigidBodyListener is not None:
@@ -263,51 +263,41 @@ class NatNetClient:
     def __unpackSkeleton(self, data):
         offset = 0
         # Skeleton ID
-        id = int.from_bytes(data[offset : offset + 4], byteorder="little")
+        idx = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tID: {}".format(id))
+        logging.info(f"\tID: {idx}")
         # Rigid body count
         rigidBodyCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tRigid Body Count: {}".format(rigidBodyCount))
+        logging.info(f'\tRigid Body Count: {rigidBodyCount}')
         # Rigid bodies
-        for j in range(rigidBodyCount):
+        for _ in range(rigidBodyCount):
             offset += self.__unpackRigidBody(data[offset:])
 
         return offset
 
     def __unpackLabeledMarker(self, data):
         offset = 0
-        id = int.from_bytes(data[offset : offset + 4], byteorder="little")
+        idx = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        model_id = id >> 16
-        marker_id = id & 0x0000FFFF
-        logging.info("\tModelID: {}, MarkerID: {}".format(model_id, marker_id))
+        model_id = idx >> 16
+        marker_id = idx & 0x0000FFFF
+        logging.info(f"\tModelID: {model_id}, MarkerID: {marker_id}")
         pos = Vector3.unpack(data[offset : offset + 12])
         offset += 12
-        logging.info("\t\tPosition: {}".format(pos))
+        logging.info(f"\t\tPosition: {pos}")
         (size,) = FloatValue.unpack(data[offset : offset + 4])
         offset += 4
-        logging.info("\t\tSize: {}".format(size))
+        logging.info(f"\t\tSize: {size}")
 
-        # Version 2.6 and later
         ver = self.__natNetStreamVersion
-        if ver[0] == 2 and ver[1] >= 6 or ver[0] > 2:
-            (param,) = struct.unpack("h", data[offset : offset + 2])
-            offset += 2
-            occluded = (param & 0x01) != 0
-            pointCloudSolved = (param & 0x02) != 0
-            modelSolved = (param & 0x04) != 0
-            if ver[0] >= 3:
-                hasModel = (param & 0x04) != 0
-                unlabeled = (param & 0x10) != 0
-                activeMarker = (param & 0x20) != 0
-
         # Version 3.0 and later
         if ver[0] >= 3:
             (residual,) = FloatValue.unpack(data[offset : offset + 4])
             offset += 4
-            logging.info("\t\tResidual: {}".format(residual))
+            logging.info(f"\t\tResidual: {residual}")
+        else:
+            raise Exception("Only natnet version 3.0 and later is supported!")
 
         return offset, marker_id, pos, size, residual
 
@@ -316,19 +306,19 @@ class NatNetClient:
         # Force plate ID
         forcePlateID = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tForce Plate {}".format(forcePlateID))
+        logging.info(f"\tForce Plate {forcePlateID}")
         # Channel Count
         forcePlateChannelCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
         # Channel Data
         for j in range(forcePlateChannelCount):
-            logging.info("\t\tChannel {}".format(j))
+            logging.info(f"\t\tChannel {j}")
             forcePlateChannelFrameCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            for k in range(forcePlateChannelFrameCount):
+            for _ in range(forcePlateChannelFrameCount):
                 forcePlateChannelVal = int.from_bytes(data[offset : offset + 4], byteorder="little")
                 offset += 4
-                logging.info("\t\t\t {}".format(forcePlateChannelVal))
+                logging.info(f"\t\t\t {forcePlateChannelVal}")
         return offset
 
     def __unpackDevice(self, data):
@@ -336,19 +326,19 @@ class NatNetClient:
         # ID
         deviceID = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tDevice {}".format(deviceID))
+        logging.info(f"\tDevice {deviceID}")
         # Channel Count
         deviceChannelCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
         # Channel Data
         for j in range(deviceChannelCount):
-            logging.info("\t\tChannel {}".format(j))
+            logging.info(f"\t\tChannel {j}")
             deviceChannelFrameCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            for k in range(deviceChannelFrameCount):
+            for _ in range(deviceChannelFrameCount):
                 deviceChannelVal = int.from_bytes(data[offset : offset + 4], byteorder="little")
                 offset += 4
-                logging.info("\t\t\t {}".format(deviceChannelVal))
+                logging.info(f"\t\t\t {deviceChannelVal}")
         return offset
 
     def __unpackMocapData(self, data):
@@ -358,12 +348,12 @@ class NatNetClient:
         # Frame number (4 bytes)
         frameNumber = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("Frame: {}".format(frameNumber))
+        logging.info(f"Frame: {frameNumber}")
 
         # ================ Marker sets
         markerSetCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("Marker Set Count: {}".format(markerSetCount))
+        logging.info(f"Marker Set Count: {markerSetCount}")
         for i in range(markerSetCount):
             offset += self.__unpackMarkerSet(data[offset:])
 
@@ -372,11 +362,11 @@ class NatNetClient:
         unlabeledMarkersCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
         if ver[0] < 3:
-            logging.info("Unlabeled Marker Count: {}".format(unlabeledMarkersCount))
+            logging.info(f"Unlabeled Marker Count: {unlabeledMarkersCount}")
             for i in range(unlabeledMarkersCount):
                 pos = Vector3.unpack(data[offset : offset + 12])
                 offset += 12
-                logging.info("\tMarker {} : {}".format(i, pos))
+                logging.info(f"\tMarker {i} : {pos}")
         else:
             # Just skip them
             offset += 12 * unlabeledMarkersCount
@@ -384,7 +374,7 @@ class NatNetClient:
         # ================ Rigid bodies
         rigidBodyCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("Rigid Body Count: {}".format(rigidBodyCount))
+        logging.info(f"Rigid Body Count: {rigidBodyCount}")
         for i in range(rigidBodyCount):
             offset += self.__unpackRigidBody(data[offset:])
 
@@ -393,7 +383,7 @@ class NatNetClient:
         if ver[0] == 2 and ver[1] > 0 or ver[0] > 2:
             skeletonCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            logging.info("Skeleton Count: {}".format(skeletonCount))
+            logging.info(f"Skeleton Count: {skeletonCount}")
             for i in range(skeletonCount):
                 offset += self.__unpackSkeleton(data[offset:])
 
@@ -402,12 +392,12 @@ class NatNetClient:
         if ver[0] == 2 and ver[1] >= 3 or ver[0] > 2:
             labeledMarkerCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            logging.info("Labeled Marker Count: {}".format(labeledMarkerCount))
+            logging.info(f"Labeled Marker Count: {labeledMarkerCount}")
             markers = LabeledMarkers()
             for i in range(labeledMarkerCount):
                 tmp = self.__unpackLabeledMarker(data[offset:])
                 offset += tmp[0]
-                markers.add(*tmp[1:])
+                markers.add(*tmp[1:])  # pylint: disable=too-many-function-args
 
             markers.finalize()
             if self.labeled_marker_listener is not None:
@@ -417,7 +407,7 @@ class NatNetClient:
         if ver[0] == 2 and ver[1] >= 9 or ver[0] > 2:
             forcePlateCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            logging.info("Force Plate Count: {}".format(forcePlateCount))
+            logging.info(f"Force Plate Count: {forcePlateCount}")
             for i in range(forcePlateCount):
                 offset += self.__unpackForcePlate(data[offset:])
 
@@ -425,7 +415,7 @@ class NatNetClient:
         if ver[0] == 2 and ver[1] >= 11 or ver[0] > 2:
             deviceCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            logging.info("Device Count: {}".format(deviceCount))
+            logging.info(f"Device Count: {deviceCount}")
             for i in range(deviceCount):
                 offset += self.__unpackDevice(data[offset:])
 
@@ -433,7 +423,7 @@ class NatNetClient:
         if ver[0] < 3:
             softwareLatency = FloatValue.unpack(data[offset : offset + 4])
             offset += 4
-            logging.info("Software latency: {}".format(softwareLatency))
+            logging.info(f"Software latency: {softwareLatency}")
 
         # Timecode
         timecode = int.from_bytes(data[offset : offset + 4], byteorder="little")
@@ -448,19 +438,19 @@ class NatNetClient:
         else:
             (timestamp,) = FloatValue.unpack(data[offset : offset + 4])
             offset += 4
-        logging.info("Timestamp: {}".format(timestamp))
+        logging.info(f"Timestamp: {timestamp}")
 
         # Hires Timestamp (Version 3.0 and later)
         if ver[0] >= 3:
             stampCameraExposure = int.from_bytes(data[offset : offset + 8], byteorder="little")
             offset += 8
-            logging.info("Mid-exposure timestamp: {}".format(stampCameraExposure))
+            logging.info(f"Mid-exposure timestamp: {stampCameraExposure}")
             stampDataReceived = int.from_bytes(data[offset : offset + 8], byteorder="little")
             offset += 8
-            logging.info("Camera data received timestamp: {}".format(stampDataReceived))
+            logging.info(f"Camera data received timestamp: {stampDataReceived}")
             stampTransmit = int.from_bytes(data[offset : offset + 8], byteorder="little")
             offset += 8
-            logging.info("Transmit timestamp: {}".format(stampTransmit))
+            logging.info(f"Transmit timestamp: {stampTransmit}")
 
         # ================ Frame parameters
         trackedModelsChanged = False
@@ -491,18 +481,18 @@ class NatNetClient:
     def __unpackMarkerSetDescription(self, data):
         offset = 0
 
-        name, separator, remainder = bytes(data[offset:]).partition(b"\0")
+        name, _, _ = bytes(data[offset:]).partition(b"\0")
         offset += len(name) + 1
-        logging.info("\tMarkerset Name: {}".format(name.decode("utf-8")))
+        logging.info(f"\tMarkers Name: {name.decode('utf-8')}")
 
         markerCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tMarker Count: {}".format(markerCount))
+        logging.info(f"\tMarker Count: {markerCount}")
 
-        for i in range(markerCount):
-            name, separator, remainder = bytes(data[offset:]).partition(b"\0")
+        for _ in range(markerCount):
+            name, _, _ = bytes(data[offset:]).partition(b"\0")
             offset += len(name) + 1
-            logging.info("\t\tMarker Name: {}".format(name.decode("utf-8")))
+            logging.info(f"\t\tMarker Name: {name.decode('utf-8')}")
 
         return offset
 
@@ -511,22 +501,22 @@ class NatNetClient:
 
         # Rigid body name (NatNet 2.0 and later)
         if self.__natNetStreamVersion[0] >= 2:
-            name, separator, remainder = bytes(data[offset:]).partition(b"\0")
+            name, _, _ = bytes(data[offset:]).partition(b"\0")
             offset += len(name) + 1
-            logging.info("\tRigid Body Name: {}".format(name.decode("utf-8")))
+            logging.info(f"\tRigid Body Name: {name.decode('utf-8')}")
 
-        id = int.from_bytes(data[offset : offset + 4], byteorder="little")
+        idx = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tID: {}".format(id))
-        self.rb_map[id] = name
+        logging.info(f"\tID: {idx}")
+        self.rb_map[idx] = name
 
         parentID = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tParent ID: {}".format(parentID))
+        logging.info(f"\tParent ID: {parentID}")
 
         coord_offset = Vector3.unpack(data[offset : offset + 12])
         offset += 12
-        logging.info("\tOffset: {}".format(coord_offset))
+        logging.info(f"\tOffset: {coord_offset}")
 
         # Per-marker data (NatNet 3.0 and later)
         if self.__natNetStreamVersion[0] >= 3:
@@ -536,37 +526,35 @@ class NatNetClient:
             for marker_idx in range(n_markers):
                 pos = Vector3.unpack(data[offset : offset + 12])
                 offset += 12
-                logging.info("\t\tMarker {}: {}".format(marker_idx, pos))
+                logging.info(f"\t\tMarker {marker_idx}: {pos}")
 
             for marker_idx in range(n_markers):
                 marker_required_label = int.from_bytes(data[offset : offset + 4], byteorder="little")
                 offset += 4
                 if marker_required_label != 0:
-                    logging.info("\t\tRequired active label: {}".format(marker_required_label))
+                    logging.info(f"\t\tRequired active label: {marker_required_label}")
 
         return offset
 
     def __unpackSkeletonDescription(self, data):
         offset = 0
 
-        name, separator, remainder = bytes(data[offset:]).partition(b"\0")
+        name, _, _ = bytes(data[offset:]).partition(b"\0")
         offset += len(name) + 1
-        logging.info("\tSkeleton Name: {}".format(name.decode("utf-8")))
+        logging.info(f"\tSkeleton Name: {name.decode('utf-8')}")
 
-        id = int.from_bytes(data[offset : offset + 4], byteorder="little")
+        idx = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tID: {}".format(id))
+        logging.info(f"\tID: {idx}")
 
-        if id in self.rb_map and self.rb_map[id] != name:
-            raise RuntimeError(
-                "Rigid body '%s' is already present in the current map but with name '%s'!" % (name, self.rb_map[id])
-            )
+        if idx in self.rb_map and self.rb_map[idx] != name:
+            raise RuntimeError(f"Rigid body '{name}' is already present in the current map but with name '{self.rb_map[idx]}'!")
 
         rigidBodyCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("\tRigidBody (Bone) Count: {}".format(rigidBodyCount))
+        logging.info(f"\tRigidBody (Bone) Count: {rigidBodyCount}")
 
-        for i in range(rigidBodyCount):
+        for _ in range(rigidBodyCount):
             offset += self.__unpackRigidBodyDescription(data[offset:])
 
         return offset
@@ -575,20 +563,20 @@ class NatNetClient:
         offset = 0
         datasetCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info("Dataset Count: {}".format(datasetCount))
+        logging.info(f"Dataset Count: {datasetCount}")
 
         # Clear the rigid body ID map
         self.rb_map = {}
         for i in range(datasetCount):
-            logging.info("\tDataset: {}".format(i))
-            type = int.from_bytes(data[offset : offset + 4], byteorder="little")
+            logging.info(f"\tDataset: {i}")
+            data_type = int.from_bytes(data[offset : offset + 4], byteorder="little")
             offset += 4
-            logging.info("\tType: {}".format(type))
-            if type == 0:
+            logging.info(f"\tType: {data_type}")
+            if data_type == 0:
                 offset += self.__unpackMarkerSetDescription(data[offset:])
-            elif type == 1:
+            elif data_type == 1:
                 offset += self.__unpackRigidBodyDescription(data[offset:])
-            elif type == 2:
+            elif data_type == 2:
                 offset += self.__unpackSkeletonDescription(data[offset:])
 
     # ================================ Threads ================================ #
@@ -596,10 +584,10 @@ class NatNetClient:
         logging.info("\n------------\nBegin Packet")
 
         messageID = int.from_bytes(data[0:2], byteorder="little")
-        logging.info("Message ID: {}".format(messageID))
+        logging.info(f"Message ID: {messageID}")
 
         packetSize = int.from_bytes(data[2:4], byteorder="little")
-        logging.info("Packet Size: {}".format(packetSize))
+        logging.info(f"Packet Size: {packetSize}")
 
         offset = 4
         if messageID == self.NAT_FRAMEOFDATA:
@@ -608,37 +596,37 @@ class NatNetClient:
             self.__unpackDataDescriptions(data[offset:])
         elif messageID == self.NAT_PINGRESPONSE:
             name, _, _ = bytes(data[offset:]).partition(b"\0")
-            logging.info("\tApp Name: {}".format(name.decode("utf-8")))
+            logging.info(f"\tApp Name: {name.decode('utf-8')}")
             offset += 256  # Skip the sending app's Name field
-            logging.info("\tApp Version: {}".format(struct.unpack("BBBB", data[offset : offset + 4])))
+            logging.info(f"\tApp Version: {struct.unpack('BBBB', data[offset: offset + 4])}")
             offset += 4  # Skip the sending app's Version info
             self.__natNetStreamVersion = struct.unpack("BBBB", data[offset : offset + 4])
-            logging.info("\tApp NatNet Version: {}".format(self.__natNetStreamVersion))
+            logging.info(f"\tApp NatNet Version: {self.__natNetStreamVersion}")
             offset += 4
         elif messageID == self.NAT_RESPONSE:
             if packetSize == 4:
                 commandResponse = int.from_bytes(data[offset : offset + 4], byteorder="little")
                 offset += 4
-                logging.info("Command response: {}".format(commandResponse))
+                logging.info(f"Command response: {commandResponse}")
             else:
-                message, separator, remainder = bytes(data[offset:]).partition(b"\0")
+                message, _, _ = bytes(data[offset:]).partition(b"\0")
                 offset += len(message) + 1
-                logging.info("Command response: {}".format(message.decode("utf-8")))
+                logging.info(f"Command response: {message.decode('utf-8')}")
         elif messageID == self.NAT_UNRECOGNIZED_REQUEST:
             logging.info("Received 'Unrecognized request' from server")
         elif messageID == self.NAT_MESSAGESTRING:
-            message, separator, remainder = bytes(data[offset:]).partition(b"\0")
+            message, _, _ = bytes(data[offset:]).partition(b"\0")
             offset += len(message) + 1
-            logging.info("Received message from server: {}".format(message.decode("utf-8")))
+            logging.info(f"Received message from server: {message.decode('utf-8')}")
         else:
             logging.info("ERROR: Unrecognized packet type")
 
         logging.info("End Packet\n----------")
 
-    def __threadFunction(self, socket):
+    def __threadFunction(self, param_socket):
         while not self._stop:
             # Block for input
-            data, addr = socket.recvfrom(32768)  # 32k byte buffer size
+            data, _ = param_socket.recvfrom(32768)  # 32k byte buffer size
             if len(data) > 0:
                 self.__processMessage(data)
 
@@ -677,7 +665,7 @@ class NatNetClient:
         return result
 
     # ================================= Main ================================== #
-    def sendCommand(self, command, commandStr, socket, address):
+    def sendCommand(self, command, commandStr, param_socket, address):
         packetSize = 0
         if command == self.NAT_REQUEST:
             packetSize = len(commandStr) + 1
@@ -688,7 +676,7 @@ class NatNetClient:
         data += commandStr.encode("utf-8")
         data += b"\0"
 
-        socket.sendto(data, address)
+        param_socket.sendto(data, address)
 
     def run(self, daemon=True):
         """

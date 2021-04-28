@@ -110,7 +110,6 @@ class SimEnv(Env, ABC, Serializable):
 
     def close(self):
         """For compatibility to `RealEnv` with the wrappers which are subclasses of `Env`."""
-        pass
 
     def _get_state(self, state_dict: dict):
         super(SimEnv, self)._get_state(state_dict)

@@ -29,11 +29,9 @@
 from typing import Sequence, Union
 
 import numpy as np
-from tabulate import tabulate
 
 import pyrado
 from pyrado.spaces.base import Space
-from pyrado.utils.input_output import color_validity
 
 
 class EmptySpace(Space):

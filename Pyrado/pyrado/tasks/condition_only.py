@@ -82,7 +82,7 @@ class ConditionOnlyTask(Task):
         # Should not be called
         raise NotImplementedError
 
-    def reset(self, env_spec: EnvSpec, condition_fcn: Callable = None, is_success_condition: bool = None, **kwargs):
+    def reset(self, env_spec: EnvSpec, condition_fcn: Callable = None, is_success_condition: bool = None, **kwargs):  # pylint: disable=arguments-differ
         """
         Reset the task.
 

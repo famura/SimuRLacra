@@ -214,10 +214,7 @@ def color_validity(data: np.ndarray, valids: np.ndarray) -> list:
     :return: list of stings
     """
 
-    def color_validity(v: int) -> str:
-        return Fore.GREEN if v == 1 else Fore.RED
-
-    return [color_validity(v) + str(ele) + Style.RESET_ALL for (ele, v) in zip(data, valids)]
+    return [(Fore.GREEN if v == 1 else Fore.RED) + str(ele) + Style.RESET_ALL for (ele, v) in zip(data, valids)]
 
 
 @contextlib.contextmanager

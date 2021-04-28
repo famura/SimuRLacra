@@ -432,7 +432,7 @@ class WAMBallInCupSim(WAMSim, Serializable):
 
         return False
 
-    def check_ball_in_cup(self, *args, verbose: bool = False):
+    def check_ball_in_cup(self, verbose: bool = False):
         """
         Check if the ball is in the cup.
 
@@ -451,7 +451,7 @@ class WAMBallInCupSim(WAMSim, Serializable):
 
             # Evaluate if the ball collides with part of the WAM (collision bodies)
             # or the connection of WAM and cup (geom_ids)
-            cup_inner_id = self.model._geom_name2id["cup_inner"]
+            cup_inner_id = self.model._geom_name2id["cup_inner"]  # pylint: disable=protected-access
             c1 = body1_name == "ball" and contact.geom2 == cup_inner_id
             c2 = body2_name == "ball" and contact.geom1 == cup_inner_id
             if c1 or c2:

@@ -53,7 +53,7 @@ from pyrado.tasks.base import Task
 from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
 from pyrado.tasks.goalless import GoallessTask
 from pyrado.tasks.reward_functions import ZeroPerStepRewFcn
-from pyrado.utils.input_output import completion_context, print_cbt, print_cbt_once
+from pyrado.utils.input_output import completion_context, print_cbt
 
 
 class WAMBallInCupRealEpisodic(WAMReal):
@@ -176,7 +176,8 @@ class WAMBallInCupRealEpisodic(WAMReal):
 
         return self.observe(self.state), self._curr_rew, done, info
 
-    def _callback(self, jg, eg, data_provider):
+    # noinspection PyUnusedLocal
+    def _callback(self, jg, eg, data_provider):  # pylint: disable=unused-argument
         """
         This function is called from robcom's ClosedLoopDirectControl process as callback and should never be called manually
 

@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 from abc import ABC
-from typing import Union
 
 import torch as to
 import torch.nn as nn
@@ -65,7 +64,7 @@ class StochasticActionExplStrat(Policy, ABC):
     def reset(self):
         self.policy.reset()
 
-    def forward(self, obs: to.Tensor, *extra) -> (to.Tensor, tuple):
+    def forward(self, obs: to.Tensor, *extra) -> (to.Tensor, tuple):  # pylint: disable=arguments-differ
         # Get actions from policy
         if self.policy.is_recurrent:
             if isinstance(self.policy, TwoHeadedPolicy):
@@ -272,7 +271,8 @@ class SACExplStrat(StochasticActionExplStrat):
         """Get the exploration noise."""
         return self._noise
 
-    def action_dist_at(self, policy_out_1: to.Tensor, policy_out_2: to.Tensor) -> Distribution:
+    # noinspection PyMethodOverriding
+    def action_dist_at(self, policy_out_1: to.Tensor, policy_out_2: to.Tensor) -> Distribution:  # pylint: disable=arguments-differ
         """
         Return the action distribution for the given output from the wrapped policy.
         This method is made for two-headed policies, e.g. used with SAC.

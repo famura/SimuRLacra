@@ -42,7 +42,7 @@ def set_log_prefix_dir(log_dir: str):
     else:
         assert osp.isdir(log_dir)
 
-    global _log_prefix_dir
+    global _log_prefix_dir  # pylint: disable=global-statement
     _log_prefix_dir = log_dir
 
 

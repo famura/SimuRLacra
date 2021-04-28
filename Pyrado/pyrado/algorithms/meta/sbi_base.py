@@ -40,6 +40,7 @@ from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
 from sbi.utils.user_input_checks import prepare_for_sbi
+from tabulate import tabulate
 from torch.distributions import Distribution, Normal
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -359,9 +360,9 @@ class SBIBase(InterruptableAlgorithm, ABC):
             unit="rollouts",
             file=sys.stdout,
         ):
-            data, rollout = rollout_worker()
+            data, local_rollout = rollout_worker()
             data_real.append(data)
-            rollouts_real.append(rollout)
+            rollouts_real.append(local_rollout)
 
         # Stacked to tensor of shape [1, num_rollouts * dim_feat]
         data_real = to.cat(data_real, dim=1)
@@ -403,7 +404,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         if idx_iter == -1:
             # Check what is the latest iteration
             cnt_iter_max = -1
-            for root, dirs, files in os.walk(load_dir):
+            for _, dirs, files in os.walk(load_dir):
                 dirs.clear()  # prevents walk() from going into subdirectories
                 for f in files:
                     if f.startswith("iter_") and f.endswith("_posterior.pt"):
@@ -413,10 +414,10 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Check if the experiment was run in a multi-round setting
         multi_round_setting = False
-        for root, dirs, files in os.walk(load_dir):
+        for _, dirs, files in os.walk(load_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             for f in files:
-                if f.startswith(f"iter_") and "round" in f:
+                if f.startswith("iter_") and "round" in f:
                     multi_round_setting = True
                     break
 
@@ -424,7 +425,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             if idx_round == -1:
                 # Check what is the latest round
                 cnt_round_max = -1
-                for root, dirs, files in os.walk(load_dir):
+                for _, dirs, files in os.walk(load_dir):
                     dirs.clear()  # prevents walk() from going into subdirectories
                     for f in files:
                         if f.startswith("iter_") and "round" in f and f.endswith("_posterior.pt"):
@@ -626,7 +627,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         if isinstance(inner_env(env), RealEnv):
             # Evaluate sequentially when evaluating on a real-world device
             rets_real = []
-            for i in range(num_rollouts):
+            for _ in range(num_rollouts):
                 rets_real.append(rollout(env, policy, eval=True).undiscounted_return())
 
         elif isinstance(inner_env(env), SimEnv):
@@ -678,14 +679,13 @@ class SBIBase(InterruptableAlgorithm, ABC):
         env.ring_idx = 0
         print_cbt(f"Filled the environment's buffer with {len(env.buffer)} domain parameters sets.", "g")
 
-    def train_policy_sim(self, domain_params: to.Tensor, prefix: str, cnt_rep: int) -> float:
+    def train_policy_sim(self, domain_params: to.Tensor, prefix: str) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
         :param domain_params: domain parameters sampled from the posterior [shape N x D where N is the number of
                               samples and D is the number of domain parameters]
         :param prefix: set a prefix to the saved file name, use "" for no prefix
-        :param cnt_rep: current repetition count, coming from the wrapper function
         :return: estimated return of the trained policy in the target domain
         """
         if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):

@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Sequence, Union
+from typing import Callable, Sequence, Union
 
 import numpy as np
 
@@ -55,7 +55,6 @@ class RewFcn(ABC):
         Reset internal members. This function is called from the `Task.reset()` function.
         The default implementation does nothing.
         """
-        pass
 
 
 class CompoundRewFcn(RewFcn):
@@ -156,9 +155,9 @@ class AbsErrRewFcn(RewFcn):
         :param r: weight vector for the action errors
         """
         if not isinstance(q, np.ndarray) and q.ndim == 1:
-            raise pyrado.TypeErr(msg=f"The weights q must be an 1-dim ndarray!")
+            raise pyrado.TypeErr(msg="The weights q must be an 1-dim ndarray!")
         if not isinstance(r, np.ndarray) and r.ndim == 1:
-            raise pyrado.TypeErr(msg=f"The weights r must be an 1-dim ndarray!")
+            raise pyrado.TypeErr(msg="The weights r must be an 1-dim ndarray!")
         if not np.all(q >= 0):
             raise pyrado.ValueErr(given=q, ge_constraint="0")
         if not np.all(r >= 0):
@@ -187,14 +186,14 @@ class QuadrErrRewFcn(RewFcn):
             try:
                 Q = np.array(Q)
                 R = np.array(R)
-            except Exception:
-                raise pyrado.TypeErr(given=Q, expected_type=[np.ndarray, list])
+            except Exception as ex:
+                raise pyrado.TypeErr(given=Q, expected_type=[np.ndarray, list]) from ex
         eig_Q, _ = np.linalg.eig(Q)
         eig_R, _ = np.linalg.eig(R)
         if not (eig_Q >= 0).all():
-            raise pyrado.ValueErr(msg=f"The weight matrix Q must not have negative eigenvalues!")
+            raise pyrado.ValueErr(msg="The weight matrix Q must not have negative eigenvalues!")
         if not (eig_R >= 0).all():  # in theory strictly > 0
-            raise pyrado.ValueErr(msg=f"The weight matrix R must not have negative eigenvalues!")
+            raise pyrado.ValueErr(msg="The weight matrix R must not have negative eigenvalues!")
 
         self.Q = Q
         self.R = R
@@ -223,16 +222,6 @@ class QuadrErrRewFcn(RewFcn):
 
 class ExpQuadrErrRewFcn(QuadrErrRewFcn):
     """Reward function that returns the exp of the weighted sum of squared errors"""
-
-    def __init__(self, Q: Union[np.ndarray, list], R: Union[np.ndarray, list]):
-        """
-        Constructor
-
-        :param Q: weight matrix for the state errors (positive semi-definite)
-        :param R: weight matrix for the action errors (positive definite)
-        """
-        # Call the constructor of the QuadrErrRewFcn class
-        super().__init__(Q, R)
 
     def __call__(self, err_s: np.ndarray, err_a: np.ndarray, remaining_steps: int = None) -> float:
         # Calculate the cost using the weighted sum of squared errors
@@ -281,7 +270,7 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
         rew = np.exp(-self.c_max * quard_cost)  # pylint: disable=invalid-unary-operand-type
         return float(rew)
 
-    def reset(self, state_space: Space, act_space: Space, min_rew=1e-4, **kwargs):
+    def reset(self, state_space: Space, act_space: Space, min_rew=1e-4, **kwargs):  # pylint: disable=arguments-differ
         if not isinstance(state_space, Space):
             raise pyrado.TypeErr(given=state_space, expected_type=Space)
         if not isinstance(act_space, Space):
@@ -401,7 +390,7 @@ class ForwardVelocityRewFcn(RewFcn):
         self.fwd_rew_weight = fwd_rew_weight
         self.ctrl_cost_weight = ctrl_cost_weight
 
-    def reset(self, init_state, **kwargs):
+    def reset(self, init_state, **kwargs):  # pylint: disable=arguments-differ
         self.last_x_pos = init_state[self._idx_x_pos]
 
     def __call__(self, state: np.ndarray, act: np.ndarray, remaining_steps: int = None) -> float:

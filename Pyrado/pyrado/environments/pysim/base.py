@@ -150,7 +150,6 @@ class SimPyEnv(SimEnv, Serializable):
         .. note::
             This function is called from the constructor and from the domain parameter setter.
         """
-        pass
 
     def _set_domain_param_attrs(self, domain_param: dict):
         """
@@ -179,8 +178,8 @@ class SimPyEnv(SimEnv, Serializable):
             # Make sure init state is a numpy array
             try:
                 init_state = np.asarray(init_state)
-            except Exception:
-                raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
+            except Exception as ex:
+                raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray) from ex
         if init_state.shape == self.state_space.shape:
             # Allow setting the complete state space
             # if not self.state_space.contains(init_state, verbose=True):
@@ -261,10 +260,7 @@ class SimPyEnv(SimEnv, Serializable):
                 self._update_anim()
 
     def _init_anim(self):
-        """
-        Initialize animation. Called by first render call.
-        """
-        pass
+        """Initialize animation. Called by first render call."""
 
     def _update_anim(self):
         """
@@ -281,7 +277,5 @@ class SimPyEnv(SimEnv, Serializable):
             self._skip_frames = int(1 / self._fps / self._dt)
 
     def _reset_anim(self):
-        """
-        Removes trace. Called by reset() if needed. Calls reset of pandavis-class.
-        """
+        """Removes trace. Called by reset() if needed. Calls reset of pandavis-class."""
         self._visualization.reset()

@@ -53,7 +53,8 @@ sys.path.insert(0, os.path.abspath("../.."))  # Pyrado folder
 project = "Pyrado"
 version = ".".join(VERSION.split("."))  # short version
 release = VERSION  # full version including tags
-copyright = "2020"
+# noinspection PyShadowingBuiltins
+copyright = "2020"  # pylint: disable=redefined-builtin
 author = "Fabio Muratore & Felix Treede & Robin Menzenbach & Chrisitan Eilers"
 
 # ---------------------

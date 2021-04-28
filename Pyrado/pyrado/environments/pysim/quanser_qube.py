@@ -67,7 +67,7 @@ class QQubeSim(SimPyEnv, Serializable):
             V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
-    def _calc_constants(self):
+    def _calc_constants(self):  # pylint: disable=arguments-differ
         Mr = self.domain_param["Mr"]
         Mp = self.domain_param["Mp"]
         Lr = self.domain_param["Lr"]
@@ -86,7 +86,7 @@ class QQubeSim(SimPyEnv, Serializable):
         self._c[3] = Jp + self._c[1]
         self._c[4] = 0.5 * Mp * Lp * g
 
-    def _dyn(self, t, x, u):
+    def _dyn(self, x, u):
         r"""
         Compute $\dot{x} = f(x, u, t)$.
 
@@ -101,7 +101,7 @@ class QQubeSim(SimPyEnv, Serializable):
         Dp = self.domain_param["Dp"]
 
         # Decompose state
-        th, al, thd, ald = x
+        _, al, thd, ald = x
         sin_al = np.sin(al)
         sin_2al = np.sin(2 * al)
 
@@ -131,7 +131,7 @@ class QQubeSim(SimPyEnv, Serializable):
             act = 0
 
         # Compute the derivative
-        thd, ald, thdd, aldd = self._dyn(None, self.state, act)
+        thd, ald, thdd, aldd = self._dyn(self.state, act)
 
         # Integration step (Runge-Kutta 4)
         k = np.zeros(shape=(4, 4))  # derivatives
@@ -141,7 +141,7 @@ class QQubeSim(SimPyEnv, Serializable):
                 s = self.state + self._dt / 2.0 * k[j - 1, :]
             else:
                 s = self.state + self._dt * k[j - 1, :]
-            thd, ald, thdd, aldd = self._dyn(None, self.state, act)
+            thd, ald, thdd, aldd = self._dyn(self.state, act)
             k[j, :] = np.array([s[2], s[3], thdd, aldd])
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
@@ -187,7 +187,7 @@ class QQubeSwingUpSim(QQubeSim):
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
 
-    def observe(self, state, dtype=np.ndarray):
+    def observe(self, state, dtype=np.ndarray):  # pylint: disable=arguments-differ
         if dtype is np.ndarray:
             return np.array(
                 [np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]]
@@ -235,6 +235,6 @@ class QQubeStabSim(QQubeSim):
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
 
-    def observe(self, state, dtype=np.ndarray):
+    def observe(self, state, dtype=np.ndarray):  # pylint: disable=arguments-differ,unused-argument
         # Directly observe the noise-free state
         return state.copy()

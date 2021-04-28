@@ -68,7 +68,8 @@ def _ps_sample_one(G, eval: bool):
     return ro, len(ro)
 
 
-def _ps_run_one(G, num: int, eval: bool):
+# noinspection PyUnusedLocal
+def _ps_run_one(G, num: int, eval: bool):  # pylint: disable=unused-argument
     """
     Sample one rollout without specifying the initial state or the domain parameters.
     This function is used when a minimum number of rollouts was given.
@@ -220,7 +221,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         # Always broadcast to workers
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
-    def sample(
+    def sample(  # pylint: disable=arguments-differ
         self,
         init_states: Optional[List[np.ndarray]] = None,
         domain_params: Optional[List[dict]] = None,

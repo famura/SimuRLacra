@@ -68,7 +68,8 @@ def sequence_const(x_init, iter, dtype=int):
     :return: element at the given iteration and array of the whole sequence
     """
 
-    def iter_function(x_seq, i, x_init):
+    # noinspection PyUnusedLocal
+    def iter_function(x_seq, i, x_init):  # pylint: disable=unused-argument
         return x_init
 
     return sequence(x_init, iter, iter_function, dtype)
@@ -84,7 +85,8 @@ def sequence_plus_one(x_init, iter, dtype=int):
     :return: element at the given iteration and array of the whole sequence
     """
 
-    def iter_function(x_seq, i, x_init):
+    # noinspection PyUnusedLocal
+    def iter_function(x_seq, i, x_init):  # pylint: disable=unused-argument
         return x_seq[0, :] + i
 
     return sequence(x_init, iter, iter_function, dtype)
@@ -100,7 +102,8 @@ def sequence_add_init(x_init, iter, dtype=int):
     :return: element at the given iteration and array of the whole sequence
     """
     # non-exponential growth
-    def iter_function(x_seq, i, x_init):
+    # noinspection PyUnusedLocal
+    def iter_function(x_seq, i, x_init):  # pylint: disable=unused-argument
         return x_seq[0, :] * (i + 1)
 
     return sequence(x_init, iter, iter_function, dtype)
@@ -116,7 +119,8 @@ def sequence_rec_double(x_init, iter, dtype=int):
     :return: element at the given iteration and array of the whole sequence
     """
     # exponential growth
-    def iter_function(x_seq, i, x_init):
+    # noinspection PyUnusedLocal
+    def iter_function(x_seq, i, x_init):  # pylint: disable=unused-argument
         return x_seq[i - 1, :] * 2.0
 
     return sequence(x_init, iter, iter_function, dtype)
@@ -132,7 +136,8 @@ def sequence_sqrt(x_init, iter, dtype=int):
     :return: element at the given iteration and array of the whole sequence
     """
     # non-exponential growth
-    def iter_function(x_seq, i, x_init):
+    # noinspection PyUnusedLocal
+    def iter_function(x_seq, i, x_init):  # pylint: disable=unused-argument
         return x_seq[0, :] * np.sqrt(i + 1)  # i+1 because sqrt(1) = 1
 
     return sequence(x_init, iter, iter_function, dtype)
@@ -148,7 +153,8 @@ def sequence_rec_sqrt(x_init, iter, dtype=int):
     :return: element at the given iteration and array of the whole sequence
     """
     # exponential growth
-    def iter_function(x_seq, i, x_init):
+    # noinspection PyUnusedLocal
+    def iter_function(x_seq, i, x_init):  # pylint: disable=unused-argument
         return x_seq[i - 1, :] * np.sqrt(i + 1)  # i+1 because sqrt(1) = 1
 
     return sequence(x_init, iter, iter_function, dtype)
@@ -164,7 +170,8 @@ def sequence_nlog2(x_init, iter, dtype=int):
     :return: element at the given iteration and array of the whole sequence
     """
     # non-exponential growth
-    def iter_function(x_seq, i, x_init):
+    # noinspection PyUnusedLocal
+    def iter_function(x_seq, i, x_init):  # pylint: disable=unused-argument
         return x_seq[0, :] * i * np.log2(i + 2)  # i+2 because log2(1) = 0 and log2(2) = 1
 
     return sequence(x_init, iter, iter_function, dtype)

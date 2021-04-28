@@ -230,10 +230,10 @@ class QCartPoleStabReal(QCartPoleReal):
                     np.abs(obs),
                     suppress_small=True,
                     precision=2,
-                    formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)},
+                    formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)},  # pylint: disable=unnecessary-lambda
                 )
                 th_str = np.array2string(
-                    th, suppress_small=True, precision=2, formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)}
+                    th, suppress_small=True, precision=2, formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)}  # pylint: disable=unnecessary-lambda
                 )
                 raise TimeoutError("The pole is not upright: {0} > {1}".format(state_str, th_str))
 

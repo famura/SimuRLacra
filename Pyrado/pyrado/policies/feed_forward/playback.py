@@ -116,7 +116,7 @@ class PlaybackPolicy(Policy):
             self._curr_rec = (self._curr_rec + 1) % self._num_rec
             self._curr_step = 0
 
-    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
+    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:  # pylint: disable=arguments-differ,unused-argument
         if self._curr_step < len(self._act_rec_buffer[self._curr_rec]):
             # Asking for something that is available, return the stored action
             act = self._act_rec_buffer[self._curr_rec][self._curr_step, :]

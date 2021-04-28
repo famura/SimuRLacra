@@ -49,13 +49,13 @@ def gen_shuffled_batch_idcs(batch_size: int, data_size: int):
     return iter(lambda: list(islice(idx_iter, batch_size)), [])
 
 
-def gen_ordered_batch_idcs(batch_size: int, data_size: int, sorted: bool = True):
+def gen_ordered_batch_idcs(batch_size: int, data_size: int, sort: bool = True):
     """
     Helper function for doing SGD on mini-batches that returns the indies for the mini-batch samples
 
     :param batch_size: number of samples in each mini-batch
     :param data_size: total number of samples
-    :param sorted: if `False`, the order of batches is randomized (but the order within them is preserved)
+    :param sort: if `False`, the order of batches is randomized (but the order within them is preserved)
     :return: generator for lists of random indices of sub-samples
 
     :usage:
@@ -69,7 +69,7 @@ def gen_ordered_batch_idcs(batch_size: int, data_size: int, sorted: bool = True)
     idcs_all = list(range(data_size))
     idcs_batches = [idcs_all[i * batch_size : i * batch_size + batch_size] for i in range(num_batches)]
 
-    if not sorted:
+    if not sort:
         # Yield a random sample from the list of lists
         idcs_batches = random.sample(idcs_batches, len(idcs_batches))
 

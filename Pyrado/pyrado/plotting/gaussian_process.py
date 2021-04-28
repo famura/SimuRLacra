@@ -61,14 +61,11 @@ def render_singletask_gp(
     num_stds: int = 2,
     alpha: float = 0.3,
     color: chr = None,
-    curve_label: str = "mean",
     heatmap_cmap: colors.Colormap = None,
     show_legend_posterior: bool = True,
-    show_legend_std: bool = False,
     show_legend_data: bool = True,
     legend_data_cmap: colors.Colormap = None,
     colorbar_label: str = None,
-    title: str = None,
     render3D: bool = True,
 ) -> plt.Figure:
     """
@@ -93,14 +90,11 @@ def render_singletask_gp(
     :param num_stds: number of standard deviations to plot around the mean
     :param alpha: transparency (alpha-value) for the std area
     :param color: color (e.g. 'k' for black), `None` invokes the default behavior
-    :param curve_label: label for the mean curve (1D plot only)
     :param heatmap_cmap: color map forwarded to `draw_heatmap()` (2D plot only), `None` to use Pyrado's default
     :param show_legend_posterior: flag if the legend entry for the posterior should be printed (affects mean and std)
-    :param show_legend_std: flag if a legend entry for the std area should be printed
     :param show_legend_data: flag if a legend entry for the individual data points should be printed
     :param legend_data_cmap: color map for the sampled points, default is 'binary'
     :param colorbar_label: label for the color bar (2D plot only)
-    :param title: title displayed above the figure, set to `None` to suppress the title
     :param render3D: use 3D rendering if possible
     :return: handle to the resulting figure
     """

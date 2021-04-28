@@ -104,7 +104,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         return np.array([state[0], np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     @classmethod
-    def get_nominal_domain_param(cls, long: bool = False) -> dict:
+    def get_nominal_domain_param(cls, long: bool = False) -> dict:  # pylint: disable=arguments-differ
         if long:
             m_pole = 0.23
             l_pole = 0.641 / 2
@@ -134,7 +134,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
             V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
-    def _calc_constants(self):
+    def _calc_constants(self):  # pylint: disable=arguments-differ
         l_pole = self.domain_param["l_pole"]
         m_pole = self.domain_param["m_pole"]
         m_cart = self.domain_param["m_cart"]
@@ -161,7 +161,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         B_p = self.domain_param["B_pole"]
         mu_c = self.domain_param["mu_cart"]
 
-        x, th, x_dot, th_dot = self.state
+        _, th, x_dot, th_dot = self.state
         sin_th = np.sin(th)
         cos_th = np.cos(th)
         m_tot = m_c + m_p

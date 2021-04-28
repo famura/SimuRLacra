@@ -92,7 +92,7 @@ class LinearPolicy(Policy):
         """
         return self._feats(obs)
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         """
         Evaluate the features at the given observation or use given feature values
 

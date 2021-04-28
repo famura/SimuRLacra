@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     if env_name == QBallBalancerSim.name:
         # Create the environment for evaluating
-        env = QBallBalancerSim(dt=dt, max_steps=args.max_steps, load_experimental_tholds=True)
+        env = QBallBalancerSim(dt=dt, max_steps=args.max_steps)
 
         # param_spec['g'] = np.linspace(8.91, 12.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.001, 0.033, num=11, endpoint=True)

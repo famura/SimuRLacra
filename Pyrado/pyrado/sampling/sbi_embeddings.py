@@ -33,7 +33,6 @@ from warnings import warn
 import torch as to
 import torch.nn as nn
 from torch.nn.utils import convert_parameters as cp
-from torch.utils.data import DataLoader, Dataset
 
 import pyrado
 from pyrado.policies.initialization import init_param

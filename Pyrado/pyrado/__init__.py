@@ -145,4 +145,4 @@ def set_seed(seed: Optional[int], verbose: bool = False):
             print(f"Set the random number generators' seed to {seed}.")
     else:
         if verbose:
-            print(f"The random number generators' seeds were not set.")
+            print("The random number generators' seeds were not set.")

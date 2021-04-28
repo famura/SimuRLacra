@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from math import ceil, floor
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -55,12 +55,11 @@ def _setup_index_axis(
     if use_index_labels:
         ax.set_label_text(index.name)  # this will clash with using plt.rcParams['use_tex']=True when index contains '_'
 
-    def _index_tick(x, pos):
+    def _index_tick(x):
         """
         Function to define how the ticks on the matplotlib axis should be styled
 
         :param x: input
-        :param pos: unused but necessary for `matplotlib.ticker.FuncFormatter`
         :return: formatted string
         """
         if x.is_integer() or isinstance(x, int):

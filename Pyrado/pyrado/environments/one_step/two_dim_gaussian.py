@@ -37,7 +37,6 @@ import pyrado
 from pyrado.environments.sim_base import SimEnv
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
-from pyrado.spaces.empty import EmptySpace
 from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.goalless import OptimProxyTask
 from pyrado.tasks.reward_functions import StateBasedRewFcn

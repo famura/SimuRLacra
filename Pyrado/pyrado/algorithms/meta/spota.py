@@ -33,6 +33,7 @@ from typing import Optional
 from warnings import warn
 
 import joblib
+import numpy as np
 import torch as to
 from tqdm import tqdm
 
@@ -46,7 +47,6 @@ from pyrado.environment_wrappers.utils import typed_env
 from pyrado.logger.step import StepLogger
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.rollout import rollout
-from pyrado.sampling.sequences import *
 from pyrado.utils.input_output import print_cbt
 
 
@@ -371,19 +371,19 @@ class SPOTA(InterruptableAlgorithm):
             self.env_dr.buffer = env_params_ref
 
             # Load the policies (makes a difference for snapshot_mode = best)
-            self._subrtn_cand._policy = pyrado.load(
+            self._subrtn_cand._policy = pyrado.load(  # pylint: disable=protected-access
                 "policy.pt",
                 self.save_dir,
                 prefix=f"iter_{self._curr_iter}",
                 suffix="cand",
-                obj=self._subrtn_cand._policy,
+                obj=self._subrtn_cand._policy,  # pylint: disable=protected-access
             )
-            self._subrtn_refs._policy = pyrado.load(
+            self._subrtn_refs._policy = pyrado.load(  # pylint: disable=protected-access
                 "policy.pt",
                 self.save_dir,
                 prefix=f"iter_{self._curr_iter}",
                 suffix=f"ref_{k}",
-                obj=self._subrtn_refs._policy,
+                obj=self._subrtn_refs._policy,  # pylint: disable=protected-access
             )
 
             # Loop over all domain realizations of the reference solutions
@@ -464,7 +464,7 @@ class SPOTA(InterruptableAlgorithm):
                         self.save_dir,
                         prefix=f"iter_{self._curr_iter}",
                         suffix=f"ref_{other_k}",
-                        obj=self._subrtn_refs._policy,
+                        obj=self._subrtn_refs._policy,  # pylint: disable=protected-access
                     )
                     other_ref_ret = 0
                     for r in range(self.nJ):

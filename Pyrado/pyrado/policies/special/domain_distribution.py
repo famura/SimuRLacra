@@ -161,6 +161,6 @@ class DomainDistrParamPolicy(Policy):
             self.param_scaler = MinMaxScaler(bound_lo=-0.5, bound_up=0.5)
             self.params.data = self.param_scaler.scale_to(self.params.data)  # params now in [-0.5, 0.5]
 
-    def forward(self, obs: to.Tensor = None) -> to.Tensor:
+    def forward(self, obs: to.Tensor = None) -> to.Tensor:  # pylint: disable=arguments-differ
         # Should never be used. This is an abuse of the policy class but it is worth it.
         raise NotImplementedError

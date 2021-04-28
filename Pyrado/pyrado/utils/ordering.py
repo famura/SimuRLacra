@@ -48,7 +48,9 @@ def filter_los_by_lok(strs: list, keys: list) -> list:
     # Collect all matches (multiple keys can match one string)
     all_matches = []
     for k in keys:
-        all_matches.extend(list(filter(lambda s: k in s, strs)))
+        for s in strs:
+            if k in s:
+                all_matches.append(s)
 
     # Remove non-unique element from the list
     return list(set(all_matches))

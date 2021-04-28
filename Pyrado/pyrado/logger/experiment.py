@@ -459,9 +459,10 @@ def _process_dict_for_saving(d: dict) -> dict:
             try:
                 copy[k] = str(v)
             except AttributeError:
+                # noinspection PyBroadException
                 try:
                     copy[k] = get_class_name(v)
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     copy[k] = v.__name__
         elif isinstance(v, dict):
             # If the value is another dict, recursively go through this one

@@ -108,7 +108,7 @@ class DiscreteSpace(Space):
             raise pyrado.ShapeErr(given=cand, expected_match=self)
         if np.isnan(cand).any():
             raise pyrado.ValueErr(
-                msg=f"At least one value is NaN!"
+                msg="At least one value is NaN!"
                 + tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]], headers="firstrow")
             )
 

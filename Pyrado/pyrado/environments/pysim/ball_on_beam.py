@@ -86,7 +86,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
             ang_offset=0.0,
         )  # constant beam angle offset [rad]
 
-    def _calc_constants(self):
+    def _calc_constants(self):  # pylint: disable=arguments-differ
         m_ball = self.domain_param["m_ball"]
         r_ball = self.domain_param["r_ball"]
         m_beam = self.domain_param["m_beam"]

@@ -129,10 +129,6 @@ class ParameterExploring(Algorithm, ExposedSampler):
         else:
             return False
 
-    def reset(self, seed: int = None):
-        # Reset the exploration strategy, internal variables and the random seeds
-        super().reset(seed)
-
     def step(self, snapshot_mode: str, meta_info: Optional[dict] = None):
         # Sample new policy parameters
         param_sets = self._expl_strat.sample_param_sets(
@@ -184,7 +180,7 @@ class ParameterExploring(Algorithm, ExposedSampler):
         self.update(param_samp_res, ret_avg_curr)
 
     @abstractmethod
-    def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float):
+    def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float):  # pylint: disable=arguments-differ
         """
         Update the policy from the given samples.
 

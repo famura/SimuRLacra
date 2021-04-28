@@ -33,7 +33,6 @@ from typing import Dict, Tuple, Union
 
 import numpy as np
 
-import pyrado
 from pyrado.domain_randomization.domain_parameter import BernoulliDomainParam, NormalDomainParam, UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.base import EnvWrapper
@@ -85,8 +84,6 @@ def create_default_randomizer(env: Union[SimEnv, EnvWrapper]) -> DomainRandomize
         dp = default_randomizer_registry.get((env_module, env_class))
         if dp:
             return dp()
-    else:
-        raise pyrado.ValueErr(msg=f"No default randomizer settings for env of type {env_type}!")
 
 
 def create_conservative_randomizer(env: Union[SimEnv, EnvWrapper]) -> DomainRandomizer:

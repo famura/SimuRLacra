@@ -272,7 +272,6 @@ class Algorithm(ABC, LoggerAware):
 
     def update(self, *args: Any, **kwargs: Any):
         """Update the policy's (and value functions') parameters based on the collected rollout data."""
-        pass
 
     def make_snapshot(self, snapshot_mode: str, curr_avg_ret: float = None, meta_info: dict = None):
         """
@@ -297,7 +296,7 @@ class Algorithm(ABC, LoggerAware):
         else:
             raise pyrado.ValueErr(given=snapshot_mode, eq_constraint="'latest', 'best', or 'no'")
 
-    def save_snapshot(self, meta_info: dict = None):
+    def save_snapshot(self, meta_info: dict = None):  # pylint: disable=unused-argument
         """
         Save the algorithm information (e.g., environment, policy, ect.).
         Subclasses should call the base method to save the policy.
@@ -380,7 +379,7 @@ class InterruptableAlgorithm(Algorithm, ABC):
     and counts until (including) `num_checkpoints`, and is then reset to zero.
     """
 
-    def __init__(self, num_checkpoints: int, init_checkpoint: int = 0, *args, **kwargs):
+    def __init__(self, *args, num_checkpoints: int, init_checkpoint: int = 0, **kwargs):
         """
         Constructor
 
@@ -431,7 +430,7 @@ class InterruptableAlgorithm(Algorithm, ABC):
 
         :param meta_info: information forwarded to `save_snapshot()`
         """
-        next = self._curr_checkpoint + 1
-        self._curr_checkpoint = next % (self._num_checkpoints + 1) if next > 0 else next  # no modulo for negative count
+        next_cp = self._curr_checkpoint + 1
+        self._curr_checkpoint = next_cp % (self._num_checkpoints + 1) if next_cp > 0 else next_cp  # no modulo for negative count
 
         self.save_snapshot(meta_info)

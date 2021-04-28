@@ -71,7 +71,7 @@ class TimePolicy(Policy):
     def reset(self):
         self._curr_time = 0.0
 
-    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
+    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:  # pylint: disable=arguments-differ,unused-argument
         act = to.tensor(self._fcn_of_time(self._curr_time), dtype=to.get_default_dtype(), device=self.device)
         self._curr_time += self._dt
         return to.atleast_1d(act)
@@ -131,7 +131,7 @@ class TraceableTimePolicy(Module):
     def reset(self):
         self.current_time = 0.0
 
-    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
+    def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:  # pylint: disable=unused-argument
         act = to.tensor(self.fcn_of_time(self.current_time), dtype=to.double)  # 64bit float
         self.current_time = self.current_time + self.dt
         return act

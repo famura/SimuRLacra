@@ -165,7 +165,8 @@ class WAMJointSpaceCtrlRealEpisodic(WAMReal):
 
         return self.observe(self.state), self._curr_rew, done, info
 
-    def _callback(self, jg, eg, data_provider):
+    # noinspection PyUnusedLocal
+    def _callback(self, jg, eg, data_provider):  # pylint: disable=unused-argument
         """
         This function is called from robcom's ClosedLoopDirectControl process as callback and should never be called manually
 

@@ -40,8 +40,6 @@ import tempfile
 import zipfile
 from urllib.request import urlretrieve
 
-import yaml
-
 
 # Get the project's root directory
 project_dir = osp.dirname(osp.abspath(__file__))
@@ -284,7 +282,6 @@ def downloadAndExtract(url, destdir, archiveContentPath=None):
             # Taken from https://stackoverflow.com/a/43094365
             def members(ml):
                 subfolder = osp.normpath(archiveContentPath)
-                l = len(subfolder)
                 for member in ml:
                     # Skip directories in zip
                     isdir = getattr(member, "is_dir", None)
@@ -307,11 +304,11 @@ def downloadAndExtract(url, destdir, archiveContentPath=None):
             with tarfile.open(tf.name) as tar:
                 tar.extractall(members=members(tar.getmembers()), path=destdir)
         else:
-            with zipfile.ZipFile(tf.name) as zip:
-                zip.extractall(members=members(zip.infolist()), path=destdir)
+            with zipfile.ZipFile(tf.name) as zip_file:
+                zip_file.extractall(members=members(zip_file.infolist()), path=destdir)
 
 
-def buildCMakeProject(srcDir, buildDir, cmakeVars=None, env=env_vars, install_dir=None):
+def buildCMakeProject(srcDir, buildDir, cmakeVars=None, env=None, install_dir=None):
     """
     cd buildDir
     cmake srcDir -D...
@@ -319,6 +316,8 @@ def buildCMakeProject(srcDir, buildDir, cmakeVars=None, env=env_vars, install_di
     (make install)
     """
     # Ensure build dir exists
+    if env is None:
+        env = env_vars
     mkdir_p(buildDir)
 
     if env is not None:

@@ -49,7 +49,7 @@ def draw_dts(
     :param dts_remainder: time it took to execute all remaining commands (e.g. soring the data)
     :param y_top_lim: upper bound for the y-axis in ms, no limit by default
     """
-    fig, axs = plt.subplots(2, 1, figsize=(6, 8), tight_layout=True)
+    _, axs = plt.subplots(2, 1, figsize=(6, 8), tight_layout=True)
 
     x = np.arange(0, len(dts_policy))
     y1 = 1000 * dts_policy

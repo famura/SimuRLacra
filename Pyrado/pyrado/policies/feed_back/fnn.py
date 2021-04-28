@@ -210,7 +210,7 @@ class FNNPolicy(Policy):
         else:
             self.param_values = init_values
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         # Get the action from the owned FNN
         return self.net(obs)
 
@@ -334,11 +334,11 @@ class DiscreteActQValPolicy(Policy):
 
         return q_vals_argamx.squeeze(1) if batch_size == 1 else q_vals_argamx
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
         # Get the Q-values from the owned net
-        q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
+        _, argmax_act_idcs, batch_size = self._build_q_table(obs)
 
         # Select the actions with the highest Q-value
         assert isinstance(self.env_spec.act_space, DiscreteSpace)

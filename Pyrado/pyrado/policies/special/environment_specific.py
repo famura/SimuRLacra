@@ -86,7 +86,7 @@ class QBallBalancerPDCtrl(Policy):
         # Default initialization
         self.init_param(kp, kd)
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         """
         Calculate the controller output.
 
@@ -106,7 +106,7 @@ class QBallBalancerPDCtrl(Policy):
         # Return action, see "Actuator Electrical Dynamics" block in [1]
         return err_th * self.kp_servo
 
-    def init_param(self, kp: to.Tensor = None, kd: to.Tensor = None, verbose: bool = False, **kwargs):
+    def init_param(self, kp: to.Tensor = None, kd: to.Tensor = None, verbose: bool = False, **kwargs):  # pylint: disable=arguments-differ
         """
         Initialize controller parameters.
 
@@ -124,7 +124,7 @@ class QBallBalancerPDCtrl(Policy):
         if verbose:
             print(f"Set Kp to\n{self.Kp.numpy()}\nand Kd to\n{self.Kd.numpy()}")
 
-    def reset(self, state_des: Union[np.ndarray, to.Tensor] = None):
+    def reset(self, state_des: Union[np.ndarray, to.Tensor] = None):  # pylint: disable=arguments-differ
         """
         Set the controller's desired state.
 
@@ -211,7 +211,7 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
                 self._log_k_e.data = self._log_k_e_init
                 self._log_k_p.data = self._log_k_p_init
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         """
         Calculate the controller output.
 
@@ -317,7 +317,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
             self.e_ctrl.init_param()
             self.pd_ctrl.init_param()
 
-    def forward(self, obs: to.tensor):
+    def forward(self, obs: to.tensor):  # pylint: disable=arguments-differ
         # Reconstruct the sate for the error-based controller
         sin_th, cos_th, sin_al, cos_al, th_d, al_d = obs
         s = to.stack([to.atan2(sin_th, cos_th), to.atan2(sin_al, cos_al), th_d, al_d])
@@ -397,7 +397,7 @@ class QQubeEnergyCtrl(Policy):
             self._log_E_gain.data = self._log_E_gain_init
             self._th_gain.data = self._th_gain_init
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         """
         Control step of energy-based controller which is used in the swing-up controller
 
@@ -405,7 +405,7 @@ class QQubeEnergyCtrl(Policy):
         :return: action
         """
         # Reconstruct partial state
-        th, al, thd, ald = obs
+        th, al, _, ald = obs
 
         # Compute energies
         J_pole = self.dp_nom["Mp"] * self.dp_nom["Lp"] ** 2 / 12.0
@@ -473,7 +473,7 @@ class QQubePDCtrl(Policy):
             # Initialize with original parameters
             self.pd_gains.data = self._pd_gains_init
 
-    def forward(self, meas: to.Tensor) -> to.Tensor:
+    def forward(self, meas: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         meas = meas.to(dtype=to.get_default_dtype())
 
         # Unpack the raw measurement (is not an observation)
@@ -520,7 +520,7 @@ class QCartPoleGoToLimCtrl:
         :param obs: observation from the environment
         :return: action
         """
-        x, _, _, xd, _ = obs
+        _, _, _, xd, _ = obs
 
         # Initialize time
         if self._t0 is None:

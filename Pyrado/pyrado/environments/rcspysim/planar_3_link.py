@@ -41,7 +41,7 @@ from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
 from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.parallel import ParallelTasks
 from pyrado.tasks.predefined import create_check_all_boundaries_task, create_task_space_discrepancy_task
-from pyrado.tasks.reward_functions import AbsErrRewFcn, ExpQuadrErrRewFcn, ZeroPerStepRewFcn
+from pyrado.tasks.reward_functions import AbsErrRewFcn, ExpQuadrErrRewFcn
 from pyrado.tasks.sequential import SequentialTasks
 from pyrado.tasks.utils import proximity_succeeded
 from pyrado.utils.data_types import EnvSpec

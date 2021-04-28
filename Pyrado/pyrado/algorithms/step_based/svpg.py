@@ -32,7 +32,6 @@ from typing import Sequence
 import numpy as np
 import torch as to
 from scipy.spatial.distance import pdist, squareform
-from torch.distributions.kl import kl_divergence
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -89,7 +88,7 @@ class SVPGParticle(Policy):
         """
         return self.critic.values(obs)
 
-    def forward(self, obs: to.Tensor) -> to.Tensor:
+    def forward(self, obs: to.Tensor) -> to.Tensor:  # pylint: disable=arguments-differ
         """
         Get the action given an observation. Forwards to the actor head.
 
@@ -213,7 +212,6 @@ class SVPG(Algorithm):
                 self.particleSteps[i] = 0
 
         # Log metrics computed from the old policy (before the update)
-        num_ros_all_prtcls = np.array([len(p) for p in ros_all_particles])
         avg_len_ros_all_prtcls = np.array([np.mean([ro.length for ro in p]) for p in ros_all_particles])
         self._cnt_samples += sum([ro.length for p in ros_all_particles for ro in p])
         avg_rets_all_prtcls = np.array([np.mean(p) for p in rets_all_particles])
@@ -268,7 +266,7 @@ class SVPG(Algorithm):
 
         return Kxx, dx_Kxx
 
-    def update(self, rollouts: Sequence[StepSequence]):
+    def update(self, rollouts: Sequence[StepSequence]):  # pylint: disable=arguments-differ
         r"""
         Train the particles $mu$.
 

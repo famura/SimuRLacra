@@ -109,7 +109,7 @@ class RcsSim(SimEnv, Serializable):
         self.state_mask = None
 
         # Dummy initialization, must be set by the derived classes
-        self.init_state = None
+        self.init_state = init_state
         self.task_args = task_args
         self._task = self._create_task(self.task_args)
 
@@ -118,7 +118,7 @@ class RcsSim(SimEnv, Serializable):
         """Derives the state space from the observation space using _state_from_obs or state_mask."""
         obs_space = self.obs_space
         # Check if _state_from_obs was overridden
-        if self._state_from_obs.__func__ != RcsSim._state_from_obs:
+        if self._state_from_obs.__func__ != RcsSim._state_from_obs:  # pylint: disable=comparison-with-callable
             return BoxSpace(self._state_from_obs(obs_space.bound_lo), self._state_from_obs(obs_space.bound_up), None)
         # Check if there is a state mask
         if self.state_mask is not None:

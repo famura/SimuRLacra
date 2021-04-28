@@ -42,7 +42,6 @@ from pyrado.tasks.parallel import ParallelTasks
 from pyrado.tasks.predefined import (
     create_check_all_boundaries_task,
     create_collision_task,
-    create_goal_dist_task,
     create_task_space_discrepancy_task,
 )
 from pyrado.tasks.reward_functions import AbsErrRewFcn, ExpQuadrErrRewFcn, MinusOnePerStepRewFcn
@@ -172,9 +171,6 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
         """
         Serializable._init(self, locals())
 
-        # Get the nominal domain parameters for the task specification
-        dp_nom = BoxShelvingSim.get_nominal_domain_param()
-
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
         if tasks_left is None:
             if not ref_frame == "upperGoal":
@@ -274,9 +270,6 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
                        observeForceTorque: bool = True
         """
         Serializable._init(self, locals())
-
-        # Get the nominal domain parameters for the task specification
-        dp_nom = BoxShelvingSim.get_nominal_domain_param()
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
         if tasks_left is None:

@@ -45,7 +45,8 @@ from pyrado.utils.data_types import RenderMode
 class EnvWrapper(Env, Serializable):
     """Base for all environment wrappers. Delegates all environment methods to the wrapped environment."""
 
-    def __init__(self, wrapped_env: Env):
+    # noinspection PyMissingConstructor
+    def __init__(self, wrapped_env: Env):  # pylint: disable=super-init-not-called
         """
         Constructor
 
@@ -130,8 +131,8 @@ class EnvWrapper(Env, Serializable):
             raise pyrado.ShapeErr(given=state, expected_match=self._wrapped_env.state)
         self._wrapped_env.state = state
 
-    def _create_task(self, task_args: dict) -> Task:
-        return self._wrapped_env._create_task(task_args)
+    def _create_task(self, task_args: dict) -> Task:  # pylint: disable=protected-access
+        return self._wrapped_env._create_task(task_args)  # pylint: disable=protected-access
 
     @property
     def task(self) -> Task:
@@ -250,11 +251,9 @@ class EnvWrapper(Env, Serializable):
 
     def _get_wrapper_domain_param(self, param: dict):
         """Called by the domain_param setter. Use to load wrapper-specific params. Does nothing by default."""
-        pass
 
     def _set_wrapper_domain_param(self, param: dict):
         """Called by the domain_param getter. Use to store wrapper-specific params. Does nothing by default."""
-        pass
 
 
 class EnvWrapperAct(EnvWrapper):

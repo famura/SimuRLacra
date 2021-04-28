@@ -197,7 +197,7 @@ class ValueBased(Algorithm, ABC):
         self.update()
 
     @abstractmethod
-    def update(self):
+    def update(self):  # pylint: disable=arguments-differ
         raise NotImplementedError
 
     def reset(self, seed: Optional[int] = None):

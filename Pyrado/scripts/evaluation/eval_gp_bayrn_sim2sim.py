@@ -129,26 +129,9 @@ if __name__ == "__main__":
     if len(args.idcs) == 1:
         ax.axvline(gt_val_x, c="firebrick", ls="--", lw=1.5, label="gt")
 
-    render_singletask_gp(
-        ax,
-        cands,
-        cands_values,
-        min_gp_obsnoise=1e-5,
-        data_x_min=ddp_space.bound_lo[args.idcs],
-        data_x_max=ddp_space.bound_up[args.idcs],
-        idcs_sel=args.idcs,
-        x_label=x_label,
-        y_label=xy,
-        z_label=r"r$\hat{J}^{\textrm{real}}$",
-        heatmap_cmap=hm_cmap,
-        num_stds=2,
-        resolution=201,
-        legend_data_cmap=scat_cmap,
-        show_legend_data=args.verbose,
-        show_legend_posterior=True,
-        show_legend_std=True,
-        render3D=args.render3D,
-    )
+    render_singletask_gp(ax, cands, cands_values, idcs_sel=args.idcs, data_x_min=ddp_space.bound_lo[args.idcs], data_x_max=ddp_space.bound_up[args.idcs], x_label=x_label,
+                         y_label=xy, z_label=r"r$\hat{J}^{\textrm{real}}$", min_gp_obsnoise=1e-5, resolution=201, num_stds=2, heatmap_cmap=hm_cmap, show_legend_posterior=True,
+                         show_legend_data=args.verbose, legend_data_cmap=scat_cmap, render3D=args.render3D)
 
     if len(args.idcs) == 2 and not args.render3D:
         # Plot the ground truth domain parameter configuration

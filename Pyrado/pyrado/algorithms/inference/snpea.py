@@ -161,8 +161,6 @@ class SNPEA(Algorithm):
         """
         num_obs = data_real.shape[0]  # TODO check for multiple real-rollouts at the same time
 
-        # variable which tracks how many samples have been used for training
-        sims_since_eval = 0
         grad_norm = []
 
         # Call sbi's preparation function

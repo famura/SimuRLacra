@@ -52,7 +52,7 @@ class IdlePolicy(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         pass
 
-    def forward(self, obs: to.Tensor = None) -> to.Tensor:
+    def forward(self, obs: to.Tensor = None) -> to.Tensor:  # pylint: disable=arguments-differ,unused-argument
         # Observations are ignored
         return to.zeros(self._env_spec.act_space.shape, dtype=to.get_default_dtype(), device=self.device)
 
@@ -74,7 +74,7 @@ class DummyPolicy(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         pass
 
-    def forward(self, obs: to.Tensor = None) -> to.Tensor:
+    def forward(self, obs: to.Tensor = None) -> to.Tensor:  # pylint: disable=arguments-differ,unused-argument
         # Observations are ignored
         act = to.from_numpy(self.env_spec.act_space.sample_uniform())
         return act.to(dtype=to.get_default_dtype(), device=self.device)

@@ -170,7 +170,7 @@ class DQL(ValueBased):
         for b in tqdm(
             range(self.num_batch_updates),
             total=self.num_batch_updates,
-            desc=f"Updating",
+            desc="Updating",
             unit="batches",
             file=sys.stdout,
             leave=False,

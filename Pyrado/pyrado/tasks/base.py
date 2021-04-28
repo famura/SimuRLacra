@@ -133,7 +133,7 @@ class Task(ABC):
             sum_final_rew += t.compute_final_rew(state, remaining_steps)
         return sum_final_rew
 
-    def compute_final_rew(self, state: np.ndarray, remaining_steps: int) -> float:
+    def compute_final_rew(self, state: np.ndarray, remaining_steps: int) -> float:  # pylint: disable=unused-argument
         """
         Compute the final reward, e.g. bonus for success or a malus for failure, for a single task.
 

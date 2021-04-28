@@ -34,7 +34,7 @@ from pyrado.utils.input_output import print_cbt
 
 try:
     import mujoco_py
-except (ImportError, Exception):
+except (ImportError, Exception):  # pylint: disable=broad-except
     # The ImportError is raised if mujoco-py is simply not installed
     # The Exception catches the case that you have everything installed properly but your IDE does not set the
     # LD_LIBRARY_PATH correctly (happens for PyCharm & CLion). To check this, try to run your script from the terminal.

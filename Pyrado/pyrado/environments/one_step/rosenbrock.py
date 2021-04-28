@@ -120,8 +120,8 @@ class RosenSim(SimEnv, Serializable):
             else:
                 try:
                     self.state = np.asarray(init_state)
-                except Exception:
-                    raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray)
+                except Exception as ex:
+                    raise pyrado.TypeErr(given=init_state, expected_type=np.ndarray) from ex
 
         # No need to reset the task
 

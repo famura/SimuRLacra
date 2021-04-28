@@ -91,13 +91,14 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
                     try:
                         dp[k] = [float(v)]
                     except (ValueError, TypeError):
+                        # noinspection PyBroadException
                         try:
                             dp[k] = v.tolist()  # numpy arrays and PyTorch tensors have a tolist() method
-                        except Exception:
-                            pyrado.TypeErr(
+                        except Exception as ex:  # pylint: disable=broad-except
+                            raise pyrado.TypeErr(
                                 msg="The domain param entries need to either be a float, a numpy array or a"
                                 "PyTorch tensor, such that they can be converted to a list!"
-                            )
+                            ) from ex
             # Taubulate is iterating through the lists in the dp dict
             print(tabulate(dp, headers="keys", tablefmt="simple"))
 

@@ -32,7 +32,6 @@ from typing import Optional, Tuple
 import numpy as np
 from matplotlib import colorbar
 from matplotlib import colors
-from matplotlib import colors as colors
 from matplotlib import pyplot as plt
 
 
