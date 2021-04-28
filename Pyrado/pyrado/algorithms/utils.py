@@ -240,14 +240,10 @@ def get_grad_via_torch(x_np: np.ndarray, fcn_to: Callable, *args_to, **kwargs_to
 @dataclass
 class RolloutSavingWrapper:
     """
-    A wrapper for :py:class:`pyrado.sampling.sampler.SamplerBase` objects.
-    Calls to :py:meth:`pyrado.sampling.sampler.SamplerBase.sample` are intercepted
-    and the results saved before they are returned to the callee.
-    All other calls to attributes and methods are forwarded to the sampler
-    object.
+    A wrapper for `SamplerBase` objects where calls to `SamplerBase.sample()` are intercepted and the results stored 
+    in this wrapper before they are returned to the caller.
 
-    **Usage**:
-
+    :usage:
     .. code-block:: python
 
         ros = RolloutSavingWrapper(sampler=subroutine.sampler)
@@ -258,19 +254,18 @@ class RolloutSavingWrapper:
     rollouts: List[List[StepSequence]] = field(default_factory=list)
 
     def sample(self, *args, **kwargs) -> List[StepSequence]:
-        """Like :py:meth:`pyrado.sampling.sampler.SamplerBase.sample()`
-        but keeps a copy of all returned values.
-
-        """
+        """Like `SamplerBase.sample()` but keeps a copy of all returned values."""
         sample = self.sampler.sample(*args, **kwargs)
         self.rollouts.append(sample)
         return sample
 
     def reset_rollouts(self) -> None:
-        """Resets the internal rollout variable, ideally
-        called before `save_snapshot()` to reduce serialized object size.
+        """
+        Resets the internal rollout variable. Inteded to be called before `save_snapshot()`, in order to
+        reduce serialized object's size.
         """
         self.rollouts = []
 
     def __getattr__(self, name: str) -> Any:
+        # Forward to the wrapped sampler
         return getattr(self.sampler, name)
