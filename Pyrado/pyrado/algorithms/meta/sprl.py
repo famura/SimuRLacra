@@ -316,7 +316,7 @@ class SPRL(Algorithm):
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
         # Wrap the sampler of the subroutine with an rollout saving wrapper
-        ros = RolloutSavingWrapper(sampler=subroutine.sampler)
+        ros = RolloutSavingWrapper(subroutine.sampler)
         subroutine.sampler = ros
 
         # Using a Union here is not really correct, but it makes PyCharm's type hinting work

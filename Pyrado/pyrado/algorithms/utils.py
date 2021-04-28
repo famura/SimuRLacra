@@ -240,22 +240,22 @@ def get_grad_via_torch(x_np: np.ndarray, fcn_to: Callable, *args_to, **kwargs_to
 @dataclass
 class RolloutSavingWrapper:
     """
-    A wrapper for `SamplerBase` objects where calls to `SamplerBase.sample()` are intercepted and the results stored 
+    A wrapper for `SamplerBase` objects where calls to `SamplerBase.sample()` are intercepted and the results stored
     in this wrapper before they are returned to the caller.
 
     :usage:
     .. code-block:: python
 
-        ros = RolloutSavingWrapper(sampler=subroutine.sampler)
+        ros = RolloutSavingWrapper(subroutine.sampler)
         subroutine.sampler = ros
     """
 
-    sampler: SamplerBase
+    wrapped_sampler: SamplerBase
     rollouts: List[List[StepSequence]] = field(default_factory=list)
 
     def sample(self, *args, **kwargs) -> List[StepSequence]:
         """Like `SamplerBase.sample()` but keeps a copy of all returned values."""
-        sample = self.sampler.sample(*args, **kwargs)
+        sample = self.wrapped_sampler.sample(*args, **kwargs)
         self.rollouts.append(sample)
         return sample
 
@@ -268,4 +268,4 @@ class RolloutSavingWrapper:
 
     def __getattr__(self, name: str) -> Any:
         # Forward to the wrapped sampler
-        return getattr(self.sampler, name)
+        return getattr(self.wrapped_sampler, name)
