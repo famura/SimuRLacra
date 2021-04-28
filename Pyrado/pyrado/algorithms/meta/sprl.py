@@ -559,14 +559,13 @@ class SPRL(Algorithm):
             else:
                 print(f"Update unsuccessful, keeping old values spl parameters")
 
-        self._subroutine.sampler.reset_rollouts()
-
     def reset(self, seed: int = None):
         # Forward to subroutine
         self._subroutine.reset(seed)
         self._subroutine.sampler.reset_rollouts()
 
     def save_snapshot(self, meta_info: dict = None):
+        self._subroutine.sampler.reset_rollouts()
         super().save_snapshot(meta_info)
 
         if meta_info is None:
