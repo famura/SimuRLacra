@@ -258,15 +258,37 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
 
 @dataclass
 class RolloutSavingWrapper:
+    """
+    A wrapper for :py:class:`pyrado.sampling.sampler.SamplerBase` objects.
+    Calls to :py:meth:`pyrado.sampling.sampler.SamplerBase.sample` are intercepted
+    and the results saved before they are returned to the callee.
+    All other calls to attributes and methods are forwarded to the sampler
+    object.
+
+    **Usage**:
+
+    .. code-block:: python
+
+        ros = RolloutSavingWrapper(sampler=subroutine.sampler)
+        subroutine.sampler = ros
+    """
+
     sampler: SamplerBase
     rollouts: List[List[StepSequence]] = field(default_factory=list)
 
-    def sample(self, *args, **kwargs):
+    def sample(self, *args, **kwargs) -> List[StepSequence]:
+        """Like :py:meth:`pyrado.sampling.sampler.SamplerBase.sample()`
+        but keeps a copy of all returned values.
+
+        """
         sample = self.sampler.sample(*args, **kwargs)
         self.rollouts.append(sample)
         return sample
 
     def reset_rollouts(self) -> None:
+        """Resets the internal rollout variable, ideally
+        called before `save_snapshot()` to reduce serialized object size.
+        """
         self.rollouts = []
 
     def __getattr__(self, name: str) -> Any:
@@ -428,7 +450,7 @@ class SPRL(Algorithm):
             previous_distribution.distribution, target_distribution.distribution
         )
 
-        values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
+        values = to.tensor([stepsequence.undiscounted_return() for rollout in rollouts for stepsequence in rollout])
 
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
@@ -607,5 +629,5 @@ class SPRL(Algorithm):
 
         self._subroutine.train(snapshot_mode, None, meta_info)
         rollouts = self._subroutine.sampler.rollouts
-        x = np.median([[ro.undiscounted_return() for ros in rollouts for ro in ros]])
+        x = np.median([[stepsequence.undiscounted_return() for rollout in rollouts for stepsequence in rollout]])
         return x
