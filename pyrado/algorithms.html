@@ -565,6 +565,45 @@ entropy: entropy of the action distribution</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="pyrado.algorithms.utils.RolloutSavingWrapper">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">RolloutSavingWrapper</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">wrapped_sampler:</span> <span class="pre">pyrado.sampling.sampler.SamplerBase</span></em>, <em class="sig-param"><span class="pre">rollouts:</span> <span class="pre">List[List[pyrado.sampling.step_sequence.StepSequence]]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#RolloutSavingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A wrapper for <cite>SamplerBase</cite> objects where calls to <cite>SamplerBase.sample()</cite> are intercepted and the results stored
+in this wrapper before they are returned to the caller.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Usage</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ros</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+<span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ros</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="pyrado.algorithms.utils.RolloutSavingWrapper.reset_rollouts">
+<code class="sig-name descname"><span class="pre">reset_rollouts</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#RolloutSavingWrapper.reset_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.reset_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the internal rollout variable. Inteded to be called before <cite>save_snapshot()</cite>, in order to
+reduce serialized object’s size.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.algorithms.utils.RolloutSavingWrapper.rollouts">
+<code class="sig-name descname"><span class="pre">rollouts</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.rollouts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.utils.RolloutSavingWrapper.sample">
+<code class="sig-name descname"><span class="pre">sample</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#RolloutSavingWrapper.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <cite>SamplerBase.sample()</cite> but keeps a copy of all returned values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.algorithms.utils.RolloutSavingWrapper.wrapped_sampler">
+<code class="sig-name descname"><span class="pre">wrapped_sampler</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></a></em><a class="headerlink" href="#pyrado.algorithms.utils.RolloutSavingWrapper.wrapped_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt id="pyrado.algorithms.utils.compute_action_statistics">
 <code class="sig-name descname"><span class="pre">compute_action_statistics</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_strat</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.algorithms.utils.ActionStatistics" title="pyrado.algorithms.utils.ActionStatistics"><span class="pre">pyrado.algorithms.utils.ActionStatistics</span></a><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#compute_action_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.utils.compute_action_statistics" title="Permalink to this definition">¶</a></dt>

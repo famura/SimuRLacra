@@ -228,7 +228,8 @@
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -236,6 +237,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">StochasticActionExplStrat</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sampler</span> <span class="kn">import</span> <span class="n">SamplerBase</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
@@ -433,6 +435,40 @@
     <span class="n">grad_to</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">out_to</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">x_to</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">out_to</span><span class="p">))</span>
     <span class="n">grad_to</span> <span class="o">=</span> <span class="n">grad_to</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># computes and returns the sum of gradients of outputs w.r.t. the inputs; we only have one</span>
     <span class="k">return</span> <span class="n">grad_to</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RolloutSavingWrapper"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.RolloutSavingWrapper">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">RolloutSavingWrapper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper for `SamplerBase` objects where calls to `SamplerBase.sample()` are intercepted and the results stored</span>
+<span class="sd">    in this wrapper before they are returned to the caller.</span>
+
+<span class="sd">    :usage:</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        ros = RolloutSavingWrapper(subroutine.sampler)</span>
+<span class="sd">        subroutine.sampler = ros</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">wrapped_sampler</span><span class="p">:</span> <span class="n">SamplerBase</span>
+    <span class="n">rollouts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RolloutSavingWrapper.sample"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.RolloutSavingWrapper.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Like `SamplerBase.sample()` but keeps a copy of all returned values.&quot;&quot;&quot;</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rollouts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sample</span></div>
+
+<div class="viewcode-block" id="RolloutSavingWrapper.reset_rollouts"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.RolloutSavingWrapper.reset_rollouts">[docs]</a>    <span class="k">def</span> <span class="nf">reset_rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the internal rollout variable. Inteded to be called before `save_snapshot()`, in order to</span>
+<span class="sd">        reduce serialized object&#39;s size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rollouts</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="c1"># Forward to the wrapped sampler</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_sampler</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

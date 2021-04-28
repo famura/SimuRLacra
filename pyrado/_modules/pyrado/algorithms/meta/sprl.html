@@ -235,7 +235,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">until_thold_exceeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">until_thold_exceeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">SelfPacedDomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
@@ -515,6 +515,10 @@
         <span class="c1"># Call Algorithm&#39;s constructor with the subroutine&#39;s properties</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subroutine</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">subroutine</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">subroutine</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
 
+        <span class="c1"># Wrap the sampler of the subroutine with an rollout saving wrapper</span>
+        <span class="n">ros</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+        <span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ros</span>
+
         <span class="c1"># Using a Union here is not really correct, but it makes PyCharm&#39;s type hinting work</span>
         <span class="c1"># suggest properties from both Algorithm and ExposedSampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Algorithm</span><span class="p">,</span> <span class="n">ExposedSampler</span><span class="p">]</span> <span class="o">=</span> <span class="n">subroutine</span>
@@ -586,10 +590,14 @@
             <span class="n">target_mean</span><span class="p">,</span> <span class="n">target_cov_chol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimize_mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimize_cov</span>
         <span class="p">)</span>
 
-        <span class="n">rollouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+        <span class="n">rollouts_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">rollouts</span>
         <span class="n">contexts</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">rollout</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">][</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">])</span> <span class="k">for</span> <span class="n">rollout</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]</span>
+                <span class="p">[</span>
+                    <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">][</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span>
+                    <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span>
+                <span class="p">]</span>
                 <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spl_parameters</span>
             <span class="p">],</span>
             <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -600,7 +608,7 @@
             <span class="n">previous_distribution</span><span class="o">.</span><span class="n">distribution</span><span class="p">,</span> <span class="n">target_distribution</span><span class="o">.</span><span class="n">distribution</span>
         <span class="p">)</span>
 
-        <span class="n">values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">ros</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">ros</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">])</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">])</span>
 
         <span class="k">def</span> <span class="nf">kl_constraint_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Compute the constraint for the KL-divergence between current and proposed distribution.&quot;&quot;&quot;</span>
@@ -733,9 +741,11 @@
 
 <div class="viewcode-block" id="SPRL.reset"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Forward to subroutine</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">reset_rollouts</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SPRL.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">reset_rollouts</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -776,8 +786,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
-        <span class="n">rollouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([[</span><span class="n">ros</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">ros</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]])</span>
+        <span class="n">rollouts_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">rollouts</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">([[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollouts_all</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]])</span>
         <span class="k">return</span> <span class="n">x</span></div>
 </pre></div>
 
