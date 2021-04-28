@@ -25,7 +25,7 @@ ignore-patterns=
 # pygtk.require().
 init-hook=
     sys.path.append(os.getcwd());
-    from pylint_ignore import PylintIgnorePaths;
+    from Pyrado.utils.pylint_ignore import PylintIgnorePaths;
     PylintIgnorePaths('Pyrado/examples/', 'Pyrado/scripts/', 'Pyrado/tests/')
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
