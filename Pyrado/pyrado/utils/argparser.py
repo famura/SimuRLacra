@@ -266,6 +266,9 @@ def get_argparser() -> argparse.ArgumentParser:
         action="append",
         help="hyperparameters to show in the ask-for-experiment dialog; use this parameter multiple times to show multiple hyperparameters; e.g. to differentiate between experiments",
     )
+    parser.add_argument(
+        "--device", type=str, default="cpu", help="device (either 'cpu' or 'cuda') to use for PyTorch (default: 'cpu')"
+    )
 
     segment_group = parser.add_mutually_exclusive_group(required=False)
     segment_group.add_argument(

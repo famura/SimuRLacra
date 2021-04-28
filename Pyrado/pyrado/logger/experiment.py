@@ -215,7 +215,8 @@ def list_experiments(
 
     :param env_name: filter by env name
     :param algo_name: filter by algorithm name. Requires env_name to be used too
-    :param base_dir: explicit base dir if desired. May also be a list of bases. Uses temp and perm dir if not specified.
+    :param base_dir: explicit base dir if desired. May also be a list of bases.
+                     Uses `pyrado.TEMP_DIR` and `pyrado.EXP_DIR` if not specified.
     :param temp: set to `False` to not look in the `pyrado.TEMP` directory
     :param perma: set to `False` to not look in the `pyrado.PERMA` directory
     """
@@ -358,19 +359,27 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
 
 
 def ask_for_experiment(
-    latest_only: bool = False, max_display: int = 10, hparam_list: Optional[List[str]] = None
+    latest_only: bool = False,
+    max_display: int = 10,
+    env_name: str = None,
+    temp: bool = True,
+    perma: bool = True,
+    hparam_list: Optional[List[str]] = None,
 ) -> Experiment:
     """
     Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.
 
     :param latest_only: only select the latest experiment of each type (environment-algorithm combination)
-    :param max_display: only display this many items
+    :param max_display: maximum number of items
+    :param env_name: filter by env name
+    :param temp: set to `False` to not look in the `pyrado.TEMP` directory
+    :param perma: set to `False` to not look in the `pyrado.PERMA` directory
     :param hparam_list: load the hyper-parameter file and show the parameters in this list,
                         sub-dicts can be separated with a dot
     :return: query asking the user for an experiment
     """
     # Scan for experiment list
-    all_exps = list(list_experiments())
+    all_exps = list(list_experiments(env_name=env_name, perma=perma, temp=temp))
 
     if len(all_exps) == 0:
         print_cbt("No experiments found!", "r")
