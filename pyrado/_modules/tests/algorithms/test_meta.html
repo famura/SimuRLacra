@@ -231,6 +231,7 @@
 <span class="kn">from</span> <span class="nn">sbi</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">SNPE_C</span>
 
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
@@ -239,6 +240,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.bayrn</span> <span class="kn">import</span> <span class="n">BayRn</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.epopt</span> <span class="kn">import</span> <span class="n">EPOpt</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.npdr</span> <span class="kn">import</span> <span class="n">NPDR</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.pddr</span> <span class="kn">import</span> <span class="n">PDDR</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.simopt</span> <span class="kn">import</span> <span class="n">SimOpt</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.sprl</span> <span class="kn">import</span> <span class="n">SPRL</span>
@@ -264,8 +266,10 @@
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_noise</span> <span class="kn">import</span> <span class="n">GaussianObsNoiseWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.state_augmentation</span> <span class="kn">import</span> <span class="n">StateAugmentationWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.fnn</span> <span class="kn">import</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
@@ -282,6 +286,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.experiments</span> <span class="kn">import</span> <span class="n">load_experiment</span>
 
 
 <div class="viewcode-block" id="ex_dir"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.ex_dir">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
@@ -920,6 +925,62 @@
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SPRL</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">),</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
     <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+
+
+<div class="viewcode-block" id="test_pddr"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_pddr">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qq-su&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fnn_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fnn&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;algo_hparam&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_teachers</span><span class="o">=</span><span class="mi">2</span><span class="p">)],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;casual&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_pddr</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
+    <span class="c1"># Create algorithm and train</span>
+    <span class="n">teacher_policy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span>
+        <span class="n">vfcn</span><span class="o">=</span><span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">teacher_algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">critic</span><span class="o">=</span><span class="n">critic</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">teacher_algo</span> <span class="o">=</span> <span class="n">PPO</span>
+
+    <span class="c1"># Wrapper</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+
+    <span class="c1"># Subroutine</span>
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">min_steps</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+        <span class="n">num_cpu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+        <span class="n">num_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">num_teachers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">teacher_policy</span><span class="o">=</span><span class="n">teacher_policy</span><span class="p">,</span>
+        <span class="n">teacher_algo</span><span class="o">=</span><span class="n">teacher_algo</span><span class="p">,</span>
+        <span class="n">teacher_algo_hparam</span><span class="o">=</span><span class="n">teacher_algo_hparam</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">PDDR</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span>
+
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">Algorithm</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">load_dir</span><span class="o">=</span><span class="n">ex_dir</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span>
+    <span class="n">policy_loaded</span> <span class="o">=</span> <span class="n">algo_loaded</span><span class="o">.</span><span class="n">policy</span>
+
+    <span class="c1"># Check</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="n">policy_loaded</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
+
+    <span class="c1"># Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="n">load_experiment</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

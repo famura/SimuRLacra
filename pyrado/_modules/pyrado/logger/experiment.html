@@ -417,7 +417,8 @@
 
 <span class="sd">    :param env_name: filter by env name</span>
 <span class="sd">    :param algo_name: filter by algorithm name. Requires env_name to be used too</span>
-<span class="sd">    :param base_dir: explicit base dir if desired. May also be a list of bases. Uses temp and perm dir if not specified.</span>
+<span class="sd">    :param base_dir: explicit base dir if desired. May also be a list of bases.</span>
+<span class="sd">                     Uses `pyrado.TEMP_DIR` and `pyrado.EXP_DIR` if not specified.</span>
 <span class="sd">    :param temp: set to `False` to not look in the `pyrado.TEMP` directory</span>
 <span class="sd">    :param perma: set to `False` to not look in the `pyrado.PERMA` directory</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -560,19 +561,27 @@
 
 
 <div class="viewcode-block" id="ask_for_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.ask_for_experiment">[docs]</a><span class="k">def</span> <span class="nf">ask_for_experiment</span><span class="p">(</span>
-    <span class="n">latest_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_display</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">hparam_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">latest_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">max_display</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">temp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">perma</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">hparam_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Experiment</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.</span>
 
 <span class="sd">    :param latest_only: only select the latest experiment of each type (environment-algorithm combination)</span>
-<span class="sd">    :param max_display: only display this many items</span>
+<span class="sd">    :param max_display: maximum number of items</span>
+<span class="sd">    :param env_name: filter by env name</span>
+<span class="sd">    :param temp: set to `False` to not look in the `pyrado.TEMP` directory</span>
+<span class="sd">    :param perma: set to `False` to not look in the `pyrado.PERMA` directory</span>
 <span class="sd">    :param hparam_list: load the hyper-parameter file and show the parameters in this list,</span>
 <span class="sd">                        sub-dicts can be separated with a dot</span>
 <span class="sd">    :return: query asking the user for an experiment</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Scan for experiment list</span>
-    <span class="n">all_exps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_experiments</span><span class="p">())</span>
+    <span class="n">all_exps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_experiments</span><span class="p">(</span><span class="n">env_name</span><span class="o">=</span><span class="n">env_name</span><span class="p">,</span> <span class="n">perma</span><span class="o">=</span><span class="n">perma</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_exps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;No experiments found!&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>

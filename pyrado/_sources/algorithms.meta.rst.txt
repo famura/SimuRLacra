@@ -59,6 +59,15 @@ npdr
    :show-inheritance:
 
 
+pddr
+----
+
+.. automodule:: pyrado.algorithms.meta.pddr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 sbi\_base
 ---------
 

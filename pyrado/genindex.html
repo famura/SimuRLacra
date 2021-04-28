@@ -1189,6 +1189,8 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.expl_strat">(ParameterExploring property)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.expl_strat">(PDDR property)</a>
+</li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO.expl_strat">(PPO property)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO2.expl_strat">(PPO2 property)</a>
@@ -1912,15 +1914,19 @@
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.load_experiment">load_experiment() (in module pyrado.utils.experiments)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="logger.html#pyrado.logger.experiment.load_hyperparameters">load_hyperparameters() (in module pyrado.logger.experiment)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_posterior">load_posterior() (SBIBase static method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.load_rollouts_from_dir">load_rollouts_from_dir() (in module pyrado.utils.experiments)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">load_snapshot() (Algorithm static method)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_teacher_experiment">load_teacher_experiment() (PDDR method)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_teachers">load_teachers() (PDDR method)</a>
 </li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.log_prob">log_prob() (TwoDimGaussian static method)</a>
 </li>
@@ -2061,6 +2067,8 @@
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.epopt">pyrado.algorithms.meta.epopt</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.npdr">pyrado.algorithms.meta.npdr</a>
+</li>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.pddr">pyrado.algorithms.meta.pddr</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.sbi_base">pyrado.algorithms.meta.sbi_base</a>
 </li>
@@ -2608,6 +2616,8 @@
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.name">(OneMassOscillatorSim attribute)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.name">(PDDR attribute)</a>
+</li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.pendulum.PendulumSim.name">(PendulumSim attribute)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.pepg.PEPG.name">(PEPG attribute)</a>
@@ -2975,6 +2985,8 @@
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.pd_linear">pd_linear() (in module pyrado.policies.recurrent.adn)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR">PDDR (class in pyrado.algorithms.meta.pddr)</a>
+</li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.peek">peek() (IterationTracker method)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.pendulum.PendulumSim">PendulumSim (class in pyrado.environments.pysim.pendulum)</a>
@@ -3104,6 +3116,8 @@
 </li>
       </ul></li>
       <li><a href="tasks.html#pyrado.tasks.utils.proximity_succeeded">proximity_succeeded() (in module pyrado.tasks.utils)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.prune_teachers">prune_teachers() (PDDR method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.pst_policy">pst_policy() (DefaultPolicies static method)</a>
 </li>
@@ -3246,6 +3260,13 @@
 
       <ul>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.npdr">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.meta.pddr
+
+      <ul>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.pddr">module</a>
 </li>
       </ul></li>
       <li>
@@ -3640,6 +3661,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.pendulum">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_ball_balancer
 
@@ -3647,8 +3670,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.quanser_ball_balancer">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.quanser_cartpole
 
@@ -5011,6 +5032,8 @@
 </li>
         <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample">(ParameterExplorationSampler method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.sample">(PDDR method)</a>
+</li>
         <li><a href="algorithms.html#pyrado.algorithms.utils.ReplayMemory.sample">(ReplayMemory method)</a>
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.utils.RolloutSavingWrapper.sample">(RolloutSavingWrapper method)</a>
@@ -5115,6 +5138,8 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.save_snapshot">(ParameterExploring method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.save_snapshot">(PDDR method)</a>
+</li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.save_snapshot">(SAC method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.save_snapshot">(SBIBase method)</a>
@@ -5206,6 +5231,8 @@
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.set_param">set_param() (StateAugmentationWrapper method)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.set_random_envs">set_random_envs() (PDDR method)</a>
+</li>
       <li><a href="pyrado.html#pyrado.set_seed">set_seed() (in module pyrado)</a>
 
       <ul>
@@ -5286,10 +5313,10 @@
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.space_des">(TaskWrapper property)</a>
 </li>
       </ul></li>
-      <li><a href="environments.html#pyrado.environments.base.Env.spec">spec() (Env property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="environments.html#pyrado.environments.base.Env.spec">spec() (Env property)</a>
+</li>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager.spin">spin() (LiveFigureManager method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.split_ordered_batches">split_ordered_batches() (StepSequence method)</a>
@@ -5424,6 +5451,8 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.step">(NPDR method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.step">(ParameterExploring method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.step">(PDDR method)</a>
 </li>
         <li><a href="environments.quanser.html#pyrado.environments.quanser.base.QuanserReal.step">(QuanserReal method)</a>
 </li>
@@ -5854,6 +5883,8 @@
 </li>
       <li><a href="tests.html#tests.test_policies.test_parameterized_policies_init_param">test_parameterized_policies_init_param() (in module tests.test_policies)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_pddr">test_pddr() (in module tests.algorithms.test_meta)</a>
+</li>
       <li><a href="tests.html#tests.test_rollout_result.test_pickle">test_pickle() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_playback_policy">test_playback_policy() (in module tests.test_policies)</a>
@@ -5887,6 +5918,8 @@
       <li><a href="tests.html#tests.test_policies.test_recurrent_policy_batching">test_recurrent_policy_batching() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_recurrent_policy_evaluate">test_recurrent_policy_evaluate() (in module tests.test_policies)</a>
+</li>
+      <li><a href="tests.html#tests.test_policies.test_recurrent_policy_evaluate_packed_padded_sequences">test_recurrent_policy_evaluate_packed_padded_sequences() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_recurrent_policy_one_step">test_recurrent_policy_one_step() (in module tests.test_policies)</a>
 </li>
@@ -5940,10 +5973,10 @@
 </li>
       <li><a href="tests.html#tests.test_utils.test_running_mem_average">test_running_mem_average() (in module tests.test_utils)</a>
 </li>
-      <li><a href="tests.html#tests.test_utils.test_running_normalizer">test_running_normalizer() (in module tests.test_utils)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tests.html#tests.test_utils.test_running_normalizer">test_running_normalizer() (in module tests.test_utils)</a>
+</li>
       <li><a href="tests.html#tests.test_utils.test_running_standardizer">test_running_standardizer() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_sample_contains_box_space">test_sample_contains_box_space() (in module tests.test_spaces)</a>
@@ -6336,6 +6369,8 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.train_policy_sim">(SimOpt method)</a>
 </li>
       </ul></li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.train_teachers">train_teachers() (PDDR method)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.training">training (DiagNormalNoise attribute)</a>
 
       <ul>
@@ -6416,6 +6451,8 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.Embedding.unpack">unpack() (Embedding static method)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.unpack_teachers">unpack_teachers() (PDDR method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.data_processing.Standardizer.unstandardize">unstandardize() (Standardizer method)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.until_thold_exceeded">until_thold_exceeded() (in module pyrado.algorithms.utils)</a>
@@ -6446,6 +6483,8 @@
         <li><a href="environments.pysim.html#pyrado.environments.pysim.pandavis.PandaVis.update">(PandaVis method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.update">(ParameterExploring method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.update">(PDDR method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.pandavis.PendulumVis.update">(PendulumVis method)</a>
 </li>
