@@ -28,7 +28,7 @@
 
 import os
 from copy import deepcopy
-from typing import Any, Optional
+from typing import Any, List, Tuple
 
 import numpy as np
 import torch as to
@@ -49,7 +49,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class PDDR(InterruptableAlgorithm):
-    """ Policy Distillation with Domain Randomization (PDDR) """
+    """Policy Distillation with Domain Randomization (PDDR)"""
 
     name: str = "pddr"
 
@@ -135,13 +135,14 @@ class PDDR(InterruptableAlgorithm):
             self.set_random_envs()
 
             # Prepare folders
+            self.teacher_ex_dirs = [os.path.join(self.save_dir, f"teachers_{idx}") for idx in range(self.num_teachers)]
             for idx in range(self.num_teachers):
-                os.makedirs(os.path.join(self.save_dir, f"teachers_{idx}"), exist_ok=True)
+                os.makedirs(self.teacher_ex_dirs[idx], exist_ok=True)
 
             # Create teacher algos
             self.algos = [
                 teacher_algo(
-                    save_dir=os.path.join(self.save_dir, f"teachers_{idx}"),
+                    save_dir=self.teacher_ex_dirs[idx],
                     env=self.teacher_envs[idx],
                     policy=deepcopy(teacher_policy),
                     logger=None,
@@ -224,8 +225,11 @@ class PDDR(InterruptableAlgorithm):
             # Update policy and value function
             self.update(rollouts=ros)
 
-    def sample(self):
-        """ Samples observations from several samplers. """
+    def sample(self) -> Tuple[List[List[StepSequence]], np.array, np.array]:
+        """
+        Samples observations from several samplers.
+        :return: list of rollouts per sampler, list of all returns, list of all rollout lengths
+        """
         ros = []
         rets = []
         all_lengths = []
@@ -238,7 +242,7 @@ class PDDR(InterruptableAlgorithm):
         return ros, np.array(rets), np.array(all_lengths)
 
     def update(self, *args: Any, **kwargs: Any):
-        """ Update the policy's (and value functions') parameters based on the collected rollout data. """
+        """Update the policy's (and value functions') parameters based on the collected rollout data."""
         obss = []
         losses = []
         for t in range(self.num_teachers):
@@ -273,11 +277,16 @@ class PDDR(InterruptableAlgorithm):
             pyrado.save(self.env_real, "env.pkl", self.save_dir)
 
     def _train_teacher(self, idx: int, snapshot_mode: str = "latest", seed: int = None):
-        """ Wrapper for use of multiprocessing: Trains oe teacher. """
+        """
+        Wrapper for use of multiprocessing: Trains one teacher.
+        :param idx: index of the teacher to be trained
+        :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)
+        :param seed: seed value for the random number generators, pass `None` for no seeding
+        """
         self.algos[idx].train(snapshot_mode=snapshot_mode, seed=seed)
 
     def set_random_envs(self):
-        """ Creates random environments of the given type. """
+        """Creates random environments of the given type."""
         self.randomizer.randomize(num_samples=self.num_teachers)
         params = self.randomizer.get_params(fmt="dict", dtype="numpy")
 
@@ -287,6 +296,11 @@ class PDDR(InterruptableAlgorithm):
             self.teacher_envs[e].domain_param = {key: value[e] for key, value in params.items()}
 
     def train_teachers(self, snapshot_mode: str = "latest", seed: int = None):
+        """
+        Trains all teachers.
+        :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)
+        :param seed: seed value for the random number generators, pass `None` for no seeding
+        """
         for idx in range(self.num_teachers):
             print_cbt(f"Training teacher {idx + 1} of {self.num_teachers}... ", "c")
             self._train_teacher(idx, snapshot_mode, seed)
@@ -294,9 +308,9 @@ class PDDR(InterruptableAlgorithm):
         self.teacher_policies = [a.policy for a in self.algos]
         self.teacher_expl_strats = [a.expl_strat for a in self.algos]
         self.teacher_critics = [a.critic for a in self.algos]
-        self.teacher_ex_dirs = [a.save_dir for a in self.algos]
 
     def load_teachers(self):
+        """Recursively load all teachers that can be found in the current experiment's directory."""
         # Get the experiment's directory to load from
         ex_dir = ask_for_experiment(max_display=10, env_name=self.env_real.name, perma=False)
         self.load_teacher_experiment(ex_dir)
@@ -307,12 +321,18 @@ class PDDR(InterruptableAlgorithm):
             self.load_teachers()
 
     def load_teacher_experiment(self, exp: Experiment):
-        """ Load teachers from PDDRTeachers experiment. """
+        """
+        Load teachers from PDDRTeachers experiment.
+        :param exp: the teacher's experiment object
+        """
         _, _, extra = load_experiment(exp)
         self.unpack_teachers(extra)
 
-    def unpack_teachers(self, extra):
-        """ Unpack teachers from PDDRTeachers experiment. """
+    def unpack_teachers(self, extra: dict):
+        """
+        Unpack teachers from PDDRTeachers experiment.
+        :param extra: dict with teacher data
+        """
         self.teacher_policies.extend(extra["teacher_policies"])
         self.teacher_envs.extend(extra["teacher_envs"])
         self.teacher_expl_strats.extend(extra["teacher_expl_strats"])
@@ -320,7 +340,7 @@ class PDDR(InterruptableAlgorithm):
         self.teacher_ex_dirs.extend(extra["teacher_ex_dirs"])
 
     def prune_teachers(self):
-        """ Prune teachers to only use the first num_teachers of them. """
+        """Prune teachers to only use the first num_teachers of them."""
         self.teacher_policies = self.teacher_policies[: self.num_teachers]
         self.teacher_envs = self.teacher_envs[: self.num_teachers]
         self.teacher_expl_strats = self.teacher_expl_strats[: self.num_teachers]

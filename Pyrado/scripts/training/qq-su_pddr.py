@@ -74,7 +74,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PDDR.name}_{QQubeSwingUpAndBalanceCtrl.name}{descr}")
 
     if args.train_teachers:
-        # Policy
+        # Teacher policy
         teacher_policy_hparam = dict(
             hidden_sizes=[64, 64], hidden_nonlin=to.relu, output_nonlin=to.tanh, use_cuda=use_cuda
         )
@@ -85,7 +85,7 @@ if __name__ == "__main__":
             with to.no_grad():
                 p /= 100
 
-        # Critic
+        # Teacher critic
         vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
         vfcn = FNNPolicy(spec=EnvSpec(env_real.obs_space, ValueFunctionSpace), **vfcn_hparam)
         critic_hparam = dict(
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         )
         critic = GAE(vfcn, **critic_hparam)
 
-        # Subroutine
+        # Teacher subroutine
         teacher_algo_hparam = dict(
             eps_clip=0.12648736789309026,
             min_steps=env_real.max_steps,

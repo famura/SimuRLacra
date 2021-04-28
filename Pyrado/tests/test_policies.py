@@ -39,7 +39,7 @@ from pyrado.policies.feed_back.dual_rfb import DualRBFLinearPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
-from pyrado.policies.recurrent.base import default_pack_hidden, default_unpack_hidden
+from pyrado.policies.recurrent.base import RecurrentPolicy, default_pack_hidden, default_unpack_hidden
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence

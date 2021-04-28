@@ -212,9 +212,11 @@ def list_experiments(
 ):
     """
     List all stored experiments.
+
     :param env_name: filter by env name
     :param algo_name: filter by algorithm name. Requires env_name to be used too
-    :param base_dir: explicit base dir if desired. May also be a list of bases. Uses temp and perm dir if not specified.
+    :param base_dir: explicit base dir if desired. May also be a list of bases.
+                     Uses `pyrado.TEMP_DIR` and `pyrado.EXP_DIR` if not specified.
     :param temp: set to `False` to not look in the `pyrado.TEMP` directory
     :param perma: set to `False` to not look in the `pyrado.PERMA` directory
     """
@@ -366,6 +368,7 @@ def ask_for_experiment(
 ) -> Experiment:
     """
     Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.
+
     :param latest_only: only select the latest experiment of each type (environment-algorithm combination)
     :param max_display: maximum number of items
     :param env_name: filter by env name
