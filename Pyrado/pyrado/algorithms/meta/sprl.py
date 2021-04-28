@@ -35,7 +35,7 @@ from torch.distributions import MultivariateNormal
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.algorithms.utils import RolloutSavingWrapper, until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
@@ -315,6 +315,10 @@ class SPRL(Algorithm):
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
+        # Wrap the sampler of the subroutine with an rollout saving wrapper
+        ros = RolloutSavingWrapper(subroutine.sampler)
+        subroutine.sampler = ros
+
         # Using a Union here is not really correct, but it makes PyCharm's type hinting work
         # suggest properties from both Algorithm and ExposedSampler
         self._subroutine: Union[Algorithm, ExposedSampler] = subroutine
@@ -386,10 +390,14 @@ class SPRL(Algorithm):
             target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
         )
 
-        rollouts = self._subroutine.sampler.sample()
+        rollouts_all = self._subroutine.sampler.rollouts
         contexts = to.tensor(
             [
-                [to.from_numpy(rollout.rollout_info["domain_param"][param.name]) for rollout in rollouts]
+                [
+                    to.from_numpy(ro.rollout_info["domain_param"][param.name])
+                    for rollouts in rollouts_all
+                    for ro in rollouts
+                ]
                 for param in self._spl_parameters
             ],
             requires_grad=True,
@@ -400,7 +408,7 @@ class SPRL(Algorithm):
             previous_distribution.distribution, target_distribution.distribution
         )
 
-        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
+        values = to.tensor([ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts])
 
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
@@ -534,8 +542,10 @@ class SPRL(Algorithm):
     def reset(self, seed: int = None):
         # Forward to subroutine
         self._subroutine.reset(seed)
+        self._subroutine.sampler.reset_rollouts()
 
     def save_snapshot(self, meta_info: dict = None):
+        self._subroutine.sampler.reset_rollouts()
         super().save_snapshot(meta_info)
 
         if meta_info is None:
@@ -576,6 +586,6 @@ class SPRL(Algorithm):
         self._subroutine.reset()
 
         self._subroutine.train(snapshot_mode, None, meta_info)
-        rollouts = self._subroutine.sampler.sample()
-        x = np.median([[ros.undiscounted_return() for ros in rollouts]])
+        rollouts_all = self._subroutine.sampler.rollouts
+        x = np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]])
         return x
