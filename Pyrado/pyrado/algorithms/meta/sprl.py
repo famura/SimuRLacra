@@ -26,8 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from dataclasses import dataclass, field
-from typing import Any, Callable, Generator, List, Optional, Tuple, Union
+from typing import Callable, Generator, List, Optional, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -36,13 +35,11 @@ from torch.distributions import MultivariateNormal
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.algorithms.utils import RolloutSavingWrapper, until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.sampling.expose_sampler import ExposedSampler
-from pyrado.sampling.sampler import SamplerBase
-from pyrado.sampling.step_sequence import StepSequence
 
 
 class MultivariateNormalWrapper:
@@ -254,45 +251,6 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
             return stacked, mean_indices, cov_indices
 
         return stacked
-
-
-@dataclass
-class RolloutSavingWrapper:
-    """
-    A wrapper for :py:class:`pyrado.sampling.sampler.SamplerBase` objects.
-    Calls to :py:meth:`pyrado.sampling.sampler.SamplerBase.sample` are intercepted
-    and the results saved before they are returned to the callee.
-    All other calls to attributes and methods are forwarded to the sampler
-    object.
-
-    **Usage**:
-
-    .. code-block:: python
-
-        ros = RolloutSavingWrapper(sampler=subroutine.sampler)
-        subroutine.sampler = ros
-    """
-
-    sampler: SamplerBase
-    rollouts: List[List[StepSequence]] = field(default_factory=list)
-
-    def sample(self, *args, **kwargs) -> List[StepSequence]:
-        """Like :py:meth:`pyrado.sampling.sampler.SamplerBase.sample()`
-        but keeps a copy of all returned values.
-
-        """
-        sample = self.sampler.sample(*args, **kwargs)
-        self.rollouts.append(sample)
-        return sample
-
-    def reset_rollouts(self) -> None:
-        """Resets the internal rollout variable, ideally
-        called before `save_snapshot()` to reduce serialized object size.
-        """
-        self.rollouts = []
-
-    def __getattr__(self, name: str) -> Any:
-        return getattr(self.sampler, name)
 
 
 class SPRL(Algorithm):

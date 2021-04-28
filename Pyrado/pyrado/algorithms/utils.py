@@ -28,7 +28,8 @@
 
 import functools
 from copy import deepcopy
-from typing import Callable, NamedTuple, Optional, Sequence, Union
+from dataclasses import dataclass, field
+from typing import Any, Callable, List, NamedTuple, Optional, Sequence, Union
 
 import numpy as np
 import torch as to
@@ -36,6 +37,7 @@ from torch.distributions import Distribution
 
 import pyrado
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
+from pyrado.sampling.sampler import SamplerBase
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.input_output import print_cbt
 
@@ -233,3 +235,42 @@ def get_grad_via_torch(x_np: np.ndarray, fcn_to: Callable, *args_to, **kwargs_to
     grad_to = to.autograd.grad(outputs=out_to, inputs=x_to, grad_outputs=to.ones_like(out_to))
     grad_to = grad_to[0]  # computes and returns the sum of gradients of outputs w.r.t. the inputs; we only have one
     return grad_to.numpy()
+
+
+@dataclass
+class RolloutSavingWrapper:
+    """
+    A wrapper for :py:class:`pyrado.sampling.sampler.SamplerBase` objects.
+    Calls to :py:meth:`pyrado.sampling.sampler.SamplerBase.sample` are intercepted
+    and the results saved before they are returned to the callee.
+    All other calls to attributes and methods are forwarded to the sampler
+    object.
+
+    **Usage**:
+
+    .. code-block:: python
+
+        ros = RolloutSavingWrapper(sampler=subroutine.sampler)
+        subroutine.sampler = ros
+    """
+
+    sampler: SamplerBase
+    rollouts: List[List[StepSequence]] = field(default_factory=list)
+
+    def sample(self, *args, **kwargs) -> List[StepSequence]:
+        """Like :py:meth:`pyrado.sampling.sampler.SamplerBase.sample()`
+        but keeps a copy of all returned values.
+
+        """
+        sample = self.sampler.sample(*args, **kwargs)
+        self.rollouts.append(sample)
+        return sample
+
+    def reset_rollouts(self) -> None:
+        """Resets the internal rollout variable, ideally
+        called before `save_snapshot()` to reduce serialized object size.
+        """
+        self.rollouts = []
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self.sampler, name)
