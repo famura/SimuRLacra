@@ -26,7 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Callable, Generator, List, Optional, Tuple, Union
+from dataclasses import dataclass, field
+from typing import Any, Callable, Generator, List, Optional, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -40,6 +41,8 @@ from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.sampling.expose_sampler import ExposedSampler
+from pyrado.sampling.sampler import SamplerBase
+from pyrado.sampling.step_sequence import StepSequence
 
 
 class MultivariateNormalWrapper:
@@ -253,6 +256,20 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         return stacked
 
 
+@dataclass
+class RolloutSavingWrapper:
+    sampler: SamplerBase
+    rollouts: List[List[StepSequence]] = field(default_factory=list)
+
+    def sample(self, *args, **kwargs):
+        sample = self.sampler.sample(*args, **kwargs)
+        self.rollouts.append(sample)
+        return sample
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self.sampler, name)
+
+
 class SPRL(Algorithm):
     """
     Self-Paced Reinforcement Leaner (SPRL)
@@ -314,6 +331,10 @@ class SPRL(Algorithm):
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
+
+        # wrap the sampler of the subroutine with an rollout saving wrapper
+        ros = RolloutSavingWrapper(sampler=subroutine.sampler)
+        subroutine.sampler = ros
 
         # Using a Union here is not really correct, but it makes PyCharm's type hinting work
         # suggest properties from both Algorithm and ExposedSampler
@@ -386,10 +407,14 @@ class SPRL(Algorithm):
             target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
         )
 
-        rollouts = self._subroutine.sampler.sample()
+        rollouts = self._subroutine.sampler.rollouts
         contexts = to.tensor(
             [
-                [to.from_numpy(rollout.rollout_info["domain_param"][param.name]) for rollout in rollouts]
+                [
+                    to.from_numpy(stepseq.rollout_info["domain_param"][param.name])
+                    for rollout in rollouts
+                    for stepseq in rollout
+                ]
                 for param in self._spl_parameters
             ],
             requires_grad=True,
@@ -400,7 +425,7 @@ class SPRL(Algorithm):
             previous_distribution.distribution, target_distribution.distribution
         )
 
-        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
+        values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
 
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
@@ -576,6 +601,6 @@ class SPRL(Algorithm):
         self._subroutine.reset()
 
         self._subroutine.train(snapshot_mode, None, meta_info)
-        rollouts = self._subroutine.sampler.sample()
-        x = np.median([[ros.undiscounted_return() for ros in rollouts]])
+        rollouts = self._subroutine.sampler.rollouts
+        x = np.median([[ro.undiscounted_return() for ros in rollouts for ro in ros]])
         return x
