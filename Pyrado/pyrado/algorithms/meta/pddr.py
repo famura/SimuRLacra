@@ -191,7 +191,7 @@ class PDDR(InterruptableAlgorithm):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         """
-        Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+        Performs a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
         adding the metrics of interest to the logger. Does not update the `curr_iter` attribute.
 
         :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new highscore)
@@ -228,6 +228,7 @@ class PDDR(InterruptableAlgorithm):
     def sample(self) -> Tuple[List[List[StepSequence]], np.array, np.array]:
         """
         Samples observations from several samplers.
+
         :return: list of rollouts per sampler, list of all returns, list of all rollout lengths
         """
         ros = []
@@ -279,6 +280,7 @@ class PDDR(InterruptableAlgorithm):
     def _train_teacher(self, idx: int, snapshot_mode: str = "latest", seed: int = None):
         """
         Wrapper for use of multiprocessing: Trains one teacher.
+
         :param idx: index of the teacher to be trained
         :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)
         :param seed: seed value for the random number generators, pass `None` for no seeding
@@ -298,6 +300,7 @@ class PDDR(InterruptableAlgorithm):
     def train_teachers(self, snapshot_mode: str = "latest", seed: int = None):
         """
         Trains all teachers.
+
         :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)
         :param seed: seed value for the random number generators, pass `None` for no seeding
         """
@@ -323,6 +326,7 @@ class PDDR(InterruptableAlgorithm):
     def load_teacher_experiment(self, exp: Experiment):
         """
         Load teachers from PDDRTeachers experiment.
+        
         :param exp: the teacher's experiment object
         """
         _, _, extra = load_experiment(exp)
@@ -331,6 +335,7 @@ class PDDR(InterruptableAlgorithm):
     def unpack_teachers(self, extra: dict):
         """
         Unpack teachers from PDDRTeachers experiment.
+
         :param extra: dict with teacher data
         """
         self.teacher_policies.extend(extra["teacher_policies"])
