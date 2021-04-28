@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Callable, Optional, Tuple
+from typing import Callable, Tuple
 
 import torch as to
 from torch import nn as nn
@@ -47,7 +47,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
     """
 
     # Type of recurrent network. Is None in base class to force inheritance.
-    recurrent_network_type: Optional[RNNBase] = None
+    recurrent_network_type: RNNBase = None
 
     def __init__(
         self,

@@ -855,9 +855,9 @@ class StepSequence(Sequence[Step]):
             data_dict[name] = data
 
         # Create new object
-        return StepSequence(
+        return StepSequence(  # pylint: disable=missing-kwoa
             **data_dict, rollout_info=rollout.rollout_info, continuous=rollout.continuous
-        )  # pylint: disable=missing-kwoa
+        )
 
 
 def discounted_reverse_cumsum(data, gamma: float):

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Callable, Optional
+from typing import Callable
 
 import torch as to
 import torch.nn as nn
@@ -43,7 +43,7 @@ class RNNPolicyBase(RecurrentPolicy):
     """Base class for recurrent policies wrapping torch.nn.RNNBase subclasses"""
 
     # Type of recurrent network. Is None in base class to force inheritance.
-    recurrent_network_type: Optional[RNNBase] = None
+    recurrent_network_type: RNNBase = None
 
     def __init__(
         self,
