@@ -69,7 +69,7 @@ class CEM(ParameterExploring):
         expl_std_min: float = 0.01,
         extra_expl_std_init: float = 0.0,
         extra_expl_decay_iter: int = 10,
-        num_domains: Optional[int] = 1,
+        num_domains: int = 1,
         full_cov: bool = False,
         symm_sampling: bool = False,
         num_workers: int = 4,

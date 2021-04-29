@@ -222,7 +222,7 @@ class Env(ABC, Serializable):
         return self.act_space.project_to(act)
 
     @abstractmethod
-    def render(self, mode: RenderMode, render_step: Optional[int] = 1):
+    def render(self, mode: RenderMode, render_step: int = 1):
         """
         Visualize one time step.
 

@@ -70,7 +70,7 @@ class SysIdViaEpisodicRL(Algorithm):
         num_rollouts_per_distr: int,
         metric: Union[Callable[[np.ndarray], np.ndarray], None],
         obs_dim_weight: Union[list, np.ndarray],
-        std_obs_filt: Optional[int] = 5,
+        std_obs_filt: int = 5,
         w_abs: float = 0.5,
         w_sq: float = 1.0,
         num_workers: int = 4,

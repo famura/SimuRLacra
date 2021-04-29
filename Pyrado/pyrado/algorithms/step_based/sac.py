@@ -77,19 +77,19 @@ class SAC(ValueBased):
         gamma: float,
         max_iter: int,
         num_updates_per_step: Optional[int] = None,
-        tau: Optional[float] = 0.995,
-        ent_coeff_init: Optional[float] = 0.2,
+        tau: float = 0.995,
+        ent_coeff_init: float = 0.2,
         learn_ent_coeff: bool = True,
-        target_update_intvl: Optional[int] = 1,
+        target_update_intvl: int = 1,
         num_init_memory_steps: Optional[int] = None,
         standardize_rew: bool = True,
         rew_scale: Union[int, float] = 1.0,
         min_rollouts: Optional[int] = None,
         min_steps: Optional[int] = None,
         batch_size: Optional[int] = 256,
-        eval_intvl: Optional[int] = 100,
-        max_grad_norm: Optional[float] = 5.0,
-        lr: Optional[float] = 3e-4,
+        eval_intvl: int = 100,
+        max_grad_norm: float = 5.0,
+        lr: float = 3e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
         num_workers: int = 4,
@@ -206,7 +206,7 @@ class SAC(ValueBased):
         return to.exp(self._log_ent_coeff.detach())
 
     @staticmethod
-    def soft_update(target: nn.Module, source: nn.Module, tau: Optional[float] = 0.995):
+    def soft_update(target: nn.Module, source: nn.Module, tau: float = 0.995):
         """
         Moving average update, a.k.a. Polyak update.
         Modifies the input argument `target`.
