@@ -366,7 +366,7 @@
     <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">des_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">succ_thold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task for lifting an object.</span>
@@ -401,7 +401,7 @@
 <div class="viewcode-block" id="create_flipping_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_flipping_task">[docs]</a><span class="k">def</span> <span class="nf">create_flipping_task</span><span class="p">(</span>
     <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">des_angle_delta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">des_angle_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span>
     <span class="n">endless</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -462,9 +462,7 @@
     <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">obs_labels</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_goal_dist_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_task</span><span class="p">(</span>
-    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
+<div class="viewcode-block" id="create_goal_dist_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task that rewards minimizing the `GoalDistance` of dynamical system movements primitives (see RcsPySim).</span>
 
@@ -497,7 +495,7 @@
 
 
 <div class="viewcode-block" id="create_goal_dist_distvel_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_distvel_task</span><span class="p">(</span>
-    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a task that rewards minimizing the `GoalDistance` as well as its rate of change of dynamical system</span>
