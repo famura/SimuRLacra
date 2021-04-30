@@ -326,7 +326,7 @@ class PDDR(InterruptableAlgorithm):
     def load_teacher_experiment(self, exp: Experiment):
         """
         Load teachers from PDDRTeachers experiment.
-        
+
         :param exp: the teacher's experiment object
         """
         _, _, extra = load_experiment(exp)
