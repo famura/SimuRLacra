@@ -33,6 +33,7 @@ from copy import deepcopy
 
 import numpy as np
 import torch as to
+import torch.nn as nn
 from sbi import utils
 from sbi.inference import SNPE_C
 
@@ -41,9 +42,15 @@ from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import IdlePolicy
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.sampling.sbi_embeddings import (
+    BayesSimEmbedding,
+    DeltaStepsEmbedding,
+    DynamicTimeWarpingEmbedding,
+    LastStepEmbedding,
+    RNNEmbedding,
+)
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -61,7 +68,7 @@ if __name__ == "__main__":
     env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake ground truth target domain
-    num_real_rollouts = 5
+    num_real_rollouts = 2
     env_real = deepcopy(env_sim)
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="m", mean=0.8, std=0.8 / 50),
@@ -87,22 +94,16 @@ if __name__ == "__main__":
     prior = utils.BoxUniform(**prior_hparam)
 
     # Time series embedding
-    # embedding_hparam = dict()
-    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=10)
-    # embedding = DeltaStepsEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-    embedding_hparam = dict(downsampling_factor=1)
-    embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = DynamicTimeWarpingEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
-    # )
-    # embedding_hparam = dict(hidden_size=10, num_recurrent_layers=2, output_size=1, downsampling_factor=10)
-    # embedding = RNNEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
+    embedding_hparam = dict(
+        downsampling_factor=1,
+        # len_rollouts=env_sim.max_steps,
+        # recurrent_network_type=nn.RNN,
+        # only_last_output=True,
+        # hidden_size=20,
+        # num_recurrent_layers=1,
+        # output_size=1,
+    )
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=5)
@@ -132,7 +133,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=20,
+        num_workers=1,
     )
     algo = NPDR(
         ex_dir,

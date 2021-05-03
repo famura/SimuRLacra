@@ -28,8 +28,7 @@
 
 import os
 from abc import ABC, abstractmethod
-from operator import itemgetter
-from typing import List, Mapping, Optional, Tuple, Union, ValuesView
+from typing import List, Mapping, Optional, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -50,34 +49,6 @@ from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces import BoxSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt_once
-
-
-def _check_domain_params(
-    rollouts: Union[List[StepSequence], StepSequence],
-    domain_param_value: np.ndarray,
-    domain_param_names: Union[List[str], ValuesView],
-):
-    """
-    Verify if the domain parameters in the rollout are actually the ones commanded.
-
-    :param rollouts: simulated rollouts or rollout segments
-    :param domain_param_value: one set of domain parameters as commanded
-    :param domain_param_names: names of the domain parameters to set, i.e. values of the domain parameter mapping
-    """
-    if isinstance(rollouts, StepSequence):
-        rollouts = [rollouts]
-
-    if not all(
-        [
-            np.allclose(
-                np.asarray(itemgetter(*domain_param_names)(ro.rollout_info["domain_param"])), domain_param_value
-            )
-            for ro in rollouts
-        ]
-    ):
-        raise pyrado.ValueErr(
-            msg="The domain parameters after the rollouts are not identical to the ones commanded by the sbi!"
-        )
 
 
 class RolloutSamplerForSBI(ABC, Serializable):
@@ -250,7 +221,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                             stop_on_done=False,
                             max_steps=seg_real.length,
                         )
-                        _check_domain_params(seg_sim, dp_value, self.dp_names)
+                        # check_domain_params(seg_sim, dp_value, self.dp_names)
                         if self.use_rec_act:
                             check_act_equal(seg_real, seg_sim, check_applied=True)
 
@@ -278,9 +249,9 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
             # Compute the features from all time series
             data_sim_all = to.stack(data_sim_all, dim=0)  # shape [batch_size, num_rollouts, len_time_series, dim_data]
-            data_sim_all = self._embedding(Embedding.pack(data_sim_all))
+            data_sim_all = self._embedding(Embedding.pack(data_sim_all))  # shape [batch_size, num_rollouts * dim_data]
 
-            # Check
+            # Check shape
             if data_sim_all.shape != (dp_values.shape[0], len(self.rollouts_real) * self._embedding.dim_output):
                 raise pyrado.ShapeErr(
                     given=data_sim_all,
@@ -302,7 +273,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_value))),
                     stop_on_done=False,
                 )
-                # _check_domain_params(ro_sim, dp_value, self.dp_names)
+                # check_domain_params(ro_sim, dp_value, self.dp_names)
 
                 # Concatenate states and actions of the simulated segments
                 data_one_seg = np.concatenate([ro_sim.states[:-1, :], ro_sim.actions_applied], axis=1)
@@ -316,7 +287,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
             data_sim_all = data_sim_all.unsqueeze(1)  # equivalent to only one target domain rollout
             data_sim_all = self._embedding(Embedding.pack(data_sim_all))  # shape [batch_size,  dim_feat]
 
-            # Check
+            # Check shape
             if data_sim_all.shape != (dp_values.shape[0], self._embedding.dim_output):
                 raise pyrado.ShapeErr(
                     given=data_sim_all, expected_match=(dp_values.shape[0], self._embedding.dim_output)
@@ -382,7 +353,11 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
         # Compute the features
         data_real = data_real.unsqueeze(0)  # only one target domain rollout
-        data_real = self._embedding(Embedding.pack(data_real))
+        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, 1, len_time_series * data_dim]
+
+        # Check shape (here no batching and always one rollout)
+        if data_real.shape[0] != 1:
+            raise pyrado.ShapeErr(given=data_real, expected_match=(1, -1))
 
         return data_real, ro
 
@@ -472,6 +447,10 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
 
         # Compute the features
         data_real = data_real.unsqueeze(0)  # only one target domain rollout
-        data_real = self._embedding(Embedding.pack(data_real))
+        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, 1, len_time_series * data_dim]
+
+        # Check shape (here no batching and always one rollout)
+        if data_real.shape[0] != 1:
+            raise pyrado.ShapeErr(given=data_real, expected_match=(1, -1))
 
         return data_real, ro

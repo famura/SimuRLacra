@@ -27,24 +27,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Pendulum environment using Neural Posterior Domain Randomization
+Domain parameter identification experiment on the Pendulum environment using Neural Posterior Domain Randomization
 """
 from copy import deepcopy
 
+import numpy as np
 import torch as to
 from sbi import utils
-from sbi.inference import SNPE_C
 
 import pyrado
-from pyrado.algorithms.episodic.hc import HCNormal
-from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.features import FeatureStack, MultFeat, const_feat, identity_feat, sign_feat, squared_feat
-from pyrado.policies.feed_back.linear import LinearPolicy
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, DeltaStepsEmbedding, DynamicTimeWarpingEmbedding
+from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -52,8 +48,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}-{HCNormal.name}_{LinearPolicy.name}")
-    num_workers = 8
+    ex_dir = setup_experiment(PendulumSim.name, f"{BayesSim.name}", "sin")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -61,12 +56,11 @@ if __name__ == "__main__":
     # Environments
     env_hparams = dict(dt=1 / 50.0, max_steps=400)
     env_sim = PendulumSim(**env_hparams)
-    # env_sim.domain_param = dict(d_pole=0, tau_max=10.0)
 
     # Create a fake ground truth target domain
     num_real_rollouts = 1
     env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(m_pole=1 / 1.2 ** 2, l_pole=1.2)
+    env_real.domain_param = dict(m_pole=1 / 1.3 ** 2, l_pole=1.3)
 
     # Define a mapping: index - domain parameter
     dp_mapping = {0: "m_pole", 1: "l_pole"}
@@ -78,56 +72,41 @@ if __name__ == "__main__":
         high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
     )
     prior = utils.BoxUniform(**prior_hparam)
+    # prior_hparam = dict(
+    #     loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
+    #     covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
+    # )
+    # prior = to.distributions.MultivariateNormal(**prior_hparam)
 
-    # Time series embedding
-    embedding_hparam = dict(
-        downsampling_factor=5,
-        # len_rollouts=env_sim.max_steps,
-        # recurrent_network_type=nn.RNN,
-        # only_last_output=True,
-        # hidden_size=20,
-        # num_recurrent_layers=1,
-        # output_size=1,
-    )
-    embedding = create_embedding(DeltaStepsEmbedding.name, env_sim.spec, **embedding_hparam)
+    # Posterior (mixture of Gaussians)
+    posterior_hparam = dict(model="mdn", num_components=10)
 
-    # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=4)
+    # Behavioral policy
+    policy_hparam = dict(tau_max=dp_nom["tau_max"], f_sin=0.5)
 
-    # Policy
-    policy_hparam = dict(
-        feats=FeatureStack([const_feat, identity_feat, sign_feat, squared_feat, MultFeat((0, 2)), MultFeat((1, 2))])
-    )
-    policy = LinearPolicy(spec=env_sim.spec, **policy_hparam)
+    def fcn_of_time(t: float):
+        act = policy_hparam["tau_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"])
+        return act.repeat(env_sim.act_space.flat_dim)
 
-    # Policy optimization subroutine
-    subrtn_policy_hparam = dict(
-        max_iter=5,
-        pop_size=5 * policy.num_param,
-        num_domains=20,
-        num_init_states_per_domain=1,
-        expl_factor=1.05,
-        expl_std_init=1.0,
-        num_workers=num_workers,
-    )
-    subrtn_policy = HCNormal(ex_dir, env_sim, policy, **subrtn_policy_hparam)
+    act_recordings = [
+        [fcn_of_time(t) for t in np.arange(0, env_sim.max_steps * env_sim.dt, env_sim.dt)]
+        for _ in range(num_real_rollouts)
+    ]
+    policy = PlaybackPolicy(env_sim.spec, act_recordings)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=5,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=300,
+        num_sim_per_round=400,
+        num_segments=4,
         num_sbi_rounds=3,
-        simulation_batch_size=10,
-        normalize_posterior=False,
-        num_eval_samples=100,
-        # num_segments=1,
-        len_segments=100,
+        downsampling_factor=1,
+        num_eval_samples=200,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
-            learning_rate=5e-4,  # default: 5e-4
+            learning_rate=3e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
             discard_prior_samples=False,  # default: False
@@ -137,28 +116,27 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=num_workers,
+        simulation_batch_size=10,
+        normalize_posterior=True,
+        subrtn_policy=None,
+        num_workers=12,
     )
-    algo = NPDR(
+    algo = BayesSim(
         ex_dir,
         env_sim,
         env_real,
         policy,
         dp_mapping,
         prior,
-        SNPE_C,
-        embedding,
         **algo_hparam,
-        subrtn_policy=subrtn_policy,
     )
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
         dict(env=env_hparams, seed=args.seed),
+        dict(policy_name=policy.name),
         dict(prior=prior_hparam),
         dict(posterior_nn=posterior_hparam),
-        dict(policy=policy_hparam),
-        dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

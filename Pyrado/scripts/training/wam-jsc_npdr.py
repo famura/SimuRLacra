@@ -42,8 +42,8 @@ from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -59,6 +59,7 @@ if __name__ == "__main__":
     # Environments
     env_sim_hparams = dict(num_dof=7, dt=1 / 250.0, max_steps=20 * 250)
     env_sim = WAMJointSpaceCtrlSim(**env_sim_hparams)
+    num_real_rollouts = 1
     env_real = osp.join(pyrado.EVAL_DIR, "wam-jsc-7_neg-wam-sin_250Hz_filt")
 
     # Define a mapping: index - domain parameter
@@ -138,22 +139,16 @@ if __name__ == "__main__":
     prior = utils.BoxUniform(**prior_hparam)
 
     # Time series embedding
-    # embedding_hparam = dict()
-    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=10)
-    # embedding = DeltaStepsEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-    embedding_hparam = dict(downsampling_factor=1)
-    embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = DynamicTimeWarpingEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
-    # )
-    # embedding_hparam = dict(hidden_size=10, num_recurrent_layers=1, output_size=5, downsampling_factor=10)
-    # embedding = RNNEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
+    embedding_hparam = dict(
+        downsampling_factor=1,
+        # len_rollouts=env_sim.max_steps,
+        # recurrent_network_type=nn.RNN,
+        # only_last_output=True,
+        # hidden_size=20,
+        # num_recurrent_layers=1,
+        # output_size=1,
+    )
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=8)
@@ -161,7 +156,7 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=1,
+        num_real_rollouts=num_real_rollouts,
         num_sim_per_round=2000,
         num_sbi_rounds=3,
         simulation_batch_size=50,

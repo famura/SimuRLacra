@@ -41,9 +41,9 @@ from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
-from pyrado.sampling.sbi_embeddings import DynamicTimeWarpingEmbedding
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, DynamicTimeWarpingEmbedding
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -61,6 +61,7 @@ if __name__ == "__main__":
     env_sim = PendulumSim(**env_hparams)
 
     # Create a fake ground truth target domain
+    num_real_rollouts = 1
     env_real = deepcopy(env_sim)
     env_real.domain_param = dict(m_pole=1 / 1.3 ** 2, l_pole=1.3)
 
@@ -81,22 +82,16 @@ if __name__ == "__main__":
     prior = to.distributions.MultivariateNormal(**prior_hparam)
 
     # Time series embedding
-    # embedding_hparam = dict()
-    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=10)
-    # embedding = DeltaStepsEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-    # embedding_hparam = dict(downsampling_factor=1)
-    # embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    embedding_hparam = dict(downsampling_factor=2)
-    embedding = DynamicTimeWarpingEmbedding(
-        env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
+    embedding_hparam = dict(
+        downsampling_factor=1,
+        # len_rollouts=env_sim.max_steps,
+        # recurrent_network_type=nn.RNN,
+        # only_last_output=True,
+        # hidden_size=20,
+        # num_recurrent_layers=1,
+        # output_size=1,
     )
-    # embedding_hparam = dict(hidden_size=10, num_recurrent_layers=2, output_size=1, downsampling_factor=10)
-    # embedding = RNNEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=4)
@@ -108,7 +103,6 @@ if __name__ == "__main__":
         act = policy_hparam["tau_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"])
         return act.repeat(env_sim.act_space.flat_dim)
 
-    num_real_rollouts = 1
     act_recordings = [
         [fcn_of_time(t) for t in np.arange(0, env_sim.max_steps * env_sim.dt, env_sim.dt)]
         for _ in range(num_real_rollouts)

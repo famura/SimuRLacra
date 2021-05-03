@@ -567,7 +567,7 @@ def plot_rollouts_segment_wise(
     segments_ground_truth: List[List[StepSequence]],
     segments_multiple_envs: List[List[List[StepSequence]]],
     segments_nominal: List[List[StepSequence]],
-    use_rec: bool,
+    use_rec_str: bool,
     idx_iter: int,
     idx_round: int = -1,
     state_labels: Optional[List[str]] = None,
@@ -586,7 +586,7 @@ def plot_rollouts_segment_wise(
     :param segments_multiple_envs: list of lists of lists containing rollout segments from different environment
                                    instances, e.g. samples from a posterior coming from `NDPR`
     :param segments_nominal: list of lists containing rollout segments from the nominal environment
-    :param use_rec: `True` if pre-recorded actions have been used to generate the rollouts
+    :param use_rec_str: `True` if pre-recorded actions have been used to generate the rollouts
     :param idx_iter: selected iteration
     :param idx_round: selected round
     :param state_labels: y-axes labels to override the default value which is extracted from the state space's labels
@@ -785,10 +785,10 @@ def plot_rollouts_segment_wise(
                 axs[idx_axs].set_xlim(x_limits[0], x_limits[1])
 
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
-        use_rec = ", using rec actions" if use_rec else ""
-        rnd = f"round {idx_round}, " if idx_round != -1 else ""
+        use_rec_str = ", using rec actions" if use_rec_str else ""
+        round_str = f"round {idx_round}, " if idx_round != -1 else ""
         fig.canvas.set_window_title(
-            f"Target Domain and Simulated Rollouts (iteration {idx_iter}, {rnd}rollout {idx_r}{use_rec})"
+            f"Target Domain and Simulated Rollouts (iteration {idx_iter}, {round_str}rollout {idx_r}{use_rec_str})"
         )
         lg = axs[0].legend(
             ncol=2 + num_samples,
@@ -803,13 +803,13 @@ def plot_rollouts_segment_wise(
             for fmt in ["pdf", "pgf", "png"]:
                 os.makedirs(os.path.join(save_dir, "plots"), exist_ok=True)
                 len_seg_str = f"seglen_{segments_ground_truth[0][0].length}"
-                use_rec = "_use_rec" if use_rec else ""
-                rnd = f"_round_{idx_round}" if idx_round != -1 else ""
+                use_rec_str = "_use_rec" if use_rec_str else ""
+                round_str = f"_round_{idx_round}" if idx_round != -1 else ""
                 fig.savefig(
                     os.path.join(
                         save_dir,
                         "plots",
-                        f"posterior_iter_{idx_iter}{rnd}_rollout_{idx_r}_{len_seg_str}{use_rec}.{fmt}",
+                        f"posterior_iter_{idx_iter}{round_str}_rollout_{idx_r}_{len_seg_str}{use_rec_str}.{fmt}",
                     ),
                     bbox_extra_artists=(lg,),
                     dpi=500,

@@ -289,9 +289,10 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
-    def get_latest_proposal(self) -> Union[utils.BoxUniform, DirectPosterior]:
+    def get_latest_unconditioned_proposal(self) -> Union[utils.BoxUniform, DirectPosterior]:
         """
-        Get the latest proposal. This is either the prior, or the (amortized) posterior from the previous iteration.
+        Get the latest proposal. This is either the prior or the amortized posterior from the previous iteration,
+        i.e. a proposal that is not conditioned on an observation.
 
         :return: latest proposal for simulating with sbi
         """
@@ -312,10 +313,10 @@ class SBIBase(InterruptableAlgorithm, ABC):
         env: Union[Env, str],
         policy: Policy,
         embedding: Embedding,
-        prefix: str,
         num_rollouts: int,
         num_segments: int = None,
         len_segments: int = None,
+        prefix: str = "",
     ) -> Tuple[to.Tensor, List[StepSequence]]:
         """
         Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the data
@@ -327,7 +328,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
                     in case you want to use pre-recorded rollouts pass the path to the parent folder as string
         :param policy: policy to evaluate
         :param embedding: embedding used for pre-processing the data before passing it to the posterior
-        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
@@ -352,10 +352,11 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         data_real = []
         rollouts_real = []
+        collect_str = f"Collecting data" if prefix == "" else f"Collecting data using {prefix}_policy"
         for _ in tqdm(
             range(num_rollouts),
             total=num_rollouts,
-            desc=Fore.CYAN + Style.BRIGHT + f"Collecting data using {prefix}_policy" + Style.RESET_ALL,
+            desc=Fore.CYAN + Style.BRIGHT + collect_str + Style.RESET_ALL,
             unit="rollouts",
             file=sys.stdout,
         ):
@@ -427,7 +428,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
                 for root, dirs, files in os.walk(load_dir):
                     dirs.clear()  # prevents walk() from going into subdirectories
                     for f in files:
-                        if f.startswith("iter_") and "round" in f and f.endswith("_posterior.pt"):
+                        if "round" in f and f.endswith("_posterior.pt"):
                             cnt_round = int(f[f.find("round_") + len("round_")])
                             cnt_round_max = cnt_round if cnt_round > cnt_round_max else cnt_round_max
                 idx_round = cnt_round_max
@@ -467,7 +468,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param posterior: posterior to evaluate, e.g. a normalizing flow, that samples domain parameters conditioned on
                           the provided data
         :param data_real: data from the real-world rollouts a.k.a. set of $x_o$ of shape
-                          [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
+                          [num_iter, num_rollouts_per_iter * dim_feat]
         :param num_samples: number of samples to draw from the posterior
         :param calculate_log_probs: if `True`, the log-probabilities are computed, else `None` is returned
         :param normalize_posterior: if `True`, the normalization of the posterior density is enforced by sbi
