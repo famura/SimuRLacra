@@ -108,21 +108,39 @@ def ex_dir(tmpdir):
             alpha=0.05,
             beta=0.01,
             nG=2,
-            nJ=10,
-            ntau=5,
+            nJ=2,
+            ntau=2,
             nc_init=1,
             nr_init=1,
             sequence_cand=sequence_add_init,
             sequence_refs=sequence_const,
             warmstart_cand=False,
             warmstart_refs=False,
-            num_bs_reps=1000,
+            num_bs_reps=100,
             studentized_ci=False,
         ),
+        dict(
+            max_iter=2,
+            alpha=0.05,
+            beta=0.01,
+            nG=2,
+            nJ=2,
+            ntau=2,
+            nc_init=2,
+            nr_init=2,
+            sequence_cand=sequence_rec_double,
+            sequence_refs=sequence_rec_sqrt,
+            warmstart_cand=True,
+            warmstart_refs=True,
+            num_bs_reps=100,
+            studentized_ci=True,
+        ),
     ],
-    ids=["casual_hparam"],
+    ids=["config1", "config2"],
 )
-def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
+def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
+    pyrado.set_seed(0)
+
     # Environment and domain randomization
     randomizer = create_default_randomizer(env)
     env = DomainRandWrapperBuffer(env, randomizer)
@@ -134,7 +152,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
     critic_cand = GAE(vfcn, **critic_hparam)
     critic_refs = GAE(deepcopy(vfcn), **critic_hparam)
 
-    subrtn_hparam_cand = dict(
+    subrtn_hparam_common = dict(
         # min_rollouts=0,  # will be overwritten by SPOTA
         min_steps=0,  # will be overwritten by SPOTA
         max_iter=2,
@@ -145,14 +163,15 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
         std_init=0.5,
         lr=1e-2,
     )
-    subrtn_hparam_cand = subrtn_hparam_cand
 
-    sr_cand = PPO(ex_dir, env, policy, critic_cand, **subrtn_hparam_cand)
-    sr_refs = PPO(ex_dir, env, deepcopy(policy), critic_refs, **subrtn_hparam_cand)
+    sr_cand = PPO(ex_dir, env, policy, critic_cand, **subrtn_hparam_common)
+    sr_refs = PPO(ex_dir, env, deepcopy(policy), critic_refs, **subrtn_hparam_common)
 
     # Create algorithm and train
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
     algo.train()
+
+    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
 
 
 @pytest.mark.longtime
@@ -188,9 +207,11 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
             num_workers=1,
         ),
     ],
-    ids=["typical_hparam", "untypical_hparam"],
+    ids=["config1", "config2"],
 )
-def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
+def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
+    pyrado.set_seed(0)
+
     # Environments and domain randomization
     env_real = deepcopy(env)
     env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
@@ -204,7 +225,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
         max_iter=1,
-        pop_size=10,
+        pop_size=8,
         num_init_states_per_domain=1,
         num_is_samples=4,
         expl_std_init=0.1,
@@ -222,11 +243,14 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     # Create algorithm and train
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
     algo.train()
+
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
 
 
 @pytest.mark.parametrize("env", ["default_omo"], ids=["omo"], indirect=True)
 def test_arpl(ex_dir, env: SimEnv):
+    pyrado.set_seed(0)
+
     env = ActNormWrapper(env)
     env = StateAugmentationWrapper(env, domain_param=None)
 
@@ -275,7 +299,9 @@ def test_arpl(ex_dir, env: SimEnv):
 
 @pytest.mark.longtime
 @pytest.mark.parametrize("env, num_eval_rollouts", [("default_bob", 5)], ids=["bob"], indirect=["env"])
-def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
+def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
+    pyrado.set_seed(0)
+
     def eval_ddp_policy(rollouts_real):
         init_states_real = np.array([ro.states[0, :] for ro in rollouts_real])
         rollouts_sim = []
@@ -318,7 +344,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
     subrtn_hparam = dict(
         max_iter=2,
         eps=1.0,
-        pop_size=200,
+        pop_size=100,
         num_init_states_per_domain=1,
         expl_std_init=5e-2,
         expl_std_min=1e-4,
@@ -358,6 +384,8 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
 @pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 def test_simopt_cem_ppo(ex_dir, env: SimEnv):
+    pyrado.set_seed(0)
+
     # Environments
     env_real = deepcopy(env)
     env_real = ActNormWrapper(env_real)
@@ -383,15 +411,15 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Subroutine for policy improvement
-    behav_policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    behav_policy_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
     behav_policy = FNNPolicy(spec=env_sim.spec, **behav_policy_hparam)
-    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
+    vfcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.relu)
     vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.99,
         lamda=0.98,
-        num_epoch=5,
-        batch_size=512,
+        num_epoch=2,
+        batch_size=128,
         standardize_adv=True,
         lr=8e-4,
         max_grad_norm=5.0,
@@ -400,9 +428,9 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     subrtn_policy_hparam = dict(
         max_iter=2,
         eps_clip=0.13,
-        min_steps=10 * env_sim.max_steps,
-        num_epoch=7,
-        batch_size=512,
+        min_steps=4 * env_sim.max_steps,
+        num_epoch=3,
+        batch_size=128,
         std_init=0.75,
         lr=7e-04,
         max_grad_norm=1.0,
@@ -420,9 +448,9 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     ddp_policy = DomainDistrParamPolicy(prior=prior, **ddp_policy_hparam)
     subsubrtn_distr_hparam = dict(
         max_iter=2,
-        pop_size=20,
+        pop_size=10,
         num_init_states_per_domain=1,
-        num_is_samples=10,
+        num_is_samples=8,
         expl_std_init=1e-2,
         expl_std_min=1e-5,
         extra_expl_std_init=1e-2,
@@ -433,7 +461,7 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     subrtn_distr_hparam = dict(
         metric=None,
         obs_dim_weight=[1, 1, 1, 1, 10, 10],
-        num_rollouts_per_distr=10,
+        num_rollouts_per_distr=3,
         num_workers=1,
     )
     subrtn_distr = SysIdViaEpisodicRL(subsubrtn_distr, behavior_policy=behav_policy, **subrtn_distr_hparam)
@@ -453,18 +481,18 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize(
     "policy",
-    [
-        "linear_policy",
-    ],
+    ["linear_policy"],
     ids=["lin"],
     indirect=True,
 )
 @pytest.mark.parametrize(
     "algo, algo_hparam",
-    [(UDR, {}), (EPOpt, dict(skip_iter=100, epsilon=0.2, gamma=0.9995))],
+    [(UDR, {}), (EPOpt, dict(skip_iter=2, epsilon=0.2, gamma=0.9995))],
     ids=["udr", "EPOpt"],
 )
-def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
+def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
+    pyrado.set_seed(0)
+
     # Policy and subroutine
     env = GaussianObsNoiseWrapper(
         env,
@@ -486,29 +514,29 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam):
     env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
+    policy_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)  # FNN
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    vfcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)  # FNN
     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9995,
         lamda=0.98,
         num_epoch=2,
-        batch_size=100,
+        batch_size=64,
         lr=5e-4,
         standardize_adv=False,
     )
     critic = GAE(vfcn, **critic_hparam)
 
     subrtn_hparam = dict(
-        max_iter=2,
-        min_steps=2 * env.max_steps,
+        max_iter=3,
+        min_steps=env.max_steps,
         num_workers=1,
         num_epoch=2,
         eps_clip=0.1,
-        batch_size=100,
+        batch_size=64,
         std_init=0.8,
         lr=2e-4,
     )
@@ -547,6 +575,8 @@ def test_npdr(
     num_sbi_rounds: int,
     use_rec_act: bool,
 ):
+    pyrado.set_seed(0)
+
     # Reduce the number of steps to make this test run faster
     env.max_steps = 50
 
@@ -676,6 +706,8 @@ def test_npdr(
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
 @pytest.mark.parametrize("optimize_mean", [False, True])
 def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
+    pyrado.set_seed(0)
+
     env = ActNormWrapper(env)
     env_sprl_params = [
         dict(
@@ -738,6 +770,8 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     ids=["casual"],
 )
 def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
+    pyrado.set_seed(0)
+
     # Create algorithm and train
     teacher_policy = deepcopy(policy)
     critic = GAE(
