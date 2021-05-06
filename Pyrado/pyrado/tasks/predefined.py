@@ -166,7 +166,7 @@ def create_lifting_task(
     env_spec: EnvSpec,
     obs_labels: Sequence[str],
     des_height: Union[float, np.ndarray],
-    succ_thold: Optional[float] = 0.01,
+    succ_thold: float = 0.01,
 ) -> MaskedTask:
     """
     Create a task for lifting an object.
@@ -201,7 +201,7 @@ def create_lifting_task(
 def create_flipping_task(
     env_spec: EnvSpec,
     obs_labels: Sequence[str],
-    des_angle_delta: Optional[float] = np.pi / 2.0,
+    des_angle_delta: float = np.pi / 2.0,
     endless: bool = True,
 ) -> MaskedTask:
     """
@@ -262,9 +262,7 @@ def create_home_pos_task(env_spec: EnvSpec, obs_labels: Sequence[str], state_des
     return MaskedTask(env_spec, task, obs_labels)
 
 
-def create_goal_dist_task(
-    env_spec: EnvSpec, ds_label: int, rew_fcn: RewFcn, succ_thold: Optional[float] = 0.01
-) -> MaskedTask:
+def create_goal_dist_task(env_spec: EnvSpec, ds_label: int, rew_fcn: RewFcn, succ_thold: float = 0.01) -> MaskedTask:
     """
     Create a task that rewards minimizing the `GoalDistance` of dynamical system movements primitives (see RcsPySim).
 
@@ -297,7 +295,7 @@ def create_goal_dist_task(
 
 
 def create_goal_dist_distvel_task(
-    env_spec: EnvSpec, ds_label: int, rew_fcn: RewFcn, succ_thold: Optional[float] = 0.01
+    env_spec: EnvSpec, ds_label: int, rew_fcn: RewFcn, succ_thold: float = 0.01
 ) -> MaskedTask:
     """
     Create a task that rewards minimizing the `GoalDistance` as well as its rate of change of dynamical system

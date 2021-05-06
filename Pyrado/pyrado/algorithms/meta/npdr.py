@@ -89,8 +89,8 @@ class NPDR(SBIBase):
         :param env_sim: randomized simulation environment a.k.a. source domain
         :param env_real: real-world environment a.k.a. target domain, this can be a `RealEnv` (sim-to-real setting), a
                          `SimEnv` (sim-to-sim setting), or a directory to load a pre-recorded set of rollouts from
-        :param policy: policy used for sampling the rollout, if subrtn_policy is not `None` this policy is not oly used
-                       for generating the target domain rollouts, but also optimized in simulation
+        :param policy: policy used for sampling the rollouts at the beginning of each iteration. If `subrtn_policy` is
+                       not `None` this policy is also trained after the inference step in every NPDR iteration.
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param prior: distribution used by sbi as a prior
         :param subrtn_sbi_class: sbi algorithm calls for executing the LFI, e.g. SNPE
@@ -160,7 +160,7 @@ class NPDR(SBIBase):
             logger=logger,
         )
 
-    def step(self, snapshot_mode: str = None, meta_info: dict = None):
+    def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
 
@@ -179,11 +179,11 @@ class NPDR(SBIBase):
             ):
                 # Rollout files do exist (can be when continuing a previous experiment)
                 self._curr_data_real = pyrado.load("data_real.pt", self._save_dir, prefix=f"iter_{self.curr_iter}")
-                print_cbt(f"Loaded existing rollout data for iteration {self.curr_iter}", "w", bright=True)
+                print_cbt(f"Loaded existing rollout data for iteration {self.curr_iter}.", "w")
 
             else:
                 # Rollout files do not exist yet (usual case)
-                self._curr_data_real, _ = NPDR.collect_data_real(
+                self._curr_data_real, _ = SBIBase.collect_data_real(
                     self.save_dir,
                     self._env_real,
                     self._policy,
@@ -214,7 +214,7 @@ class NPDR(SBIBase):
 
         if self.curr_checkpoint == 1:
             # Load the latest proposal, this can be the prior or the amortized posterior of the last iteration
-            proposal = self.get_latest_proposal()
+            proposal = self.get_latest_unconditioned_proposal()
 
             # Multi-round sbi
             for idx_r in range(self.num_sbi_rounds):

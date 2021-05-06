@@ -146,7 +146,7 @@ class ValueBased(Algorithm, ABC):
         )
 
         self._expl_strat = None  # must be implemented by subclass
-        self.sampler = None  # must be implemented by subclass
+        self._sampler = None  # must be implemented by subclass
 
     @property
     def expl_strat(self) -> Union[SACExplStrat, EpsGreedyExplStrat]:

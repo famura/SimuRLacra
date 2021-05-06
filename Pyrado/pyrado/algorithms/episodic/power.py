@@ -66,7 +66,7 @@ class PoWER(ParameterExploring):
         num_is_samples: int,
         expl_std_init: float,
         expl_std_min: float = 0.01,
-        num_domains: Optional[int] = 1,
+        num_domains: int = 1,
         symm_sampling: bool = False,
         num_workers: int = 4,
         logger: Optional[StepLogger] = None,

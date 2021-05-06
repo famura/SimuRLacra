@@ -35,11 +35,10 @@ from torch.distributions import MultivariateNormal
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.algorithms.utils import RolloutSavingWrapper, until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from pyrado.sampling.expose_sampler import ExposedSampler
 
 
 class MultivariateNormalWrapper:
@@ -284,7 +283,7 @@ class SPRL(Algorithm):
 
         :param env: environment wrapped in a DomainRandWrapper
         :param subroutine: algorithm which performs the policy/value-function optimization, which
-                           must inherit from `ExposedSampler`
+                           must expose its sampler
         :param kl_constraints_ub: upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
         :param performance_lower_bound: lower bound for the performance SPRL tries to stay above
@@ -298,26 +297,18 @@ class SPRL(Algorithm):
                                    training attempt of the subroutine should be reattempted
         """
         if not isinstance(subroutine, Algorithm):
-            raise pyrado.TypeErr(
-                given=subroutine,
-                expected_type=Algorithm,
-                msg="Subroutine must inherit from *Algorithm* and ExposedSampler!",
-            )
-        if not isinstance(subroutine, ExposedSampler):
-            raise pyrado.TypeErr(
-                given=subroutine,
-                expected_type=ExposedSampler,
-                msg="Subroutine must inherit from Algorithm and *ExposedSampler*!",
-            )
+            raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
+        if not hasattr(subroutine, "sampler"):
+            raise AttributeError("The subroutine must have a sampler attribute!")
         if not typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
-        # Using a Union here is not really correct, but it makes PyCharm's type hinting work
-        # suggest properties from both Algorithm and ExposedSampler
-        self._subroutine: Union[Algorithm, ExposedSampler] = subroutine
+        # Wrap the sampler of the subroutine with an rollout saving wrapper
+        self._subroutine = subroutine
+        self._subroutine.sampler = RolloutSavingWrapper(subroutine.sampler)
         self._subroutine.save_name = self._subroutine.name
 
         self._env = env
@@ -386,10 +377,14 @@ class SPRL(Algorithm):
             target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
         )
 
-        rollouts = self._subroutine.sampler.sample()
+        rollouts_all = self._subroutine.sampler.rollouts
         contexts = to.tensor(
             [
-                [to.from_numpy(rollout.rollout_info["domain_param"][param.name]) for rollout in rollouts]
+                [
+                    to.from_numpy(ro.rollout_info["domain_param"][param.name])
+                    for rollouts in rollouts_all
+                    for ro in rollouts
+                ]
                 for param in self._spl_parameters
             ],
             requires_grad=True,
@@ -400,7 +395,7 @@ class SPRL(Algorithm):
             previous_distribution.distribution, target_distribution.distribution
         )
 
-        values = to.tensor([ros.undiscounted_return() for ros in rollouts])
+        values = to.tensor([ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts])
 
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
@@ -534,8 +529,10 @@ class SPRL(Algorithm):
     def reset(self, seed: int = None):
         # Forward to subroutine
         self._subroutine.reset(seed)
+        self._subroutine.sampler.reset_rollouts()
 
     def save_snapshot(self, meta_info: dict = None):
+        self._subroutine.sampler.reset_rollouts()
         super().save_snapshot(meta_info)
 
         if meta_info is None:
@@ -576,6 +573,6 @@ class SPRL(Algorithm):
         self._subroutine.reset()
 
         self._subroutine.train(snapshot_mode, None, meta_info)
-        rollouts = self._subroutine.sampler.sample()
-        x = np.median([[ros.undiscounted_return() for ros in rollouts]])
+        rollouts_all = self._subroutine.sampler.rollouts
+        x = np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]])
         return x

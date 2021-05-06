@@ -30,7 +30,7 @@ import os.path as osp
 from collections.abc import Iterable
 from functools import partial
 from itertools import product
-from typing import Callable, Optional, Sequence, Tuple, Union
+from typing import Callable, Sequence, Tuple, Union
 
 import joblib
 import numpy as np
@@ -70,7 +70,7 @@ class SysIdViaEpisodicRL(Algorithm):
         num_rollouts_per_distr: int,
         metric: Union[Callable[[np.ndarray], np.ndarray], None],
         obs_dim_weight: Union[list, np.ndarray],
-        std_obs_filt: Optional[int] = 5,
+        std_obs_filt: int = 5,
         w_abs: float = 0.5,
         w_sq: float = 1.0,
         num_workers: int = 4,

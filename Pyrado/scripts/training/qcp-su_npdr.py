@@ -47,8 +47,8 @@ from pyrado.sampling.sbi_embeddings import (
     DynamicTimeWarpingEmbedding,
     RNNEmbedding,
 )
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -149,26 +149,16 @@ if __name__ == "__main__":
     prior = utils.BoxUniform(**prior_hparam)
 
     # Time series embedding
-    # embedding_hparam = dict()
-    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=10)
-    # embedding = DeltaStepsEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-    embedding_hparam = dict(downsampling_factor=1)
-    embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = DeltaStepsEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-    # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = DynamicTimeWarpingEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
-    # )
-    # embedding_hparam = dict(hidden_size=20, num_recurrent_layers=1, output_size=5, downsampling_factor=1)
-    # embedding = RNNEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
+    embedding_hparam = dict(
+        downsampling_factor=1,
+        # len_rollouts=env_sim.max_steps,
+        # recurrent_network_type=nn.RNN,
+        # only_last_output=True,
+        # hidden_size=20,
+        # num_recurrent_layers=1,
+        # output_size=1,
+    )
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)

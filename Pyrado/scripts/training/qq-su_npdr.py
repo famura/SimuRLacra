@@ -37,14 +37,15 @@ from sbi.inference import SNPE_C
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -85,11 +86,11 @@ if __name__ == "__main__":
     # Environments
     env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
-    # env_sim = ActDelayWrapper(env_sim)
+    env_sim = ActDelayWrapper(env_sim)
 
     # Create the ground truth target domain and the behavioral policy
     if ectl:
-        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz_filt")
+        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")
         policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
     else:
         env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
@@ -103,20 +104,20 @@ if __name__ == "__main__":
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
     # dp_mapping = {0: "Rm", 1: "km", 2: "Mr", 3: "Mp"}
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
-    dp_mapping = {
-        0: "Dr",
-        1: "Dp",
-        2: "Rm",
-        3: "km",
-        4: "Mr",
-        5: "Mp",
-        6: "Lr",
-        7: "Lp",
-        8: "g",
-        # 9: "V_thold_neg",
-        # 10: "V_thold_pos",
-    }
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
+    # dp_mapping = {
+    #     0: "Dr",
+    #     1: "Dp",
+    #     2: "Rm",
+    #     3: "km",
+    #     4: "Mr",
+    #     5: "Mp",
+    #     6: "Lr",
+    #     7: "Lp",
+    #     8: "g",
+    #     # 9: "V_thold_neg",
+    #     # 10: "V_thold_pos",
+    # }
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
@@ -133,28 +134,29 @@ if __name__ == "__main__":
             [
                 dp_nom["Dr"] * 0,
                 dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.5,
-                dp_nom["km"] * 0.5,
+                dp_nom["Rm"] * 0.2,
+                dp_nom["km"] * 0.4,
                 dp_nom["Mr"] * 0.6,
                 dp_nom["Mp"] * 0.6,
-                dp_nom["Lr"] * 0.6,
-                dp_nom["Lp"] * 0.6,
+                dp_nom["Lr"] * 0.7,
+                dp_nom["Lp"] * 0.7,
                 dp_nom["g"] * 0.90,
                 # -0.1,
-                # 0.0,
+                0.0,
             ]
         ),
         high=to.tensor(
             [
-                dp_nom["Dr"] * 3,
-                dp_nom["Dp"] * 3,
-                dp_nom["Rm"] * 1.5,
-                dp_nom["km"] * 1.5,
+                dp_nom["Dr"] * 10,
+                dp_nom["Dp"] * 10,
+                dp_nom["Rm"] * 1.8,
+                dp_nom["km"] * 1.6,
                 dp_nom["Mr"] * 1.4,
                 dp_nom["Mp"] * 1.4,
-                dp_nom["Lr"] * 1.4,
-                dp_nom["Lp"] * 1.4,
+                dp_nom["Lr"] * 1.3,
+                dp_nom["Lp"] * 1.3,
                 dp_nom["g"] * 1.10,
+                5,
                 # 0,
                 # 0.1,
             ]
@@ -163,22 +165,16 @@ if __name__ == "__main__":
     prior = utils.BoxUniform(**prior_hparam)
 
     # Time series embedding
-    # embedding_hparam = dict()
-    # embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=5)
-    # embedding = DeltaStepsEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
-    embedding_hparam = dict(downsampling_factor=1)
-    embedding = BayesSimEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
-    # embedding_hparam = dict(downsampling_factor=2)
-    # embedding = DynamicTimeWarpingEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam
-    # )
-    # embedding_hparam = dict(hidden_size=20, num_recurrent_layers=1, output_size=5, downsampling_factor=1)
-    # embedding = RNNEmbedding(
-    #     env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), env_sim.max_steps, **embedding_hparam
-    # )
+    embedding_hparam = dict(
+        downsampling_factor=1,
+        # len_rollouts=env_sim.max_steps,
+        # recurrent_network_type=nn.RNN,
+        # only_last_output=True,
+        # hidden_size=20,
+        # num_recurrent_layers=1,
+        # output_size=1,
+    )
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
@@ -187,8 +183,8 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=5,
-        num_sim_per_round=4000,
-        num_sbi_rounds=3,
+        num_sim_per_round=10000,
+        num_sbi_rounds=5,
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=10,
@@ -209,7 +205,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        num_workers=20,
+        num_workers=8,
     )
     algo = NPDR(
         ex_dir,

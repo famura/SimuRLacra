@@ -60,7 +60,7 @@ class HopperSim(MujocoSimEnv, Serializable):
         self,
         frame_skip: int = 5,
         dt: Optional[float] = None,
-        max_steps: Optional[int] = 1000,
+        max_steps: int = 1000,
         task_args: Optional[dict] = None,
     ):
         """

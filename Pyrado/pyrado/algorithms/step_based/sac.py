@@ -42,6 +42,7 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import SACExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy, TwoHeadedPolicy
+from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.data_processing import standardize
 
@@ -77,19 +78,19 @@ class SAC(ValueBased):
         gamma: float,
         max_iter: int,
         num_updates_per_step: Optional[int] = None,
-        tau: Optional[float] = 0.995,
-        ent_coeff_init: Optional[float] = 0.2,
+        tau: float = 0.995,
+        ent_coeff_init: float = 0.2,
         learn_ent_coeff: bool = True,
-        target_update_intvl: Optional[int] = 1,
+        target_update_intvl: int = 1,
         num_init_memory_steps: Optional[int] = None,
         standardize_rew: bool = True,
         rew_scale: Union[int, float] = 1.0,
         min_rollouts: Optional[int] = None,
         min_steps: Optional[int] = None,
         batch_size: Optional[int] = 256,
-        eval_intvl: Optional[int] = 100,
-        max_grad_norm: Optional[float] = 5.0,
-        lr: Optional[float] = 3e-4,
+        eval_intvl: int = 100,
+        max_grad_norm: float = 5.0,
+        lr: float = 3e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
         num_workers: int = 4,
@@ -170,7 +171,7 @@ class SAC(ValueBased):
 
         # Create sampler for exploration during training
         self._expl_strat = SACExplStrat(self._policy)
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             self._env,
             self._expl_strat,
             num_workers=num_workers if min_steps != 1 else 1,
@@ -201,12 +202,22 @@ class SAC(ValueBased):
             self._lr_scheduler_qfcns = lr_scheduler(self._optim_qfcns, **lr_scheduler_hparam)
 
     @property
+    def sampler(self) -> ParallelRolloutSampler:
+        return self._sampler
+
+    @sampler.setter
+    def sampler(self, sampler: ParallelRolloutSampler):
+        if not isinstance(sampler, (ParallelRolloutSampler, CVaRSampler)):
+            raise pyrado.TypeErr(given=sampler, expected_type=(ParallelRolloutSampler, CVaRSampler))
+        self._sampler = sampler
+
+    @property
     def ent_coeff(self) -> to.Tensor:
         """Get the detached entropy coefficient."""
         return to.exp(self._log_ent_coeff.detach())
 
     @staticmethod
-    def soft_update(target: nn.Module, source: nn.Module, tau: Optional[float] = 0.995):
+    def soft_update(target: nn.Module, source: nn.Module, tau: float = 0.995):
         """
         Moving average update, a.k.a. Polyak update.
         Modifies the input argument `target`.

@@ -37,10 +37,11 @@ from sbi.inference import SNPE, simulate_for_sbi
 from sbi.utils import BoxUniform, posterior_nn
 from sbi.utils.user_input_checks import prepare_for_sbi
 
+from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts
-from pyrado.plotting.distribution import draw_posterior_distr_pairwise
+from pyrado.plotting.distribution import draw_posterior_distr_pairwise_heatmap, draw_posterior_distr_pairwise_scatter
 from pyrado.plotting.rollout_based import (
     plot_actions,
     plot_features,
@@ -244,11 +245,7 @@ def test_rollout_based(env: SimEnv, policy: Policy):
         draw_dts(ro.dts_policy, ro.dts_step, ro.dts_remainder, y_top_lim=5)
 
 
-@pytest.mark.parametrize(
-    "env, policy",
-    [("default_omo", "idle_policy")],
-    indirect=True,
-)
+@pytest.mark.parametrize("env, policy", [("default_omo", "idle_policy")], indirect=True)
 @pytest.mark.parametrize("layout", ["inside", "outside"], ids=["inside", "outside"])
 @pytest.mark.parametrize("x_labels, y_labels, prob_labels", [(None, None, None), ("", "", "")], ids=["None", "default"])
 def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels, prob_labels):
@@ -271,12 +268,7 @@ def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels,
     density_estimator = posterior_nn(model="maf", hidden_features=10, num_transforms=3)
     snpe = SNPE(prior, density_estimator)
     simulator, prior = prepare_for_sbi(_simulator, prior)
-    domain_param, data_sim = simulate_for_sbi(
-        simulator=simulator,
-        proposal=prior,
-        num_simulations=50,
-        num_workers=4,
-    )
+    domain_param, data_sim = simulate_for_sbi(simulator=simulator, proposal=prior, num_simulations=50, num_workers=1)
     snpe.append_simulations(domain_param, data_sim)
     density_estimator = snpe.train(max_num_epochs=5)
     posterior = snpe.build_posterior(density_estimator)
@@ -296,7 +288,7 @@ def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels,
         num_rows, num_cols = len(dp_mapping) + 1, len(dp_mapping) + 1
 
     _, axs = plt.subplots(num_rows, num_cols, figsize=(14, 14), tight_layout=True)
-    fig = draw_posterior_distr_pairwise(
+    fig = draw_posterior_distr_pairwise_heatmap(
         axs,
         posterior,
         data_real,
@@ -313,4 +305,74 @@ def test_pair_plot(env: SimEnv, policy: Policy, layout: str, x_labels, y_labels,
         prob_labels=prob_labels,
     )
 
+    assert fig is not None
+
+
+@pytest.mark.parametrize("env, policy", [("default_omo", "idle_policy")], indirect=True)
+@pytest.mark.parametrize("layout", ["inside", "outside"], ids=["inside", "outside"])
+@pytest.mark.parametrize("labels", [None, ["dp_1", "dp_2", "dp_3"]], ids=["no_labels", "labels"])
+@pytest.mark.parametrize("legend_labels", [None, ["A", "B"]], ids=["no_legend", "legend"])
+@pytest.mark.parametrize("axis_limits", [None, "use_prior"], ids=["no_limits", "prior_limits"])
+@pytest.mark.parametrize("use_kde", [False, True], ids=["no_kde", "kde"])
+def test_pair_plot_scatter(env: SimEnv, policy: Policy, layout: str, labels, legend_labels, axis_limits, use_kde):
+    def _simulator(dp: to.Tensor) -> to.Tensor:
+        """The most simple interface of a simulation to sbi, using `env` and `policy` from outer scope"""
+        ro = rollout(env, policy, eval=True, reset_kwargs=dict(domain_param=dict(m=dp[0], k=dp[1], d=dp[2])))
+        observation_sim = to.from_numpy(ro.observations[-1]).to(dtype=to.float32)
+        return to.atleast_2d(observation_sim)
+
+    # Fix the init state
+    env.init_space = SingularStateSpace(env.init_space.sample_uniform())
+    env_real = deepcopy(env)
+    env_real.domain_param = {"m": 0.8, "k": 35, "d": 0.7}
+
+    # Domain parameter mapping and prior
+    dp_mapping = {0: "m", 1: "k", 2: "d"}
+    prior = BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
+
+    # Learn a likelihood from the simulator
+    density_estimator = posterior_nn(model="maf", hidden_features=10, num_transforms=3)
+    snpe = SNPE(prior, density_estimator)
+    simulator, prior = prepare_for_sbi(_simulator, prior)
+    domain_param, data_sim = simulate_for_sbi(simulator=simulator, proposal=prior, num_simulations=50, num_workers=1)
+    snpe.append_simulations(domain_param, data_sim)
+    density_estimator = snpe.train(max_num_epochs=5)
+    posterior = snpe.build_posterior(density_estimator)
+
+    # Create a fake (random) true domain parameter
+    domain_param_gt = to.tensor([env_real.domain_param[dp_mapping[key]] for key in sorted(dp_mapping.keys())])
+    domain_param_gt += domain_param_gt * to.randn(len(dp_mapping)) / 5
+    domain_param_gt = domain_param_gt.unsqueeze(0)
+    data_real = simulator(domain_param_gt)
+
+    domain_params, log_probs = SBIBase.eval_posterior(
+        posterior,
+        data_real,
+        num_samples=20,
+        normalize_posterior=False,
+        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
+    )
+    dp_samples = [domain_params.reshape(1, -1, domain_params.shape[-1]).squeeze()]
+    dp_samples.append(domain_param_gt)
+
+    if layout == "inside":
+        num_rows, num_cols = len(dp_mapping), len(dp_mapping)
+    else:
+        num_rows, num_cols = len(dp_mapping) + 1, len(dp_mapping) + 1
+
+    if axis_limits == "use_prior":
+        axis_limits = to.stack((prior.base_dist.low, prior.base_dist.high))
+
+    _, axs = plt.subplots(num_rows, num_cols, figsize=(14, 14), tight_layout=True)
+    fig = draw_posterior_distr_pairwise_scatter(
+        axs,
+        dp_samples,
+        dp_mapping,
+        marginal_layout=layout,
+        labels=labels,
+        legend_labels=legend_labels,
+        set_alpha=0.2,
+        axis_limits=axis_limits,
+        use_kde=use_kde,
+    )
     assert fig is not None

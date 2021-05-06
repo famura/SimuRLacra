@@ -85,7 +85,7 @@ class PEPG(ParameterExploring):
         num_init_states_per_domain: int,
         expl_std_init: float,
         expl_std_min: float = 0.01,
-        num_domains: Optional[int] = 1,
+        num_domains: int = 1,
         pop_size: Optional[int] = None,
         clip_ratio_std: float = 0.05,
         normalize_update: bool = False,

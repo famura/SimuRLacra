@@ -32,6 +32,7 @@ By default (args.iter = -1), the most recent iteration is evaluated.
 """
 import os
 
+import seaborn as sns
 import torch as to
 from matplotlib import pyplot as plt
 
@@ -40,6 +41,7 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.sbi_base import SBIBase
+from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
@@ -47,7 +49,7 @@ from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.distribution import (
     draw_posterior_distr_1d,
     draw_posterior_distr_2d,
-    draw_posterior_distr_pairwise,
+    draw_posterior_distr_pairwise_heatmap,
     draw_posterior_distr_pairwise_scatter,
 )
 from pyrado.plotting.utils import num_rows_cols_from_length
@@ -83,8 +85,6 @@ if __name__ == "__main__":
     if args.mode.lower() == "evolution-round" and args.iter == -1:
         args.iter = algo.curr_iter
         print_cbt("Set the evaluation iteration to the latest iteration of the algorithm.", "y")
-
-    algo.load_posterior(ex_dir)
 
     # Load the sequence of posteriors if desired
     if args.mode.lower() == "evolution-iter":
@@ -143,11 +143,16 @@ if __name__ == "__main__":
                 dp_gt = to.stack(
                     [to.stack(list(d.values())) for d in env_real.randomizer.get_params(-1, "list", "torch")]
                 )
-            elif isinstance(env_real, SimEnv):
+            elif isinstance(env_real, (SimEnv, EnvWrapper)):
                 dp_gt = to.tensor([env_real.domain_param[v] for v in algo.dp_mapping.values()])
                 dp_gt = to.atleast_2d(dp_gt)
             else:
                 dp_gt = None
+            if isinstance(env_sim, (SimEnv, EnvWrapper)):
+                dp_nom = to.tensor([env_sim.domain_param[v] for v in algo.dp_mapping.values()])
+                dp_nom = to.atleast_2d(dp_nom)
+            else:
+                dp_nom = None
             reference_posterior_samples = None
             for dirpath, dirnames, filenames in os.walk(ex_dir):
                 for f in filenames:
@@ -156,7 +161,7 @@ if __name__ == "__main__":
             condition = None
         else:
             # Get the most likely domain parameters per iteration
-            condition, _ = NPDR.get_ml_posterior_samples(
+            condition, _ = SBIBase.get_ml_posterior_samples(
                 algo.dp_mapping,
                 posterior[-1] if "evolution" in args.mode.lower() else posterior,
                 data_real,
@@ -196,9 +201,18 @@ if __name__ == "__main__":
 
             fig, axs = plt.subplots(num_rows, num_cols, figsize=(16, 16), tight_layout=False)
             if args.mode.lower() == "pairwise-scatter":
+                axis_limits = to.stack((prior.base_dist.low, prior.base_dist.high))
                 dp_samples = [domain_params_posterior]
+                legend_labels = ["Sim"]
+                c_palette = sns.color_palette()[1:]
                 if dp_gt is not None:
+                    legend_labels.append("Real")
+                    c_palette.insert(1, (0.0, 0.0, 0.0))
                     dp_samples.append(dp_gt)
+                if dp_nom is not None:
+                    legend_labels.append("Nominal")
+                    c_palette.insert(2, sns.color_palette()[0])
+                    dp_samples.append(dp_nom)
                 if reference_posterior_samples is not None:
                     # If there are more reference samples than num_samples, short the reference samples
                     if args.num_samples < reference_posterior_samples.shape[0]:
@@ -211,9 +225,13 @@ if __name__ == "__main__":
                     dp_samples,
                     algo.dp_mapping,
                     marginal_layout=args.layout,
+                    legend_labels=legend_labels,
+                    color_palette=c_palette,
+                    set_alpha=0.2,
+                    axis_limits=axis_limits,
                 )
             else:
-                _ = draw_posterior_distr_pairwise(
+                _ = draw_posterior_distr_pairwise_heatmap(
                     axs,
                     posterior,
                     data_real,

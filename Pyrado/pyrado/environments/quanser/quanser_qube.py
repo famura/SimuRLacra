@@ -50,7 +50,7 @@ class QQubeSwingUpReal(QuanserReal, Serializable):
 
     def __init__(
         self,
-        dt: Optional[float] = 1 / 500.0,
+        dt: float = 1 / 500.0,
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
         ip: str = "192.168.2.17",
@@ -116,7 +116,7 @@ class QQubeSwingUpReal(QuanserReal, Serializable):
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         return meas - self._sens_offset
 
-    def _wait_for_pole_at_rest(self, thold_ang_vel: Optional[float] = 0.1 / 180.0 * np.pi):
+    def _wait_for_pole_at_rest(self, thold_ang_vel: float = 0.1 / 180.0 * np.pi):
         """Wait until the Qube's rotating pole is at rest"""
         cnt = 0
         while cnt < 1.5 / self._dt:
