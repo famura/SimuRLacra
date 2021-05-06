@@ -67,12 +67,12 @@ git clone https://github.com/famura/SimuRLacra.git
 cd SimuRLacra
 ```
 
-Create an anaconda environment (without PyTorch)
+Create an anaconda environment (without PyTorch) and install the requirements
 ```
 conda create -y -n pyrado python=3.7
 conda activate pyrado
 conda install -y blas cmake lapack libgcc-ng mkl mkl-include patchelf pip pycairo setuptools -c conda-forge
-pip install argparse black box2d colorama coverage cython dtw-python glfw gym isort joblib matplotlib numpy optuna panda3d pandas prettyprinter pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm git+https://github.com/Xfel/init-args-serializer.git@master
+pip install -r requirements.txt
 ```
 
 

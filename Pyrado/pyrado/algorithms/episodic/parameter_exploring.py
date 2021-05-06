@@ -39,12 +39,12 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.expose_sampler import ExposedSampler
+from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler, ParameterSamplingResult
 from pyrado.utils.input_output import print_cbt
 
 
-class ParameterExploring(Algorithm, ExposedSampler):
+class ParameterExploring(Algorithm):
     """Base for all algorithms that explore directly in the policy parameter space"""
 
     def __init__(
@@ -118,6 +118,16 @@ class ParameterExploring(Algorithm, ExposedSampler):
     @property
     def expl_strat(self) -> StochasticParamExplStrat:
         return self._expl_strat
+
+    @property
+    def sampler(self) -> ParameterExplorationSampler:
+        return self._sampler
+
+    @sampler.setter
+    def sampler(self, sampler: ParameterExplorationSampler):
+        if not isinstance(sampler, (ParameterExplorationSampler, CVaRSampler)):
+            raise pyrado.TypeErr(given=sampler, expected_type=(ParameterExplorationSampler, CVaRSampler))
+        self._sampler = sampler
 
     def algo_stopping_criterion_met(self) -> bool:
         """

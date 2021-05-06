@@ -39,7 +39,6 @@ from pyrado.algorithms.utils import RolloutSavingWrapper, until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from pyrado.sampling.expose_sampler import ExposedSampler
 
 
 class MultivariateNormalWrapper:
@@ -284,7 +283,7 @@ class SPRL(Algorithm):
 
         :param env: environment wrapped in a DomainRandWrapper
         :param subroutine: algorithm which performs the policy/value-function optimization, which
-                           must inherit from `ExposedSampler`
+                           must expose its sampler
         :param kl_constraints_ub: upper bound for the KL-divergence
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
         :param performance_lower_bound: lower bound for the performance SPRL tries to stay above
@@ -298,17 +297,9 @@ class SPRL(Algorithm):
                                    training attempt of the subroutine should be reattempted
         """
         if not isinstance(subroutine, Algorithm):
-            raise pyrado.TypeErr(
-                given=subroutine,
-                expected_type=Algorithm,
-                msg="Subroutine must inherit from *Algorithm* and ExposedSampler!",
-            )
-        if not isinstance(subroutine, ExposedSampler):
-            raise pyrado.TypeErr(
-                given=subroutine,
-                expected_type=ExposedSampler,
-                msg="Subroutine must inherit from Algorithm and *ExposedSampler*!",
-            )
+            raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
+        if not hasattr(subroutine, "sampler"):
+            raise AttributeError("The subroutine must have a sampler attribute!")
         if not typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
 
@@ -316,12 +307,8 @@ class SPRL(Algorithm):
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
         # Wrap the sampler of the subroutine with an rollout saving wrapper
-        ros = RolloutSavingWrapper(subroutine.sampler)
-        subroutine.sampler = ros
-
-        # Using a Union here is not really correct, but it makes PyCharm's type hinting work
-        # suggest properties from both Algorithm and ExposedSampler
-        self._subroutine: Union[Algorithm, ExposedSampler] = subroutine
+        self._subroutine = subroutine
+        self._subroutine.sampler = RolloutSavingWrapper(subroutine.sampler)
         self._subroutine.save_name = self._subroutine.name
 
         self._env = env

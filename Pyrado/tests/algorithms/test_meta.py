@@ -559,13 +559,13 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
         DynamicTimeWarpingEmbedding.name,
         RNNEmbedding.name,
     ],
-    ids=["laststep", "allsteps", "bayessim", "dtw", "rnn"],
+    ids=["laststep", "deltasteps", "bayessim", "dtw", "rnn"],
 )
 @pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
 @pytest.mark.parametrize("num_real_rollouts", [2], ids=["2ros"])
-@pytest.mark.parametrize("num_sbi_rounds", [2], ids=["2rounds"])
+@pytest.mark.parametrize("num_sbi_rounds", [1, 2], ids=["1round", "2rounds"])
 @pytest.mark.parametrize("use_rec_act", [True, False], ids=["userecact", "dontuserecact"])
-def test_npdr(
+def test_npdr_no_policy_optimization(
     ex_dir,
     env: SimEnv,
     embedding_name: str,
@@ -577,80 +577,50 @@ def test_npdr(
 ):
     pyrado.set_seed(0)
 
-    # Reduce the number of steps to make this test run faster
-    env.max_steps = 50
-
     # Create a fake ground truth target domain
     env_real = deepcopy(env)
     dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = dict(
-        Dr=dp_nom["Dr"] * 1.9,
-        Dp=dp_nom["Dp"] * 0.4,
-        Rm=dp_nom["Rm"] * 1.0,
-        km=dp_nom["km"] * 1.0,
-        Mp=dp_nom["Mp"] * 1.1,
-        Mr=dp_nom["Mr"] * 1.2,
-        Lp=dp_nom["Lp"] * 0.8,
-        Lr=dp_nom["Lr"] * 0.9,
-        g=dp_nom["g"] * 1.0,
-    )
+    env_real.domain_param = dict(Rm=dp_nom["Rm"] * 1.2, km=dp_nom["km"] * 0.8)
+
+    # Reduce the number of steps to make this test run faster
+    env.max_steps = 100
+    env_real.max_steps = 100
 
     # Policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    dp_mapping = {1: "Rm", 2: "km"}
 
     # Prior
     prior_hparam = dict(
-        low=to.tensor(
-            [
-                dp_nom["Dr"] * 0,
-                dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.8,
-                dp_nom["km"] * 0.8,
-                dp_nom["Mr"] * 0.8,
-                dp_nom["Mp"] * 0.8,
-                dp_nom["Lr"] * 0.8,
-                dp_nom["Lp"] * 0.8,
-                dp_nom["g"] * 0.9,
-            ]
-        ),
-        high=to.tensor(
-            [
-                2 * 0.0015,
-                2 * 0.0005,
-                dp_nom["Rm"] * 1.2,
-                dp_nom["km"] * 1.2,
-                dp_nom["Mr"] * 1.2,
-                dp_nom["Mp"] * 1.2,
-                dp_nom["Lr"] * 1.2,
-                dp_nom["Lp"] * 1.2,
-                dp_nom["g"] * 1.1,
-            ]
-        ),
+        low=to.tensor([dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
+        high=to.tensor([dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
     )
     prior = utils.BoxUniform(**prior_hparam)
 
     # Time series embedding
-    embedding_hparam = dict()
     if embedding_name == LastStepEmbedding.name:
-        embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam)
+        embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec))
     elif embedding_name == DeltaStepsEmbedding.name:
-        embedding_hparam = dict(downsampling_factor=20)
         embedding = DeltaStepsEmbedding(
-            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, **embedding_hparam
+            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, downsampling_factor=10
         )
     elif embedding_name == BayesSimEmbedding.name:
-        embedding = BayesSimEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam)
+        embedding = BayesSimEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=10)
     elif embedding_name == DynamicTimeWarpingEmbedding.name:
         embedding = DynamicTimeWarpingEmbedding(
-            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), **embedding_hparam
+            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=10
         )
     elif embedding_name == RNNEmbedding.name:
-        embedding_hparam = dict(hidden_size=10, num_recurrent_layers=1, output_size=1)
         embedding = RNNEmbedding(
-            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, **embedding_hparam
+            env.spec,
+            RolloutSamplerForSBI.get_dim_data(env.spec),
+            hidden_size=10,
+            num_recurrent_layers=1,
+            output_size=1,
+            len_rollouts=env.max_steps,
+            downsampling_factor=1,
         )
     else:
         raise NotImplementedError
@@ -671,19 +641,8 @@ def test_npdr(
         len_segments=len_segments,
         use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
-        subrtn_sbi_training_hparam=dict(
-            num_atoms=10,  # default: 10
-            training_batch_size=50,  # default: 50
-            learning_rate=3e-4,  # default: 5e-4
-            validation_fraction=0.2,  # default: 0.1
-            stop_after_epochs=20,  # default: 20
-            discard_prior_samples=False,  # default: False
-            use_combined_loss=False,  # default: False
-            retrain_from_scratch_each_round=False,  # default: False
-            show_train_summary=False,  # default: False
-            max_num_epochs=5,  # default: None
-        ),
-        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),
+        subrtn_sbi_training_hparam=dict(max_num_epochs=2),  # only train for 2 iterations
+        # subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),
         num_workers=1,
     )
     algo = NPDR(

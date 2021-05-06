@@ -583,14 +583,8 @@ def test_recurrent_policy_evaluate(env, policy):
 )
 @pytest.mark.parametrize(
     "policy",
-    [
-        "rnn_policy",
-        "lstm_policy",
-        "gru_policy",
-        "adn_policy",
-        "nf_policy",
-    ],
-    ids=["rnn", "lstm", "gru", "adn", "nf"],
+    ["rnn_policy", "lstm_policy", "gru_policy"],
+    ids=["rnn", "lstm", "gru"],
     indirect=True,
 )
 def test_recurrent_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
@@ -650,6 +644,47 @@ def test_recurrent_policy_evaluate_packed_padded_sequences(env: Env, policy: Rec
     act_new = policy.evaluate(cat)
 
     to.testing.assert_allclose(act_old, act_new)
+
+
+@pytest.mark.recurrent_policy
+@pytest.mark.parametrize(
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
+    ],
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
+)
+@pytest.mark.parametrize(
+    "policy",
+    ["adn_policy", "nf_policy"],
+    ids=["adn", "nf"],
+    indirect=True,
+)
+def test_recurrent_potential_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
+    # Test packed padded sequence implementation for custom recurrent neural networks
+
+    # Get some rollouts
+    ros = []
+    for i in range(10):
+        ro = rollout(env, policy, eval=True, render_mode=RenderMode())
+        ro.torch(to.get_default_dtype())
+
+        # Perturb some hidden states
+        if i < 4:
+            ro[0].hidden_state[0] = i + 1.0
+
+        # Collect rollouts
+        ros.append(ro)
+
+    # Perform concatenation
+    cat = StepSequence.concat(ros)
+
+    # Evaluate old and new approaches
+    act_new = policy.evaluate(cat)
+    assert act_new is not None
 
 
 @pytest.mark.recurrent_policy
