@@ -69,8 +69,8 @@ RUN conda create -n pyrado python=3.7 blas cmake lapack libgcc-ng mkl mkl-includ
 
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 
-COPY requirements.txt requirements.txt
-
+# Copy the file and install the required python packages
+COPY --chown=user:user requirements.txt requirements.txt
 RUN pip install -r requirements.txt; \
     conda init bash ; rm -fr /home/user/.cache
 
