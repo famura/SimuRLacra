@@ -32,7 +32,7 @@ from typing import NoReturn
 
 class StoppingCriterion(ABC):
     def __init__(self):
-        self._criterion = self
+        self._criterion: "StoppingCriterion" = self
 
     def __call__(self) -> bool:
         return self._validate()
@@ -55,6 +55,12 @@ class StoppingCriterion(ABC):
     def __ixor__(self, other: "StoppingCriterion") -> NoReturn:
         self._criterion = self._criterion ^ other
 
+    def __repr__(self) -> str:
+        return repr(self._criterion)
+
+    def __str__(self) -> str:
+        return str(self._criterion)
+
     @abstractmethod
     def _validate(self) -> bool:
         raise NotImplementedError()
@@ -66,6 +72,12 @@ class _AndStoppingCriterion(StoppingCriterion):
         self.criterion1 = criterion1
         self.criterion2 = criterion2
 
+    def __repr__(self) -> str:
+        return f"_AndStoppingCriterion[criterion1={repr(self.criterion1)}; criterion2={repr(self.criterion2)}]"
+
+    def __str__(self) -> str:
+        return f"{self.criterion1} and {self.criterion2}"
+
     def _validate(self) -> bool:
         return self.criterion1() and self.criterion2()
 
@@ -75,6 +87,12 @@ class _OrStoppingCriterion(StoppingCriterion):
         super().__init__()
         self.criterion1 = criterion1
         self.criterion2 = criterion2
+
+    def __repr__(self) -> str:
+        return f"_OrStoppingCriterion[criterion1={repr(self.criterion1)}; criterion2={repr(self.criterion2)}]"
+
+    def __str__(self) -> str:
+        return f"{self.criterion1} or {self.criterion2}"
 
     def _validate(self) -> bool:
         return self.criterion1() or self.criterion2()
@@ -86,5 +104,11 @@ class _XorStoppingCriterion(StoppingCriterion):
         self.criterion1 = criterion1
         self.criterion2 = criterion2
 
+    def __repr__(self) -> str:
+        return f"_XorStoppingCriterion[criterion1={repr(self.criterion1)}; criterion2={repr(self.criterion2)}]"
+
+    def __str__(self) -> str:
+        return f"{self.criterion1} xor {self.criterion2}"
+
     def _validate(self) -> bool:
-        return self.criterion1() == self.criterion2()
+        return self.criterion1() != self.criterion2()
