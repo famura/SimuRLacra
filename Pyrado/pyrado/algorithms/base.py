@@ -27,8 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
+import uuid
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import joblib
 import torch.nn as nn
@@ -70,6 +71,13 @@ class Algorithm(ABC, LoggerAware):
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         :param save_name: name of the algorithm's pickle file without the ending, this becomes important if the
                           algorithm is run as a subroutine
+        :param additional_stopping_criterion_met: a stopping criterion that gets evaluated in addition to the
+                                                  algorithm's internal stopping criterion; whether both or one of them
+                                                  has to be fulfilled is controlled by the parameter
+                                                  `additional_stopping_criterion_mode`
+        :param additional_stopping_criterion_mode: if `and`, both the internal and the additional stopping criterion
+                                                   have to be fulfilled; if `or`, any of them has to be fulfilled;
+                                                   defaults to `or`
         """
         if not isinstance(max_iter, int) and max_iter > 0:
             raise pyrado.ValueErr(given=max_iter, g_constraint="0")
@@ -88,6 +96,7 @@ class Algorithm(ABC, LoggerAware):
         self._logger = logger
         self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf  # for snapshot_mode = 'best'
+        self._stopping_criteria = {}
 
     @property
     def save_dir(self) -> str:
@@ -154,6 +163,18 @@ class Algorithm(ABC, LoggerAware):
         :return: flag if one of the stopping criterion(s) is met
         """
         return False
+
+    def all_stopping_criteria_met(self) -> bool:
+        return self.stopping_criterion_met() or any([criterion() for criterion in self._stopping_criteria.values()])
+
+    def add_stopping_criterion(self, stopping_criterion: Callable[[], bool], name: str = None) -> str:
+        if name is None:
+            name = uuid.uuid4()
+        self._stopping_criteria[name] = stopping_criterion
+        return name
+
+    def remove_stopping_criterion(self, name: str) -> Callable[[], bool]:
+        return self._stopping_criteria.pop(name)
 
     def reset(self, seed: int = None):
         """
@@ -229,7 +250,7 @@ class Algorithm(ABC, LoggerAware):
         if seed is not None:
             set_seed(seed, verbose=True)
 
-        while self._curr_iter < self.max_iter and not self.stopping_criterion_met():
+        while self._curr_iter < self.max_iter and not self.all_stopping_criteria_met():
             # Record current iteration to logger
             self.logger.add_value(self.iteration_key, self._curr_iter)
 
@@ -242,8 +263,8 @@ class Algorithm(ABC, LoggerAware):
             # Increase the iteration counter
             self._curr_iter += 1
 
-        if self.stopping_criterion_met():
-            stopping_reason = "Stopping criterion met!"
+        if self.all_stopping_criteria_met():
+            stopping_reason = "Stopping criteria met!"
         else:
             stopping_reason = "Maximum number of iterations reached!"
 

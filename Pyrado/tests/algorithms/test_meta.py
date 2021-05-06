@@ -171,7 +171,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
     algo.train()
 
-    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+    assert algo.curr_iter == algo.max_iter or algo.all_stopping_criteria_met()
 
 
 @pytest.mark.longtime
@@ -244,7 +244,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
     algo.train()
 
-    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+    assert algo.curr_iter == algo.max_iter or algo.all_stopping_criteria_met()
 
 
 @pytest.mark.parametrize("env", ["default_omo"], ids=["omo"], indirect=True)
@@ -364,7 +364,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     loss_pre = eval_ddp_policy(rollouts_real_tst)
 
     # Mimic training
-    while algo.curr_iter < algo.max_iter and not algo.stopping_criterion_met():
+    while algo.curr_iter < algo.max_iter and not algo.all_stopping_criteria_met():
         algo.logger.add_value(algo.iteration_key, algo.curr_iter)
 
         # Creat fake real-world data
