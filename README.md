@@ -67,7 +67,7 @@ git clone https://github.com/famura/SimuRLacra.git
 cd SimuRLacra
 ```
 
-Create an anaconda environment (without PyTorch)
+Create an anaconda environment (without PyTorch) and install the requirements
 ```
 conda create -y -n pyrado python=3.7
 conda activate pyrado
