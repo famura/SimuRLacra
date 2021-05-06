@@ -116,7 +116,10 @@ class PandaVis(ShowBase):
         self.last_pos = None
 
         # Adds one instance of the update function to the task-manager, thus initializes the animation
-        self.taskMgr.add(self.update, "update", )
+        self.taskMgr.add(
+            self.update,
+            "update",
+        )
 
     def update(self, task: Task):
         """

@@ -269,7 +269,7 @@ class NatNetClient:
         # Rigid body count
         rigidBodyCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4
-        logging.info(f'\tRigid Body Count: {rigidBodyCount}')
+        logging.info(f"\tRigid Body Count: {rigidBodyCount}")
         # Rigid bodies
         for _ in range(rigidBodyCount):
             offset += self.__unpackRigidBody(data[offset:])
@@ -548,7 +548,9 @@ class NatNetClient:
         logging.info(f"\tID: {idx}")
 
         if idx in self.rb_map and self.rb_map[idx] != name:
-            raise RuntimeError(f"Rigid body '{name}' is already present in the current map but with name '{self.rb_map[idx]}'!")
+            raise RuntimeError(
+                f"Rigid body '{name}' is already present in the current map but with name '{self.rb_map[idx]}'!"
+            )
 
         rigidBodyCount = int.from_bytes(data[offset : offset + 4], byteorder="little")
         offset += 4

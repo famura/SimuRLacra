@@ -272,7 +272,9 @@ class SACExplStrat(StochasticActionExplStrat):
         return self._noise
 
     # noinspection PyMethodOverriding
-    def action_dist_at(self, policy_out_1: to.Tensor, policy_out_2: to.Tensor) -> Distribution:  # pylint: disable=arguments-differ
+    def action_dist_at(
+        self, policy_out_1: to.Tensor, policy_out_2: to.Tensor
+    ) -> Distribution:  # pylint: disable=arguments-differ
         """
         Return the action distribution for the given output from the wrapped policy.
         This method is made for two-headed policies, e.g. used with SAC.

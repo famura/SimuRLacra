@@ -101,7 +101,10 @@ class YourEnvironmentVis(PandaVis):
         """
         The last step of the init-method is to add the update-method to the taskmanager, in order for it to call it every frame
         """
-        self.taskMgr.add(self.update, "update", )
+        self.taskMgr.add(
+            self.update,
+            "update",
+        )
 
     def update(self, task):
         """

@@ -71,8 +71,18 @@ if __name__ == "__main__":
         for idx_r, row in enumerate(range(dim_cand // 2)):
             for idx_c, col in enumerate(range(2)):  # 1st col means, 2nd col stds
                 ax = fig.add_subplot(spec[row, col])
-                render_singletask_gp(ax, cands, cands_values, idcs_sel=[idx_r * 2 + idx_c], x_label="$\phi_{" + f"{idx_r * 2 + idx_c}" + "}$", y_label=r"$\hat{J}^{\textrm{real}}$",
-                                     min_gp_obsnoise=1e-5, num_stds=2, show_legend_posterior=False, show_legend_data=args.verbose)
+                render_singletask_gp(
+                    ax,
+                    cands,
+                    cands_values,
+                    idcs_sel=[idx_r * 2 + idx_c],
+                    x_label="$\phi_{" + f"{idx_r * 2 + idx_c}" + "}$",
+                    y_label=r"$\hat{J}^{\textrm{real}}$",
+                    min_gp_obsnoise=1e-5,
+                    num_stds=2,
+                    show_legend_posterior=False,
+                    show_legend_data=args.verbose,
+                )
 
     elif args.mode == "2D":
         fig_mean = plt.figure(figsize=fig_size, constrained_layout=True)
@@ -85,14 +95,39 @@ if __name__ == "__main__":
         ax_hm_std = fig_std.add_subplot(spec[0, 0])
         ax_cb_std = fig_std.add_subplot(spec[0, 1])
 
-        render_singletask_gp([ax_hm_mean, ax_cb_mean, ax_hm_std, ax_cb_std], cands, cands_values, idcs_sel=args.idcs, x_label=f"$\phi_{args.idcs[0]}$",
-                             y_label=f"$\phi_{args.idcs[1]}$", z_label=r"$\hat{J}^{\textrm{real}}$", min_gp_obsnoise=1e-5, resolution=51, num_stds=2, show_legend_posterior=True,
-                             show_legend_data=args.verbose, render3D=False)
+        render_singletask_gp(
+            [ax_hm_mean, ax_cb_mean, ax_hm_std, ax_cb_std],
+            cands,
+            cands_values,
+            idcs_sel=args.idcs,
+            x_label=f"$\phi_{args.idcs[0]}$",
+            y_label=f"$\phi_{args.idcs[1]}$",
+            z_label=r"$\hat{J}^{\textrm{real}}$",
+            min_gp_obsnoise=1e-5,
+            resolution=51,
+            num_stds=2,
+            show_legend_posterior=True,
+            show_legend_data=args.verbose,
+            render3D=False,
+        )
 
     elif args.mode == "3D":
         fig, ax = plt.subplots(1, subplot_kw={"projection": "3d"}, constrained_layout=True)
-        render_singletask_gp(ax, cands, cands_values, idcs_sel=args.idcs, x_label=f"$\phi_{args.idcs[0]}$", y_label=f"$\phi_{args.idcs[1]}$", z_label=r"$\hat{J}^{\textrm{real}}$",
-                             min_gp_obsnoise=1e-5, resolution=51, num_stds=2, show_legend_posterior=False, show_legend_data=args.verbose, render3D=True)
+        render_singletask_gp(
+            ax,
+            cands,
+            cands_values,
+            idcs_sel=args.idcs,
+            x_label=f"$\phi_{args.idcs[0]}$",
+            y_label=f"$\phi_{args.idcs[1]}$",
+            z_label=r"$\hat{J}^{\textrm{real}}$",
+            min_gp_obsnoise=1e-5,
+            resolution=51,
+            num_stds=2,
+            show_legend_posterior=False,
+            show_legend_data=args.verbose,
+            render3D=True,
+        )
 
     else:
         raise pyrado.ValueErr(given=args, eq_constraint="'1D', '2D', '3D'")

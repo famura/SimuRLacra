@@ -204,7 +204,9 @@ class ADR(Algorithm):
 
         return params
 
-    def step(self, snapshot_mode: str, meta_info: dict = None, parallel: bool = True):  # pylint: disable=arguments-differ
+    def step(
+        self, snapshot_mode: str, meta_info: dict = None, parallel: bool = True
+    ):  # pylint: disable=arguments-differ
         rand_trajs = []
         ref_trajs = []
         ros = []
