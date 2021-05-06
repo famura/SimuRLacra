@@ -30,7 +30,6 @@ from typing import Callable
 
 import torch as to
 import torch.nn as nn
-from torch.nn import RNNBase
 
 import pyrado
 from pyrado.policies.initialization import init_param
@@ -43,7 +42,7 @@ class RNNPolicyBase(RecurrentPolicy):
     """Base class for recurrent policies wrapping torch.nn.RNNBase subclasses"""
 
     # Type of recurrent network. Is None in base class to force inheritance.
-    recurrent_network_type: RNNBase = None
+    recurrent_network_type = None
 
     def __init__(
         self,

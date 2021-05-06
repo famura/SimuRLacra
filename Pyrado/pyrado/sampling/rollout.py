@@ -332,14 +332,14 @@ def rollout(
 
 
 def after_rollout_query(
-    env: Env, policy: Policy, param_rollout: StepSequence
+    env: Env, policy: Policy, rollout_data: StepSequence
 ) -> Tuple[bool, Optional[np.ndarray], Optional[dict]]:
     """
     Ask the user what to do after a rollout has been animated.
 
     :param env: environment used for the rollout
     :param policy: policy used for the rollout
-    :param param_rollout: collected data from the rollout
+    :param rollout_data: collected data from the rollout
     :return: done flag, initial state, and domain parameters
     """
     # Fist entry contains hotkey, second the info text
@@ -386,7 +386,7 @@ def after_rollout_query(
                     raise pyrado.TypeErr(given=state, expected_type=list)
                 return False, state, {}
         except (pyrado.TypeErr, pyrado.ShapeErr):
-            return after_rollout_query(env, policy, param_rollout)
+            return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "n":
         # Get nominal domain parameters
@@ -405,64 +405,64 @@ def after_rollout_query(
         if hasattr(env, "randomizer"):
             print(env.randomizer)
         print(policy)
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "p":
-        plot_observations_actions_rewards(param_rollout)
+        plot_observations_actions_rewards(rollout_data)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "pa":
-        plot_actions(param_rollout, env)
+        plot_actions(rollout_data, env)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "po":
-        plot_observations(param_rollout)
+        plot_observations(rollout_data)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif "po" in ans and any(char.isdigit() for char in ans):
         idcs = [int(s) for s in ans.split() if s.isdigit()]
-        plot_observations(param_rollout, idcs_sel=idcs)
+        plot_observations(rollout_data, idcs_sel=idcs)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "ps":
-        plot_states(param_rollout)
+        plot_states(rollout_data)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif "ps" in ans and any(char.isdigit() for char in ans):
         idcs = [int(s) for s in ans.split() if s.isdigit()]
-        plot_states(param_rollout, idcs_sel=idcs)
+        plot_states(rollout_data, idcs_sel=idcs)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "pf":
-        plot_features(param_rollout, policy)
+        plot_features(rollout_data, policy)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "pp":
         draw_policy_params(policy, env.spec, annotate=False)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "pr":
-        plot_rewards(param_rollout)
+        plot_rewards(rollout_data)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "pdt":
-        draw_dts(param_rollout.dts_policy, param_rollout.dts_step, param_rollout.dts_remainder)
+        draw_dts(rollout_data.dts_policy, rollout_data.dts_step, rollout_data.dts_remainder)
         plt.show()
-        return (after_rollout_query(env, policy, param_rollout),)
+        return (after_rollout_query(env, policy, rollout_data),)
 
     elif ans == "ppot":
-        plot_potentials(param_rollout)
+        plot_potentials(rollout_data)
         plt.show()
-        return after_rollout_query(env, policy, param_rollout)
+        return after_rollout_query(env, policy, rollout_data)
 
     elif ans == "s":
         if isinstance(env, SimEnv):
@@ -482,11 +482,11 @@ def after_rollout_query(
             return False, None, param
         except (ValueError, KeyError):
             print_cbt(f"Could not parse {strs} into a dict.", "r")
-            after_rollout_query(env, policy, param_rollout)
+            after_rollout_query(env, policy, rollout_data)
 
     elif ans == "e":
         env.close()
         return True, None, {}  # breaks the outer while loop
 
     else:
-        return after_rollout_query(env, policy, param_rollout)  # recursion
+        return after_rollout_query(env, policy, rollout_data)  # recursion
