@@ -32,6 +32,8 @@ from warnings import warn
 
 import torch as to
 import torch.nn as nn
+from dtw import dtw
+from dtw.stepPattern import rabinerJuangStepPattern
 from torch.nn.utils import convert_parameters as cp
 
 import pyrado
@@ -88,7 +90,7 @@ class Embedding(ABC, nn.Module):
         self,
         spec: EnvSpec,
         dim_data: int,
-        downsampling_factor: Optional[int] = 1,
+        downsampling_factor: int = 1,
         use_cuda: bool = False,
     ):
         """
@@ -127,6 +129,7 @@ class Embedding(ABC, nn.Module):
     @property
     @abstractmethod
     def dim_output(self) -> int:
+        """Get the dimension of the embeddings output, i.e. its feature dimension."""
         raise NotImplementedError
 
     @property
@@ -166,7 +169,7 @@ class Embedding(ABC, nn.Module):
     @staticmethod
     def unpack(data: to.Tensor, dim_data_orig: int) -> to.Tensor:
         """
-        Reshape the data such that the shape is [batch_dim, num_rollouts, data_series, data_sample].
+        Reshape the data such that the shape is [batch_dim, num_rollouts, len_time_series, dim_data].
 
         :param data: packed a.k.a. flattened data
         :param dim_data_orig: dimension of the original data
@@ -175,8 +178,8 @@ class Embedding(ABC, nn.Module):
         if data.ndim != 3:
             raise pyrado.ShapeErr(
                 msg=f"The data must have exactly 3 dimensions, but is of shape {data.shape}! Check if packed before "
-                f"unpacking. This error can also occur if the simulator is not batched. Either enable it to process"
-                f" batches of domain parameters or implement a 2-dim case of pack() and unpack()."
+                f"unpacking. This error can also occur if the simulator is not batched. Either enable it to process "
+                f"batches of domain parameters or implement a 2-dim case of pack() and unpack()."
             )
 
         batch_size, num_rollouts = data.shape[:2]  # packing is designed to ensure this
@@ -213,34 +216,11 @@ class Embedding(ABC, nn.Module):
         if self.downsampling_factor > 1:
             data = data[:, :, :: self.downsampling_factor, :]
 
-        # from time import time
-        # t0 = time()
-        #
-        # dataset = SingleTensorDataset(data)
-        # dataloader = DataLoader(
-        #     dataset,
-        #     batch_size=data.shape[1],  # get num_rollout samples per batch
-        #     drop_last=False,
-        #     collate_fn=lambda x: x,
-        #     # sampler=SequentialSampler(dataset),
-        # )
-        # x2 = []
-        # for data_batch in dataloader:
-        #     x2.append(to.cat([self.summary_statistic(d) for d in data_batch], dim=0))
-        # x2 = to.stack(x2, dim=0)
-        #
-        # t1 = time()
-
         # Iterate over all data batches computing the features from the data
         x = to.stack([self.forward_one_batch(batch) for batch in data], dim=0)
 
-        # t2 = time()
-        #
-        # assert to.allclose(x, x2)
-        # print(f"dt1 {t1 - t0}:.4f      dt2 {t2 - t1}:.4f")
-
         # Check the shape
-        if not x.shape == (data.shape[0], data.shape[1] * self.dim_output):
+        if x.shape != (data.shape[0], data.shape[1] * self.dim_output):
             raise pyrado.ShapeErr(given=x, expected_match=(data.shape[0], data.shape[1] * self.dim_output))
 
         return x
@@ -283,7 +263,7 @@ class DeltaStepsEmbedding(Embedding):
         spec: EnvSpec,
         dim_data: int,
         len_rollouts: int,
-        downsampling_factor: Optional[int] = 1,
+        downsampling_factor: int = 1,
         use_cuda: bool = False,
     ):
         """
@@ -377,8 +357,8 @@ class BayesSimEmbedding(Embedding):
 
 class RNNEmbedding(Embedding):
     """
-    Embedding for simulation-based inference with time series data which uses an Recurrent Neural Network (RNN) to
-    compute features of the rollouts
+    Embedding for simulation-based inference with time series data which uses an recurrent neural network, e.g. RNN,
+    LSTM, or GRU, to compute features of the rollouts
     """
 
     name: str = "rnnemb"
@@ -388,14 +368,15 @@ class RNNEmbedding(Embedding):
         self,
         spec: EnvSpec,
         dim_data: int,
-        len_rollouts: int,
         hidden_size: int,
         num_recurrent_layers: int,
         output_size: int,
-        recurrent_network_type: Optional[type] = nn.RNN,
-        dropout: Optional[float] = 0.0,
+        recurrent_network_type: type = nn.RNN,
+        only_last_output: bool = False,
+        len_rollouts: int = None,
+        downsampling_factor: int = 1,
+        dropout: float = 0.0,
         init_param_kwargs: Optional[dict] = None,
-        downsampling_factor: Optional[int] = 1,
         use_cuda: bool = False,
         **recurrent_net_kwargs,
     ):
@@ -406,25 +387,31 @@ class RNNEmbedding(Embedding):
         :param dim_data: number of dimensions of one data sample, i.e. one time step. By default, this is the sum of the
                          state and action spaces' flat dimensions. This number is doubled if the embedding
                          target domain data.
-        :param len_rollouts: number of time steps per rollout without considering a potential downsampling later
-                             (must be the same for all rollouts)
         :param hidden_size: size of the hidden layers (all equal)
         :param num_recurrent_layers: number of equally sized hidden layers
-        :param recurrent_network_type: PyTorch recurrent network class, e.g. `nn.GRU`
+        :param recurrent_network_type: PyTorch recurrent network class, e.g. `nn.RNN`, `nn.LSTM`, or `nn.GRU`
         :param output_size: size of the features at every time step, which are eventually reshaped into a vector
+        :param only_last_output: if `True`, only the last output of the network is used as a feature for sbi, else
+                                 there will be an output every `downsampling_factor` time steps. Moreover, if `True` the
+                                 constructor does not need to know how long the rollouts are.
+        :param len_rollouts: number of time steps per rollout without considering a potential downsampling later
+                             (must be the same for all rollouts)
+        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
+                                    base class before calling `summary_statistic()`
         :param dropout: dropout probability, default = 0 deactivates dropout
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net's constructor
-        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
-                                    base class before calling `summary_statistic()`
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        if not isinstance(len_rollouts, int) or len_rollouts < 0:
-            raise pyrado.ValueErr(given=len_rollouts, eq_constraint="1 (int)")
-
         super().__init__(spec, dim_data, downsampling_factor, use_cuda)
 
-        self._len_rollouts = len_rollouts // downsampling_factor
+        # Check the time sequence length if necessary
+        if not only_last_output:
+            if not isinstance(len_rollouts, int) or len_rollouts < 0:
+                raise pyrado.ValueErr(given=len_rollouts, eq_constraint="1 (int)")
+            self._len_rollouts = len_rollouts // downsampling_factor
+        else:
+            self._len_rollouts = None  # use to signal only_last_output == True
 
         if recurrent_network_type == nn.RNN:
             recurrent_net_kwargs = merge_dicts([dict(nonlinearity="tanh"), recurrent_net_kwargs])
@@ -455,7 +442,11 @@ class RNNEmbedding(Embedding):
 
     @property
     def dim_output(self) -> int:
-        return self._len_rollouts * self.output_layer.out_features
+        if self._len_rollouts is None:
+            # Only use the last output
+            return self.output_layer.out_features
+        else:
+            return self._len_rollouts * self.output_layer.out_features
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         # See RNNPolicyBase
@@ -481,10 +472,15 @@ class RNNEmbedding(Embedding):
 
         # Pass the input through hidden RNN layers, select the last output, and pass that through the output layer
         out, _ = self.rnn_layers(data, None)
-        out = self.output_layer(out)
-        assert out.shape[0] == data.shape[0]
 
-        # Reshape the outputs of every time step into one long feature vector
+        if self._len_rollouts is None:
+            # Only use the output of the last time step
+            out = out[-1]
+
+        # Pass through the final output layer
+        out = self.output_layer(out)
+
+        # Reshape the outputs of every time step into a 1-dim feature vector
         return out.reshape(-1)
 
 
@@ -502,7 +498,7 @@ class DynamicTimeWarpingEmbedding(Embedding):
         spec: EnvSpec,
         dim_data: int,
         step_pattern: Optional[str] = None,
-        downsampling_factor: Optional[int] = 1,
+        downsampling_factor: int = 1,
         use_cuda: bool = False,
     ):
         """
@@ -519,7 +515,6 @@ class DynamicTimeWarpingEmbedding(Embedding):
                                     base class before calling `summary_statistic()`
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        from dtw.stepPattern import rabinerJuangStepPattern
 
         super().__init__(spec, dim_data, downsampling_factor, use_cuda)
 
@@ -545,8 +540,6 @@ class DynamicTimeWarpingEmbedding(Embedding):
                      real states (1st part of the 2nd half of the 1st dim)
         :return: dynamic time warping distance in multi-dim state space
         """
-        from dtw import dtw
-
         # Split the data
         data_sim, data_real = to.chunk(data, 2, dim=1)
 

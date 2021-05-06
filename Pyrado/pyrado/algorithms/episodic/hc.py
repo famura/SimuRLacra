@@ -61,7 +61,7 @@ class HC(ParameterExploring):
         max_iter: int,
         num_init_states_per_domain: int,
         expl_factor: float,
-        num_domains: Optional[int] = 1,
+        num_domains: int = 1,
         pop_size: Optional[int] = None,
         num_workers: int = 4,
         logger: Optional[StepLogger] = None,

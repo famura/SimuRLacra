@@ -156,7 +156,7 @@ class Policy(nn.Module, ABC):
         """
         raise NotImplementedError
 
-    def reset(self):
+    def reset(self, *args, **kwargs):
         """
         Reset the policy to it's initial state.
         This should be called at the start of a rollout. Stateful policies should use it to reset the state variables.
@@ -175,7 +175,9 @@ class Policy(nn.Module, ABC):
         """
         raise NotImplementedError
 
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:  # pylint: disable=unused-argument
+    def evaluate(
+        self, rollout: StepSequence, hidden_states_name: str = "hidden_states"
+    ) -> to.Tensor:  # pylint: disable=unused-argument
         """
         Re-evaluate the given rollout and return a derivable action tensor.
         The default implementation simply calls `forward()`.
@@ -240,5 +242,7 @@ class TwoHeadedPolicy(Policy, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def forward(self, obs: to.Tensor) -> Union[to.Tensor, Tuple[to.Tensor, to.Tensor]]:  # pylint: disable=arguments-differ
+    def forward(
+        self, obs: to.Tensor
+    ) -> Union[to.Tensor, Tuple[to.Tensor, to.Tensor]]:  # pylint: disable=arguments-differ
         raise NotImplementedError

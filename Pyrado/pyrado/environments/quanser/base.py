@@ -48,7 +48,7 @@ class QuanserReal(RealEnv, ABC):
         ip: str,
         rcv_dim: int,
         snd_dim: int,
-        dt: Optional[float] = 1 / 500.0,
+        dt: float = 1 / 500.0,
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
     ):
@@ -177,7 +177,7 @@ class QuanserReal(RealEnv, ABC):
 
         return self.observe(self.state), self._curr_rew, done, info
 
-    def render(self, mode: RenderMode = RenderMode(text=True), render_step: Optional[int] = 1):
+    def render(self, mode: RenderMode = RenderMode(text=True), render_step: int = 1):
         if self._curr_step % render_step == 0:
             if mode.text:
                 print(

@@ -41,6 +41,7 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.feed_back.fnn import DiscreteActQValPolicy
+from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
@@ -69,10 +70,10 @@ class DQL(ValueBased):
         num_init_memory_steps: Optional[int] = None,
         min_rollouts: Optional[int] = None,
         min_steps: Optional[int] = None,
-        batch_size: Optional[int] = 256,
-        eval_intvl: Optional[int] = 100,
-        max_grad_norm: Optional[float] = 0.5,
-        lr: Optional[float] = 5e-4,
+        batch_size: int = 256,
+        eval_intvl: int = 100,
+        max_grad_norm: float = 0.5,
+        lr: float = 5e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
         num_workers: int = 4,
@@ -134,7 +135,7 @@ class DQL(ValueBased):
 
         # Create sampler for exploration during training
         self._expl_strat = EpsGreedyExplStrat(self._policy, eps_init, eps_schedule_gamma)
-        self.sampler = ParallelRolloutSampler(
+        self._sampler = ParallelRolloutSampler(
             self._env,
             self._expl_strat,
             num_workers=num_workers if min_steps != 1 else 1,
@@ -150,6 +151,16 @@ class DQL(ValueBased):
         self._lr_scheduler_hparam = lr_scheduler_hparam
         if lr_scheduler is not None:
             self._lr_scheduler = lr_scheduler(self.optim, **lr_scheduler_hparam)
+
+    @property
+    def sampler(self) -> ParallelRolloutSampler:
+        return self._sampler
+
+    @sampler.setter
+    def sampler(self, sampler: ParallelRolloutSampler):
+        if not isinstance(sampler, (ParallelRolloutSampler, CVaRSampler)):
+            raise pyrado.TypeErr(given=sampler, expected_type=(ParallelRolloutSampler, CVaRSampler))
+        self._sampler = sampler
 
     @staticmethod
     def loss_fcn(q_vals: to.Tensor, expected_q_vals: to.Tensor) -> to.Tensor:

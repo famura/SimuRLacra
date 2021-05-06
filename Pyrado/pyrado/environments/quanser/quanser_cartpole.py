@@ -163,7 +163,7 @@ class QCartPoleStabReal(QCartPoleReal):
 
     def __init__(
         self,
-        dt: Optional[float] = 1 / 500.0,
+        dt: float = 1 / 500.0,
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
         ip: Optional[str] = "192.168.2.38",
@@ -233,7 +233,10 @@ class QCartPoleStabReal(QCartPoleReal):
                     formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)},  # pylint: disable=unnecessary-lambda
                 )
                 th_str = np.array2string(
-                    th, suppress_small=True, precision=2, formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)}  # pylint: disable=unnecessary-lambda
+                    th,
+                    suppress_small=True,
+                    precision=2,
+                    formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)},  # pylint: disable=unnecessary-lambda
                 )
                 raise TimeoutError("The pole is not upright: {0} > {1}".format(state_str, th_str))
 
@@ -266,7 +269,7 @@ class QCartPoleSwingUpReal(QCartPoleReal):
 
     def __init__(
         self,
-        dt: Optional[float] = 1 / 500.0,
+        dt: float = 1 / 500.0,
         max_steps: int = pyrado.inf,
         task_args: Optional[dict] = None,
         ip: Optional[str] = "192.168.2.38",

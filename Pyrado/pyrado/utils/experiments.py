@@ -220,6 +220,19 @@ def load_experiment(
         if isinstance(algo.sub_algorithm, ActorCritic):
             extra["vfcn"] = pyrado.load(algo.sub_algorithm.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
             print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
+
+    elif algo.name == "pddr":
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Teachers
+        extra["teacher_policies"] = algo.teacher_policies
+        extra["teacher_envs"] = algo.teacher_envs
+        extra["teacher_expl_strats"] = algo.teacher_expl_strats
+        extra["teacher_critics"] = algo.teacher_critics
+        extra["teacher_ex_dirs"] = algo.teacher_ex_dirs
+
     else:
         raise pyrado.TypeErr(msg="No matching algorithm name found during loading the experiment!")
 

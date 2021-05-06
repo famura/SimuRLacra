@@ -40,11 +40,10 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.expose_sampler import ExposedSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
-class ARPL(Algorithm, ExposedSampler):
+class ARPL(Algorithm):
     """
     Adversarially Robust Policy Learning (ARPL)
 
@@ -118,15 +117,6 @@ class ARPL(Algorithm, ExposedSampler):
         if apply_observation_noise:
             env = AdversarialObservationWrapper(env, self.policy, obs_eps, obs_phi)
 
-        self.num_rollouts = num_rollouts
-        self._sampler = ParallelRolloutSampler(
-            env,
-            expl_strat,
-            num_workers=num_workers,
-            min_steps=steps_num,
-            min_rollouts=num_rollouts,
-        )
-
         # Subroutine
         self._subrtn = subrtn
         self._subrtn.save_name = "subrtn"
@@ -136,7 +126,7 @@ class ARPL(Algorithm, ExposedSampler):
         return self._subrtn.sample_count
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        rollouts = self.sampler.sample()
+        rollouts = self._subrtn.sampler.sample()
         rets = [ro.undiscounted_return() for ro in rollouts]
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)

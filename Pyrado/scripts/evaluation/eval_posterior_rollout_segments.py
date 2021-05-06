@@ -279,7 +279,10 @@ if __name__ == "__main__":
     headers = ("rollout", "DTW dist. ml", "DTW dist. nom", "mean RMSE ml", "mean RMSE nom")
     print(tabulate(table, headers))
     table_latex_str = tabulate(table, headers, tablefmt="latex")
-    with open(osp.join(ex_dir, "distance_metrics_per_rollout.tex"), "w") as tab_file:
+    str_iter = f"_iter_{args.iter}"
+    str_round = f"_round_{args.round}"
+    use_rec_str = "_use_rec" if args.use_rec_str else ""
+    with open(osp.join(ex_dir, f"distance_metrics{str_iter}{str_round}{use_rec_str}.tex"), "w") as tab_file:
         print(table_latex_str, file=tab_file)
 
     # Plot
@@ -288,7 +291,7 @@ if __name__ == "__main__":
         segments_real_all,
         segments_ml_all,
         segments_nom,
-        use_rec=args.use_rec,
+        use_rec_str=args.use_rec,
         idx_iter=args.iter,
         idx_round=args.round,
         show_act=False,

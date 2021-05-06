@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from copy import deepcopy
 from typing import Any, List, Mapping, Optional, Sequence, Tuple, Union
 
 import numpy as np
@@ -33,6 +34,8 @@ import seaborn as sns
 import torch as to
 from matplotlib import patches
 from matplotlib import pyplot as plt
+from matplotlib.patches import Patch
+from matplotlib.ticker import ScalarFormatter
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
 from torch.distributions import Distribution, MultivariateNormal
@@ -57,7 +60,7 @@ def draw_distr_evolution(
     y_label: Optional[str] = "",
     distr_labels: Optional[Sequence[str]] = None,
     grid_res: Optional[int] = 201,
-    alpha: Optional[float] = 0.3,
+    alpha: float = 0.3,
     cmap_name: Optional[str] = "plasma",
     show_legend: bool = True,
     title: Optional[str] = None,
@@ -126,7 +129,7 @@ def draw_posterior_distr_1d(
     condition: Optional[to.Tensor] = None,
     show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
-    grid_res: Optional[int] = 500,
+    grid_res: int = 500,
     normalize_posterior: bool = False,
     rescale_posterior: bool = False,
     x_label: Optional[str] = "",
@@ -288,7 +291,7 @@ def draw_posterior_distr_2d(
     condition: Optional[to.Tensor] = None,
     show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
-    grid_res: Optional[int] = 100,
+    grid_res: int = 100,
     normalize_posterior: bool = False,
     rescale_posterior: bool = False,
     x_label: Optional[str] = "",
@@ -558,7 +561,7 @@ def _draw_prior(ax, prior: BoxUniform, dim_x: int, dim_y: int, num_dim: int = 2,
 
 
 @to.no_grad()
-def draw_posterior_distr_pairwise(
+def draw_posterior_distr_pairwise_heatmap(
     axs: plt.Axes,
     posterior: Union[DirectPosterior, to.distributions.Distribution],
     data_real: to.Tensor,
@@ -567,7 +570,7 @@ def draw_posterior_distr_pairwise(
     prior: Optional[Union[BoxUniform, Uniform]] = None,
     env_real: Optional[DomainRandWrapperBuffer] = None,
     show_prior: bool = False,
-    grid_res: Optional[int] = 100,
+    grid_res: int = 100,
     marginal_layout: str = "inside",
     normalize_posterior: bool = False,
     rescale_posterior: bool = False,
@@ -603,7 +606,8 @@ def draw_posterior_distr_pairwise(
                      or pass `None` to use no labels
     :param y_labels: 2-dim numpy array of labels for the y-axes, pass `""` to use domain parameter name by default,
                      or pass `None` to use no labels
-    :param prob_labels: 1-dim numpy array of labels for the probability axis in the marginal plots
+    :param prob_labels: 1-dim numpy array of labels for the probability axis in the marginal plots, pass `""` to use
+                        the default labels or pass `None` to use no labels
     :return: figure containing the pair plot
     """
     # Check the inputs
@@ -760,38 +764,49 @@ def draw_posterior_distr_pairwise(
     return plt.gcf()
 
 
+@to.no_grad()
 def draw_posterior_distr_pairwise_scatter(
     axs: plt.Axes,
     dp_samples: List[to.Tensor],
     dp_mapping: Mapping[int, str],
     marginal_layout: str = "outside",
-    x_labels: Optional[np.ndarray] = "",
-    y_labels: Optional[np.ndarray] = "",
-    prob_labels: Optional[np.ndarray] = "",
-    c_palette=sns.color_palette(),
-    legend_labels=None,
-        label_mapping=None,
+    labels: Optional[List[str]] = None,
+    legend_labels: Optional[List[str]] = None,
+    prob_label: Optional[str] = None,
+    color_palette=sns.color_palette(),
+    set_alpha: Optional[float] = None,
+    axis_limits: Optional[np.array] = None,
+    use_kde: bool = False,
+    custom_scatter_args: Optional[dict] = None,
+    custom_histplot_args: Optional[dict] = None,
+    custom_line_args: Optional[dict] = None,
+    custom_kde_args: Optional[dict] = None,
 ) -> plt.Figure:
     """
-    Plot a 2-dim gird of pairwise slices of the posterior distribution evaluated with samples from the posterior
+    Plot a 2-dim gird of pairwise slices of the posterior distribution evaluated with samples from the posterior.
 
     :param axs: axis (joint) or axes (separately) of the figure to plot on
-    :param dp_samples: a batch of domain parameter samples generated from different distributions
+    :param dp_samples: domain parameter samples generated from different (posterior) distributions
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param marginal_layout: choose between `inside` for plotting the marginals on the diagonal (more dense), and
                            `outside` plotting the marginals on the side (better comparison)
-    :param x_labels: 2-dim numpy array of labels for the x-axes, pass `""` to use domain parameter name by default,
-                     or pass `None` to use no labels
-    :param y_labels: 2-dim numpy array of labels for the y-axes, pass `""` to use domain parameter name by default,
-                     or pass `None` to use no labels
-    :param prob_labels: 1-dim numpy array of labels for the probability axis in the marginal plots
-    :param c_palette: colorpalette for plotting the different distribution samples
+    :param labels: List of strings to set the axis labels, pass `None` to use the domain parameter mapping
+    :param legend_labels: List of strings to set the legend labels, pass `None` to not use a legend
+    :param prob_label: string to set the label for the probability axis in the marginal plots,
+                       pass `""` to use default labels or pass `None` to use no labels
+    :param color_palette: colorpalette for plotting the different distribution samples
+    :param set_alpha: define a fixed alpha value for the scatter plot
+    :param axis_limits: define the lower and upper limits for each dp as a numpy array. The shape is [2, num_dp]
+                        passing `None` will generate limits automatically
+    :param use_kde: set to True to plot samples with KDE (currently only for pair axes)
+    :param custom_scatter_args: `dict` with additional settings for seaborn.scatterplot
+    :param custom_histplot_args: `dict` with additional settings for seaborn.histplot
+    :param custom_line_args: `dict` with additional settings for matplotlib.pyplot.vline and matplotlib.pyplot.hline
+    :param custom_kde_args: `dict` with additional settings for seaborn.kdeplot
     :return: figure containing the pair plot
     """
     # Check the inputs
-    if label_mapping is None:
-        label_mapping = dict()
     if marginal_layout == "inside":
         plot_shape = (len(dp_mapping), len(dp_mapping))
     elif marginal_layout == "outside":
@@ -802,47 +817,37 @@ def draw_posterior_distr_pairwise_scatter(
     if axs.shape != plot_shape:
         raise pyrado.ShapeErr(given=axs, expected_match=plot_shape)
 
-    # Manage the labels
-    if x_labels == "":
-        # The default values for the labels has been given, fill with the domain parameter names
-        x_labels = np.empty(plot_shape, dtype=object)
-        for i in range(len(dp_mapping)):
-            x_labels[:, i] = dp_mapping[i]
-    elif x_labels is not None:
-        # A non-default values for the labels has been given, check the shape
-        if x_labels.shape != plot_shape:
-            raise pyrado.ShapeErr(given=x_labels, expected_match=plot_shape)
-    if y_labels == "":
-        # The default values for the labels has been given, fill with the domain parameter names
-        y_labels = np.empty(plot_shape, dtype=object)
-        if marginal_layout == "inside":
-            for i in range(len(dp_mapping)):
-                y_labels[i, :] = dp_mapping[i]
-        else:
-            for i in range(len(dp_mapping)):
-                y_labels[i + 1, :] = dp_mapping[i]
-    elif y_labels != "" and y_labels is not None:
-        # A non-default values for the labels has been given, check the shape
-        if y_labels.shape != plot_shape:
-            raise pyrado.ShapeErr(given=y_labels, expected_match=plot_shape)
+    if labels is None:
+        # The default values for the labels are filled with the domain parameter names
+        labels = [dp_mapping[k] for k in sorted(dp_mapping.keys())]
+    elif type(labels) != list:
+        raise pyrado.TypeErr(given=type(labels), expected_type=list)
+    elif len(labels) != len(dp_mapping):
+        raise pyrado.ShapeErr(given=labels, expected_match=dp_mapping)
 
-    if prob_labels == "":
-        if marginal_layout == "inside":
-            for i in range(len(dp_mapping)):
-                y_labels[i, i] = "samples"
-        else:
-            y_labels[0, :] = "samples"
-            x_labels[:, -1] = "samples"
-    elif prob_labels != "" and prob_labels is not None:
-        if len(prob_labels) == len(dp_mapping):
-            if marginal_layout == "inside":
-                for i in range(len(dp_mapping)):
-                    y_labels[i, i] = prob_labels[i]
-            else:
-                y_labels[0, :] = prob_labels
-                x_labels[:, -1] = prob_labels
-        else:
-            raise pyrado.ShapeErr(given=prob_labels, expected_match=dp_mapping)
+    if legend_labels is not None:
+        if type(legend_labels) != list:
+            raise pyrado.TypeErr(given=type(legend_labels), expected_type=list)
+        elif len(legend_labels) != len(dp_samples):
+            raise pyrado.ShapeErr(given=legend_labels, expected_match=dp_samples)
+
+    if prob_label == "":
+        prob_label = "sample counts (KDE)" if use_kde else "sample counts"
+    elif prob_label is None:
+        pass
+    else:
+        prob_label = f"${prob_label}$"
+
+    # Initialize plotting args and update them with custom args
+    scatter_args = dict()
+    scatter_args.update(custom_scatter_args or dict())
+    histplot_args = dict(element="step", bins=50)
+    histplot_args.update(custom_histplot_args or dict())
+    line_args = dict(lw=2)
+    line_args.update(custom_line_args or dict())
+    kde_args = dict(fill=True)
+    kde_args.update(custom_kde_args or dict())
+    label_args = dict()  # fontsize=11
 
     # Generate the indices for the subplots
     if marginal_layout == "inside":
@@ -865,144 +870,190 @@ def draw_posterior_distr_pairwise_scatter(
     assert check_all_types_equal(idcs_marginal) and check_all_lengths_equal(idcs_marginal)
     assert check_all_types_equal(idcs_pair) and check_all_lengths_equal(idcs_pair)
 
-    # Plot everything
+    # Apply settings for all axes
+    for i, j in idcs_pair + idcs_marginal:
+        # Rotate the ticklabels by 90° and format x- and y-axis
+        plt.setp(axs[i, j].get_xticklabels(), rotation=90, horizontalalignment="center")
+        axs[i, j].xaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+        axs[i, j].xaxis.get_offset_text().set_rotation(90)
+        axs[i, j].yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+
+    # Define transparency values
+    alphas = []
+    for idx_obs in range(len(dp_samples)):
+        if len(dp_samples[idx_obs]) == 1:
+            alpha = 1.0
+        else:
+            alpha = 1 - idx_obs / len(dp_samples) if set_alpha is None else set_alpha
+        alphas.append(alpha)
+
+    # Plot data in pair axes
     for i, j in idcs_pair:
-        dim_x, dim_y = j, i
+        plt.sca(axs[i, j])
+        plt.minorticks_on()
+
+        dim_x, dim_y = j, i  # dim_x, dim_y specify the data indices
         if marginal_layout == "outside":
             dim_y -= 1
 
-        # Plot the points
-        plt.sca(axs[i, j])
+        # Iterate through the data given sets
         for idx_obs in range(len(dp_samples)):
-            alpha = 1 - idx_obs / len(dp_samples)
-            if len(dp_samples[idx_obs]) == 1:
-                alpha = 1.0
-            sns.scatterplot(
-                x=dp_samples[idx_obs][:, dim_x],
-                y=dp_samples[idx_obs][:, dim_y],
-                color=c_palette[idx_obs],
-                alpha=alpha,
-            )
+            # Plot the data points
+            if use_kde and len(dp_samples[idx_obs]) > 1:
+                sns.kdeplot(
+                    x=dp_samples[idx_obs][:, dim_x],
+                    y=dp_samples[idx_obs][:, dim_y],
+                    alpha=alphas[idx_obs],
+                    cmap=sns.light_palette(color_palette[idx_obs], as_cmap=True),
+                    **kde_args,
+                )
+            else:
+                sns.scatterplot(
+                    x=dp_samples[idx_obs][:, dim_x],
+                    y=dp_samples[idx_obs][:, dim_y],
+                    color=color_palette[idx_obs],
+                    alpha=alphas[idx_obs],
+                    **scatter_args,
+                )
 
-        # FORMER
-        # axs[i, j].set_xlabel(x_labels[i, j])
-        # axs[i, j].set_ylabel(y_labels[i, j])
+    # Format pair axes. Set matplotlib axis limits based on the y-axis of the first column or cast them if were given.
+    if axis_limits is None:
+        i = 1 if marginal_layout == "outside" else 0
+        axis_limits = [axs[i, 1].get_ylim()] + [axs[dim, 0].get_ylim() for dim in range(i + 1, plot_shape[0])]
+        axis_limits = np.array(axis_limits).T
+    else:
+        axis_limits = axis_limits.numpy()
 
-        # HACKY
-        plt.minorticks_on()
-        if i == plot_shape[0] - 1:
-            pass
-            # axs[i, j].set_xlabel(x_labels[i, j])
-        else:
-            if i == plot_shape[0] - 2 and j == plot_shape[0] - 2:
-                pass
-                # axs[i, j].set_xlabel(x_labels[i, j])
+    for i, j in idcs_pair:
+        dim_x, dim_y = j, i  # dim_x, dim_y specify the data indices
+        if marginal_layout == "outside":
+            dim_y -= 1
+
+        # Update the axis limits for the pair_idcs
+        axs[i, j].set_xlim(axis_limits[0, dim_x], axis_limits[1, dim_x])
+        axs[i, j].set_ylim(axis_limits[0, dim_y], axis_limits[1, dim_y])
+
+        if marginal_layout == "outside":
+            # Show the ticklabels only for left and lower axes
+            if i != plot_shape[0] - 1 and (i != plot_shape[0] - 2 or j != plot_shape[1] - 2):
+                axs[i, j].set_xticklabels([])
+            if j != 0 and (j != 1 or i != 1):
+                axs[i, j].set_yticklabels([])
+
+        if marginal_layout == "inside":
+            if i == plot_shape[0] - 1 or (i == plot_shape[0] - 2 and j == plot_shape[1] - 1):
+                axs[i, j].set_xlabel(f"${labels[dim_x]}$", **label_args)
             else:
                 axs[i, j].set_xticklabels([])
-        if j == 0:
-            pass
-            # axs[i, j].set_ylabel(y_labels[i, j])
-        else:
-            if j == 1 and i == 1:
-                pass
-                # axs[i, j].set_ylabel(y_labels[i, j])
+            if j == 0 or (j == 1 and i == 0):
+                axs[i, j].set_ylabel(f"${labels[dim_y]}$", **label_args)
             else:
                 axs[i, j].set_yticklabels([])
-        plt.setp(axs[i, j].get_xticklabels(), rotation=90, horizontalalignment="center")
 
+    # Plot marginal axes
+    max_marginal_y_limit = 0
     for i, j in idcs_marginal:
-        if marginal_layout == "outside":
-            if i == 0:
-                dim = j
-                rotate = False
-            if j == len(dp_mapping):
-                dim = i - 1
-                rotate = True
-        else:
-            dim = i
-            rotate = False
         plt.sca(axs[i, j])
-        for idx_obs in range(len(dp_samples)):
-            obs = dp_samples[idx_obs]
-            if rotate:
-                # Rotate the sub-plot
-                if len(obs) == 1:
-                    plt.hlines(
-                        obs[:, dim],
-                        xmin=axs[i, j].get_xlim()[0],
-                        xmax=axs[i, j].get_xlim()[1],
-                        colors=c_palette[idx_obs],
-                        lw=2,
-                    )
-                else:
-                    sns.histplot(y=obs[:, dim], color=c_palette[idx_obs], alpha=(1 - idx_obs / len(dp_samples)))
-            else:
-                if len(obs) == 1:
-                    plt.vlines(
-                        obs[:, dim],
-                        ymin=axs[i, j].get_ylim()[0],
-                        ymax=axs[i, j].get_ylim()[1],
-                        colors=c_palette[idx_obs],
-                        lw=2,
-                    )
-                else:
-                    sns.histplot(x=obs[:, dim], color=c_palette[idx_obs], alpha=(1 - idx_obs / len(dp_samples)))
-
-        # adjust labels
-        font_size = 12
-        current_x_label = x_labels[i, j]
-        current_y_label = y_labels[i, j]
-        if current_x_label in label_mapping.keys():
-            current_x_label = label_mapping[current_x_label]
-        if current_y_label in label_mapping.keys():
-            current_y_label = label_mapping[current_y_label]
-        axs[i, j].set_xlabel(
-            "${}$".format(current_x_label),
-            fontsize=font_size,
-        )
-        axs[i, j].set_ylabel(
-            "${}$".format(current_y_label),
-            fontsize=font_size,
-        )
-
-        # adjust axis appearance
         plt.minorticks_on()
-        if i == 0:
-            axs[i, j].xaxis.tick_top()
-            axs[i, j].get_yaxis().set_visible(False if j != 0 else True)
-            axs[i, j].xaxis.set_label_position("top")
-            # optional
-            axs[i, j].set_xticklabels([])
-            # axs[i, j].get_xaxis().set_visible(False)
-        if j == plot_shape[1] - 1:
-            axs[i, j].yaxis.tick_right()
-            axs[i, j].get_xaxis().set_visible(False if i != plot_shape[0] - 1 else True)
-            axs[i, j].yaxis.set_label_position("right")
-            # optional
-            axs[i, j].set_yticklabels([])
-            # axs[i, j].get_yaxis().set_visible(False)
-        # plt.setp(axs[i, j].get_xticklabels(), rotation=90, horizontalalignment='center')
 
+        # dim_x, dim_y specify the data indices and decide if plot has to be rotated
+        rotate = False
+        if marginal_layout == "outside":
+            dim = j if i == 0 else i - 1
+            if i != 0:
+                rotate = True
+        elif marginal_layout == "inside":
+            dim = i
+
+        # Iterate through the given data sets
+        for idx_obs in range(len(dp_samples)):
+            # Update plotting arguments
+            scatter_data = dp_samples[idx_obs][:, dim]  # current scatter data
+            color = color_palette[idx_obs]
+            current_histplot_args = dict(binrange=axis_limits[:, dim])
+            current_histplot_args.update(histplot_args)
+            current_kde_args = deepcopy(kde_args)
+
+            # Define the settings depending on the rotation
+            current_histplot_args.update(dict(y=scatter_data) if rotate else dict(x=scatter_data))
+            current_kde_args.update(dict(y=scatter_data) if rotate else dict(x=scatter_data))
+            line_obj = plt.axhline if rotate else plt.axvline
+
+            # Plot a histogram or line depending on data size
+            if len(scatter_data) == 1:
+                line_obj(scatter_data, color=color, **line_args)
+            elif use_kde:
+                sns.kdeplot(color=color, alpha=alphas[idx_obs], **current_kde_args)
+            else:
+                sns.histplot(color=color, alpha=alphas[idx_obs], edgecolor=color, **current_histplot_args)
+
+            if i == 0:
+                max_marginal_y_limit = max(max_marginal_y_limit, axs[i, j].get_ylim()[1])
+
+    # Format marginal axes
+    for i, j in idcs_marginal:
+        # dim_x, dim_y specify the data indices and decide if plot has to be rotated
+        rotate = False
+        if marginal_layout == "outside":
+            dim = j if i == 0 else i - 1
+            if i != 0:
+                rotate = True
+        elif marginal_layout == "inside":
+            dim = i
+
+        if rotate:
+            axs[i, j].set_ylim(axis_limits[0, dim], axis_limits[1, dim])  # dp axis
+            axs[i, j].set_xlim(0.0, max_marginal_y_limit)  # sample counts axis
+        else:
+            axs[i, j].set_xlim(axis_limits[0, dim], axis_limits[1, dim])
+            axs[i, j].set_ylim(0.0, max_marginal_y_limit)
+
+        # Set x-axis label and tick settings
+        if marginal_layout == "outside":
+            if i == 0:  # top row of axes
+                axs[i, j].xaxis.set_label_position("top")  # set labels on top
+                axs[i, j].set_xlabel(f"${labels[dim]}$", **label_args)
+                axs[i, j].set_ylabel(prob_label if j == 0 else "", **label_args)
+                axs[i, j].xaxis.tick_top()  # set ticks on top
+                axs[i, j].set_xticklabels([])
+                if j != 0:
+                    axs[i, j].set_yticklabels([])
+
+            if j == plot_shape[1] - 1:  # most right column of axes
+                axs[i, j].yaxis.set_label_position("right")  # set labels to the right
+                axs[i, j].set_ylabel(f"${labels[dim]}$", **label_args)
+                axs[i, j].set_xlabel(prob_label if i == plot_shape[1] - 1 else "", **label_args)
+                axs[i, j].yaxis.tick_right()  # set ticks to the right
+                axs[i, j].set_yticklabels([])
+                if i != plot_shape[1] - 1:
+                    axs[i, j].set_xticklabels([])
+
+        elif marginal_layout == "inside":
+            axs[i, j].set_xlabel(f"${labels[dim]}$" if i == plot_shape[0] - 1 else "", **label_args)
+            axs[i, j].set_ylabel(prob_label, **label_args)
+            if i != plot_shape[0] - 1:
+                axs[i, j].set_xticklabels([])
+
+    # Format other axes
     if marginal_layout == "outside":
         for i, j in idcs_skipp:
+            # Hide diagonal axes for outside layout
             axs[i, j].set_visible(False)
 
-    # build legend
-    from matplotlib.patches import Patch
-
-    if legend_labels != None:
+    # Build legend
+    if legend_labels is not None:
         legend_elements = list()
         for idx_obs in range(len(dp_samples)):
-            c = c_palette[idx_obs]
-            if idx_obs < len(legend_labels):
-                legend_elements.append(Patch(facecolor=c, label=legend_labels[idx_obs]))
-            else:
-                legend_elements.append(Patch(facecolor=c, label="True"))
+            legend_elements.append(Patch(facecolor=color_palette[idx_obs], label=legend_labels[idx_obs]))
 
         # Create the legend
-        ax_leg = axs[0, plot_shape[1] - 1]
-        ax_leg.set_visible(True)
-        ax_leg.axis("off")
-        ax_leg.legend(handles=legend_elements, loc="center")
+        if marginal_layout == "outside":
+            ax_leg = axs[0, plot_shape[1] - 1]
+            ax_leg.set_visible(True)
+            ax_leg.axis("off")
+            ax_leg.legend(handles=legend_elements, loc="center")
+        elif marginal_layout == "inside":
+            fig = plt.gcf()
+            fig.legend(handles=legend_elements, loc=(0.5, 1), ncol=len(legend_elements))
 
     return plt.gcf()

@@ -157,38 +157,62 @@ class RNNPolicyBase(RecurrentPolicy):
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()
 
-        # The passed sample collection might contain multiple rollouts.
-        # Note:
-        # While we *could* try to convert this to a PackedSequence, allowing us to only call the network once, that
-        # would require a lot of reshaping on the result. So let's not. If performance becomes an issue, revisit here.
-        act_list = []
+        # Get a list of all observation sequences and their respective lengths
+        obs_list = []
+        lengths = []
+        hidden_list = []
+
         for ro in rollout.iterate_rollouts():
             if hidden_states_name in rollout.data_names:
-                # Get initial hidden state from first step
-                hidden = self._unpack_hidden(ro[0][hidden_states_name])
+                # Get initial hidden state from first step, but do not unpack it yet
+                hidden_list.append(ro[0][hidden_states_name])
             else:
-                # Let the network pick the default hidden state
-                hidden = None
+                # If no hidden state is given, let it be None
+                hidden_list.append(None)
 
             # Reshape observations to match PyTorch's RNN sequence protocol
-            obs = ro.get_data_values("observations", True).unsqueeze(1)
+            obs = ro.get_data_values("observations", True)
             obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
-            # Pass the input through hidden RNN layers
-            out, _ = self.rnn_layers(obs, hidden)
+            # Get all observation sequences and their respective lengths
+            obs_list.append(obs)
+            lengths.append(len(obs))
 
-            # And through the output layer
-            act = self.output_layer(out.squeeze(1))
-            if self.output_nonlin is not None:
-                act = self.output_nonlin(act)
+        # Pad and then pack observations
+        obs_padded = to.nn.utils.rnn.pad_sequence(obs_list)
+        obs_packed = to.nn.utils.rnn.pack_padded_sequence(obs_padded, lengths=lengths, enforce_sorted=False)
 
-            # Collect the actions
-            act_list.append(act)
+        # Check whether no hidden state was provided
+        if all(h is None for h in hidden_list):
+            hidden = None
+        else:
+            # Get dimension of hidden state, by using first not None element of hidden state list
+            dim_hidden = next(h for h in hidden_list if h is not None).shape
+
+            # Exchange all Nones through zero tensors (Pytorch default)
+            hidden_list = [to.zeros(dim_hidden) if h is None else h for h in hidden_list]
+
+            # Get hidden state
+            batch_size = len(hidden_list)
+            hidden = to.stack(hidden_list, 0)
+            hidden = self._unpack_hidden(hidden, batch_size=batch_size)
+
+        # Pass packed observation through RNN, result is also packed
+        out_packed, _ = self.rnn_layers(obs_packed, hidden)
+
+        # Unpack result
+        out, lens = to.nn.utils.rnn.pad_packed_sequence(out_packed)
+        out = to.cat([out[:l, i] for i, l in enumerate(lens)], 0)
+
+        # Then pass all of it through the output layer
+        act = self.output_layer(out)
+        if self.output_nonlin is not None:
+            act = self.output_nonlin(act)
 
         # Set policy, i.e. PyTorch nn.Module, back to training mode
         self.train()
 
-        return to.cat(act_list)
+        return act
 
     def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         """

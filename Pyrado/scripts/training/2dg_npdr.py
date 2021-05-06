@@ -38,7 +38,6 @@ Note that this script is supposed to work only on a single condition/real-rollou
 """
 
 import os.path as osp
-from copy import deepcopy
 
 import sbi.utils as utils
 import torch as to
@@ -46,12 +45,9 @@ from sbi.inference import SNPE_C
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.one_step.two_dim_gaussian import TwoDimGaussian
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
-from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.sampling.sbi_embeddings import LastStepEmbedding
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
@@ -98,8 +94,7 @@ if __name__ == "__main__":
     prior = utils.BoxUniform(**prior_hparam)
 
     # Embedding
-    embedding_hparam = dict()
-    embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec), **embedding_hparam)
+    embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec))
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
@@ -109,7 +104,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1,
         num_sbi_rounds=5,
-        num_real_rollouts=1,  # Should remain unchanged
+        num_real_rollouts=1,  # fixed by the environment
         num_sim_per_round=1000,
         simulation_batch_size=10,
         num_segments=1,
@@ -148,7 +143,7 @@ if __name__ == "__main__":
     save_dicts_to_yaml(
         dict(seed=args.seed),
         dict(prior=prior_hparam),
-        dict(embedding=embedding_hparam, embedding_name=embedding.name),
+        dict(embedding_name=embedding.name),
         dict(posterior_nn=posterior_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         dict(condition=args.condition),

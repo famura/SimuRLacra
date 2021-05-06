@@ -28,7 +28,7 @@
 
 import math
 import time
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 import torch as to
@@ -106,7 +106,9 @@ class QBallBalancerPDCtrl(Policy):
         # Return action, see "Actuator Electrical Dynamics" block in [1]
         return err_th * self.kp_servo
 
-    def init_param(self, kp: to.Tensor = None, kd: to.Tensor = None, verbose: bool = False, **kwargs):  # pylint: disable=arguments-differ
+    def init_param(
+        self, kp: to.Tensor = None, kd: to.Tensor = None, verbose: bool = False, **kwargs
+    ):  # pylint: disable=arguments-differ
         """
         Initialize controller parameters.
 
@@ -124,11 +126,11 @@ class QBallBalancerPDCtrl(Policy):
         if verbose:
             print(f"Set Kp to\n{self.Kp.numpy()}\nand Kd to\n{self.Kd.numpy()}")
 
-    def reset(self, state_des: Union[np.ndarray, to.Tensor] = None):  # pylint: disable=arguments-differ
+    def reset(self, state_des: Optional[Union[np.ndarray, to.Tensor]] = None):  # pylint: disable=arguments-differ
         """
         Set the controller's desired state.
 
-        :param state_des: tensor of desired x and y ball position [m], or None to keep the current desired state
+        :param state_des: desired x and y ball position [m], or `None` to keep the current desired state
         """
         if state_des is not None:
             if isinstance(state_des, to.Tensor):
@@ -298,6 +300,11 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max)
         self.pd_ctrl = QQubePDCtrl(env_spec, pd_gains, al_des=math.pi)
 
+    def reset(self, *args, **kwargs):
+        # Forward to the two controllers
+        self.e_ctrl.reset(*args, **kwargs)
+        self.pd_ctrl.reset(*args, **kwargs)
+
     def pd_enabled(self, cos_al: [float, to.Tensor]) -> bool:
         """
         Check if the PD-controller should be enabled based oin a predefined threshold on the alpha angle.
@@ -330,7 +337,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
 
 
 class QQubeEnergyCtrl(Policy):
-    """Energy-based controller used to swing the pendulum up"""
+    """Energy-based controller used to swing the Furuta pendulum up"""
 
     def __init__(
         self,
@@ -364,28 +371,29 @@ class QQubeEnergyCtrl(Policy):
         self._th_gain = nn.Parameter(to.empty_like(self._th_gain_init), requires_grad=True)
 
         self.acc_max = to.tensor(acc_max)
-        self.dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
+        self._domain_param = QQubeSwingUpSim.get_nominal_domain_param()
 
         # Default initialization
         self.init_param(None)
 
+    def reset(self, domain_param: Optional[dict] = None):
+        """
+        Set the domain parameters defining the controller's model.
+
+        :param domain_param: domain parameter dict
+        """
+        if domain_param is not None:
+            self._domain_param.update(domain_param)
+
     @property
     def E_ref(self):
+        """Get the reference energy level."""
         return to.exp(self._log_E_ref)
-
-    # @E_ref.setter
-    # def E_ref(self, new_E_ref: float):
-    #     self._log_E_ref = to.log(new_E_ref)
 
     @property
     def E_gain(self):
-        r"""Called $\mu$ by Quanser."""
+        r"""Get the energy gain, called $\mu$ in the Quanser documentation."""
         return to.exp(self._log_E_gain)
-
-    # @E_gain.setter
-    # def E_gain(self, new_mu):
-    #     r""" Called $\mu$ by Quanser."""
-    #     self._log_E_gain = to.log(new_mu)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is not None:
@@ -408,16 +416,16 @@ class QQubeEnergyCtrl(Policy):
         th, al, _, ald = obs
 
         # Compute energies
-        J_pole = self.dp_nom["Mp"] * self.dp_nom["Lp"] ** 2 / 12.0
+        J_pole = self._domain_param["Mp"] * self._domain_param["Lp"] ** 2 / 12.0
         E_kin = 0.5 * J_pole * ald ** 2
-        E_pot = 0.5 * self.dp_nom["Mp"] * self.dp_nom["g"] * self.dp_nom["Lp"] * (1.0 - to.cos(al))
+        E_pot = 0.5 * self._domain_param["Mp"] * self._domain_param["g"] * self._domain_param["Lp"] * (1.0 - to.cos(al))
         E = E_kin + E_pot
 
         # Compute clipped action
         u = self.E_gain * (E - self.E_ref) * to.sign(ald * to.cos(al)) - self._th_gain * th
         acc = clamp_symm(u, self.acc_max)
-        trq = self.dp_nom["Mr"] * self.dp_nom["Lr"] * acc
-        volt = self.dp_nom["Rm"] / self.dp_nom["km"] * trq
+        trq = self._domain_param["Mr"] * self._domain_param["Lr"] * acc
+        volt = self._domain_param["Rm"] / self._domain_param["km"] * trq
         return volt.view(1)
 
 

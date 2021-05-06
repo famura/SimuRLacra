@@ -66,7 +66,7 @@ def rollout(
     max_steps: Optional[int] = None,
     reset_kwargs: Optional[dict] = None,
     render_mode: Optional[RenderMode] = RenderMode(),
-    render_step: Optional[int] = 1,
+    render_step: int = 1,
     no_reset: bool = False,
     no_close: bool = False,
     record_dts: bool = False,

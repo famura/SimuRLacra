@@ -40,6 +40,7 @@ from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.experiment import split_path_custom_common
 from pyrado.logger.step import LoggerAware, StepLogger
 from pyrado.policies.base import Policy
+from pyrado.sampling.sampler import SamplerBase
 from pyrado.utils import get_class_name
 from pyrado.utils.input_output import print_cbt
 
@@ -140,9 +141,24 @@ class Algorithm(ABC, LoggerAware):
         return self._policy
 
     @property
-    def expl_strat(self) -> Union[StochasticActionExplStrat, StochasticParamExplStrat, None]:
+    def expl_strat(self) -> Optional[Union[StochasticActionExplStrat, StochasticParamExplStrat]]:
         """Get the algorithm's exploration strategy."""
         return None
+
+    @expl_strat.setter
+    def expl_strat(self, expl_strat: Union[StochasticActionExplStrat, StochasticParamExplStrat]):
+        """Set the algorithm's exploration strategy."""
+        raise NotImplementedError
+
+    @property
+    def sampler(self) -> Optional[SamplerBase]:
+        """Get the sampler. For algorithms with multiple samplers, this is the once collecting the training data."""
+        return None
+
+    @sampler.setter
+    def sampler(self, sampler: SamplerBase):
+        """Set the sampler. For algorithms with multiple samplers, this is the once collecting the training data."""
+        raise NotImplementedError
 
     def stopping_criterion_met(self) -> bool:
         """
@@ -431,6 +447,8 @@ class InterruptableAlgorithm(Algorithm, ABC):
         :param meta_info: information forwarded to `save_snapshot()`
         """
         next_cp = self._curr_checkpoint + 1
-        self._curr_checkpoint = next_cp % (self._num_checkpoints + 1) if next_cp > 0 else next_cp  # no modulo for negative count
+        self._curr_checkpoint = (
+            next_cp % (self._num_checkpoints + 1) if next_cp > 0 else next_cp
+        )  # no modulo for negative count
 
         self.save_snapshot(meta_info)

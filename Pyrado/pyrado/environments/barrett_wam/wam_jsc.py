@@ -65,7 +65,7 @@ class WAMJointSpaceCtrlRealEpisodic(WAMReal):
         self,
         num_dof: int,
         max_steps: int,
-        dt: Optional[float] = 1 / 500.0,
+        dt: float = 1 / 500.0,
         ip: Optional[str] = "192.168.2.2",
     ):
         """
@@ -209,7 +209,7 @@ class WAMJointSpaceCtrlRealStepBased(WAMReal):
         self,
         num_dof: int,
         max_steps: int,
-        dt: Optional[float] = 1 / 500.0,
+        dt: float = 1 / 500.0,
         ip: Optional[str] = "192.168.2.2",
     ):
         """

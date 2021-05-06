@@ -65,7 +65,7 @@ class WAMReal(RealEnv, ABC):
         self,
         num_dof: int,
         max_steps: int,
-        dt: Optional[float] = 1 / 500.0,
+        dt: float = 1 / 500.0,
         ip: Optional[str] = "192.168.2.2",
     ):
         """
@@ -193,7 +193,7 @@ class WAMReal(RealEnv, ABC):
         # return self.observe(self.state)
         return None  # TODO
 
-    def render(self, mode: RenderMode = None, render_step: Optional[int] = 1):
+    def render(self, mode: RenderMode = None, render_step: int = 1):
         # Skip all rendering
         pass
 
