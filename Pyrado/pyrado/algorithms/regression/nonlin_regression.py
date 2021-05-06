@@ -141,7 +141,7 @@ class NonlinRegression(Algorithm):
         self._cnt_iter_no_improvement = 0
         self._max_iter_no_improvement = max_iter_no_improvement
 
-    def stopping_criterion_met(self) -> bool:
+    def algo_stopping_criterion_met(self) -> bool:
         """
         Keep track of the best validation performance and check if it does not improve for a given number of iterations.
 

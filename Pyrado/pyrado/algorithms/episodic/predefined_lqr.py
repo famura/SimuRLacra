@@ -180,7 +180,7 @@ class LQR(Algorithm, ExposedSampler):
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
 
-    def stopping_criterion_met(self) -> bool:
+    def algo_stopping_criterion_met(self) -> bool:
         """Checks if the all eigenvalues of the closed loop system are negative."""
         return (self.eigvals < 0).all()
 

@@ -119,7 +119,7 @@ class ParameterExploring(Algorithm, ExposedSampler):
     def expl_strat(self) -> StochasticParamExplStrat:
         return self._expl_strat
 
-    def stopping_criterion_met(self) -> bool:
+    def algo_stopping_criterion_met(self) -> bool:
         """
         Check if the average reward of the mean policy did not change more than the specified threshold over the
         last iterations.

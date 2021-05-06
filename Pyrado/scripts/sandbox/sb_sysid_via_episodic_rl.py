@@ -228,7 +228,7 @@ if __name__ == "__main__":
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
 
     # Jeeeha
-    while algo.curr_iter < algo.max_iter and not algo.any_stopping_criteria_met():
+    while algo.curr_iter < algo.max_iter and not algo.stopping_criterion_met():
         algo.logger.add_value(algo.iteration_key, algo.curr_iter)
 
         # Create fake real-world data
@@ -240,7 +240,7 @@ if __name__ == "__main__":
         algo.logger.record_step()
         algo._curr_iter += 1
 
-    if algo.any_stopping_criteria_met():
+    if algo.stopping_criterion_met():
         stopping_reason = "Stopping criterion met!"
     else:
         stopping_reason = "Maximum number of iterations reached!"

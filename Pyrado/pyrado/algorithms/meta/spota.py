@@ -193,7 +193,7 @@ class SPOTA(InterruptableAlgorithm):
         else:
             raise NotImplementedError(f"No _adapt_batch_size method found for class {type(subroutine)}!")
 
-    def stopping_criterion_met(self) -> bool:
+    def algo_stopping_criterion_met(self) -> bool:
         """
         Check if the upper confidence bound on the optimality gap is smaller than the specified threshold.
         .. note:: The UCBOG is equal to zero if all optimality gap samples are negative.

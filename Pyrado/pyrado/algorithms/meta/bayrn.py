@@ -205,7 +205,7 @@ class BayRn(InterruptableAlgorithm):
     def sample_count(self) -> int:
         return self._cnt_samples + self._subrtn.sample_count
 
-    def stopping_criterion_met(self) -> bool:
+    def algo_stopping_criterion_met(self) -> bool:
         return self.curr_cand_value > self.thold_succ
 
     def train_policy_sim(self, cand: to.Tensor, prefix: str, cnt_rep: int) -> float:

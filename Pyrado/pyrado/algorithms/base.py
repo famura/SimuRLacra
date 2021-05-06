@@ -28,13 +28,14 @@
 
 import os.path as osp
 from abc import ABC, abstractmethod
-from typing import Any, Callable, NoReturn, Optional, Union
+from typing import Any, Optional, Union
 
 import joblib
 import torch.nn as nn
 
 import pyrado
 from pyrado import set_seed
+from pyrado.algorithms.stopping_criteria.trivial_criteria import CustomStoppingCriterion
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.experiment import split_path_custom_common
@@ -88,9 +89,8 @@ class Algorithm(ABC, LoggerAware):
         self._logger = logger
         self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf  # for snapshot_mode = 'best'
-        self._stopping_criteria = {}
 
-        self._additional_stopping_criterion = lambda: False
+        self.stopping_criterion = CustomStoppingCriterion(self.algo_stopping_criterion_met)
 
     @property
     def save_dir(self) -> str:
@@ -147,9 +147,9 @@ class Algorithm(ABC, LoggerAware):
         """Get the algorithm's exploration strategy."""
         return None
 
-    def stopping_criterion_met(self) -> bool:
+    def algo_stopping_criterion_met(self) -> bool:
         """
-        Checks if one of the algorithms (characteristic) stopping criteria is met.
+        Checks if the algorithms (characteristic) stopping criterion is met.
 
         .. note::
             This function can be overwritten by the subclasses to implement custom stopping behavior.
@@ -158,22 +158,9 @@ class Algorithm(ABC, LoggerAware):
         """
         return False
 
-    def any_stopping_criteria_met(self) -> bool:
-        """Checks if any of the stopping criteria (the internal and the additional) is met."""
-        return self.stopping_criterion_met() or self._additional_stopping_criterion()
-
-    def set_additional_stopping_criterion(self, stopping_criterion: Callable[[], bool]) -> NoReturn:
-        """
-        Sets an additional stopping criterion to probably stop the algorithm early.
-
-        :param stopping_criterion: a stopping criterion that gets evaluated in addition to the algorithm's internal
-                                   stopping criterion
-        """
-        self._additional_stopping_criterion = stopping_criterion
-
-    def remove_additional_stopping_criterion(self) -> NoReturn:
-        """Removes the additional stopping criterion."""
-        self._additional_stopping_criterion = lambda: False
+    def stopping_criterion_met(self) -> bool:
+        """Checks if the stopping criterion is met."""
+        return self.stopping_criterion()
 
     def reset(self, seed: int = None):
         """
@@ -249,7 +236,7 @@ class Algorithm(ABC, LoggerAware):
         if seed is not None:
             set_seed(seed, verbose=True)
 
-        while self._curr_iter < self.max_iter and not self.any_stopping_criteria_met():
+        while self._curr_iter < self.max_iter and not self.stopping_criterion_met():
             # Record current iteration to logger
             self.logger.add_value(self.iteration_key, self._curr_iter)
 
@@ -262,7 +249,7 @@ class Algorithm(ABC, LoggerAware):
             # Increase the iteration counter
             self._curr_iter += 1
 
-        if self.any_stopping_criteria_met():
+        if self.stopping_criterion_met():
             stopping_reason = "Stopping criteria met!"
         else:
             stopping_reason = "Maximum number of iterations reached!"
