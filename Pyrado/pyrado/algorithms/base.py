@@ -35,7 +35,7 @@ import torch.nn as nn
 
 import pyrado
 from pyrado import set_seed
-from pyrado.algorithms.stopping_criteria.trivial_criteria import CustomStoppingCriterion
+from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.experiment import split_path_custom_common
@@ -176,7 +176,7 @@ class Algorithm(ABC, LoggerAware):
 
     def stopping_criterion_met(self) -> bool:
         """Checks if the stopping criterion is met."""
-        return self.stopping_criterion()
+        return self.stopping_criterion(self)
 
     def reset(self, seed: int = None):
         """

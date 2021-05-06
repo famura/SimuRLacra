@@ -34,8 +34,8 @@ class StoppingCriterion(ABC):
     def __init__(self):
         self._criterion: "StoppingCriterion" = self
 
-    def __call__(self) -> bool:
-        return self._validate()
+    def __call__(self, algo) -> bool:
+        return self._validate(algo)
 
     def __and__(self, other: "StoppingCriterion") -> "StoppingCriterion":
         return _AndStoppingCriterion(self._criterion, other)
@@ -62,7 +62,7 @@ class StoppingCriterion(ABC):
         return str(self._criterion)
 
     @abstractmethod
-    def _validate(self) -> bool:
+    def _validate(self, algo) -> bool:
         raise NotImplementedError()
 
 
@@ -78,8 +78,8 @@ class _AndStoppingCriterion(StoppingCriterion):
     def __str__(self) -> str:
         return f"{self.criterion1} and {self.criterion2}"
 
-    def _validate(self) -> bool:
-        return self.criterion1() and self.criterion2()
+    def _validate(self, algo) -> bool:
+        return self.criterion1(algo) and self.criterion2(algo)
 
 
 class _OrStoppingCriterion(StoppingCriterion):
@@ -94,8 +94,8 @@ class _OrStoppingCriterion(StoppingCriterion):
     def __str__(self) -> str:
         return f"{self.criterion1} or {self.criterion2}"
 
-    def _validate(self) -> bool:
-        return self.criterion1() or self.criterion2()
+    def _validate(self, algo) -> bool:
+        return self.criterion1(algo) or self.criterion2(algo)
 
 
 class _XorStoppingCriterion(StoppingCriterion):
@@ -110,5 +110,5 @@ class _XorStoppingCriterion(StoppingCriterion):
     def __str__(self) -> str:
         return f"{self.criterion1} xor {self.criterion2}"
 
-    def _validate(self) -> bool:
-        return self.criterion1() != self.criterion2()
+    def _validate(self, algo) -> bool:
+        return self.criterion1(algo) != self.criterion2(algo)
