@@ -27,9 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-import uuid
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, NoReturn, Optional, Union
 
 import joblib
 import torch.nn as nn
@@ -71,13 +70,6 @@ class Algorithm(ABC, LoggerAware):
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         :param save_name: name of the algorithm's pickle file without the ending, this becomes important if the
                           algorithm is run as a subroutine
-        :param additional_stopping_criterion_met: a stopping criterion that gets evaluated in addition to the
-                                                  algorithm's internal stopping criterion; whether both or one of them
-                                                  has to be fulfilled is controlled by the parameter
-                                                  `additional_stopping_criterion_mode`
-        :param additional_stopping_criterion_mode: if `and`, both the internal and the additional stopping criterion
-                                                   have to be fulfilled; if `or`, any of them has to be fulfilled;
-                                                   defaults to `or`
         """
         if not isinstance(max_iter, int) and max_iter > 0:
             raise pyrado.ValueErr(given=max_iter, g_constraint="0")
@@ -97,6 +89,8 @@ class Algorithm(ABC, LoggerAware):
         self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf  # for snapshot_mode = 'best'
         self._stopping_criteria = {}
+
+        self._additional_stopping_criterion = lambda: False
 
     @property
     def save_dir(self) -> str:
@@ -164,17 +158,22 @@ class Algorithm(ABC, LoggerAware):
         """
         return False
 
-    def all_stopping_criteria_met(self) -> bool:
-        return self.stopping_criterion_met() or any([criterion() for criterion in self._stopping_criteria.values()])
+    def any_stopping_criteria_met(self) -> bool:
+        """Checks if any of the stopping criteria (the internal and the additional) is met."""
+        return self.stopping_criterion_met() or self._additional_stopping_criterion()
 
-    def add_stopping_criterion(self, stopping_criterion: Callable[[], bool], name: str = None) -> str:
-        if name is None:
-            name = uuid.uuid4()
-        self._stopping_criteria[name] = stopping_criterion
-        return name
+    def set_additional_stopping_criterion(self, stopping_criterion: Callable[[], bool]) -> NoReturn:
+        """
+        Sets an additional stopping criterion to probably stop the algorithm early.
 
-    def remove_stopping_criterion(self, name: str) -> Callable[[], bool]:
-        return self._stopping_criteria.pop(name)
+        :param stopping_criterion: a stopping criterion that gets evaluated in addition to the algorithm's internal
+                                   stopping criterion
+        """
+        self._additional_stopping_criterion = stopping_criterion
+
+    def remove_additional_stopping_criterion(self) -> NoReturn:
+        """Removes the additional stopping criterion."""
+        self._additional_stopping_criterion = lambda: False
 
     def reset(self, seed: int = None):
         """
@@ -250,7 +249,7 @@ class Algorithm(ABC, LoggerAware):
         if seed is not None:
             set_seed(seed, verbose=True)
 
-        while self._curr_iter < self.max_iter and not self.all_stopping_criteria_met():
+        while self._curr_iter < self.max_iter and not self.any_stopping_criteria_met():
             # Record current iteration to logger
             self.logger.add_value(self.iteration_key, self._curr_iter)
 
@@ -263,7 +262,7 @@ class Algorithm(ABC, LoggerAware):
             # Increase the iteration counter
             self._curr_iter += 1
 
-        if self.all_stopping_criteria_met():
+        if self.any_stopping_criteria_met():
             stopping_reason = "Stopping criteria met!"
         else:
             stopping_reason = "Maximum number of iterations reached!"
