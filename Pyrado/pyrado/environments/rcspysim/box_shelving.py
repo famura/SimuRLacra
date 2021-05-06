@@ -171,6 +171,9 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
         """
         Serializable._init(self, locals())
 
+        # # Get the nominal domain parameters for the task specification
+        # dp_nom = BoxShelvingSim.get_nominal_domain_param()
+
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
         if tasks_left is None:
             if not ref_frame == "upperGoal":
@@ -270,6 +273,9 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
                        observeForceTorque: bool = True
         """
         Serializable._init(self, locals())
+
+        # # Get the nominal domain parameters for the task specification
+        # dp_nom = BoxShelvingSim.get_nominal_domain_param()
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
         if tasks_left is None:

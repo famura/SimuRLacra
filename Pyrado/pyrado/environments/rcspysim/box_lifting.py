@@ -97,6 +97,9 @@ class BoxLiftingSim(RcsSim, Serializable):
         )
         tasks_box = SequentialTasks([task_box_lift, task_post_lift], hold_rew_when_done=True, verbose=True)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
+        # task_force = create_forcemin_task(
+        #     self.spec, ["WristLoadCellLBR_R_Fy", "WristLoadCellLBR_R_Fz"], Q=np.diag([1e-6, 1e-6])
+        # )
         # task_collision = create_collision_task(self.spec, factor=1.0)
         # task_ts_discrepancy = create_task_space_discrepancy_task(
         #     self.spec, AbsErrRewFcn(q=0.5 * np.ones(2), r=np.zeros(self.act_space.shape))
