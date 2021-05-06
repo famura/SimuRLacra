@@ -69,7 +69,9 @@ RUN conda create -n pyrado python=3.7 blas cmake lapack libgcc-ng mkl mkl-includ
 
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 
-RUN pip install argparse black box2d colorama coverage cython dtw-python glfw gym isort joblib matplotlib numpy optuna panda3d pandas prettyprinter pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm git+https://github.com/Xfel/init-args-serializer.git@master; \
+COPY requirements.txt requirements.txt
+
+RUN pip install -r requirements.txt; \
     conda init bash ; rm -fr /home/user/.cache
 
 # Add env variables
