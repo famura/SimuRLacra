@@ -30,7 +30,7 @@ import os.path as osp
 from collections.abc import Iterable
 from functools import partial
 from itertools import product
-from typing import Callable, Optional, Sequence, Tuple, Union
+from typing import Callable, Sequence, Tuple, Union
 
 import joblib
 import numpy as np

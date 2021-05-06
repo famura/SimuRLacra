@@ -31,7 +31,6 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.mixins import ExposedSampler
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
@@ -39,12 +38,13 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_back.linear import LinearPolicy
+from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.tasks.reward_functions import QuadrErrRewFcn
 from pyrado.utils.tensor import insert_tensor_col
 
 
-class LQR(Algorithm, ExposedSampler):
+class LQR(Algorithm):
     """Linear Quadratic Regulator created using the control module"""
 
     name: str = "lqr"
@@ -89,6 +89,16 @@ class LQR(Algorithm, ExposedSampler):
             env, self._policy, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.eigvals = np.array([pyrado.inf])  # initialize with sth positive
+
+    @property
+    def sampler(self) -> ParallelRolloutSampler:
+        return self._sampler
+
+    @sampler.setter
+    def sampler(self, sampler: ParallelRolloutSampler):
+        if not isinstance(sampler, (ParallelRolloutSampler, CVaRSampler)):
+            raise pyrado.TypeErr(given=sampler, expected_type=(ParallelRolloutSampler, CVaRSampler))
+        self._sampler = sampler
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
 

@@ -38,12 +38,13 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.expose_sampler import ExposedSampler
+from pyrado.sampling.cvar_sampler import CVaRSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.input_output import print_cbt
 
 
-class ActorCritic(Algorithm, ExposedSampler, ABC):
+class ActorCritic(Algorithm, ABC):
     """Base class of all actor critic algorithms"""
 
     def __init__(
@@ -72,8 +73,8 @@ class ActorCritic(Algorithm, ExposedSampler, ABC):
         self._critic = critic
 
         # Initialize
-        self._expl_strat = None
-        self._sampler = None
+        self._expl_strat = None  # must be implemented by subclass
+        self._sampler = None  # must be implemented by subclass
         self._lr_scheduler = None
         self._lr_scheduler_hparam = None
 
@@ -92,6 +93,16 @@ class ActorCritic(Algorithm, ExposedSampler, ABC):
     @property
     def expl_strat(self) -> NormalActNoiseExplStrat:
         return self._expl_strat
+
+    @property
+    def sampler(self) -> ParallelRolloutSampler:
+        return self._sampler
+
+    @sampler.setter
+    def sampler(self, sampler: ParallelRolloutSampler):
+        if not isinstance(sampler, (ParallelRolloutSampler, CVaRSampler)):
+            raise pyrado.TypeErr(given=sampler, expected_type=(ParallelRolloutSampler, CVaRSampler))
+        self._sampler = sampler
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Sample rollouts
