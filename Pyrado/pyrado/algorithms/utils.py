@@ -261,7 +261,7 @@ class RolloutSavingWrapper:
 
     def reset_rollouts(self) -> None:
         """
-        Resets the internal rollout variable. Inteded to be called before `save_snapshot()`, in order to
+        Resets the internal rollout variable. Intended to be called before `save_snapshot()`, in order to
         reduce serialized object's size.
         """
         self.rollouts = []
