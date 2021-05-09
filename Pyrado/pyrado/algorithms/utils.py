@@ -269,3 +269,11 @@ class RolloutSavingWrapper:
     def __getattr__(self, name: str) -> Any:
         # Forward to the wrapped sampler
         return getattr(self.wrapped_sampler, name)
+
+    def __getstate__(self):
+        """Required so that pickle does not end in an endless recursion"""
+        return vars(self)
+
+    def __setstate__(self, state):
+        """Required so that pickle does not end in an endless recursion"""
+        vars(self).update(state)
