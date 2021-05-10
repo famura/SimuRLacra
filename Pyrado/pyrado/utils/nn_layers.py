@@ -191,8 +191,7 @@ class MirrConv1d(_ConvNd):
 
     def forward(self, inp: to.Tensor) -> to.Tensor:
         # Reconstruct symmetric weights for convolution (original size)
-        mirr_weight = to.empty(self.orig_weight_shape)
-        # mirr_weight.fill_(pyrado.inf)  # only for testing
+        mirr_weight = to.empty(self.orig_weight_shape, dtype=inp.dtype)
 
         # Loop over input channels
         for i in range(self.orig_weight_shape[1]):

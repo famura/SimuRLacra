@@ -99,7 +99,7 @@ class LinearPolicy(Policy):
         :param obs: observations from the environment
         :return: actions
         """
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
         batched = obs.ndimension() == 2  # number of dim is 1 if unbatched, dim > 2 is cought by features
         feats_val = self.eval_feats(obs)
 

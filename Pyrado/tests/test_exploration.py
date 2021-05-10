@@ -60,7 +60,7 @@ def test_noise_on_act(env: SimEnv, policy: Policy):
         assert (mean == act_noise_strat.noise.mean).all()
 
         # Sample a random observation from the environment
-        obs = to.from_numpy(env.obs_space.sample_uniform())
+        obs = to.from_numpy(env.obs_space.sample_uniform()).to(dtype=to.get_default_dtype())
 
         # Get a clean and a noisy action
         act = policy(obs)  # policy expects Tensors
@@ -100,7 +100,7 @@ def test_noise_on_param(env: SimEnv, policy: Policy):
         param_noise_strat.reset_expl_params()
 
         # Sample a random observation from the environment
-        obs = to.from_numpy(env.obs_space.sample_uniform())
+        obs = to.from_numpy(env.obs_space.sample_uniform()).to(dtype=to.get_default_dtype())
 
         # Get a clean and a noisy action
         act = policy(obs)  # policy expects Tensors

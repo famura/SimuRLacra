@@ -280,7 +280,7 @@ class SVPG(Algorithm):
         for i in range(self.num_particles):
             # Get the rollouts associated to the i-th particle
             concat_ros = StepSequence.concat(rollouts[i])
-            concat_ros.torch()
+            concat_ros.torch(to.get_default_dtype())
 
             act_stats = compute_action_statistics(concat_ros, self.expl_strats[i])
             act_stats_fixed = compute_action_statistics(concat_ros, self.fixed_expl_strats[i])

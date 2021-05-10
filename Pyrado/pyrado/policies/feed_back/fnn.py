@@ -136,7 +136,7 @@ class FNN(nn.Module):
             self.param_values = init_values
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
 
         # Pass input through hidden layers
         next_input = obs
@@ -324,7 +324,7 @@ class DiscreteActQValPolicy(Policy):
         :param obs: current observations
         :return: Q-values for state-action combinations where the argmax actions, dimension equals flat action space dimension
         """
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
 
         # Get the Q-values from the owned net
         q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
@@ -335,7 +335,7 @@ class DiscreteActQValPolicy(Policy):
         return q_vals_argamx.squeeze(1) if batch_size == 1 else q_vals_argamx
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
 
         # Get the Q-values from the owned net
         q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)

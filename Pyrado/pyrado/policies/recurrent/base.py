@@ -137,8 +137,8 @@ class StatefulRecurrentNetwork(nn.Module):
         # Trace network (using random observation and init hidden state)
         inputs = {
             "forward": (
-                to.from_numpy(net.env_spec.obs_space.sample_uniform()).to(to.get_default_dtype()),
-                hidden_buf.to(to.get_default_dtype()),
+                to.from_numpy(net.env_spec.obs_space.sample_uniform()),  # former: .to(to.get_default_dtype()),
+                hidden_buf,  # former: .to(to.get_default_dtype()),
             ),
             "init_hidden": tuple(),  # call with no arguments
         }

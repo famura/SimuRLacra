@@ -187,7 +187,7 @@ class ADR(Algorithm):
         """
         Computes the parameters
 
-        :param sim_instances: Physics configurations trajectory
+        :param sim_instances: Physics configurations rollout
         :param t: time step to chose
         :return: parameters at the time
         """
@@ -470,7 +470,7 @@ class RewardGenerator:
         self.logger = logger
 
     def get_reward(self, traj: StepSequence):
-        traj = convert_step_sequence(traj)
+        traj = preprocess_rollout(traj)
         with to.no_grad():
             reward = self.discriminator.forward(traj).cpu()
             return to.log(reward.mean()) * self.reward_multiplier
@@ -485,8 +485,8 @@ class RewardGenerator:
         loss = None
         for _ in tqdm(range(num_epoch), "Discriminator Epoch", num_epoch):
             try:
-                reference_batch_now = convert_step_sequence(next(reference_batch))
-                random_batch_now = convert_step_sequence(next(random_batch))
+                reference_batch_now = preprocess_rollout(next(reference_batch))
+                random_batch_now = preprocess_rollout(next(random_batch))
             except StopIteration:
                 break
             if reference_batch_now.shape[0] < self.batch_size - 1 or random_batch_now.shape[0] < self.batch_size - 1:
@@ -506,17 +506,24 @@ class RewardGenerator:
         return loss
 
 
-def convert_step_sequence(trajectory: StepSequence):
+def preprocess_rollout(rollout: StepSequence) -> StepSequence:
     """
-    Converts a StepSequence to a Tensor which can be fed through a Network
+    Extracts observations and actions from a `StepSequence` and packs them into a PyTorch tensor which can be fed
+    through a network.
 
-    :param trajectory: A step sequence containing a trajectory
-    :return: A Tensor containing the trajectory
+    :param rollout: a `StepSequence` instance containing a trajectory
+    :return: a PyTorch Tensor containing the trajectory
     """
-    assert isinstance(trajectory, StepSequence)
-    trajectory.torch()
-    state = trajectory.get_data_values("observations")[:-1].double()
-    next_state = trajectory.get_data_values("observations")[1::].double()
-    action = trajectory.get_data_values("actions").narrow(0, 0, next_state.shape[0]).double()
-    trajectory = to.cat((state, next_state, action), 1).cpu().double()
-    return trajectory
+    if not isinstance(rollout, StepSequence):
+        raise pyrado.TypeErr(given=rollout, expected_type=StepSequence)
+
+    # Convert data type
+    rollout.torch(to.get_default_dtype())
+
+    # Extract the data
+    state = rollout.get_data_values("observations")[:-1]
+    next_state = rollout.get_data_values("observations")[1::]
+    action = rollout.get_data_values("actions").narrow(0, 0, next_state.shape[0])
+
+    rollout = to.cat((state, next_state, action), 1)
+    return rollout

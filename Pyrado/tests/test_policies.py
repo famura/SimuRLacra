@@ -43,8 +43,7 @@ from pyrado.policies.recurrent.base import RecurrentPolicy, default_pack_hidden,
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
-from pyrado.spaces.box import InfBoxSpace
-from pyrado.utils.data_types import EnvSpec, RenderMode
+from pyrado.utils.data_types import RenderMode
 from pyrado.utils.nn_layers import IndiNonlinLayer
 
 
@@ -311,7 +310,7 @@ def test_parameterized_policies_init_param(env, policy):
 )
 def test_feedforward_policy_one_step(env, policy):
     obs = env.spec.obs_space.sample_uniform()
-    obs = to.from_numpy(obs)
+    obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
     act = policy(obs)
     assert isinstance(act, to.Tensor)
 
@@ -352,7 +351,7 @@ def test_time_policy_one_step(env, policy):
 def test_recurrent_policy_one_step(env, policy):
     hid = policy.init_hidden()
     obs = env.obs_space.sample_uniform()
-    obs = to.from_numpy(obs)
+    obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
     if isinstance(policy, TwoHeadedRNNPolicyBase):
         act, out2, hid = policy(obs, hid)
         assert isinstance(out2, to.Tensor)
@@ -384,7 +383,7 @@ def test_recurrent_policy_one_step(env, policy):
 @pytest.mark.parametrize("batch_size", [1, 2, 3])
 def test_feedforward_policy_batching(env, policy, batch_size):
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
-    obs = to.from_numpy(obs)
+    obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
     act = policy(obs)
     assert act.shape[0] == batch_size
 
@@ -419,7 +418,7 @@ def test_feedforward_policy_batching(env, policy, batch_size):
 def test_recurrent_policy_batching(env, policy, batch_size):
     assert policy.is_recurrent
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
-    obs = to.from_numpy(obs)
+    obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
 
     # Do this in evaluation mode to disable dropout&co
     policy.eval()
@@ -448,7 +447,12 @@ def test_recurrent_policy_batching(env, policy, batch_size):
 
 
 @pytest.mark.recurrent_policy
-@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
+@pytest.mark.parametrize(
+    "env",
+    ["default_bob", "default_qbb", pytest.param("default_bop5d_bt", marks=m_needs_bullet)],
+    ids=["bob", "qbb", "bop5d"],
+    indirect=True,
+)
 @pytest.mark.parametrize(
     "policy",
     [
@@ -470,7 +474,12 @@ def test_pytorch_recurrent_policy_rollout(env, policy):
 
 
 @pytest.mark.recurrent_policy
-@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
+@pytest.mark.parametrize(
+    "env",
+    ["default_bob", "default_qbb", pytest.param("default_bop5d_bt", marks=m_needs_bullet)],
+    ids=["bob", "qbb", "bop5d"],
+    indirect=True,
+)
 @pytest.mark.parametrize(
     "policy",
     [
@@ -489,7 +498,7 @@ def test_pytorch_recurrent_policy_rollout(env, policy):
 def test_recurrent_policy_one_step(env, policy):
     assert policy.is_recurrent
     obs = policy.env_spec.obs_space.sample_uniform()
-    obs = to.from_numpy(obs)
+    obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
 
     # Do this in evaluation mode to disable dropout & co
     policy.eval()
@@ -523,62 +532,8 @@ def test_recurrent_policy_one_step(env, policy):
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     "env",
-    [
-        "default_bob",
-        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
-    ],
-    ids=["bob", "bop5D"],
-    indirect=True,
-)
-@pytest.mark.parametrize(
-    "policy",
-    [
-        "rnn_policy",
-        "lstm_policy",
-        "gru_policy",
-        "adn_policy",
-        "nf_policy",
-        "thrnn_policy",
-        "thgru_policy",
-        "thlstm_policy",
-    ],
-    ids=["rnn", "lstm", "gru", "adn", "nf", "thgrnn", "thgru", "thlstm"],
-    indirect=True,
-)
-def test_recurrent_policy_evaluate(env, policy):
-    # Make a rollout
-    ro = rollout(env, policy, eval=True, render_mode=RenderMode())
-    ro.torch(to.get_default_dtype())
-
-    # Evaluate first and second action manually
-    o1 = ro[0].observation
-    h1 = ro[0].hidden_state
-
-    if isinstance(policy, TwoHeadedRNNPolicyBase):
-        a1, _, h2 = policy(o1, h1)
-    else:
-        a1, h2 = policy(o1, h1)
-    to.testing.assert_allclose(a1.detach(), ro[0].action)
-    to.testing.assert_allclose(h2.detach(), ro[0].next_hidden_state)
-
-    # Run evaluate
-    if isinstance(policy, TwoHeadedRNNPolicyBase):
-        eval_act, _ = policy.evaluate(ro)
-    else:
-        eval_act = policy.evaluate(ro)
-
-    to.testing.assert_allclose(eval_act.detach(), ro.actions)
-
-
-@pytest.mark.recurrent_policy
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_bob",
-        "default_qbb",
-        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
-    ],
-    ids=["bob", "qbb", "bop5D"],
+    ["default_pend", "default_qbb"],
+    ids=["pend", "qbb"],
     indirect=True,
 )
 @pytest.mark.parametrize(
@@ -587,7 +542,7 @@ def test_recurrent_policy_evaluate(env, policy):
     ids=["rnn", "lstm", "gru"],
     indirect=True,
 )
-def test_recurrent_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
+def test_basic_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
     # Test packed padded sequence implementation against old implementation
     def old_evaluate(rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
@@ -625,15 +580,9 @@ def test_recurrent_policy_evaluate_packed_padded_sequences(env: Env, policy: Rec
 
     # Get some rollouts
     ros = []
-    for i in range(10):
+    for i in range(5):
         ro = rollout(env, policy, eval=True, render_mode=RenderMode())
         ro.torch(to.get_default_dtype())
-
-        # Perturb some hidden states
-        if i < 4:
-            ro[0].hidden_state[0] = i + 1.0
-
-        # Collect rollouts
         ros.append(ro)
 
     # Perform concatenation
@@ -649,12 +598,39 @@ def test_recurrent_policy_evaluate_packed_padded_sequences(env: Env, policy: Rec
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     "env",
-    [
-        "default_bob",
-        "default_qbb",
-        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
-    ],
-    ids=["bob", "qbb", "bop5D"],
+    ["default_pend", "default_qbb"],
+    ids=["pend", "qbb"],
+    indirect=True,
+)
+@pytest.mark.parametrize(
+    "policy",
+    ["thrnn_policy", "thgru_policy", "thlstm_policy"],
+    ids=["thrnn", "thgru", "thlstm"],
+    indirect=True,
+)
+def test_twoheaded_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
+    # Test packed padded sequence implementation for custom recurrent neural networks
+
+    # Get some rollouts
+    ros = []
+    for i in range(5):
+        ro = rollout(env, policy, eval=True, render_mode=RenderMode())
+        ro.torch(to.get_default_dtype())
+        ros.append(ro)
+
+    # Perform concatenation
+    cat = StepSequence.concat(ros)
+
+    # Evaluate old and new approaches
+    act_new = policy.evaluate(cat)
+    assert act_new is not None
+
+
+@pytest.mark.recurrent_policy
+@pytest.mark.parametrize(
+    "env",
+    ["default_pend", "default_qbb"],
+    ids=["pend", "qbb"],
     indirect=True,
 )
 @pytest.mark.parametrize(
@@ -663,20 +639,14 @@ def test_recurrent_policy_evaluate_packed_padded_sequences(env: Env, policy: Rec
     ids=["adn", "nf"],
     indirect=True,
 )
-def test_recurrent_potential_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
+def test_potential_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
     # Test packed padded sequence implementation for custom recurrent neural networks
 
     # Get some rollouts
     ros = []
-    for i in range(10):
+    for i in range(5):
         ro = rollout(env, policy, eval=True, render_mode=RenderMode())
         ro.torch(to.get_default_dtype())
-
-        # Perturb some hidden states
-        if i < 4:
-            ro[0].hidden_state[0] = i + 1.0
-
-        # Collect rollouts
         ros.append(ro)
 
     # Perform concatenation
@@ -743,13 +713,13 @@ def test_hidden_state_packing_nobatch():
     ids=["lin", "fnn"],
     indirect=True,
 )
-def test_script_feedforward(env, policy):
+def test_script_nonrecurrent(env, policy):
     # Generate scripted version
-    scripted = policy.script()
+    scripted = policy.double().script()
 
     # Compare results
-    obs = to.from_numpy(policy.env_spec.obs_space.sample_uniform())
-
+    sample = policy.env_spec.obs_space.sample_uniform()
+    obs = to.from_numpy(sample)
     act_reg = policy(obs)
     act_script = scripted(obs)
     to.testing.assert_allclose(act_reg, act_script)
@@ -781,18 +751,20 @@ def test_script_feedforward(env, policy):
 )
 def test_script_recurrent(env, policy):
     # Generate scripted version
-    scripted = policy.script()
+    scripted = policy.double().script()
 
     # Compare results, tracing hidden manually
     hidden = policy.init_hidden()
 
     # Run one step
-    obs = to.from_numpy(policy.env_spec.obs_space.sample_uniform())
+    sample = policy.env_spec.obs_space.sample_uniform()
+    obs = to.from_numpy(sample)
     act_reg, hidden = policy(obs, hidden)
     act_script = scripted(obs)
     to.testing.assert_allclose(act_reg, act_script)
     # Run second step
-    obs = to.from_numpy(policy.env_spec.obs_space.sample_uniform())
+    sample = policy.env_spec.obs_space.sample_uniform()
+    obs = to.from_numpy(sample)
     act_reg, hidden = policy(obs, hidden)
     act_script = scripted(obs)
     to.testing.assert_allclose(act_reg, act_script)
@@ -801,7 +773,8 @@ def test_script_recurrent(env, policy):
     hidden = policy.init_hidden()
     scripted.reset()
 
-    obs = to.from_numpy(policy.env_spec.obs_space.sample_uniform())
+    sample = policy.env_spec.obs_space.sample_uniform()
+    obs = to.from_numpy(sample)
     act_reg, hidden = policy(obs, hidden)
     act_script = scripted(obs)
     to.testing.assert_allclose(act_reg, act_script)
@@ -849,7 +822,8 @@ def test_export_cpp(env, policy: Policy, tmpdir, file_type):
     # Compare a couple of inputs
     for i in range(50):
         obs = policy.env_spec.obs_space.sample_uniform()
-        act_scripted = scripted(to.from_numpy(obs)).cpu().numpy()
+        obs_to = to.from_numpy(obs)  # is already double
+        act_scripted = scripted(obs_to).cpu().numpy()
         act_loaded = loaded(to.from_numpy(obs)).cpu().numpy()
         assert act_loaded == pytest.approx(act_scripted), f"Wrong action values on step #{i}"
 
@@ -860,8 +834,9 @@ def test_export_cpp(env, policy: Policy, tmpdir, file_type):
         assert loaded.hidden.numpy() == pytest.approx(scripted.hidden.numpy()), "Wrong hidden state after reset"
 
         obs = policy.env_spec.obs_space.sample_uniform()
-        act_scripted = scripted(to.from_numpy(obs)).numpy()
-        act_loaded = loaded(to.from_numpy(obs)).numpy()
+        obs_to = to.from_numpy(obs)  # is already double
+        act_scripted = scripted(obs_to).cpu().numpy()
+        act_loaded = loaded(to.from_numpy(obs)).cpu().numpy()
         assert act_loaded == pytest.approx(act_scripted), "Wrong action values after reset"
 
 
@@ -893,10 +868,10 @@ def test_export_cpp(env, policy: Policy, tmpdir, file_type):
     ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf"],
     indirect=True,
 )
-def test_export_rcspysim(env, policy, tmpdir):
+def test_export_rcspysim(env: Env, policy: Policy, tmpdir: str):
     from rcsenv import ControlPolicy
 
-    # Generate scripted version (in double mode for CPP compatibility)
+    # Generate scripted version (double mode for CPP compatibility)
     scripted = policy.double().script()
     print(scripted.graph)
 
@@ -910,7 +885,8 @@ def test_export_rcspysim(env, policy, tmpdir):
     # Compare a couple of inputs
     for _ in range(50):
         obs = policy.env_spec.obs_space.sample_uniform()
-        act_script = scripted(to.from_numpy(obs)).numpy()
+        obs = to.from_numpy(obs).to(dtype=to.double)
+        act_script = scripted(obs).cpu().numpy()
         act_cpp = cpp(obs, policy.env_spec.act_space.flat_dim)
         assert act_cpp == pytest.approx(act_script)
 
@@ -919,7 +895,8 @@ def test_export_rcspysim(env, policy, tmpdir):
         scripted.reset()
         cpp.reset()
         obs = policy.env_spec.obs_space.sample_uniform()
-        act_script = scripted(to.from_numpy(obs)).numpy()
+        obs = to.from_numpy(obs).to(dtype=to.double)
+        act_script = scripted(obs).cpu().numpy()
         act_cpp = cpp(obs, policy.env_spec.act_space.flat_dim)
         assert act_cpp == pytest.approx(act_script)
 
