@@ -42,7 +42,6 @@
 {% endif %}
 
 {%- if not modulefirst and not is_namespace %}
-{%- endif %}
 
 {{ automodule(pkgname, automodule_options) }}
 {% endif %}

@@ -277,7 +277,7 @@ class OneMassOscillatorVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(0, -4.0 * self._scale,0.2 * self._scale)
+        self.cam.setPos(0, -4.0 * self._scale, 0.2 * self._scale)
 
         # Ground
         self.ground = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
