@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Optional
 
 import numpy as np
@@ -37,7 +37,7 @@ from pyrado.algorithms.utils import RolloutSavingWrapper
 from pyrado.sampling.sampler import SamplerBase
 
 
-class RolloutBasedStoppingCriterion(ABC, StoppingCriterion):
+class RolloutBasedStoppingCriterion(StoppingCriterion):
     """
     Abstract extension of the base `StoppingCriterion` class for criteria that are based on having access to rollouts.
     This criterion requires the algorithm to expose a `RolloutSavingWrapper` via a property `sampler`.
@@ -88,10 +88,16 @@ class MinReturnStoppingCriterion(RolloutBasedStoppingCriterion):
         """
         self._min_return = min_return
 
+    def __repr__(self) -> str:
+        return f"MinReturnStoppingCriterion[min_return={self._min_return}]"
+
+    def __str__(self) -> str:
+        return f"(return >= {self._min_return})"
+
     # noinspection PyUnusedLocal
     def _is_met_with_sampler(self, algo, sampler: RolloutSavingWrapper) -> bool:
         """Returns whether the minimum return of the latest rollout is greater than or equal to the minimum return."""
         rollouts = sampler.rollouts[-1]
-        returns = [rollouts.undiscounted_return() for rollouts in rollouts]
+        returns = [rollout.undiscounted_return() for rollout in rollouts]
         min_return = np.min(returns)
         return min_return >= self._min_return

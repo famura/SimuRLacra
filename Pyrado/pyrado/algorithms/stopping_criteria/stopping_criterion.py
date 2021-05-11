@@ -76,7 +76,7 @@ class _AndStoppingCriterion(StoppingCriterion):
         return f"_AndStoppingCriterion[criterion1={repr(self.criterion1)}; criterion2={repr(self.criterion2)}]"
 
     def __str__(self) -> str:
-        return f"{self.criterion1} and {self.criterion2}"
+        return f"({self.criterion1} and {self.criterion2})"
 
     def is_met(self, algo) -> bool:
         """Checks if both criteria are met."""
@@ -101,7 +101,7 @@ class _OrStoppingCriterion(StoppingCriterion):
         return f"_OrStoppingCriterion[criterion1={repr(self.criterion1)}; criterion2={repr(self.criterion2)}]"
 
     def __str__(self) -> str:
-        return f"{self.criterion1} or {self.criterion2}"
+        return f"({self.criterion1} or {self.criterion2})"
 
     def is_met(self, algo) -> bool:
         """Checks if at least one criterion is met."""
