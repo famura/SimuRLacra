@@ -35,6 +35,7 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
@@ -110,6 +111,11 @@ class ParameterExploring(Algorithm):
         # Set this in subclasses
         self._expl_strat = None
 
+        # Check if the average reward of the mean policy did not change more than the specified threshold over the last iterations
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(
+            lambda algo: np.std(algo.ret_avg_stack) < algo.thold_ret_std
+        )
+
     @property
     def env(self) -> Env:
         """Get the environment in which the algorithm exploration trains."""
@@ -128,16 +134,6 @@ class ParameterExploring(Algorithm):
         if not isinstance(sampler, (ParameterExplorationSampler, CVaRSampler)):
             raise pyrado.TypeErr(given=sampler, expected_type=(ParameterExplorationSampler, CVaRSampler))
         self._sampler = sampler
-
-    def stopping_criterion_met(self) -> bool:
-        """
-        Check if the average reward of the mean policy did not change more than the specified threshold over the
-        last iterations.
-        """
-        if np.std(self.ret_avg_stack) < self.thold_ret_std:
-            return True
-        else:
-            return False
 
     def reset(self, seed: int = None):
         # Reset the exploration strategy, internal variables and the random seeds

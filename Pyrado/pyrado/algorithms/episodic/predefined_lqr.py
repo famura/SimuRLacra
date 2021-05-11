@@ -31,6 +31,7 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
@@ -190,9 +191,10 @@ class LQR(Algorithm):
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
 
-    def stopping_criterion_met(self) -> bool:
-        """Checks if the all eigenvalues of the closed loop system are negative."""
-        return (self.eigvals < 0).all()
+        # Checks if the all eigenvalues of the closed loop system are negative.
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(
+            lambda algo: (algo.eigvals < 0).all()
+        )
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)

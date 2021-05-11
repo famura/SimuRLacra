@@ -36,6 +36,7 @@ from torch.utils.data import DataLoader, SubsetRandomSampler, TensorDataset
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.utils.data_types import merge_dicts
@@ -141,23 +142,26 @@ class NonlinRegression(Algorithm):
         self._cnt_iter_no_improvement = 0
         self._max_iter_no_improvement = max_iter_no_improvement
 
-    def stopping_criterion_met(self) -> bool:
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(self._custom_stopping_criterion)
+
+    @staticmethod
+    def _custom_stopping_criterion(algo: "NonlinRegression") -> bool:
         """
         Keep track of the best validation performance and check if it does not improve for a given number of iterations.
 
         :return: `True` if the performance on the validation set did not improve for, i.e. network has converged
         """
-        if self._cnt_iter_no_improvement >= self._max_iter_no_improvement:
+        if algo._cnt_iter_no_improvement >= algo._max_iter_no_improvement:
             # No improvement over on the validation set for self._max_iter_no_improvement iterations
             return True
 
         else:
-            if self.curr_iter == 0 or self._curr_loss_val < self._best_loss_val:
+            if algo.curr_iter == 0 or algo._curr_loss_val < algo._best_loss_val:
                 # Reset the counter if first epoch or any improvement
-                self._best_loss_val = self._curr_loss_val
-                self._cnt_iter_no_improvement = 0
+                algo._best_loss_val = algo._curr_loss_val
+                algo._cnt_iter_no_improvement = 0
             else:
-                self._cnt_iter_no_improvement += 1
+                algo._cnt_iter_no_improvement += 1
 
             # Continue training
             return False
