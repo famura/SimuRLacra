@@ -206,6 +206,9 @@ class Algorithm(ABC, LoggerAware):
         self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf
 
+        # Reset the internal state of the stopping criterion
+        self._stopping_criterion.reset()
+
         # Set all rngs' seeds
         if seed is not None:
             set_seed(seed, verbose=True)
