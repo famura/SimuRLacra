@@ -40,6 +40,7 @@ import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
+from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
@@ -164,6 +165,8 @@ class SPOTA(InterruptableAlgorithm):
         # Save initial environment and randomizer
         self.save_snapshot(meta_info=None)
 
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(self._custom_stopping_criterion)
+
     @property
     def subroutine_cand(self) -> Algorithm:
         """Get the candidate subroutine."""
@@ -193,13 +196,16 @@ class SPOTA(InterruptableAlgorithm):
         else:
             raise NotImplementedError(f"No _adapt_batch_size method found for class {type(subroutine)}!")
 
-    def algo_stopping_criterion_met(self) -> bool:
+    @staticmethod
+    def _custom_stopping_criterion(algo) -> bool:
         """
         Check if the upper confidence bound on the optimality gap is smaller than the specified threshold.
-        .. note:: The UCBOG is equal to zero if all optimality gap samples are negative.
+
+        .. note::
+            The UCBOG is equal to zero if all optimality gap samples are negative.
         """
-        if self.ucbog != 0 and self.ucbog < self.beta:
-            print_cbt(f"UCBOG is below specified threshold: {self.ucbog} < {self.beta}", "g", bright=True)
+        if algo.ucbog != 0 and algo.ucbog < algo.beta:
+            print_cbt(f"UCBOG is below specified threshold: {algo.ucbog} < {algo.beta}", "g", bright=True)
             return True
         else:
             return False
@@ -407,7 +413,7 @@ class SPOTA(InterruptableAlgorithm):
 
         print_cbt(f"diffs (optimistic - pessimistic bound):\n{self.Gn_diffs}", "y")
         print_cbt(
-            f"\n{100*ratio_neg_diffs}% of the diffs would have been negative and were set to 0\n", "r", bright=True
+            f"\n{100 * ratio_neg_diffs}% of the diffs would have been negative and were set to 0\n", "r", bright=True
         )
 
         if ratio_neg_diffs == 1:

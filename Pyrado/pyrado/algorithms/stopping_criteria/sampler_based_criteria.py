@@ -26,62 +26,30 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Any, Callable, Optional
+from abc import ABC, abstractmethod
+from typing import Optional
 
+import pyrado
 from pyrado.algorithms.stopping_criteria.stopping_criterion import StoppingCriterion
+from pyrado.sampling.sampler import SamplerBase
 
 
-class AlwaysStopStoppingCriterion(StoppingCriterion):
-    def __repr__(self) -> str:
-        return "AlwaysStopStoppingCriterion"
-
-    def __str__(self) -> str:
-        return "True"
-
+class SamplerBasedStoppingCriterion(ABC, StoppingCriterion):
     def is_met(self, algo) -> bool:
-        return True
+        sampler: Optional[SamplerBase] = algo.sampler
+        if sampler is None:
+            raise pyrado.ValueErr(msg="")
+        return self._is_met_with_sampler(algo, sampler)
+
+    @abstractmethod
+    def _is_met_with_sampler(self, algo, sampler: SamplerBase) -> bool:
+        raise NotImplementedError()
 
 
-class NeverStopStoppingCriterion(StoppingCriterion):
-    def __repr__(self) -> str:
-        return "NeverStopStoppingCriterion"
-
-    def __str__(self) -> str:
-        return "False"
-
-    def is_met(self, algo) -> bool:
-        return False
-
-
-class CustomStoppingCriterion(StoppingCriterion):
-    def __init__(self, criterion_fn: Callable[[Any], bool], name: Optional[str] = None):
+class MinReturnStoppingCriterion(SamplerBasedStoppingCriterion):
+    def __init__(self, min_return: float):
         super().__init__()
-        self._criterion_fn = criterion_fn
-        self._name = name
+        self._min_return = min_return
 
-    def __repr__(self) -> str:
-        return f"CustomStoppingCriterion[_criterion_fn={repr(self._criterion_fn)}; name={self._name}]"
-
-    def __str__(self) -> str:
-        return "Custom" if self._name is None else self._name
-
-    def is_met(self, algo) -> bool:
-        return self._criterion_fn(algo)
-
-
-class IterCountStoppingCriterion(StoppingCriterion):
-    def __init__(self, max_iter: int):
-        super().__init__()
-        self._max_iter = max_iter
-
-    def is_met(self, algo) -> bool:
-        return algo.curr_iter >= self._max_iter
-
-
-class SampleCountStoppingCriterion(StoppingCriterion):
-    def __init__(self, max_iter: int):
-        super().__init__()
-        self._max_samples = max_iter
-
-    def is_met(self, algo) -> bool:
-        return algo.sample_count >= self._max_samples
+    def _is_met_with_sampler(self, algo, sampler: SamplerBase) -> bool:
+        raise NotImplementedError()

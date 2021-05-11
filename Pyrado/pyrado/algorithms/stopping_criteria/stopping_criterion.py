@@ -27,42 +27,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import NoReturn
 
 
 class StoppingCriterion(ABC):
-    def __init__(self):
-        self._criterion: "StoppingCriterion" = self
-
-    def __call__(self, algo) -> bool:
-        return self._validate(algo)
+    def __or__(self, other: "StoppingCriterion") -> "StoppingCriterion":
+        return _OrStoppingCriterion(self, other)
 
     def __and__(self, other: "StoppingCriterion") -> "StoppingCriterion":
-        return _AndStoppingCriterion(self._criterion, other)
-
-    def __or__(self, other: "StoppingCriterion") -> "StoppingCriterion":
-        return _OrStoppingCriterion(self._criterion, other)
+        return _AndStoppingCriterion(self, other)
 
     def __xor__(self, other: "StoppingCriterion") -> "StoppingCriterion":
-        return _XorStoppingCriterion(self._criterion, other)
-
-    def __iand__(self, other: "StoppingCriterion") -> NoReturn:
-        self._criterion = self._criterion & other
-
-    def __ior__(self, other: "StoppingCriterion") -> NoReturn:
-        self._criterion = self._criterion | other
-
-    def __ixor__(self, other: "StoppingCriterion") -> NoReturn:
-        self._criterion = self._criterion ^ other
-
-    def __repr__(self) -> str:
-        return repr(self._criterion)
-
-    def __str__(self) -> str:
-        return str(self._criterion)
+        return _XorStoppingCriterion(self, other)
 
     @abstractmethod
-    def _validate(self, algo) -> bool:
+    def is_met(self, algo) -> bool:
         raise NotImplementedError()
 
 
@@ -78,8 +56,8 @@ class _AndStoppingCriterion(StoppingCriterion):
     def __str__(self) -> str:
         return f"{self.criterion1} and {self.criterion2}"
 
-    def _validate(self, algo) -> bool:
-        return self.criterion1(algo) and self.criterion2(algo)
+    def is_met(self, algo) -> bool:
+        return self.criterion1.is_met(algo) and self.criterion2.is_met(algo)
 
 
 class _OrStoppingCriterion(StoppingCriterion):
@@ -94,8 +72,8 @@ class _OrStoppingCriterion(StoppingCriterion):
     def __str__(self) -> str:
         return f"{self.criterion1} or {self.criterion2}"
 
-    def _validate(self, algo) -> bool:
-        return self.criterion1(algo) or self.criterion2(algo)
+    def is_met(self, algo) -> bool:
+        return self.criterion1.is_met(algo) or self.criterion2.is_met(algo)
 
 
 class _XorStoppingCriterion(StoppingCriterion):
@@ -110,5 +88,5 @@ class _XorStoppingCriterion(StoppingCriterion):
     def __str__(self) -> str:
         return f"{self.criterion1} xor {self.criterion2}"
 
-    def _validate(self, algo) -> bool:
-        return self.criterion1(algo) != self.criterion2(algo)
+    def is_met(self, algo) -> bool:
+        return self.criterion1.is_met(algo) != self.criterion2.is_met(algo)

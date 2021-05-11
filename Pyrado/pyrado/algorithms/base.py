@@ -35,7 +35,8 @@ import torch.nn as nn
 
 import pyrado
 from pyrado import set_seed
-from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
+from pyrado.algorithms.stopping_criteria.predefined_criteria import IterCountStoppingCriterion
+from pyrado.algorithms.stopping_criteria.stopping_criterion import StoppingCriterion
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.experiment import split_path_custom_common
@@ -91,7 +92,7 @@ class Algorithm(ABC, LoggerAware):
         self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf  # for snapshot_mode = 'best'
 
-        self.stopping_criterion = CustomStoppingCriterion(self.algo_stopping_criterion_met)
+        self._stopping_criterion = IterCountStoppingCriterion(self.max_iter)
 
     @property
     def save_dir(self) -> str:
@@ -163,20 +164,30 @@ class Algorithm(ABC, LoggerAware):
         """Set the sampler. For algorithms with multiple samplers, this is the once collecting the training data."""
         raise NotImplementedError
 
-    def algo_stopping_criterion_met(self) -> bool:
-        """
-        Checks if the algorithms (characteristic) stopping criterion is met.
+    @property
+    def stopping_criterion(self) -> StoppingCriterion:
+        """Get the stopping criterion."""
+        return self._stopping_criterion
 
-        .. note::
-            This function can be overwritten by the subclasses to implement custom stopping behavior.
-
-        :return: flag if one of the stopping criterion(s) is met
-        """
-        return False
+    @stopping_criterion.setter
+    def stopping_criterion(self, stopping_criterion: StoppingCriterion):
+        """Set the stopping criterion."""
+        self._stopping_criterion = stopping_criterion
 
     def stopping_criterion_met(self) -> bool:
-        """Checks if the stopping criterion is met."""
-        return self.stopping_criterion(self)
+        """
+        Checks if the stopping criterion is met.
+
+        .. note::
+            We need this method because the stopping criterion's `is_met(algo)` method requires an instance of the
+            algorithm. If we would simply use the `is_met(algo)` function of the exposed property, we would have to pass
+            the algorithm instance manually. Moreover, if we would change the `is_met(algo)` function to not require the
+            algorithm, initializing the latter would require the former and vice versa. This would be a circular
+            dependency.
+
+        :return: `True` if the stopping criterion is met, see also `StoppingCriterion.is_met(algo)`
+        """
+        return self._stopping_criterion.is_met(self)
 
     def reset(self, seed: int = None):
         """
@@ -252,7 +263,7 @@ class Algorithm(ABC, LoggerAware):
         if seed is not None:
             set_seed(seed, verbose=True)
 
-        while self._curr_iter < self.max_iter and not self.stopping_criterion_met():
+        while not self.stopping_criterion_met():
             # Record current iteration to logger
             self.logger.add_value(self.iteration_key, self._curr_iter)
 

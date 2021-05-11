@@ -42,6 +42,7 @@ from tabulate import tabulate
 
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
+from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
@@ -196,6 +197,10 @@ class BayRn(InterruptableAlgorithm):
         self.save_snapshot(meta_info=None)
         pyrado.save(self.ddp_space, "ddp_space.pkl", self.save_dir)
 
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(
+            lambda algo: algo.curr_cand_value > algo.thold_succ
+        )
+
     @property
     def subroutine(self) -> Algorithm:
         """Get the policy optimization subroutine."""
@@ -204,9 +209,6 @@ class BayRn(InterruptableAlgorithm):
     @property
     def sample_count(self) -> int:
         return self._cnt_samples + self._subrtn.sample_count
-
-    def algo_stopping_criterion_met(self) -> bool:
-        return self.curr_cand_value > self.thold_succ
 
     def train_policy_sim(self, cand: to.Tensor, prefix: str, cnt_rep: int) -> float:
         """
