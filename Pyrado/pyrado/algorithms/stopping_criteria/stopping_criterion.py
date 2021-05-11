@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
+from typing import NoReturn
 
 
 class StoppingCriterion(ABC):
@@ -56,6 +57,10 @@ class StoppingCriterion(ABC):
         :return: `True` if the criterion is met, and `False` otherwise
         """
         raise NotImplementedError()
+
+    def reset(self) -> NoReturn:
+        """Resets the internal state of this stopping criterion. Has to be called when the algorithm is reset."""
+        pass
 
 
 class _AndStoppingCriterion(StoppingCriterion):
