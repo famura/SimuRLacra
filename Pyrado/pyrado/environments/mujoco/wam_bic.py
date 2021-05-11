@@ -101,7 +101,7 @@ class WAMBallInCupSim(WAMSim, Serializable):
                    overwritten. Possible use case if if you know that you recorded a trajectory with a specific `dt`.
         :param max_steps: max number of simulation time steps
         :param fixed_init_state: enables/disables deterministic, fixed initial state
-        :param stop_on_collision: set the `failed` flag in the `dict` returned by `_mujoco_step()` to true, if the ball
+        :param stop_on_collision: set the `failed` flag in the dict returned by `_mujoco_step()` to true, if the ball
                                   collides with something else than the desired parts of the cup. This causes the
                                   episode to end. Keep in mind that in case of a negative step reward and no final
                                   cost on failing, this might result in undesired behavior.

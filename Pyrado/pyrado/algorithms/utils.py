@@ -261,7 +261,7 @@ class RolloutSavingWrapper:
 
     def reset_rollouts(self) -> None:
         """
-        Resets the internal rollout variable. Inteded to be called before `save_snapshot()`, in order to
+        Resets the internal rollout variable. Intended to be called before `save_snapshot()`, in order to
         reduce serialized object's size.
         """
         self.rollouts = []
@@ -269,3 +269,11 @@ class RolloutSavingWrapper:
     def __getattr__(self, name: str) -> Any:
         # Forward to the wrapped sampler
         return getattr(self.wrapped_sampler, name)
+
+    def __getstate__(self):
+        """Required so that pickle does not end in an endless recursion"""
+        return vars(self)
+
+    def __setstate__(self, state):
+        """Required so that pickle does not end in an endless recursion"""
+        vars(self).update(state)

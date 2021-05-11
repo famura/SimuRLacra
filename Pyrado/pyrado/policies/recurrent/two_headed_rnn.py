@@ -122,7 +122,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
         return self._hidden_size * self.num_recurrent_layers
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> Tuple[to.Tensor, to.Tensor, to.Tensor]:
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
 
         # Adjust the input's shape to be compatible with PyTorch's RNN implementation
         batch_size = None

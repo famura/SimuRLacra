@@ -159,11 +159,11 @@ def explained_var(y_mdl: Union[np.ndarray, to.Tensor], y_obs: Union[np.ndarray, 
 
 def logmeanexp(x: Union[to.Tensor, np.ndarray], dim: int = 0) -> Union[to.Tensor, np.ndarray]:
     r"""
-    Numerically stable way to compute $\log \left( 1/N \sum_{i=1}^N \exp(x) \right)$
+    Numerically stable way to compute :math:`\log \left( \frac{1}{N} \sum_{i=1}^N \exp(x) \right)
 
     :param x: input tensor
-    :param dim: dimension to compute the logmeanexp along
-    :return: $\log \left( 1/N \sum_{i=1}^N \exp(x) \right)$
+    :param dim: dimension to compute the logmeanexp` along
+    :return: natural logarithm of the mean of the exponentiated values
     """
     if isinstance(x, to.Tensor):
         return to.logsumexp(x, dim=dim) - to.log(to.tensor(x.shape[dim], dtype=to.get_default_dtype()))
@@ -175,7 +175,7 @@ def logmeanexp(x: Union[to.Tensor, np.ndarray], dim: int = 0) -> Union[to.Tensor
 
 def cosine_similarity(x: to.Tensor, y: to.Tensor) -> to.Tensor:
     r"""
-    Compute the cosine similarity between two tensors $D_cos(x,y) = \frac{x^T y}{|x| \cdot |y|}$.
+    Compute the cosine similarity between two tensors :math:`D_\text{cos}(x,y) = \frac{x^T y}{|x| \cdot |y|}`.
 
     :param x: input tensor
     :param y: input tensor

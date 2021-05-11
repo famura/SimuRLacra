@@ -75,8 +75,8 @@ def save(obj, name: str, save_dir: PathLike, prefix: str = "", suffix: str = "",
     :param name: name of the object for loading including the file extension, e.g. 'policy.pt' for PyTorch modules
                  like a Pyrado `Policy` instance
     :param save_dir: directory to save in
-    :param prefix: prefix for altering the name, e.g. "iter_0_..."
-    :param suffix: suffix for altering the name, e.g. "..._ref"
+    :param prefix: prefix for altering the name, e.g. 'iter_0_...'
+    :param suffix: suffix for altering the name, e.g. '..._ref'
     :param use_state_dict: if `True` save the `state_dict`, else save the entire module. This only has an effect if
                            PyTorch modules (file_ext = 'pt') are saved.
 
@@ -125,8 +125,8 @@ def load(name: str, load_dir: PathLike, prefix: str = "", suffix: str = "", obj=
     :param name: name of the object for loading including the file extension, e.g. 'policy.pt' for PyTorch modules
                  like a Pyrado `Policy` instance
     :param load_dir: directory to load from
-    :param prefix: prefix for altering the name, e.g. "iter_0_..."
-    :param suffix: suffix for altering the name, e.g. "..._ref"
+    :param prefix: prefix for altering the name, e.g. 'iter_0_...'
+    :param suffix: suffix for altering the name, e.g. '..._ref'
     :param obj: PyTorch module to load into, this can be `None` except for the case if you want to load and save the
                 module's `state_dict`
     :param verbose: if `True`, print the path of what has been loaded

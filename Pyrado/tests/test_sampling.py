@@ -107,13 +107,7 @@ def test_sampler_collect_minrun(num_threads: int, min_samples: int, min_runs: in
     assert min_runs <= len(cr)
 
 
-@pytest.mark.parametrize(
-    "data_type",
-    [
-        (None, None),
-        (to.int32, np.int32),
-    ],
-)
+@pytest.mark.parametrize("data_type", [(None, None), (to.int32, np.int32)])
 def test_to_format(data_type: tuple):
     # Create some tensors to convert
     ndarray = np.random.rand(3, 2).astype(dtype=np.float64)
@@ -132,21 +126,8 @@ def test_to_format(data_type: tuple):
     assert converted_tensor.dtype == new_type
 
 
-@pytest.mark.parametrize(
-    "epsilon",
-    [
-        1,
-        0.5,
-        0.1,
-    ],
-)
-@pytest.mark.parametrize(
-    "num_ro",
-    [
-        10,
-        20,
-    ],
-)
+@pytest.mark.parametrize("epsilon", [1, 0.5, 0.1])
+@pytest.mark.parametrize("num_ro", [10, 20])
 def test_select_cvar(epsilon: float, num_ro: int):
     # Create rollouts with known discounted rewards
     rollouts = [StepSequence(rewards=[i], observations=[i], actions=[i]) for i in range(num_ro)]
@@ -240,9 +221,7 @@ def test_rollout_wo_policy(env: SimEnv):
 
 @pytest.mark.parametrize(
     "mean, cov",
-    [
-        (to.tensor([5.0, 7.0]), to.tensor([[2.0, 0.0], [0.0, 2.0]])),
-    ],
+    [(to.tensor([5.0, 7.0]), to.tensor([[2.0, 0.0], [0.0, 2.0]]))],
     ids=["2dim"],
 )
 def test_reparametrization_trick(mean, cov):

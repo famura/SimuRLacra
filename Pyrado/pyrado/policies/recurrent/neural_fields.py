@@ -176,7 +176,7 @@ class NFPolicy(PotentialBasedPolicy):
             self.param_values = init_values
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
 
         # We assume flattened observations, if they are 2d, they're batched.
         if len(obs.shape) == 1:
@@ -188,10 +188,10 @@ class NFPolicy(PotentialBasedPolicy):
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
         if hidden is not None:
-            hidden = hidden.to(device=self.device, dtype=to.get_default_dtype())
+            hidden = hidden.to(device=self.device, dtype=obs.dtype)
             pot = self._unpack_hidden(hidden, batch_size)
         else:
-            pot = self.init_hidden(batch_size)
+            pot = self.init_hidden(batch_size).to(dtype=obs.dtype)
 
         # Don't track the gradient through the potentials
         pot = pot.detach()

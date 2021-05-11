@@ -76,7 +76,7 @@ def test_action_statistics(env: SimEnv, policy: Policy):
 
     # Sample a deterministic rollout
     ro_policy = rollout(env, policy, eval=True, max_steps=1000, stop_on_done=False, seed=0)
-    ro_policy.torch()
+    ro_policy.torch(to.get_default_dtype())
 
     # Run the exploration strategy on the previously sampled rollout
     if policy.is_recurrent:
@@ -111,13 +111,7 @@ def test_action_statistics(env: SimEnv, policy: Policy):
 
 
 @pytest.mark.longtime
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_omo",
-    ],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_omo"], indirect=True)
 def test_adr_reward_generator(env):
     reference_env = env
     random_env = deepcopy(env)

@@ -217,7 +217,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         Apply the given action to the MuJoCo simulation. This executes one step of the physics simulation.
 
         :param act: action
-        :return: `dict` with optional information from MuJoCo
+        :return: dict with optional information from MuJoCo
         """
 
     def _create_mujoco_model(self):

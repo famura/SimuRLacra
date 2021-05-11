@@ -104,7 +104,7 @@ class TwoHeadedFNNPolicy(TwoHeadedPolicy):
             self.param_values = init_values
 
     def forward(self, obs: to.Tensor) -> Tuple[to.Tensor, to.Tensor]:
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
 
         # Get the output of the last shared layer and pass this to the two headers separately
         x = self.shared(obs)

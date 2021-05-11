@@ -108,7 +108,7 @@ class RNNPolicyBase(RecurrentPolicy):
         return self.num_recurrent_layers * self._hidden_size
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
-        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+        obs = obs.to(device=self.device)
 
         # Adjust the input's shape to be compatible with PyTorch's RNN implementation
         batch_size = None
@@ -125,7 +125,7 @@ class RNNPolicyBase(RecurrentPolicy):
 
         # Unpack hidden tensor if specified. The network can handle getting None by using default values.
         if hidden is not None:
-            hidden = hidden.to(device=self.device, dtype=to.get_default_dtype())
+            hidden = hidden.to(device=self.device, dtype=obs.dtype)
             hidden = self._unpack_hidden(hidden, batch_size)
 
         # Pass the input through hidden RNN layers
@@ -171,7 +171,7 @@ class RNNPolicyBase(RecurrentPolicy):
 
             # Reshape observations to match PyTorch's RNN sequence protocol
             obs = ro.get_data_values("observations", True)
-            obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+            obs = obs.to(device=self.device)
 
             # Get all observation sequences and their respective lengths
             obs_list.append(obs)

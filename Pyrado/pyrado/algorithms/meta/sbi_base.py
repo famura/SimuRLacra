@@ -145,7 +145,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
                                is called amortized (it has never seen any target domain data).
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
         :param posterior_hparam: hyper parameters for creating the posterior's density estimator
-        :param subrtn_sbi_training_hparam: `dict` forwarded to sbi's `PosteriorEstimator.train()` function like
+        :param subrtn_sbi_training_hparam: dict forwarded to sbi's `PosteriorEstimator.train()` function like
                                            `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
         :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
                                           `sample_with_mcmc`, ect.
@@ -547,7 +547,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :param return_as_tensor: if `True`, return the most likely domain parameter sets as a tensor of shape
-                                 [num_iter, num_ml_samples, dim_domain_param], else as a list of `dict`
+                                 [num_iter, num_ml_samples, dim_domain_param], else as a list of dict
         :return: most likely domain parameters sets sampled form the posterior
         """
         if not isinstance(num_ml_samples, int) or num_ml_samples < 1:

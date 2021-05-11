@@ -800,10 +800,10 @@ def draw_posterior_distr_pairwise_scatter(
     :param axis_limits: define the lower and upper limits for each dp as a numpy array. The shape is [2, num_dp]
                         passing `None` will generate limits automatically
     :param use_kde: set to True to plot samples with KDE (currently only for pair axes)
-    :param custom_scatter_args: `dict` with additional settings for seaborn.scatterplot
-    :param custom_histplot_args: `dict` with additional settings for seaborn.histplot
-    :param custom_line_args: `dict` with additional settings for matplotlib.pyplot.vline and matplotlib.pyplot.hline
-    :param custom_kde_args: `dict` with additional settings for seaborn.kdeplot
+    :param custom_scatter_args: dict with additional settings for seaborn.scatterplot
+    :param custom_histplot_args: dict with additional settings for seaborn.histplot
+    :param custom_line_args: dict with additional settings for matplotlib.pyplot.vline and matplotlib.pyplot.hline
+    :param custom_kde_args: dict with additional settings for seaborn.kdeplot
     :return: figure containing the pair plot
     """
     # Check the inputs

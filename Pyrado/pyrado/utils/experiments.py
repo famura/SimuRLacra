@@ -211,15 +211,14 @@ def load_experiment(
 
     elif algo.name == "sprl":
         # Environment
-        env = pyrado.load(None, "env", "pkl", ex_dir, None)
+        env = pyrado.load("env.pkl", ex_dir)
         print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
         # Policy
-        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy)
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (value function)
         if isinstance(algo._subroutine, ActorCritic):
-            extra["vfcn"] = pyrado.load(algo._subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
-            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
+            extra["vfcn"] = pyrado.load(f"{args.vfcn_name}.pt", ex_dir, obj=algo._subroutine.critic.vfcn, verbose=True)
 
     elif algo.name == "pddr":
         # Environment

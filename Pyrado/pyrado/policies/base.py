@@ -226,9 +226,11 @@ class TracedPolicyWrapper(nn.Module):
         self.input_size = module.env_spec.obs_space.flat_dim
         self.output_size = module.env_spec.act_space.flat_dim
 
-        self.module = trace(module, (to.from_numpy(module.env_spec.obs_space.sample_uniform()),))
+        samples = to.from_numpy(module.env_spec.obs_space.sample_uniform())  # .to(dtype=to.get_default_dtype())
+        self.module = trace(module, (samples,))
 
     def forward(self, obs):
+        # Forward to traced module
         return self.module(obs)
 
 

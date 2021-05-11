@@ -42,7 +42,8 @@
 {% endif %}
 
 {%- if not modulefirst and not is_namespace %}
-{%- endif %}
+Module contents
+---------------
 
 {{ automodule(pkgname, automodule_options) }}
 {% endif %}

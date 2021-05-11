@@ -540,7 +540,7 @@ class StepSequence(Sequence[Step]):
 
     def numpy(self, data_type=None):
         """
-        Convert data to numpy ndarrays.
+        Convert data to numpy `ndarray.
 
         :param data_type: type to return data in. When None is passed, the data type is left unchanged.
         """
@@ -548,7 +548,7 @@ class StepSequence(Sequence[Step]):
 
     def torch(self, data_type=None):
         """
-        Convert data to PyTorch Tensors.
+        Convert data to PyTorch tensors.
 
         :param data_type: type to return data in. When None is passed, the data type is left unchanged.
         """
