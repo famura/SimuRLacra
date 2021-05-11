@@ -44,8 +44,13 @@ class RolloutBasedStoppingCriterion(ABC, StoppingCriterion):
     """
 
     def is_met(self, algo) -> bool:
-        """Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the checkinf of
-        the stopping criterion to `_is_met_with_sampler(..)`."""
+        """
+        Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the checkinf of the
+        stopping criterion to `_is_met_with_sampler(..)`.
+
+        :param algo: instance of `Algorithm` that has to be evaluated
+        :return: `True` if the criterion is met, and `False` otherwise
+        """
         if not hasattr(algo, "sampler"):
             raise pyrado.ValueErr(
                 msg="Any rollout-based stopping criterion requires the algorithm to expose a property 'sampler'!"

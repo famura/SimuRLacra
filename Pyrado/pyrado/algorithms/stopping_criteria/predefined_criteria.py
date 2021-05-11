@@ -41,7 +41,6 @@ class AlwaysStopStoppingCriterion(StoppingCriterion):
         return "True"
 
     def is_met(self, algo) -> bool:
-        """Returns `True`."""
         return True
 
 
@@ -55,7 +54,6 @@ class NeverStopStoppingCriterion(StoppingCriterion):
         return "False"
 
     def is_met(self, algo) -> bool:
-        """Returns `False`."""
         return False
 
 
@@ -81,7 +79,6 @@ class CustomStoppingCriterion(StoppingCriterion):
         return "Custom" if self._name is None else self._name
 
     def is_met(self, algo) -> bool:
-        """Invokes the criterion function that was passed to the constructor."""
         return self._criterion_fn(algo)
 
 
@@ -97,7 +94,6 @@ class IterCountStoppingCriterion(StoppingCriterion):
         self._max_iter = max_iter
 
     def is_met(self, algo) -> bool:
-        """Returns whether the current iteration number os greater than or equal to the maximum number of iterations."""
         return algo.curr_iter >= self._max_iter
 
 
@@ -113,5 +109,4 @@ class SampleCountStoppingCriterion(StoppingCriterion):
         self._max_sample_count = max_sample_count
 
     def is_met(self, algo) -> bool:
-        """Returns whether the current sample count is greater than or equal to the maximum sample count."""
         return algo.sample_count >= self._max_sample_count
