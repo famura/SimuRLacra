@@ -108,7 +108,7 @@ def stack_to_format(data: Union[dict, tuple, Sequence], data_format: str):
 
     :param data: input data
     :param data_format: 'numpy' or 'torch'
-    :return: numpy `ndarray` or PyTorch `Tensor`, or `dict` of these
+    :return: numpy array or PyTorch tensor, or dict of these
     """
     # Check recursion case
     if isinstance(data, dict):

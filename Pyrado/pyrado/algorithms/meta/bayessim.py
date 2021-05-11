@@ -124,7 +124,7 @@ class BayesSim(SBIBase):
                                     before passing it to the posterior, 1 means no downsampling
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
         :param posterior_hparam: hyper parameters for creating the posterior's density estimator
-        :param subrtn_sbi_training_hparam: `dict` forwarded to sbi's `PosteriorEstimator.train()` function like
+        :param subrtn_sbi_training_hparam: dict forwarded to sbi's `PosteriorEstimator.train()` function like
                                            `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
         :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
                                           `sample_with_mcmc`, ect.

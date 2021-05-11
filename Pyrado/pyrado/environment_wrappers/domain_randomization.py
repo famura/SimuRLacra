@@ -226,7 +226,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         Set the domain parameter buffer.
         Depends on the way the buffer has been saved, see the `DomainRandomizer.get_params()` arguments.
 
-        :param buffer: `list` of `dicts`, each describing a domain ,or just one `dict` for one domain
+        :param buffer: list of dicts, each describing a domain ,or just one dict for one domain
         """
         if not (isinstance(buffer, list) or isinstance(buffer, dict)):
             raise pyrado.TypeErr(given=buffer, expected_type=[list, dict])

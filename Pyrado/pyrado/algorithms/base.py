@@ -319,7 +319,7 @@ class Algorithm(ABC, LoggerAware):
         Subclasses should call the base method to save the policy.
 
         :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
-                          contains a `dict` of information about the current iteration of the meta-algorithm
+                          contains a dict of information about the current iteration of the meta-algorithm
         """
         joblib.dump(self, osp.join(self.save_dir, f"{self._save_name}.pkl"))
 

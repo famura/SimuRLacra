@@ -68,7 +68,7 @@ def stack_tensor_dict_list(tensor_dict_list: list) -> dict:
 
 def insert_tensor_col(x: to.Tensor, idx: int, col: to.Tensor) -> to.Tensor:
     """
-    Insert a column into a PyTorch Tensor.
+    Insert a column into a PyTorch tensor`.
 
     :param x: original tensor
     :param idx: column index where to insert the column

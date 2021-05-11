@@ -599,7 +599,7 @@ def create_default_domain_param_map_bob() -> Dict[int, Tuple[str, str]]:
     """
     Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
-    :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
+    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
     """
     return {
@@ -625,7 +625,7 @@ def create_default_domain_param_map_omo() -> Dict[int, Tuple[str, str]]:
     """
     Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
-    :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
+    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
     """
     return {
@@ -642,7 +642,7 @@ def create_default_domain_param_map_pend() -> Dict[int, Tuple[str, str]]:
     """
     Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
-    :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
+    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
     """
     return {
@@ -655,7 +655,7 @@ def create_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
     """
     Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
-    :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
+    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
     """
     return {
@@ -678,7 +678,7 @@ def create_default_domain_param_map_wambic() -> Dict[int, Tuple[str, str]]:
     """
     Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).
 
-    :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
+    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
     """
     return {
@@ -725,7 +725,7 @@ def create_damping_dryfriction_domain_param_map_wamjsc() -> Dict[int, str]:
     """
     Create a mapping from indices to domain parameters (as used in the `LFI` algorithm).
 
-    :return: `dict` where the key is the index and the value is the domain parameter name
+    :return: dict where the key is the index and the value is the domain parameter name
     """
     return {
         0: "joint_1_damping",

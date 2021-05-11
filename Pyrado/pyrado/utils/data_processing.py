@@ -116,7 +116,7 @@ def normalize(
     x: Union[np.ndarray, to.Tensor], axis: int = -1, order: int = 1, eps: float = 1e-8
 ) -> Union[np.ndarray, to.Tensor]:
     """
-    Normalize a numpy `ndarray` or a PyTroch `Tensor` without changing the input.
+    Normalize a numpy array or a PyTroch Tensor without changing the input.
     Choosing `axis=1` and `norm_order=1` makes all columns of sum to 1.
 
     :param x: input to normalize

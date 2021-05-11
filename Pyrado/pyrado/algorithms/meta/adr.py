@@ -512,7 +512,7 @@ def preprocess_rollout(rollout: StepSequence) -> StepSequence:
     through a network.
 
     :param rollout: a `StepSequence` instance containing a trajectory
-    :return: a PyTorch Tensor containing the trajectory
+    :return: a PyTorch tensor` containing the trajectory
     """
     if not isinstance(rollout, StepSequence):
         raise pyrado.TypeErr(given=rollout, expected_type=StepSequence)
