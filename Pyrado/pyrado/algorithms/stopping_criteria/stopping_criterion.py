@@ -30,22 +30,44 @@ from abc import ABC, abstractmethod
 
 
 class StoppingCriterion(ABC):
+    """
+    Base class for the stopping criterion. A stopping criterion takes an algorithm (and hence its current state) and
+    decides whether the algorithm should terminate. A common stopping criterion is e.g. reaching a set number of
+    iterations.
+    """
+
     def __or__(self, other: "StoppingCriterion") -> "StoppingCriterion":
+        """Returns an `_OrStoppingCriterion` that combines this criterion with the other."""
         return _OrStoppingCriterion(self, other)
 
     def __and__(self, other: "StoppingCriterion") -> "StoppingCriterion":
+        """Returns an `_AndStoppingCriterion` that combines this criterion with the other."""
         return _AndStoppingCriterion(self, other)
-
-    def __xor__(self, other: "StoppingCriterion") -> "StoppingCriterion":
-        return _XorStoppingCriterion(self, other)
 
     @abstractmethod
     def is_met(self, algo) -> bool:
+        """
+        Checks whether the stopping criterion is met.
+
+        .. note::
+            Has to be overwritten by sub-classes.
+
+        :param algo: instance of `Algorithm` that has to be evaluated
+        :return: `True` if the criterion is met, and `False` otherwise
+        """
         raise NotImplementedError()
 
 
 class _AndStoppingCriterion(StoppingCriterion):
+    """Combines two stopping criteria such that both of them have to be met in order for this criterion to be met."""
+
     def __init__(self, criterion1: StoppingCriterion, criterion2: StoppingCriterion):
+        """
+        Constructor.
+
+        :param criterion1: first criterion; gets evaluated first
+        :param criterion2: second criterion
+        """
         super().__init__()
         self.criterion1 = criterion1
         self.criterion2 = criterion2
@@ -57,11 +79,20 @@ class _AndStoppingCriterion(StoppingCriterion):
         return f"{self.criterion1} and {self.criterion2}"
 
     def is_met(self, algo) -> bool:
+        """Checks if both criteria are met."""
         return self.criterion1.is_met(algo) and self.criterion2.is_met(algo)
 
 
 class _OrStoppingCriterion(StoppingCriterion):
+    """Combines two stopping criteria such that at least one of them has to be met in order for this criterion to be met."""
+
     def __init__(self, criterion1: StoppingCriterion, criterion2: StoppingCriterion):
+        """
+        Constructor.
+
+        :param criterion1: first criterion; gets evaluated first
+        :param criterion2: second criterion
+        """
         super().__init__()
         self.criterion1 = criterion1
         self.criterion2 = criterion2
@@ -73,20 +104,5 @@ class _OrStoppingCriterion(StoppingCriterion):
         return f"{self.criterion1} or {self.criterion2}"
 
     def is_met(self, algo) -> bool:
+        """Checks if at least one criterion is met."""
         return self.criterion1.is_met(algo) or self.criterion2.is_met(algo)
-
-
-class _XorStoppingCriterion(StoppingCriterion):
-    def __init__(self, criterion1: StoppingCriterion, criterion2: StoppingCriterion):
-        super().__init__()
-        self.criterion1 = criterion1
-        self.criterion2 = criterion2
-
-    def __repr__(self) -> str:
-        return f"_XorStoppingCriterion[criterion1={repr(self.criterion1)}; criterion2={repr(self.criterion2)}]"
-
-    def __str__(self) -> str:
-        return f"{self.criterion1} xor {self.criterion2}"
-
-    def is_met(self, algo) -> bool:
-        return self.criterion1.is_met(algo) != self.criterion2.is_met(algo)

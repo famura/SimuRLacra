@@ -29,27 +29,64 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
+import numpy as np
+
 import pyrado
 from pyrado.algorithms.stopping_criteria.stopping_criterion import StoppingCriterion
+from pyrado.algorithms.utils import RolloutSavingWrapper
 from pyrado.sampling.sampler import SamplerBase
 
 
-class SamplerBasedStoppingCriterion(ABC, StoppingCriterion):
+class RolloutBasedStoppingCriterion(ABC, StoppingCriterion):
+    """
+    Abstract extension of the base `StoppingCriterion` class for criteria that are based on having access to rollouts.
+    This criterion requires the algorithm to expose a `RolloutSavingWrapper` via a property `sampler`.
+    """
+
     def is_met(self, algo) -> bool:
+        """Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the checkinf of
+        the stopping criterion to `_is_met_with_sampler(..)`."""
+        if not hasattr(algo, "sampler"):
+            raise pyrado.ValueErr(
+                msg="Any rollout-based stopping criterion requires the algorithm to expose a property 'sampler'!"
+            )
         sampler: Optional[SamplerBase] = algo.sampler
-        if sampler is None:
-            raise pyrado.ValueErr(msg="")
+        if not isinstance(sampler, RolloutSavingWrapper):
+            raise pyrado.TypeErr(
+                msg="Any rollout-based stopping criterion requires the algorithm to expose a sampler of type 'RolloutSavingWrapper' via the property 'sampler'!"
+            )
         return self._is_met_with_sampler(algo, sampler)
 
     @abstractmethod
-    def _is_met_with_sampler(self, algo, sampler: SamplerBase) -> bool:
+    def _is_met_with_sampler(self, algo, sampler: RolloutSavingWrapper) -> bool:
+        """
+        Checks whether the stopping criterion is met.
+
+        .. note::
+            Has to be overwritten by sub-classes.
+
+        :param algo: instance of `Algorithm` that has to be evaluated
+        :param sampler: instance of `RolloutSavingWrapper`, the sampler of `algo`, that has to be evaluated
+        :return: `True` if the criterion is met, and `False` otherwise
+        """
         raise NotImplementedError()
 
 
-class MinReturnStoppingCriterion(SamplerBasedStoppingCriterion):
+class MinReturnStoppingCriterion(RolloutBasedStoppingCriterion):
+    """Uses the minimum return of the latest rollout as a stopping criterion."""
+
     def __init__(self, min_return: float):
-        super().__init__()
+        """
+        Constructor.
+
+        :param min_return: minimal return; if this return is reached, the stopping criterion is met
+        """
         self._min_return = min_return
 
-    def _is_met_with_sampler(self, algo, sampler: SamplerBase) -> bool:
-        raise NotImplementedError()
+    # noinspection PyUnusedLocal
+    def _is_met_with_sampler(self, algo, sampler: RolloutSavingWrapper) -> bool:
+        """Returns whether the minimum return of the latest rollout is greater than or equal to the minimum return."""
+        rollouts = sampler.rollouts[-1]
+        returns = [rollouts.undiscounted_return() for rollouts in rollouts]
+        min_return = np.min(returns)
+        return min_return >= self._min_return

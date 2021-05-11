@@ -32,6 +32,8 @@ from pyrado.algorithms.stopping_criteria.stopping_criterion import StoppingCrite
 
 
 class AlwaysStopStoppingCriterion(StoppingCriterion):
+    """Stopping criterion that is always met."""
+
     def __repr__(self) -> str:
         return "AlwaysStopStoppingCriterion"
 
@@ -39,10 +41,13 @@ class AlwaysStopStoppingCriterion(StoppingCriterion):
         return "True"
 
     def is_met(self, algo) -> bool:
+        """Returns `True`."""
         return True
 
 
 class NeverStopStoppingCriterion(StoppingCriterion):
+    """Stopping criterion that is never met."""
+
     def __repr__(self) -> str:
         return "NeverStopStoppingCriterion"
 
@@ -50,12 +55,22 @@ class NeverStopStoppingCriterion(StoppingCriterion):
         return "False"
 
     def is_met(self, algo) -> bool:
+        """Returns `False`."""
         return False
 
 
 class CustomStoppingCriterion(StoppingCriterion):
+    """Custom stopping criterion that takes an arbitrary callable to evaluate."""
+
     def __init__(self, criterion_fn: Callable[[Any], bool], name: Optional[str] = None):
-        super().__init__()
+        """
+        Constructor.
+
+        :param criterion_fn: signature `[Algorithm] -> bool`; gets evaluated when `is_met` is called; allows for custom
+                             functionality, e.g. if an algorithm requires special treatment; the given algorithm is the
+                             same that was passed to the `is_met` method
+        :param name: name of the stopping criterion, used for `str(..)` and ´repr(..)`
+        """
         self._criterion_fn = criterion_fn
         self._name = name
 
@@ -66,22 +81,37 @@ class CustomStoppingCriterion(StoppingCriterion):
         return "Custom" if self._name is None else self._name
 
     def is_met(self, algo) -> bool:
+        """Invokes the criterion function that was passed to the constructor."""
         return self._criterion_fn(algo)
 
 
 class IterCountStoppingCriterion(StoppingCriterion):
+    """Uses the iteration number as a stopping criterion, i.e. sets a maximum number of iterations."""
+
     def __init__(self, max_iter: int):
-        super().__init__()
+        """
+        Constructor.
+
+        :param max_iter: maximum number of iterations
+        """
         self._max_iter = max_iter
 
     def is_met(self, algo) -> bool:
+        """Returns whether the current iteration number os greater than or equal to the maximum number of iterations."""
         return algo.curr_iter >= self._max_iter
 
 
 class SampleCountStoppingCriterion(StoppingCriterion):
-    def __init__(self, max_iter: int):
-        super().__init__()
-        self._max_samples = max_iter
+    """Uses the sampler count as a stopping criterion, i.e. sets a maximum number samples."""
+
+    def __init__(self, max_sample_count: int):
+        """
+        Constructor.
+
+        :param max_sample_count: maximum sample count
+        """
+        self._max_sample_count = max_sample_count
 
     def is_met(self, algo) -> bool:
-        return algo.sample_count >= self._max_samples
+        """Returns whether the current sample count is greater than or equal to the maximum sample count."""
+        return algo.sample_count >= self._max_sample_count
