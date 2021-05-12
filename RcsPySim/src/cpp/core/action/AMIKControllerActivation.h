@@ -56,7 +56,7 @@ public:
     
     // not copy- or movable - klocwork doesn't pick up the inherited ones. RCSPYSIM_NOCOPY_NOMOVE(AMControllerActivation)
     
-    //! Add Rcs controller tasks that are wlways active. Do this after adding the regular tasks.
+    //! Add Rcs controller tasks that are always active. Do this after adding the regular tasks.
     void addAlwaysActiveTask(Task* task);
     
     //! Get the number of tasks multiplied by their individual dimension, owned by the action model, except the always active tasks

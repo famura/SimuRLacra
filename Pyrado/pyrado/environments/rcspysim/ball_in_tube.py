@@ -130,8 +130,8 @@ class BallInTubeSim(RcsSim, Serializable):
         # Forward to the RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args,
             envType="BallInTube",
+            task_args=task_args,
             physicsConfigFile="pBallInTube.xml",
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BallInTube"),
             collisionConfig={"file": "collisionModel.xml"},
@@ -197,8 +197,8 @@ class BallInTubeIKSim(BallInTubeSim, Serializable):
         # Forward to the BallInTubeSim's constructor
         super().__init__(
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
-            ref_frame=ref_frame,
             actionModelType="ik",
+            ref_frame=ref_frame,
             positionTasks=False,
             **kwargs,
         )

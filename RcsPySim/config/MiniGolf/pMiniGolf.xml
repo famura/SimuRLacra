@@ -34,9 +34,17 @@
                      body_linear_damping="0.00001"
                      body_angular_damping="0.00001"
                      joint_lock_stiffness="100000.0"
-                     joint_lock_damping="5000000.0"/>
+                     joint_lock_damping="5000000.0"
+  />
 
-  <bullet_parameters />
+  <bullet_parameters use_ground_plane="false"
+                     use_mclp_solver="false"
+                     body_linear_damping="0.0"
+                     body_angular_damping="0.0"
+                     convex_hull_vertex_limit="140"
+                     jointed_body_linear_damping="0"
+                     jointed_body_angular_damping="0"
+  />
 
   <!-- Definition of available materials (in addition to "default") -->
   <!-- ==================================================================== -->
@@ -66,9 +74,9 @@
             compliance="0.0001"
             restitution="0"
   />
-  <material name="effector_mat"
+  <material name="ball_mat"
             friction_model="ScaledBox"
-            friction_coefficient="0.7"
+            friction_coefficient="0.888"
             rolling_friction_coefficient="0.0"
             static_friction_scale="1.0"
             slip="0.0001"
@@ -76,9 +84,9 @@
             compliance="0.0001"
             restitution="0"
   />
-  <material name="upperwall_mat"
+  <material name="ground_mat"
             friction_model="ScaledBox"
-            friction_coefficient="0.5"
+            friction_coefficient="0.666"
             rolling_friction_coefficient="0.0"
             static_friction_scale="1.0"
             slip="0.0001"

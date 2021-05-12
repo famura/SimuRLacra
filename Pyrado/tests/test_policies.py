@@ -69,7 +69,7 @@ from pyrado.utils.nn_layers import IndiNonlinLayer
     ],
     ids=["const_only", "ident_only", "all_simple_feats"],
 )
-def test_simple_feature_stack(feat_list):
+def test_simple_feature_stack(feat_list: list):
     fs = FeatureStack(feat_list)
     obs = to.randn(1)
     feats_val = fs(obs)
@@ -78,7 +78,7 @@ def test_simple_feature_stack(feat_list):
 
 @pytest.mark.features
 @pytest.mark.parametrize("obs_dim, idcs", [(2, (0, 1)), (3, (2, 0)), (10, (0, 1, 5, 6))], ids=["2_2", "3_2", "10_4"])
-def test_mul_feat(obs_dim, idcs):
+def test_mul_feat(obs_dim: int, idcs: tuple):
     mf = MultFeat(idcs=idcs)
     fs = FeatureStack([identity_feat, mf])
     obs = to.randn(obs_dim)
@@ -90,7 +90,7 @@ def test_mul_feat(obs_dim, idcs):
 @pytest.mark.parametrize(
     "obs_dim, num_feat_per_dim", [(1, 1), (2, 1), (1, 4), (2, 4), (10, 100)], ids=["1_1", "2_1", "1_4", "2_4", "10_100"]
 )
-def test_rff_feat_serial(obs_dim, num_feat_per_dim):
+def test_rff_feat_serial(obs_dim: int, num_feat_per_dim: int):
     rff = RFFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
@@ -108,7 +108,7 @@ def test_rff_feat_serial(obs_dim, num_feat_per_dim):
 @pytest.mark.parametrize(
     "obs_dim, num_feat_per_dim", [(1, 1), (2, 1), (1, 4), (2, 4), (10, 100)], ids=["1_1", "2_1", "1_4", "2_4", "10_100"]
 )
-def test_rff_feat_batched(batch_size, obs_dim, num_feat_per_dim):
+def test_rff_feat_batched(batch_size: int, obs_dim: int, num_feat_per_dim: int):
     rff = RFFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
@@ -132,7 +132,7 @@ def test_rff_feat_batched(batch_size, obs_dim, num_feat_per_dim):
     ],
     ids=["1_4_to", "1_4_np", "2_4", "10_100"],
 )
-def test_rbf_serial(obs_dim, num_feat_per_dim, bounds):
+def test_rbf_serial(obs_dim: int, num_feat_per_dim: int, bounds: to.Tensor):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
     fs = FeatureStack([rbf])
     for _ in range(10):
@@ -153,7 +153,7 @@ def test_rbf_serial(obs_dim, num_feat_per_dim, bounds):
     ],
     ids=["1_4_to", "1_4_np", "2_4", "10_100"],
 )
-def test_rbf_feat_batched(batch_size, obs_dim, num_feat_per_dim, bounds):
+def test_rbf_feat_batched(batch_size: int, obs_dim: int, num_feat_per_dim: int, bounds: to.Tensor):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
     fs = FeatureStack([rbf])
     for _ in range(10):
@@ -175,7 +175,7 @@ def test_rbf_feat_batched(batch_size, obs_dim, num_feat_per_dim, bounds):
     indirect=True,
 )
 @pytest.mark.parametrize("num_feat_per_dim", [4, 100], ids=["4", "100"])
-def test_rff_policy_serial(env, num_feat_per_dim):
+def test_rff_policy_serial(env: Env, num_feat_per_dim: int):
     rff = RFFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up)
     policy = LinearPolicy(env.spec, FeatureStack([rff]))
     for _ in range(10):
@@ -199,7 +199,7 @@ def test_rff_policy_serial(env, num_feat_per_dim):
 @pytest.mark.parametrize(
     "batch_size, num_feat_per_dim", [(1, 4), (20, 4), (1, 100), (20, 100)], ids=["1_4", "20_4", "1_100", "20_100"]
 )
-def test_rff_policy_batch(env, batch_size, num_feat_per_dim):
+def test_rff_policy_batch(env: Env, batch_size: int, num_feat_per_dim: int):
     rff = RFFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up)
     policy = LinearPolicy(env.spec, FeatureStack([rff]))
     for _ in range(10):
@@ -222,7 +222,7 @@ def test_rff_policy_batch(env, batch_size, num_feat_per_dim):
     indirect=True,
 )
 @pytest.mark.parametrize("num_feat_per_dim", [4, 100], ids=["4", "100"])
-def test_rfb_policy_serial(env, num_feat_per_dim):
+def test_rfb_policy_serial(env: Env, num_feat_per_dim: int):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=env.obs_space.bounds)
     fs = FeatureStack([rbf])
     policy = LinearPolicy(env.spec, fs)
@@ -247,7 +247,7 @@ def test_rfb_policy_serial(env, num_feat_per_dim):
 @pytest.mark.parametrize(
     "batch_size, num_feat_per_dim", [(1, 4), (20, 4), (1, 100), (20, 100)], ids=["1_4", "20_4", "1_100", "20_100"]
 )
-def test_rfb_policy_batch(env, batch_size, num_feat_per_dim):
+def test_rfb_policy_batch(env: Env, batch_size: int, num_feat_per_dim: int):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=env.obs_space.bounds)
     fs = FeatureStack([rbf])
     policy = LinearPolicy(env.spec, fs)
@@ -268,7 +268,7 @@ def test_rfb_policy_batch(env, batch_size, num_feat_per_dim):
     indirect=True,
 )
 @pytest.mark.parametrize("dim_mask", [0, 1, 2], ids=["0", "1", "2"])
-def test_dualrbf_policy(env, dim_mask):
+def test_dualrbf_policy(env: Env, dim_mask: int):
     # Hyper-parameters for the RBF features are not important here
     rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.0]), np.array([1.0])), scale=None)
     policy = DualRBFLinearPolicy(env.spec, rbf_hparam, dim_mask)
@@ -308,7 +308,7 @@ def test_parameterized_policies_init_param(env, policy):
     ids=["idle", "dummy", "lin", "fnn"],
     indirect=True,
 )
-def test_feedforward_policy_one_step(env, policy):
+def test_feedforward_policy_one_step(env: Env, policy: Policy):
     obs = env.spec.obs_space.sample_uniform()
     obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
     act = policy(obs)
@@ -320,14 +320,16 @@ def test_feedforward_policy_one_step(env, policy):
     "policy",
     [
         "time_policy",
-        "tracetime_policy",
+        "traced_time_policy",
+        "pst_policy",
+        "traced_pst_policy",
     ],
-    ids=["time", "tracetime"],
+    ids=["time", "tracedtime", "pst", "tracedpst"],
     indirect=True,
 )
-def test_time_policy_one_step(env, policy):
+def test_time_policy_one_step(env: Env, policy: Policy):
     policy.reset()
-    obs = policy.env_spec.obs_space.sample_uniform()
+    obs = env.obs_space.sample_uniform()
     obs = to.from_numpy(obs)
     act = policy(obs)
     assert isinstance(act, to.Tensor)
@@ -348,7 +350,7 @@ def test_time_policy_one_step(env, policy):
     ids=["rnn", "lstm", "gru", "adn", "nf", "thgru"],
     indirect=True,
 )
-def test_recurrent_policy_one_step(env, policy):
+def test_recurrent_policy_one_step(env: Env, policy: Policy):
     hid = policy.init_hidden()
     obs = env.obs_space.sample_uniform()
     obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
@@ -381,7 +383,7 @@ def test_recurrent_policy_one_step(env, policy):
     indirect=True,
 )
 @pytest.mark.parametrize("batch_size", [1, 2, 3])
-def test_feedforward_policy_batching(env, policy, batch_size):
+def test_feedforward_policy_batching(env: Env, policy: Policy, batch_size: int):
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
     obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
     act = policy(obs)
@@ -415,7 +417,7 @@ def test_feedforward_policy_batching(env, policy, batch_size):
     indirect=True,
 )
 @pytest.mark.parametrize("batch_size", [1, 2, 4, 256])
-def test_recurrent_policy_batching(env, policy, batch_size):
+def test_recurrent_policy_batching(env: Env, policy: Policy, batch_size: int):
     assert policy.is_recurrent
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
     obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
@@ -468,7 +470,7 @@ def test_recurrent_policy_batching(env, policy, batch_size):
     ids=["rnn", "lstm", "gru", "adn", "nf", "thgrnn", "thgru", "thlstm"],
     indirect=True,
 )
-def test_pytorch_recurrent_policy_rollout(env, policy):
+def test_pytorch_recurrent_policy_rollout(env: Env, policy: Policy):
     ro = rollout(env, policy, render_mode=RenderMode())
     assert isinstance(ro, StepSequence)
 
@@ -495,7 +497,7 @@ def test_pytorch_recurrent_policy_rollout(env, policy):
     ids=["rnn", "lstm", "gru", "adn", "nf", "thgrnn", "thgru", "thlstm"],
     indirect=True,
 )
-def test_recurrent_policy_one_step(env, policy):
+def test_recurrent_policy_one_step(env: Env, policy: Policy):
     assert policy.is_recurrent
     obs = policy.env_spec.obs_space.sample_uniform()
     obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
@@ -693,16 +695,7 @@ def test_hidden_state_packing_nobatch():
     to.testing.assert_allclose(up, packed)
 
 
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_bob",
-        "default_qbb",
-        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
-    ],
-    ids=["bob", "qbb", "bop5D"],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
     "policy",
     [
@@ -713,7 +706,7 @@ def test_hidden_state_packing_nobatch():
     ids=["lin", "fnn"],
     indirect=True,
 )
-def test_script_nonrecurrent(env, policy):
+def test_script_nonrecurrent(env: Env, policy: Policy):
     # Generate scripted version
     scripted = policy.double().script()
 
@@ -726,16 +719,7 @@ def test_script_nonrecurrent(env, policy):
 
 
 @pytest.mark.recurrent_policy
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_bob",
-        "default_qbb",
-        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
-    ],
-    ids=["bob", "qbb", "bop5D"],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
     "policy",
     [
@@ -749,7 +733,7 @@ def test_script_nonrecurrent(env, policy):
     ids=["rnn", "lstm", "gru", "adn", "nf"],
     indirect=True,
 )
-def test_script_recurrent(env, policy):
+def test_script_recurrent(env: Env, policy: Policy):
     # Generate scripted version
     scripted = policy.double().script()
 
@@ -782,16 +766,7 @@ def test_script_recurrent(env, policy):
 
 @to.no_grad()
 @m_needs_libtorch
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_bob",
-        "default_qbb",
-        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
-    ],
-    ids=["bob", "qbb", "bop5D"],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
     "policy",
     [
@@ -808,7 +783,7 @@ def test_script_recurrent(env, policy):
     indirect=True,
 )
 @pytest.mark.parametrize("file_type", [".pt", ".zip"], ids=["pt", "zip"])
-def test_export_cpp(env, policy: Policy, tmpdir, file_type):
+def test_export_cpp(env: Env, policy: Policy, tmpdir: str, file_type):
     # Generate scripted version (in double mode for CPP compatibility)
     scripted = policy.double().script()
 
@@ -843,16 +818,7 @@ def test_export_cpp(env, policy: Policy, tmpdir, file_type):
 @to.no_grad()
 @m_needs_rcs
 @m_needs_libtorch
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_bob",
-        "default_qbb",
-        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
-    ],
-    ids=["bob", "qbb", "bop5D"],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
     "policy",
     [
@@ -958,9 +924,10 @@ def test_playback_policy(env: Env, dtype):
 @pytest.mark.parametrize("env", ["default_pend", "default_qbb"], ids=["pend", "qbb"], indirect=True)
 @pytest.mark.parametrize("cond_lvl", ["vel", "acc"], ids=["vel", "acc"])
 @pytest.mark.parametrize("cond_final", ["zero", "one"], ids=["zero", "one"])
-@pytest.mark.parametrize("cond_init", [None], ids=["None"])
+@pytest.mark.parametrize("cond_init", [None, "rand"], ids=["default", "rand"])
+@pytest.mark.parametrize("overtime_behavior", ["hold", "zero"], ids=["hold", "zero"])
 @pytest.mark.parametrize("use_cuda", [False, pytest.param(True, marks=m_needs_cuda)], ids=["cpu", "cuda"])
-def test_poly_time_policy(env: Env, cond_lvl: str, cond_final: str, cond_init, use_cuda: bool):
+def test_poly_time_policy(env: Env, cond_lvl: str, cond_final: str, cond_init, overtime_behavior: str, use_cuda: bool):
     order = 3 if cond_lvl == "vel" else 5
     num_cond = (order + 1) // 2
 
@@ -970,6 +937,9 @@ def test_poly_time_policy(env: Env, cond_lvl: str, cond_final: str, cond_init, u
         cond_final = to.zeros(num_cond, env.act_space.flat_dim)
         cond_final[::num_cond] = 1.0
 
+    if cond_init == "rand":
+        cond_init = to.randn(num_cond, env.act_space.flat_dim)
+
     # Create instance
     policy = PolySplineTimePolicy(
         spec=env.spec,
@@ -978,14 +948,14 @@ def test_poly_time_policy(env: Env, cond_lvl: str, cond_final: str, cond_init, u
         cond_lvl=cond_lvl,
         cond_final=cond_final,
         cond_init=cond_init,
+        overtime_behavior=overtime_behavior,
         use_cuda=use_cuda,
     )
-
     policy.reset()
 
     act_hist = []
     for _ in range(env.max_steps):
-        act = policy(env.obs_space.sample_uniform())
+        act = policy(None)
         act_hist.append(act.detach().cpu().numpy())
 
         if cond_final == "zero":
@@ -993,3 +963,15 @@ def test_poly_time_policy(env: Env, cond_lvl: str, cond_final: str, cond_init, u
 
     if cond_final == "one":
         assert act_hist[-1] == pytest.approx(to.ones_like(act))
+
+    # Check overtime behavior
+    policy.reset()
+    act_hist_ot = []
+    for _ in range(2 * env.max_steps):
+        act = policy(env.obs_space.sample_uniform())
+        act_hist_ot.append(act.detach().cpu().numpy())
+
+    if overtime_behavior == "hold":
+        assert act_hist_ot[-1] == pytest.approx(act_hist_ot[-1])
+    elif overtime_behavior == "zero":
+        assert act_hist_ot[-1] == pytest.approx(to.zeros_like(act))

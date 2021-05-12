@@ -428,7 +428,7 @@ public:
                 string_format("link masses:   [%1.2f, %1.2f, %1.2f, %1.2f] kg      wall Z pos: %1.3f m",
                               link1_bpi->body->m, link2_bpi->body->m, link3_bpi->body->m, link4_bpi->body->m,
                               uWall_bpi->body->A_BP->org[2]));
-            linesOut.emplace_back(string_format("wall friction: [%1.3f, %1.3f]            effector friction: %1.3f",
+            linesOut.emplace_back(string_format("wall friction: [%1.3f, %1.3f] l/u        effector friction: %1.3f",
                                                 lWall_bpi->material.getFrictionCoefficient(),
                                                 uWall_bpi->material.getFrictionCoefficient(),
                                                 eff_bpi->material.getFrictionCoefficient()));

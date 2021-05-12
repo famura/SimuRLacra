@@ -1,0 +1,159 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="MiniGolf" resourcePath="${HOME}/localdisk/Software/SimuRLacra/RcsPySim/config ${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
+
+  <Body name="Ground" physics="kinematic" mass="1000">
+    <Shape type="BOX" extents="8 8 0.04" distance="true" physics="true" graphics="true" transform="0 0 -0.02 0 0 0" textureFile="textures/grass_v2.jpg" material="ground_mat"/>
+    <Shape type="BOX" extents="0.1 8 0.2" distance="true" physics="true" graphics="true" transform="3.95 0 0.1 0 0 0" color="LIGHTGRAY" />
+    <Shape type="BOX" extents="0.1 8 0.2" distance="true" physics="true" graphics="true" transform="-3.95 0 0.1 0 0 0" color="LIGHTGRAY" />
+    <Shape type="BOX" extents="8 0.1 0.2" distance="true" physics="true" graphics="true" transform="0 3.95 0.1 0 0 0" color="LIGHTGRAY" />
+    <Shape type="BOX" extents="8 0.1 0.2" distance="true" physics="true" graphics="true" transform="0 -3.95 0.1 0 0 0" color="LIGHTGRAY" />
+    <Shape type="FRAME" scale="0.5" />
+  </Body>
+
+  <Body name="Table" prev="Ground" physics="kinematic" transform="0 0 0 0 0 90">
+    <Shape type="BOX" extents="0.8 0.8 0.03" distance="true" physics="true" graphics="true" transform="0 0 0.835 0 0 0" />
+    <Shape type="BOX" extents="0.1 0.1 0.82" distance="true" physics="true" graphics="true" transform="0.35 0.35 0.41 0 0 0" />
+    <Shape type="BOX" extents="0.1 0.1 0.82" distance="true" physics="true" graphics="true" transform="0.35 -0.35 0.41 0 0 0" />
+    <Shape type="BOX" extents="0.1 0.1 0.82" distance="true" physics="true" graphics="true" transform="-0.35 0.35 0.41 0 0 0" />
+    <Shape type="BOX" extents="0.1 0.1 0.82" distance="true" physics="true" graphics="true" transform="-0.35 -0.35 0.41 0 0 0" />
+    <Shape type="BOX" extents="0.4 0.8 0.03" distance="true" physics="true" graphics="true" transform="0.1 0 0.45 0 0 0" />
+    <Shape type="BOX" extents="0.04 0.04 0.3" distance="true" physics="true" graphics="true" transform="0.22 0.35 0.345 0 -45 0" />
+    <Shape type="BOX" extents="0.04 0.04 0.3" distance="true" physics="true" graphics="true" transform="0.22 -0.35 0.345 0 -45 0" />
+    <Shape type="BOX" extents="0.14 0.14 0.34" distance="true" physics="true" graphics="true" transform="0.2 0 0.63 0 0 0" />
+    <Shape type="BOX" extents="0.24 0.2 0.06" distance="true" physics="true" graphics="true" transform="0.16 0 0.49 0 0 0" />
+  </Body>
+
+  <Body name="Arm" prev="Table" transform="0.1975 0 0 0 0 0" >
+    <Joint name="ArmHeight" range="0 1.325 2" constraint="true" type="TransZ" torqueLimit="500" />
+    <Shape type="FRAME" scale="0.3" />
+    <Shape type="BOX" extents="0.16 0.16 0.485" distance="true" physics="true" graphics="true" transform="0 0 -0.2725 0 0 0" />
+    <Shape type="BOX" extents="0.36 0.28 0.03" distance="true" physics="true" graphics="true" transform="0.02 0 -0.015 0 0 0" />
+  </Body>
+
+  <Body name="lwa-base" prev="Arm" transform="0.11 0 0 0 0 0" mass="10" inertia="0.0238186 0 0   0 0.0238186 0   0 0 0.0373769" >
+    <Shape type="CYLINDER" length="0.06" radius="0.09" distance="false" physics="false" graphics="false" transform="0 0 0.03 0 0 0" color="POLISHED_SILVER" />
+    <Shape type="FRAME" scale="0.25" />
+  </Body>
+
+  <Body name="m3" prev="lwa-base" mass="3.6" inertia="0.0130953 0 0.000254725   0 0.0215424 0   0.000254725 0 0.01854" >
+    <Joint name="base-m3" range="-170 0 170" weightJL="10" weightMetric="0.05" type="RotZ" transform="0 0 0.12 0 0 0" speedLimit="25" />
+    <Shape type="CYLINDER" length="0.14" radius="0.06" distance="false" physics="true" graphics="true" color="COPPER" />
+    <Shape type="SSL" length="0.05" radius="0.09" distance="true" physics="false" graphics="false" transform="0 0 -0.02 0 0 0" color="COPPER" />
+  </Body>
+
+  <Body name="m4" prev="m3" mass="3.6" inertia="0.0168206 1.92761e-20 0   1.92761e-20 0.016978 0   0 0 0.00669502" >
+    <Joint name="m3-m4" range="-260 -90 80" weightJL="10" weightMetric="0.05" type="RotZ" transform="0.175 0 0 0 90 0" speedLimit="25" />
+    <Shape type="CYLINDER" length="0.14" radius="0.062" distance="false" physics="true" graphics="true" transform="0 0 0.01 0 0 0" color="JADE_S" />
+    <Shape type="SSL" length="0.14" radius="0.062" distance="true" physics="false" graphics="false" transform="0 0 -0.06 0 0 0" color="JADE_S" />
+  </Body>
+
+  <Body name="m5" prev="m4" mass="2" inertia="0.00974386 -1.35927e-36 -1.10992e-20   -1.35927e-36 0.0117741 -8.73348e-21   -1.10992e-20 -8.73348e-21 0.00856829" >
+    <Joint name="m4-m5" range="-115 60 115" weightJL="10" weightMetric="0.05" type="RotZ" transform="0 0 0.175 0 -90 0" speedLimit="24" />
+    <Shape type="CYLINDER" length="0.118" radius="0.052" distance="false" physics="true" graphics="true" color="BRASS" />
+    <Shape type="SSL" length="0.08" radius="0.095" distance="true" physics="false" graphics="false" transform="0.02 0 -0.04 0 0 0" color="BRASS" />
+  </Body>
+
+  <Body name="m6" prev="m5" mass="2" inertia="0.0106724 8.87272e-21 0   8.87272e-21 0.0107449 0   0 0 0.00264734" >
+    <Joint name="m5-m6" range="-260 -90 80" weightJL="10" weightMetric="0.05" type="RotZ" transform="0.1515 0 0 0 90 0" speedLimit="24" />
+    <Shape type="CYLINDER" length="0.118" radius="0.052" distance="false" physics="true" graphics="true" transform="0 0 0.015 0 0 0" color="BRONZE" />
+    <Shape type="CYLINDER" length="0.06" radius="0.052" distance="false" physics="true" graphics="true" transform="0 0 0.103 0 0 0" color="BLUE" />
+    <Shape type="SSL" length="0.178" radius="0.052" distance="true" physics="false" graphics="false" transform="0 0 -0.02 0 0 0" color="BRONZE" />
+  </Body>
+
+  <Body name="m7" prev="m6" mass="1.2" inertia="0.00381156 -4.47731e-37 -2.62763e-05   -4.47731e-37 0.00489693 -5.69201e-21   -2.62763e-05 -5.69201e-21 0.00381175" >
+    <Joint name="m6-m7" range="-110 45 115" weightJL="10" weightMetric="0.05" type="RotZ" transform="0 0 0.2115 0 -90 0" speedLimit="27" />
+    <Shape type="CYLINDER" length="0.0965" radius="0.042" distance="false" physics="true" graphics="true" color="PEWTER" />
+    <Shape type="SSL" length="0.055" radius="0.08" distance="true" physics="false" graphics="false" transform="0 0 -0.03 0 0 0" color="PEWTER" />
+  </Body>
+
+  <Body name="m8" prev="m7" mass="1.2" inertia="0.00365094 9.64291e-21 0   9.64291e-21 0.00372968 0   0 0 0.00107627" >
+    <Joint name="m7-m8" range="-350 -180 0" weightJL="10" weightMetric="0.05" type="RotZ" transform="0.12575 0 0 0 90 0" speedLimit="27" />
+    <Shape type="CYLINDER" length="0.0965" radius="0.042" distance="false" physics="true" graphics="true" transform="0 0 0.01 0 0 0" color="COPPER" />
+    <Shape type="CYLINDER" length="0.04" radius="0.042" distance="false" physics="true" graphics="true" transform="0 0 0.07825 0 0 0" color="BLUE" />
+  </Body>
+
+  <Body name="m9" prev="m8" physics="kinematic" mass="1" inertia="0.00329535 -2.61937e-37 -2.3935e-05   -2.61937e-37 0.00427483 -4.26616e-21   -2.3935e-05 -4.26616e-21 0.00331027" >
+    <Joint name="m8-m9" range="-120 -45 120" weightJL="10" weightMetric="0.05" type="RotZ" transform="0 0 0.16575 0 -90 0" speedLimit="50" />
+    <Shape type="CYLINDER" length="0.086" radius="0.03" distance="false" physics="true" graphics="true" />
+    <Shape type="CYLINDER" length="0.016" radius="0.032" distance="false" physics="true" graphics="true" transform="0.095 0 0 0 90 0" />
+    <Shape type="CYLINDER" length="0.02" radius="0.032" distance="false" physics="true" graphics="true" transform="0.123573 0 0 0 90 0" color="BLUE" />
+    <Shape type="SSL" length="0.055" radius="0.08" distance="true" physics="false" graphics="false" transform="0 0 -0.03 0 0 0" />
+  </Body>
+
+  <Body name="SchunkFTS" prev="m9" transform="0.104 0 0 0 90 0" physics="fixed" mass="1.92" inertia="0.00058672 0 0   0 0.00058672 0   0 0 0.00104544" >
+    <Shape type="CYLINDER" length="0.02" radius="0.033" distance="false" physics="true" graphics="true" transform="0 0 0.02 0 0 0" color="BLUE" />
+    <Sensor name="WristLoadCellSchunk" type="LOADCELL" />
+  </Body>
+
+  <Body name="sdh-base" prev="SchunkFTS" transform="0 0 0.0403 0 0 -165" physics="fixed" mass="1.054" inertia="0.001757 0 0   0 0.001757 0   0 0 0.001757" >
+    <Shape type="SSL" length="0.02" radius="0.065" distance="true" physics="false" graphics="false" transform="0 0 0.02 0 0 0" color="RED" />
+    <Shape type="CYLINDER" length="0.06" radius="0.04" distance="true" physics="true" graphics="false" transform="0 0 0.03 0 0 0" color="RED" />
+    <Sensor name="WristLoadCellLBR" type="LOADCELL" transform="0 0 0 0 0 -165" />
+  </Body>
+
+  <Body name="Club" prev="sdh-base" transform="0 0 0.08 0 0 0" physics="fixed" mass="0.5" >
+    <Shape type="SSL" length="0.95" radius="0.01" distance="true" physics="true" graphics="true" transform="0 0 0 90 0 0" />
+    <Shape type="SSR" extents="0.04 0.12 0.02" distance="true" physics="true" graphics="true" transform="0.01 -0.98 0 0 0 57" />
+    <Shape type="FRAME" scale="0.2" />
+  </Body>
+
+  <Body name="ClubTip" prev="Club" transform="0.01 -0.98 0 0 0 0" >
+    <Shape type="FRAME" scale="0.3" />
+  </Body>
+
+  <Body name="Ball" prev="Ground" physics="dynamic" mass="0.05">
+    <Joint name="Ball_rigidBodyJnt0" range="-8 0.5 8" constraint="true" type="TransX" />
+    <Joint name="Ball_rigidBodyJnt1" range="-8 1.4 8" constraint="true" type="TransY" />
+    <Joint name="Ball_rigidBodyJnt2" range="-8 0.02 8" constraint="true" type="TransZ" />
+    <Joint name="Ball_rigidBodyJnt3" range="-360 0 360" constraint="true" type="RotX" />
+    <Joint name="Ball_rigidBodyJnt4" range="-360 0 360" constraint="true" type="RotY" />
+    <Joint name="Ball_rigidBodyJnt5" range="-360 0 360" constraint="true" type="RotZ" />
+    <Shape type="SPHERE" radius="0.02" distance="true" physics="true" graphics="true" material="ball_mat"/>
+    <Shape type="FRAME" scale="0.15" />
+  </Body>
+
+  <Body name="Hole" prev="Ground" physics="kinematic" transform="2.5 1.4 0.03 0 0 0" >
+    <Shape type="CYLINDER" length="0.06" radius="0.04" distance="false" physics="true" graphics="true" color="BLACK_RUBBER"/>
+  </Body>
+
+  <model_state model="MiniGolf" time_stamp="0">
+<!--    <joint_state joint="ArmHeight" position="1.1" />-->
+    <joint_state joint="base-m3" position="-4.490844" />
+    <joint_state joint="m3-m4" position="-85.619975" />
+    <joint_state joint="m4-m5" position="66.87262" />
+    <joint_state joint="m5-m6" position="-87.85045" />
+    <joint_state joint="m6-m7" position="38.640863" />
+    <joint_state joint="m7-m8" position="-190.958411" />
+    <joint_state joint="m8-m9" position="-47.75292" />
+  </model_state>
+
+</Graph>

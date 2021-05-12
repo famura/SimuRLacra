@@ -37,7 +37,6 @@ from pyrado.exploration.normal_noise import DiagNormalNoise
 from pyrado.exploration.uniform_noise import UniformNoise
 from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.sampling.step_sequence import StepSequence
-from pyrado.utils.math import clamp
 
 
 class StochasticActionExplStrat(Policy, ABC):
@@ -282,7 +281,7 @@ class SACExplStrat(StochasticActionExplStrat):
         :return: action distribution at the mean given by `policy_out_1`
         """
         # Manually adapt the Gaussian's variance to the clipped value
-        log_std = clamp(policy_out_2, lo=self._log_std_min, up=self._log_std_max)
+        log_std = policy_out_2.clamp(self._log_std_min, self._log_std_max)
         self._noise.std = to.exp(log_std)
 
         return self._noise(policy_out_1)

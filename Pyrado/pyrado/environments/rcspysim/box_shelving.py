@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import functools
 import os.path as osp
+from functools import partial
 from typing import Sequence
 
 import numpy as np
@@ -72,7 +72,7 @@ def create_box_upper_shelve_task(env_spec: EnvSpec, continuous_rew_fcn: bool, su
         rew_fcn = ExpQuadrErrRewFcn(Q, R)
     else:
         rew_fcn = MinusOnePerStepRewFcn
-    dst = DesStateTask(spec, state_des, rew_fcn, functools.partial(proximity_succeeded, thold_dist=succ_thold))
+    dst = DesStateTask(spec, state_des, rew_fcn, partial(proximity_succeeded, thold_dist=succ_thold))
 
     # Return the masked tasks
     return MaskedTask(env_spec, dst, idcs)
@@ -113,8 +113,8 @@ class BoxShelvingSim(RcsSim, Serializable):
         # Forward to the RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args,
             envType="BoxShelving",
+            task_args=task_args,
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxShelving"),
             hudColor="BLACK_RUBBER",
             refFrame=ref_frame,
@@ -124,7 +124,7 @@ class BoxShelvingSim(RcsSim, Serializable):
         )
 
     def _create_task(self, task_args: dict) -> Task:
-        # Create the tasks
+        # Define the task including the reward function
         continuous_rew_fcn = task_args.get("continuous_rew_fcn", True)
         task_box = create_box_upper_shelve_task(self.spec, continuous_rew_fcn, succ_thold=5e-2)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)

@@ -56,10 +56,7 @@
 #include <TaskVelocity1D.h>
 #include <TaskOmega1D.h>
 #include <TaskEuler3D.h>
-#include <TaskEuler1D.h>
-#include <TaskPositionForce1D.h>
 #include <TaskFactory.h>
-#include <CompositeTask.h>
 
 #ifdef GRAPHICS_AVAILABLE
 

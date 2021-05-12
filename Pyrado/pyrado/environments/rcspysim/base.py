@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import abstractmethod
+from typing import Optional
 
 import numpy as np
 from init_args_serializer import Serializable
@@ -62,7 +63,7 @@ class RcsSim(SimEnv, Serializable):
         task_args: dict,
         dt: float = 0.01,
         max_steps: int = pyrado.inf,
-        init_state: np.ndarray = None,
+        init_state: Optional[np.ndarray] = None,
         checkJointLimits: bool = False,
         joint_limit_penalty: float = -1e3,
         **kwargs,
@@ -85,6 +86,13 @@ class RcsSim(SimEnv, Serializable):
         :param kwargs: keyword arguments which are available for `RcsSim` on the C++ side. These arguments will not
                        be stored in the environment object, thus are saved e.g. when pickled.
         """
+        if not isinstance(envType, str):
+            raise pyrado.TypeErr(given=envType, expected_type=str)
+        if not isinstance(task_args, dict):
+            raise pyrado.TypeErr(given=task_args, expected_type=dict)
+        if dt <= 0:
+            raise pyrado.ValueErr(given=dt, g_constraint="0.0 (float)")
+
         Serializable._init(self, locals())
 
         # Initialize basic variables
@@ -297,7 +305,7 @@ class RcsSim(SimEnv, Serializable):
     def get_body_position(self, bodyName: str, refFrameName: str, refBodyName: str) -> np.ndarray:
         """
         Get the position of a body in the simulators config graph.
-        This function uses code coped from `Rcs` to transform the position depending on a refernce frame and/or body.
+        This function uses code coped from `Rcs` to transform the position depending on a reference frame and/or body.
 
         :param bodyName: name of the body in the graph
         :param refFrameName: name of the reference frame, pass '' to use world coordinates
@@ -309,7 +317,7 @@ class RcsSim(SimEnv, Serializable):
     def get_body_extents(self, bodyName: str, shapeIdx: int = 0) -> np.ndarray:
         """
         Get the dimensions of a body in the simulators config graph.
-        This function uses code coped from `Rcs` to transform the position depending on a refernce frame and/or body.
+        This function uses code coped from `Rcs` to transform the position depending on a reference frame and/or body.
 
         .. note::
             Depending on the kind of shape (e.g. box, sphere, torus, ect.) the extends mean different things.

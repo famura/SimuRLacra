@@ -139,8 +139,8 @@ found in `PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/base.py`. Here 
             # TODO Forward basic arguments as well as custom arguments to RcsSim's constructor, which will then pass it to the ECHelloMichael.
             RcsSim.__init__(
                 self,
-                task_args=dict() if task_args is None else task_args,
                 envType="HelloMichael",
+                task_args=dict() if task_args is None else task_args,
                 graphFileName=kwargs.pop("graphFileName", "gHelloMichael.xml"),
                 **kwargs,
             )
@@ -234,14 +234,24 @@ trained a policy. Next you can go to script's folder, activate the anaconda envi
 
 This will create an `ex_<CUSTOM>_export.xml` as well as an `policy_export.pt` file.
 If you want the your trained policy to be played back, you need to insert the line
-`<policy type="torch" file="policy_export.pt"/>` into the experiment XML-file. However, this is optional. Actually, you
-don't really need to run an experiment to use this export script. Feel free to change it, or generate the XML-file
-manually. The important lines in the export script ware are:
+
+.. code-block:: xml
+
+    <policy type="torch" file="policy_export.pt"/>
+
+into the experiment XML-file. However, this is optional. Actually, you don't really need to run an experiment to use
+this export script. Feel free to change it, or generate the XML-file manually. The important lines in the export script
+ware are:
 
 .. code-block:: python
 
     exp_export_file = osp.join(ex_dir, f"ex_{env.name}_export.xml")
     inner_env(env).save_config_xml(exp_export_file)
 
-Next you copy the `ex_<CUSTOM>_export.xml` file (and optionally the policy) to `cd PATH_TO/SimuRLacra/RcsPySim/build`
-and then run `bin/TestBotSim -dl 2 -dir ../config/HelloMichael -f ex_<CUSTOM>_export.xml`.
+Next, you copy the `ex_<CUSTOM>_export.xml` file (and optionally the policy) to the `RcsPySim/config/HelloMichael`
+folder and run
+
+.. code-block:: bash
+
+    cd PATH_TO/SimuRLacra/RcsPySim/build
+    bin/TestBotSim -dl 2 -dir ../config/HelloMichael -f ex_<CUSTOM>_export.xml`

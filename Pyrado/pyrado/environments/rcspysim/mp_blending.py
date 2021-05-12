@@ -70,8 +70,8 @@ class MPBlendingSim(RcsSim, Serializable):
         # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args,
             envType="MPBlending",
+            task_args=task_args,
             graphFileName="gMPBlending.xml",
             actionModelType=action_model_type,
             tasks=mps,

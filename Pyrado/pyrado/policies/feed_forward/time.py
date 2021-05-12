@@ -30,8 +30,8 @@ import inspect
 from typing import Callable, List, Optional, Sequence
 
 import torch as to
+import torch.nn as nn
 from torch.jit import ScriptModule, export, script
-from torch.nn import Module
 
 from pyrado.policies.base import Policy
 from pyrado.utils.data_types import EnvSpec
@@ -80,23 +80,30 @@ class TimePolicy(Policy):
         return script(TraceableTimePolicy(self.env_spec, self._fcn_of_time, self._dt))
 
 
-class TraceableTimePolicy(Module):
+class TraceableTimePolicy(nn.Module):
     """
-    A scriptable version of TimePolicy.
+    A scriptable version of `TimePolicy`.
 
-    We could try to make TimePolicy itself scriptable, but that won't work anyways due to Policy not being scriptable.
+    We could try to make `TimePolicy` itself scriptable, but that won't work anyways due to Policy not being scriptable.
     Better to just write another class.
     """
 
-    name: str = "trtime"
+    name: str = "time"
 
     # Attributes
     input_size: int
     output_size: int
     dt: float
-    current_time: float
+    curr_time: float
 
     def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], Sequence[float]], dt: float):
+        """
+        Constructor
+
+        :param spec: environment specification
+        :param fcn_of_time: time-depended function returning actions
+        :param dt: time step [s]
+        """
         super().__init__()
         self.env_spec = spec
 
@@ -104,7 +111,7 @@ class TraceableTimePolicy(Module):
         self.input_size = spec.obs_space.flat_dim
         self.output_size = spec.act_space.flat_dim
         self.dt = dt
-        self.current_time = 0.0
+        self.curr_time = 0.0
 
         # Validate function signature
         sig = inspect.signature(fcn_of_time, follow_wrapped=False)
@@ -119,19 +126,20 @@ class TraceableTimePolicy(Module):
         ]
         assert len(posp) == 1
         param = next(iter(posp))
-        # check parameter type
+        # Check parameter type
         if param.annotation != float:
             raise ValueError(f"Malformed fcn_of_time with signature {sig} - parameter must have type float")
-        # check return type
+        # Check return type
         if sig.return_annotation != inspect.Signature.empty and sig.return_annotation != List[float]:
             raise ValueError(f"Malformed fcn_of_time with signature {sig} - return type must be List[float]")
         self.fcn_of_time = fcn_of_time
 
     @export
     def reset(self):
-        self.current_time = 0.0
+        """Reset the policy to it's initial state."""
+        self.curr_time = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
-        act = to.tensor(self.fcn_of_time(self.current_time), dtype=to.double)  # 64bit float
-        self.current_time = self.current_time + self.dt
+        act = to.tensor(self.fcn_of_time(self.curr_time), dtype=to.double)
+        self.curr_time = self.curr_time + self.dt
         return act

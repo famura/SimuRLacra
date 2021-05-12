@@ -68,8 +68,8 @@ class BallOnPlateSim(RcsSim, Serializable):
         # Forward to the RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args,
             envType="BallOnPlate",
+            task_args=task_args,
             graphFileName="gBotKuka.xml",
             physicsConfigFile="pBallOnPlate.xml",
             **kwargs,

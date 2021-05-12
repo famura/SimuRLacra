@@ -68,8 +68,8 @@ class QQubeRcsSim(RcsSim, Serializable):
         # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args if task_args is not None else dict(),
             envType="QuanserQube",
+            task_args=task_args if task_args is not None else dict(),
             graphFileName="gQuanserQube_trqCtrl.xml",
             physicsConfigFile="pQuanserQube.xml",
             actionModelType="joint_acc",

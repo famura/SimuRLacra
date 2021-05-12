@@ -148,6 +148,14 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
         }
         initStateSetter->applyInitialState(initState);
     }
+
+#ifdef GRAPHICS_AVAILABLE
+    // If we are resetting the simulation the viewer already exists
+    if (viewer && usePhysicsNode)
+    {
+        viewer->removeInternal("PhysicsNode");
+    }
+#endif
     
     // Rebuild physics sim with new parameters
     // We set it to nullptr before creating the new one since there might be exceptions during parameter loading
@@ -155,6 +163,19 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
     physicsSim = nullptr;
     physicsSim = physicsManager->createSimulator(domainParam);
     
+ #ifdef GRAPHICS_AVAILABLE
+    // If we are resetting the simulation the viewer already exists
+    if (viewer)
+    {
+        if (usePhysicsNode) {
+            Rcs::PhysicsNode* pNode = new Rcs::PhysicsNode(physicsSim, true);
+            viewer->add(pNode);
+            pNode->physicsNd->togglePhysicsModel(); // switch off
+            pNode->physicsNd->toggleGraphicsModel(); // switch on
+        }
+    }
+ #endif
+ 
     // Reset control command vectors
     MatNd_copy(q_ctrl, config->graph->q);
     MatNd_setZero(qd_ctrl);
@@ -355,9 +376,9 @@ void Rcs::RcsSimEnv::render(std::string mode, bool close)
             
             // Make nodes resizable so it can update on physics param changes setting that for relevant nodes only
             // would be better, but it's not possible right now.
-            // Visualize the IK controller graph (a.k.a. desired graph)
             auto amIK = config->actionModel->unwrap<ActionModelIK>();
             if (amIK != nullptr) {
+                // Visualize the IK controller graph (a.k.a. desired graph)
                 Rcs::GraphNode* gDesNode = new Rcs::GraphNode(amIK->getController()->getGraph(), true, false);
                 gDesNode->setGhostMode(true);
                 viewer->add(gDesNode);

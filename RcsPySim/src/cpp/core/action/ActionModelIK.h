@@ -95,6 +95,11 @@ protected:
      */
     void addTask(Task* task);
     
+    //! Add Rcs controller tasks that is always fixed to one target value. Do this after adding the regular tasks.
+    void addFixedTask(Task* task, MatNd* value);
+    
+    unsigned int getNumActiveTasks() const;
+    
     /*! Compute IK solution from desired task space state.
      *
      * @param[out] q_des     resulting desired joint positions
@@ -141,6 +146,10 @@ private:
     double alpha = 1e-4;
     //! Regularization factor for the task space weighting
     double lambda = 1e-6;
+    //! Store the target values of all fixed tasks
+    MatNd* fixedTasksValues;
+    //! Store the cumulative number of task dimensions which are fixed to one target value
+    unsigned int dimFixedTasks;
 };
 
 /*! Generic IK-based action model.
@@ -157,8 +166,9 @@ class AMIKGeneric : public ActionModelIK
 {
 public:
     using ActionModelIK::ActionModelIK;
-    // Expose addTask
+    // Expose addTask and addFixedTask
     using ActionModelIK::addTask;
+    using ActionModelIK::addFixedTask;
     
     virtual ActionModel* clone(RcsGraph* newGraph) const;
     

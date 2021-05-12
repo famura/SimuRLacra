@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import functools
 import os.path as osp
+from functools import partial
 from typing import Sequence
 
 import numpy as np
@@ -84,8 +84,8 @@ class Planar3LinkSim(RcsSim, Serializable):
         # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args,
             envType="Planar3Link",
+            task_args=task_args,
             graphFileName=kwargs.pop("graphFileName", "gPlanar3Link_trqCtrl.xml"),  # by default torque control
             positionTasks=kwargs.pop("positionTasks", None),  # invalid default value, positionTasks can be unnecessary
             collisionConfig=collision_config,
@@ -125,7 +125,7 @@ class Planar3LinkSim(RcsSim, Serializable):
             self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs)),
         )
 
-        # Get and set goal position in world coordinates for all three sub-goals
+        # Get the goal position in world coordinates for all three sub-goals
         p1 = self.get_body_position("Goal1", "", "")
         p2 = self.get_body_position("Goal2", "", "")
         p3 = self.get_body_position("Goal3", "", "")
@@ -140,7 +140,7 @@ class Planar3LinkSim(RcsSim, Serializable):
             state_des2 = state_des2[:2]
             state_des3 = state_des3[:2]
 
-        success_fcn = functools.partial(proximity_succeeded, thold_dist=7.5e-2, dims=[0, 1])  # min distance = 7cm
+        success_fcn = partial(proximity_succeeded, thold_dist=7.5e-2, dims=[0, 1])  # min distance = 7cm
         R = np.zeros((spec.act_space.flat_dim, spec.act_space.flat_dim))
 
         # Create the tasks

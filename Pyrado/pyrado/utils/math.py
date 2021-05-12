@@ -213,20 +213,6 @@ def rmse(
         raise pyrado.TypeErr(msg="Both inputs need to be either a numpy array or a PyTorch tensor!")
 
 
-def clamp(inp: to.Tensor, lo: to.Tensor, up: to.Tensor) -> to.Tensor:
-    """
-    Clip the entries of a tensor by the entries of a lower bound and an upper bound tensor.
-
-    :param inp: input tensor
-    :param lo: lower bound for each entry
-    :param up: upper bound for each entry
-    :return: clipped tensor
-    """
-    if not (lo < up).all():
-        raise pyrado.ValueErr(msg="The lower bounds needs to be element-wise smaller than the upper bound.")
-    return to.max(to.min(inp, up), lo)
-
-
 def clamp_symm(inp: to.Tensor, up_lo: to.Tensor) -> to.Tensor:
     """
     Symmetrically clip the entries of a tensor by the entries of a tensor with only positive entries.
@@ -236,8 +222,6 @@ def clamp_symm(inp: to.Tensor, up_lo: to.Tensor) -> to.Tensor:
     :param up_lo: upper and (negative of the) lower bound for each entry
     :return: clipped tensor
     """
-    if not (up_lo > 0).all():
-        raise pyrado.ValueErr(given=up_lo, g_constraint="0")
     return to.max(to.min(inp.clone(), up_lo), -up_lo)
 
 

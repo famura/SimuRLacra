@@ -57,7 +57,7 @@ from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_back.two_headed_fnn import TwoHeadedFNNPolicy
 from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
-from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
+from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy, TraceablePolySplineTimePolicy
 from pyrado.policies.feed_forward.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.policies.recurrent.neural_fields import NFPolicy
@@ -694,7 +694,7 @@ class DefaultPolicies:
         return TimePolicy(env.spec, dt=env.dt, fcn_of_time=timefcn)
 
     @staticmethod
-    def tracetime_policy(env: Env):
+    def traced_time_policy(env: Env):
         def timefcn(t: float):
             return list(np.random.rand(env.spec.act_space.flat_dim))
 
@@ -703,12 +703,21 @@ class DefaultPolicies:
     @staticmethod
     def pst_policy(env: Env):
         return PolySplineTimePolicy(
-            env.spec,
+            spec=env.spec,
             dt=env.dt,
             t_end=int(env.max_steps / env.dt),
             cond_lvl="acc",
-            cond_final=to.zeros(3),
-            use_cuda=False,
+            cond_final=to.zeros(3, env.spec.act_space.flat_dim),
+        )
+
+    @staticmethod
+    def traced_pst_policy(env: Env):
+        return TraceablePolySplineTimePolicy(
+            spec=env.spec,
+            dt=env.dt,
+            t_end=int(env.max_steps / env.dt),
+            cond_lvl="acc",
+            cond_final=to.zeros(3, env.spec.act_space.flat_dim),
         )
 
     @staticmethod

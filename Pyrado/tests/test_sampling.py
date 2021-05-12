@@ -453,7 +453,6 @@ def test_parallel_rollout_sampler(env: SimEnv, policy: Policy, num_workers: int)
 
 
 @m_needs_cuda
-@pytest.mark.skip
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
     "env",

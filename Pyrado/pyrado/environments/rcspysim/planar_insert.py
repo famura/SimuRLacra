@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import functools
 import os.path as osp
+from functools import partial
 from typing import Callable, Sequence
 
 import numpy as np
@@ -92,8 +92,8 @@ class PlanarInsertSim(RcsSim, Serializable):
         # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args,
             envType="PlanarInsert",
+            task_args=task_args,
             physicsConfigFile="pPlanarInsert.xml",
             collisionConfig=collision_config,
             **kwargs,
@@ -121,7 +121,7 @@ class PlanarInsertSim(RcsSim, Serializable):
         # Define the task including the reward function
         state_des = task_args.get("state_des", None)
         if state_des is None:
-            # Get and set goal position in world coordinates
+            # Get the goal position in world coordinates
             p = self.get_body_position("Goal", "", "")
             state_des = np.array([p[0], p[2], 0, 0, 0, 0])  # X, Z, B, Xd, Zd, Bd
 
@@ -132,7 +132,7 @@ class PlanarInsertSim(RcsSim, Serializable):
             rew_fcn=ExpQuadrErrRewFcn(
                 Q=np.diag([2e1, 2e1, 1e-1, 1e-2, 1e-2, 1e-2]), R=2e-2 * np.eye(self.act_space.flat_dim)
             ),
-            success_fcn=functools.partial(proximity_succeeded, thold_dist=0.07, dims=[0, 1, 2]),  # position and angle
+            success_fcn=partial(proximity_succeeded, thold_dist=0.07, dims=[0, 1, 2]),  # position and angle
         )
         task_ts_discrepancy = create_task_space_discrepancy_task(
             self.spec, AbsErrRewFcn(q=0.1 * np.ones(2), r=np.zeros(self.act_space.shape))
@@ -148,7 +148,7 @@ class PlanarInsertSim(RcsSim, Serializable):
             link4_mass=2.0,
             upperwall_pos_offset_x=0.0,
             upperwall_friction_coefficient=0.5,
-            effector_friction_coefficient=0.8,
+            effector_friction_coefficient=0.7,
         )
 
     def _disturbance_generator(self) -> (np.ndarray, None):

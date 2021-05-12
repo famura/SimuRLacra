@@ -136,6 +136,9 @@ ActionModelIK::ActionModelIK(RcsGraph* graph) : ActionModel(graph), alpha(1e-4),
     
     // Must be set manually
     collisionMdl = nullptr;
+    
+    dimFixedTasks = 0;
+    fixedTasksValues = nullptr;
 }
 
 ActionModelIK::ActionModelIK(RcsGraph* graph, std::vector<Task*> tasks) : ActionModelIK(graph)
@@ -272,18 +275,38 @@ void ActionModelIK::setupCollisionModel(const RcsCollisionMdl* modelToCopy)
     }
 }
 
+void ActionModelIK::addFixedTask(Task* task, MatNd* value)
+{
+    if (fixedTasksValues) {
+        // Not the first time, append
+        MatNd_appendRows(fixedTasksValues, value);
+    }
+    else{
+        // The first time, copy
+        fixedTasksValues = MatNd_clone(value);
+    }
+    
+    dimFixedTasks += task->getDim();
+    this->addTask(task);
+}
+
+unsigned int ActionModelIK::getNumActiveTasks() const
+{
+    return controller->getNumberOfTasks() - dimFixedTasks;
+}
+
 /*
  * AMIKGeneric
  */
 unsigned int AMIKGeneric::getDim() const
 {
-    return controller->getTaskDim();
+    return (unsigned int)  controller->getTaskDim() - dimFixedTasks;
 }
 
 void AMIKGeneric::getMinMax(double* min, double* max) const
 {
     unsigned int idx = 0;
-    for (unsigned int ti = 0; ti < controller->getNumberOfTasks(); ++ti) {
+    for (unsigned int ti = 0; ti < this->getNumActiveTasks(); ++ti) {
         Task* task = controller->getTask(ti);
         for (unsigned int tp = 0; tp < task->getDim(); ++tp) {
             auto param = task->getParameter(tp);
@@ -297,7 +320,7 @@ void AMIKGeneric::getMinMax(double* min, double* max) const
 std::vector<std::string> AMIKGeneric::getNames() const
 {
     std::vector<std::string> result;
-    for (unsigned int ti = 0; ti < controller->getNumberOfTasks(); ++ti) {
+    for (unsigned int ti = 0; ti < this->getNumActiveTasks(); ++ti) {
         Task* task = controller->getTask(ti);
         for (unsigned int tp = 0; tp < task->getDim(); ++tp) {
             auto param = task->getParameter(tp);
@@ -309,14 +332,24 @@ std::vector<std::string> AMIKGeneric::getNames() const
 
 void AMIKGeneric::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* action, double dt)
 {
+    // Augment the action with the fixed values
+    MatNd* augmentedAction = MatNd_clone(action);
+    MatNd_appendRows(augmentedAction, fixedTasksValues);
+    
     // Copy the ExperimentConfig graph which has been updated by the physics simulation into the desired graph
     RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, nullptr);
     
-    computeIK(q_des, q_dot_des, T_des, action, dt);
+    computeIK(q_des, q_dot_des, T_des, augmentedAction, dt);
+    
+    delete augmentedAction;
 }
 
 void AMIKGeneric::getStableAction(MatNd* action) const
 {
+    // Augment the action with the fixed values
+    MatNd* augmentedAction = MatNd_clone(action);
+    MatNd_appendRows(augmentedAction, fixedTasksValues);
+    
     controller->computeX(action);
 }
 

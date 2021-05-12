@@ -206,12 +206,10 @@ public:
         RcsBody* base = RcsGraph_getBodyByName(graph, "Effector");
         double cameraCenter[3];
         Vec3d_copy(cameraCenter, base->A_BI->org);
-        cameraCenter[1] -= 0.0;
-        cameraCenter[2] += 0.0;
         
         // Set the camera position
         double cameraLocation[3];
-        cameraLocation[0] = 0.;
+        cameraLocation[0] = 1.5;
         cameraLocation[1] = -2.5;
         cameraLocation[2] = 4.;
         

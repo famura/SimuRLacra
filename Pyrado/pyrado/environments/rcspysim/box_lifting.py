@@ -81,8 +81,8 @@ class BoxLiftingSim(RcsSim, Serializable):
         # Forward to the RcsSim's constructor
         RcsSim.__init__(
             self,
-            task_args=task_args,
             envType="BoxLifting",
+            task_args=task_args,
             physicsConfigFile="pBoxLifting.xml",
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxLifting"),
             hudColor="BLACK_RUBBER",

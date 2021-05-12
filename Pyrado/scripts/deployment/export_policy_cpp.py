@@ -37,6 +37,7 @@ The converted policy is saved same directory where the original policy was loade
 """
 import os.path as osp
 
+import pyrado
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.logger.experiment import ask_for_experiment
@@ -53,10 +54,16 @@ if __name__ == "__main__":
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the policy (trained in simulation)
-    env, policy, _ = load_experiment(ex_dir)
+    try:
+        # First try to load a "proper" experiment
+        env, policy, _ = load_experiment(ex_dir)
+    except (pyrado.PathErr, FileNotFoundError):
+        # Try to load the policy and environment directly
+        policy = pyrado.load("policy.pt", ex_dir, verbose=True)  # no state_dict loading
+        env = pyrado.load("env.pkl", ex_dir, verbose=True)
 
     # Use torch.jit.trace / torch.jit.script (the latter if recurrent) to generate a torch.jit.ScriptModule
-    ts_module = policy.script()  # can be evaluated like a regular PyTorch module
+    ts_module = policy.double().script()  # can be evaluated like a regular PyTorch module
 
     # Serialize the script module to a file and save it in the same directory we loaded the policy from
     policy_export_file = osp.join(ex_dir, "policy_export.pt")

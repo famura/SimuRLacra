@@ -311,7 +311,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         :return: bool if condition is met
         """
         cos_al_delta = 1.0 + to.cos(to.tensor(math.pi - self.alpha_max_pd_enable))
-        return bool(to.abs(1.0 + cos_al) < cos_al_delta)
+        return to.abs(1.0 + cos_al) < cos_al_delta
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is not None:
