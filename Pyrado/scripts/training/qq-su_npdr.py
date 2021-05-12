@@ -117,6 +117,7 @@ if __name__ == "__main__":
     #     8: "g",
     #     # 9: "V_thold_neg",
     #     # 10: "V_thold_pos",
+    #     11: "act_delay",
     # }
 
     # Prior and Posterior (normalizing flow)
@@ -134,31 +135,32 @@ if __name__ == "__main__":
             [
                 dp_nom["Dr"] * 0,
                 dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.2,
-                dp_nom["km"] * 0.4,
-                dp_nom["Mr"] * 0.6,
-                dp_nom["Mp"] * 0.6,
-                dp_nom["Lr"] * 0.7,
-                dp_nom["Lp"] * 0.7,
-                dp_nom["g"] * 0.90,
+                dp_nom["Rm"] * 0.1,
+                dp_nom["km"] * 0.2,
+                dp_nom["Mr"] * 0.3,
+                dp_nom["Mp"] * 0.3,
+                dp_nom["Lr"] * 0.5,
+                dp_nom["Lp"] * 0.5,
+                dp_nom["g"] * 0.85,
                 # -0.1,
-                0.0,
+                # 0.0,
+                0,
             ]
         ),
         high=to.tensor(
             [
-                dp_nom["Dr"] * 10,
-                dp_nom["Dp"] * 10,
-                dp_nom["Rm"] * 1.8,
-                dp_nom["km"] * 1.6,
-                dp_nom["Mr"] * 1.4,
-                dp_nom["Mp"] * 1.4,
-                dp_nom["Lr"] * 1.3,
-                dp_nom["Lp"] * 1.3,
-                dp_nom["g"] * 1.10,
-                5,
+                dp_nom["Dr"] * 5,
+                dp_nom["Dp"] * 50,
+                dp_nom["Rm"] * 1.9,
+                dp_nom["km"] * 1.8,
+                dp_nom["Mr"] * 1.7,
+                dp_nom["Mp"] * 1.7,
+                dp_nom["Lr"] * 1.5,
+                dp_nom["Lp"] * 1.5,
+                dp_nom["g"] * 1.15,
                 # 0,
                 # 0.1,
+                5,
             ]
         ),
     )
@@ -167,6 +169,7 @@ if __name__ == "__main__":
     # Time series embedding
     embedding_hparam = dict(
         downsampling_factor=1,
+        idcs_data=(0, 1),
         # len_rollouts=env_sim.max_steps,
         # recurrent_network_type=nn.RNN,
         # only_last_output=True,
@@ -182,8 +185,8 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=5,
-        num_sim_per_round=10000,
+        num_real_rollouts=1,
+        num_sim_per_round=3000,
         num_sbi_rounds=5,
         simulation_batch_size=10,
         normalize_posterior=False,
@@ -197,7 +200,7 @@ if __name__ == "__main__":
             training_batch_size=50,  # default: 50
             learning_rate=3e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
-            stop_after_epochs=10,  # default: 20
+            stop_after_epochs=20,  # default: 20
             discard_prior_samples=False,  # default: False
             use_combined_loss=True,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
@@ -205,7 +208,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        num_workers=8,
+        num_workers=12,
     )
     algo = NPDR(
         ex_dir,

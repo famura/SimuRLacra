@@ -281,7 +281,7 @@ if __name__ == "__main__":
     table_latex_str = tabulate(table, headers, tablefmt="latex")
     str_iter = f"_iter_{args.iter}"
     str_round = f"_round_{args.round}"
-    use_rec_str = "_use_rec" if args.use_rec_str else ""
+    use_rec_str = "_use_rec" if args.use_rec else ""
     with open(osp.join(ex_dir, f"distance_metrics{str_iter}{str_round}{use_rec_str}.tex"), "w") as tab_file:
         print(table_latex_str, file=tab_file)
 

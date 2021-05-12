@@ -561,6 +561,7 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     ],
     ids=["laststep", "deltasteps", "bayessim", "dtw", "rnn"],
 )
+@pytest.mark.parametrize("idcs_data", [None, (0, 1)], ids=["allstatedims", "selstatedim"])
 @pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
 @pytest.mark.parametrize("num_real_rollouts", [2], ids=["2ros"])
 @pytest.mark.parametrize("num_sbi_rounds", [1, 2], ids=["1round", "2rounds"])
@@ -569,6 +570,7 @@ def test_npdr_no_policy_optimization(
     ex_dir,
     env: SimEnv,
     embedding_name: str,
+    idcs_data: Union[None, Tuple[int]],
     num_segments: int,
     len_segments: int,
     num_real_rollouts: int,
@@ -583,8 +585,8 @@ def test_npdr_no_policy_optimization(
     env_real.domain_param = dict(Rm=dp_nom["Rm"] * 1.2, km=dp_nom["km"] * 0.8)
 
     # Reduce the number of steps to make this test run faster
-    env.max_steps = 100
-    env_real.max_steps = 100
+    env.max_steps = 50
+    env_real.max_steps = 50
 
     # Policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
@@ -601,16 +603,22 @@ def test_npdr_no_policy_optimization(
 
     # Time series embedding
     if embedding_name == LastStepEmbedding.name:
-        embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec))
+        embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), idcs_data=idcs_data)
     elif embedding_name == DeltaStepsEmbedding.name:
         embedding = DeltaStepsEmbedding(
-            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), env.max_steps, downsampling_factor=10
+            env.spec,
+            RolloutSamplerForSBI.get_dim_data(env.spec),
+            env.max_steps,
+            downsampling_factor=7,
+            idcs_data=idcs_data,
         )
     elif embedding_name == BayesSimEmbedding.name:
-        embedding = BayesSimEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=10)
+        embedding = BayesSimEmbedding(
+            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=7, idcs_data=idcs_data
+        )
     elif embedding_name == DynamicTimeWarpingEmbedding.name:
         embedding = DynamicTimeWarpingEmbedding(
-            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=10
+            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=7, idcs_data=idcs_data
         )
     elif embedding_name == RNNEmbedding.name:
         embedding = RNNEmbedding(
@@ -621,6 +629,7 @@ def test_npdr_no_policy_optimization(
             output_size=1,
             len_rollouts=env.max_steps,
             downsampling_factor=1,
+            idcs_data=idcs_data,
         )
     else:
         raise NotImplementedError
@@ -631,17 +640,17 @@ def test_npdr_no_policy_optimization(
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_sim_per_round=50,
+        num_sim_per_round=20,
         num_real_rollouts=num_real_rollouts,
         num_sbi_rounds=num_sbi_rounds,
         simulation_batch_size=1,
         normalize_posterior=False,
-        num_eval_samples=10,
+        num_eval_samples=3,
         num_segments=num_segments,
         len_segments=len_segments,
         use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
-        subrtn_sbi_training_hparam=dict(max_num_epochs=2),  # only train for 2 iterations
+        subrtn_sbi_training_hparam=dict(max_num_epochs=1),  # only train for 1 iteration
         # subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),
         num_workers=1,
     )

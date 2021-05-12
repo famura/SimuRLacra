@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import List, Optional, Tuple, Union
 from warnings import warn
 
 import torch as to
@@ -92,6 +92,7 @@ class Embedding(ABC, nn.Module):
         spec: EnvSpec,
         dim_data: int,
         downsampling_factor: int = 1,
+        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
         use_cuda: bool = False,
     ):
         """
@@ -102,6 +103,8 @@ class Embedding(ABC, nn.Module):
                          states and action spaces' flat dimensions. This number is doubled if the embedding
                          target domain data.
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default
+        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
+                          by default `None` to select all states
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(spec, EnvSpec):
@@ -115,6 +118,7 @@ class Embedding(ABC, nn.Module):
 
         self._env_spec = spec
         self._dim_data_orig = 2 * dim_data if self.requires_target_domain_data else dim_data
+        self._idcs_data = tuple(idcs_data) if idcs_data is not None else None
         self.downsampling_factor = downsampling_factor
 
         # Manage device
@@ -237,7 +241,10 @@ class LastStepEmbedding(Embedding):
 
     @property
     def dim_output(self) -> int:
-        return self._env_spec.state_space.flat_dim
+        if self._idcs_data is not None:
+            return len(self._idcs_data)
+        else:
+            return self._env_spec.state_space.flat_dim
 
     @to.no_grad()
     def summary_statistic(self, data: to.Tensor) -> to.Tensor:
@@ -247,7 +254,11 @@ class LastStepEmbedding(Embedding):
         :param data: states and actions of a rollout or segment to be transformed for inference
         :return: last states as a vector
         """
-        return data[-1, : self._env_spec.state_space.flat_dim].reshape(-1)
+        if self._idcs_data is not None:
+            last_state = data[-1, self._idcs_data]
+        else:
+            last_state = data[-1, : self._env_spec.state_space.flat_dim]
+        return last_state.reshape(-1)
 
 
 class DeltaStepsEmbedding(Embedding):
@@ -265,6 +276,7 @@ class DeltaStepsEmbedding(Embedding):
         dim_data: int,
         len_rollouts: int,
         downsampling_factor: int = 1,
+        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
         use_cuda: bool = False,
     ):
         """
@@ -278,19 +290,24 @@ class DeltaStepsEmbedding(Embedding):
                              (must be the same for all rollouts)
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
                                     base class before calling `summary_statistic()`
+        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
+                          by default `None` to select all states
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(len_rollouts, int) or len_rollouts < 0:
             raise pyrado.ValueErr(given=len_rollouts, eq_constraint="1 (int)")
 
-        super().__init__(spec, dim_data, downsampling_factor, use_cuda)
+        super().__init__(spec, dim_data, downsampling_factor, idcs_data, use_cuda)
 
         self._len_rollouts = len_rollouts // downsampling_factor
         self.to(self.device)
 
     @property
     def dim_output(self) -> int:
-        return (self._len_rollouts - 1) * self._env_spec.state_space.flat_dim
+        if self._idcs_data is not None:
+            return (self._len_rollouts - 1) * len(self._idcs_data)
+        else:
+            return (self._len_rollouts - 1) * self._env_spec.state_space.flat_dim
 
     @to.no_grad()
     def summary_statistic(self, data: to.Tensor) -> to.Tensor:
@@ -304,7 +321,11 @@ class DeltaStepsEmbedding(Embedding):
             raise pyrado.ShapeErr(msg="The data tensor needs to contain at least two samples!")
 
         # Extract the states, and compute the deltas
-        states = data[:, : self._env_spec.state_space.flat_dim]
+        if self._idcs_data is not None:
+            states = data[:, self._idcs_data]
+        else:
+            states = data[:, : self._env_spec.state_space.flat_dim]
+
         states_diff = states[1:] - states[:-1]
         return states_diff.reshape(-1)
 
@@ -323,8 +344,11 @@ class BayesSimEmbedding(Embedding):
 
     @property
     def dim_output(self) -> int:
-        state_dim = self._env_spec.state_space.shape[0]
-        act_dim = self._env_spec.act_space.shape[0]
+        if self._idcs_data is not None:
+            state_dim = len(self._idcs_data)
+        else:
+            state_dim = self._env_spec.state_space.shape[0]
+        act_dim = self._env_spec.act_space.shape[0]  # always use the full action
         return state_dim * act_dim + 2 * state_dim
 
     @to.no_grad()
@@ -343,7 +367,10 @@ class BayesSimEmbedding(Embedding):
             raise pyrado.ShapeErr(msg="The data tensor needs to contain at least two samples!")
 
         # Extract the states and actions from the data
-        state = data[:, : self._env_spec.state_space.flat_dim]
+        if self._idcs_data is not None:
+            state = data[:, self._idcs_data]
+        else:
+            state = data[:, : self._env_spec.state_space.flat_dim]
         act = data[:-1, self._env_spec.state_space.flat_dim :]  # need to cut off one act due to using the delta state
         state_diff = state[1:] - state[:-1]
 
@@ -375,9 +402,10 @@ class RNNEmbedding(Embedding):
         recurrent_network_type: type = nn.RNN,
         only_last_output: bool = False,
         len_rollouts: int = None,
-        downsampling_factor: int = 1,
         dropout: float = 0.0,
         init_param_kwargs: Optional[dict] = None,
+        downsampling_factor: int = 1,
+        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
         use_cuda: bool = False,
         **recurrent_net_kwargs,
     ):
@@ -397,14 +425,16 @@ class RNNEmbedding(Embedding):
                                  constructor does not need to know how long the rollouts are.
         :param len_rollouts: number of time steps per rollout without considering a potential downsampling later
                              (must be the same for all rollouts)
-        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
-                                    base class before calling `summary_statistic()`
         :param dropout: dropout probability, default = 0 deactivates dropout
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net's constructor
+        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
+                                    base class before calling `summary_statistic()`
+        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
+                          by default `None` to select all states
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        super().__init__(spec, dim_data, downsampling_factor, use_cuda)
+        super().__init__(spec, dim_data, downsampling_factor, idcs_data, use_cuda)
 
         # Check the time sequence length if necessary
         if not only_last_output:
@@ -419,7 +449,7 @@ class RNNEmbedding(Embedding):
 
         # Create the RNN layers
         self.rnn_layers = recurrent_network_type(
-            input_size=dim_data,
+            input_size=dim_data if idcs_data is None else len(idcs_data),
             hidden_size=hidden_size,
             num_layers=num_recurrent_layers,
             bias=True,
@@ -468,6 +498,9 @@ class RNNEmbedding(Embedding):
         :param data: states and actions of a rollout or segment to be transformed for inference
         :return: features obtained from the RNN at every time step, fattened into a vector
         """
+        if self._idcs_data is not None:
+            data = data[:, self._idcs_data]
+
         # Reshape the data to match the shape desired by PyTorch
         data = data.unsqueeze(1)  # shape [len_time_series, 1, dim_data]
 
@@ -500,6 +533,7 @@ class DynamicTimeWarpingEmbedding(Embedding):
         dim_data: int,
         step_pattern: Optional[str] = None,
         downsampling_factor: int = 1,
+        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
         use_cuda: bool = False,
     ):
         """
@@ -514,10 +548,12 @@ class DynamicTimeWarpingEmbedding(Embedding):
                              recursion step pattern
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
                                     base class before calling `summary_statistic()`
+        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
+                          by default `None` to select all states
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
 
-        super().__init__(spec, dim_data, downsampling_factor, use_cuda)
+        super().__init__(spec, dim_data, downsampling_factor, idcs_data, use_cuda)
 
         self.step_pattern = step_pattern or rabinerJuangStepPattern(6, "c")
         self.to(self.device)
@@ -545,10 +581,15 @@ class DynamicTimeWarpingEmbedding(Embedding):
         data_sim, data_real = to.chunk(data, 2, dim=1)
 
         # Extract the states
-        data_sim = data_sim[:, : self._env_spec.state_space.flat_dim].numpy()
-        data_real = data_real[:, : self._env_spec.state_space.flat_dim].numpy()
+        if self._idcs_data is not None:
+            data_sim = data_sim[:, self._idcs_data]
+            data_real = data_real[:, self._idcs_data]
+        else:
+            data_sim = data_sim[:, : self._env_spec.state_space.flat_dim]
+            data_real = data_real[:, : self._env_spec.state_space.flat_dim]
 
         # Use the dtw package to compute the distance using the specified metric
+        data_sim, data_real = data_sim.numpy(), data_real.numpy()
         alignment = dtw(
             data_sim,
             data_real,

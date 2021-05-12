@@ -101,12 +101,12 @@ if __name__ == "__main__":
         num_workers=12,
     )
     algo = BayesSim(
-        ex_dir,
-        env_sim,
-        env_real,
-        policy,
-        dp_mapping,
-        prior,
+        save_dir=ex_dir,
+        env_sim=env_sim,
+        env_real=env_real,
+        policy=policy,
+        dp_mapping=dp_mapping,
+        prior=prior,
         **algo_hparam,
     )
 

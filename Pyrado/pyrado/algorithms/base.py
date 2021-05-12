@@ -218,8 +218,8 @@ class Algorithm(ABC, LoggerAware):
         Initialize the algorithm's learnable modules, e.g. a policy or value function.
         Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.
 
-        :param warmstart: if `True`, the algorithm starts learning with an initialization. This can either be the a
-                          fixed parameter vector, or the results of the previous iteration
+        :param warmstart: if `True`, the algorithm starts learning with a non-random initialization. This can either
+                          be the a fixed parameter vector, or the loaded results of the previous iteration.
         :param suffix: keyword for `meta_info` when loading from previous iteration
         :param prefix: keyword for `meta_info` when loading from previous iteration
         :param kwargs: keyword arguments for initialization, e.g. `policy_param_init` or `valuefcn_param_init`

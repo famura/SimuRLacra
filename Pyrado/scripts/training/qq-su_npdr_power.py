@@ -46,7 +46,6 @@ from pyrado.sampling.sbi_embeddings import (
     DynamicTimeWarpingEmbedding,
     RNNEmbedding,
 )
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.sbi import create_embedding
 
@@ -63,6 +62,7 @@ if __name__ == "__main__":
         len_seg_str = f"lensegs-{args.len_segments}"
     else:
         raise pyrado.ValueErr(msg="Either num_segments or len_segments must not be None, but not both or none!")
+    num_eval_samples = args.num_samples or 50
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
@@ -71,35 +71,20 @@ if __name__ == "__main__":
         num_segs_str + len_seg_str + seed_str,
     )
 
-    t_end = 5.5  # s
-    num_workers = 8
-
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
+    env_sim_hparams = dict(dt=1 / 250.0, max_steps=int(5.5 * 250))
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
 
     # Create the ground truth target domain and the behavioral policy
-    num_real_rollouts = 2
+    num_real_rollouts = 1
     env_real = QQubeSwingUpReal(**env_sim_hparams)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {
-        0: "Dr",
-        1: "Dp",
-        2: "Rm",
-        3: "km",
-        4: "Mr",
-        5: "Mp",
-        6: "Lr",
-        7: "Lp",
-        8: "g",
-        9: "V_thold_neg",
-        10: "V_thold_pos",
-    }
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
@@ -108,30 +93,28 @@ if __name__ == "__main__":
             [
                 dp_nom["Dr"] * 0,
                 dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.6,
-                dp_nom["km"] * 0.6,
-                dp_nom["Mr"] * 0.7,
-                dp_nom["Mp"] * 0.7,
-                dp_nom["Lr"] * 0.7,
-                dp_nom["Lp"] * 0.7,
-                dp_nom["g"] * 0.95,
-                -0.15,
-                0.0,
+                dp_nom["Rm"] * 0.1,
+                dp_nom["km"] * 0.2,
+                dp_nom["Mr"] * 0.3,
+                dp_nom["Mp"] * 0.3,
+                dp_nom["Lr"] * 0.5,
+                dp_nom["Lp"] * 0.5,
+                dp_nom["g"] * 0.85,
+                0,
             ]
         ),
         high=to.tensor(
             [
-                2 * 0.0015,
-                2 * 0.0005,
-                dp_nom["Rm"] * 1.4,
-                dp_nom["km"] * 1.4,
-                dp_nom["Mr"] * 1.3,
-                dp_nom["Mp"] * 1.3,
-                dp_nom["Lr"] * 1.3,
-                dp_nom["Lp"] * 1.3,
-                dp_nom["g"] * 1.05,
-                0,
-                0.15,
+                dp_nom["Dr"] * 5,
+                dp_nom["Dp"] * 50,
+                dp_nom["Rm"] * 1.9,
+                dp_nom["km"] * 1.8,
+                dp_nom["Mr"] * 1.7,
+                dp_nom["Mp"] * 1.7,
+                dp_nom["Lr"] * 1.5,
+                dp_nom["Lp"] * 1.5,
+                dp_nom["g"] * 1.15,
+                5,
             ]
         ),
     )
@@ -157,41 +140,42 @@ if __name__ == "__main__":
         max_iter=5,
         pop_size=50,
         num_init_states_per_domain=4,
-        num_domains=50,
+        num_domains=num_eval_samples,
         num_is_samples=10,
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=num_workers,
+        num_workers=args.num_workers,
     )
     subrtn_policy = PoWER(ex_dir, env_sim, policy, **subrtn_policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=1,
+        max_iter=5,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=500,
-        num_sbi_rounds=5,
+        num_sim_per_round=5000,
+        num_sbi_rounds=3,
         simulation_batch_size=10,
         normalize_posterior=False,
-        num_eval_samples=50,
+        num_eval_samples=num_eval_samples,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
         use_rec_act=True,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
-            num_atoms=20,  # default: 10
+            num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
             learning_rate=3e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
-            stop_after_epochs=20,  # default: 20
+            stop_after_epochs=10,  # default: 20
             discard_prior_samples=False,  # default: False
             use_combined_loss=True,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        num_workers=num_workers,
+        subrtn_policy_snapshot_mode="best",
+        num_workers=args.num_workers,
     )
     algo = NPDR(
         ex_dir,
@@ -204,7 +188,6 @@ if __name__ == "__main__":
         embedding,
         **algo_hparam,
         subrtn_policy=subrtn_policy,
-        subrtn_policy_snapshot_mode="best",
     )
 
     # Save the hyper-parameters
@@ -213,6 +196,7 @@ if __name__ == "__main__":
         dict(prior=prior_hparam),
         dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(posterior_nn=posterior_hparam),
+        dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

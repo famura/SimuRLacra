@@ -27,23 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-from typing import Mapping, Optional, Type, Union
 
 import torch as to
 from sbi.inference.base import simulate_for_sbi
-from sbi.inference.snpe import PosteriorEstimator
-from torch.distributions import Distribution
 
 import pyrado
-from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.algorithms.utils import until_thold_exceeded
-from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environments.base import Env
-from pyrado.environments.sim_base import SimEnv
-from pyrado.logger.step import StepLogger
-from pyrado.policies.base import Policy
-from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.utils.input_output import print_cbt
 
 
@@ -53,112 +43,10 @@ class NPDR(SBIBase):
     name: str = "npdr"
     iteration_key: str = "npdr_iteration"  # logger's iteration key
 
-    def __init__(
-        self,
-        save_dir: pyrado.PathLike,
-        env_sim: Union[SimEnv, EnvWrapper],
-        env_real: Union[Env, str],
-        policy: Policy,
-        dp_mapping: Mapping[int, str],
-        prior: Distribution,
-        subrtn_sbi_class: Type[PosteriorEstimator],
-        embedding: Embedding,
-        max_iter: int,
-        num_real_rollouts: int,
-        num_sim_per_round: int,
-        num_segments: int = None,
-        len_segments: int = None,
-        use_rec_act: bool = True,
-        num_sbi_rounds: int = 1,
-        num_eval_samples: Optional[int] = None,
-        posterior_hparam: Optional[dict] = None,
-        subrtn_sbi_training_hparam: Optional[dict] = None,
-        subrtn_sbi_sampling_hparam: Optional[dict] = None,
-        simulation_batch_size: int = 1,
-        normalize_posterior: bool = True,
-        subrtn_policy: Optional[Algorithm] = None,
-        subrtn_policy_snapshot_mode: str = "latest",
-        thold_succ_subrtn: float = -pyrado.inf,
-        num_workers: int = 4,
-        logger: Optional[StepLogger] = None,
-    ):
-        """
-        Constructor
-
-        :param save_dir: directory to save the snapshots i.e. the results in
-        :param env_sim: randomized simulation environment a.k.a. source domain
-        :param env_real: real-world environment a.k.a. target domain, this can be a `RealEnv` (sim-to-real setting), a
-                         `SimEnv` (sim-to-sim setting), or a directory to load a pre-recorded set of rollouts from
-        :param policy: policy used for sampling the rollouts at the beginning of each iteration. If `subrtn_policy` is
-                       not `None` this policy is also trained after the inference step in every NPDR iteration.
-        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
-        :param prior: distribution used by sbi as a prior
-        :param subrtn_sbi_class: sbi algorithm calls for executing the LFI, e.g. SNPE
-        :param embedding: embedding used for pre-processing the data before passing it to the posterior
-        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_real_rollouts: number of real-world rollouts received by sbi, i.e. from every rollout exactly one
-                                  data set is computed
-        :param num_sim_per_round: number of simulations done by sbi per round (i.e. iteration over the same target
-                                  domain data set)
-        :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
-                            state of the simulation is reset, and thus for every set the features of the trajectories
-                            are computed separately. Either specify `num_segments` or `len_segments`.
-        :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout
-                            during simulation (feed-forward). If `False` there policy is used to generate (potentially)
-                            state-dependent actions (feed-back).
-        :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
-                             state of the simulation is reset, and thus for every set the features of the trajectories
-                             are computed separately. Either specify `num_segments` or `len_segments`.
-        :param num_sbi_rounds: set to an integer > 1 to use multi-round sbi. This way the posteriors (saved as
-                               `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`
-                               counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior
-                               is called amortized (it has never seen any target domain data).
-        :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
-        :param posterior_hparam: hyper parameters for creating the posterior's density estimator
-        :param subrtn_sbi_training_hparam: dict forwarded to sbi's `PosteriorEstimator.train()` function like
-                                           `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
-        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
-                                          `sample_with_mcmc`, ect.
-        :param simulation_batch_size: batch size forwarded to the sbi toolbox, requires batched simulator
-        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
-        :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
-        :param subrtn_policy_snapshot_mode: snapshot mode for saving during policy optimization
-        :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
-                                  subroutine until the threshold is exceeded or the for a given number of iterations
-        :param num_workers: number of environments for parallel sampling
-        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
-        """
+    def __init__(self, *args, **kwargs):
+        """Constructor forwarding everything to the superclass"""
         # Call SBIBase's constructor
-        super().__init__(
-            num_checkpoints=3,
-            init_checkpoint=-1,
-            save_dir=save_dir,
-            env_sim=env_sim,
-            env_real=env_real,
-            policy=policy,
-            dp_mapping=dp_mapping,
-            prior=prior,
-            subrtn_sbi_class=subrtn_sbi_class,
-            embedding=embedding,
-            max_iter=max_iter,
-            num_real_rollouts=num_real_rollouts,
-            num_sim_per_round=num_sim_per_round,
-            num_segments=num_segments,
-            len_segments=len_segments,
-            use_rec_act=use_rec_act,
-            num_sbi_rounds=num_sbi_rounds,
-            num_eval_samples=num_eval_samples,
-            posterior_hparam=posterior_hparam,
-            subrtn_sbi_training_hparam=subrtn_sbi_training_hparam,
-            subrtn_sbi_sampling_hparam=subrtn_sbi_sampling_hparam,
-            simulation_batch_size=simulation_batch_size,
-            normalize_posterior=normalize_posterior,
-            subrtn_policy=subrtn_policy,
-            subrtn_policy_snapshot_mode=subrtn_policy_snapshot_mode,
-            thold_succ_subrtn=thold_succ_subrtn,
-            num_workers=num_workers,
-            logger=logger,
-        )
+        super().__init__(*args, num_checkpoints=3, init_checkpoint=-1, **kwargs)
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
@@ -237,7 +125,9 @@ class NPDR(SBIBase):
 
                 # Train the posterior
                 density_estimator = self._subrtn_sbi.train(**self.subrtn_sbi_training_hparam)
-                posterior = self._subrtn_sbi.build_posterior(density_estimator, **self.subrtn_sbi_sampling_hparam)
+                posterior = self._subrtn_sbi.build_posterior(
+                    density_estimator=density_estimator, **self.subrtn_sbi_sampling_hparam
+                )
 
                 # Save the posterior of this iteration before tailoring it to the data (when it is still amortized)
                 if idx_r == 0:

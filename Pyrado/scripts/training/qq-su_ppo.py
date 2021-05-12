@@ -40,6 +40,7 @@ from pyrado.environment_wrappers.observation_velfilter import ObsVelFiltWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.recurrent.rnn import GRUPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
@@ -48,9 +49,16 @@ from pyrado.utils.data_types import EnvSpec
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
+    if args.mode is None or args.mode.lower() == FNNPolicy.name:
+        pol_str = FNNPolicy.name
+    elif args.mode.lower() == GRUPolicy.name:
+        pol_str = GRUPolicy.name
+    else:
+        raise pyrado.ValueErr(given=args.mode, eq_constraint=f"{FNNPolicy.name}, {GRUPolicy.name}, or None")
+    seed_str = f"seed-{args.seed}" if args.seed is not None else None
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PPO.name}_{FNNPolicy.name}", f"100Hz_seed_{args.seed}")
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PPO.name}_{pol_str}", seed_str)
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -62,16 +70,20 @@ if __name__ == "__main__":
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
-    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
-    policy = FNNPolicy(spec=env.spec, **policy_hparam)
-    # policy = GRUPolicy(spec=env.spec, **policy_hparam)
+    if args.mode is None or args.mode.lower() == FNNPolicy.name:
+        policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+        policy = FNNPolicy(spec=env.spec, **policy_hparam)
+    elif args.mode.lower() == GRUPolicy.name:
+        policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)
+        policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
-    # vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
-    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
-    # vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    if isinstance(policy, FNNPolicy):
+        vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
+        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    elif isinstance(policy, GRUPolicy):
+        vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+        vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9844224855479998,
         lamda=0.9700148505302241,
@@ -87,7 +99,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=200,
+        max_iter=200 if policy.name == FNNPolicy.name else 75,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,

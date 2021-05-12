@@ -27,21 +27,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-from typing import Mapping, Optional, Union
+from typing import Union
 
 import torch as to
 from sbi.inference import SNPE_C
 from sbi.inference.base import simulate_for_sbi
-from torch.distributions import Distribution
 
 import pyrado
-from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
@@ -69,75 +65,18 @@ class BayesSim(SBIBase):
     name = "bayessim"
     iteration_key = "bayessim_iteration"
 
-    def __init__(
-        self,
-        save_dir: pyrado.PathLike,
-        env_sim: Union[SimEnv, EnvWrapper],
-        env_real: Union[Env, str],
-        policy: Policy,
-        dp_mapping: Mapping[int, str],
-        prior: Distribution,
-        num_real_rollouts: int,
-        num_sim_per_round: int,
-        num_segments: int = None,
-        len_segments: int = None,
-        num_sbi_rounds: int = 1,
-        downsampling_factor: int = 1,
-        num_eval_samples: Optional[int] = None,
-        posterior_hparam: Optional[dict] = None,
-        subrtn_sbi_training_hparam: Optional[dict] = None,
-        subrtn_sbi_sampling_hparam: Optional[dict] = None,
-        simulation_batch_size: int = 1,
-        normalize_posterior: bool = True,
-        subrtn_policy: Optional[Algorithm] = None,
-        subrtn_policy_snapshot_mode: str = "latest",
-        thold_succ_subrtn: float = -pyrado.inf,
-        num_workers: int = 4,
-        logger: Optional[StepLogger] = None,
-    ):
+    def __init__(self, env_sim: Union[SimEnv, EnvWrapper], policy: Policy, downsampling_factor: int = 1, **kwargs):
         """
         Constructor
 
-        :param save_dir: directory to save the snapshots i.e. the results in
         :param env_sim: randomized simulation environment a.k.a. source domain
-        :param env_real: real-world environment a.k.a. target domain, this can be a `RealEnv` (sim-to-real setting), a
-                         `SimEnv` (sim-to-sim setting), or a directory to load a pre-recorded set of rollouts from
         :param policy: policy used for sampling the rollouts in the target domain at the beginning of each iteration.
                        If `subrtn_policy` is not `None` this policy is also trained at the very last iteration.
-        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
-        :param prior: distribution used by sbi as a prior
-        :param num_real_rollouts: number of real-world rollouts received by sbi, i.e. from every rollout exactly one
-                                  data set is computed
-        :param num_sim_per_round: number of simulations done by sbi per round (i.e. iteration over the same target
-                                  domain data set)
-        :param num_segments: length of the segments in which the rollouts are split into. For every segment, the initial
-                            state of the simulation is reset, and thus for every set the features of the trajectories
-                            are computed separately. Either specify `num_segments` or `len_segments`.
-        :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
-                             state of the simulation is reset, and thus for every set the features of the trajectories
-                             are computed separately. Either specify `num_segments` or `len_segments`.
-        :param num_sbi_rounds: set to an integer > 1 to use multi-round sbi. This way the posteriors (saved as
-                               `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`
-                               counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior
-                               is called amortized (it has never seen any target domain data).
         :param downsampling_factor: downsampling factor for the embedding which is used for pre-processing the data
                                     before passing it to the posterior, 1 means no downsampling
-        :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
-        :param posterior_hparam: hyper parameters for creating the posterior's density estimator
-        :param subrtn_sbi_training_hparam: dict forwarded to sbi's `PosteriorEstimator.train()` function like
-                                           `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
-        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
-                                          `sample_with_mcmc`, ect.
-        :param simulation_batch_size: batch size forwarded to the sbi toolbox, requires batched simulator
-        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
-        :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
-        :param subrtn_policy_snapshot_mode: snapshot mode for saving during policy optimization
-        :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
-                                  subroutine until the threshold is exceeded or the for a given number of iterations
-        :param num_workers: number of environments for parallel sampling
-        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        :param kwargs: forwarded the superclass constructor
         """
-        # Construct the embedding from [1]
+        # Construct the same embedding as in [1]
         embedding = BayesSimEmbedding(
             spec=env_sim.spec,
             dim_data=RolloutSamplerForSBI.get_dim_data(env_sim.spec),
@@ -147,34 +86,15 @@ class BayesSim(SBIBase):
 
         # Call SBIBase's constructor
         super().__init__(
-            num_checkpoints=3,
-            init_checkpoint=0,
-            save_dir=save_dir,
             env_sim=env_sim,
-            env_real=env_real,
             policy=policy,
-            dp_mapping=dp_mapping,
-            prior=prior,
             subrtn_sbi_class=SNPE_C,  # TODO replace by SNPE-A when available
             embedding=embedding,
+            num_checkpoints=3,
+            init_checkpoint=0,
             max_iter=1,  # BayesSim only runs SNPE-A (could be multi-round) once on the initially collected trajectories
-            num_real_rollouts=num_real_rollouts,
-            num_sim_per_round=num_sim_per_round,
-            num_segments=num_segments,
-            len_segments=len_segments,
             use_rec_act=True,  # BayesSim requires the trajectories to be recorded beforehand
-            num_sbi_rounds=num_sbi_rounds,
-            num_eval_samples=num_eval_samples,
-            posterior_hparam=posterior_hparam,
-            subrtn_sbi_training_hparam=subrtn_sbi_training_hparam,
-            subrtn_sbi_sampling_hparam=subrtn_sbi_sampling_hparam,
-            simulation_batch_size=simulation_batch_size,
-            normalize_posterior=normalize_posterior,
-            subrtn_policy=subrtn_policy,
-            subrtn_policy_snapshot_mode=subrtn_policy_snapshot_mode,
-            thold_succ_subrtn=thold_succ_subrtn,
-            num_workers=num_workers,
-            logger=logger,
+            **kwargs,
         )
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):

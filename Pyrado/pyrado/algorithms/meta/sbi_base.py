@@ -81,8 +81,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
     def __init__(
         self,
-        num_checkpoints: int,
-        init_checkpoint: int,
         save_dir: pyrado.PathLike,
         env_sim: SimEnv,
         env_real: Union[Env, str],
@@ -91,6 +89,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
         prior: Distribution,
         subrtn_sbi_class: Type[PosteriorEstimator],
         embedding: Embedding,
+        num_checkpoints: int,
+        init_checkpoint: int,
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_round: int,
@@ -107,15 +107,13 @@ class SBIBase(InterruptableAlgorithm, ABC):
         subrtn_policy: Optional[Algorithm] = None,
         subrtn_policy_snapshot_mode: str = "latest",
         thold_succ_subrtn: float = -pyrado.inf,
+        warmstart: bool = True,
         num_workers: int = 4,
         logger: Optional[StepLogger] = None,
     ):
         """
         Constructor
 
-        :param num_checkpoints: total number of checkpoints
-        :param init_checkpoint: initial value of the cyclic counter, defaults to 0, use negative values can to mark
-                                sections that should only be executed once
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env_sim: randomized simulation environment a.k.a. source domain
         :param env_real: real-world environment a.k.a. target domain, this can be a `RealEnv` (sim-to-real setting), a
@@ -126,6 +124,9 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param prior: distribution used by sbi as a prior
         :param subrtn_sbi_class: sbi algorithm calls for executing the LFI, e.g. SNPE
         :param embedding: embedding used for pre-processing the data before passing it to the posterior
+        :param num_checkpoints: total number of checkpoints
+        :param init_checkpoint: initial value of the cyclic counter, defaults to 0, use negative values can to mark
+                                sections that should only be executed once
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_real_rollouts: number of real-world rollouts received by sbi, i.e. from every rollout exactly one
                                   data set is computed
@@ -155,6 +156,9 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param subrtn_policy_snapshot_mode: snapshot mode for saving during policy optimization
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
                                   subroutine until the threshold is exceeded or the for a given number of iterations
+        :param warmstart: initialize the policy (and value function) parameters with the one of the previous iteration.
+                          This behavior can also be overruled by passing `init_policy_params` (and
+                          `valuefcn_param_init`) explicitly.
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
@@ -206,11 +210,18 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.simulation_batch_size = simulation_batch_size
         self.normalize_posterior = normalize_posterior
         self.subrtn_sbi_training_hparam = subrtn_sbi_training_hparam or dict()
-        self.subrtn_sbi_sampling_hparam = subrtn_sbi_sampling_hparam or dict()
         self.posterior_hparam = posterior_hparam or dict()
         self.thold_succ_subrtn = float(thold_succ_subrtn)
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
+        self.warmstart = warmstart
         self.num_workers = int(num_workers)
+
+        # Merge the custom sbi sampling hyper-parameters with the ones explicitly provided
+        default_sampling_hparam = dict(
+            mcmc_method="slice_np_vectorized",
+            mcmc_parameters=dict(warmup_steps=50, num_chains=100, init_strategy="sir"),  # default: slice_np, 20
+        )
+        self.subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
 
         # Temporary containers
         self._curr_data_real = None
@@ -225,8 +236,14 @@ class SBIBase(InterruptableAlgorithm, ABC):
         density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
+        # if self.subrtn_sbi_class == SNPE_A:
+        #     assert self.posterior_hparam["num_components"]
         self._subrtn_sbi = self.subrtn_sbi_class(
-            prior=self._sbi_prior, density_estimator=density_estimator, summary_writer=summary_writer
+            prior=self._sbi_prior,
+            density_estimator=density_estimator,
+            summary_writer=summary_writer,
+            # num_rounds=self.num_sbi_rounds,
+            # num_components=self.posterior_hparam["num_components"] if self.subrtn_sbi_class == SNPE_A else None,
         )
 
         # Optional policy optimization subroutine
@@ -483,7 +500,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Sample domain parameters for all batches and stack them
         default_sampling_hparam = dict(
-            mcmc_method="slice_np", mcmc_parameters=dict(warmup_steps=30)  # default: slice_np, 20
+            mcmc_method="slice_np_vectorized",
+            mcmc_parameters=dict(warmup_steps=50, num_chains=100, init_strategy="sir"),  # default: slice_np, 20
         )
         subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
         domain_params = to.stack(
@@ -714,12 +732,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
         else:
             raise pyrado.KeyErr(keys="sampler", container=self._subrtn_policy)
 
-        # Do a warm start if desired, but randomly reset the policy parameters if training failed once
-        # self._subrtn_policy.init_modules(
-        #     self.warmstart and cnt_rep == 0,
-        #     policy_param_init=self.policy_param_init,
-        #     valuefcn_param_init=self.valuefcn_param_init,
-        # )
+        # Do a warm start, but randomly reset the policy parameters if training failed once
+        self._subrtn_policy.init_modules(self.warmstart and cnt_rep == 0)
 
         # Train a policy in simulation using the subroutine
         self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))

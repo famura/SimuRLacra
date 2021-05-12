@@ -98,8 +98,9 @@ class SimOpt(InterruptableAlgorithm):
         :param thold_succ: success threshold on the real system's return for BayRn, stop the algorithm if exceeded
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subrtn, repeat the
                                       subrtn until the threshold is exceeded or the for a given number of iterations
-        :param warmstart: initialize the policy parameters with the one of the previous iteration. This option has no
-                          effect for initial policies and can be overruled by passing init policy params explicitly.
+        :param warmstart: initialize the policy (and value function) parameters with the one of the previous iteration.
+                          This behavior can also be overruled by passing `init_policy_params` (and
+                          `valuefcn_param_init`) explicitly.
         :param policy_param_init: initial policy parameter values for the subrtn, set `None` to be random
         :param valuefcn_param_init: initial value function parameter values for the subrtn, set `None` to be random
         :param subrtn_snapshot_mode: snapshot mode for saving during training of the subrtn
