@@ -4,9 +4,10 @@
 <area shape="rect" id="node4" href="$classRcs_1_1ECBoxFlipping.html" title="Rcs::ECBoxFlipping" alt="" coords="221,107,363,133"/>
 <area shape="rect" id="node5" href="$classRcs_1_1ECBoxLifting.html" title="Rcs::ECBoxLifting" alt="" coords="227,157,357,184"/>
 <area shape="rect" id="node6" href="$classRcs_1_1ECBoxShelving.html" title="Rcs::ECBoxShelving" alt="" coords="219,208,365,235"/>
-<area shape="rect" id="node7" href="$classRcs_1_1ECMPblending.html" title="Rcs::ECMPblending" alt="" coords="221,259,363,285"/>
-<area shape="rect" id="node8" href="$classRcs_1_1ECPlanar3Link.html" title="Rcs::ECPlanar3Link" alt="" coords="221,309,363,336"/>
-<area shape="rect" id="node9" href="$classRcs_1_1ECPlanarInsert.html" title="Rcs::ECPlanarInsert" alt="" coords="221,360,363,387"/>
-<area shape="rect" id="node10" href="$classRcs_1_1ECQuanserQube.html" title="Rcs::ECQuanserQube" alt="" coords="215,411,369,437"/>
-<area shape="rect" id="node11" href="$classRcs_1_1ECTargetTracking.html" title="Rcs::ECTargetTracking" alt="" coords="212,461,372,488"/>
+<area shape="rect" id="node7" href="$classRcs_1_1ECMiniGolf.html" title="Rcs::ECMiniGolf" alt="" coords="231,259,353,285"/>
+<area shape="rect" id="node8" href="$classRcs_1_1ECMPblending.html" title="Rcs::ECMPblending" alt="" coords="221,309,363,336"/>
+<area shape="rect" id="node9" href="$classRcs_1_1ECPlanar3Link.html" title="Rcs::ECPlanar3Link" alt="" coords="221,360,363,387"/>
+<area shape="rect" id="node10" href="$classRcs_1_1ECPlanarInsert.html" title="Rcs::ECPlanarInsert" alt="" coords="221,411,363,437"/>
+<area shape="rect" id="node11" href="$classRcs_1_1ECQuanserQube.html" title="Rcs::ECQuanserQube" alt="" coords="215,461,369,488"/>
+<area shape="rect" id="node12" href="$classRcs_1_1ECTargetTracking.html" title="Rcs::ECTargetTracking" alt="" coords="212,512,372,539"/>
 </map>

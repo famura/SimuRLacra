@@ -16,6 +16,7 @@ var dir_f66444a5a09ecfc2fd30d78607e90727 =
     [ "ECBoxFlipping.cpp", "ECBoxFlipping_8cpp.html", "ECBoxFlipping_8cpp" ],
     [ "ECBoxLifting.cpp", "ECBoxLifting_8cpp.html", "ECBoxLifting_8cpp" ],
     [ "ECBoxShelving.cpp", "ECBoxShelving_8cpp.html", "ECBoxShelving_8cpp" ],
+    [ "ECMiniGolf.cpp", "ECMiniGolf_8cpp.html", "ECMiniGolf_8cpp" ],
     [ "ECMPBlending.cpp", "ECMPBlending_8cpp.html", "ECMPBlending_8cpp" ],
     [ "ECPlanar3Link.cpp", "ECPlanar3Link_8cpp.html", "ECPlanar3Link_8cpp" ],
     [ "ECPlanarInsert.cpp", "ECPlanarInsert_8cpp.html", "ECPlanarInsert_8cpp" ],

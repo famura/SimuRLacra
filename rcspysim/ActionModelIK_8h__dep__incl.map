@@ -13,11 +13,12 @@
 <area shape="rect" id="node15" href="$AMPlatePos5D_8h.html" title="src/cpp/core/action\l/AMPlatePos5D.h" alt="" coords="1637,95,1770,136"/>
 <area shape="rect" id="node17" href="$OMManipulabilityIndex_8h.html" title="src/cpp/core/observation\l/OMManipulabilityIndex.h" alt="" coords="1133,95,1303,136"/>
 <area shape="rect" id="node18" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="1829,191,2044,218"/>
-<area shape="rect" id="node20" href="$ECTargetTracking_8cpp.html" title="src/cpp/core/ECTargetTracking.cpp" alt="" coords="1794,102,2023,129"/>
-<area shape="rect" id="node21" href="$OMDynamicalSystemDiscrepancy_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.cpp" alt="" coords="2048,95,2300,136"/>
-<area shape="rect" id="node22" href="$OMDynamicalSystemGoalDistance_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.cpp" alt="" coords="2325,95,2583,136"/>
-<area shape="rect" id="node23" href="$RcsSimEnv_8cpp.html" title="src/cpp/core/RcsSimEnv.cpp" alt="" coords="2608,102,2801,129"/>
-<area shape="rect" id="node24" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="2825,102,3080,129"/>
+<area shape="rect" id="node20" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="1795,102,1985,129"/>
+<area shape="rect" id="node21" href="$ECTargetTracking_8cpp.html" title="src/cpp/core/ECTargetTracking.cpp" alt="" coords="2010,102,2239,129"/>
+<area shape="rect" id="node22" href="$OMDynamicalSystemDiscrepancy_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.cpp" alt="" coords="2264,95,2516,136"/>
+<area shape="rect" id="node23" href="$OMDynamicalSystemGoalDistance_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.cpp" alt="" coords="2541,95,2799,136"/>
+<area shape="rect" id="node24" href="$RcsSimEnv_8cpp.html" title="src/cpp/core/RcsSimEnv.cpp" alt="" coords="2824,102,3017,129"/>
+<area shape="rect" id="node25" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="3041,102,3296,129"/>
 <area shape="rect" id="node13" href="$AMPlateAngPos_8cpp.html" title="src/cpp/core/action\l/AMPlateAngPos.cpp" alt="" coords="2069,184,2215,225"/>
 <area shape="rect" id="node14" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="2239,191,2450,218"/>
 <area shape="rect" id="node16" href="$AMPlatePos5D_8cpp.html" title="src/cpp/core/action\l/AMPlatePos5D.cpp" alt="" coords="2474,184,2615,225"/>

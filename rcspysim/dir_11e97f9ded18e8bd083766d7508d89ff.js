@@ -24,6 +24,10 @@ var dir_11e97f9ded18e8bd083766d7508d89ff =
     [ "ISSBoxShelving.h", "ISSBoxShelving_8h.html", [
       [ "ISSBoxShelving", "classRcs_1_1ISSBoxShelving.html", "classRcs_1_1ISSBoxShelving" ]
     ] ],
+    [ "ISSMiniGolf.cpp", "ISSMiniGolf_8cpp.html", null ],
+    [ "ISSMiniGolf.h", "ISSMiniGolf_8h.html", [
+      [ "ISSMiniGolf", "classRcs_1_1ISSMiniGolf.html", "classRcs_1_1ISSMiniGolf" ]
+    ] ],
     [ "ISSMPBlending.cpp", "ISSMPBlending_8cpp.html", null ],
     [ "ISSMPBlending.h", "ISSMPBlending_8h.html", [
       [ "ISSMPBlending", "classRcs_1_1ISSMPBlending.html", "classRcs_1_1ISSMPBlending" ]

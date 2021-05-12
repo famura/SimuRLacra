@@ -10,6 +10,7 @@ var searchData=
   ['regboxlifting',['RegBoxLifting',['../namespaceRcs.html#a1bbcf97343212d670518e82fcacfc1f9',1,'Rcs']]],
   ['regboxshelving',['RegBoxShelving',['../namespaceRcs.html#a6cbb6168cfa50aac8358cee7394fbdbd',1,'Rcs']]],
   ['registry',['registry',['../namespaceRcs.html#a53f81200cc93bb395e429dcee62d6ffa',1,'Rcs::registry()'],['../namespaceRcs.html#a870ea68705b1e797dfea34d440d4245f',1,'Rcs::registry()']]],
+  ['regminigolf',['RegMiniGolf',['../namespaceRcs.html#aa815b5768bdab68b0c17214dc104c587',1,'Rcs']]],
   ['regmpblending',['RegMPBlending',['../namespaceRcs.html#a039b4c8a5cb20e7a314c47ce4dc66653',1,'Rcs']]],
   ['regplanar3link',['RegPlanar3Link',['../namespaceRcs.html#a0b5cbf8cfe23ef52feb2abfb28766bf0',1,'Rcs']]],
   ['regplanarinsert',['RegPlanarInsert',['../namespaceRcs.html#ad67b7b6aa523cbb7a43d281510ab3d7f',1,'Rcs']]],

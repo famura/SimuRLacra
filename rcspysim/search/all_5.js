@@ -10,6 +10,8 @@ var searchData=
   ['ecboxlifting_2ecpp',['ECBoxLifting.cpp',['../ECBoxLifting_8cpp.html',1,'']]],
   ['ecboxshelving',['ECBoxShelving',['../classRcs_1_1ECBoxShelving.html',1,'Rcs']]],
   ['ecboxshelving_2ecpp',['ECBoxShelving.cpp',['../ECBoxShelving_8cpp.html',1,'']]],
+  ['ecminigolf',['ECMiniGolf',['../classRcs_1_1ECMiniGolf.html',1,'Rcs']]],
+  ['ecminigolf_2ecpp',['ECMiniGolf.cpp',['../ECMiniGolf_8cpp.html',1,'']]],
   ['ecmpblending',['ECMPblending',['../classRcs_1_1ECMPblending.html',1,'Rcs']]],
   ['ecmpblending_2ecpp',['ECMPBlending.cpp',['../ECMPBlending_8cpp.html',1,'']]],
   ['ecplanar3link',['ECPlanar3Link',['../classRcs_1_1ECPlanar3Link.html',1,'Rcs']]],

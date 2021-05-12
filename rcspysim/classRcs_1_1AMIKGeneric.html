@@ -192,6 +192,10 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_classRcs_1_1ActionModelIK"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classRcs_1_1ActionModelIK')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classRcs_1_1ActionModelIK.html">Rcs::ActionModelIK</a></td></tr>
 <tr class="memitem:ab563f58e2df2c6f4e0f7c23d93257416 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#ab563f58e2df2c6f4e0f7c23d93257416">addTask</a> (Task *task)</td></tr>
 <tr class="separator:ab563f58e2df2c6f4e0f7c23d93257416 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42021dbe312d14921f1fa60941146c95 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a42021dbe312d14921f1fa60941146c95">addFixedTask</a> (Task *task, MatNd *value)</td></tr>
+<tr class="separator:a42021dbe312d14921f1fa60941146c95 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a894b0cfed20a52a1a42ec6b540644706 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a894b0cfed20a52a1a42ec6b540644706">getNumActiveTasks</a> () const</td></tr>
+<tr class="separator:a894b0cfed20a52a1a42ec6b540644706 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1912eb532fb3c1b87c2f2f38e2d8fc91 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a1912eb532fb3c1b87c2f2f38e2d8fc91">computeIK</a> (MatNd *q_des, MatNd *q_dot_des, MatNd *T_des, const MatNd *x_des, double dt)</td></tr>
 <tr class="separator:a1912eb532fb3c1b87c2f2f38e2d8fc91 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d6eb4d751fababd30aff6838f5213b8 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a9d6eb4d751fababd30aff6838f5213b8">computeIKVel</a> (MatNd *q_des, MatNd *q_dot_des, MatNd *T_des, const MatNd *x_dot_des, double dt)</td></tr>
@@ -218,7 +222,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Here, the action is used directly as desired task space state for the IK. You need to add your tasks to the controller before using it: </p><pre class="fragment">AMIKGeneric* am = new AMIKGeneric(graph);
 am-&gt;addTask(new TaskXY(...));
 am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre> 
-<p class="definition">Definition at line <a class="el" href="ActionModelIK_8h_source.html#l00156">156</a> of file <a class="el" href="ActionModelIK_8h_source.html">ActionModelIK.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ActionModelIK_8h_source.html#l00165">165</a> of file <a class="el" href="ActionModelIK_8h_source.html">ActionModelIK.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a260058d1d7d18b196576795eb7e31cef"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a260058d1d7d18b196576795eb7e31cef">&#9670;&nbsp;</a></span>clone()</h2>
@@ -253,7 +257,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 
 <p>Implements <a class="el" href="classRcs_1_1ActionModel.html#a9ea04a4154d537d2a66a4e85264742df">Rcs::ActionModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00323">323</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00356">356</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
 
 </div>
 </div>
@@ -323,7 +327,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 
 <p>Reimplemented in <a class="el" href="classRcs_1_1AMIKControllerActivation.html#ad0b13f5b3c58aa714f4198ff7a4bc7bd">Rcs::AMIKControllerActivation</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00310">310</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00333">333</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
 
 </div>
 </div>
@@ -356,7 +360,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 
 <p>Reimplemented in <a class="el" href="classRcs_1_1AMIKControllerActivation.html#a60a075969de0a00af8fa898d3aa8408e">Rcs::AMIKControllerActivation</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00278">278</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00301">301</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
 
 </div>
 </div>
@@ -407,7 +411,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 
 <p>Reimplemented in <a class="el" href="classRcs_1_1AMIKControllerActivation.html#a4160f51fe85481b743216f83dbee5f95">Rcs::AMIKControllerActivation</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00283">283</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00306">306</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
 
 </div>
 </div>
@@ -441,7 +445,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 
 <p>Reimplemented in <a class="el" href="classRcs_1_1AMIKControllerActivation.html#a2664c3616d8dbd5fb4c5ba22d7852901">Rcs::AMIKControllerActivation</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00297">297</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00320">320</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
 
 </div>
 </div>
@@ -479,7 +483,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 
 <p>Reimplemented in <a class="el" href="classRcs_1_1AMIKControllerActivation.html#ae154a2f0db4a6592b491d562a5f770c3">Rcs::AMIKControllerActivation</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00318">318</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ActionModelIK_8cpp_source.html#l00347">347</a> of file <a class="el" href="ActionModelIK_8cpp_source.html">ActionModelIK.cpp</a>.</p>
 
 </div>
 </div>
@@ -493,7 +497,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1AMIKGeneric.html">AMIKGeneric</a></li>
-    <li class="footer">Generated on Wed May 12 2021 16:23:09 for RcsPySim by
+    <li class="footer">Generated on Wed May 12 2021 16:24:35 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

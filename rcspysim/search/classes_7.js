@@ -6,6 +6,7 @@ var searchData=
   ['issboxflipping',['ISSBoxFlipping',['../classRcs_1_1ISSBoxFlipping.html',1,'Rcs']]],
   ['issboxlifting',['ISSBoxLifting',['../classRcs_1_1ISSBoxLifting.html',1,'Rcs']]],
   ['issboxshelving',['ISSBoxShelving',['../classRcs_1_1ISSBoxShelving.html',1,'Rcs']]],
+  ['issminigolf',['ISSMiniGolf',['../classRcs_1_1ISSMiniGolf.html',1,'Rcs']]],
   ['issmpblending',['ISSMPBlending',['../classRcs_1_1ISSMPBlending.html',1,'Rcs']]],
   ['issplanar3link',['ISSPlanar3Link',['../classRcs_1_1ISSPlanar3Link.html',1,'Rcs']]],
   ['issplanarinsert',['ISSPlanarInsert',['../classRcs_1_1ISSPlanarInsert.html',1,'Rcs']]],

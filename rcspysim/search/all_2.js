@@ -1,7 +1,7 @@
 var searchData=
 [
   ['backwardeuler',['BackwardEuler',['../namespaceRcs.html#a7588f75c5f32b3eb102fe1a7bfa7faf7a13994fc2e5f46621905dfaf24069d6a3',1,'Rcs']]],
-  ['ball',['ball',['../classRcs_1_1ISSBallOnPlate.html#aa82880712dab8239d393e99d80b65554',1,'Rcs::ISSBallOnPlate']]],
+  ['ball',['ball',['../classRcs_1_1ISSBallOnPlate.html#aa82880712dab8239d393e99d80b65554',1,'Rcs::ISSBallOnPlate::ball()'],['../classRcs_1_1ISSMiniGolf.html#afd0c151f9394f72c012e2fa1ddd59b88',1,'Rcs::ISSMiniGolf::ball()']]],
   ['ballradius',['ballRadius',['../classRcs_1_1OMBallPos.html#a114575d79916ba3188a12eb2f615eb95',1,'Rcs::OMBallPos']]],
   ['basefilename',['baseFileName',['../classRcs_1_1DataLogger.html#a9b72ee64b4657eb32a8efb451a833afe',1,'Rcs::DataLogger']]],
   ['bias',['bias',['../structRcs_1_1MLPPolicy_1_1MLPLayer.html#afd13e22f74c5c4bc59fbbe4cf233cd40',1,'Rcs::MLPPolicy::MLPLayer']]],
