@@ -253,6 +253,14 @@ class RolloutSavingWrapper:
     wrapped_sampler: SamplerBase
     rollouts: List[List[StepSequence]] = field(default_factory=list)
 
+    def __post_init__(self):
+        """
+        This method is called after the usual init method for the dataclass. Since wrapped_sampler is supposed to be
+        an instance of a `SamplerBase` it also implements `.register`, a method to create "virtual subclasses".
+        This lets `RolloutSavingWrapper` pass every `isinstance` check the `wrapped_sampler` would also pass.
+        """
+        self.wrapped_sampler.__class__.register(self.__class__)
+
     def sample(self, *args, **kwargs) -> List[StepSequence]:
         """Like `SamplerBase.sample()` but keeps a copy of all returned values."""
         sample = self.wrapped_sampler.sample(*args, **kwargs)
