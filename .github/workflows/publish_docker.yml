@@ -63,8 +63,6 @@ jobs:
           mkdir public
           export PUBLIC=$(realpath ./public)
           docker run --rm -u 1000:1000 -v $PUBLIC:/var/www ghcr.io/famura/simurlacra:sacher conda run -n pyrado bash -c "./build_docs.sh;sudo mkdir /var/www/pyrado; sudo cp -r Pyrado/doc/build/* /var/www/pyrado;mv RcsPySim/build/doc/html RcsPySim/build/doc/rcspysim; sudo cp -r RcsPySim/build/doc/rcspysim /var/www"
-          echo $PUBLIC
-          ls $PUBLIC quietioet
       - name: Deploy
         continue-on-error: true
         uses: JamesIves/github-pages-deploy-action@3.5.9
