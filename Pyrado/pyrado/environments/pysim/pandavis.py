@@ -610,7 +610,7 @@ class QCartPoleVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(0, -0.15 * self._scale, -3.0 * self._scale)
+        self.cam.setPos(-0.2 * self._scale, -3.0 * self._scale, 0)
 
         # Rail
         self.rail = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_grey.egg"))
@@ -633,7 +633,7 @@ class QCartPoleVis(PandaVis):
         # Pole
         self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_top_red.egg"))
         self.pole.setPos(x * self._scale, (-r_pole - h_cart / 2) * self._scale, 0)
-        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, 2 * l_pole * self._scale)
+        self.pole.setScale(r_pole * self._scale, r_pole * self._scale, l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
     def update(self, task: Task):

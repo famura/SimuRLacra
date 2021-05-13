@@ -311,9 +311,11 @@ def test_reset(env):
         "default_pend",
         "default_qbb",
         "default_qqsu",
+        "default_qqst",
+        "default_qcpsu",
         "default_qcpst",
     ],
-    ids=["bobd", "bob", "omo", "pend", "qbb", "qq-su", "qcp-st"],
+    ids=["bobd", "bob", "omo", "pend", "qbb", "qq-su", "qq-st", "qcp-su", "qcp-st"],
     indirect=True,
 )
 @pytest.mark.parametrize("use_render", [False], ids=["render_off"])
