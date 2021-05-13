@@ -4,9 +4,7 @@ on:
   workflow_run:
     workflows: ["Publish Docker Images"]
     branches: [cicd, master]
-    types:
-      - completed
-      - requested
+    types: [completed]
 
 jobs:
   build-docs:
