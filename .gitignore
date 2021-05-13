@@ -90,4 +90,5 @@ chrome.json
 MUJOCO_LOG.*
 
 ### sbi-logs
-Pyrado/sbi-logs/*
+Pyrado/sbi-logs/
+Pyrado/tests/sbi-logs/
