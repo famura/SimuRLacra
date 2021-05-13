@@ -26,6 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Mapping
+
 import numpy as np
 
 
@@ -130,6 +132,13 @@ def check_all_equal(iterable) -> bool:
         return True
 
     if isinstance(first, np.ndarray):
-        return all(np.allclose(first, rest) for rest in iterator)
+        try:
+            return all(np.allclose(first, rest) for rest in iterator)
+        except ValueError:
+            return False
+    elif isinstance(first, Mapping):
+        if not all(first.keys() == rest.keys() for rest in iter(iterable)):
+            return False
+        return all(check_all_equal((first[key], *(rest[key] for rest in iterator))) for key in first)
     else:
         return all(first == rest for rest in iterator)

@@ -42,7 +42,13 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.utils import gen_ordered_batch_idcs, gen_ordered_batches, gen_shuffled_batch_idcs
 from pyrado.spaces import BoxSpace
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
-from pyrado.utils.checks import check_all_lengths_equal, check_all_shapes_equal, check_all_types_equal, is_iterator
+from pyrado.utils.checks import (
+    check_all_equal,
+    check_all_lengths_equal,
+    check_all_shapes_equal,
+    check_all_types_equal,
+    is_iterator,
+)
 from pyrado.utils.data_processing import (
     MinMaxScaler,
     RunningNormalizer,
@@ -722,6 +728,22 @@ def test_check_all_lengths_equal(x, b):
 )
 def test_check_all_shapes_equal(x, b):
     assert check_all_shapes_equal(x) == b
+
+
+@pytest.mark.parametrize(
+    "x, b",
+    [
+        [({"a": 1, "b": "a"}, {"a": 1, "b": "a"}), True],
+        [({"a": 2}, {"a": 1}), False],
+        [({"a": {"b": 42, "c": 43}}, {"a": {"b": 42, "c": 43}}), True],
+        [({"a": np.array([1, 2, 3])}, {"a": np.array([1, 2, 3])}, {"a": np.array([1, 2, 3])}), True],
+        [({"a": np.array([1, 2, 3])}, {"a": np.array([1, 2, 8])}), False],
+        [({"a": np.array([1, 2, 3])}, {"a": np.array([1, 2, 8]), "c": 42}), False],
+        [({"a": {"b": 42, "c": np.array([1, 2, 3])}}, {"a": {"b": 42, "c": np.array([1, 2, 3])}}), True],
+    ],
+)
+def test_check_all_equal(x, b):
+    assert check_all_equal(x) == b
 
 
 def test_iteration_tracker():
