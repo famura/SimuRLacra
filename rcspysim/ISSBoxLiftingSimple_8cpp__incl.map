@@ -1,7 +1,0 @@
-<map id="src/cpp/core/initState/ISSBoxLiftingSimple.cpp" name="src/cpp/core/initState/ISSBoxLiftingSimple.cpp">
-<area shape="rect" id="node2" href="$ISSBoxLiftingSimple_8h.html" title="ISSBoxLiftingSimple.h" alt="" coords="216,95,369,121"/>
-<area shape="rect" id="node3" href="$InitStateSetter_8h.html" title="InitStateSetter.h" alt="" coords="234,169,351,196"/>
-<area shape="rect" id="node4" href="$BoxSpaceProvider_8h.html" title="../util/BoxSpaceProvider.h" alt="" coords="125,244,300,271"/>
-<area shape="rect" id="node5" href="$BoxSpace_8h.html" title="BoxSpace.h" alt="" coords="113,319,206,345"/>
-<area shape="rect" id="node9" href="$nocopy_8h.html" title="nocopy.h" alt="" coords="230,319,305,345"/>
-</map>
