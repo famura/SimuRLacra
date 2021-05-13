@@ -47,7 +47,7 @@ if __name__ == "__main__":
     num_fpd = 5
     num_eval_points = 500
 
-    policy_hparam = dict(feats=FeatureStack([RBFFeat(num_feat_per_dim=num_fpd, bounds=obs_space.bounds, scale=None)]))
+    policy_hparam = dict(feats=FeatureStack(RBFFeat(num_feat_per_dim=num_fpd, bounds=obs_space.bounds, scale=None)))
     policy = LinearPolicy(spec, **policy_hparam)
 
     eval_grid_0 = to.linspace(-5.0, 10, num_eval_points)

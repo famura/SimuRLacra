@@ -112,9 +112,7 @@ class ParameterExploring(Algorithm):
         self._expl_strat = None
 
         # Check if the average reward of the mean policy did not change more than the specified threshold over the last iterations
-        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(
-            lambda algo: np.std(algo.ret_avg_stack) < algo.thold_ret_std
-        )
+        self.stopping_criterion = self.stopping_criterion
 
     @property
     def env(self) -> Env:

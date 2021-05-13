@@ -86,7 +86,7 @@ if __name__ == "__main__":
     env = DomainRandWrapperBuffer(env, randomizer)
 
     # Policy
-    policy_hparam = dict(feats=FeatureStack([identity_feat]))
+    policy_hparam = dict(feats=FeatureStack(identity_feat))
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Initialize with Quanser's PD gains

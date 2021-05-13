@@ -46,7 +46,7 @@ def create_nonrecurrent_policy():
             BoxSpace(-1, 1, 4),
             BoxSpace(-1, 1, 3),
         ),
-        FeatureStack([const_feat, identity_feat, squared_feat]),
+        FeatureStack(const_feat, identity_feat, squared_feat),
     )
 
 

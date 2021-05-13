@@ -65,7 +65,7 @@ instances are deterministic. The exploration is handled separately (see `Pyrado/
 .. code-block:: python
 
     policy_hparam = dict(
-        feats=FeatureStack([identity_feat, sin_feat])
+        feats=FeatureStack(identity_feat, sin_feat)
     )
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 

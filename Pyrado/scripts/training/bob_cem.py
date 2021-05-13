@@ -56,8 +56,8 @@ if __name__ == "__main__":
 
     # Policy
     policy_hparam = dict(
-        feats=FeatureStack([identity_feat, sin_feat])
-        # feats=FeatureStack([RBFFeat(num_feat_per_dim=7, bounds=env.obs_space.bounds, scale=None)])
+        feats=FeatureStack(identity_feat, sin_feat)
+        # feats=FeatureStack(RBFFeat(num_feat_per_dim=7, bounds=env.obs_space.bounds, scale=None))
     )
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 

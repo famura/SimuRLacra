@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     # Policy
     policy_hparam = dict(
-        feats=FeatureStack([const_feat, identity_feat, sign_feat, squared_feat, MultFeat((0, 2)), MultFeat((1, 2))])
+        feats=FeatureStack(const_feat, identity_feat, sign_feat, squared_feat, MultFeat((0, 2)), MultFeat((1, 2)))
     )
     policy = LinearPolicy(spec=env_sim.spec, **policy_hparam)
 

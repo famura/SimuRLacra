@@ -59,9 +59,9 @@ if __name__ == "__main__":
 
     # Policy
     policy_hparam = dict(
-        # feats=FeatureStack([RFFeat(env.obs_space.flat_dim, num_feat=1000, bandwidth=1/env.obs_space.bound_up)])
-        # feats=FeatureStack([RBFFeat(num_feat_per_dim=20, bounds=env.obs_space.bounds, scale=0.8)]),
-        feats=FeatureStack([identity_feat, sin_feat])
+        # feats=FeatureStack(RFFeat(env.obs_space.flat_dim, num_feat=1000, bandwidth=1/env.obs_space.bound_up))
+        # feats=FeatureStack(RBFFeat(num_feat_per_dim=20, bounds=env.obs_space.bounds, scale=0.8)),
+        feats=FeatureStack(identity_feat, sin_feat)
     )
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 

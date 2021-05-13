@@ -52,8 +52,8 @@ if __name__ == "__main__":
 
     # Policy
     # policy_hparam = dict(
-    #     feats=FeatureStack([identity_feat, sign_feat, abs_feat, squared_feat,
-    #                         MultFeat((2, 5)), MultFeat((3, 5)), MultFeat((4, 5))])
+    #     feats=FeatureStack(identity_feat, sign_feat, abs_feat, squared_feat,
+    #                        MultFeat((2, 5)), MultFeat((3, 5)), MultFeat((4, 5)))
     # )
     # policy = LinearPolicy(spec=env.spec, **policy_hparam)
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827)

@@ -77,7 +77,7 @@ def create_bob_setup():
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Policies (the behavioral policy needs to be deterministic)
-    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat, sin_feat]))
+    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack(identity_feat, sin_feat))
     behavior_policy.param_values = to.tensor([3.8090, -3.8036, -1.0786, -2.4510, -0.9875, -1.3252, 3.1503, 1.4443])
     prior = DomainRandomizer(
         # NormalDomainParam(name="l_beam", mean=2.05, std=2.05/10),

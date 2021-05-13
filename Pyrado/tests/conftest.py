@@ -668,7 +668,7 @@ def policy(request, env):
 class DefaultPolicies:
     @staticmethod
     def default_fs():
-        return FeatureStack([const_feat, identity_feat, squared_feat])
+        return FeatureStack(const_feat, identity_feat, squared_feat)
 
     @staticmethod
     def idle_policy(env: Env):

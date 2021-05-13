@@ -145,6 +145,23 @@ class QQubeSim(SimPyEnv, Serializable):
             k[j, :] = np.array([s[2], s[3], thdd, aldd])
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
+    def observe(self, state: np.ndarray, dtype: type = np.ndarray):
+        if dtype is np.ndarray:
+            return np.array(
+                [np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]]
+            )
+        elif dtype is to.Tensor:
+            return to.cat(
+                (
+                    state[0].sin().view(1),
+                    state[0].cos().view(1),
+                    state[1].sin().view(1),
+                    state[1].cos().view(1),
+                    state[2].view(1),
+                    state[3].view(1),
+                )
+            )
+
     def _init_anim(self):
         # Import PandaVis Class
         from pyrado.environments.pysim.pandavis import QQubeVis
@@ -164,8 +181,8 @@ class QQubeSwingUpSim(QQubeSim):
     def _create_spaces(self):
         # Define the spaces
         max_state = np.array([115.0 / 180 * np.pi, 4 * np.pi, 20 * np.pi, 20 * np.pi])  # [rad, rad, rad/s, rad/s]
-        max_obs = np.array([1.0, 1.0, 1.0, 1.0, np.inf, np.inf])  # [-, -, -, -, rad/s, rad/s]
         max_init_state = np.array([2.0, 1.0, 0.5, 0.5]) / 180 * np.pi  # [rad, rad, rad/s, rad/s]
+        max_obs = np.array([1.0, 1.0, 1.0, 1.0, 20 * np.pi, 20 * np.pi])  # [-, -, -, -, rad/s, rad/s]
 
         self._state_space = BoxSpace(-max_state, max_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"])
         self._obs_space = BoxSpace(
@@ -179,30 +196,10 @@ class QQubeSwingUpSim(QQubeSim):
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
         state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
-        # It turned out that a higher penalty for the theta-displacement (the displacement of the rotary arm)
-        # leads to policies that perform better on the real environment as it prevents the arm to crash into
-        # the workspace boundaries.
         Q = task_args.get("Q", np.diag([1.0, 1.0, 2e-2, 5e-3]))  # former: [3e-1, 1.0, 2e-2, 5e-3]
         R = task_args.get("R", np.diag([4e-3]))
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
-
-    def observe(self, state, dtype=np.ndarray):
-        if dtype is np.ndarray:
-            return np.array(
-                [np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]]
-            )
-        elif dtype is to.Tensor:
-            return to.cat(
-                (
-                    state[0].sin().view(1),
-                    state[0].cos().view(1),
-                    state[1].sin().view(1),
-                    state[1].cos().view(1),
-                    state[2].view(1),
-                    state[3].view(1),
-                )
-            )
 
 
 class QQubeStabSim(QQubeSim):
@@ -218,12 +215,15 @@ class QQubeStabSim(QQubeSim):
 
     def _create_spaces(self):
         # Define the spaces
-        max_state = np.array([120.0 / 180 * np.pi, 4 * np.pi, 20 * np.pi, 20 * np.pi])  # [rad, rad, rad/s, rad/s]
+        max_state = np.array([115.0 / 180 * np.pi, 4 * np.pi, 20 * np.pi, 20 * np.pi])  # [rad, rad, rad/s, rad/s]
         min_init_state = np.array([-5.0 / 180 * np.pi, 175.0 / 180 * np.pi, 0, 0])  # [rad, rad, rad/s, rad/s]
         max_init_state = np.array([5.0 / 180 * np.pi, 185.0 / 180 * np.pi, 0, 0])  # [rad, rad, rad/s, rad/s]
+        max_obs = np.array([1.0, 1.0, 1.0, 1.0, 20 * np.pi, 20 * np.pi])  # [-, -, -, -, rad/s, rad/s]
 
         self._state_space = BoxSpace(-max_state, max_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"])
-        self._obs_space = self._state_space
+        self._obs_space = BoxSpace(
+            -max_obs, max_obs, labels=["sin_theta", "cos_theta", "sin_alpha", "cos_alpha", "theta_dot", "alpha_dot"]
+        )
         self._init_space = BoxSpace(min_init_state, max_init_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"])
         self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
 
@@ -234,7 +234,3 @@ class QQubeStabSim(QQubeSim):
         R = task_args.get("R", np.diag([5e-2]))
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
-
-    def observe(self, state, dtype=np.ndarray):
-        # Directly observe the noise-free state
-        return state.copy()

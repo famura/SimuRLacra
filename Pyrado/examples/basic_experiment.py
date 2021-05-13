@@ -82,7 +82,7 @@ vary in terms of required hyper-parameters. You can find some examples at `Pyrad
 Note that all policies must inherit from `Policy` which inherits from `torch.nn.Module`. Moreover, all `Policy`
 instances are deterministic. The exploration is handled separately (see `Pyrado/pyrado/exploration`).
 """
-policy_hparam = dict(feats=FeatureStack([identity_feat, sin_feat]))
+policy_hparam = dict(feats=FeatureStack(identity_feat, sin_feat))
 policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
 """

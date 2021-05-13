@@ -253,6 +253,59 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         return act.view(1)  # such that when act is later converted to numpy it does not become a float
 
 
+class QCartPoleGoToLimCtrl:
+    """Controller for going to one of the joint limits (part of the calibration routine)"""
+
+    def __init__(self, init_state: np.ndarray, positive: bool = True):
+        """
+        Constructor
+
+        :param init_state: initial state of the system
+        :param positive: direction switch
+        """
+        self.done = False
+        self.success = False
+        self.x_init = init_state[0]
+        self.x_lim = 0.0
+        self.xd_max = 1e-4
+        self.delta_x_min = 0.1
+        self.sign = 1 if positive else -1
+        self.u_max = self.sign * np.array([1.5])
+        self._t0 = None
+        self._t_max = 10.0
+        self._t_min = 2.0
+
+    def __call__(self, obs: np.ndarray) -> np.ndarray:
+        """
+        Go to joint limits by applying u_max and save limit value in th_lim.
+
+        :param obs: observation from the environment
+        :return: action
+        """
+        x, _, _, xd, _ = obs
+
+        # Initialize time
+        if self._t0 is None:
+            self._t0 = time.time()
+
+        # Compute voltage
+        if (time.time() - self._t0) < self._t_min:
+            # Go full speed before t_min
+            u = self.u_max
+        elif (time.time() - self._t0) > self._t_max:
+            # Do nothing if t_max is elapsed
+            u = np.zeros(1)
+            self.success, self.done = False, True
+        elif np.abs(xd) < self.xd_max:  # and np.abs(x - self.x_init) > self.delta_x_min:
+            # Do nothing
+            u = np.zeros(1)
+            self.success, self.done = True, True
+        else:
+            u = self.u_max
+
+        return u
+
+
 class QQubeSwingUpAndBalanceCtrl(Policy):
     """Hybrid controller (QQubeEnergyCtrl, QQubePDCtrl) switching based on the pendulum pole angle alpha
 
@@ -497,59 +550,6 @@ class QQubePDCtrl(Policy):
         return to.atleast_1d(self.pd_gains.dot(err))
 
 
-class QCartPoleGoToLimCtrl:
-    """Controller for going to one of the joint limits (part of the calibration routine)"""
-
-    def __init__(self, init_state: np.ndarray, positive: bool = True):
-        """
-        Constructor
-
-        :param init_state: initial state of the system
-        :param positive: direction switch
-        """
-        self.done = False
-        self.success = False
-        self.x_init = init_state[0]
-        self.x_lim = 0.0
-        self.xd_max = 1e-4
-        self.delta_x_min = 0.1
-        self.sign = 1 if positive else -1
-        self.u_max = self.sign * np.array([1.5])
-        self._t0 = None
-        self._t_max = 10.0
-        self._t_min = 2.0
-
-    def __call__(self, obs: np.ndarray) -> np.ndarray:
-        """
-        Go to joint limits by applying u_max and save limit value in th_lim.
-
-        :param obs: observation from the environment
-        :return: action
-        """
-        x, _, _, xd, _ = obs
-
-        # Initialize time
-        if self._t0 is None:
-            self._t0 = time.time()
-
-        # Compute voltage
-        if (time.time() - self._t0) < self._t_min:
-            # Go full speed before t_min
-            u = self.u_max
-        elif (time.time() - self._t0) > self._t_max:
-            # Do nothing if t_max is elapsed
-            u = np.zeros(1)
-            self.success, self.done = False, True
-        elif np.abs(xd) < self.xd_max:  # and np.abs(x - self.x_init) > self.delta_x_min:
-            # Do nothing
-            u = np.zeros(1)
-            self.success, self.done = True, True
-        else:
-            u = self.u_max
-
-        return u
-
-
 class QQubeGoToLimCtrl:
     """Controller for going to one of the joint limits (part of the calibration routine)"""
 
@@ -754,7 +754,7 @@ def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) 
         raise pyrado.TypeErr(given=inner_env(env), expected_type=BallOnPlate5DSim)
 
     # Reconstruct the controller
-    feats = FeatureStack([identity_feat])
+    feats = FeatureStack(identity_feat)
     ctrl = LinearPolicy(env.spec, feats)
     ctrl.init_param(-1 * ctrl_gains)  # in classical control it is u = -K*x; here a = psi(s)*s
     return ctrl

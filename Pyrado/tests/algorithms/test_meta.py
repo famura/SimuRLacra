@@ -334,7 +334,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     assert env_real is not env_sim
 
     # Policies (the behavioral policy needs to be deterministic)
-    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat]))
+    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack(identity_feat))
     prior = DomainRandomizer(
         UniformDomainParam(name="ang_offset", mean=1 * np.pi / 180, halfspan=1 * np.pi / 180),
     )

@@ -70,8 +70,8 @@ if __name__ == "__main__":
         #         )
         #     ]
         # )
-        # feats=FeatureStack([RBFFeat(num_feat_per_dim=20, bounds=env.obs_space.bounds, scale=None, use_cuda=True)])
-        feats=FeatureStack([identity_feat, sin_feat])
+        # feats=FeatureStack(RBFFeat(num_feat_per_dim=20, bounds=env.obs_space.bounds, scale=None, use_cuda=True))
+        feats=FeatureStack(identity_feat, sin_feat)
     )
     policy = LinearPolicy(spec=env.spec, **policy_hparam, use_cuda=True)
 

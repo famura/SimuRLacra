@@ -75,7 +75,7 @@ class DualRBFLinearPolicy(LinearPolicy):
         self._feats = RBFFeat(**rbf_hparam)
 
         # Call LinearPolicy's constructor (custom parts will be overridden later)
-        super().__init__(spec, FeatureStack([self._feats]), init_param_kwargs, use_cuda)
+        super().__init__(spec, FeatureStack(self._feats), init_param_kwargs, use_cuda)
 
         # Override custom parts
         self._feats = RBFFeat(**rbf_hparam)

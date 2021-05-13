@@ -47,14 +47,16 @@ class FeatureStack:
         We only consider 1-dim inputs.
     """
 
-    def __init__(self, feat_fcns: Sequence[Callable]):
+    def __init__(self, *feat_fcns: Sequence[Callable]):
         """
         Constructor
 
-        :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output
-                          (e.g. identity_feat, squared_feat, exception: const_feat)
+        :param feat_fcns: feature functions, each of them maps from a multi-dim input to a multi-dim output
+                          (e.g. `identity_feat`, `squared_feat`, exception: `const_feat`)
         """
-        self.feat_fcns = tuple(feat_fcns)  # TODO concat var number of input args
+        self.feat_fcns = tuple(feat_fcns)
+        if len(self.feat_fcns) < 1:
+            raise pyrado.ShapeErr(given=self.feat_fcns, expected_match=(-1,))
 
     def __str__(self):
         """Get an information string."""
@@ -68,8 +70,8 @@ class FeatureStack:
         :param inp: input, i.e. observations in the RL setting
         :return: 1-dim tensor with a value of every feature of the input
         """
-        feats_val = [f(inp) for f in self.feat_fcns]
-        return to.cat(feats_val, dim=-1)
+        feats_val = [fcn(inp) for fcn in self.feat_fcns]
+        return to.cat(feats_val, dim=-1).to(dtype=inp.dtype)
 
     def get_num_feat(self, inp_flat_dim: int) -> int:
         """

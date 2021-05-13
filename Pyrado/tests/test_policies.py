@@ -32,6 +32,7 @@ import pytest
 from tests.conftest import m_needs_bullet, m_needs_cuda, m_needs_libtorch, m_needs_mujoco, m_needs_rcs
 from torch import nn as nn
 
+import pyrado
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
@@ -41,6 +42,11 @@ from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
 from pyrado.policies.recurrent.base import RecurrentPolicy, default_pack_hidden, default_unpack_hidden
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedRNNPolicyBase
+from pyrado.policies.special.environment_specific import (
+    QBallBalancerPDCtrl,
+    QCartPoleSwingUpAndBalanceCtrl,
+    QQubeSwingUpAndBalanceCtrl,
+)
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
@@ -56,33 +62,34 @@ from pyrado.utils.nn_layers import IndiNonlinLayer
         [
             const_feat,
             identity_feat,
-            abs_feat,
             sign_feat,
+            abs_feat,
             squared_feat,
+            cubic_feat,
+            sig_feat,
+            bell_feat,
             sin_feat,
             cos_feat,
             sinsin_feat,
             sincos_feat,
-            sig_feat,
-            bell_feat,
         ],
     ],
     ids=["const_only", "ident_only", "all_simple_feats"],
 )
 def test_simple_feature_stack(feat_list: list):
-    fs = FeatureStack(feat_list)
+    fs = FeatureStack(*feat_list)
     obs = to.randn(1)
     feats_val = fs(obs)
-    assert feats_val is not None
+    assert isinstance(feats_val, to.Tensor)
 
 
 @pytest.mark.features
 @pytest.mark.parametrize("obs_dim, idcs", [(2, (0, 1)), (3, (2, 0)), (10, (0, 1, 5, 6))], ids=["2_2", "3_2", "10_4"])
 def test_mul_feat(obs_dim: int, idcs: tuple):
-    mf = MultFeat(idcs=idcs)
-    fs = FeatureStack([identity_feat, mf])
+    fs = FeatureStack(identity_feat, MultFeat(idcs=idcs))
     obs = to.randn(obs_dim)
     feats_val = fs(obs)
+    assert isinstance(feats_val, to.Tensor)
     assert len(feats_val) == obs_dim + 1
 
 
@@ -96,10 +103,11 @@ def test_rff_feat_serial(obs_dim: int, num_feat_per_dim: int):
         num_feat_per_dim=num_feat_per_dim,
         bandwidth=np.ones(obs_dim),
     )
-    fs = FeatureStack([rff])
+    fs = FeatureStack(rff)
     for _ in range(10):
         obs = to.randn(obs_dim)
         feats_val = fs(obs)
+        assert isinstance(feats_val, to.Tensor)
         assert feats_val.shape == (1, num_feat_per_dim)
 
 
@@ -114,10 +122,11 @@ def test_rff_feat_batched(batch_size: int, obs_dim: int, num_feat_per_dim: int):
         num_feat_per_dim=num_feat_per_dim,
         bandwidth=np.ones(obs_dim),
     )
-    fs = FeatureStack([rff])
+    fs = FeatureStack(rff)
     for _ in range(10):
         obs = to.randn(batch_size, obs_dim)
         feats_val = fs(obs)
+        assert isinstance(feats_val, to.Tensor)
         assert feats_val.shape == (batch_size, num_feat_per_dim)
 
 
@@ -134,10 +143,11 @@ def test_rff_feat_batched(batch_size: int, obs_dim: int, num_feat_per_dim: int):
 )
 def test_rbf_serial(obs_dim: int, num_feat_per_dim: int, bounds: to.Tensor):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
-    fs = FeatureStack([rbf])
+    fs = FeatureStack(rbf)
     for _ in range(10):
         obs = to.randn(obs_dim)  # 1-dim obs vector
         feats_val = fs(obs)
+        assert isinstance(feats_val, to.Tensor)
         assert feats_val.shape == (1, obs_dim * num_feat_per_dim)
 
 
@@ -155,10 +165,11 @@ def test_rbf_serial(obs_dim: int, num_feat_per_dim: int, bounds: to.Tensor):
 )
 def test_rbf_feat_batched(batch_size: int, obs_dim: int, num_feat_per_dim: int, bounds: to.Tensor):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
-    fs = FeatureStack([rbf])
+    fs = FeatureStack(rbf)
     for _ in range(10):
         obs = to.randn(batch_size, obs_dim)  # 2-dim obs array
         feats_val = fs(obs)
+        assert isinstance(feats_val, to.Tensor)
         assert feats_val.shape == (batch_size, obs_dim * num_feat_per_dim)
 
 
@@ -177,10 +188,11 @@ def test_rbf_feat_batched(batch_size: int, obs_dim: int, num_feat_per_dim: int, 
 @pytest.mark.parametrize("num_feat_per_dim", [4, 100], ids=["4", "100"])
 def test_rff_policy_serial(env: Env, num_feat_per_dim: int):
     rff = RFFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up)
-    policy = LinearPolicy(env.spec, FeatureStack([rff]))
+    policy = LinearPolicy(env.spec, FeatureStack(rff))
     for _ in range(10):
         obs = env.obs_space.sample_uniform()
-        act = policy(to.from_numpy(obs))
+        obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
+        act = policy(obs)
         assert act.shape == (env.act_space.flat_dim,)
 
 
@@ -201,10 +213,11 @@ def test_rff_policy_serial(env: Env, num_feat_per_dim: int):
 )
 def test_rff_policy_batch(env: Env, batch_size: int, num_feat_per_dim: int):
     rff = RFFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up)
-    policy = LinearPolicy(env.spec, FeatureStack([rff]))
+    policy = LinearPolicy(env.spec, FeatureStack(rff))
     for _ in range(10):
         obs = env.obs_space.sample_uniform()
-        obs = to.from_numpy(obs).repeat(batch_size, 1)
+        obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
+        obs = obs.repeat(batch_size, 1)
         act = policy(obs)
         assert act.shape == (batch_size, env.act_space.flat_dim)
 
@@ -224,11 +237,12 @@ def test_rff_policy_batch(env: Env, batch_size: int, num_feat_per_dim: int):
 @pytest.mark.parametrize("num_feat_per_dim", [4, 100], ids=["4", "100"])
 def test_rfb_policy_serial(env: Env, num_feat_per_dim: int):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=env.obs_space.bounds)
-    fs = FeatureStack([rbf])
+    fs = FeatureStack(rbf)
     policy = LinearPolicy(env.spec, fs)
     for _ in range(10):
         obs = env.obs_space.sample_uniform()
-        act = policy(to.from_numpy(obs))
+        obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
+        act = policy(obs)
         assert act.shape == (env.act_space.flat_dim,)
 
 
@@ -249,11 +263,12 @@ def test_rfb_policy_serial(env: Env, num_feat_per_dim: int):
 )
 def test_rfb_policy_batch(env: Env, batch_size: int, num_feat_per_dim: int):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=env.obs_space.bounds)
-    fs = FeatureStack([rbf])
+    fs = FeatureStack(rbf)
     policy = LinearPolicy(env.spec, fs)
     for _ in range(10):
         obs = env.obs_space.sample_uniform()
-        obs = to.from_numpy(obs).repeat(batch_size, 1)
+        obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
+        obs = obs.repeat(batch_size, 1)
         act = policy(obs)
         assert act.shape == (batch_size, env.act_space.flat_dim)
 
@@ -275,7 +290,36 @@ def test_dualrbf_policy(env: Env, dim_mask: int):
     assert policy.num_param == policy.num_active_feat * env.act_space.flat_dim // 2
 
     ro = rollout(env, policy, eval=True)
-    assert ro is not None
+    assert isinstance(ro, StepSequence)
+
+
+@pytest.mark.parametrize(
+    "env",
+    ["default_qbb", "default_qcpsu", "default_qcpst", "default_qqsu", "default_qqst"],
+    ids=["qbb", "qcpsu", "qcpst", "qqsu", "qqst"],
+    indirect=True,
+)
+def test_env_specific(env: Env):
+    pyrado.set_seed(0)
+
+    if "qbb" in env.name:
+        policy = QBallBalancerPDCtrl(env.spec)
+        policy.reset()
+    elif "qcp" in env.name:
+        policy = QCartPoleSwingUpAndBalanceCtrl(env.spec)
+        policy.reset()
+    elif "qq" in env.name:
+        policy = QQubeSwingUpAndBalanceCtrl(env.spec)
+        policy.reset()
+    else:
+        raise NotImplementedError
+
+    # Sample an observation and do an action 10 times
+    for _ in range(10):
+        obs = env.obs_space.sample_uniform()
+        obs = to.from_numpy(obs).to(dtype=to.get_default_dtype())
+        act = policy(obs)
+        assert isinstance(act, to.Tensor)
 
 
 @pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
@@ -295,7 +339,7 @@ def test_dualrbf_policy(env: Env, dim_mask: int):
     ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf", "thfnn", "thgru"],
     indirect=True,
 )
-def test_parameterized_policies_init_param(env, policy):
+def test_parameterized_policies_init_param(env: Env, policy: Policy):
     some_values = to.ones_like(policy.param_values)
     policy.init_param(some_values)
     to.testing.assert_allclose(policy.param_values, some_values)
@@ -956,22 +1000,22 @@ def test_poly_time_policy(env: Env, cond_lvl: str, cond_final: str, cond_init, o
     act_hist = []
     for _ in range(env.max_steps):
         act = policy(None)
-        act_hist.append(act.detach().cpu().numpy())
+        act_hist.append(act.detach().cpu())
 
         if cond_final == "zero":
             assert act == pytest.approx(to.zeros_like(act))
 
     if cond_final == "one":
-        assert act_hist[-1] == pytest.approx(to.ones_like(act))
+        assert to.allclose(act_hist[-1], to.ones_like(act))
 
     # Check overtime behavior
     policy.reset()
     act_hist_ot = []
     for _ in range(2 * env.max_steps):
         act = policy(env.obs_space.sample_uniform())
-        act_hist_ot.append(act.detach().cpu().numpy())
+        act_hist_ot.append(act.detach().cpu())
 
     if overtime_behavior == "hold":
-        assert act_hist_ot[-1] == pytest.approx(act_hist_ot[-1])
+        assert to.allclose(act_hist_ot[-1], act_hist_ot[-1])
     elif overtime_behavior == "zero":
-        assert act_hist_ot[-1] == pytest.approx(to.zeros_like(act))
+        assert to.allclose(act_hist_ot[-1], to.zeros_like(act))

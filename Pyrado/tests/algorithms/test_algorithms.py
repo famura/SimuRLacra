@@ -368,7 +368,7 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
 def test_training_parameter_exploring(ex_dir, env: SimEnv, algo, algo_hparam):
     # Environment and policy
     env = ActNormWrapper(env)
-    policy_hparam = dict(feats=FeatureStack([const_feat, identity_feat]))
+    policy_hparam = dict(feats=FeatureStack(const_feat, identity_feat))
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Get initial return for comparison
@@ -429,7 +429,7 @@ def test_rff_regression(ex_dir, num_feat_per_dim: int, loss_fcn: Callable, algo_
 
     # Create the policy
     rff = RFFeat(inp_dim=1, num_feat_per_dim=num_feat_per_dim, bandwidth=1 / 20)
-    policy = LinearPolicy(EnvSpec(InfBoxSpace(shape=(1,)), InfBoxSpace(shape=(1,))), FeatureStack([rff]))
+    policy = LinearPolicy(EnvSpec(InfBoxSpace(shape=(1,)), InfBoxSpace(shape=(1,))), FeatureStack(rff))
 
     # Create the algorithm, and train
     loss_before = loss_fcn(policy(inputs), targets)

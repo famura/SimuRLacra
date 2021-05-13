@@ -94,8 +94,8 @@ if __name__ == "__main__":
 
     # PoWER and linear policy setup
     # policy_hparam = dict(
-    #     feats=FeatureStack([identity_feat, sign_feat, abs_feat, squared_feat,
-    #                         MultFeat((2, 5)), MultFeat((3, 5)), MultFeat((4, 5))])
+    #     feats=FeatureStack(identity_feat, sign_feat, abs_feat, squared_feat,
+    #                        MultFeat((2, 5)), MultFeat((3, 5)), MultFeat((4, 5)))
     # )
     # policy = LinearPolicy(spec=env_sim.spec, **policy_hparam)
     # subrtn_hparam = dict(

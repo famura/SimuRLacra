@@ -44,7 +44,7 @@ if __name__ == "__main__":
     env = ActNormWrapper(env)
 
     # Set up policy
-    feats = FeatureStack([identity_feat, squared_feat])
+    feats = FeatureStack(identity_feat, squared_feat)
     policy = LinearPolicy(env.spec, feats)
 
     # Set up sampler

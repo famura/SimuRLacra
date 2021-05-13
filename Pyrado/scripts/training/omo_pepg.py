@@ -57,7 +57,7 @@ if __name__ == "__main__":
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(feats=FeatureStack([const_feat, identity_feat]))
+    policy_hparam = dict(feats=FeatureStack(const_feat, identity_feat))
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
