@@ -198,9 +198,11 @@ class BayRn(InterruptableAlgorithm):
         self.save_snapshot(meta_info=None)
         pyrado.save(self.ddp_space, "ddp_space.pkl", self.save_dir)
 
-        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(
-            lambda algo: algo.curr_cand_value > algo.thold_succ
-        )
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(self._custom_stopping_criterion)
+
+    @staticmethod
+    def _custom_stopping_criterion(algo: "BayRn") -> bool:
+        return algo.curr_cand_value > algo.thold_succ
 
     @property
     def subroutine(self) -> Algorithm:

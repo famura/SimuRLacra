@@ -111,10 +111,18 @@ class ParameterExploring(Algorithm):
         # Set this in subclasses
         self._expl_strat = None
 
-        # Check if the average reward of the mean policy did not change more than the specified threshold over the last iterations
-        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(
-            lambda algo: np.std(algo.ret_avg_stack) < algo.thold_ret_std
-        )
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(self._custom_stopping_criterion)
+
+    @staticmethod
+    def _custom_stopping_criterion(algo: "ParameterExploring") -> bool:
+        """
+        Check if the average reward of the mean policy did not change more than the specified threshold over the last
+        iterations.
+
+        :param algo: the algorithm
+        :return: whether the stopping criterion is met
+        """
+        return np.std(algo.ret_avg_stack) < algo.thold_ret_std
 
     @property
     def env(self) -> Env:
