@@ -191,10 +191,12 @@ class LQR(Algorithm):
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
 
-        # Checks if the all eigenvalues of the closed loop system are negative.
-        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(
-            lambda algo: (algo.eigvals < 0).all()
-        )
+        self.stopping_criterion = self.stopping_criterion | CustomStoppingCriterion(self._custom_stopping_criterion)
+
+    @staticmethod
+    def _custom_stopping_criterion(algo: "LQR") -> bool:
+        """Checks if the all eigenvalues of the closed loop system are negative."""
+        return (algo.eigvals < 0).all()
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
