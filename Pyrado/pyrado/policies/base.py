@@ -158,8 +158,7 @@ class Policy(nn.Module, ABC):
 
     def reset(self, *args, **kwargs):
         """
-        Reset the policy to it's initial state.
-        This should be called at the start of a rollout. Stateful policies should use it to reset the state variables.
+        Reset the policy's internal state. This should be called at the start of a rollout.
         The default implementation does nothing.
         """
         pass  # this is used in rollout() even though your IDE might not link it

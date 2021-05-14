@@ -61,8 +61,9 @@ class StochasticActionExplStrat(Policy, ABC):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         self.policy.init_param(init_values, **kwargs)
 
-    def reset(self):
-        self.policy.reset()
+    def reset(self, *args, **kwargs):
+        # Forward to the wrapped policy
+        self.policy.reset(*args, **kwargs)
 
     def forward(self, obs: to.Tensor, *extra) -> (to.Tensor, tuple):
         # Get actions from policy

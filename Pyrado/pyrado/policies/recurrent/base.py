@@ -145,8 +145,8 @@ class StatefulRecurrentNetwork(nn.Module):
         self.net = trace_module(net, inputs)
 
     @export
-    def reset(self):
-        """Reset the hidden states."""
+    def reset(self, *args, **kwargs):
+        """Reset the policy's internal state."""
         self.hidden.data.copy_(self.net.init_hidden().data)  # in most cases all zeros
 
     def forward(self, inp):

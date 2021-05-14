@@ -65,7 +65,7 @@ def rollout(
     eval: bool = False,
     max_steps: Optional[int] = None,
     reset_kwargs: Optional[dict] = None,
-    render_mode: Optional[RenderMode] = RenderMode(),
+    render_mode: RenderMode = RenderMode(),
     render_step: int = 1,
     no_reset: bool = False,
     no_close: bool = False,
@@ -87,7 +87,7 @@ def rollout(
     :param no_reset: do not reset the environment before running the rollout
     :param no_close: do not close (and disconnect) the environment after running the rollout
     :param record_dts: flag if the time intervals of different parts of one step should be recorded (for debugging)
-    :param stop_on_done: set to false to ignore the environments's done flag (for debugging)
+    :param stop_on_done: set to false to ignore the environment's done flag (for debugging)
     :param seed: seed value for the random number generators, pass `None` for no seeding
     :return paths of the observations, actions, rewards, and information about the environment as well as the policy
     """
@@ -130,21 +130,25 @@ def rollout(
     if max_steps is not None:
         env.max_steps = max_steps
 
-    # Set all rngs' seeds
+    # Setup rollout information
+    rollout_info = dict(env_name=env.name, env_spec=env.spec)
+    if isinstance(inner_env(env), SimEnv):
+        rollout_info["domain_param"] = env.domain_param
+
+    # Set all rngs' seeds (call before resetting)
     if seed is not None:
         pyrado.set_seed(seed)
 
     # Reset the environment and pass the kwargs
     if reset_kwargs is None:
-        reset_kwargs = {}
-    if not no_reset:
-        obs = env.reset(**reset_kwargs)
-    else:
-        obs = np.zeros(env.obs_space.shape)
+        reset_kwargs = dict()
+    obs = np.zeros(env.obs_space.shape) if no_reset else env.reset(**reset_kwargs)
 
     if isinstance(policy, Policy):
-        # Reset the policy / the exploration strategy
-        policy.reset()
+        # Reset the policy, i.e. the exploration strategy in case of step-based exploration.
+        # In case the environment is a simulation, the current domain parameters are passed to the policy. This allows
+        # the policy policy to update it's internal model, e.g. for the energy-based swing-up controllers
+        policy.reset(domain_param=rollout_info.get("domain_param", None))
 
         # Set dropout and batch normalization layers to the right mode
         if eval:
@@ -152,15 +156,9 @@ def rollout(
         else:
             policy.train()
 
-        # Check for recurrent policy, which requires special handling
+        # Check for recurrent policy, which requires initializing the hidden state
         if policy.is_recurrent:
-            # Initialize hidden state var
             hidden = policy.init_hidden()
-
-    # Setup rollout information
-    rollout_info = dict(env_name=env.name, env_spec=env.spec)
-    if isinstance(inner_env(env), SimEnv):
-        rollout_info["domain_param"] = env.domain_param
 
     # Initialize animation
     env.render(render_mode, render_step=1)

@@ -68,7 +68,7 @@ class TimePolicy(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         pass
 
-    def reset(self):
+    def reset(self, *args, **kwargs):
         self._curr_time = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
@@ -135,8 +135,8 @@ class TraceableTimePolicy(nn.Module):
         self.fcn_of_time = fcn_of_time
 
     @export
-    def reset(self):
-        """Reset the policy to it's initial state."""
+    def reset(self, *args, **kwargs):
+        """Reset the policy's internal state."""
         self.curr_time = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:

@@ -166,7 +166,7 @@ class PolySplineTimePolicy(Policy):
         else:
             self.param_values = init_values  # ignore the IntelliJ warning
 
-    def reset(self):
+    def reset(self, *args, **kwargs):
         self._curr_time = self._t_init
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
@@ -347,8 +347,8 @@ class TraceablePolySplineTimePolicy(nn.Module):
         return feats
 
     @export
-    def reset(self):
-        """Reset the policy to it's initial state."""
+    def reset(self, *args, **kwargs):
+        """Reset the policy's internal state."""
         self.curr_time = self.t_init
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:

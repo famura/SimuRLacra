@@ -124,20 +124,16 @@ class QBallBalancerPDCtrl(Policy):
         if verbose:
             print(f"Set Kp to\n{self.Kp.numpy()}\nand Kd to\n{self.Kd.numpy()}")
 
-    def reset(self, state_des: Optional[Union[np.ndarray, to.Tensor]] = None):
-        """
-        Set the controller's desired state.
-
-        :param state_des: desired x and y ball position [m], or `None` to keep the current desired state
-        """
+    def reset(self, *args, **kwargs):
+        """Set the domain parameters defining the controller's model using a dict called `domain_param`."""
+        state_des = kwargs.get("state_des", None)  # do nothing if state_des not given
         if state_des is not None:
             if isinstance(state_des, to.Tensor):
-                pass
+                self.state_des = state_des.clone()
             elif isinstance(state_des, np.ndarray):
                 self.state_des = to.from_numpy(state_des).type(to.get_default_dtype())
             else:
-                raise pyrado.TypeErr(given=state_des, expected_type=[to.Tensor, np.ndarray])
-            self.state_des = state_des.clone()
+                raise pyrado.TypeErr(given=state_des, expected_type=(to.Tensor, np.ndarray))
 
 
 class QCartPoleSwingUpAndBalanceCtrl(Policy):
@@ -427,14 +423,13 @@ class QQubeEnergyCtrl(Policy):
         # Default initialization
         self.init_param(None)
 
-    def reset(self, domain_param: Optional[dict] = None):
-        """
-        Set the domain parameters defining the controller's model.
-
-        :param domain_param: domain parameter dict
-        """
-        if domain_param is not None:
+    def reset(self, *args, **kwargs):
+        """Set the domain parameters defining the controller's model using a dict called `domain_param`."""
+        domain_param = kwargs.get("domain_param", dict())  # do nothing if domain_param not given
+        if isinstance(domain_param, dict):
             self._domain_param.update(domain_param)
+        else:
+            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
 
     @property
     def E_ref(self):
