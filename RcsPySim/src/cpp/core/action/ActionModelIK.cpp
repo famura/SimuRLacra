@@ -332,9 +332,10 @@ std::vector<std::string> AMIKGeneric::getNames() const
 
 void AMIKGeneric::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* action, double dt)
 {
-    // Augment the action with the fixed values
     MatNd* augmentedAction = MatNd_clone(action);
-    MatNd_appendRows(augmentedAction, fixedTasksValues);
+    if (fixedTasksValues)
+        // Augment the action with the fixed values
+        MatNd_appendRows(augmentedAction, fixedTasksValues);
     
     // Copy the ExperimentConfig graph which has been updated by the physics simulation into the desired graph
     RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, nullptr);
@@ -346,11 +347,14 @@ void AMIKGeneric::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, c
 
 void AMIKGeneric::getStableAction(MatNd* action) const
 {
-    // Augment the action with the fixed values
     MatNd* augmentedAction = MatNd_clone(action);
-    MatNd_appendRows(augmentedAction, fixedTasksValues);
+    if (fixedTasksValues)
+        // Augment the action with the fixed values
+        MatNd_appendRows(augmentedAction, fixedTasksValues);
     
-    controller->computeX(action);
+    controller->computeX(augmentedAction);
+    
+    delete augmentedAction;
 }
 
 ActionModel* AMIKGeneric::clone(RcsGraph* newGraph) const

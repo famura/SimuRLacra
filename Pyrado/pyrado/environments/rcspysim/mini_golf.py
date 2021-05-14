@@ -153,8 +153,8 @@ class MiniGolfSim(RcsSim, Serializable):
         )
 
 
-class MiniGolfIKSim(MiniGolfSim, Serializable):
-    """A 7-dof Schunk robot playing mini golf by setting the input to an Rcs IK-based controller"""
+class MiniGolfPosIKSim(MiniGolfSim, Serializable):
+    """A 7-dof Schunk robot playing mini golf by setting the input to an Rcs IK-based controller on position level"""
 
     name: str = "mg-ik"
 
@@ -180,5 +180,37 @@ class MiniGolfIKSim(MiniGolfSim, Serializable):
             task_args=dict() if task_args is None else task_args,
             ref_frame=ref_frame,
             actionModelType="ik",
+            positionTasks=True,
+            **kwargs,
+        )
+
+class MiniGolfVelIKSim(MiniGolfSim, Serializable):
+    """A 7-dof Schunk robot playing mini golf by setting the input to an Rcs IK-based controller on velocity level"""
+
+    name: str = "mg-ik"
+
+    def __init__(self, ref_frame: str = "world", task_args: Optional[dict] = None, **kwargs):
+        """
+        Constructor
+
+        :param ref_frame: reference frame for the Rcs tasks, e.g. 'world' or 'ball'
+        :param task_args: arguments for the task construction
+        :param kwargs: keyword arguments forwarded to `RcsSim`
+                       fixedInitState: bool = True,
+                       checkJointLimits: bool = False,
+                       collisionAvoidanceIK: bool = True,
+                       observeVelocities: bool = True,
+                       observeForceTorque: bool = True,
+                       observeCollisionCost: bool = False,
+                       observePredictedCollisionCost: bool = False,
+        """
+        Serializable._init(self, locals())
+
+        # Forward to the MiniGolfSim's constructor, specifying the characteristic action model
+        super().__init__(
+            task_args=dict() if task_args is None else task_args,
+            ref_frame=ref_frame,
+            actionModelType="ik",
+            positionTasks=False,
             **kwargs,
         )

@@ -50,6 +50,7 @@
 #include <Rcs_typedef.h>
 #include <Rcs_macros.h>
 #include <TaskPosition1D.h>
+#include <TaskVelocity1D.h>
 
 #ifdef GRAPHICS_AVAILABLE
 
@@ -103,7 +104,13 @@ protected:
         if (actionModelType == "ik") {
             // Create the action model
             auto amIK = new AMIKGeneric(graph);
-            amIK->addTask(new TaskPosition1D("X", graph, clubTip, refBody, refFrame));
+            if (properties->getPropertyBool("positionTasks", true)) {
+                amIK->addTask(new TaskPosition1D("X", graph, clubTip, refBody, refFrame));
+            }
+            else{
+                amIK->addTask(new TaskVelocity1D("Xd", graph, clubTip, refBody, refFrame));
+            }
+            
             // Add fixed tasks after the ones controlled by th policy
             MatNd* fixedClubTipY = MatNd_create(1, 1);
             MatNd* fixedClubTipZ = MatNd_create(1, 1);

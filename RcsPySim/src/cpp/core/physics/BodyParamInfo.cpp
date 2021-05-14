@@ -44,12 +44,13 @@ Rcs::BodyParamInfo::BodyParamInfo(RcsGraph* graph, const char* bodyName, Rcs::Ph
     std::transform(paramNamePrefix.begin(), paramNamePrefix.end(), paramNamePrefix.begin(), ::tolower);
     paramNamePrefix += "_";
     
-    // extract material from first physics shape
+    // Extract material from the first physics shape.
     RCSBODY_TRAVERSE_SHAPES(body) {
         if ((SHAPE->computeType & RCSSHAPE_COMPUTE_PHYSICS) != 0) {
-            // found material-defining shape.
-            // on vortex, there might be more materials, but that is not needed for now
+            // Found material-defining shape.
+            // Fn vortex, there might be more materials but that is not needed for now.
             material = physicsConfig->getMaterial(SHAPE->material);
+            break;
         }
     }
     

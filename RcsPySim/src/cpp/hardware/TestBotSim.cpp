@@ -107,7 +107,7 @@ int main(int argc, char** argv)
         Rcs_addResourcePath(meshDir.c_str());
     }
 
-//    Rcs_addResourcePath("../config");
+    Rcs_addResourcePath("../config");
     Rcs_addResourcePath(directory);
     
     // show help if requested
@@ -132,6 +132,8 @@ int main(int argc, char** argv)
     
     Rcs::PhysicsSimulationComponent* sim = new Rcs::PhysicsSimulationComponent(simImpl);
     sim->setUpdateFrequency(1.0/bot.getConfig()->dt);
+//    sim->setSchedulingPolicy(SCHED_FIFO);
+    
     bot.addHardwareComponent(sim);
     bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
     

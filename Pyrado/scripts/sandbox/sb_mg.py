@@ -30,12 +30,15 @@
 Script to test the simplified box flipping task using a hard-coded time-based policy
 """
 import rcsenv
+import torch as to
 
 import pyrado
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+from pyrado.environments.rcspysim.mini_golf import MiniGolfPosIKSim, MiniGolfVelIKSim
+from pyrado.policies.features import FeatureStack, const_feat
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
 from pyrado.sampling.rollout import after_rollout_query, rollout
@@ -46,10 +49,10 @@ from pyrado.utils.input_output import print_cbt
 rcsenv.setLogLevel(4)
 
 
-def create_idle_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits):
+def create_idle_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: str, checkJointLimits: bool):
     # Set up environment
-    env = MiniGolfIKSim(
-        usePhysicsNode=False,
+    env = MiniGolfPosIKSim(
+        usePhysicsNode=True,
         physicsEngine=physicsEngine,
         dt=dt,
         max_steps=max_steps,
@@ -64,9 +67,9 @@ def create_idle_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
     return env, policy
 
 
-def create_ik_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits):
+def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: str, checkJointLimits: bool):
     # Set up environment
-    env = MiniGolfIKSim(
+    env = MiniGolfVelIKSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         dt=dt,
@@ -84,9 +87,28 @@ def create_ik_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits):
     return env, policy
 
 
+def create_lin_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: str, checkJointLimits: bool):
+    # Set up environment
+    env = MiniGolfPosIKSim(
+        usePhysicsNode=True,
+        physicsEngine=physicsEngine,
+        dt=dt,
+        max_steps=max_steps,
+        ref_frame=ref_frame,
+        checkJointLimits=checkJointLimits,
+        fixedInitState=True,
+    )
+
+    # Set up policy
+    policy = LinearPolicy(env.spec, FeatureStack([const_feat]))
+    policy.param_values = to.tensor([0.55])
+
+    return env, policy
+
+
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "ik"  # idle, or ika
+    setup_type = "ik"  # idle, ik, or lin
     physicsEngine = "Bullet"  # Bullet or Vortex
     dt = 1 / 100.0
     max_steps = int(15 / dt)
@@ -97,9 +119,11 @@ if __name__ == "__main__":
     if setup_type == "idle":
         env, policy = create_idle_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == "ik":
-        env, policy = create_ik_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
+        env, policy = create_pst_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
+    elif setup_type == "lin":
+        env, policy = create_lin_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle' or 'ik'")
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="idle, ik, or lin")
 
     if randomize:
         dp_nom = env.get_nominal_domain_param()

@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     # Environment
     env_hparams = dict(
-        physicsEngine="Vortex",  # Bullet or Vortex
+        physicsEngine="Bullet",  # Bullet or Vortex
         graphFileName="gPlanarInsert6Link.xml",
         dt=1 / 50.0,
         max_steps=800,

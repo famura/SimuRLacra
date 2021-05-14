@@ -457,11 +457,12 @@ public:
                 string_format("forces:        [% 3.1f,% 3.1f] N", obs->ele[omFT.pos + 0], obs->ele[omFT.pos + 1]));
         }
     
-        // TODO TestBotSim crashes here if not commented out
-//        const double* distForce = forceDisturber->getLastForce();
-//        linesOut.emplace_back(
-//            string_format("disturbances:  [% 3.1f,% 3.1f,% 3.1f] N", distForce[0], distForce[1], distForce[2]));
-    
+        if (forceDisturber) {
+            const double* distForce = forceDisturber->getLastForce();
+            linesOut.emplace_back(
+                string_format("disturbances:  [% 3.1f,% 3.1f,% 3.1f] N", distForce[0], distForce[1], distForce[2]));
+        }
+        
         linesOut.emplace_back(
             string_format("actions:       [% 1.3f,% 1.3f,% 1.3f]",
                           currentAction->ele[0], currentAction->ele[1], currentAction->ele[2]));

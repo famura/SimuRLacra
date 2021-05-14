@@ -410,9 +410,11 @@ public:
             linesOut.emplace_back(string_format("tcm:            %s", castedAM->getTaskCombinationMethodName()));
         }
         
-        const double* distForce = forceDisturber->getLastForce();
-        linesOut.emplace_back(
-            string_format("disturbances:  [% 3.1f,% 3.1f,% 3.1f] N", distForce[0], distForce[1], distForce[2]));
+        if (forceDisturber){
+            const double* distForce = forceDisturber->getLastForce();
+            linesOut.emplace_back(
+                string_format("disturbances:  [% 3.1f,% 3.1f,% 3.1f] N", distForce[0], distForce[1], distForce[2]));
+        }
         
         if (physicsManager != nullptr) {
             // Get the parameters that are not stored in the Rcs graph
