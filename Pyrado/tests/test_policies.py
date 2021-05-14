@@ -656,6 +656,29 @@ def test_basic_policy_evaluate_packed_padded_sequences(env: Env, policy: Recurre
 )
 def test_twoheaded_policy_evaluate_packed_padded_sequences(env: Env, policy: RecurrentPolicy):
     # Test packed padded sequence implementation for custom recurrent neural networks
+    def old_evaluate(rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
+        # Set policy, i.e. PyTorch nn.Module, to evaluation mode
+        policy.eval()
+
+        act_list = []
+        head2_list = []
+        for ro in rollout.iterate_rollouts():
+            if hidden_states_name in rollout.data_names:
+                # Get initial hidden state from first step
+                hidden = ro[0][hidden_states_name]
+            else:
+                # Let the network pick the default hidden state
+                hidden = None
+            # Run steps consecutively reusing the hidden state
+            for step in ro:
+                act, head2, hidden = policy(step.observation, hidden)
+                act_list.append(act)
+                head2_list.append(head2)
+
+        # Set policy, i.e. PyTorch nn.Module, back to training mode
+        policy.train()
+
+        return to.stack(act_list), to.stack(head2_list)
 
     # Get some rollouts
     ros = []
@@ -668,8 +691,11 @@ def test_twoheaded_policy_evaluate_packed_padded_sequences(env: Env, policy: Rec
     cat = StepSequence.concat(ros)
 
     # Evaluate old and new approaches
-    act_new = policy.evaluate(cat)
-    assert act_new is not None
+    output_1_old, output_2_old = old_evaluate(cat)
+    output_1_new, output_2_new = policy.evaluate(cat)
+
+    to.testing.assert_allclose(output_1_old, output_1_new)
+    to.testing.assert_allclose(output_2_old, output_2_new)
 
 
 @pytest.mark.recurrent_policy
