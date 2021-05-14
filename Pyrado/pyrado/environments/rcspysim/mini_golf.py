@@ -184,6 +184,7 @@ class MiniGolfPosIKSim(MiniGolfSim, Serializable):
             **kwargs,
         )
 
+
 class MiniGolfVelIKSim(MiniGolfSim, Serializable):
     """A 7-dof Schunk robot playing mini golf by setting the input to an Rcs IK-based controller on velocity level"""
 

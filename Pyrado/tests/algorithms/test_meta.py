@@ -550,8 +550,8 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
 @pytest.mark.high_memory
+@pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "embedding_name",
@@ -673,6 +673,7 @@ def test_npdr_no_policy_optimization(
     assert algo.curr_iter == algo.max_iter
 
 
+@pytest.mark.high_memory
 @pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
 @pytest.mark.parametrize("optimize_mean", [False, True])
