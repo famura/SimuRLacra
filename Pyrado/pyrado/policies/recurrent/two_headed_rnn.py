@@ -230,7 +230,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
             output_1 = self.head_1_output_nonlin(output_1)
         if self.head_2_output_nonlin is not None:
             output_2 = self.head_2_output_nonlin(output_2)
-        
+
         # Set policy, i.e. PyTorch nn.Module, back to training mode
         self.train()
 
