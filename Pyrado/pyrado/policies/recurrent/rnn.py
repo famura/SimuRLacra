@@ -186,14 +186,14 @@ class RNNPolicyBase(RecurrentPolicy):
             hidden = None
         else:
             # Get dimension of hidden state, by using first not None element of hidden state list
-            dim_hidden = next(h for h in hidden_list if h is not None).shape
+            shape_hidden = next(h for h in hidden_list if h is not None).shape
 
             # Exchange all Nones through zero tensors (Pytorch default)
-            hidden_list = [to.zeros(dim_hidden) if h is None else h for h in hidden_list]
+            hidden_list = [to.zeros(shape_hidden) if h is None else h for h in hidden_list]
 
             # Get hidden state
             batch_size = len(hidden_list)
-            hidden = to.stack(hidden_list, 0)
+            hidden = to.stack(hidden_list, dim=0)
             hidden = self._unpack_hidden(hidden, batch_size=batch_size)
 
         # Pass packed observation through RNN, result is also packed
@@ -201,7 +201,7 @@ class RNNPolicyBase(RecurrentPolicy):
 
         # Unpack result
         out, lens = to.nn.utils.rnn.pad_packed_sequence(out_packed)
-        out = to.cat([out[:l, i] for i, l in enumerate(lens)], 0)
+        out = to.cat([out[:l, i] for i, l in enumerate(lens)], dim=0)
 
         # Then pass all of it through the output layer
         act = self.output_layer(out)

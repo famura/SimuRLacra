@@ -176,25 +176,65 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()
 
-        act_list = []
-        head2_list = []
+        # Get a list of all observation sequences and their respective lengths
+        obs_list = []
+        lengths = []
+        hidden_list = []
+
         for ro in rollout.iterate_rollouts():
             if hidden_states_name in rollout.data_names:
-                # Get initial hidden state from first step
-                hidden = ro[0][hidden_states_name]
+                # Get initial hidden state from first step, but do not unpack it yet
+                hidden_list.append(ro[0][hidden_states_name])
             else:
-                # Let the network pick the default hidden state
-                hidden = None
-            # Run steps consecutively reusing the hidden state
-            for step in ro:
-                act, head2, hidden = self(step.observation, hidden)
-                act_list.append(act)
-                head2_list.append(head2)
+                # If no hidden state is given, let it be None
+                hidden_list.append(None)
+
+            # Reshape observations to match PyTorch's RNN sequence protocol
+            obs = ro.get_data_values("observations", True)
+            obs = obs.to(device=self.device)
+
+            # Get all observation sequences and their respective lengths
+            obs_list.append(obs)
+            lengths.append(len(obs))
+
+        # Pad and then pack observations
+        obs_padded = to.nn.utils.rnn.pad_sequence(obs_list)
+        obs_packed = to.nn.utils.rnn.pack_padded_sequence(obs_padded, lengths=lengths, enforce_sorted=False)
+
+        # Check whether no hidden state was provided
+        if all(h is None for h in hidden_list):
+            hidden = None
+        else:
+            # Get dimension of hidden state, by using first not None element of hidden state list
+            shape_hidden = next(h for h in hidden_list if h is not None).shape
+
+            # Exchange all Nones through zero tensors (Pytorch default)
+            hidden_list = [to.zeros(shape_hidden) if h is None else h for h in hidden_list]
+
+            # Get hidden state
+            batch_size = len(hidden_list)
+            hidden = to.stack(hidden_list, dim=0)
+            hidden = self._unpack_hidden(hidden, batch_size=batch_size)
+
+        # Pass packed observation through RNN, result is also packed
+        out_packed, _ = self.shared(obs_packed, hidden)
+
+        # Unpack result
+        out, lens = to.nn.utils.rnn.pad_packed_sequence(out_packed)
+        out = to.cat([out[:l, i] for i, l in enumerate(lens)], dim=0)
+
+        # And then through the two output layers
+        output_1 = self.head_1(out)
+        output_2 = self.head_2(out)
+        if self.head_1_output_nonlin is not None:
+            output_1 = self.head_1_output_nonlin(output_1)
+        if self.head_2_output_nonlin is not None:
+            output_2 = self.head_2_output_nonlin(output_2)
 
         # Set policy, i.e. PyTorch nn.Module, back to training mode
         self.train()
 
-        return to.stack(act_list), to.stack(head2_list)
+        return output_1, output_2
 
     def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         """
