@@ -7,6 +7,7 @@ cython
 dtw-python
 glfw
 gym
+init-args-serializer
 isort
 joblib
 matplotlib
@@ -27,4 +28,3 @@ sphinx_rtd_theme
 tabulate
 tensorboard
 tqdm
-git+https://github.com/Xfel/init-args-serializer.git@master
