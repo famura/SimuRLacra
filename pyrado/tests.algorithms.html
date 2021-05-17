@@ -326,6 +326,43 @@
 </div>
 <div class="section" id="module-tests.algorithms.test_stopping_criteria">
 <span id="test-stopping-criteria"></span><h2>test_stopping_criteria<a class="headerlink" href="#module-tests.algorithms.test_stopping_criteria" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_sequences</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler.reinit">
+<span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</p>
+<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy,
+they will not automatically propagate to all processes. This method exists as a workaround; call it to
+force a reinitialization of environment and policy in all subprocesses.</p>
+<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between
+sampling runs, the sample() method takes care of this on it’s own.</p>
+<p>You can use the env and policy parameters to completely replace the stored environment or policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – new environment to use, or None to keep the old one</p></li>
+<li><p><strong>policy</strong> – new policy to use, or None to keep the old one</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a list of rollouts. This method works exactly as specified in the class description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sampled rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_always">
 <span class="sig-name descname"><span class="pre">test_criterion_always</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_always"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_always" title="Permalink to this definition">¶</a></dt>

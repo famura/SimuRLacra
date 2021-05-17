@@ -247,8 +247,9 @@
 <span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
-
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pytest</span>
 
@@ -263,6 +264,23 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.rollout_based_criteria</span> <span class="kn">import</span> <span class="n">MinReturnStoppingCriterion</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.stopping_criterion</span> <span class="kn">import</span> <span class="n">_AndStoppingCriterion</span><span class="p">,</span> <span class="n">_OrStoppingCriterion</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">RolloutSavingWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sampler</span> <span class="kn">import</span> <span class="n">SamplerBase</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+
+
+<div class="viewcode-block" id="MockSampler"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.MockSampler">[docs]</a><span class="k">class</span> <span class="nc">MockSampler</span><span class="p">(</span><span class="n">SamplerBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_sequences</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">min_rollouts</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_sequences</span> <span class="o">=</span> <span class="n">step_sequences</span>
+
+<div class="viewcode-block" id="MockSampler.reinit"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.MockSampler.reinit">[docs]</a>    <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="MockSampler.sample"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.MockSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step_sequences</span><span class="p">)</span></div></div>
 
 
 <span class="c1"># noinspection PyTypeChecker</span>
@@ -410,7 +428,8 @@
 <span class="c1"># noinspection PyTypeChecker</span>
 <div class="viewcode-block" id="test_criterion_rollout_based_min_return_lower"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_lower">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_rollout_based_min_return_lower</span><span class="p">():</span>
     <span class="n">rollout_a</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(),</span> <span class="p">[[</span><span class="n">rollout_a</span><span class="p">]])</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">MockSampler</span><span class="p">([</span><span class="n">rollout_a</span><span class="p">]))</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
     <span class="n">criterion</span> <span class="o">=</span> <span class="n">MinReturnStoppingCriterion</span><span class="p">(</span><span class="n">min_return</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">criterion</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span></div>
@@ -419,7 +438,8 @@
 <span class="c1"># noinspection PyTypeChecker</span>
 <div class="viewcode-block" id="test_criterion_rollout_based_min_return_higher"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_higher">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_rollout_based_min_return_higher</span><span class="p">():</span>
     <span class="n">rollout_a</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(),</span> <span class="p">[[</span><span class="n">rollout_a</span><span class="p">]])</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">MockSampler</span><span class="p">([</span><span class="n">rollout_a</span><span class="p">]))</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
     <span class="n">criterion</span> <span class="o">=</span> <span class="n">MinReturnStoppingCriterion</span><span class="p">(</span><span class="n">min_return</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">criterion</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span></div>
@@ -428,7 +448,8 @@
 <span class="c1"># noinspection PyTypeChecker</span>
 <div class="viewcode-block" id="test_criterion_rollout_based_min_return_equal"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_equal">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_rollout_based_min_return_equal</span><span class="p">():</span>
     <span class="n">rollout_a</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(),</span> <span class="p">[[</span><span class="n">rollout_a</span><span class="p">]])</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">MockSampler</span><span class="p">([</span><span class="n">rollout_a</span><span class="p">]))</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
     <span class="n">criterion</span> <span class="o">=</span> <span class="n">MinReturnStoppingCriterion</span><span class="p">(</span><span class="n">min_return</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">criterion</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span></div>
@@ -439,7 +460,8 @@
     <span class="n">rollout_a</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">rollout_b</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">rollout_c</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(),</span> <span class="p">[[</span><span class="n">rollout_a</span><span class="p">,</span> <span class="n">rollout_b</span><span class="p">,</span> <span class="n">rollout_c</span><span class="p">]])</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">MockSampler</span><span class="p">([</span><span class="n">rollout_a</span><span class="p">,</span> <span class="n">rollout_b</span><span class="p">,</span> <span class="n">rollout_c</span><span class="p">]))</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
     <span class="n">criterion</span> <span class="o">=</span> <span class="n">MinReturnStoppingCriterion</span><span class="p">(</span><span class="n">min_return</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">criterion</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span></div>
@@ -450,7 +472,8 @@
     <span class="n">rollout_a</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">rollout_b</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">rollout_c</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">undiscounted_return</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">SimpleNamespace</span><span class="p">(),</span> <span class="p">[[</span><span class="n">rollout_a</span><span class="p">],</span> <span class="p">[</span><span class="n">rollout_b</span><span class="p">],</span> <span class="p">[</span><span class="n">rollout_c</span><span class="p">]])</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">MockSampler</span><span class="p">([</span><span class="n">rollout_a</span><span class="p">,</span> <span class="n">rollout_b</span><span class="p">,</span> <span class="n">rollout_c</span><span class="p">]))</span>
+    <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
     <span class="n">criterion</span> <span class="o">=</span> <span class="n">MinReturnStoppingCriterion</span><span class="p">(</span><span class="n">min_return</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">criterion</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span></div>
