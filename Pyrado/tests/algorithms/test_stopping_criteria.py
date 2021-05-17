@@ -25,8 +25,9 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+from copy import deepcopy
 from types import SimpleNamespace
+from typing import List, Optional
 
 import pytest
 
@@ -41,6 +42,23 @@ from pyrado.algorithms.stopping_criteria.predefined_criteria import (
 from pyrado.algorithms.stopping_criteria.rollout_based_criteria import MinReturnStoppingCriterion
 from pyrado.algorithms.stopping_criteria.stopping_criterion import _AndStoppingCriterion, _OrStoppingCriterion
 from pyrado.algorithms.utils import RolloutSavingWrapper
+from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
+from pyrado.sampling.sampler import SamplerBase
+from pyrado.sampling.step_sequence import StepSequence
+
+
+class MockSampler(SamplerBase):
+    def __init__(self, step_sequences: List[StepSequence]):
+        super().__init__(min_rollouts=0, min_steps=0)
+
+        self._step_sequences = step_sequences
+
+    def reinit(self, env: Optional[Env] = None, policy: Optional[Policy] = None):
+        pass
+
+    def sample(self) -> List[StepSequence]:
+        return deepcopy(self._step_sequences)
 
 
 # noinspection PyTypeChecker
@@ -188,7 +206,8 @@ def test_criterion_rollout_based_wrong_sampler():
 # noinspection PyTypeChecker
 def test_criterion_rollout_based_min_return_lower():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 1)
-    sampler = RolloutSavingWrapper(SimpleNamespace(), [[rollout_a]])
+    sampler = RolloutSavingWrapper(MockSampler([rollout_a]))
+    sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = MinReturnStoppingCriterion(min_return=2)
     assert not criterion.is_met(algo)
@@ -197,7 +216,8 @@ def test_criterion_rollout_based_min_return_lower():
 # noinspection PyTypeChecker
 def test_criterion_rollout_based_min_return_higher():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 3)
-    sampler = RolloutSavingWrapper(SimpleNamespace(), [[rollout_a]])
+    sampler = RolloutSavingWrapper(MockSampler([rollout_a]))
+    sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = MinReturnStoppingCriterion(min_return=2)
     assert criterion.is_met(algo)
@@ -206,7 +226,8 @@ def test_criterion_rollout_based_min_return_higher():
 # noinspection PyTypeChecker
 def test_criterion_rollout_based_min_return_equal():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 2)
-    sampler = RolloutSavingWrapper(SimpleNamespace(), [[rollout_a]])
+    sampler = RolloutSavingWrapper(MockSampler([rollout_a]))
+    sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = MinReturnStoppingCriterion(min_return=2)
     assert criterion.is_met(algo)
@@ -217,7 +238,8 @@ def test_criterion_rollout_based_min_return_check_min():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 3)
     rollout_b = SimpleNamespace(undiscounted_return=lambda: 2)
     rollout_c = SimpleNamespace(undiscounted_return=lambda: 1)
-    sampler = RolloutSavingWrapper(SimpleNamespace(), [[rollout_a, rollout_b, rollout_c]])
+    sampler = RolloutSavingWrapper(MockSampler([rollout_a, rollout_b, rollout_c]))
+    sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = MinReturnStoppingCriterion(min_return=2)
     assert not criterion.is_met(algo)
@@ -228,7 +250,8 @@ def test_criterion_rollout_based_min_return_use_last():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 3)
     rollout_b = SimpleNamespace(undiscounted_return=lambda: 2)
     rollout_c = SimpleNamespace(undiscounted_return=lambda: 1)
-    sampler = RolloutSavingWrapper(SimpleNamespace(), [[rollout_a], [rollout_b], [rollout_c]])
+    sampler = RolloutSavingWrapper(MockSampler([rollout_a, rollout_b, rollout_c]))
+    sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = MinReturnStoppingCriterion(min_return=2)
     assert not criterion.is_met(algo)
