@@ -463,8 +463,8 @@ class QBallBalancerVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(-0.1 * self._scale, -1.3 * self._scale, 0.5 * self._scale)
-        self.cam.setHpr(0, -18, 0)  # roll, pitch, yaw [deg]
+        self.cam.setPos(-0.1 * self._scale, -0.8 * self._scale, 0.4 * self._scale)
+        self.cam.setHpr(0, -30, 0)  # roll, pitch, yaw [deg]
 
         # Ball
         self.ball = self.loader.loadModel(osp.join(self.dir, "ball_red.egg"))
@@ -491,12 +491,10 @@ class QBallBalancerVis(PandaVis):
         self.pole.setScale(r_pole * self._scale, r_pole * self._scale, l_pole * self._scale)
         self.pole.reparentTo(self.render)
 
-        # Null_plate
+        # Pround plate
         self.null_plate = self.loader.loadModel(osp.join(self.dir, "cube_grey.egg"))
         self.null_plate.setPos(0, 0, -2.5 * l_pole * self._scale)
-        self.null_plate.setScale(
-            l_plate * 1.5 * 0.5 * self._scale, l_plate * 1.5 * 0.5 * self._scale, d_plate / 20.0 * self._scale
-        )
+        self.null_plate.setScale(l_plate * 0.8 * self._scale, l_plate * 0.8 * self._scale, d_plate / 20.0 * self._scale)
         self.null_plate.reparentTo(self.render)
 
     def update(self, task: Task):
@@ -547,14 +545,13 @@ class QBallBalancerVis(PandaVis):
         self.draw_trace(ball_pos)
 
         # Update displayed text
-        self.text.setText(
+        self.text.setText(  # x-axis is pos to the right, y-axis is pos up
             f"""
-            x-axis is pos to the right, y-axis is pos up
-            Commanded voltage: x servo : {self._env._curr_act[0] : 1.2f}, y servo : {self._env._curr_act[1] : 1.2f}
-            Plate angle around x axis: {self._env.plate_angs[1] * 180 / np.pi : 2.2f}
-            Plate angle around y axis: {self._env.plate_angs[0] * 180 / np.pi : 2.2f}
-            Shaft angles: {self._env.state[0] * 180 / np.pi : 2.2f}, {self._env.state[1] * 180 / np.pi : 2.2f}
-            Ball position: {x : 1.3f}, {y : 1.3f}
+            ball pos: {x : 1.3f}, {y : 1.3f}
+            plate angle around x axis: {self._env.plate_angs[1] * 180 / np.pi : 2.2f}
+            plate angle around y axis: {self._env.plate_angs[0] * 180 / np.pi : 2.2f}
+            shaft angles: {self._env.state[0] * 180 / np.pi : 2.2f}, {self._env.state[1] * 180 / np.pi : 2.2f}
+            V_: {self._env._curr_act[0] : 1.2f}, V_y : {self._env._curr_act[1] : 1.2f}
             g: {g : 1.3f}
             m_ball: {m_ball : 1.3f}
             r_ball: {r_ball : 1.3f}
@@ -610,7 +607,7 @@ class QCartPoleVis(PandaVis):
         self.win.requestProperties(self.windowProperties)
 
         # Set pov
-        self.cam.setPos(-0.2 * self._scale, -3.0 * self._scale, 0)
+        self.cam.setPos(-0.2 * self._scale, -2 * self._scale, 0)
 
         # Rail
         self.rail = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_grey.egg"))
@@ -665,15 +662,13 @@ class QCartPoleVis(PandaVis):
         # Get position of pole
         pole_pos = self.pole.getPos(self.render)
 
-        # Calculate position of new point
-        current_pos = (
-            pole_pos[0] + 4 * l_pole * np.sin(th) * self._scale,
-            pole_pos[1],
-            pole_pos[2] - 4 * l_pole * np.cos(th) * self._scale,
-        )
-
         # Draw line to that point
-        self.draw_trace(current_pos)
+        traced_point = (
+            pole_pos[0] + 2 * l_pole * np.sin(th) * self._scale,
+            pole_pos[1],
+            pole_pos[2] - 2 * l_pole * np.cos(th) * self._scale,
+        )
+        self.draw_trace(traced_point)
 
         # Update displayed text
         self.text.setText(
