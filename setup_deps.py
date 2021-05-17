@@ -69,17 +69,20 @@ parser.add_argument(
     nargs="*",
     help="Subtasks to execute. Suggested tasks are `all` (includes every feature) or `no_rcs` (excludes Rcs and RcsPysim). To get a list of all availibe tasks, run `python setup_deps.py`.",
 )
-parser.add_argument("--vortex", dest="vortex", action="store_true", default=False, help="Use vortex physics engine")
+parser.add_argument(
+    "--vortex", dest="vortex", action="store_true", default=False, help="Use vortex physics engine (default: False)"
+)
 parser.add_argument("--no_vortex", dest="vortex", action="store_false", help="Do not use vortex physics engine")
-parser.add_argument("--cuda", dest="usecuda", action="store_true", default=False, help="Use CUDA for PyTorch")
+parser.set_defaults(vortex=False)
+parser.add_argument("--cuda", dest="usecuda", action="store_true", help="Use CUDA for PyTorch (default: False)")
 parser.add_argument("--no_cuda", dest="usecuda", action="store_false", help="Do not use CUDA for PyTorch")
+parser.set_defaults(usecuda=False)
 parser.add_argument("--headless", action="store_true", default=False, help="Build in headless mode")
 parser.add_argument(
     "--local_torch",
     dest="uselibtorch",
     action="store_true",
-    default=True,
-    help="Use the local libtorch from the thirdParty directory for RcsPySim",
+    help="Use the local libtorch from the thirdParty directory for RcsPySim (default: True)",
 )
 parser.add_argument(
     "--no_local_torch",
@@ -87,8 +90,12 @@ parser.add_argument(
     action="store_false",
     help="Do not use the local libtorch from the thirdParty directory for RcsPySim",
 )
+parser.set_defaults(uselibtorch=True)
 parser.add_argument(
-    "--pip_check", action="store_true", default=False, help="Run ´pip check´ after installing the dependencies"
+    "--pip_check",
+    action="store_true",
+    default=False,
+    help="Run ´pip check´ after installing the dependencies (default: False)",
 )
 parser.add_argument("-j", default=1, type=int, help="Number of make threads")
 
@@ -652,7 +659,8 @@ def setup_wo_rcs_wo_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
-        setup_render_pipeline()
+        if not args.headless:
+            setup_render_pipeline()
     setup_pytorch_based()
     print("\nWAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
@@ -665,10 +673,12 @@ def setup_wo_rcs_w_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
-        setup_render_pipeline()
+        if not args.headless:
+            setup_render_pipeline()
     setup_pytorch_based()
     print(
-        "\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
+        "\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are "
+        "set up!\n"
     )
 
 
@@ -686,10 +696,12 @@ def setup_w_rcs_wo_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
-        setup_render_pipeline()
+        if not args.headless:
+            setup_render_pipeline()
     setup_pytorch_based()
     print(
-        "\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
+        "\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro "
+        "using the --no-deps flag) are set up!\n"
     )
 
 
@@ -706,10 +718,12 @@ def setup_w_rcs_w_pytorch():
     setup_mujoco_py()
     if not CI:
         setup_pyrado()
-        setup_render_pipeline()
+        if not args.headless:
+            setup_render_pipeline()
     setup_pytorch_based()
     print(
-        "\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
+        "\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and "
+        "Pyro using the --no-deps flag) are set up!\n"
     )
 
 
