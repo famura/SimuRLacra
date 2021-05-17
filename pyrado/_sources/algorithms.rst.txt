@@ -1,0 +1,40 @@
+
+
+algorithms
+==========
+
+.. toctree::
+
+   pyrado.algorithms.episodic
+   pyrado.algorithms.meta
+   pyrado.algorithms.regression
+   pyrado.algorithms.step_based
+   pyrado.algorithms.stopping_criteria
+
+
+
+base
+----
+
+.. automodule:: pyrado.algorithms.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+utils
+-----
+
+.. automodule:: pyrado.algorithms.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.algorithms
+   :members:
+   :undoc-members:
+   :show-inheritance:
