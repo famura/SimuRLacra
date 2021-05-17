@@ -89,7 +89,7 @@ IF (USE_LIBTORCH)
   )
   get_filename_component(TORCH_BASEDIR ${TORCH_INIT_FILE} DIRECTORY)
   
-  find_package(Torch 1.7 REQUIRED HINTS "${TORCH_BASEDIR}")
+  find_package(Torch 1.8 REQUIRED HINTS "${TORCH_BASEDIR}")
   message("-- Building libtorch policy support.")
 ENDIF ()
 
@@ -141,12 +141,14 @@ IF (UNIX)
   # The torch cmake config defines _GLIBCXX_USE_CXX11_ABI, but that messes up the pybind11/numpy integration on GCC 4.8. So we remove it.
   IF (TORCH_FOUND)
     EXECUTE_PROCESS(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-    IF (${GCC_VERSION} VERSION_EQUAL "4.8")
+    #IF (${GCC_VERSION} VERSION_EQUAL "4.8")
       message(STATUS "Removing erroneous definition from torch library")
       set_target_properties(torch PROPERTIES INTERFACE_COMPILE_OPTIONS "")
-    ENDIF ()
+    #ENDIF ()
   ENDIF ()
-
+  
+  # Set the CXX options such that RcsPySim compiles with the new ABI
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=1")
 
 ENDIF ()
 

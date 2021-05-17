@@ -439,7 +439,7 @@ def setup_pytorch():
     env["USE_CUDNN"] = "ON" if args.usecuda else "OFF"
     # disable MKLDNN; mkl/blas deprecated error https://github.com/pytorch/pytorch/issues/17874
     env["USE_MKLDNN"] = "OFF"
-    env["_GLIBCXX_USE_CXX11_ABI"] = "ON"
+    env["_GLIBCXX_USE_CXX11_ABI"] = "1"
     sp.check_call([sys.executable, "setup.py", "install"], cwd=pytorch_src_dir, env=env)
 
 
