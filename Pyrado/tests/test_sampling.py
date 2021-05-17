@@ -487,11 +487,11 @@ def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
 @pytest.mark.parametrize(
     "env",
     [
+        "default_pend",
+        "default_qbb",
         pytest.param("default_qqsurcs_bt", marks=m_needs_bullet),
-        pytest.param("default_bs_ds_pos_bt", marks=m_needs_bullet),
-        pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
     ],
-    ids=["qqsurcs_bt", "bs_pos_bt", "bit_ika_bt"],
+    ids=["pend", "qbb", "qqsurcs_bt"],
     indirect=True,
 )
 @pytest.mark.parametrize("policy", ["idle_policy"], ids=["idle"], indirect=True)  # ad deterministic policy
