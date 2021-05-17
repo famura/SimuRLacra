@@ -347,7 +347,7 @@ class TraceablePolySplineTimePolicy(nn.Module):
         return feats
 
     @export
-    def reset(self, *args, **kwargs):
+    def reset(self):
         """Reset the policy's internal state."""
         self.curr_time = self.t_init
 

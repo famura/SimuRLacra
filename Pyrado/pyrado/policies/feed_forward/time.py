@@ -135,7 +135,7 @@ class TraceableTimePolicy(nn.Module):
         self.fcn_of_time = fcn_of_time
 
     @export
-    def reset(self, *args, **kwargs):
+    def reset(self):
         """Reset the policy's internal state."""
         self.curr_time = 0.0
 
