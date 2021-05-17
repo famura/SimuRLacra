@@ -369,7 +369,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">trace_module</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork.reset"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.reset">[docs]</a>    <span class="nd">@export</span>
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset the policy&#39;s internal state.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># in most cases all zeros</span></div>
 
