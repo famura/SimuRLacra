@@ -130,11 +130,6 @@ def rollout(
     if max_steps is not None:
         env.max_steps = max_steps
 
-    # Setup rollout information
-    rollout_info = dict(env_name=env.name, env_spec=env.spec)
-    if isinstance(inner_env(env), SimEnv):
-        rollout_info["domain_param"] = env.domain_param
-
     # Set all rngs' seeds (call before resetting)
     if seed is not None:
         pyrado.set_seed(seed)
@@ -143,6 +138,11 @@ def rollout(
     if reset_kwargs is None:
         reset_kwargs = dict()
     obs = np.zeros(env.obs_space.shape) if no_reset else env.reset(**reset_kwargs)
+
+    # Setup rollout information
+    rollout_info = dict(env_name=env.name, env_spec=env.spec)
+    if isinstance(inner_env(env), SimEnv):
+        rollout_info["domain_param"] = env.domain_param
 
     if isinstance(policy, Policy):
         # Reset the policy, i.e. the exploration strategy in case of step-based exploration.
