@@ -385,6 +385,7 @@ def setup_wm5():
                 "build",
                 "CFG={}".format(wm5_config),
                 "-j{}".format(make_parallelity),
+                "--quiet",
             ],
             cwd=osp.join(wm5_src_dir, module),
         )
