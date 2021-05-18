@@ -76,10 +76,10 @@ if __name__ == "__main__":
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(shared_hidden_sizes=[128, 128], shared_hidden_nonlin=to.relu)  # FNN
+    policy_hparam = dict(shared_hidden_sizes=[64, 64], shared_hidden_nonlin=to.relu)  # FNN
     policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
 
-    qfnc_param = dict(hidden_sizes=[128, 128], hidden_nonlin=to.relu)
+    qfnc_param = dict(hidden_sizes=[64, 64], hidden_nonlin=to.relu)
     combined_space = BoxSpace.cat([env.obs_space, env.act_space])
     q1 = FNNPolicy(spec=EnvSpec(combined_space, ValueFunctionSpace), **qfnc_param)
     q2 = FNNPolicy(spec=EnvSpec(combined_space, ValueFunctionSpace), **qfnc_param)
