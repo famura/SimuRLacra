@@ -148,7 +148,7 @@ def rollout(
         # Reset the policy, i.e. the exploration strategy in case of step-based exploration.
         # In case the environment is a simulation, the current domain parameters are passed to the policy. This allows
         # the policy policy to update it's internal model, e.g. for the energy-based swing-up controllers
-        policy.reset(domain_param=rollout_info.get("domain_param", None))
+        policy.reset(domain_param=env.domain_param if isinstance(env, SimEnv) else None)
 
         # Set dropout and batch normalization layers to the right mode
         if eval:
