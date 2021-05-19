@@ -284,7 +284,7 @@ class GAE(LoggerAware, nn.Module):
         self.logger.add_value("loss improv critic", vfcn_loss_impr, 4)
         self.logger.add_value("avg grad norm critic", np.mean(vfcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value("lr critic", self._lr_scheduler.get_last_lr(), 6)
+            self.logger.add_value("lr critic", np.mean(self._lr_scheduler.get_last_lr()), 6)
 
         return adv
 
