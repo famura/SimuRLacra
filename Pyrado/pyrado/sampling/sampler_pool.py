@@ -362,7 +362,6 @@ class SamplerPool:
 
                 # Update progress (need to subtract since it's incremental)
                 progressbar.update(done - progressbar.n)
-                sleep(0.1)
 
         # Collect results in one list
         allres = self._await_result()
@@ -434,7 +433,6 @@ class SamplerPool:
 
                 # Update progress (need to subtract since it's incremental)
                 collect_progressbar.update(cnt - collect_progressbar.n)
-                sleep(0.1)
 
         # Collect results in one list
         allres = self._await_result()
