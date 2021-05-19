@@ -107,7 +107,7 @@ class NFPolicy(PotentialBasedPolicy):
             raise pyrado.TypeErr(given=activation_nonlin, expected_type=Callable)
 
         # Set the multiprocessing start method to spawn, since PyTorch is using the GPU for convolutions if it can
-        if to.cuda.is_available() and mp.get_start_method(allow_none=True) != "spawn":
+        if mp.get_start_method(allow_none=True) != "spawn":
             mp.set_start_method("spawn", force=True)
 
         super().__init__(
