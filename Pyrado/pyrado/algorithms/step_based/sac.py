@@ -30,6 +30,7 @@ import sys
 from copy import deepcopy
 from typing import Optional, Union
 
+import numpy as np
 import torch as to
 import torch.nn as nn
 from tqdm import tqdm
@@ -349,8 +350,8 @@ class SAC(ValueBased):
         self.logger.add_value("avg expl strat std", to.mean(expl_strat_stds))
         self.logger.add_value("ent_coeff", self.ent_coeff)
         if self._lr_scheduler_policy is not None:
-            self.logger.add_value("avg lr policy", to.mean(self._lr_scheduler_policy.get_last_lr()), 6)
-            self.logger.add_value("avg lr critic", to.mean(self._lr_scheduler_qfcns.get_last_lr()), 6)
+            self.logger.add_value("avg lr policy", np.mean(self._lr_scheduler_policy.get_last_lr()), 6)
+            self.logger.add_value("avg lr critic", np.mean(self._lr_scheduler_qfcns.get_last_lr()), 6)
 
     def reset(self, seed: Optional[int] = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds
