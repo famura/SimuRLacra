@@ -31,7 +31,6 @@ from typing import Optional, Tuple
 
 import numpy as np
 from matplotlib import colorbar
-from matplotlib import colors
 from matplotlib import colors as colors
 from matplotlib import pyplot as plt
 
@@ -133,8 +132,8 @@ class AccNorm(colors.Normalize):
 
 def draw_sep_cbar(
     ax_cb: Optional[plt.Axes] = None,
-    colorbar_label: Optional[str] = None,
-    colorbar_orientation: Optional[str] = "vertical",
+    cbar_label: Optional[str] = None,
+    cbar_orientation: Optional[str] = "vertical",
     fig_size: Optional[tuple] = (8, 6),
     cmap: Optional[colors.Colormap] = None,
     norm: Optional[colors.Normalize] = colors.Normalize(),
@@ -144,8 +143,8 @@ def draw_sep_cbar(
     Add a separate figure with a color bar.
 
     :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
-    :param colorbar_label: label for the color bar, if `None` no label is printed
-    :param colorbar_orientation: orientation to `ColorbarBase` (vertical of horizontal)
+    :param cbar_label: label for the color bar, if `None` no label is printed
+    :param cbar_orientation: orientation to `ColorbarBase` (vertical of horizontal)
     :param fig_size: width and height of the figure in inches
     :param cmap: colormap passed to `ColorbarBase`
     :param norm: colormap normalizer passed to `ColorbarBase`
@@ -160,18 +159,18 @@ def draw_sep_cbar(
         fig_cb = plt.gcf()
 
     # Add the color bar
-    if colorbar_label is not None:
-        colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=colorbar_label, orientation=colorbar_orientation)
+    if cbar_label is not None:
+        colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=cbar_label, orientation=cbar_orientation)
     else:
-        colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, orientation=colorbar_orientation)
+        colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, orientation=cbar_orientation)
 
     # Set the ticks
     if num_major_ticks_cb is not None:
-        if colorbar_orientation == "horizontal":
+        if cbar_orientation == "horizontal":
             ax_cb.xaxis.set_label_position("top")
             ax_cb.xaxis.set_ticks_position("top")
             ax_cb.xaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
-        elif colorbar_orientation == "vertical":
+        elif cbar_orientation == "vertical":
             ax_cb.yaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
 
     return fig_cb

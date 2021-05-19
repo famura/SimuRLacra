@@ -102,7 +102,7 @@ def plot_observations_actions_rewards(ro: StepSequence):
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(14, 10), tight_layout=True)
         axs = np.atleast_2d(axs)
         axs = correct_atleast_2d(axs)
-        fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
+        fig.canvas.manager.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
         # Observations (without the last time step)
@@ -155,7 +155,7 @@ def plot_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
         axs = np.atleast_2d(axs)
         axs = correct_atleast_2d(axs)
-        fig.canvas.set_window_title("Observations over Time")
+        fig.canvas.manager.set_window_title("Observations over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_obs)))
 
         if len(dim_obs) == 1:
@@ -204,7 +204,7 @@ def plot_states(ro: StepSequence, idcs_sel: Sequence[int] = None):
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
         axs = np.atleast_2d(axs)
         axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case axs was 1-dim
-        fig.canvas.set_window_title("States over Time")
+        fig.canvas.manager.set_window_title("States over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_states)))
 
         if len(dim_states) == 1:
@@ -254,7 +254,7 @@ def plot_features(ro: StepSequence, policy: Policy):
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
         axs = np.atleast_2d(axs)
         axs = correct_atleast_2d(axs)
-        fig.canvas.set_window_title("Feature Values over Time")
+        fig.canvas.manager.set_window_title("Feature Values over Time")
         plt.subplots_adjust(hspace=0.5)
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_feat)))
 
@@ -289,7 +289,7 @@ def plot_actions(ro: StepSequence, env: Env):
         t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
         fig, axs = plt.subplots(*num_rows_cols_from_length(dim_act), figsize=(10, 8), tight_layout=True)
-        fig.canvas.set_window_title("Actions over Time")
+        fig.canvas.manager.set_window_title("Actions over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
         act_norm_wrapper = typed_env(env, ActNormWrapper)
@@ -332,7 +332,7 @@ def plot_rewards(ro: StepSequence):
         t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
         fig, ax = plt.subplots(1, tight_layout=True)
-        fig.canvas.set_window_title("Reward over Time")
+        fig.canvas.manager.set_window_title("Reward over Time")
         ax.plot(t, ro.rewards, c="k")
         ax.set_ylabel("reward")
         ax.set_xlabel("time")
@@ -787,7 +787,7 @@ def plot_rollouts_segment_wise(
         # Set window title and the legend, placing the latter above the plot expanding and expanding it fully
         use_rec_str = ", using rec actions" if use_rec_str else ""
         round_str = f"round {idx_round}, " if idx_round != -1 else ""
-        fig.canvas.set_window_title(
+        fig.canvas.manager.set_window_title(
             f"Target Domain and Simulated Rollouts (iteration {idx_iter}, {round_str}rollout {idx_r}{use_rec_str})"
         )
         lg = axs[0].legend(

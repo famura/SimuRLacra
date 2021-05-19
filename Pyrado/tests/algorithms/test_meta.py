@@ -664,8 +664,8 @@ def test_npdr_no_policy_optimization(
         policy,
         dp_mapping,
         prior,
-        SNPE_C,
         embedding,
+        subrtn_sbi_class=SNPE_C,
         **algo_hparam,
     )
 

@@ -98,6 +98,7 @@ figsize_IEEE_2col_18to10 = (7.16, 7.16 / 18 * 10)
 figsize_IEEE_1col_square = (3.5, 3.5)
 figsize_IEEE_2col_square = (7.16, 7.16)
 figsize_JMLR_warpfig = (2.5, 2.4)
+figsize_CoRL_6perrow_square = (2.9, 0.8)
 
 # Time and date formats
 timestamp_format = "%Y-%m-%d_%H-%M-%S"

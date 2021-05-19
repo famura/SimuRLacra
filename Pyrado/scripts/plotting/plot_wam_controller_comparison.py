@@ -69,7 +69,7 @@ if __name__ == "__main__":
     act_idcs = [1, 3] if act_dim == 2 else [1, 3, 5]
 
     fig, ax = plt.subplots(nrows=act_dim, ncols=2, figsize=(12, 8), sharex="all", constrained_layout=True)
-    fig.canvas.set_window_title("Trajectory Comparison")
+    fig.canvas.manager.set_window_title("Trajectory Comparison")
 
     for i, idx in enumerate(act_idcs):
         # Positions

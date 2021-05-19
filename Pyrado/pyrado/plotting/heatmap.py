@@ -143,8 +143,8 @@ def draw_heatmap(
     add_cbar: bool = True,
     separate_cbar: bool = False,
     ax_cb: Optional[plt.Axes] = None,
-    colorbar_label: Optional[str] = None,
-    colorbar_orientation: Optional[str] = "vertical",
+    cbar_label: Optional[str] = None,
+    cbar_orientation: Optional[str] = "vertical",
     use_index_labels: bool = False,
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
@@ -174,8 +174,8 @@ def draw_heatmap(
     :param add_cbar: if `True`, add a color bar in the same figure
     :param separate_cbar: if `True`, the color bar is added in a seperate figure
     :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
-    :param colorbar_label: label for the color bar
-    :param colorbar_orientation: orientation of the color bar
+    :param cbar_label: label for the color bar
+    :param cbar_orientation: orientation of the color bar
     :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.
                              This can can be overridden by `x_label` and `y_label`
     :param x_label: label for the x axis
@@ -253,7 +253,7 @@ def draw_heatmap(
 
     # Add color bar if requested
     if add_cbar and separate_cbar:
-        fig_cb = draw_sep_cbar(ax_cb, colorbar_label, colorbar_orientation, fig_size, cmap, norm, num_major_ticks_cb)
+        fig_cb = draw_sep_cbar(ax_cb, cbar_label, cbar_orientation, fig_size, cmap, norm, num_major_ticks_cb)
         return fig_hm, fig_cb
     else:
         return fig_hm, None

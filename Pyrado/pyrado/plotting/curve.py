@@ -244,8 +244,8 @@ def draw_curve(
         raise pyrado.TypeErr(given=y_label, expected_type=str)
 
     # Set defaults which can be overwritten by passing plot_kwargs
-    plot_kwargs = merge_dicts([dict(alpha=0.3, num_stds=2), plot_kwargs])
-    num_stds = plot_kwargs.pop("num_stds")  # pop here since some plotting functions do not expect num_stds
+    plot_kwargs = merge_dicts([dict(alpha=0.3, num_std=2), plot_kwargs])
+    num_std = plot_kwargs.pop("num_std")  # pop here since some plotting functions do not expect num_std
     legend_kwargs = dict() if legend_kwargs is None else legend_kwargs
     # palette = sns.color_palette() if palette is None else palette
 
@@ -260,11 +260,11 @@ def draw_curve(
         if not ("mean" in data.columns and "std" in data.columns):
             raise pyrado.KeyErr(keys="'mean' and 'std'", container=data)
         if area_label == "":
-            area_label = rf"$\pm {num_stds}$ std"
+            area_label = rf"$\pm {num_std}$ std"
         ax.fill_between(
             x_grid,
-            data["mean"] - num_stds * data["std"],
-            data["mean"] + num_stds * data["std"],
+            data["mean"] - num_std * data["std"],
+            data["mean"] + num_std * data["std"],
             label=area_label,
             **plot_kwargs,
         )

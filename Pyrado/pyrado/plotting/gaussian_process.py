@@ -58,7 +58,7 @@ def render_singletask_gp(
     z_label: str = "",
     min_gp_obsnoise: float = None,
     resolution: int = 201,
-    num_stds: int = 2,
+    num_std: int = 2,
     alpha: float = 0.3,
     color: chr = None,
     curve_label: str = "mean",
@@ -67,7 +67,7 @@ def render_singletask_gp(
     show_legend_std: bool = False,
     show_legend_data: bool = True,
     legend_data_cmap: colors.Colormap = None,
-    colorbar_label: str = None,
+    cbar_label: str = None,
     title: str = None,
     render3D: bool = True,
 ) -> plt.Figure:
@@ -90,8 +90,8 @@ def render_singletask_gp(
     :param z_label: label for z-axis (3D plot only)
     :param min_gp_obsnoise: set a minimal noise value (normalized) for the GP, if `None` the GP has no measurement noise
     :param resolution: number of samples for the input (corresponds to x-axis resolution of the plot)
-    :param num_stds: number of standard deviations to plot around the mean
-    :param alpha: transparency (alpha-value) for the std area
+    :param num_std: number of standard deviations to plot around the mean
+    :param alpha: transparency levelfor the std area
     :param color: color (e.g. 'k' for black), `None` invokes the default behavior
     :param curve_label: label for the mean curve (1D plot only)
     :param heatmap_cmap: color map forwarded to `draw_heatmap()` (2D plot only), `None` to use Pyrado's default
@@ -99,7 +99,7 @@ def render_singletask_gp(
     :param show_legend_std: flag if a legend entry for the std area should be printed
     :param show_legend_data: flag if a legend entry for the individual data points should be printed
     :param legend_data_cmap: color map for the sampled points, default is 'binary'
-    :param colorbar_label: label for the color bar (2D plot only)
+    :param cbar_label: label for the color bar (2D plot only)
     :param title: title displayed above the figure, set to `None` to suppress the title
     :param render3D: use 3D rendering if possible
     :return: handle to the resulting figure
@@ -166,8 +166,8 @@ def render_singletask_gp(
         # Plot the curve
         plt.fill_between(
             x_grid.numpy(),
-            mean.numpy() - num_stds * std.numpy(),
-            mean.numpy() + num_stds * std.numpy(),
+            mean.numpy() - num_std * std.numpy(),
+            mean.numpy() + num_std * std.numpy(),
             alpha=alpha,
             color=color,
         )
@@ -230,8 +230,8 @@ def render_singletask_gp(
             # Project back from normalized input and standardized output (custom for 3D)
             x0_mesh = x0_mesh * (data_x_max[0] - data_x_min[0]) + data_x_min[0]
             x1_mesh = x1_mesh * (data_x_max[1] - data_x_min[1]) + data_x_min[1]
-            lower = mean_raw - num_stds * std_raw
-            upper = mean_raw + num_stds * std_raw
+            lower = mean_raw - num_std * std_raw
+            upper = mean_raw + num_std * std_raw
 
             # Plot a 2D surface in 3D
             ax.plot_surface(x0_mesh.numpy(), x1_mesh.numpy(), mean_raw.numpy())
@@ -289,10 +289,10 @@ def render_singletask_gp(
                 tick_label_prec=2,
                 separate_cbar=True,
                 cmap=heatmap_cmap,
-                colorbar_label=colorbar_label,
+                cbar_label=cbar_label,
                 num_major_ticks_hm=3,
                 num_major_ticks_cb=2,
-                colorbar_orientation="horizontal",
+                cbar_orientation="horizontal",
             )
 
             df_std = pd.DataFrame(std_raw.numpy(), columns=x0_grid_raw.numpy(), index=x1_grid_raw.numpy())
@@ -307,10 +307,10 @@ def render_singletask_gp(
                 tick_label_prec=2,
                 separate_cbar=True,
                 cmap=heatmap_cmap,
-                colorbar_label=colorbar_label,
+                cbar_label=cbar_label,
                 num_major_ticks_hm=3,
                 num_major_ticks_cb=2,
-                colorbar_orientation="horizontal",
+                cbar_orientation="horizontal",
                 norm=colors.Normalize(),
             )  # explicitly instantiate a new norm
 

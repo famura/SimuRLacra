@@ -87,7 +87,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
         policy: Policy,
         dp_mapping: Mapping[int, str],
         prior: Distribution,
-        subrtn_sbi_class: Type[PosteriorEstimator],
         embedding: Embedding,
         num_checkpoints: int,
         init_checkpoint: int,
@@ -199,7 +198,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self._env_real = env_real
         self.dp_mapping = dp_mapping
         self._embedding = embedding
-        self.subrtn_sbi_class = subrtn_sbi_class
         self.num_sim_per_round = num_sim_per_round
         self.num_real_rollouts = num_real_rollouts
         self.num_segments = num_segments
@@ -216,13 +214,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.warmstart = warmstart
         self.num_workers = int(num_workers)
 
-        # Merge the custom sbi sampling hyper-parameters with the ones explicitly provided
-        default_sampling_hparam = dict(
-            mcmc_method="slice_np_vectorized",
-            mcmc_parameters=dict(warmup_steps=50, num_chains=100, init_strategy="sir"),  # default: slice_np, 20
-        )
-        self.subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
-
         # Temporary containers
         self._curr_data_real = None
         self._curr_domain_param_eval = None
@@ -231,20 +222,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self._sbi_simulator = None  # to be set in step()
         self._sbi_prior = None  # to be set in step()
         self._setup_sbi(prior=prior)
-
-        # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
-        density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
-        summary_writer = self.logger.printers[2].writer
-        assert isinstance(summary_writer, SummaryWriter)
-        # if self.subrtn_sbi_class == SNPE_A:
-        #     assert self.posterior_hparam["num_components"]
-        self._subrtn_sbi = self.subrtn_sbi_class(
-            prior=self._sbi_prior,
-            density_estimator=density_estimator,
-            summary_writer=summary_writer,
-            # num_rounds=self.num_sbi_rounds,
-            # num_components=self.posterior_hparam["num_components"] if self.subrtn_sbi_class == SNPE_A else None,
-        )
 
         # Optional policy optimization subroutine
         self._subrtn_policy = subrtn_policy
@@ -306,17 +283,23 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
-    def get_latest_unconditioned_proposal(self) -> Union[utils.BoxUniform, DirectPosterior]:
+    def get_latest_proposal_prev_iter(self) -> Union[utils.BoxUniform, DirectPosterior]:
         """
-        Get the latest proposal. This is either the prior or the amortized posterior from the previous iteration,
-        i.e. a proposal that is not conditioned on an observation.
+        Get either the prior or the conditioned posterior from the (last round of) previous iteration.
 
-        :return: latest proposal for simulating with sbi
+        :return: proposal for simulating with sbi
         """
         if self._curr_iter == 0:
+            # Multi-round or single-round sbi, 1st iteration
             proposal = self._sbi_prior
         else:
-            proposal = pyrado.load("posterior.pt", self._save_dir, prefix=f"iter_{self._curr_iter - 1}")
+            if self.num_sbi_rounds == 1:
+                # Single-round sbi, 2nd iteration
+                prefix = f"iter_{self._curr_iter - 1}"
+            else:
+                # Multi-round sbi, 2nd iteration
+                prefix = f"iter_{self._curr_iter - 1}_round_{self.num_sbi_rounds - 1}"
+            proposal = pyrado.load("posterior.pt", self._save_dir, prefix=prefix)
         return proposal
 
     @abstractmethod
@@ -803,5 +786,5 @@ class SBIBase(InterruptableAlgorithm, ABC):
         assert isinstance(summary_writer, SummaryWriter)
         self.__dict__["_subrtn_sbi"]._summary_writer = summary_writer
 
-        # Set the internal sbi construction callable to None
-        self.__dict__["_subrtn_sbi"]._build_neural_net = None
+        # Set the internal sbi construction callable given the predefined posterior hyper-parameter.
+        self.__dict__["_subrtn_sbi"]._build_neural_net = utils.posterior_nn(**self.posterior_hparam)

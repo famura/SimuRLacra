@@ -82,7 +82,7 @@ if __name__ == "__main__":
     # Time series embedding
     embedding_hparam = dict(
         downsampling_factor=5,
-        # len_rollouts=env_sim.max_steps,
+        len_rollouts=env_sim.max_steps,
         # recurrent_network_type=nn.RNN,
         # only_last_output=True,
         # hidden_size=20,
@@ -146,10 +146,10 @@ if __name__ == "__main__":
         policy,
         dp_mapping,
         prior,
-        SNPE_C,
         embedding,
-        **algo_hparam,
+        subrtn_sbi_class=SNPE_C,
         subrtn_policy=subrtn_policy,
+        **algo_hparam,
     )
 
     # Save the hyper-parameters

@@ -189,7 +189,7 @@ if __name__ == "__main__":
     fig_fize = (3.5, 2.5 / 18 * 10)  # pyrado.figsize_IEEE_1col_18to10 = (3.5, 3.5/18*10)
     fig, ax = plt.subplots(1, figsize=fig_fize, constrained_layout=True)
     means_str = [f"{k}: {np.mean(v)}" for k, v in zip(algo_names, data)]
-    fig.canvas.set_window_title(f"Mean returns on real {env_name.upper()}: " + ", ".join(means_str))
+    fig.canvas.manager.set_window_title(f"Mean returns on real {env_name.upper()}: " + ", ".join(means_str))
 
     draw_categorical(
         ax,

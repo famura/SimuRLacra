@@ -31,8 +31,8 @@ Domain parameter identification experiment on the Pendulum environment using Neu
 """
 from copy import deepcopy
 
-import numpy as np
 import torch as to
+import torch.nn as nn
 from sbi import utils
 from sbi.inference import SNPE_C
 
@@ -41,7 +41,13 @@ from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, DynamicTimeWarpingEmbedding
+from pyrado.policies.special.environment_specific import create_pend_excitation_policy
+from pyrado.sampling.sbi_embeddings import (
+    BayesSimEmbedding,
+    DeltaStepsEmbedding,
+    DynamicTimeWarpingEmbedding,
+    RNNEmbedding,
+)
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.sbi import create_embedding
 
@@ -51,7 +57,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}", "sin")
+    ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}_{PlaybackPolicy.name}", "sin")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -59,67 +65,58 @@ if __name__ == "__main__":
     # Environments
     env_hparams = dict(dt=1 / 50.0, max_steps=400)
     env_sim = PendulumSim(**env_hparams)
+    env_sim.domain_param = dict(d_pole=0)
+    env_sim.domain_param = dict(tau_max=4.5)
 
     # Create a fake ground truth target domain
     num_real_rollouts = 1
     env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(m_pole=1 / 1.3 ** 2, l_pole=1.3)
 
     # Define a mapping: index - domain parameter
     dp_mapping = {0: "m_pole", 1: "l_pole"}
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()
-    # prior_hparam = dict(
-    #     low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
-    #     high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
-    # )
-    # prior = utils.BoxUniform(**prior_hparam)
     prior_hparam = dict(
-        loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
-        covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
+        low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
+        high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
     )
-    prior = to.distributions.MultivariateNormal(**prior_hparam)
+    prior = utils.BoxUniform(**prior_hparam)
+    # prior_hparam = dict(
+    #     loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
+    #     covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
+    # )
+    # prior = to.distributions.MultivariateNormal(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
-        downsampling_factor=1,
+        # downsampling_factor=10,
         # len_rollouts=env_sim.max_steps,
         # recurrent_network_type=nn.RNN,
-        # only_last_output=True,
-        # hidden_size=20,
+        # only_last_output=False,
+        # hidden_size=5,
         # num_recurrent_layers=1,
         # output_size=1,
     )
     embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=4)
+    posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=2)
 
     # Behavioral policy
-    policy_hparam = dict(tau_max=dp_nom["tau_max"], f_sin=0.5)
-
-    def fcn_of_time(t: float):
-        act = policy_hparam["tau_max"] * np.sin(2 * np.pi * t * policy_hparam["f_sin"])
-        return act.repeat(env_sim.act_space.flat_dim)
-
-    act_recordings = [
-        [fcn_of_time(t) for t in np.arange(0, env_sim.max_steps * env_sim.dt, env_sim.dt)]
-        for _ in range(num_real_rollouts)
-    ]
-    policy = PlaybackPolicy(env_sim.spec, act_recordings)
+    policy = create_pend_excitation_policy(env_sim, 1)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=200,
-        num_sbi_rounds=5,
+        num_sim_per_round=100,
+        num_sbi_rounds=8,
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=1000,
-        # num_segments=1,
-        len_segments=100,
+        num_segments=1,
+        # len_segments=200,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
@@ -134,7 +131,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=6,
+        num_workers=20,
     )
     algo = NPDR(
         ex_dir,
@@ -143,8 +140,8 @@ if __name__ == "__main__":
         policy,
         dp_mapping,
         prior,
-        SNPE_C,
         embedding,
+        subrtn_sbi_class=SNPE_C,
         **algo_hparam,
     )
 
@@ -152,8 +149,9 @@ if __name__ == "__main__":
     save_dicts_to_yaml(
         dict(env=env_hparams, seed=args.seed),
         dict(prior=prior_hparam),
+        dict(policy_name=policy.name),
+        dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(posterior_nn=posterior_hparam),
-        dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

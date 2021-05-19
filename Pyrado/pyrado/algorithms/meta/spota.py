@@ -61,9 +61,9 @@ class SPOTA(InterruptableAlgorithm):
 
     .. seealso::
         [1] F. Muratore, M. Gienger, J. Peters, "Assessing Transferability from Simulation to Reality for Reinforcement
-        Learning", PAMI, 2019
+            Learning", PAMI, 2021
         [2] W. Mak, D.P. Morton, and R.K. Wood, "Monte Carlo bounding techniques for determining solution quality in
-        stochastic programs", Oper. Res. Lett., 1999
+            stochastic programs", Oper. Res. Lett., 1999
     """
 
     name: str = "spota"

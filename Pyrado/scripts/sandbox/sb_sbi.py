@@ -43,7 +43,7 @@ from sbi.utils.user_input_checks import prepare_for_sbi
 import pyrado
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.environments.sim_base import SimEnv
-from pyrado.plotting.distribution import draw_posterior_distr_2d
+from pyrado.plotting.distribution import draw_posterior_heatmap_2d
 from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_forward.dummy import IdlePolicy
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     # Plot the posterior
     _, axs = plt.subplots(*num_rows_cols_from_length(num_instances_real), figsize=(14, 14), tight_layout=True)
     axs = np.atleast_2d(axs)
-    draw_posterior_distr_2d(
+    draw_posterior_heatmap_2d(
         axs,
         "separate",
         posterior,

@@ -122,7 +122,7 @@ if __name__ == "__main__":
     else:
         raise pyrado.ValueErr(msg="Select exactly 1 or 2 indices!")
 
-    # Nice color map from seaborn
+    # Use a color map from seaborn for pyplot
     hm_cmap = ListedColormap(sns.color_palette("YlGnBu", n_colors=100)[::-1])
     scat_cmap = LinearSegmentedColormap.from_list("light_to_dark_gray", [(0.95, 0.95, 0.95), (0.05, 0.05, 0.05)], N=256)
 
@@ -138,10 +138,10 @@ if __name__ == "__main__":
         data_x_max=ddp_space.bound_up[args.idcs],
         idcs_sel=args.idcs,
         x_label=x_label,
-        y_label=xy,
+        y_label=y_label,
         z_label=r"r$\hat{J}^{\textrm{real}}$",
         heatmap_cmap=hm_cmap,
-        num_stds=2,
+        num_std=2,
         resolution=201,
         legend_data_cmap=scat_cmap,
         show_legend_data=args.verbose,

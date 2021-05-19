@@ -75,7 +75,7 @@ if __name__ == "__main__":
     for idx_p in range(num_p):
         # Create the figure
         fig, ax = plt.subplots(1, figsize=(12, 10), subplot_kw={"projection": "3d"})
-        fig.canvas.set_window_title(f"Potential dynamics for the {idx_p}-th dimension for initial values")
+        fig.canvas.manager.set_window_title(f"Potential dynamics for the {idx_p}-th dimension for initial values")
         ax.set_xlabel("$t$ [s]")
         ax.set_ylabel("$p_0$")
         ax.set_zlabel("$p(t)$")

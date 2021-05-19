@@ -184,10 +184,10 @@ if __name__ == "__main__":
         policy,
         dp_mapping,
         prior,
-        SNPE_C,
         embedding,
-        **algo_hparam,
+        subrtn_sbi_class=SNPE_C,
         subrtn_policy=subrtn_policy,
+        **algo_hparam,
     )
 
     # Save the hyper-parameters

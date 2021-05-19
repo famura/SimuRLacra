@@ -26,9 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import Optional
+
 import numpy as np
 from init_args_serializer.serializable import Serializable
 
+import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.singular import SingularStateSpace
@@ -42,16 +45,38 @@ class PendulumSim(SimPyEnv, Serializable):
 
     name: str = "pend"
 
+    def __init__(
+        self,
+        dt: float,
+        max_steps: int = pyrado.inf,
+        task_args: Optional[dict] = None,
+        init_state: Optional[np.ndarray] = None,
+    ):
+        """
+        Constructor
+
+        :param dt: simulation step size [s]
+        :param max_steps: maximum number of simulation steps
+        :param task_args: arguments for the task construction
+        :param init_state: set an pole angle and pole angular velocity for the `SingularStateSpace`
+        """
+        Serializable._init(self, locals())
+
+        self._init_state = np.zeros(2) if init_state is None else np.asarray(init_state)  # [rad, rad/s]
+        if self._init_state.size != 2:
+            raise pyrado.ShapeErr(given=self._init_state, expected_match=(2,))
+
+        super().__init__(dt, max_steps, task_args)
+
     def _create_spaces(self):
         # Define the spaces
         max_state = np.array([4 * np.pi, 4 * np.pi])  # [rad, rad/s]
         max_obs = np.array([1.0, 1.0, np.inf])  # [-, -, rad/s]
-        init_state = np.zeros(2)  # [rad, rad/s]
         tau_max = self.domain_param["tau_max"]
 
         self._state_space = BoxSpace(-max_state, max_state, labels=["theta", "theta_dot"])
         self._obs_space = BoxSpace(-max_obs, max_obs, labels=["sin_theta", "cos_theta", "theta_dot"])
-        self._init_space = SingularStateSpace(init_state, labels=["theta", "theta_dot"])
+        self._init_space = SingularStateSpace(self._init_state, labels=["theta", "theta_dot"])
         self._act_space = BoxSpace(-tau_max, tau_max, labels=["tau"])
 
     def _create_task(self, task_args: dict) -> Task:

@@ -101,7 +101,7 @@ def draw_policy_params(
     ax_hm: plt.Axes = None,
     annotate: bool = True,
     annotation_valfmt: str = "{x:.2f}",
-    colorbar_label: str = "",
+    cbar_label: str = "",
     x_label: str = None,
     y_label: str = None,
 ) -> plt.Figure:
@@ -118,7 +118,7 @@ def draw_policy_params(
     :param ax_hm: axis to draw the heat map onto, if equal to None a new figure is opened
     :param annotate: select if the heat map should be annotated
     :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False
-    :param colorbar_label: label for the color bar
+    :param cbar_label: label for the color bar
     :param x_label: label for the x axis
     :param y_label: label for the y axis
     :return: handles to figures
@@ -214,7 +214,7 @@ def draw_policy_params(
                 ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
         # Add the color bar (call this within the loop to make the AccNorm scan every image)
-        colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=colorbar_label)
+        colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=cbar_label)
 
     # Increase the vertical white spaces between the subplots
     plt.subplots_adjust(hspace=0.7, wspace=0.1)

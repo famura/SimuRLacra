@@ -217,7 +217,7 @@ class CatapultExample:
 
     .. seealso::
         [1] F. Muratore, M. Gienger, J. Peters, "Assessing Transferability from Simulation to Reality for Reinforcement
-            Learning", PAMI, 2019
+            Learning", PAMI, 2021
     """
 
     def __init__(self, m, g_M, k_M, x_M, g_V, k_V, x_V):

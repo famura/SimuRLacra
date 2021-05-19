@@ -81,24 +81,17 @@ if __name__ == "__main__":
         num_sbi_rounds=4,
         downsampling_factor=1,
         num_eval_samples=100,
-        posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
-            num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
-            learning_rate=3e-4,  # default: 5e-4
+            learning_rate=5e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
             stop_after_epochs=20,  # default: 20
-            discard_prior_samples=False,  # default: False
-            use_combined_loss=True,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        simulation_batch_size=10,
-        normalize_posterior=True,
         subrtn_policy=None,
-        num_workers=12,
+        num_workers=20,
     )
     algo = BayesSim(
         save_dir=ex_dir,

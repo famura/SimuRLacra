@@ -142,8 +142,8 @@ if __name__ == "__main__":
         policy,
         dp_mapping,
         prior,
-        SNPE_C,
         embedding,
+        subrtn_sbi_class=SNPE_C,
         **algo_hparam,
     )
 

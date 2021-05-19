@@ -30,8 +30,10 @@ import os.path as osp
 from typing import Union
 
 import torch as to
-from sbi.inference import SNPE_C
+from sbi import utils as utils
+from sbi.inference import SNPE_A
 from sbi.inference.base import simulate_for_sbi
+from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.algorithms.meta.sbi_base import SBIBase
@@ -65,7 +67,15 @@ class BayesSim(SBIBase):
     name = "bayessim"
     iteration_key = "bayessim_iteration"
 
-    def __init__(self, env_sim: Union[SimEnv, EnvWrapper], policy: Policy, downsampling_factor: int = 1, **kwargs):
+    def __init__(
+        self,
+        env_sim: Union[SimEnv, EnvWrapper],
+        policy: Policy,
+        downsampling_factor: int = 1,
+        num_components: int = 5,
+        component_perturbation: float = 1e-3,
+        **kwargs,
+    ):
         """
         Constructor
 
@@ -74,8 +84,14 @@ class BayesSim(SBIBase):
                        If `subrtn_policy` is not `None` this policy is also trained at the very last iteration.
         :param downsampling_factor: downsampling factor for the embedding which is used for pre-processing the data
                                     before passing it to the posterior, 1 means no downsampling
+        :param num_components: number of components for the mixture of Gaussians density estimator
+        :param component_perturbation: standard deviation applied to all weights and biases when, in the last round of
+                                       SNPE-A, the Mixture of Gaussians is build from a single Gaussian.
         :param kwargs: forwarded the superclass constructor
         """
+        if component_perturbation <= 0:
+            raise pyrado.ValueErr(given=component_perturbation, g_constraint="0")
+
         # Construct the same embedding as in [1]
         embedding = BayesSimEmbedding(
             spec=env_sim.spec,
@@ -88,14 +104,32 @@ class BayesSim(SBIBase):
         super().__init__(
             env_sim=env_sim,
             policy=policy,
-            subrtn_sbi_class=SNPE_C,  # TODO replace by SNPE-A when available
             embedding=embedding,
             num_checkpoints=3,
             init_checkpoint=0,
+            posterior_hparam=dict(model="mdn_snpe_a"),  # could be something else but SNPE-A practically too special
             max_iter=1,  # BayesSim only runs SNPE-A (could be multi-round) once on the initially collected trajectories
             use_rec_act=True,  # BayesSim requires the trajectories to be recorded beforehand
             **kwargs,
         )
+
+        # Set the sampling parameters used by the sbi subroutine
+        self.subrtn_sbi_sampling_hparam = kwargs.get("subrtn_sbi_sampling_hparam", dict())
+
+        # Create the algorithm instance used in sbi, i.e. SNPE-A  which as a few specialities has a
+        density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
+        summary_writer = self.logger.printers[2].writer
+        assert isinstance(summary_writer, SummaryWriter)
+        self._subrtn_sbi = SNPE_A(
+            prior=self._sbi_prior,
+            density_estimator=density_estimator,
+            summary_writer=summary_writer,
+            num_components=num_components,
+        )
+
+        # Custom to SNPE-A
+        self._component_perturbation = float(component_perturbation)
+        self._allow_precision_correction = False
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
@@ -103,11 +137,13 @@ class BayesSim(SBIBase):
 
         if self.curr_checkpoint == 0:
             # Check if the rollout files already exist
-            if osp.isfile(osp.join(self._save_dir, "data_real.pt")) and osp.isfile(
-                osp.join(self._save_dir, "rollouts_real.pkl")
+            if (
+                osp.isfile(osp.join(self._save_dir, f"iter_{self.curr_iter}_data_real.pt"))
+                and osp.isfile(osp.join(self._save_dir, "data_real.pt"))
+                and osp.isfile(osp.join(self._save_dir, "rollouts_real.pkl"))
             ):
                 # Rollout files do exist (can be when continuing a previous experiment)
-                self._curr_data_real = pyrado.load("data_real.pt", self._save_dir)
+                self._curr_data_real = pyrado.load("data_real.pt", self._save_dir, prefix=f"iter_{self.curr_iter}")
                 print_cbt(f"Loaded existing rollout data.", "w")
 
             else:
@@ -117,6 +153,7 @@ class BayesSim(SBIBase):
                     self._env_real,
                     self._policy,
                     self._embedding,
+                    prefix=f"iter_{self._curr_iter}",
                     num_rollouts=self.num_real_rollouts,
                     num_segments=self.num_segments,
                     len_segments=self.len_segments,
@@ -128,7 +165,7 @@ class BayesSim(SBIBase):
             # Initialize sbi simulator and prior
             self._setup_sbi(
                 prior=self._sbi_prior,
-                rollouts_real=pyrado.load("rollouts_real.pkl", self._save_dir),
+                rollouts_real=pyrado.load("rollouts_real.pkl", self._save_dir, prefix=f"iter_{self._curr_iter}"),
             )
 
             self.reached_checkpoint()  # setting counter to 1
@@ -157,8 +194,16 @@ class BayesSim(SBIBase):
                 )
 
                 # Train the posterior
-                density_estimator = self._subrtn_sbi.train(**self.subrtn_sbi_training_hparam)
-                posterior = self._subrtn_sbi.build_posterior(density_estimator, **self.subrtn_sbi_sampling_hparam)
+                density_estimator = self._subrtn_sbi.train(
+                    final_round=idx_r == self.num_sbi_rounds - 1,
+                    component_perturbation=self._component_perturbation,
+                    **self.subrtn_sbi_training_hparam,
+                )
+                posterior = self._subrtn_sbi.build_posterior(
+                    density_estimator,
+                    **self.subrtn_sbi_sampling_hparam,
+                    allow_precision_correction=self._allow_precision_correction,
+                )
 
                 # Save the posterior of this iteration before tailoring it to the data (when it is still amortized)
                 if idx_r == 0:
@@ -170,6 +215,10 @@ class BayesSim(SBIBase):
                     )
 
                 if self.num_sbi_rounds > 1:
+                    # Set proposal of the next round to focus on the next data set.
+                    # set_default_x() expects dim [1, num_rollouts * data_samples]
+                    proposal = posterior.set_default_x(self._curr_data_real)
+
                     # Save the posterior tailored to each round
                     pyrado.save(
                         posterior,
@@ -177,10 +226,6 @@ class BayesSim(SBIBase):
                         self._save_dir,
                         prefix=f"iter_{self._curr_iter}_round_{idx_r}",  # for compatibility with load_posterior()
                     )
-
-                    # Set proposal of the next round to focus on the next data set.
-                    # set_default_x() expects dim [1, num_rollouts * data_samples]
-                    proposal = posterior.set_default_x(self._curr_data_real)
 
                 # Override the latest posterior
                 pyrado.save(posterior, "posterior.pt", self._save_dir)
@@ -196,12 +241,6 @@ class BayesSim(SBIBase):
                 self.num_eval_samples,
                 normalize_posterior=self.normalize_posterior,
             )
-            self.logger.add_value(  # max likelihood domain parameter set
-                "ml domain param",
-                to.mean(self._curr_domain_param_eval[:, to.argmax(log_probs, dim=1), :], dim=[0, 1]),
-                2,
-            )
-            self.logger.add_value("std domain param", to.std(self._curr_domain_param_eval, dim=[0, 1]), 2)
             self.logger.add_value("avg log prob", to.mean(log_probs), 4)
             self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
 

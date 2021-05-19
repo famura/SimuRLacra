@@ -169,7 +169,7 @@ class DefaultEnvs:
 
     @staticmethod
     def default_pend():
-        return PendulumSim(dt=0.02, max_steps=400)
+        return PendulumSim(dt=0.02, max_steps=400, init_state=np.array([0.1, 0.2]))
 
     @staticmethod
     def default_qbb():

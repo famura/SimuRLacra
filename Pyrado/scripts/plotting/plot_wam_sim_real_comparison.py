@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     # Plot trajectories of the directly controlled joints and their corresponding desired trajectories
     fig, ax = plt.subplots(nrows=len(act_idcs), ncols=2, figsize=(12, 8), sharex="all", constrained_layout=True)
-    fig.canvas.set_window_title("Trajectory Comparison")
+    fig.canvas.manager.set_window_title("Trajectory Comparison")
 
     # Compute the RMSE (root mean squared error) in degree
     if real_data_exists:

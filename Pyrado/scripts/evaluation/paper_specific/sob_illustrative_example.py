@@ -29,8 +29,9 @@
 """
 This script yields the values for the illustrative example in
 
-[1] F. Muratore, M. Gienger, J. Peters, "Assessing Transferability from Simulation to Reality for Reinforcement
-    Learning", PAMI, 2019
+.. seealso::
+    [1] F. Muratore, M. Gienger, J. Peters, "Assessing Transferability from Simulation to Reality for Reinforcement
+        Learning", PAMI, 2021
 """
 import os
 import os.path as osp
@@ -114,32 +115,32 @@ if __name__ == "__main__":
     ex_dir = osp.join(pyrado.EVAL_DIR, "illustrative_example")
     env = CatapultExample(m=1.0, g_M=3.71, k_M=1000.0, x_M=0.5, g_V=8.87, k_V=3000.0, x_V=1.5)
     psi = 0.7  # true probability of drawing Venus
-    S = 100  # 100
-    N = 30  # 30
-    noise_th_scale = 0.15  # 0.15
+    num_samples = 100
+    num_iter = 30
+    noise_th_scale = 0.15
     set_seed(args.seed)
     fig_size = tuple([0.75 * x for x in pyrado.figsize_thesis_1percol_18to10])
 
     th_true_opt = env.opt_policy_param(1 - psi, psi)  # true probabilities instead of counts
     J_true_opt = env.opt_est_expec_return(1 - psi, psi)  # true probabilities instead of counts
     print(f"th_true_opt: {th_true_opt}")
-    print(f"J_true_opt:   {J_true_opt}\n")
+    print(f"J_true_opt:  {J_true_opt}\n")
 
     # Initialize containers
-    n_M_hist = np.empty((S, N))
-    n_V_hist = np.empty((S, N))
-    th_n_opt_hist = np.empty((S, N))
-    th_c_hist = np.empty((S, N))
-    Jhat_th_n_opt_hist = np.empty((S, N))
-    Jhat_th_c_hist = np.empty((S, N))
-    Jhat_th_true_opt_hist = np.empty((S, N))
-    G_n_hist = np.empty((S, N))
-    G_true_hist = np.empty((S, N))
-    b_Jhat_n_hist = np.empty((S, N))
+    n_M_hist = np.empty((num_samples, num_iter))
+    n_V_hist = np.empty((num_samples, num_iter))
+    th_n_opt_hist = np.empty((num_samples, num_iter))
+    th_c_hist = np.empty((num_samples, num_iter))
+    Jhat_th_n_opt_hist = np.empty((num_samples, num_iter))
+    Jhat_th_c_hist = np.empty((num_samples, num_iter))
+    Jhat_th_true_opt_hist = np.empty((num_samples, num_iter))
+    G_n_hist = np.empty((num_samples, num_iter))
+    G_true_hist = np.empty((num_samples, num_iter))
+    b_Jhat_n_hist = np.empty((num_samples, num_iter))
 
-    for s in range(S):
+    for s in range(num_samples):
 
-        for n in range(1, N + 1):
+        for n in range(1, num_iter + 1):
             n_V = np.random.binomial(n, psi)  # perform n Bernoulli trials
             n_M = n - n_V
             n_M_hist[s, n - 1], n_V_hist[s, n - 1] = n_M, n_V
@@ -192,7 +193,7 @@ if __name__ == "__main__":
             if args.verbose:
                 print(f"b_Jhat_{n}:\t\t{b_Jhat_n}\n")
 
-    print(f"At the last iteration (n={N})")
+    print(f"At the last iteration (n={num_iter})")
     print(f"mean G_n: {np.mean(G_n_hist, axis=0)[-1]}")
     print(f"mean G_true: {np.mean(G_true_hist, axis=0)[-1]}")
     print(f"mean b_Jhat_n: {np.mean(b_Jhat_n_hist, axis=0)[-1]}\n")
@@ -204,7 +205,7 @@ if __name__ == "__main__":
         "ci_on_mean",
         ax,
         n_M_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="samples per domain",
@@ -214,14 +215,14 @@ if __name__ == "__main__":
         "ci_on_mean",
         ax,
         n_V_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="samples per domain",
         curve_label="$n_V$",
     )
-    ax.plot(np.arange(1, N + 1), np.arange(1, N + 1) * (1 - psi), c="C0", ls="--")
-    ax.plot(np.arange(1, N + 1), np.arange(1, N + 1) * psi, c="C1", ls="--")
+    ax.plot(np.arange(1, num_iter + 1), np.arange(1, num_iter + 1) * (1 - psi), c="C0", ls="--")
+    ax.plot(np.arange(1, num_iter + 1), np.arange(1, num_iter + 1) * psi, c="C1", ls="--")
     ax.legend(loc="upper left", handletextpad=0.2)
 
     fig_theta, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
@@ -229,7 +230,7 @@ if __name__ == "__main__":
         "ci_on_mean",
         ax,
         th_n_opt_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="policy parameter",
@@ -239,71 +240,76 @@ if __name__ == "__main__":
         "ci_on_mean",
         ax,
         th_c_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="policy parameter",
         curve_label=r"$\theta^c$",
     )
-    ax.plot(np.arange(1, N + 1), np.ones(N) * th_true_opt, ls="--", label=r"$\theta^\star$")
+    ax.plot(np.arange(1, num_iter + 1), np.ones(num_iter) * th_true_opt, ls="--", label=r"$\theta^\star$")
     ax.legend(loc="lower right", ncol=3, handletextpad=0.2)
 
-    fig_Jn, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
+    fig_return, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
     draw_curve_from_data(
-        "ci_on_mean",
+        "mean_std",
         ax,
         Jhat_th_n_opt_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="return",
         curve_label="$\\hat{J}_n(\\theta^\\star_n)$",
+        plot_kwargs=dict(num_std=1),
     )
     draw_curve_from_data(
-        "ci_on_mean",
+        "mean_std",
         ax,
         Jhat_th_c_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="return",
         curve_label="$\\hat{J}_n(\\theta^c)$",
+        plot_kwargs=dict(num_std=1),
     )
     draw_curve_from_data(
-        "ci_on_mean",
+        "mean_std",
         ax,
         Jhat_th_true_opt_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="return",
         curve_label="$\\hat{J}_n(\\theta^\\star)$",
+        plot_kwargs=dict(num_std=1),
     )
     ax.legend(loc="lower right", ncol=3, handletextpad=0.2)
     plt.ylim(bottom=-70)
 
-    fig_SOB, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
+    fig_sob, ax = plt.subplots(1, figsize=fig_size, constrained_layout=True)
     draw_curve_from_data(
-        "ci_on_mean",
+        "mean_std",
         ax,
         G_true_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="OG and SOB",
         curve_label=r"$G_{}^{}(\theta^c)$",
+        plot_kwargs=dict(num_std=1),
     )
     draw_curve_from_data(
-        "ci_on_mean",
+        "mean_std",
         ax,
         G_n_hist,
-        np.arange(1, N + 1),
+        np.arange(1, num_iter + 1),
         ax_calc=0,
         x_label="number of domains $n$",
         y_label="OG and SOB",
         curve_label=r"$\hat{G}_n^{}(\theta^c)$",
+        plot_kwargs=dict(num_std=1),
     )
-    ax.plot(np.arange(1, N + 1), np.mean(b_Jhat_n_hist, axis=0), label=r"$\mathrm{b}[J_n(\theta^\star_n)]$")
+    ax.plot(np.arange(1, num_iter + 1), np.mean(b_Jhat_n_hist, axis=0), label=r"$\mathrm{b}[J_n(\theta^\star_n)]$")
     ax.legend(loc="upper right", ncol=3, handletextpad=0.2)
     # ax.legend(bbox_to_anchor=(0., 1.02, 1., .102), lo=3, ncol=3, mode='expand', borderaxespad=0.)
     plt.ylim(top=42)
@@ -313,7 +319,7 @@ if __name__ == "__main__":
         for fmt in ["pdf", "pgf"]:
             fig_n.savefig(osp.join(ex_dir, f"n.{fmt}"), dpi=500)
             fig_theta.savefig(osp.join(ex_dir, f"theta.{fmt}"), dpi=500)
-            fig_Jn.savefig(osp.join(ex_dir, f"Jn.{fmt}"), dpi=500)
-            fig_SOB.savefig(osp.join(ex_dir, f"OG_SOB.{fmt}"), dpi=500)
+            fig_return.savefig(osp.join(ex_dir, f"Jn.{fmt}"), dpi=500)
+            fig_sob.savefig(osp.join(ex_dir, f"OG_SOB.{fmt}"), dpi=500)
 
     plt.show()

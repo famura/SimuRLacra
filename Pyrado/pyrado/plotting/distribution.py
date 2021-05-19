@@ -42,6 +42,7 @@ from torch.distributions import Distribution, MultivariateNormal
 from torch.distributions.uniform import Uniform
 
 import pyrado
+from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.sim_base import SimEnv
@@ -80,9 +81,9 @@ def draw_distr_evolution(
     :param distr_labels: label for each of the distributions
     :param grid_res: number of samples for the input (corresponds to x-axis grid_res of the plot)
     :param cmap_name: name of the color map, e.g. 'inferno', 'RdBu', or 'viridis'
-    :param alpha: transparency (alpha-value) for the std area
+    :param alpha: transparency level for the std area
     :param show_legend: flag if the legend entry should be printed, set to True when using multiple subplots
-    :param title: title displayed above the (sub)figure, empty string triggers the default title, set to `None` to
+    :param title: title displayed above the (sub)figure, `""` triggers the default title, set to `None` to
                   suppress the title
     :return: handle to the resulting figure
     """
@@ -117,14 +118,14 @@ def draw_distr_evolution(
 
 
 @to.no_grad()
-def draw_posterior_distr_1d(
+def draw_posterior_1d(
     ax: plt.Axes,
     posterior: Union[DirectPosterior, List[DirectPosterior]],
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dim: Union[int, Tuple[int]],
     prior: Optional[BoxUniform] = None,
-    env_real: Optional[DomainRandWrapperBuffer] = None,
+    env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     prob: Optional[to.Tensor] = None,
     condition: Optional[to.Tensor] = None,
     show_prior: bool = False,
@@ -148,9 +149,9 @@ def draw_posterior_distr_1d(
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param dim: selected dimension
-    :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
-                     infer the ground truth domain parameters
-    :param prior: distribution used by sbi as a prior
+    :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
+                     get the ground truth domain parameters
+    :param prior: prior distribution used to extract the evaluation/plotting boundaries
     :param prob: pre-computed probabilities used to compute the marginal probabilities. The use case in mind is the
                  pairwise density plot, where we evaluate several 2-dim grids and later want to use these
                  evaluations to plot a marginal which is in-line with the other plots
@@ -158,7 +159,7 @@ def draw_posterior_distr_1d(
                       can be used in case of a 1-dim domain parameter mapping, else it must be a tensor of shape
                       [num_iter, 1, dim_domain_param]
     :param show_prior: display the prior as a box
-    :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set
+    :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [1 x 2]. Can be set
                         arbitrarily, but should contain the prior if `show_prior` is `True`.
     :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
     :param rescale_posterior: if `True` scale the probabilities to [0, 1], also if `True` the `normalize_posterior`
@@ -210,6 +211,7 @@ def draw_posterior_distr_1d(
     # Create the grid
     if grid_bounds is not None:
         grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
+        grid_bounds = to.atleast_2d(grid_bounds)
         if not grid_bounds.shape == (1, 2):
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(1, 2))
     elif isinstance(prior, BoxUniform):
@@ -279,15 +281,15 @@ def draw_posterior_distr_1d(
 
 
 @to.no_grad()
-def draw_posterior_distr_2d(
+def draw_posterior_heatmap_2d(
     axs: plt.Axes,
     plot_type: str,
     posterior: Union[DirectPosterior, List[DirectPosterior]],
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dims: Tuple[int, int],
-    prior: Optional[BoxUniform] = None,
-    env_real: Optional[DomainRandWrapperBuffer] = None,
+    prior: Optional[Union[BoxUniform, MultivariateNormal]] = None,
+    env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     condition: Optional[to.Tensor] = None,
     show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
@@ -296,6 +298,8 @@ def draw_posterior_distr_2d(
     rescale_posterior: bool = False,
     x_label: Optional[str] = "",
     y_label: Optional[str] = "",
+    show_x_tick_labels: bool = True,
+    show_y_tick_labels: bool = True,
     title: Optional[str] = "",
     add_sep_colorbar: bool = False,
     contourf_kwargs: Optional[dict] = None,
@@ -316,9 +320,9 @@ def draw_posterior_distr_2d(
                       [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
-    :param prior: distribution used by sbi as a prior
-    :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
-                     infer the ground truth domain parameters
+    :param prior: prior distribution used to extract the evaluation/plotting boundaries
+    :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
+                     get the ground truth domain parameters
     :param dims: selected dimensions
     :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions. `None`
                       can be used in case of a 2-dim domain parameter mapping, else it must be a tensor of shape
@@ -332,13 +336,15 @@ def draw_posterior_distr_2d(
     :param grid_res: number of elements on one axis of the evaluation gird
     :param x_label: label for the x-axis, use domain parameter name by default
     :param y_label: label for the y-axis, use domain parameter name by default
-    :param title: title displayed above the (sub)figure, empty string triggers the default title, set to `None` to
+    :param show_x_tick_labels: if `False` no labels for the  ticks of the x axis will be displayed
+    :param show_y_tick_labels: if `False` no labels for the  ticks of the y axis will be displayed
+    :param title: title displayed above the (sub)figure, `""` triggers the default title, set to `None` to
                   suppress the title
     :param add_sep_colorbar: if `True`, add a color bar in a separate figure, else no color bar is plotted
     :param contourf_kwargs: keyword arguments forwarded to pyplot's `contourf()` function for the posterior distribution
     :param scatter_kwargs: keyword arguments forwarded to pyplot's `scatter()` function for the true parameter
     :param colorbar_kwargs: keyword arguments forwarded to `draw_sep_cbar()` function, possible kwargs: `ax_cb`,
-                            `colorbar_label`, `colorbar_orientation`, `fig_size`, `cmap`, `norm`, num_major_ticks_cb`
+                            `cbar_label`, `cbar_orientation`, `fig_size`, `cmap`, `norm`, num_major_ticks_cb`
     :return: handle to the resulting figure, optionally the handle to a color bar, and the tensor of the marginal
              probabilities obtained averaging over the rows and columns of the the 2-dim evaluation grid
     """
@@ -369,7 +375,9 @@ def draw_posterior_distr_2d(
     if not isinstance(grid_res, int):
         raise pyrado.TypeErr(given=grid_res, expected_type=int)
     if len(dp_mapping) == 1:
-        raise NotImplementedError("The draw_posterior_distr_2d() function does not support plotting 1-dim posteriors.")
+        raise NotImplementedError(
+            "The draw_posterior_heatmap_2d() function does not support plotting 1-dim posteriors."
+        )
     if condition is None:
         # No condition was given, check if that is feasible
         if len(dp_mapping) > 2:
@@ -383,7 +391,7 @@ def draw_posterior_distr_2d(
             raise pyrado.ShapeErr(given=condition, expected_match=(num_iter, 1, len(dp_mapping)))
 
     # Set defaults which can be overwritten by passing plot_kwargs
-    contourf_kwargs = merge_dicts([dict(), contourf_kwargs])
+    contourf_kwargs = merge_dicts([dict(levels=30), contourf_kwargs])
     scatter_kwargs = merge_dicts([dict(zorder=1, s=60, marker="o", c="w", edgecolors="k"), scatter_kwargs])
     colorbar_kwargs = merge_dicts([dict(fig_size=(4, 1)), colorbar_kwargs])
 
@@ -472,7 +480,11 @@ def draw_posterior_distr_2d(
         axs.set_xlabel(f"${dp_mapping[dim_x]}$" if x_label == "" else x_label)
         axs.set_ylabel(f"${dp_mapping[dim_y]}$" if y_label == "" else y_label)
         axs.set_title(f"across {num_iter} iterations" if title == "" else title)
-        fig.canvas.set_window_title("Posterior Probability")
+        fig.canvas.manager.set_window_title("Posterior Probability")
+        if not show_x_tick_labels:
+            axs.tick_params(axis="x", which="both", labelbottom=False)
+        if not show_y_tick_labels:
+            axs.tick_params(axis="y", which="both", labelleft=False)
 
     elif plot_type in ["separate", "evolution-iter", "evolution-round"]:
         for i in range(axs.shape[0]):
@@ -515,9 +527,9 @@ def draw_posterior_distr_2d(
                 axs[i, j].set_title(default_title if title == "" else title)
 
         if plot_type == "separate":
-            fig.canvas.set_window_title("Probability of the Latest Posterior")
+            fig.canvas.manager.set_window_title("Probability of the Latest Posterior")
         else:
-            fig.canvas.set_window_title("Probability of the Associated Iteration's Posterior")
+            fig.canvas.manager.set_window_title("Probability of the Associated Iteration's Posterior")
 
     # Add a separate colorbar if desired
     fig_cb = draw_sep_cbar(**colorbar_kwargs) if add_sep_colorbar else None
@@ -561,21 +573,201 @@ def _draw_prior(ax, prior: BoxUniform, dim_x: int, dim_y: int, num_dim: int = 2,
 
 
 @to.no_grad()
-def draw_posterior_distr_pairwise_heatmap(
+def draw_posterior_scatter_2d(
+    ax: plt.Axes,
+    dp_samples: List[to.Tensor],
+    dp_mapping: Mapping[int, str],
+    dims: Tuple[int, int],
+    prior: Optional[Union[BoxUniform, MultivariateNormal]] = None,
+    env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
+    env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
+    axis_limits: Optional[np.array] = None,
+    x_label: Optional[str] = "",
+    y_label: Optional[str] = "",
+    show_x_tick_labels: bool = True,
+    show_y_tick_labels: bool = True,
+    title: Optional[str] = "",
+    legend_labels: Optional[List[str]] = None,
+    show_legend: bool = True,
+    color_palette=sns.color_palette(),
+    alpha: float = 0.3,
+    use_kde: bool = False,
+    scatter_kwargs: Optional[dict] = None,
+    kde_kwargs: Optional[dict] = None,
+    legend_kwargs: Optional[dict] = None,
+) -> plt.Figure:
+    """
+    Plot a 2-dim slice of the posterior distribution evaluated with samples from the posterior.
+
+    :param ax: axis of the figure to plot on
+    :param dp_samples: domain parameter samples generated from different (posterior) distributions
+    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+                       Here this mapping must not have more than 2 elements since we can't plot more.
+    :param dims: selected dimensions
+    :param prior: prior distribution used to extract the evaluation/plotting boundaries
+    :param env_sim: simulation environment a.k.a. source domain. Used to get the nominal domain parameters.
+    :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
+                     get the ground truth domain parameters
+    :param axis_limits: define the lower and upper limits of shape [2, num_domain_param] for each domain parameter.
+                        This is only used if no `pior` was specified. Passing `None` will generate limits automatically.
+    :param x_label: label for the x-axis, use domain parameter name by default
+    :param y_label: label for the y-axis, use domain parameter name by default
+    :param show_x_tick_labels: if `False` no labels for the  ticks of the x axis will be displayed
+    :param show_y_tick_labels: if `False` no labels for the  ticks of the y axis will be displayed
+    :param title: title displayed above the (sub)figure, `""` triggers the default title, set to `None` to
+                  suppress the title
+    :param legend_labels: list of strings to set the legend labels, pass `None` to not use a legend
+    :param show_legend: if `True` the legend is shown
+    :param color_palette: colorpalette for plotting the different distribution samples
+    :param alpha: transparency level for the scatter and histogram plots except ground truth and nominal parameters
+    :param use_kde: set to True to plot samples with KDE (currently only for pair axes)
+    :param scatter_kwargs: dict with additional settings for seaborn.scatterplot
+    :param kde_kwargs: dict with additional settings for seaborn.kdeplot
+    :param legend_kwargs: dict with additional settings for the legends
+    :return: figure containing the pair plot
+    """
+    # Check the inputs
+    dim_x, dim_y = dims
+    if not isinstance(dim_x, int) and dim_x >= 0:
+        raise pyrado.ValueErr(given=dim_x, ge_constraint="0 (int)")
+    if not isinstance(dim_y, int) and dim_x >= 0:
+        raise pyrado.ValueErr(given=dim_y, ge_constraint="0 (int)")
+
+    if legend_labels is not None:
+        legend_labels = deepcopy(legend_labels)  # we want to be able to append without modifying the input
+        if not isinstance(legend_labels, list):
+            raise pyrado.TypeErr(given=legend_labels, expected_type=list)
+        elif len(legend_labels) != len(dp_samples):
+            raise pyrado.ShapeErr(given=legend_labels, expected_match=dp_samples)
+
+    # Get the nominal domain parameters
+    dp_nom = []  # later called len() on
+    if isinstance(env_sim, (SimEnv, EnvWrapper)):
+        dp_nom = to.tensor([env_sim.domain_param[v] for v in dp_mapping.values()])
+        dp_samples.append(to.atleast_2d(dp_nom))
+        if legend_labels is not None:
+            legend_labels.append("nom")
+        color_palette.insert(len(dp_samples) - 1, sns.color_palette()[0])
+
+    # Reconstruct ground truth domain parameters if they exist
+    dp_gt = []  # later called len() on
+    if typed_env(env_real, DomainRandWrapperBuffer):
+        dp_gt = to.stack([to.stack(list(d.values())) for d in env_real.randomizer.get_params(-1, "list", "torch")])
+    elif isinstance(env_real, SimEnv):
+        dp_gt = to.tensor([env_real.domain_param[v] for v in dp_mapping.values()])
+        dp_gt = to.atleast_2d(dp_gt)
+    if dp_gt != []:
+        # Append ground truth parameters at the end if they exist
+        dp_samples.append(dp_gt)
+        if legend_labels is not None:
+            legend_labels.append("real")
+        color_palette.insert(len(dp_samples) - 1, (0, 0, 0))
+
+    # Initialize plotting args and update them with custom args
+    scatter_args = merge_dicts([dict(s=20), scatter_kwargs or dict()])
+    kde_args = merge_dicts([dict(fill=True), kde_kwargs or dict()])
+    legend_args = dict(
+        loc="upper center",
+        bbox_to_anchor=(0.0, 1.1, 1.0, -0.1),
+        mode="expand",
+        ncol=len(legend_labels),
+        handletextpad=0.0,
+    )
+    # legend_args = dict(loc="center left", bbox_to_anchor=(0.9, 0.5), mode="expand", ncol=1, handletextpad=-0.2)
+    legend_args = merge_dicts([legend_args, legend_kwargs or dict()])
+
+    # Define transparency values
+    alphas = []
+    for idx_obs in range(len(dp_samples)):
+        # There is only one sample for the nominal and the ground truth domain parameters, make it opaque
+        alphas.append(1.0 if len(dp_samples[idx_obs]) == 1 else alpha)
+
+    # Plot the data given sets
+    for idx_obs in range(len(dp_samples)):
+        # Plot the data points
+        if use_kde and len(dp_samples[idx_obs]) > 1:
+            sns.kdeplot(
+                x=dp_samples[idx_obs][:, dim_x],
+                y=dp_samples[idx_obs][:, dim_y],
+                alpha=alphas[idx_obs],
+                cmap=sns.light_palette(color_palette[idx_obs], as_cmap=True),
+                label=legend_labels[idx_obs],
+                **kde_args,
+            )
+        else:
+            sns.scatterplot(
+                x=dp_samples[idx_obs][:, dim_x],
+                y=dp_samples[idx_obs][:, dim_y],
+                color=color_palette[idx_obs],
+                alpha=alphas[idx_obs],
+                label=legend_labels[idx_obs],
+                **scatter_args,
+            )
+
+    # Format pair axes. Set matplotlib axis limits based on the y-axis of the first column or cast them if were given.
+    if prior is not None:
+        # Extract limits from the prior
+        if isinstance(prior, BoxUniform):
+            if not hasattr(prior, "base_dist"):
+                raise AttributeError(
+                    "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
+                )
+            axis_limits = to.stack([prior.base_dist.support.lower_bound, prior.base_dist.support.upper_bound], dim=0)
+            axis_limits = axis_limits.numpy()
+        elif isinstance(prior, MultivariateNormal):
+            # Construct a grid with +/-3 prior std around the prior mean
+            lb = prior.mean - 3 * to.sqrt(prior.variance)
+            ub = prior.mean + 3 * to.sqrt(prior.variance)
+            axis_limits = to.stack([lb, ub], dim=0).numpy()
+        else:
+            raise pyrado.TypeErr(given=prior, expected_type=(BoxUniform, MultivariateNormal))
+    elif isinstance(axis_limits, np.ndarray):
+        assert axis_limits.ndim == 2 and axis_limits.shape[0] == 2
+    else:
+        raise pyrado.ValueErr(msg="Neither explicit axis limits nor a prior has been provided!")
+
+    # Legend
+    if show_legend:
+        ax.legend(**legend_args)
+    else:
+        ax.get_legend().remove()
+
+    # Annotate
+    ax.axis("square")
+    ax.set_xlim(axis_limits[0, dim_x], axis_limits[1, dim_x])
+    ax.set_ylim(axis_limits[0, dim_y], axis_limits[1, dim_y])
+    ax.set_xlabel(f"${dp_mapping[dim_x]}$" if x_label == "" else x_label)
+    ax.set_ylabel(f"${dp_mapping[dim_y]}$" if y_label == "" else y_label)
+    ax.set_title(title)
+    plt.minorticks_on()
+    fig = plt.gcf()
+    num_samples = sum(s.shape[0] for s in dp_samples if s.shape[0] > max(len(dp_gt), len(dp_nom)))  # ignore the
+    num_data_sets = sum(int(len(ds) > max(len(dp_gt), len(dp_nom))) for ds in dp_samples)
+    fig.canvas.manager.set_window_title(f"{num_samples} Posterior Samples of {num_data_sets} Data Sets")
+    if not show_x_tick_labels:
+        ax.tick_params(axis="x", which="both", labelbottom=False)
+    if not show_y_tick_labels:
+        ax.tick_params(axis="y", which="both", labelleft=False)
+
+    return fig
+
+
+@to.no_grad()
+def draw_posterior_pairwise_heatmap(
     axs: plt.Axes,
     posterior: Union[DirectPosterior, to.distributions.Distribution],
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     condition: to.Tensor,
     prior: Optional[Union[BoxUniform, Uniform]] = None,
-    env_real: Optional[DomainRandWrapperBuffer] = None,
+    env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     show_prior: bool = False,
+    grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
     grid_res: int = 100,
     marginal_layout: str = "inside",
     normalize_posterior: bool = False,
     rescale_posterior: bool = False,
-    x_labels: Optional[np.ndarray] = "",
-    y_labels: Optional[np.ndarray] = "",
+    labels: Optional[List[str]] = None,
     prob_labels: Optional[np.ndarray] = "",
 ) -> plt.Figure:
     """
@@ -591,21 +783,20 @@ def draw_posterior_distr_pairwise_heatmap(
     :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions. `None`
                       can be used in case of a 2-dim domain parameter mapping, else it must be a tensor of shape
                       [num_iter, 1, dim_domain_param]
-    :param prior: distribution used by sbi as a prior
-    :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
-                     infer the ground truth domain parameters
+    :param prior: prior distribution used to extract the evaluation/plotting boundaries
+    :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
+                     get the ground truth domain parameters
     :param show_prior: display the prior as a box or as two lines
     :param dims: selected dimensions
+    :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [num_domain_param x 2].
+                        Can be set arbitrarily, but should contain the prior if `show_prior` is `True`.
     :param grid_res: number of elements on one axis of the evaluation gird
     :param marginal_layout: choose between `inside` for plotting the marginals on the diagonal (more dense), and
                            `outside` plotting the marginals on the side (better comparison)
     :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
     :param rescale_posterior: if `True` scale the probabilities to [0, 1], also if `True` the `normalize_posterior`
                               argument is ignored since it would be a wasted computation
-    :param x_labels: 2-dim numpy array of labels for the x-axes, pass `""` to use domain parameter name by default,
-                     or pass `None` to use no labels
-    :param y_labels: 2-dim numpy array of labels for the y-axes, pass `""` to use domain parameter name by default,
-                     or pass `None` to use no labels
+    :param labels: list of strings to set the axis labels, pass `None` to use the domain parameter mapping
     :param prob_labels: 1-dim numpy array of labels for the probability axis in the marginal plots, pass `""` to use
                         the default labels or pass `None` to use no labels
     :return: figure containing the pair plot
@@ -622,36 +813,15 @@ def draw_posterior_distr_pairwise_heatmap(
         raise pyrado.ShapeErr(given=axs, expected_match=plot_shape)
 
     # Manage the labels
-    if x_labels == "":
-        # The default values for the labels has been given, fill with the domain parameter names
-        x_labels = np.empty(plot_shape, dtype=object)
-        for i in range(len(dp_mapping)):
-            x_labels[i, :] = dp_mapping[i]
-    elif x_labels is not None:
-        # A non-default values for the labels has been given, check the shape
-        if x_labels.shape != plot_shape:
-            raise pyrado.ShapeErr(given=x_labels, expected_match=plot_shape)
-    if y_labels == "":
-        # The default values for the labels has been given, fill with the domain parameter names
-        y_labels = np.empty(plot_shape, dtype=object)
-        for i in range(len(dp_mapping)):
-            y_labels[:, i] = dp_mapping[i]
-    elif y_labels != "" and y_labels is not None:
-        # A non-default values for the labels has been given, check the shape
-        if y_labels.shape != plot_shape:
-            raise pyrado.ShapeErr(given=y_labels, expected_match=plot_shape)
-    if marginal_layout == "inside":
-        # Remove the repetitive labels, mind the later transposing for the dim assignment
-        if x_labels is not None:
-            x_labels.T[:-1, :] = None
-        if y_labels is not None:
-            y_labels.T[:, 1:] = None
-    elif marginal_layout == "outside":
-        # Remove the repetitive labels, mind the later transposing and shift for the dim assignment
-        if x_labels is not None:
-            x_labels.T[:-2, :] = None
-        if y_labels is not None:
-            y_labels.T[:, 1:] = None
+    if labels is None:
+        # The default values for the labels are filled with the domain parameter names
+        labels = [dp_mapping[k] for k in sorted(dp_mapping.keys())]
+    elif type(labels) != list:
+        raise pyrado.TypeErr(given=type(labels), expected_type=list)
+    elif len(labels) != len(dp_mapping):
+        raise pyrado.ShapeErr(given=labels, expected_match=dp_mapping)
+    else:
+        labels = deepcopy(labels)  # we want to be able to append without modifying the input
 
     if prob_labels == "":
         prob_labels = [f"p({v})" for v in dp_mapping.values()]
@@ -689,7 +859,13 @@ def draw_posterior_distr_pairwise_heatmap(
         if marginal_layout == "outside":
             dim_y = i - 1  # counter the shift that we got from the marginal plots in the top row
 
-        _, _, marginal_prob = draw_posterior_distr_2d(
+        # Subselect the explicit bounds if given
+        if grid_bounds is not None:
+            grid_bounds_sel = to.index_select(to.as_tensor(grid_bounds), 0, to.as_tensor([dim_x, dim_y]))
+        else:
+            grid_bounds_sel = None
+
+        _, _, marginal_prob = draw_posterior_heatmap_2d(
             axs[i, j],
             "joint",
             posterior,
@@ -699,16 +875,19 @@ def draw_posterior_distr_pairwise_heatmap(
             prior=prior,
             env_real=env_real,
             condition=condition,
-            grid_bounds=None,
+            grid_bounds=grid_bounds_sel,
             grid_res=grid_res,
             show_prior=show_prior,
             normalize_posterior=normalize_posterior,
             rescale_posterior=rescale_posterior,
-            x_label=x_labels[dim_x, dim_y] if x_labels is not None else None,
-            y_label=y_labels[dim_x, dim_y] if y_labels is not None else None,
+            x_label=None,  # will be set later
+            y_label=None,  # will be set later
             title=None,
             add_sep_colorbar=False,
         )
+
+        # Set axes label and tick settings
+        _set_labels_pair_axes_(axs, i, j, dim_x, dim_y, labels, marginal_layout, plot_shape, None)
 
         # Extract the marginals (1st dim is always the x-axis in the 2-dim plots)
         marginal_probs[dim_x, :] += marginal_prob[0]
@@ -721,23 +900,17 @@ def draw_posterior_distr_pairwise_heatmap(
     for i, j in idcs_marginal:
         dim = j
         rotate = False
-        if marginal_layout == "inside":
-            x_label = x_labels[i, j] if x_labels is not None else None
-            y_label = prob_labels[i] if prob_labels is not None else None
-        elif marginal_layout == "outside":
-            if i == 0:
-                dim = j
-                x_label = x_labels[dim, 0] if x_labels is not None else None
-                y_label = prob_labels[dim] if prob_labels is not None else None
-            elif j == len(dp_mapping):
-                dim = i - 1
-                rotate = True
-                x_label = x_labels[dim, 0] if x_labels is not None else None
-                y_label = prob_labels[dim] if prob_labels is not None else None
-        else:
-            x_label = y_label = None
+        if marginal_layout == "outside" and j == len(dp_mapping):
+            dim = i - 1
+            rotate = True
 
-        draw_posterior_distr_1d(
+        # Subselect the explicit bounds if given
+        if grid_bounds is not None:
+            grid_bounds_sel = to.as_tensor(grid_bounds)[dim]
+        else:
+            grid_bounds_sel = None
+
+        draw_posterior_1d(
             axs[i, j],
             posterior,
             data_real,
@@ -748,14 +921,18 @@ def draw_posterior_distr_pairwise_heatmap(
             prob=marginal_probs[dim],
             condition=condition,
             show_prior=show_prior,
-            grid_bounds=None,
+            grid_bounds=grid_bounds_sel,
             grid_res=grid_res,
             normalize_posterior=normalize_posterior,
             rescale_posterior=rescale_posterior,
-            x_label=x_label,
-            y_label=y_label,
+            x_label=None,  # will be set later
+            y_label=None,  # will be set later
             transposed=rotate,
         )
+
+        # Set axes label and tick settings
+        prob_label = prob_labels[dim] if prob_labels is not None else None
+        _set_labels_marginal_axes_(axs, i, j, dim, labels, prob_label, marginal_layout, plot_shape, None)
 
     if marginal_layout == "outside":
         for i, j in idcs_skipp:
@@ -765,45 +942,52 @@ def draw_posterior_distr_pairwise_heatmap(
 
 
 @to.no_grad()
-def draw_posterior_distr_pairwise_scatter(
+def draw_posterior_pairwise_scatter(
     axs: plt.Axes,
     dp_samples: List[to.Tensor],
     dp_mapping: Mapping[int, str],
+    prior: Optional[Union[BoxUniform, Uniform]] = None,
+    env_sim: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
+    env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
+    axis_limits: Optional[np.array] = None,
     marginal_layout: str = "outside",
     labels: Optional[List[str]] = None,
     legend_labels: Optional[List[str]] = None,
-    prob_label: Optional[str] = None,
+    prob_label: Optional[str] = "",
     color_palette=sns.color_palette(),
-    set_alpha: Optional[float] = None,
-    axis_limits: Optional[np.array] = None,
+    alpha: float = 0.3,
     use_kde: bool = False,
     custom_scatter_args: Optional[dict] = None,
     custom_histplot_args: Optional[dict] = None,
     custom_line_args: Optional[dict] = None,
-    custom_kde_args: Optional[dict] = None,
+    kde_kwargs: Optional[dict] = None,
 ) -> plt.Figure:
     """
     Plot a 2-dim gird of pairwise slices of the posterior distribution evaluated with samples from the posterior.
 
-    :param axs: axis (joint) or axes (separately) of the figure to plot on
+    :param axs: axis of the figure to plot on
     :param dp_samples: domain parameter samples generated from different (posterior) distributions
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
+    :param prior: prior distribution used to extract the evaluation/plotting boundaries
+    :param env_sim: simulation environment a.k.a. source domain. Used to get the nominal domain parameters.
+    :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
+                     get the ground truth domain parameters
+    :param axis_limits: define the lower and upper limits of shape [2, num_domain_param] for each domain parameter.
+                        This is only used if no `pior` was specified. Passing `None` will generate limits automatically.
     :param marginal_layout: choose between `inside` for plotting the marginals on the diagonal (more dense), and
                            `outside` plotting the marginals on the side (better comparison)
-    :param labels: List of strings to set the axis labels, pass `None` to use the domain parameter mapping
-    :param legend_labels: List of strings to set the legend labels, pass `None` to not use a legend
+    :param labels: list of strings to set the axis labels, pass `None` to use the domain parameter mapping
+    :param legend_labels: list of strings to set the legend labels, pass `None` to not use a legend
     :param prob_label: string to set the label for the probability axis in the marginal plots,
                        pass `""` to use default labels or pass `None` to use no labels
     :param color_palette: colorpalette for plotting the different distribution samples
-    :param set_alpha: define a fixed alpha value for the scatter plot
-    :param axis_limits: define the lower and upper limits for each dp as a numpy array. The shape is [2, num_dp]
-                        passing `None` will generate limits automatically
+    :param alpha: transparency level for the scatter and histogram plots except ground truth and nominal parameters
     :param use_kde: set to True to plot samples with KDE (currently only for pair axes)
     :param custom_scatter_args: dict with additional settings for seaborn.scatterplot
     :param custom_histplot_args: dict with additional settings for seaborn.histplot
     :param custom_line_args: dict with additional settings for matplotlib.pyplot.vline and matplotlib.pyplot.hline
-    :param custom_kde_args: dict with additional settings for seaborn.kdeplot
+    :param kde_kwargs: dict with additional settings for seaborn.kdeplot
     :return: figure containing the pair plot
     """
     # Check the inputs
@@ -824,11 +1008,16 @@ def draw_posterior_distr_pairwise_scatter(
         raise pyrado.TypeErr(given=type(labels), expected_type=list)
     elif len(labels) != len(dp_mapping):
         raise pyrado.ShapeErr(given=labels, expected_match=dp_mapping)
+    else:
+        labels = deepcopy(labels)  # we want to be able to append without modifying the input
 
     if legend_labels is not None:
-        if type(legend_labels) != list:
-            raise pyrado.TypeErr(given=type(legend_labels), expected_type=list)
+        legend_labels = deepcopy(legend_labels)  # we want to be able to append without modifying the input
+        if not isinstance(legend_labels, list):
+            raise pyrado.TypeErr(given=legend_labels, expected_type=list)
         elif len(legend_labels) != len(dp_samples):
+            print(len(legend_labels))
+            print(len(dp_samples))
             raise pyrado.ShapeErr(given=legend_labels, expected_match=dp_samples)
 
     if prob_label == "":
@@ -839,15 +1028,37 @@ def draw_posterior_distr_pairwise_scatter(
         prob_label = f"${prob_label}$"
 
     # Initialize plotting args and update them with custom args
-    scatter_args = dict()
+    scatter_args = dict(s=20)
     scatter_args.update(custom_scatter_args or dict())
-    histplot_args = dict(element="step", bins=50)
+    histplot_args = dict(element="step", bins=30)
     histplot_args.update(custom_histplot_args or dict())
     line_args = dict(lw=2)
     line_args.update(custom_line_args or dict())
     kde_args = dict(fill=True)
-    kde_args.update(custom_kde_args or dict())
+    kde_args.update(kde_kwargs or dict())
     label_args = dict()  # fontsize=11
+
+    # Get the nominal domain parameters
+    if isinstance(env_sim, (SimEnv, EnvWrapper)):
+        dp_nom = to.tensor([env_sim.domain_param[v] for v in dp_mapping.values()])
+        dp_samples.append(to.atleast_2d(dp_nom))
+        if legend_labels is not None:
+            legend_labels.append("nom")
+        color_palette.insert(len(dp_samples) - 1, sns.color_palette()[0])
+
+    # Reconstruct ground truth domain parameters if they exist
+    dp_gt = None
+    if typed_env(env_real, DomainRandWrapperBuffer):
+        dp_gt = to.stack([to.stack(list(d.values())) for d in env_real.randomizer.get_params(-1, "list", "torch")])
+    elif isinstance(env_real, SimEnv):
+        dp_gt = to.tensor([env_real.domain_param[v] for v in dp_mapping.values()])
+        dp_gt = to.atleast_2d(dp_gt)
+    if dp_gt is not None:
+        # Append ground truth parameters at the end if they exist
+        dp_samples.append(dp_gt)
+        if legend_labels is not None:
+            legend_labels.append("real")
+        color_palette.insert(len(dp_samples) - 1, (0, 0, 0))
 
     # Generate the indices for the subplots
     if marginal_layout == "inside":
@@ -881,11 +1092,8 @@ def draw_posterior_distr_pairwise_scatter(
     # Define transparency values
     alphas = []
     for idx_obs in range(len(dp_samples)):
-        if len(dp_samples[idx_obs]) == 1:
-            alpha = 1.0
-        else:
-            alpha = 1 - idx_obs / len(dp_samples) if set_alpha is None else set_alpha
-        alphas.append(alpha)
+        # There is only one sample for the nominal and the ground truth domain parameters, make it opaque
+        alphas.append(1.0 if len(dp_samples[idx_obs]) == 1 else alpha)
 
     # Plot data in pair axes
     for i, j in idcs_pair:
@@ -896,7 +1104,7 @@ def draw_posterior_distr_pairwise_scatter(
         if marginal_layout == "outside":
             dim_y -= 1
 
-        # Iterate through the data given sets
+        # Plot the data given sets
         for idx_obs in range(len(dp_samples)):
             # Plot the data points
             if use_kde and len(dp_samples[idx_obs]) > 1:
@@ -917,12 +1125,30 @@ def draw_posterior_distr_pairwise_scatter(
                 )
 
     # Format pair axes. Set matplotlib axis limits based on the y-axis of the first column or cast them if were given.
-    if axis_limits is None:
+    if prior is not None:
+        # Extract limits from the prior
+        if isinstance(prior, BoxUniform):
+            if not hasattr(prior, "base_dist"):
+                raise AttributeError(
+                    "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
+                )
+            axis_limits = to.stack([prior.base_dist.support.lower_bound, prior.base_dist.support.upper_bound], dim=0)
+            axis_limits = axis_limits.numpy()
+        elif isinstance(prior, MultivariateNormal):
+            # Construct a grid with +/-3 prior std around the prior mean
+            lb = prior.mean - 3 * to.sqrt(prior.variance)
+            ub = prior.mean + 3 * to.sqrt(prior.variance)
+            axis_limits = to.stack([lb, ub], dim=0).numpy()
+        else:
+            raise pyrado.TypeErr(given=prior, expected_type=(BoxUniform, MultivariateNormal))
+    elif axis_limits is None:
         i = 1 if marginal_layout == "outside" else 0
         axis_limits = [axs[i, 1].get_ylim()] + [axs[dim, 0].get_ylim() for dim in range(i + 1, plot_shape[0])]
         axis_limits = np.array(axis_limits).T
+    elif isinstance(axis_limits, np.ndarray):
+        assert axis_limits.ndim == 2 and axis_limits.shape[0] == 2
     else:
-        axis_limits = axis_limits.numpy()
+        raise pyrado.ValueErr(msg="Neither explicit axis limits nor a prior has been provided!")
 
     for i, j in idcs_pair:
         dim_x, dim_y = j, i  # dim_x, dim_y specify the data indices
@@ -933,22 +1159,8 @@ def draw_posterior_distr_pairwise_scatter(
         axs[i, j].set_xlim(axis_limits[0, dim_x], axis_limits[1, dim_x])
         axs[i, j].set_ylim(axis_limits[0, dim_y], axis_limits[1, dim_y])
 
-        if marginal_layout == "outside":
-            # Show the ticklabels only for left and lower axes
-            if i != plot_shape[0] - 1 and (i != plot_shape[0] - 2 or j != plot_shape[1] - 2):
-                axs[i, j].set_xticklabels([])
-            if j != 0 and (j != 1 or i != 1):
-                axs[i, j].set_yticklabels([])
-
-        if marginal_layout == "inside":
-            if i == plot_shape[0] - 1 or (i == plot_shape[0] - 2 and j == plot_shape[1] - 1):
-                axs[i, j].set_xlabel(f"${labels[dim_x]}$", **label_args)
-            else:
-                axs[i, j].set_xticklabels([])
-            if j == 0 or (j == 1 and i == 0):
-                axs[i, j].set_ylabel(f"${labels[dim_y]}$", **label_args)
-            else:
-                axs[i, j].set_yticklabels([])
+        # Set axes label and tick settings
+        _set_labels_pair_axes_(axs, i, j, dim_x, dim_y, labels, marginal_layout, plot_shape, label_args)
 
     # Plot marginal axes
     max_marginal_y_limit = 0
@@ -968,24 +1180,24 @@ def draw_posterior_distr_pairwise_scatter(
         # Iterate through the given data sets
         for idx_obs in range(len(dp_samples)):
             # Update plotting arguments
-            scatter_data = dp_samples[idx_obs][:, dim]  # current scatter data
+            scatter_data = dp_samples[idx_obs][:, dim].numpy()  # current data
             color = color_palette[idx_obs]
-            current_histplot_args = dict(binrange=axis_limits[:, dim])
-            current_histplot_args.update(histplot_args)
-            current_kde_args = deepcopy(kde_args)
+            curr_histplot_args = dict(binrange=axis_limits[:, dim])
+            curr_histplot_args.update(histplot_args)
+            curr_kde_args = deepcopy(kde_args)
 
             # Define the settings depending on the rotation
-            current_histplot_args.update(dict(y=scatter_data) if rotate else dict(x=scatter_data))
-            current_kde_args.update(dict(y=scatter_data) if rotate else dict(x=scatter_data))
+            curr_histplot_args.update(dict(y=scatter_data) if rotate else dict(x=scatter_data))
+            curr_kde_args.update(dict(y=scatter_data) if rotate else dict(x=scatter_data))
             line_obj = plt.axhline if rotate else plt.axvline
 
             # Plot a histogram or line depending on data size
             if len(scatter_data) == 1:
                 line_obj(scatter_data, color=color, **line_args)
             elif use_kde:
-                sns.kdeplot(color=color, alpha=alphas[idx_obs], **current_kde_args)
+                sns.kdeplot(color=color, alpha=alphas[idx_obs], **curr_kde_args)
             else:
-                sns.histplot(color=color, alpha=alphas[idx_obs], edgecolor=color, **current_histplot_args)
+                sns.histplot(color=color, alpha=alphas[idx_obs], edgecolor=color, **curr_histplot_args)
 
             if i == 0:
                 max_marginal_y_limit = max(max_marginal_y_limit, axs[i, j].get_ylim()[1])
@@ -1008,31 +1220,8 @@ def draw_posterior_distr_pairwise_scatter(
             axs[i, j].set_xlim(axis_limits[0, dim], axis_limits[1, dim])
             axs[i, j].set_ylim(0.0, max_marginal_y_limit)
 
-        # Set x-axis label and tick settings
-        if marginal_layout == "outside":
-            if i == 0:  # top row of axes
-                axs[i, j].xaxis.set_label_position("top")  # set labels on top
-                axs[i, j].set_xlabel(f"${labels[dim]}$", **label_args)
-                axs[i, j].set_ylabel(prob_label if j == 0 else "", **label_args)
-                axs[i, j].xaxis.tick_top()  # set ticks on top
-                axs[i, j].set_xticklabels([])
-                if j != 0:
-                    axs[i, j].set_yticklabels([])
-
-            if j == plot_shape[1] - 1:  # most right column of axes
-                axs[i, j].yaxis.set_label_position("right")  # set labels to the right
-                axs[i, j].set_ylabel(f"${labels[dim]}$", **label_args)
-                axs[i, j].set_xlabel(prob_label if i == plot_shape[1] - 1 else "", **label_args)
-                axs[i, j].yaxis.tick_right()  # set ticks to the right
-                axs[i, j].set_yticklabels([])
-                if i != plot_shape[1] - 1:
-                    axs[i, j].set_xticklabels([])
-
-        elif marginal_layout == "inside":
-            axs[i, j].set_xlabel(f"${labels[dim]}$" if i == plot_shape[0] - 1 else "", **label_args)
-            axs[i, j].set_ylabel(prob_label, **label_args)
-            if i != plot_shape[0] - 1:
-                axs[i, j].set_xticklabels([])
+        # Set axes label and tick settings
+        _set_labels_marginal_axes_(axs, i, j, dim, labels, prob_label, marginal_layout, plot_shape, label_args)
 
     # Format other axes
     if marginal_layout == "outside":
@@ -1057,3 +1246,81 @@ def draw_posterior_distr_pairwise_scatter(
             fig.legend(handles=legend_elements, loc=(0.5, 1), ncol=len(legend_elements))
 
     return plt.gcf()
+
+
+def _set_labels_pair_axes_(
+    axs: plt.Axes,
+    i: int,
+    j: int,
+    dim_x: int,
+    dim_y: int,
+    labels: List[str],
+    marginal_layout: str,
+    plot_shape: Tuple[int, int],
+    label_args: Optional[dict] = None,
+):
+    """Helper function for setting the pair axes' labels. The variables shadow the meaning from outer scope."""
+    if label_args is None:
+        label_args = dict()
+
+    if marginal_layout == "outside":
+        # Show the ticklabels only for left and lower axes
+        if i != plot_shape[0] - 1 and (i != plot_shape[0] - 2 or j != plot_shape[1] - 2):
+            axs[i, j].set_xticklabels([])
+        if j != 0 and (j != 1 or i != 1):
+            axs[i, j].set_yticklabels([])
+
+    if marginal_layout == "inside":
+        # Show the ticklabels only for left and lower axes,
+        if i == plot_shape[0] - 1:
+            axs[i, j].set_xlabel(f"${labels[dim_x]}$", **label_args)
+        else:
+            axs[i, j].set_xticklabels([])
+        if j == 0:
+            axs[i, j].set_ylabel(f"${labels[dim_y]}$", **label_args)
+        elif j == 1 and i == 0:
+            pass  # print ticks but no label for first pair y-axis in the first row
+        else:
+            axs[i, j].set_yticklabels([])
+
+
+def _set_labels_marginal_axes_(
+    axs: plt.Axes,
+    i: int,
+    j: int,
+    dim: int,
+    labels: List[str],
+    prob_label: Optional[str],
+    marginal_layout: str,
+    plot_shape: Tuple[int, int],
+    label_args: Optional[dict] = None,
+):
+    """Helper function for setting the marinal axes' labels. The variables shadow the meaning from outer scope."""
+
+    if label_args is None:
+        label_args = dict()
+
+    if marginal_layout == "outside":
+        if i == 0:  # top row of axes
+            axs[i, j].xaxis.set_label_position("top")  # set labels on top
+            axs[i, j].set_xlabel(f"${labels[dim]}$", **label_args)
+            axs[i, j].set_ylabel(prob_label if j == 0 else "", **label_args)
+            axs[i, j].xaxis.tick_top()  # set ticks on top
+            axs[i, j].set_xticklabels([])
+            if j != 0:
+                axs[i, j].set_yticklabels([])
+
+        if j == plot_shape[1] - 1:  # most right column of axes
+            axs[i, j].yaxis.set_label_position("right")  # set labels to the right
+            axs[i, j].set_ylabel(f"${labels[dim]}$", **label_args)
+            axs[i, j].set_xlabel(prob_label if i == plot_shape[1] - 1 else "", **label_args)
+            axs[i, j].yaxis.tick_right()  # set ticks to the right
+            axs[i, j].set_yticklabels([])
+            if i != plot_shape[1] - 1:
+                axs[i, j].set_xticklabels([])
+
+    elif marginal_layout == "inside":
+        axs[i, j].set_xlabel(f"${labels[dim]}$" if i == plot_shape[0] - 1 else "", **label_args)
+        axs[i, j].set_ylabel(prob_label if j == 0 else "", **label_args)
+        if i != plot_shape[0] - 1:
+            axs[i, j].set_xticklabels([])

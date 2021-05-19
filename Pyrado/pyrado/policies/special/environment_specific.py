@@ -36,6 +36,7 @@ import torch.nn as nn
 
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
@@ -43,6 +44,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.feed_back.linear import LinearPolicy
+from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.math import clamp_symm
 from pyrado.utils.tensor import insert_tensor_col
@@ -583,6 +585,29 @@ class QQubeGoToLimCtrl:
         # Do this for cnt_done time steps
         self.done = self.cnt >= self.cnt_done
         return to.tensor([self.sign * self.u_max])
+
+
+def create_pend_excitation_policy(env: PendulumSim, num_rollouts: int, f_sin: float = 1.0) -> PlaybackPolicy:
+    """
+    Create a policy that returns a previously recorded action time series. Used in the experiments for [1].
+
+    .. seealso::
+        [1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, "TITLE", VENUE, YEAR
+
+    :param env: pendulum simulation environment
+    :param num_rollouts: number of rollouts to store in the policy's buffer
+    :param f_sin: frequency of the sinus [Hz]
+    :return: policy with recorded action time series
+    """
+
+    def fcn_of_time(t: float):
+        act = env.domain_param["tau_max"] * np.sin(2 * np.pi * t * f_sin)
+        return act.repeat(env.act_space.flat_dim)
+
+    act_recordings = [
+        [fcn_of_time(t) for t in np.arange(0, env.max_steps * env.dt, env.dt)] for _ in range(num_rollouts)
+    ]
+    return PlaybackPolicy(env.spec, act_recordings)
 
 
 def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) -> LinearPolicy:

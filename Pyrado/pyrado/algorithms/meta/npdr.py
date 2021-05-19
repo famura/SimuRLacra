@@ -27,13 +27,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
+from typing import Type
 
+import sbi.utils as utils
 import torch as to
 from sbi.inference.base import simulate_for_sbi
+from sbi.inference.snpe import PosteriorEstimator
+from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.utils.data_types import merge_dicts
 from pyrado.utils.input_output import print_cbt
 
 
@@ -43,10 +48,32 @@ class NPDR(SBIBase):
     name: str = "npdr"
     iteration_key: str = "npdr_iteration"  # logger's iteration key
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, subrtn_sbi_class: Type[PosteriorEstimator], **kwargs):
         """Constructor forwarding everything to the superclass"""
+        if not issubclass(subrtn_sbi_class, PosteriorEstimator):
+            raise pyrado.TypeErr(
+                msg=f"The given subrtn_sbi_class must be a subclass of PosteriorEstimator, but is {subrtn_sbi_class}!"
+            )
+
         # Call SBIBase's constructor
         super().__init__(*args, num_checkpoints=3, init_checkpoint=-1, **kwargs)
+
+        # Set the sampling parameters used by the sbi subroutine
+        default_sampling_hparam = dict(
+            mcmc_method="slice_np_vectorized",
+            mcmc_parameters=dict(warmup_steps=50, num_chains=100, init_strategy="sir"),  # default: slice_np, 20
+        )
+        self.subrtn_sbi_sampling_hparam = merge_dicts(
+            [default_sampling_hparam, kwargs.get("subrtn_sbi_sampling_hparam", dict())]
+        )
+
+        # Create the algorithm instance used in sbi, e.g. SNPE-B/C or SNLE
+        density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
+        summary_writer = self.logger.printers[2].writer
+        assert isinstance(summary_writer, SummaryWriter)
+        self._subrtn_sbi = subrtn_sbi_class(
+            prior=self._sbi_prior, density_estimator=density_estimator, summary_writer=summary_writer
+        )
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
@@ -54,6 +81,9 @@ class NPDR(SBIBase):
 
         if self.curr_checkpoint == -1:
             if self._subrtn_policy is not None:
+                # Add dummy values of variables that are logger later
+                self.logger.add_value("avg log prob", -pyrado.inf)
+
                 # Train the behavioral policy using the nominal domain parameters
                 self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode)  # overrides policy.pt
             self.reached_checkpoint()  # setting counter to 0
@@ -102,7 +132,7 @@ class NPDR(SBIBase):
 
         if self.curr_checkpoint == 1:
             # Load the latest proposal, this can be the prior or the amortized posterior of the last iteration
-            proposal = self.get_latest_unconditioned_proposal()
+            proposal = self.get_latest_proposal_prev_iter()
 
             # Multi-round sbi
             for idx_r in range(self.num_sbi_rounds):
@@ -139,6 +169,10 @@ class NPDR(SBIBase):
                     )
 
                 if self.num_sbi_rounds > 1:
+                    # Set proposal of the next round to focus on the next data set.
+                    # set_default_x() expects dim [1, num_rollouts * data_samples]
+                    proposal = posterior.set_default_x(self._curr_data_real)
+
                     # Save the posterior tailored to each round
                     pyrado.save(
                         posterior,
@@ -146,10 +180,6 @@ class NPDR(SBIBase):
                         self._save_dir,
                         prefix=f"iter_{self._curr_iter}_round_{idx_r}",
                     )
-
-                    # Set proposal of the next round to focus on the next data set.
-                    # set_default_x() expects dim [1, num_rollouts * data_samples]
-                    proposal = posterior.set_default_x(self._curr_data_real)
 
                 # Override the latest posterior
                 pyrado.save(posterior, "posterior.pt", self._save_dir)
@@ -165,14 +195,8 @@ class NPDR(SBIBase):
                 self.num_eval_samples,
                 normalize_posterior=self.normalize_posterior,
             )
-            self.logger.add_value(  # max likelihood domain parameter set
-                "ml domain param",
-                to.mean(self._curr_domain_param_eval[:, to.argmax(log_probs, dim=1), :], dim=[0, 1]),
-                2,
-            )
-            self.logger.add_value("std domain param", to.std(self._curr_domain_param_eval, dim=[0, 1]), 2)
             self.logger.add_value("avg log prob", to.mean(log_probs), 4)
-            self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
+            self.logger.add_value("num total samples", self._cnt_samples)
 
             self.reached_checkpoint()  # setting counter to 3
 

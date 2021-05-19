@@ -181,7 +181,7 @@ if __name__ == "__main__":
 
     """ tau """
     fig, ax = plt.subplots(1, figsize=(12, 10))
-    fig.canvas.set_window_title(
+    fig.canvas.manager.set_window_title(
         f"Varying the time constant tau: s = {nominal['s']}, h = {nominal['h']}, c = {nominal['c']}, "
         f"kappa = {nominal['kappa']}"
     )
@@ -216,7 +216,7 @@ if __name__ == "__main__":
 
     """ s """
     fig, ax = plt.subplots(1, figsize=(12, 10))
-    fig.canvas.set_window_title(
+    fig.canvas.manager.set_window_title(
         f"Varying the stimulus s: tau = {nominal['tau']}, h = {nominal['h']}, c = {nominal['c']},"
         f"kappa = {nominal['kappa']}"
     )
@@ -251,7 +251,7 @@ if __name__ == "__main__":
 
     """ h """
     fig, ax = plt.subplots(1, figsize=(12, 10))
-    fig.canvas.set_window_title(
+    fig.canvas.manager.set_window_title(
         f"Varying the resting level h: s = {nominal['s']}, tau = {nominal['tau']}, c = {nominal['c']},"
         f"kappa = {nominal['kappa']}"
     )
@@ -281,7 +281,7 @@ if __name__ == "__main__":
 
     """ c """
     fig, ax = plt.subplots(1, figsize=(12, 10))
-    fig.canvas.set_window_title(
+    fig.canvas.manager.set_window_title(
         f"Varying the capacity C: tau = {nominal['tau']}, s = {nominal['s']}, h = {nominal['h']}, "
         f"kappa = {nominal['kappa']}"
     )
@@ -316,7 +316,7 @@ if __name__ == "__main__":
 
     """ kappa """
     fig, ax = plt.subplots(1, figsize=(12, 10))
-    fig.canvas.set_window_title(
+    fig.canvas.manager.set_window_title(
         f"Varying the decay factor kappa: tau = {nominal['tau']}, s = {nominal['s']}, h = {nominal['h']}, "
         f"c = {nominal['c']}"
     )
