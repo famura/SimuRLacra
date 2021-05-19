@@ -343,7 +343,7 @@
 
 <div class="viewcode-block" id="MetaDomainRandWrapper.reset"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="c1"># Forward to the wrapped DomainRandWrapper</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MetaDomainRandWrapper.adapt_randomizer"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.adapt_randomizer">[docs]</a>    <span class="k">def</span> <span class="nf">adapt_randomizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_distr_param_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="c1"># Check the input dimension and reshape if necessary</span>
@@ -373,7 +373,7 @@
             <span class="n">domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
 
         <span class="c1"># Set the new domain parameters (and the initial sate) by calling the reset method of the wrapped env</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="DomainRandWrapperBuffer"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer">[docs]</a><span class="k">class</span> <span class="nc">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">DomainRandWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
@@ -475,11 +475,8 @@
             <span class="c1"># Explicit specification of domain parameters</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_wrapper_domain_param</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
 
-        <span class="c1"># Set the (new) domain params in the the wrapped env</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="n">domain_param</span>
-
-        <span class="c1"># Forward the rest to the reset method of the wrapped env</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+        <span class="c1"># Forward to the reset method of the wrapped env</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get_state</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
