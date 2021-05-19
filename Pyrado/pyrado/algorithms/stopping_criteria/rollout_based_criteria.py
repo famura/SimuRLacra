@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import abstractmethod
-from typing import Optional
+from typing import NoReturn, Optional
 
 import numpy as np
 
@@ -77,27 +77,95 @@ class RolloutBasedStoppingCriterion(StoppingCriterion):
         raise NotImplementedError()
 
 
-class MinReturnStoppingCriterion(RolloutBasedStoppingCriterion):
-    """Uses the minimum return of the latest rollout as a stopping criterion."""
+class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
+    AVAILABLE_RETURN_STATISTICS = ("min", "max", "median", "mean", "variance")
 
-    def __init__(self, min_return: float):
+    def __init__(self, return_statistic="median", num_lookbacks=1):
+        return_statistic = return_statistic.lower()
+        if not (return_statistic in ReturnStatisticBasedStoppingCriterion.AVAILABLE_RETURN_STATISTICS):
+            raise pyrado.ValueErr(
+                msg=f"return_statistic has to be one of {ReturnStatisticBasedStoppingCriterion.AVAILABLE_RETURN_STATISTICS} (case insensitive)"
+            )
+        self._return_statistic = return_statistic
+        self._num_lookbacks = num_lookbacks
+
+    def _is_met_with_sampler(self, algo, sampler: RolloutSavingWrapper) -> bool:
+        if len(sampler.rollouts) < self._num_lookbacks:
+            return False
+        step_sequences = sampler.rollouts[-self._num_lookbacks :]
+        returns = [rollout.undiscounted_return() for step_sequence in step_sequences for rollout in step_sequence]
+        return_statistic = self._compute_return_statistic(np.asarray(returns))
+        return self._is_met_with_return_statistic(algo, sampler, return_statistic)
+
+    @abstractmethod
+    def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+        raise NotImplementedError()
+
+    def _compute_return_statistic(self, returns: np.ndarray) -> float:
+        if self._return_statistic == "min":
+            return np.min(returns)
+        if self._return_statistic == "max":
+            return np.max(returns)
+        if self._return_statistic == "median":
+            return np.quantile(returns, q=0.50)
+        if self._return_statistic == "mean":
+            return np.mean(returns).item()
+        if self._return_statistic == "variance":
+            return returns.var().item()
+        assert (
+            False
+        ), "Should not happen! Either the code is inconsistent or the instance variable _return_statistic has been touched!"
+
+
+class MinReturnStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
+    """
+    Uses any statistic (defaulting to min) of the return of the latest rollout as a stopping criterion and stops if this
+    statistic exceeds a certain threshold.
+    """
+
+    def __init__(self, return_threshold: float, return_statistic="min"):
         """
         Constructor.
 
-        :param min_return: minimal return; if this return is reached, the stopping criterion is met
+        :param return_threshold: return threshold; if the return statistic reaches this threshold, the stopping
+                                 criterion is met
+        :param return_statistic: the statistic of the return to use; defaults to minimum
         """
-        self._min_return = min_return
+        super().__init__(return_statistic=return_statistic)
+        self._return_threshold = return_threshold
 
     def __repr__(self) -> str:
-        return f"MinReturnStoppingCriterion[min_return={self._min_return}]"
+        return f"MinReturnStoppingCriterion[return_statistic={self._return_statistic}, min_return={self._return_threshold}]"
 
     def __str__(self) -> str:
-        return f"(return >= {self._min_return})"
+        return f"({self._return_statistic} return >= {self._return_threshold})"
 
     # noinspection PyUnusedLocal
-    def _is_met_with_sampler(self, algo, sampler: RolloutSavingWrapper) -> bool:
-        """Returns whether the minimum return of the latest rollout is greater than or equal to the minimum return."""
-        rollouts = sampler.rollouts[-1]
-        returns = [rollout.undiscounted_return() for rollout in rollouts]
-        min_return = np.min(returns)
-        return min_return >= self._min_return
+    def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+        """Returns whether the return statistic is greater than or equal to the return threshold."""
+        return return_statistic >= self._return_threshold
+
+
+class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
+    """Uses the minimum return of the latest rollout as a stopping criterion."""
+
+    def __init__(self, return_statistic="median", num_lookbacks=1):
+        super().__init__(return_statistic, num_lookbacks)
+        self._return_statistic_history = []
+
+    def __repr__(self) -> str:
+        return (
+            f"ConvergenceStoppingCriterion[return_statistic={self._return_statistic}, "
+            f"num_lookbacks={self._num_lookbacks}, "
+            f"return_statistic_history={self._return_statistic_history}]"
+        )
+
+    def __str__(self) -> str:
+        return f"({self._return_statistic} return converged)"
+
+    def reset(self) -> NoReturn:
+        self._return_statistic_history = []
+
+    # noinspection PyUnusedLocal
+    def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+        pass

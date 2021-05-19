@@ -29,6 +29,7 @@ from copy import deepcopy
 from types import SimpleNamespace
 from typing import List, Optional
 
+import numpy as np
 import pytest
 
 import pyrado
@@ -39,7 +40,10 @@ from pyrado.algorithms.stopping_criteria.predefined_criteria import (
     NeverStopStoppingCriterion,
     SampleCountStoppingCriterion,
 )
-from pyrado.algorithms.stopping_criteria.rollout_based_criteria import MinReturnStoppingCriterion
+from pyrado.algorithms.stopping_criteria.rollout_based_criteria import (
+    MinReturnStoppingCriterion,
+    ReturnStatisticBasedStoppingCriterion,
+)
 from pyrado.algorithms.stopping_criteria.stopping_criterion import _AndStoppingCriterion, _OrStoppingCriterion
 from pyrado.algorithms.utils import RolloutSavingWrapper
 from pyrado.environments.base import Env
@@ -59,6 +63,16 @@ class MockSampler(SamplerBase):
 
     def sample(self) -> List[StepSequence]:
         return deepcopy(self._step_sequences)
+
+
+class ExposingReturnStatisticBasedStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
+    def __init__(self, return_statistic="median", num_lookbacks=1):
+        super().__init__(return_statistic, num_lookbacks)
+        self.return_statistic_value = np.nan
+
+    def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+        self.return_statistic_value = return_statistic
+        return False
 
 
 # noinspection PyTypeChecker
@@ -189,7 +203,7 @@ def test_criterion_sample_count_equal():
 # noinspection PyTypeChecker
 def test_criterion_rollout_based_no_sampler():
     algo = SimpleNamespace()
-    criterion = MinReturnStoppingCriterion(min_return=None)
+    criterion = MinReturnStoppingCriterion(return_threshold=None)
     with pytest.raises(pyrado.ValueErr):
         criterion.is_met(algo)
 
@@ -198,60 +212,52 @@ def test_criterion_rollout_based_no_sampler():
 def test_criterion_rollout_based_wrong_sampler():
     sampler = SimpleNamespace()
     algo = SimpleNamespace(sampler=sampler)
-    criterion = MinReturnStoppingCriterion(min_return=None)
+    criterion = MinReturnStoppingCriterion(return_threshold=None)
     with pytest.raises(pyrado.TypeErr):
         criterion.is_met(algo)
 
 
 # noinspection PyTypeChecker
-def test_criterion_rollout_based_min_return_lower():
+@pytest.mark.parametrize(
+    ["statistic", "expected"], [("min", 1), ("max", 6), ("median", 2), ("mean", 3), ("variance", 14 / 3)]
+)
+def test_criterion_return_statistic_based_check_min(statistic, expected):
+    rollout_a = SimpleNamespace(undiscounted_return=lambda: 6)
+    rollout_b = SimpleNamespace(undiscounted_return=lambda: 2)
+    rollout_c = SimpleNamespace(undiscounted_return=lambda: 1)
+    sampler = RolloutSavingWrapper(MockSampler([rollout_a, rollout_b, rollout_c]))
+    sampler.sample()
+    algo = SimpleNamespace(sampler=sampler)
+    criterion = ExposingReturnStatisticBasedStoppingCriterion(return_statistic=statistic)
+    criterion.is_met(algo)
+    assert np.isclose(criterion.return_statistic_value, expected)
+
+
+# noinspection PyTypeChecker
+def test_criterion_rollout_based_min_min_return_lower():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 1)
     sampler = RolloutSavingWrapper(MockSampler([rollout_a]))
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
-    criterion = MinReturnStoppingCriterion(min_return=2)
+    criterion = MinReturnStoppingCriterion(return_threshold=2)
     assert not criterion.is_met(algo)
 
 
 # noinspection PyTypeChecker
-def test_criterion_rollout_based_min_return_higher():
+def test_criterion_rollout_based_min_min_return_higher():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 3)
     sampler = RolloutSavingWrapper(MockSampler([rollout_a]))
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
-    criterion = MinReturnStoppingCriterion(min_return=2)
+    criterion = MinReturnStoppingCriterion(return_threshold=2)
     assert criterion.is_met(algo)
 
 
 # noinspection PyTypeChecker
-def test_criterion_rollout_based_min_return_equal():
+def test_criterion_rollout_based_min_min_return_equal():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 2)
     sampler = RolloutSavingWrapper(MockSampler([rollout_a]))
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
-    criterion = MinReturnStoppingCriterion(min_return=2)
+    criterion = MinReturnStoppingCriterion(return_threshold=2)
     assert criterion.is_met(algo)
-
-
-# noinspection PyTypeChecker
-def test_criterion_rollout_based_min_return_check_min():
-    rollout_a = SimpleNamespace(undiscounted_return=lambda: 3)
-    rollout_b = SimpleNamespace(undiscounted_return=lambda: 2)
-    rollout_c = SimpleNamespace(undiscounted_return=lambda: 1)
-    sampler = RolloutSavingWrapper(MockSampler([rollout_a, rollout_b, rollout_c]))
-    sampler.sample()
-    algo = SimpleNamespace(sampler=sampler)
-    criterion = MinReturnStoppingCriterion(min_return=2)
-    assert not criterion.is_met(algo)
-
-
-# noinspection PyTypeChecker
-def test_criterion_rollout_based_min_return_use_last():
-    rollout_a = SimpleNamespace(undiscounted_return=lambda: 3)
-    rollout_b = SimpleNamespace(undiscounted_return=lambda: 2)
-    rollout_c = SimpleNamespace(undiscounted_return=lambda: 1)
-    sampler = RolloutSavingWrapper(MockSampler([rollout_a, rollout_b, rollout_c]))
-    sampler.sample()
-    algo = SimpleNamespace(sampler=sampler)
-    criterion = MinReturnStoppingCriterion(min_return=2)
-    assert not criterion.is_met(algo)
