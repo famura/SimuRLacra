@@ -260,6 +260,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pendulum</span> <span class="kn">import</span> <span class="n">PendulumSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeSwingUpSim</span>
@@ -267,6 +268,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="n">FeatureStack</span><span class="p">,</span> <span class="n">identity_feat</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.playback</span> <span class="kn">import</span> <span class="n">PlaybackPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">clamp_symm</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.tensor</span> <span class="kn">import</span> <span class="n">insert_tensor_col</span>
@@ -807,6 +809,29 @@
         <span class="c1"># Do this for cnt_done time steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnt</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cnt_done</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sign</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="create_pend_excitation_policy"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.environment_specific.create_pend_excitation_policy">[docs]</a><span class="k">def</span> <span class="nf">create_pend_excitation_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">PendulumSim</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">f_sin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PlaybackPolicy</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a policy that returns a previously recorded action time series. Used in the experiments for [1].</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        [1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, &quot;TITLE&quot;, VENUE, YEAR</span>
+
+<span class="sd">    :param env: pendulum simulation environment</span>
+<span class="sd">    :param num_rollouts: number of rollouts to store in the policy&#39;s buffer</span>
+<span class="sd">    :param f_sin: frequency of the sinus [Hz]</span>
+<span class="sd">    :return: policy with recorded action time series</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">fcn_of_time</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;tau_max&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">*</span> <span class="n">f_sin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">act</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+
+    <span class="n">act_recordings</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">fcn_of_time</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">PlaybackPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">act_recordings</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_lin_ctrl"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.environment_specific.get_lin_ctrl">[docs]</a><span class="k">def</span> <span class="nf">get_lin_ctrl</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">ctrl_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ball_z_dim_mismatch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LinearPolicy</span><span class="p">:</span>

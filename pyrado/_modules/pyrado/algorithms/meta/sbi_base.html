@@ -311,7 +311,6 @@
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
         <span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">prior</span><span class="p">:</span> <span class="n">Distribution</span><span class="p">,</span>
-        <span class="n">subrtn_sbi_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">PosteriorEstimator</span><span class="p">],</span>
         <span class="n">embedding</span><span class="p">:</span> <span class="n">Embedding</span><span class="p">,</span>
         <span class="n">num_checkpoints</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">init_checkpoint</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -423,7 +422,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span> <span class="o">=</span> <span class="n">env_real</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span> <span class="o">=</span> <span class="n">dp_mapping</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span> <span class="o">=</span> <span class="n">embedding</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_class</span> <span class="o">=</span> <span class="n">subrtn_sbi_class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_sim_per_round</span> <span class="o">=</span> <span class="n">num_sim_per_round</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_real_rollouts</span> <span class="o">=</span> <span class="n">num_real_rollouts</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_segments</span> <span class="o">=</span> <span class="n">num_segments</span>
@@ -440,13 +438,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">warmstart</span> <span class="o">=</span> <span class="n">warmstart</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
 
-        <span class="c1"># Merge the custom sbi sampling hyper-parameters with the ones explicitly provided</span>
-        <span class="n">default_sampling_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">mcmc_method</span><span class="o">=</span><span class="s2">&quot;slice_np_vectorized&quot;</span><span class="p">,</span>
-            <span class="n">mcmc_parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">warmup_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">init_strategy</span><span class="o">=</span><span class="s2">&quot;sir&quot;</span><span class="p">),</span>  <span class="c1"># default: slice_np, 20</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_sampling_hparam</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="n">default_sampling_hparam</span><span class="p">,</span> <span class="n">subrtn_sbi_sampling_hparam</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()])</span>
-
         <span class="c1"># Temporary containers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_domain_param_eval</span> <span class="o">=</span> <span class="kc">None</span>
@@ -455,20 +446,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># to be set in step()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># to be set in step()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_sbi</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
-
-        <span class="c1"># Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE</span>
-        <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span>  <span class="c1"># embedding for nflows is always nn.Identity</span>
-        <span class="n">summary_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">writer</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">summary_writer</span><span class="p">,</span> <span class="n">SummaryWriter</span><span class="p">)</span>
-        <span class="c1"># if self.subrtn_sbi_class == SNPE_A:</span>
-        <span class="c1">#     assert self.posterior_hparam[&quot;num_components&quot;]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_class</span><span class="p">(</span>
-            <span class="n">prior</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span><span class="p">,</span>
-            <span class="n">density_estimator</span><span class="o">=</span><span class="n">density_estimator</span><span class="p">,</span>
-            <span class="n">summary_writer</span><span class="o">=</span><span class="n">summary_writer</span><span class="p">,</span>
-            <span class="c1"># num_rounds=self.num_sbi_rounds,</span>
-            <span class="c1"># num_components=self.posterior_hparam[&quot;num_components&quot;] if self.subrtn_sbi_class == SNPE_A else None,</span>
-        <span class="p">)</span>
 
         <span class="c1"># Optional policy optimization subroutine</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span> <span class="o">=</span> <span class="n">subrtn_policy</span>
@@ -530,17 +507,23 @@
         <span class="c1"># Call sbi&#39;s preparation function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span> <span class="o">=</span> <span class="n">prepare_for_sbi</span><span class="p">(</span><span class="n">rollout_sampler</span><span class="p">,</span> <span class="n">prior</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SBIBase.get_latest_unconditioned_proposal"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_latest_unconditioned_proposal">[docs]</a>    <span class="k">def</span> <span class="nf">get_latest_unconditioned_proposal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">utils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">]:</span>
+<div class="viewcode-block" id="SBIBase.get_latest_proposal_prev_iter"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_latest_proposal_prev_iter">[docs]</a>    <span class="k">def</span> <span class="nf">get_latest_proposal_prev_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">utils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the latest proposal. This is either the prior or the amortized posterior from the previous iteration,</span>
-<span class="sd">        i.e. a proposal that is not conditioned on an observation.</span>
+<span class="sd">        Get either the prior or the conditioned posterior from the (last round of) previous iteration.</span>
 
-<span class="sd">        :return: latest proposal for simulating with sbi</span>
+<span class="sd">        :return: proposal for simulating with sbi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Multi-round or single-round sbi, 1st iteration</span>
             <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">proposal</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Single-round sbi, 2nd iteration</span>
+                <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Multi-round sbi, 2nd iteration</span>
+                <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">proposal</span></div>
 
 <div class="viewcode-block" id="SBIBase.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.step">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -1027,8 +1010,8 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">summary_writer</span><span class="p">,</span> <span class="n">SummaryWriter</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_summary_writer</span> <span class="o">=</span> <span class="n">summary_writer</span>
 
-        <span class="c1"># Set the internal sbi construction callable to None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_build_neural_net</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="c1"># Set the internal sbi construction callable given the predefined posterior hyper-parameter.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_subrtn_sbi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">_build_neural_net</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

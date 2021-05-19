@@ -369,8 +369,8 @@
     <span class="n">add_cbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">separate_cbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">ax_cb</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">colorbar_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">colorbar_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
+    <span class="n">cbar_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cbar_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
     <span class="n">use_index_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">x_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">y_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -400,8 +400,8 @@
 <span class="sd">    :param add_cbar: if `True`, add a color bar in the same figure</span>
 <span class="sd">    :param separate_cbar: if `True`, the color bar is added in a seperate figure</span>
 <span class="sd">    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created</span>
-<span class="sd">    :param colorbar_label: label for the color bar</span>
-<span class="sd">    :param colorbar_orientation: orientation of the color bar</span>
+<span class="sd">    :param cbar_label: label for the color bar</span>
+<span class="sd">    :param cbar_orientation: orientation of the color bar</span>
 <span class="sd">    :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.</span>
 <span class="sd">                             This can can be overridden by `x_label` and `y_label`</span>
 <span class="sd">    :param x_label: label for the x axis</span>
@@ -479,7 +479,7 @@
 
     <span class="c1"># Add color bar if requested</span>
     <span class="k">if</span> <span class="n">add_cbar</span> <span class="ow">and</span> <span class="n">separate_cbar</span><span class="p">:</span>
-        <span class="n">fig_cb</span> <span class="o">=</span> <span class="n">draw_sep_cbar</span><span class="p">(</span><span class="n">ax_cb</span><span class="p">,</span> <span class="n">colorbar_label</span><span class="p">,</span> <span class="n">colorbar_orientation</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">num_major_ticks_cb</span><span class="p">)</span>
+        <span class="n">fig_cb</span> <span class="o">=</span> <span class="n">draw_sep_cbar</span><span class="p">(</span><span class="n">ax_cb</span><span class="p">,</span> <span class="n">cbar_label</span><span class="p">,</span> <span class="n">cbar_orientation</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">num_major_ticks_cb</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig_hm</span><span class="p">,</span> <span class="n">fig_cb</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">fig_hm</span><span class="p">,</span> <span class="kc">None</span></div>

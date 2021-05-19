@@ -599,6 +599,28 @@ The default implementation does nothing.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pyrado.policies.special.environment_specific.create_pend_excitation_policy">
+<span class="sig-name descname"><span class="pre">create_pend_excitation_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.pysim.html#pyrado.environments.pysim.pendulum.PendulumSim" title="pyrado.environments.pysim.pendulum.PendulumSim"><span class="pre">pyrado.environments.pysim.pendulum.PendulumSim</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_sin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="policies.feed_forward.html#pyrado.policies.feed_forward.playback.PlaybackPolicy" title="pyrado.policies.feed_forward.playback.PlaybackPolicy"><span class="pre">pyrado.policies.feed_forward.playback.PlaybackPolicy</span></a><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#create_pend_excitation_policy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.create_pend_excitation_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a policy that returns a previously recorded action time series. Used in the experiments for [1].</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, “TITLE”, VENUE, YEAR</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – pendulum simulation environment</p></li>
+<li><p><strong>num_rollouts</strong> – number of rollouts to store in the policy’s buffer</p></li>
+<li><p><strong>f_sin</strong> – frequency of the sinus [Hz]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>policy with recorded action time series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pyrado.policies.special.environment_specific.get_lin_ctrl">
 <span class="sig-name descname"><span class="pre">get_lin_ctrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctrl_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ball_z_dim_mismatch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="policies.feed_back.html#pyrado.policies.feed_back.linear.LinearPolicy" title="pyrado.policies.feed_back.linear.LinearPolicy"><span class="pre">pyrado.policies.feed_back.linear.LinearPolicy</span></a><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#get_lin_ctrl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.get_lin_ctrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a linear controller specified by its controller gains.

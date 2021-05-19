@@ -418,8 +418,6 @@
 </li>
       <li><a href="utils.html#pyrado.utils.exceptions.BaseErr">BaseErr</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim">BayesSim (class in pyrado.algorithms.meta.bayessim)</a>
-</li>
       <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding">BayesSimEmbedding (class in pyrado.sampling.sbi_embeddings)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn">BayRn (class in pyrado.algorithms.meta.bayrn)</a>
@@ -632,10 +630,10 @@
 </li>
       <li><a href="utils.html#pyrado.utils.data_processing.correct_atleast_2d">correct_atleast_2d() (in module pyrado.utils.data_processing)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.html#pyrado.policies.features.cos_feat">cos_feat() (in module pyrado.policies.features)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils.html#pyrado.utils.math.cosine_similarity">cosine_similarity() (in module pyrado.utils.math)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.CosOfOneEleRewFcn">CosOfOneEleRewFcn (class in pyrado.tasks.reward_functions)</a>
@@ -719,6 +717,8 @@
       <li><a href="tasks.html#pyrado.tasks.predefined.create_lifting_task">create_lifting_task() (in module pyrado.tasks.predefined)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.create_mask">create_mask() (Space method)</a>
+</li>
+      <li><a href="policies.special.html#pyrado.policies.special.environment_specific.create_pend_excitation_policy">create_pend_excitation_policy() (in module pyrado.policies.special.environment_specific)</a>
 </li>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker.create_query">create_query() (MarkerTracker method)</a>
 </li>
@@ -900,10 +900,10 @@
         <li><a href="exploration.html#pyrado.exploration.uniform_noise.UniformNoise.device">(UniformNoise property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise">DiagNormalNoise (class in pyrado.exploration.normal_noise)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils.html#pyrado.utils.data_types.dict_arraylike_to_float">dict_arraylike_to_float() (in module pyrado.utils.data_types)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.dict_path_access">dict_path_access() (in module pyrado.utils.data_types)</a>
@@ -994,13 +994,15 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.policy_parameters.draw_policy_params">draw_policy_params() (in module pyrado.plotting.policy_parameters)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_1d">draw_posterior_distr_1d() (in module pyrado.plotting.distribution)</a>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_1d">draw_posterior_1d() (in module pyrado.plotting.distribution)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_2d">draw_posterior_distr_2d() (in module pyrado.plotting.distribution)</a>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_heatmap_2d">draw_posterior_heatmap_2d() (in module pyrado.plotting.distribution)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_pairwise_heatmap">draw_posterior_distr_pairwise_heatmap() (in module pyrado.plotting.distribution)</a>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_pairwise_heatmap">draw_posterior_pairwise_heatmap() (in module pyrado.plotting.distribution)</a>
 </li>
-      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_distr_pairwise_scatter">draw_posterior_distr_pairwise_scatter() (in module pyrado.plotting.distribution)</a>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_pairwise_scatter">draw_posterior_pairwise_scatter() (in module pyrado.plotting.distribution)</a>
+</li>
+      <li><a href="plotting.html#pyrado.plotting.distribution.draw_posterior_scatter_2d">draw_posterior_scatter_2d() (in module pyrado.plotting.distribution)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.utils.draw_sep_cbar">draw_sep_cbar() (in module pyrado.plotting.utils)</a>
 </li>
@@ -1454,7 +1456,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_latest_unconditioned_proposal">get_latest_unconditioned_proposal() (SBIBase method)</a>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_latest_proposal_prev_iter">get_latest_proposal_prev_iter() (SBIBase method)</a>
 </li>
       <li><a href="policies.special.html#pyrado.policies.special.environment_specific.get_lin_ctrl">get_lin_ctrl() (in module pyrado.policies.special.environment_specific)</a>
 </li>
@@ -1815,8 +1817,6 @@
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.iteration_key">iteration_key (Algorithm attribute)</a>
 
       <ul>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.iteration_key">(BayesSim attribute)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.iteration_key">(BayRn attribute)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.npdr.NPDR.iteration_key">(NPDR attribute)</a>
@@ -2045,8 +2045,6 @@
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.adr">pyrado.algorithms.meta.adr</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.arpl">pyrado.algorithms.meta.arpl</a>
-</li>
-        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayessim">pyrado.algorithms.meta.bayessim</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayrn">pyrado.algorithms.meta.bayrn</a>
 </li>
@@ -2501,8 +2499,6 @@
         <li><a href="environments.pysim.html#pyrado.environments.pysim.ball_on_beam.BallOnBeamDiscSim.name">(BallOnBeamDiscSim attribute)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.ball_on_beam.BallOnBeamSim.name">(BallOnBeamSim attribute)</a>
-</li>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.name">(BayesSim attribute)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.name">(BayesSimEmbedding attribute)</a>
 </li>
@@ -3147,13 +3143,6 @@
 </li>
       </ul></li>
       <li>
-    pyrado.algorithms.meta.bayessim
-
-      <ul>
-        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayessim">module</a>
-</li>
-      </ul></li>
-      <li>
     pyrado.algorithms.meta.bayrn
 
       <ul>
@@ -3559,8 +3548,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.ball_on_beam
 
@@ -3568,6 +3555,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.ball_on_beam">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.base
 
@@ -5302,8 +5291,6 @@
         <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.step">(Algorithm method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.step">(ARPL method)</a>
-</li>
-        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.step">(BayesSim method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.step">(BayRn method)</a>
 </li>

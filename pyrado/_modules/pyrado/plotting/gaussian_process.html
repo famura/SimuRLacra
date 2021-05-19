@@ -284,7 +284,7 @@
     <span class="n">z_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">min_gp_obsnoise</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">201</span><span class="p">,</span>
-    <span class="n">num_stds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">num_std</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
     <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
     <span class="n">color</span><span class="p">:</span> <span class="nb">chr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">curve_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
@@ -293,7 +293,7 @@
     <span class="n">show_legend_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">show_legend_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">legend_data_cmap</span><span class="p">:</span> <span class="n">colors</span><span class="o">.</span><span class="n">Colormap</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">colorbar_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cbar_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">render3D</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
@@ -316,8 +316,8 @@
 <span class="sd">    :param z_label: label for z-axis (3D plot only)</span>
 <span class="sd">    :param min_gp_obsnoise: set a minimal noise value (normalized) for the GP, if `None` the GP has no measurement noise</span>
 <span class="sd">    :param resolution: number of samples for the input (corresponds to x-axis resolution of the plot)</span>
-<span class="sd">    :param num_stds: number of standard deviations to plot around the mean</span>
-<span class="sd">    :param alpha: transparency (alpha-value) for the std area</span>
+<span class="sd">    :param num_std: number of standard deviations to plot around the mean</span>
+<span class="sd">    :param alpha: transparency levelfor the std area</span>
 <span class="sd">    :param color: color (e.g. &#39;k&#39; for black), `None` invokes the default behavior</span>
 <span class="sd">    :param curve_label: label for the mean curve (1D plot only)</span>
 <span class="sd">    :param heatmap_cmap: color map forwarded to `draw_heatmap()` (2D plot only), `None` to use Pyrado&#39;s default</span>
@@ -325,7 +325,7 @@
 <span class="sd">    :param show_legend_std: flag if a legend entry for the std area should be printed</span>
 <span class="sd">    :param show_legend_data: flag if a legend entry for the individual data points should be printed</span>
 <span class="sd">    :param legend_data_cmap: color map for the sampled points, default is &#39;binary&#39;</span>
-<span class="sd">    :param colorbar_label: label for the color bar (2D plot only)</span>
+<span class="sd">    :param cbar_label: label for the color bar (2D plot only)</span>
 <span class="sd">    :param title: title displayed above the figure, set to `None` to suppress the title</span>
 <span class="sd">    :param render3D: use 3D rendering if possible</span>
 <span class="sd">    :return: handle to the resulting figure</span>
@@ -392,8 +392,8 @@
         <span class="c1"># Plot the curve</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
             <span class="n">x_grid</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
-            <span class="n">mean</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">-</span> <span class="n">num_stds</span> <span class="o">*</span> <span class="n">std</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
-            <span class="n">mean</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">+</span> <span class="n">num_stds</span> <span class="o">*</span> <span class="n">std</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+            <span class="n">mean</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">-</span> <span class="n">num_std</span> <span class="o">*</span> <span class="n">std</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+            <span class="n">mean</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">+</span> <span class="n">num_std</span> <span class="o">*</span> <span class="n">std</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
         <span class="p">)</span>
@@ -456,8 +456,8 @@
             <span class="c1"># Project back from normalized input and standardized output (custom for 3D)</span>
             <span class="n">x0_mesh</span> <span class="o">=</span> <span class="n">x0_mesh</span> <span class="o">*</span> <span class="p">(</span><span class="n">data_x_max</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_x_min</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">data_x_min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">x1_mesh</span> <span class="o">=</span> <span class="n">x1_mesh</span> <span class="o">*</span> <span class="p">(</span><span class="n">data_x_max</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_x_min</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">data_x_min</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">lower</span> <span class="o">=</span> <span class="n">mean_raw</span> <span class="o">-</span> <span class="n">num_stds</span> <span class="o">*</span> <span class="n">std_raw</span>
-            <span class="n">upper</span> <span class="o">=</span> <span class="n">mean_raw</span> <span class="o">+</span> <span class="n">num_stds</span> <span class="o">*</span> <span class="n">std_raw</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">mean_raw</span> <span class="o">-</span> <span class="n">num_std</span> <span class="o">*</span> <span class="n">std_raw</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">mean_raw</span> <span class="o">+</span> <span class="n">num_std</span> <span class="o">*</span> <span class="n">std_raw</span>
 
             <span class="c1"># Plot a 2D surface in 3D</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x0_mesh</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">x1_mesh</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">mean_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
@@ -515,10 +515,10 @@
                 <span class="n">tick_label_prec</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="n">separate_cbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">cmap</span><span class="o">=</span><span class="n">heatmap_cmap</span><span class="p">,</span>
-                <span class="n">colorbar_label</span><span class="o">=</span><span class="n">colorbar_label</span><span class="p">,</span>
+                <span class="n">cbar_label</span><span class="o">=</span><span class="n">cbar_label</span><span class="p">,</span>
                 <span class="n">num_major_ticks_hm</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                 <span class="n">num_major_ticks_cb</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                <span class="n">colorbar_orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+                <span class="n">cbar_orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">df_std</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">std_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">x0_grid_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">x1_grid_raw</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
@@ -533,10 +533,10 @@
                 <span class="n">tick_label_prec</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="n">separate_cbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">cmap</span><span class="o">=</span><span class="n">heatmap_cmap</span><span class="p">,</span>
-                <span class="n">colorbar_label</span><span class="o">=</span><span class="n">colorbar_label</span><span class="p">,</span>
+                <span class="n">cbar_label</span><span class="o">=</span><span class="n">cbar_label</span><span class="p">,</span>
                 <span class="n">num_major_ticks_hm</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                 <span class="n">num_major_ticks_cb</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                <span class="n">colorbar_orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+                <span class="n">cbar_orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
                 <span class="n">norm</span><span class="o">=</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(),</span>
             <span class="p">)</span>  <span class="c1"># explicitly instantiate a new norm</span>
 
