@@ -69,6 +69,7 @@ class CustomStoppingCriterion(StoppingCriterion):
                              same that was passed to the `is_met` method
         :param name: name of the stopping criterion, used for `str(..)` and ´repr(..)`
         """
+        super().__init__()
         self._criterion_fn = criterion_fn
         self._name = name
 
@@ -91,6 +92,7 @@ class IterCountStoppingCriterion(StoppingCriterion):
 
         :param max_iter: maximum number of iterations
         """
+        super().__init__()
         self._max_iter = max_iter
 
     def is_met(self, algo) -> bool:
@@ -106,6 +108,7 @@ class SampleCountStoppingCriterion(StoppingCriterion):
 
         :param max_sample_count: maximum sample count
         """
+        super().__init__()
         self._max_sample_count = max_sample_count
 
     def is_met(self, algo) -> bool:

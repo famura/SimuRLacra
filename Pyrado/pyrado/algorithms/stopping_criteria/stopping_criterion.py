@@ -37,6 +37,9 @@ class StoppingCriterion(ABC):
     iterations.
     """
 
+    def __init__(self):
+        self._suppress_next_reset = False
+
     def __or__(self, other: "StoppingCriterion") -> "StoppingCriterion":
         """Returns an `_OrStoppingCriterion` that combines this criterion with the other."""
         return _OrStoppingCriterion(self, other)
@@ -59,7 +62,24 @@ class StoppingCriterion(ABC):
         raise NotImplementedError()
 
     def reset(self) -> NoReturn:
-        """Resets the internal state of this stopping criterion. Has to be called when the algorithm is reset."""
+        """
+        Resets the internal state of this stopping criterion. Has to be called when the algorithm is reset. If
+        `suppress_next_reset` was invoked right before invoking this method, the stopping criterion will not be reset.
+
+        .. note::
+            Do not overwrite this method directly! Rather implement `_reset` instead to not bypass the suppression
+            mechanism.
+        """
+        if not self._suppress_next_reset:
+            self._reset()
+        self._suppress_next_reset = False
+
+    def suppress_next_reset(self) -> NoReturn:
+        """Suppresses the next reset call as described in `reset`."""
+        self._suppress_next_reset = True
+
+    def _reset(self) -> NoReturn:
+        """Resets the internal state of this stopping criterion."""
         pass
 
 
