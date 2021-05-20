@@ -372,7 +372,10 @@
         <span class="c1"># Reset the policy, i.e. the exploration strategy in case of step-based exploration.</span>
         <span class="c1"># In case the environment is a simulation, the current domain parameters are passed to the policy. This allows</span>
         <span class="c1"># the policy policy to update it&#39;s internal model, e.g. for the energy-based swing-up controllers</span>
-        <span class="n">policy</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">domain_param</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">):</span>
+            <span class="n">policy</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">policy</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
         <span class="c1"># Set dropout and batch normalization layers to the right mode</span>
         <span class="k">if</span> <span class="nb">eval</span><span class="p">:</span>
