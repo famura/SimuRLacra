@@ -209,7 +209,7 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     meta-algorithm as here it is possible that convergence kicks in far at the beginning of the learning process as the
     environment did not change much (see for example SPRL).
 
-    It might be helpful to and-combine this stopping criterion with an iterations criterion
+    It might be helpful to use this stopping criterion in conjunction with an iterations criterion
     (`IterCountStoppingCriterion`) to ensure that the algorithm does not terminate prematurely due to initialization
     issues. For example, PPO usually takes some iterations to make progress which leads to a flat learning curve that
     however does not correspond to the algorithm being converged.
