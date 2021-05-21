@@ -261,6 +261,9 @@
 <span class="sd">    iterations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_suppress_next_reset</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;StoppingCriterion&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StoppingCriterion&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns an `_OrStoppingCriterion` that combines this criterion with the other.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_OrStoppingCriterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
@@ -283,8 +286,25 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="StoppingCriterion.reset"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Resets the internal state of this stopping criterion. Has to be called when the algorithm is reset.&quot;&quot;&quot;</span>
-        <span class="k">pass</span></div></div>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the internal state of this stopping criterion. Has to be called when the algorithm is reset. If</span>
+<span class="sd">        `suppress_next_reset` was invoked right before invoking this method, the stopping criterion will not be reset.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Do not overwrite this method directly! Rather implement `_reset` instead to not bypass the suppression</span>
+<span class="sd">            mechanism.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_suppress_next_reset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_suppress_next_reset</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="StoppingCriterion.suppress_next_reset"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.suppress_next_reset">[docs]</a>    <span class="k">def</span> <span class="nf">suppress_next_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Suppresses the next reset call as described in `reset`.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_suppress_next_reset</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Resets the internal state of this stopping criterion.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
 
 
 <span class="k">class</span> <span class="nc">_AndStoppingCriterion</span><span class="p">(</span><span class="n">StoppingCriterion</span><span class="p">):</span>

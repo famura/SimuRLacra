@@ -293,6 +293,7 @@
 <span class="sd">                             same that was passed to the `is_met` method</span>
 <span class="sd">        :param name: name of the stopping criterion, used for `str(..)` and ´repr(..)`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_criterion_fn</span> <span class="o">=</span> <span class="n">criterion_fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
 
@@ -315,6 +316,7 @@
 
 <span class="sd">        :param max_iter: maximum number of iterations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
 
 <div class="viewcode-block" id="IterCountStoppingCriterion.is_met"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.IterCountStoppingCriterion.is_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -330,6 +332,7 @@
 
 <span class="sd">        :param max_sample_count: maximum sample count</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_sample_count</span> <span class="o">=</span> <span class="n">max_sample_count</span>
 
 <div class="viewcode-block" id="SampleCountStoppingCriterion.is_met"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.SampleCountStoppingCriterion.is_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>

@@ -327,8 +327,14 @@
 <div class="section" id="module-tests.algorithms.test_stopping_criteria">
 <span id="test-stopping-criteria"></span><h2>test_stopping_criteria<a class="headerlink" href="#module-tests.algorithms.test_stopping_criteria" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.ExposingReturnStatisticBasedStoppingCriterion">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ExposingReturnStatisticBasedStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">return_statistic:</span> <span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span> <span class="pre">=</span> <span class="pre">&lt;ReturnStatistic.MEDIAN:</span> <span class="pre">2&gt;</span></em>, <em class="sig-param"><span class="pre">num_lookbacks:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#ExposingReturnStatisticBasedStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.ExposingReturnStatisticBasedStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_sequences</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_sequences</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler.reinit">
@@ -404,28 +410,73 @@ sampling runs, the sample() method takes care of this on it’s own.</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_check_min">
-<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_return_check_min</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_return_check_min"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_check_min" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_return_statistic_based_check_min">
+<span class="sig-name descname"><span class="pre">test_criterion_return_statistic_based_check_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statistic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_return_statistic_based_check_min"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_return_statistic_based_check_min" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_equal">
-<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_return_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_return_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_equal" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_equal">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_equal" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_higher">
-<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_return_higher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_return_higher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_higher" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_higher">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_higher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_higher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_higher" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_lower">
-<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_return_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_return_lower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_lower" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_history_filling">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_history_filling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_history_filling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_history_filling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_use_last">
-<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_return_use_last</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_return_use_last"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_return_use_last" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_lower">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_lower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_none">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_one">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_constant_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_constant_one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_zero">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_constant_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_constant_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_zero" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_not_constant">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_not_constant</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_not_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_not_constant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_random">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_random"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_subset">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_subset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_equal">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_min_return_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_min_return_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_higher">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_min_return_higher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_min_return_higher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_higher" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_lower">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_min_return_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_min_return_lower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_lower" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
