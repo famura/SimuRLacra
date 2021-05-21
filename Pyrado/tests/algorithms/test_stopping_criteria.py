@@ -44,6 +44,7 @@ from pyrado.algorithms.stopping_criteria.predefined_criteria import (
 from pyrado.algorithms.stopping_criteria.rollout_based_criteria import (
     ConvergenceStoppingCriterion,
     MinReturnStoppingCriterion,
+    ReturnStatistic,
     ReturnStatisticBasedStoppingCriterion,
 )
 from pyrado.algorithms.stopping_criteria.stopping_criterion import _AndStoppingCriterion, _OrStoppingCriterion
@@ -55,7 +56,7 @@ from pyrado.sampling.step_sequence import StepSequence
 
 
 class MockSampler(SamplerBase):
-    def __init__(self, step_sequences=None):
+    def __init__(self, step_sequences: Optional[List[StepSequence]] = None):
         super().__init__(min_rollouts=0, min_steps=0)
         self.step_sequences = [] if step_sequences is None else step_sequences
 
@@ -67,7 +68,7 @@ class MockSampler(SamplerBase):
 
 
 class ExposingReturnStatisticBasedStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
-    def __init__(self, return_statistic="median", num_lookbacks=1):
+    def __init__(self, return_statistic: ReturnStatistic = ReturnStatistic.MEDIAN, num_lookbacks: int = 1):
         super().__init__(return_statistic, num_lookbacks)
         self.return_statistic_value = np.nan
 
@@ -220,7 +221,14 @@ def test_criterion_rollout_based_wrong_sampler():
 
 # noinspection PyTypeChecker
 @pytest.mark.parametrize(
-    ["statistic", "expected"], [("min", 1), ("max", 6), ("median", 2), ("mean", 3), ("variance", 14 / 3)]
+    ["statistic", "expected"],
+    [
+        (ReturnStatistic.MIN, 1),
+        (ReturnStatistic.MAX, 6),
+        (ReturnStatistic.MEDIAN, 2),
+        (ReturnStatistic.MEAN, 3),
+        (ReturnStatistic.VARIANCE, 14 / 3),
+    ],
 )
 def test_criterion_return_statistic_based_check_min(statistic, expected):
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 6)
@@ -257,7 +265,7 @@ def test_criterion_rollout_based_min_min_return_higher():
 # noinspection PyTypeChecker
 def test_criterion_rollout_based_min_min_return_equal():
     rollout_a = SimpleNamespace(undiscounted_return=lambda: 2)
-    sampler = RolloutSavingWrapper(MockSampler())
+    sampler = RolloutSavingWrapper(MockSampler([rollout_a]))
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = MinReturnStoppingCriterion(return_threshold=2)

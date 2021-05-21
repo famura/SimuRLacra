@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import abstractmethod
+from enum import Enum
 from typing import List, NoReturn, Optional
 
 import numpy as np
@@ -37,6 +38,16 @@ import pyrado
 from pyrado.algorithms.stopping_criteria.stopping_criterion import StoppingCriterion
 from pyrado.algorithms.utils import RolloutSavingWrapper
 from pyrado.sampling.sampler import SamplerBase
+
+
+class ReturnStatistic(Enum):
+    """All the different return statistics supported by `ReturnStatisticBasedStoppingCriterion`."""
+
+    MIN = 0
+    MAX = 1
+    MEDIAN = 2
+    MEAN = 3
+    VARIANCE = 4
 
 
 class RolloutBasedStoppingCriterion(StoppingCriterion):
@@ -87,24 +98,16 @@ class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
     statistic of the returns of rollouts of the last iteration.
     """
 
-    # List of the statistics that this class can compute from a rollout.
-    AVAILABLE_RETURN_STATISTICS = ("min", "max", "median", "mean", "variance")
-
-    def __init__(self, return_statistic="median", num_lookbacks=1):
+    def __init__(self, return_statistic: ReturnStatistic = ReturnStatistic.MEDIAN, num_lookbacks: int = 1):
         """
         Constructor.
 
-        :param return_statistic: statistic to compute; must be one of `min`, `max`, `median`, `mean`, or `variance`
+        :param return_statistic: statistic to compute; defaults to median
         :param num_lookbacks: over how many iterations the statistic should be computed; for example, a value of two
                               means that the rollouts of both the current and the previous iteration will be used for
                               computing the statistic; defaults to one
         """
         super().__init__()
-        return_statistic = return_statistic.lower()
-        if not (return_statistic in ReturnStatisticBasedStoppingCriterion.AVAILABLE_RETURN_STATISTICS):
-            raise pyrado.ValueErr(
-                msg=f"return_statistic has to be one of {ReturnStatisticBasedStoppingCriterion.AVAILABLE_RETURN_STATISTICS} (case insensitive)"
-            )
         self._return_statistic = return_statistic
         self._num_lookbacks = num_lookbacks
 
@@ -147,19 +150,17 @@ class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
         :param returns: returns
         :return: statistic
         """
-        if self._return_statistic == "min":
+        if self._return_statistic is ReturnStatistic.MIN:
             return np.min(returns)
-        if self._return_statistic == "max":
+        if self._return_statistic is ReturnStatistic.MAX:
             return np.max(returns)
-        if self._return_statistic == "median":
+        if self._return_statistic is ReturnStatistic.MEDIAN:
             return np.quantile(returns, q=0.50)
-        if self._return_statistic == "mean":
+        if self._return_statistic is ReturnStatistic.MEAN:
             return np.mean(returns).item()
-        if self._return_statistic == "variance":
+        if self._return_statistic is ReturnStatistic.VARIANCE:
             return returns.var().item()
-        assert (
-            False
-        ), "Should not happen! Either the code is inconsistent or the instance variable _return_statistic has been touched!"
+        raise pyrado.ValueErr(msg=f"Unexpected return statistic {self._return_statistic}!")
 
 
 class MinReturnStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
@@ -168,13 +169,13 @@ class MinReturnStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     statistic exceeds a certain threshold.
     """
 
-    def __init__(self, return_threshold: float, return_statistic="min"):
+    def __init__(self, return_threshold: float, return_statistic: ReturnStatistic = ReturnStatistic.MIN):
         """
         Constructor.
 
         :param return_threshold: return threshold; if the return statistic reaches this threshold, the stopping
                                  criterion is met
-        :param return_statistic: statistic to compute; must be one of `min`, `max`, `median`, `mean`, or `variance`
+        :param return_statistic: statistic to compute; defaults to minimum
         """
         super().__init__(return_statistic=return_statistic)
         self._return_threshold = return_threshold
@@ -215,7 +216,13 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     however does not correspond to the algorithm being converged.
     """
 
-    def __init__(self, convergence_probability_threshold=0.99, M=None, return_statistic="median", num_lookbacks=1):
+    def __init__(
+        self,
+        convergence_probability_threshold: float = 0.99,
+        M=None,
+        return_statistic: ReturnStatistic = ReturnStatistic.MEDIAN,
+        num_lookbacks: int = 1,
+    ):
         """
         Constructor.
 
@@ -224,7 +231,7 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
                                                   can be explained
         :param M: number of iterations to use for the moving mode; if `None`, the cumulative mode is used; defaults to
                   `None`
-        :param return_statistic: statistic to compute; must be one of `min`, `max`, `median`, `mean`, or `variance`
+        :param return_statistic: statistic to compute; defaults to median
         :param num_lookbacks: over how many iterations the statistic should be computed; for example, a value of two
                               means that the rollouts of both the current and the previous iteration will be used for
                               computing the statistic; defaults to one
