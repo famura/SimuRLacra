@@ -201,6 +201,8 @@ class SAC(ValueBased):
         if lr_scheduler is not None:
             self._lr_scheduler_policy = lr_scheduler(self._optim_policy, **lr_scheduler_hparam)
             self._lr_scheduler_qfcns = lr_scheduler(self._optim_qfcns, **lr_scheduler_hparam)
+        else:
+            self._lr_scheduler_policy = self._lr_scheduler_qfcns = None
 
     @property
     def sampler(self) -> ParallelRolloutSampler:
