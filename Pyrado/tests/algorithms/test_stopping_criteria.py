@@ -317,6 +317,7 @@ def test_criterion_rollout_based_convergence_regress_random():
     assert criterion._compute_convergence_probability() > 0.9
 
 
+# noinspection PyTypeChecker
 def test_criterion_rollout_based_convergence_lower():
     rollout = SimpleNamespace(undiscounted_return=lambda: 0)
     sampler = RolloutSavingWrapper(MockSampler([rollout]))
@@ -328,6 +329,7 @@ def test_criterion_rollout_based_convergence_lower():
     assert not criterion.is_met(algo)
 
 
+# noinspection PyTypeChecker
 def test_criterion_rollout_based_convergence_higher():
     rollout = SimpleNamespace(undiscounted_return=lambda: 0)
     sampler = RolloutSavingWrapper(MockSampler([rollout]))
@@ -339,6 +341,7 @@ def test_criterion_rollout_based_convergence_higher():
     assert criterion.is_met(algo)
 
 
+# noinspection PyTypeChecker
 def test_criterion_rollout_based_convergence_equal():
     rollout = SimpleNamespace(undiscounted_return=lambda: 0)
     sampler = RolloutSavingWrapper(MockSampler([rollout]))
@@ -350,6 +353,7 @@ def test_criterion_rollout_based_convergence_equal():
     assert criterion.is_met(algo)
 
 
+# noinspection PyTypeChecker
 def test_criterion_rollout_based_convergence_none():
     rollout = SimpleNamespace(undiscounted_return=lambda: 0)
     sampler = RolloutSavingWrapper(MockSampler([rollout]))
