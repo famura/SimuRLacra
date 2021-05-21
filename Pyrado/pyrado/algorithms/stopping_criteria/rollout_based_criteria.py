@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import abstractmethod
-from typing import NoReturn, Optional
+from typing import List, NoReturn, Optional
 
 import numpy as np
 import scipy as sp
@@ -174,7 +174,7 @@ class MinReturnStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
 
         :param return_threshold: return threshold; if the return statistic reaches this threshold, the stopping
                                  criterion is met
-        :param return_statistic: the statistic of the return to use; defaults to minimum
+        :param return_statistic: statistic to compute; must be one of `min`, `max`, `median`, `mean`, or `variance`
         """
         super().__init__(return_statistic=return_statistic)
         self._return_threshold = return_threshold
@@ -209,43 +209,91 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     meta-algorithm as here it is possible that convergence kicks in far at the beginning of the learning process as the
     environment did not change much (see, for example, SPRL).
 
-    It might be helpful to combine this stopping criterion with a min-iterations criterion (TODO) to ensure that the
-    algorithm does not terminate prematurely due to initialization issues. For example, PPO usually takes some
-    iterations to make progress which leads to a flat learning curve that however does not correspond to the algorithm
-    being converged.
+    It might be helpful to and-combine this stopping criterion with an iterations criterion
+    (`IterCountStoppingCriterion`) to ensure that the algorithm does not terminate prematurely due to initialization
+    issues. For example, PPO usually takes some iterations to make progress which leads to a flat learning curve that
+    however does not correspond to the algorithm being converged.
     """
 
-    # TODO: Stopped here. Next steps: Implement the min-iterations criterion and the two modes (moving and cumulative).
-
-    def __init__(self, convergence_probability_threshold=0.99, return_statistic="median", num_lookbacks=1):
+    def __init__(self, convergence_probability_threshold=0.99, M=None, return_statistic="median", num_lookbacks=1):
         """
         Constructor.
 
         :param convergence_probability_threshold: threshold of the p-value above which the algorithm is considered to be
                                                   converged; defaults to `0.99`, i.e. a `99%` certainty that the data
                                                   can be explained
+        :param M: number of iterations to use for the moving mode; if `None`, the cumulative mode is used; defaults to
+                  `None`
+        :param return_statistic: statistic to compute; must be one of `min`, `max`, `median`, `mean`, or `variance`
+        :param num_lookbacks: over how many iterations the statistic should be computed; for example, a value of two
+                              means that the rollouts of both the current and the previous iteration will be used for
+                              computing the statistic; defaults to one
         """
         super().__init__(return_statistic, num_lookbacks)
+        if not (M is None or M > 0):
+            raise pyrado.ValueErr(msg="M must be either none or positive")
         self._convergence_probability_threshold = convergence_probability_threshold
+        self._M = M
         self._return_statistic_history = []
 
     def __repr__(self) -> str:
         return (
-            f"ConvergenceStoppingCriterion[return_statistic={self._return_statistic}, "
+            f"ConvergenceStoppingCriterion["
+            f"convergence_probability_threshold={self._convergence_probability_threshold}, "
+            f"M={self._M}, "
+            f"return_statistic={self._return_statistic}, "
             f"num_lookbacks={self._num_lookbacks}, "
             f"return_statistic_history={self._return_statistic_history}]"
         )
 
     def __str__(self) -> str:
-        return f"({self._return_statistic} return converged)"
+        return f"({self._return_statistic} return converged, {'cumulative' if self._M is None else 'moving'} mode)"
 
     def _reset(self) -> NoReturn:
         self._return_statistic_history = []
 
     def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+        """Returns whether the convergence probability is greater than or equal to the threshold."""
         self._return_statistic_history.append(return_statistic)
         convergence_prob = self._compute_convergence_probability()
+        if convergence_prob is None:
+            return False
         return convergence_prob >= self._convergence_probability_threshold
 
-    def _compute_convergence_probability(self) -> float:
-        return sp.stats.linregress(range(len(self._return_statistic_history)), self._return_statistic_history).pvalue
+    def _compute_convergence_probability(self) -> Optional[float]:
+        """
+        Computes the convergence probability for the current data. By invoking `_get_relevant_return_statistic_subset`,
+        the two modes (moving and cumulative) are implemented. If not enough data is present, this method does not
+        return the probability, but `None`.
+
+        .. note::
+            This invoked the method `linregress` of `scipy.stats` and returns the corresponing p-value.
+
+        .. see::
+            https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html
+
+        :return the convergence probability or `None` if not enough data is present
+        """
+        statistic_subset = self._get_relevant_return_statistic_subset()
+        if statistic_subset is None:
+            return None
+        return sp.stats.linregress(range(len(statistic_subset)), statistic_subset).pvalue
+
+    def _get_relevant_return_statistic_subset(self) -> Optional[List[float]]:
+        """
+        Extracts the relevant subset of the return statistic history, implementing the two modes described in the class
+        documentation: moving and cumulative.
+
+        If either the return history is empty or does not contain enough elements for getting `M` elements, `None` is
+        returned. The convergence checking method shall treat this as the convergence criterion not being met as there
+        is not enough data.
+
+        :return: the relevant subset
+        """
+        if len(self._return_statistic_history) <= 0:
+            return None
+        if self._M is None:
+            return self._return_statistic_history
+        if len(self._return_statistic_history) < self._M:
+            return None
+        return self._return_statistic_history[-self._M :]
