@@ -207,7 +207,7 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     have to be at least two points to fit a linear model. While the former is primarily useful for convergence checking
     for a regular algorithm, the latter is primarily useful for checking convergence of the subroutine in a
     meta-algorithm as here it is possible that convergence kicks in far at the beginning of the learning process as the
-    environment did not change much (see, for example, SPRL).
+    environment did not change much (see for example SPRL).
 
     It might be helpful to and-combine this stopping criterion with an iterations criterion
     (`IterCountStoppingCriterion`) to ensure that the algorithm does not terminate prematurely due to initialization
