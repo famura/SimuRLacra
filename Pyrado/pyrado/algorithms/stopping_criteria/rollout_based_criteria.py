@@ -231,7 +231,7 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
         """
         super().__init__(return_statistic, num_lookbacks)
         if not (M is None or M > 0):
-            raise pyrado.ValueErr(msg="M must be either none or positive")
+            raise pyrado.ValueErr(msg="M must be either None or a positive number.")
         self._convergence_probability_threshold = convergence_probability_threshold
         self._M = M
         self._return_statistic_history = []
