@@ -194,7 +194,7 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     """
     Checks for convergence of the returns for a given statistic that can be specified in the constructor. This is done
     by fitting a linear regression model to all the previous statistics (stored in a list) and performing a Wald test
-    with a t-distribution of the test statistic (with tne null hypothesis that the slope is zero). The resulting
+    with a t-distribution of the test statistic (with the null hypothesis that the slope is zero). The resulting
     p-value is called the *probability of convergence* and is used for checking if the algorithm has converged.
 
     This procedure can intuitively be explained by measuring "how flat the returns are" in the presence of noise. It has
