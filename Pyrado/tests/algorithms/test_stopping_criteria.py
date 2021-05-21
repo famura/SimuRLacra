@@ -28,7 +28,6 @@
 from copy import deepcopy
 from types import SimpleNamespace
 from typing import List, Optional
-from unittest import mock
 
 import numpy as np
 import pytest
@@ -323,9 +322,8 @@ def test_criterion_rollout_based_convergence_lower():
     sampler = RolloutSavingWrapper(MockSampler([rollout]))
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
-    criterion = ConvergenceStoppingCriterion()
-    criterion._compute_convergence_probability = mock.MagicMock()
-    criterion._compute_convergence_probability.return_value = 0.0
+    criterion = ConvergenceStoppingCriterion(convergence_probability_threshold=0.5)
+    criterion._compute_convergence_probability = lambda: 0.0
     assert not criterion.is_met(algo)
 
 
@@ -335,9 +333,8 @@ def test_criterion_rollout_based_convergence_higher():
     sampler = RolloutSavingWrapper(MockSampler([rollout]))
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
-    criterion = ConvergenceStoppingCriterion()
-    criterion._compute_convergence_probability = mock.MagicMock()
-    criterion._compute_convergence_probability.return_value = 1.0
+    criterion = ConvergenceStoppingCriterion(convergence_probability_threshold=0.5)
+    criterion._compute_convergence_probability = lambda: 1.0
     assert criterion.is_met(algo)
 
 
@@ -348,8 +345,7 @@ def test_criterion_rollout_based_convergence_equal():
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = ConvergenceStoppingCriterion(convergence_probability_threshold=0.5)
-    criterion._compute_convergence_probability = mock.MagicMock()
-    criterion._compute_convergence_probability.return_value = 0.5
+    criterion._compute_convergence_probability = lambda: 0.5
     assert criterion.is_met(algo)
 
 
@@ -360,6 +356,5 @@ def test_criterion_rollout_based_convergence_none():
     sampler.sample()
     algo = SimpleNamespace(sampler=sampler)
     criterion = ConvergenceStoppingCriterion(convergence_probability_threshold=0.5)
-    criterion._compute_convergence_probability = mock.MagicMock()
-    criterion._compute_convergence_probability.return_value = None
+    criterion._compute_convergence_probability = lambda: None
     assert not criterion.is_met(algo)
