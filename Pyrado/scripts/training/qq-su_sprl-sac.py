@@ -53,9 +53,9 @@ from pyrado.utils.data_types import EnvSpec
 if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument("--frequency", default=250, type=int)
+    parser.add_argument("--frequency", default=100, type=int)
     parser.set_defaults(max_steps=600)
-    parser.add_argument("--sac_iterations", default=150, type=int)
+    parser.add_argument("--sac_iterations", default=300, type=int)
     parser.add_argument("--sprl_iterations", default=50, type=int)
     parser.add_argument("--cov_only", action="store_true")
     args = parser.parse_args()
@@ -87,19 +87,19 @@ if __name__ == "__main__":
     # Subroutine
     algo_hparam = dict(
         max_iter=args.sac_iterations,
-        memory_size=10_000,
+        memory_size=100_000,
         gamma=0.99,
-        num_updates_per_step=None,  # uses internal heuristic
+        num_updates_per_step=1_000,
         tau=0.995,
         ent_coeff_init=0.2,
         learn_ent_coeff=False,
-        target_update_intvl=1_000,
-        num_init_memory_steps=10_000,
+        target_update_intvl=1,
+        num_init_memory_steps=None,
         standardize_rew=False,
-        min_steps=30 * env.max_steps,
-        batch_size=500,
-        lr=6e-04,
-        max_grad_norm=1.0,
+        min_steps=10 * env.max_steps,
+        batch_size=256,
+        lr=3e-4,
+        max_grad_norm=10,
         num_workers=8,
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999),
