@@ -104,12 +104,13 @@ class _AndStoppingCriterion(StoppingCriterion):
         return f"({self.criterion1} and {self.criterion2})"
 
     def is_met(self, algo) -> bool:
-        """Checks if both criteria are met."""
         return self.criterion1.is_met(algo) and self.criterion2.is_met(algo)
 
 
 class _OrStoppingCriterion(StoppingCriterion):
-    """Combines two stopping criteria such that at least one of them has to be met in order for this criterion to be met."""
+    """
+    Combines two stopping criteria such that at least one of them has to be met in order for this criterion to be met.
+    """
 
     def __init__(self, criterion1: StoppingCriterion, criterion2: StoppingCriterion):
         """
@@ -129,5 +130,4 @@ class _OrStoppingCriterion(StoppingCriterion):
         return f"({self.criterion1} or {self.criterion2})"
 
     def is_met(self, algo) -> bool:
-        """Checks if at least one criterion is met."""
         return self.criterion1.is_met(algo) or self.criterion2.is_met(algo)

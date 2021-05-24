@@ -43,11 +43,11 @@ from pyrado.sampling.sampler import SamplerBase
 class ReturnStatistic(Enum):
     """All the different return statistics supported by `ReturnStatisticBasedStoppingCriterion`."""
 
-    MIN = 0
-    MAX = 1
-    MEDIAN = 2
-    MEAN = 3
-    VARIANCE = 4
+    min = 0
+    max = 1
+    median = 2
+    mean = 3
+    variance = 4
 
 
 class RolloutBasedStoppingCriterion(StoppingCriterion):
@@ -60,7 +60,7 @@ class RolloutBasedStoppingCriterion(StoppingCriterion):
 
     def is_met(self, algo) -> bool:
         """
-        Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the checkinf of the
+        Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the check if of the
         stopping criterion to `_is_met_with_sampler(..)`.
 
         :param algo: instance of `Algorithm` that has to be evaluated
@@ -73,7 +73,8 @@ class RolloutBasedStoppingCriterion(StoppingCriterion):
         sampler: Optional[SamplerBase] = algo.sampler
         if not isinstance(sampler, RolloutSavingWrapper):
             raise pyrado.TypeErr(
-                msg="Any rollout-based stopping criterion requires the algorithm to expose a sampler of type 'RolloutSavingWrapper' via the property 'sampler'!"
+                msg="Any rollout-based stopping criterion requires the algorithm to expose a sampler of type "
+                "'RolloutSavingWrapper' via the property 'sampler'!"
             )
         return self._is_met_with_sampler(algo, sampler)
 
@@ -98,7 +99,7 @@ class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
     statistic of the returns of rollouts of the last iteration.
     """
 
-    def __init__(self, return_statistic: ReturnStatistic = ReturnStatistic.MEDIAN, num_lookbacks: int = 1):
+    def __init__(self, return_statistic: ReturnStatistic = ReturnStatistic.median, num_lookbacks: int = 1):
         """
         Constructor.
 
@@ -150,15 +151,15 @@ class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
         :param returns: returns
         :return: statistic
         """
-        if self._return_statistic is ReturnStatistic.MIN:
+        if self._return_statistic is ReturnStatistic.min:
             return np.min(returns)
-        if self._return_statistic is ReturnStatistic.MAX:
+        if self._return_statistic is ReturnStatistic.max:
             return np.max(returns)
-        if self._return_statistic is ReturnStatistic.MEDIAN:
+        if self._return_statistic is ReturnStatistic.median:
             return np.quantile(returns, q=0.50)
-        if self._return_statistic is ReturnStatistic.MEAN:
+        if self._return_statistic is ReturnStatistic.mean:
             return np.mean(returns).item()
-        if self._return_statistic is ReturnStatistic.VARIANCE:
+        if self._return_statistic is ReturnStatistic.variance:
             return returns.var().item()
         raise pyrado.ValueErr(msg=f"Unexpected return statistic {self._return_statistic}!")
 
@@ -169,7 +170,7 @@ class MinReturnStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     statistic exceeds a certain threshold.
     """
 
-    def __init__(self, return_threshold: float, return_statistic: ReturnStatistic = ReturnStatistic.MIN):
+    def __init__(self, return_threshold: float, return_statistic: ReturnStatistic = ReturnStatistic.min):
         """
         Constructor.
 
@@ -219,8 +220,8 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     def __init__(
         self,
         convergence_probability_threshold: float = 0.99,
-        M=None,
-        return_statistic: ReturnStatistic = ReturnStatistic.MEDIAN,
+        num_iter: Optional[int] = None,
+        return_statistic: ReturnStatistic = ReturnStatistic.median,
         num_lookbacks: int = 1,
     ):
         """
@@ -229,32 +230,33 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
         :param convergence_probability_threshold: threshold of the p-value above which the algorithm is considered to be
                                                   converged; defaults to `0.99`, i.e. a `99%` certainty that the data
                                                   can be explained
-        :param M: number of iterations to use for the moving mode; if `None`, the cumulative mode is used; defaults to
-                  `None`
+        :param num_iter: number of iterations to use for the moving mode. If `None`, the cumulative mode is used
         :param return_statistic: statistic to compute; defaults to median
         :param num_lookbacks: over how many iterations the statistic should be computed; for example, a value of two
                               means that the rollouts of both the current and the previous iteration will be used for
                               computing the statistic; defaults to one
         """
         super().__init__(return_statistic, num_lookbacks)
-        if not (M is None or M > 0):
+        if not (num_iter is None or num_iter > 0):
             raise pyrado.ValueErr(msg="M must be either None or a positive number.")
         self._convergence_probability_threshold = convergence_probability_threshold
-        self._M = M
+        self._num_iter = num_iter
         self._return_statistic_history = []
 
     def __repr__(self) -> str:
         return (
             f"ConvergenceStoppingCriterion["
             f"convergence_probability_threshold={self._convergence_probability_threshold}, "
-            f"M={self._M}, "
+            f"num_iter={self._num_iter}, "
             f"return_statistic={self._return_statistic}, "
             f"num_lookbacks={self._num_lookbacks}, "
             f"return_statistic_history={self._return_statistic_history}]"
         )
 
     def __str__(self) -> str:
-        return f"({self._return_statistic} return converged, {'cumulative' if self._M is None else 'moving'} mode)"
+        return (
+            f"({self._return_statistic} return converged, {'cumulative' if self._num_iter is None else 'moving'} mode)"
+        )
 
     def _reset(self) -> NoReturn:
         self._return_statistic_history = []
@@ -276,7 +278,7 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
         .. note::
             This invoked the method `linregress` of `scipy.stats` and returns the corresponing p-value.
 
-        .. see::
+        .. seealso::
             https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html
 
         :return the convergence probability or `None` if not enough data is present
@@ -299,8 +301,8 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
         """
         if len(self._return_statistic_history) <= 0:
             return None
-        if self._M is None:
+        if self._num_iter is None:
             return self._return_statistic_history
-        if len(self._return_statistic_history) < self._M:
+        if len(self._return_statistic_history) < self._num_iter:
             return None
-        return self._return_statistic_history[-self._M :]
+        return self._return_statistic_history[-self._num_iter :]

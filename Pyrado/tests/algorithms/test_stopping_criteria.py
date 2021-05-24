@@ -67,7 +67,7 @@ class MockSampler(SamplerBase):
 
 
 class ExposingReturnStatisticBasedStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
-    def __init__(self, return_statistic: ReturnStatistic = ReturnStatistic.MEDIAN, num_lookbacks: int = 1):
+    def __init__(self, return_statistic: ReturnStatistic = ReturnStatistic.median, num_lookbacks: int = 1):
         super().__init__(return_statistic, num_lookbacks)
         self.return_statistic_value = np.nan
 
@@ -222,11 +222,11 @@ def test_criterion_rollout_based_wrong_sampler():
 @pytest.mark.parametrize(
     ["statistic", "expected"],
     [
-        (ReturnStatistic.MIN, 1),
-        (ReturnStatistic.MAX, 6),
-        (ReturnStatistic.MEDIAN, 2),
-        (ReturnStatistic.MEAN, 3),
-        (ReturnStatistic.VARIANCE, 14 / 3),
+        (ReturnStatistic.min, 1),
+        (ReturnStatistic.max, 6),
+        (ReturnStatistic.median, 2),
+        (ReturnStatistic.mean, 3),
+        (ReturnStatistic.variance, 14 / 3),
     ],
 )
 def test_criterion_return_statistic_based_check_min(statistic, expected):
@@ -271,9 +271,11 @@ def test_criterion_rollout_based_min_min_return_equal():
     assert criterion.is_met(algo)
 
 
-@pytest.mark.parametrize(["M", "expected"], [(None, [1, 2, 3]), (1, [3]), (2, [2, 3]), (3, [1, 2, 3]), (4, None)])
-def test_criterion_rollout_based_convergence_subset(M, expected):
-    criterion = ConvergenceStoppingCriterion(M=M)
+@pytest.mark.parametrize(
+    ["num_iter", "expected"], [(None, [1, 2, 3]), (1, [3]), (2, [2, 3]), (3, [1, 2, 3]), (4, None)]
+)
+def test_criterion_rollout_based_convergence_subset(num_iter, expected):
+    criterion = ConvergenceStoppingCriterion(num_iter=num_iter)
     criterion._return_statistic_history = [1, 2, 3]
     assert criterion._get_relevant_return_statistic_subset() == expected
 
