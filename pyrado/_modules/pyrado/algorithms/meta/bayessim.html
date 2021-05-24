@@ -1,0 +1,532 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.algorithms.meta.bayessim &mdash; Pyrado 0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.algorithms.meta.bayessim</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.algorithms.meta.bayessim</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">sbi</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">SNPE_A</span>
+<span class="kn">from</span> <span class="nn">sbi.inference.base</span> <span class="kn">import</span> <span class="n">simulate_for_sbi</span>
+<span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.sbi_base</span> <span class="kn">import</span> <span class="n">SBIBase</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">until_thold_exceeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="n">BayesSimEmbedding</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_rollout_sampler</span> <span class="kn">import</span> <span class="n">RolloutSamplerForSBI</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
+
+
+<div class="viewcode-block" id="BayesSim"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim">[docs]</a><span class="k">class</span> <span class="nc">BayesSim</span><span class="p">(</span><span class="n">SBIBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    BayesSim [1] using Sequential Neural Posterior Estimation (SNPE-A) [3]</span>
+
+<span class="sd">    For convenience, we provide the possibility to train a policy of the last posterior, i.e. after the inference was</span>
+<span class="sd">    done. This is not part of the original BayesSim algorithm [1]. Note that Online BayesSim [2], apart from using a</span>
+<span class="sd">    different embedding, alternates between training the policy or the internal model of the policy (see the last</span>
+<span class="sd">    paragraph of Section V.B.), thus has a significantly different data generation procedure.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        [1] F. Ramos, R.C. Possas, D. Fox, &quot;BayesSim: adaptive domain randomization via probabilistic inference for</span>
+<span class="sd">            robotics simulators&quot;, RSS, 2019</span>
+<span class="sd">        [2] R.C. Possas, L. Barcelos, R. Oliveira, D. Fox, F. Ramos, &quot;Online BayesSim for Combined Simulator Parameter</span>
+<span class="sd">            Inference and Policy Improvement&quot;, IROS, 2020</span>
+<span class="sd">        [3] G. Papamakarios, I. Murray. &quot;Fast epsilon-free inference of simulation models with Bayesian conditional</span>
+<span class="sd">            density estimation.&quot;, NIPS, 2016</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;bayessim&quot;</span>
+    <span class="n">iteration_key</span> <span class="o">=</span> <span class="s2">&quot;bayessim_iteration&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env_sim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+        <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_components</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">component_perturbation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env_sim: randomized simulation environment a.k.a. source domain</span>
+<span class="sd">        :param policy: policy used for sampling the rollouts in the target domain at the beginning of each iteration.</span>
+<span class="sd">                       If `subrtn_policy` is not `None` this policy is also trained at the very last iteration.</span>
+<span class="sd">        :param downsampling_factor: downsampling factor for the embedding which is used for pre-processing the data</span>
+<span class="sd">                                    before passing it to the posterior, 1 means no downsampling</span>
+<span class="sd">        :param num_components: number of components for the mixture of Gaussians density estimator</span>
+<span class="sd">        :param component_perturbation: standard deviation applied to all weights and biases when, in the last round of</span>
+<span class="sd">                                       SNPE-A, the Mixture of Gaussians is build from a single Gaussian.</span>
+<span class="sd">        :param kwargs: forwarded the superclass constructor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">component_perturbation</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">component_perturbation</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Construct the same embedding as in [1]</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">BayesSimEmbedding</span><span class="p">(</span>
+            <span class="n">spec</span><span class="o">=</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">dim_data</span><span class="o">=</span><span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">downsampling_factor</span><span class="o">=</span><span class="n">downsampling_factor</span><span class="p">,</span>
+            <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Call SBIBase&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">env_sim</span><span class="o">=</span><span class="n">env_sim</span><span class="p">,</span>
+            <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="n">embedding</span><span class="p">,</span>
+            <span class="n">num_checkpoints</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">init_checkpoint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">posterior_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;mdn_snpe_a&quot;</span><span class="p">),</span>  <span class="c1"># could be something else but SNPE-A practically too special</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># BayesSim only runs SNPE-A (could be multi-round) once on the initially collected trajectories</span>
+            <span class="n">use_rec_act</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># BayesSim requires the trajectories to be recorded beforehand</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Set the sampling parameters used by the sbi subroutine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_sampling_hparam</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subrtn_sbi_sampling_hparam&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+
+        <span class="c1"># Create the algorithm instance used in sbi, i.e. SNPE-A  which as a few specialities has a</span>
+        <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span>  <span class="c1"># embedding for nflows is always nn.Identity</span>
+        <span class="n">summary_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">writer</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">summary_writer</span><span class="p">,</span> <span class="n">SummaryWriter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span> <span class="o">=</span> <span class="n">SNPE_A</span><span class="p">(</span>
+            <span class="n">prior</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span><span class="p">,</span>
+            <span class="n">density_estimator</span><span class="o">=</span><span class="n">density_estimator</span><span class="p">,</span>
+            <span class="n">summary_writer</span><span class="o">=</span><span class="n">summary_writer</span><span class="p">,</span>
+            <span class="n">num_components</span><span class="o">=</span><span class="n">num_components</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Custom to SNPE-A</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_component_perturbation</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">component_perturbation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_precision_correction</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="BayesSim.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayessim.BayesSim.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Save snapshot to save the correct iteration count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Check if the rollout files already exist</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span><span class="si">}</span><span class="s2">_data_real.pt&quot;</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">))</span>
+            <span class="p">):</span>
+                <span class="c1"># Rollout files do exist (can be when continuing a previous experiment)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded existing rollout data.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Rollout files do not exist yet (usual case)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">collect_data_real</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span><span class="p">,</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">num_rollouts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_real_rollouts</span><span class="p">,</span>
+                    <span class="n">num_segments</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_segments</span><span class="p">,</span>
+                    <span class="n">len_segments</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">len_segments</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Save the target domain data</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+
+            <span class="c1"># Initialize sbi simulator and prior</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setup_sbi</span><span class="p">(</span>
+                <span class="n">prior</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span><span class="p">,</span>
+                <span class="n">rollouts_real</span><span class="o">=</span><span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># The proposal of the first round is the prior</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span>
+
+            <span class="c1"># Multi-round sbi</span>
+            <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span><span class="p">):</span>
+                <span class="c1"># Sample parameters proposal, and simulate these parameters to obtain the data</span>
+                <span class="n">domain_param</span><span class="p">,</span> <span class="n">data_sim</span> <span class="o">=</span> <span class="n">simulate_for_sbi</span><span class="p">(</span>
+                    <span class="n">simulator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span><span class="p">,</span>
+                    <span class="n">proposal</span><span class="o">=</span><span class="n">proposal</span><span class="p">,</span>
+                    <span class="n">num_simulations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sim_per_round</span><span class="p">,</span>
+                    <span class="n">simulation_batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_batch_size</span><span class="p">,</span>
+                    <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sim_per_round</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_sbi</span><span class="o">.</span><span class="n">max_steps</span>
+
+                <span class="c1"># Append simulations and proposals for sbi</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span><span class="o">.</span><span class="n">append_simulations</span><span class="p">(</span>
+                    <span class="n">domain_param</span><span class="p">,</span>
+                    <span class="n">data_sim</span><span class="p">,</span>
+                    <span class="n">proposal</span><span class="o">=</span><span class="n">proposal</span><span class="p">,</span>  <span class="c1"># do not pass proposal arg for SNLE or SNRE</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Train the posterior</span>
+                <span class="n">density_estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+                    <span class="n">final_round</span><span class="o">=</span><span class="n">idx_r</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">component_perturbation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_component_perturbation</span><span class="p">,</span>
+                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_training_hparam</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span><span class="o">.</span><span class="n">build_posterior</span><span class="p">(</span>
+                    <span class="n">density_estimator</span><span class="p">,</span>
+                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span>
+                    <span class="n">allow_precision_correction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_precision_correction</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Save the posterior of this iteration before tailoring it to the data (when it is still amortized)</span>
+                <span class="k">if</span> <span class="n">idx_r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                        <span class="n">posterior</span><span class="p">,</span>
+                        <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
+                        <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># for compatibility with load_posterior()</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># Set proposal of the next round to focus on the next data set.</span>
+                    <span class="c1"># set_default_x() expects dim [1, num_rollouts * data_samples]</span>
+                    <span class="n">proposal</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">set_default_x</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">)</span>
+
+                    <span class="c1"># Save the posterior tailored to each round</span>
+                    <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                        <span class="n">posterior</span><span class="p">,</span>
+                        <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
+                        <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="n">idx_r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># for compatibility with load_posterior()</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Override the latest posterior</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 2</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Logging (the evaluation can be time-intensive)</span>
+            <span class="n">posterior</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curr_domain_param_eval</span><span class="p">,</span> <span class="n">log_probs</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">eval_posterior</span><span class="p">(</span>
+                <span class="n">posterior</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_curr_data_real</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_samples</span><span class="p">,</span>
+                <span class="n">normalize_posterior</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_posterior</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;avg log prob&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">log_probs</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;num total samples&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span><span class="p">)</span>  <span class="c1"># here the samples are simulations</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 3</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># Policy optimization</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Train the behavioral policy using the posterior samples obtained before, repeat if the resulting</span>
+                <span class="c1"># policy did not exceed the success threshold</span>
+                <span class="n">wrapped_trn_fcn</span> <span class="o">=</span> <span class="n">until_thold_exceeded</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thold_succ_subrtn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_subrtn_rep</span><span class="p">)(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">train_policy_sim</span>
+                <span class="p">)</span>
+                <span class="n">wrapped_trn_fcn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_domain_param_eval</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">reached_checkpoint</span><span class="p">()</span>  <span class="c1"># setting counter to 0</span>
+
+        <span class="c1"># Save snapshot data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

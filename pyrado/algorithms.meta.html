@@ -126,7 +126,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">meta</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.adr">adr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.arpl">arpl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#bayessim">bayessim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayessim">bayessim</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayrn">bayrn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.epopt">epopt</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.npdr">npdr</a></li>
@@ -501,8 +501,56 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd></dl>
 
 </div>
-<div class="section" id="bayessim">
-<h2>bayessim<a class="headerlink" href="#bayessim" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.algorithms.meta.bayessim">
+<span id="bayessim"></span><h2>bayessim<a class="headerlink" href="#module-pyrado.algorithms.meta.bayessim" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.bayessim.BayesSim">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">BayesSim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_sim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsampling_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_components</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_perturbation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayessim.html#BayesSim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.meta.sbi_base.SBIBase" title="pyrado.algorithms.meta.sbi_base.SBIBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.meta.sbi_base.SBIBase</span></code></a></p>
+<p>BayesSim [1] using Sequential Neural Posterior Estimation (SNPE-A) [3]</p>
+<p>For convenience, we provide the possibility to train a policy of the last posterior, i.e. after the inference was
+done. This is not part of the original BayesSim algorithm [1]. Note that Online BayesSim [2], apart from using a
+different embedding, alternates between training the policy or the internal model of the policy (see the last
+paragraph of Section V.B.), thus has a significantly different data generation procedure.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt>[1] F. Ramos, R.C. Possas, D. Fox, “BayesSim: adaptive domain randomization via probabilistic inference for</dt><dd><p>robotics simulators”, RSS, 2019</p>
+</dd>
+<dt>[2] R.C. Possas, L. Barcelos, R. Oliveira, D. Fox, F. Ramos, “Online BayesSim for Combined Simulator Parameter</dt><dd><p>Inference and Policy Improvement”, IROS, 2020</p>
+</dd>
+<dt>[3] G. Papamakarios, I. Murray. “Fast epsilon-free inference of simulation models with Bayesian conditional</dt><dd><p>density estimation.”, NIPS, 2016</p>
+</dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.bayessim.BayesSim.iteration_key">
+<span class="sig-name descname"><span class="pre">iteration_key</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bayessim_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.iteration_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.bayessim.BayesSim.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'bayessim'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.bayessim.BayesSim.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayessim.html#BayesSim.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayessim.BayesSim.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.algorithms.meta.bayrn">
 <span id="bayrn"></span><h2>bayrn<a class="headerlink" href="#module-pyrado.algorithms.meta.bayrn" title="Permalink to this headline">¶</a></h2>
