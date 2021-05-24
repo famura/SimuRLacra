@@ -267,11 +267,11 @@
 <div class="viewcode-block" id="ReturnStatistic"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic">[docs]</a><span class="k">class</span> <span class="nc">ReturnStatistic</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;All the different return statistics supported by `ReturnStatisticBasedStoppingCriterion`.&quot;&quot;&quot;</span>
 
-    <span class="n">MIN</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">MAX</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">MEDIAN</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">MEAN</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">VARIANCE</span> <span class="o">=</span> <span class="mi">4</span></div>
+    <span class="nb">min</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="nb">max</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">median</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">variance</span> <span class="o">=</span> <span class="mi">4</span></div>
 
 
 <div class="viewcode-block" id="RolloutBasedStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">RolloutBasedStoppingCriterion</span><span class="p">(</span><span class="n">StoppingCriterion</span><span class="p">):</span>
@@ -284,7 +284,7 @@
 
 <div class="viewcode-block" id="RolloutBasedStoppingCriterion.is_met"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.RolloutBasedStoppingCriterion.is_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the checkinf of the</span>
+<span class="sd">        Gets the sampler from the algorithm, checks if it is a `RolloutSavingWrapper` and forwards the check if of the</span>
 <span class="sd">        stopping criterion to `_is_met_with_sampler(..)`.</span>
 
 <span class="sd">        :param algo: instance of `Algorithm` that has to be evaluated</span>
@@ -297,7 +297,8 @@
         <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SamplerBase</span><span class="p">]</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">sampler</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">RolloutSavingWrapper</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
-                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Any rollout-based stopping criterion requires the algorithm to expose a sampler of type &#39;RolloutSavingWrapper&#39; via the property &#39;sampler&#39;!&quot;</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Any rollout-based stopping criterion requires the algorithm to expose a sampler of type &quot;</span>
+                <span class="s2">&quot;&#39;RolloutSavingWrapper&#39; via the property &#39;sampler&#39;!&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_met_with_sampler</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">sampler</span><span class="p">)</span></div>
 
@@ -322,7 +323,7 @@
 <span class="sd">    statistic of the returns of rollouts of the last iteration.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">MEDIAN</span><span class="p">,</span> <span class="n">num_lookbacks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">,</span> <span class="n">num_lookbacks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor.</span>
 
@@ -374,15 +375,15 @@
 <span class="sd">        :param returns: returns</span>
 <span class="sd">        :return: statistic</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">MIN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">MAX</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">MEDIAN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.50</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">MEAN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">mean</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">VARIANCE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span> <span class="ow">is</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">variance</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">returns</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unexpected return statistic </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
 
@@ -393,7 +394,7 @@
 <span class="sd">    statistic exceeds a certain threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">MIN</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">min</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor.</span>
 
@@ -443,8 +444,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">convergence_probability_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.99</span><span class="p">,</span>
-        <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">MEDIAN</span><span class="p">,</span>
+        <span class="n">num_iter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_statistic</span><span class="p">:</span> <span class="n">ReturnStatistic</span> <span class="o">=</span> <span class="n">ReturnStatistic</span><span class="o">.</span><span class="n">median</span><span class="p">,</span>
         <span class="n">num_lookbacks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -453,32 +454,33 @@
 <span class="sd">        :param convergence_probability_threshold: threshold of the p-value above which the algorithm is considered to be</span>
 <span class="sd">                                                  converged; defaults to `0.99`, i.e. a `99%` certainty that the data</span>
 <span class="sd">                                                  can be explained</span>
-<span class="sd">        :param M: number of iterations to use for the moving mode; if `None`, the cumulative mode is used; defaults to</span>
-<span class="sd">                  `None`</span>
+<span class="sd">        :param num_iter: number of iterations to use for the moving mode. If `None`, the cumulative mode is used</span>
 <span class="sd">        :param return_statistic: statistic to compute; defaults to median</span>
 <span class="sd">        :param num_lookbacks: over how many iterations the statistic should be computed; for example, a value of two</span>
 <span class="sd">                              means that the rollouts of both the current and the previous iteration will be used for</span>
 <span class="sd">                              computing the statistic; defaults to one</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">return_statistic</span><span class="p">,</span> <span class="n">num_lookbacks</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">M</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">num_iter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">num_iter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;M must be either None or a positive number.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_convergence_probability_threshold</span> <span class="o">=</span> <span class="n">convergence_probability_threshold</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_M</span> <span class="o">=</span> <span class="n">M</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="o">=</span> <span class="n">num_iter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;ConvergenceStoppingCriterion[&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;convergence_probability_threshold=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_convergence_probability_threshold</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;M=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_M</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;num_iter=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;return_statistic=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;num_lookbacks=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_lookbacks</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;return_statistic_history=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="si">}</span><span class="s2">]&quot;</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2"> return converged, </span><span class="si">{</span><span class="s1">&#39;cumulative&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_M</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;moving&#39;</span><span class="si">}</span><span class="s2"> mode)&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic</span><span class="si">}</span><span class="s2"> return converged, </span><span class="si">{</span><span class="s1">&#39;cumulative&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;moving&#39;</span><span class="si">}</span><span class="s2"> mode)&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span> <span class="o">=</span> <span class="p">[]</span>
@@ -500,7 +502,7 @@
 <span class="sd">        .. note::</span>
 <span class="sd">            This invoked the method `linregress` of `scipy.stats` and returns the corresponing p-value.</span>
 
-<span class="sd">        .. see::</span>
+<span class="sd">        .. seealso::</span>
 <span class="sd">            https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html</span>
 
 <span class="sd">        :return the convergence probability or `None` if not enough data is present</span>
@@ -523,11 +525,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_M</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_M</span> <span class="p">:]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_statistic_history</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_iter</span> <span class="p">:]</span></div>
 </pre></div>
 
            </div>

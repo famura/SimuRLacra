@@ -328,12 +328,13 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion2</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Checks if both criteria are met.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion1</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion2</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_OrStoppingCriterion</span><span class="p">(</span><span class="n">StoppingCriterion</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Combines two stopping criteria such that at least one of them has to be met in order for this criterion to be met.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combines two stopping criteria such that at least one of them has to be met in order for this criterion to be met.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criterion1</span><span class="p">:</span> <span class="n">StoppingCriterion</span><span class="p">,</span> <span class="n">criterion2</span><span class="p">:</span> <span class="n">StoppingCriterion</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -353,7 +354,6 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion1</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion2</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Checks if at least one criterion is met.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion1</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion2</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="n">algo</span><span class="p">)</span>
 </pre></div>
 
