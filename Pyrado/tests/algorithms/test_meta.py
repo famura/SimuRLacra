@@ -175,6 +175,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
 
 
 @pytest.mark.longtime
+@pytest.mark.high_memory
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "bayrn_hparam",
