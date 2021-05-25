@@ -33,4 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           folder: public
-          clean: false
+          clean: true
+          clean-exclude: |
+            logo.png
+            index.html
