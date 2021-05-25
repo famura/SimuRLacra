@@ -294,7 +294,6 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
 
 
 @pytest.mark.longtime
-@pytest.mark.high_memory
 @pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
