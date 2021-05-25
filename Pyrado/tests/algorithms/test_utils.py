@@ -46,6 +46,7 @@ from pyrado.sampling.step_sequence import StepSequence
 
 
 @to.no_grad()
+@pytest.mark.high_memory
 @pytest.mark.parametrize(
     "env",
     [
