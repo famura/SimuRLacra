@@ -65,8 +65,9 @@ def test_combination_wrappers_domain_params(env: SimEnv):
 
 
 @pytest.mark.wrapper
-def test_combination():
-    env = QCartPoleSwingUpSim(dt=1 / 100.0, max_steps=20)
+@pytest.mark.parametrize("env", ["default_qcpsu", "default_qbb"], indirect=True)
+def test_combination(env: SimEnv):
+    env.max_steps = 20
 
     randomizer = create_default_randomizer(env)
     env_r = DomainRandWrapperBuffer(env, randomizer)
@@ -96,7 +97,7 @@ def test_combination():
     ro_rn = rollout(env_rn, DummyPolicy(env_rn.spec), eval=True, seed=0, render_mode=RenderMode())
     assert np.allclose(env_rn._process_obs(ro_r.observations), ro_rn.observations)
 
-    env_rnp = ObsPartialWrapper(env_rn, idcs=["x_dot", r"cos_theta"])
+    env_rnp = ObsPartialWrapper(env_rn, idcs=[env.obs_space.labels[2], env.obs_space.labels[3]])
     ro_rnp = rollout(env_rnp, DummyPolicy(env_rnp.spec), eval=True, seed=0, render_mode=RenderMode())
 
     env_rnpa = GaussianActNoiseWrapper(
@@ -110,7 +111,7 @@ def test_combination():
     assert np.allclose(ro_rnp.actions, ro_rnpd.actions)
     assert not np.allclose(ro_rnp.observations, ro_rnpd.observations)
 
-    assert isinstance(inner_env(env_rnpd), QCartPoleSwingUpSim)
+    assert type(inner_env(env_rnpd)) == type(env)
     assert typed_env(env_rnpd, ObsPartialWrapper) is not None
     assert isinstance(env_rnpd, ActDelayWrapper)
     env_rnpdr = remove_env(env_rnpd, ActDelayWrapper)
@@ -118,14 +119,7 @@ def test_combination():
 
 
 @pytest.mark.wrapper
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_qbb",
-    ],
-    ids=["qbb"],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 def test_wrap_like_other_env(env: SimEnv):
     wenv_like = deepcopy(env)
     wenv_like.dt /= 3

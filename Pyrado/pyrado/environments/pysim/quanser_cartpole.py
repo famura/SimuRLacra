@@ -146,7 +146,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self.J_pole = l_pole ** 2 * m_pole / 3.0  # pole inertia [kg*m**2]
         self.J_eq = m_cart + (eta_g * K_g ** 2 * J_m) / r_mp ** 2  # equiv. inertia [kg]
 
-    def _step_dynamics(self, act: np.ndarray):
+    def _step_dynamics(self, u: np.ndarray):
         g = self.domain_param["g"]
         l_p = self.domain_param["l_pole"]
         m_p = self.domain_param["m_pole"]
@@ -168,11 +168,11 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
         # This is a very simple model of static friction.
-        if not self._simple_dynamics and self.domain_param["V_thold_neg"] <= act <= self.domain_param["V_thold_pos"]:
-            act = 0
+        if not self._simple_dynamics and self.domain_param["V_thold_neg"] <= u <= self.domain_param["V_thold_pos"]:
+            u = 0.0
 
         # Actuation force coming from the carts motor torque
-        f_act = (eta_g * K_g * eta_m * k_m) / (R_m * r_mp) * (eta_m * act - K_g * k_m * x_dot / r_mp)
+        f_act = (eta_g * K_g * eta_m * k_m) / (R_m * r_mp) * (eta_m * float(u) - K_g * k_m * x_dot / r_mp)
 
         if self._simple_dynamics:
             f_tot = float(f_act)
@@ -186,7 +186,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
                 f_c = 0.0
             else:
                 f_c = mu_c * f_normal * np.sign(x_dot)
-            f_tot = float(f_act - f_c)
+            f_tot = f_act - f_c
 
         M = np.array(
             [

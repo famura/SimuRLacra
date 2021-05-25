@@ -112,7 +112,7 @@ class QQubeSim(SimPyEnv, Serializable):
         det = a * c - b * b
 
         # Calculate vector [x, y] = tau - C(q, qd)
-        trq = km * (u - km * thd) / Rm
+        trq = km * (float(u) - km * thd) / Rm  # u is a scalar array, causing warning on later np.array construction
         c0 = self._c[1] * sin_2al * thd * ald - self._c[2] * sin_al * ald * ald
         c1 = -0.5 * self._c[1] * sin_2al * thd * thd + self._c[4] * sin_al
         x = trq - Dr * thd - c0
