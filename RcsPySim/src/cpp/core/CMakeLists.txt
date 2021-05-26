@@ -50,8 +50,8 @@ set(CORE_SRCS
     config/PropertySource.cpp
     config/PropertySourceXml.cpp
     
-    control/MLPPolicy.cpp
     control/ControlPolicy.cpp
+    control/ActionModelIKPolicy.cpp
     
     initState/InitStateSetter.cpp
     initState/ISSBallInTube.cpp

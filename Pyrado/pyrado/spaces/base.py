@@ -119,7 +119,8 @@ class Space(ABC):
         for idx in idcs:
             if isinstance(idx, str):
                 # Handle labels
-                assert labels is not None, "The space must be labeled to use label-based indexing"
+                if labels is None:
+                    raise pyrado.TypeErr(msg="The space must be labeled to use label-based indexing!")
                 for idx_label, label in np.ndenumerate(labels):
                     if label == idx:
                         idx = idx_label

@@ -74,6 +74,13 @@ def get_argparser() -> argparse.ArgumentParser:
         help="name of the environment to use (e.g. 'qbb' or 'qcp-st')",
     )
     parser.add_argument(
+        "-f",
+        "--file",
+        type=str,
+        nargs="?",
+        help="path to the file to load from",
+    )
+    parser.add_argument(
         "--idcs",
         nargs="+",
         type=int,

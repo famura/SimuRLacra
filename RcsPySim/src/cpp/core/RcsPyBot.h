@@ -47,7 +47,6 @@ class ObservationModel;
 
 class ControlPolicy;
 
-// TODO besserer Name
 class RcsPyBot : public MotionControlLayer
 {
 public:
@@ -111,7 +110,7 @@ protected:
     //! Control policy
     ControlPolicy* controlPolicy;
     
-    // temporary matrices
+    // Temporary matrices
     MatNd* q_ctrl;
     MatNd* qd_ctrl;
     MatNd* T_ctrl;

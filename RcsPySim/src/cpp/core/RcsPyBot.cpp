@@ -32,7 +32,6 @@
 #include "action/ActionModel.h"
 #include "observation/ObservationModel.h"
 #include "control/ControlPolicy.h"
-//#include "control/MLPPolicy.h"
 
 #include <Rcs_typedef.h>
 #include <Rcs_macros.h>
@@ -130,7 +129,7 @@ void RcsPyBot::setControlPolicy(ControlPolicy* controlPolicy)
 {
     std::unique_lock<std::mutex> lock(controlPolicyMutex);
     this->controlPolicy = controlPolicy;
-    if (controlPolicy == NULL) {
+    if (controlPolicy == nullptr) {
         // Command initial state
         RcsGraph_getDefaultState(desiredGraph, q_ctrl);
         MatNd_setZero(qd_ctrl);
@@ -150,7 +149,11 @@ void RcsPyBot::updateControl()
     config->observationModel->computeObservation(observation, action, config->dt);
     
     // Compute action
-    if (controlPolicy != NULL) {
+    if (controlPolicy != nullptr) {
+        // Inform the policy about the robots internal state
+        controlPolicy->setBotInternals(q_ctrl, qd_ctrl, T_ctrl);
+        
+        // Call the policy
         controlPolicy->computeAction(action, observation);
         
         // Run action through action model

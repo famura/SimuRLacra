@@ -344,13 +344,3 @@ class Planar3LinkTASim(Planar3LinkSim, Serializable):
         super().__init__(
             task_args=dict() if task_args is None else task_args, actionModelType="ds_activation", tasks=mps, **kwargs
         )
-
-        # # State space definition
-        # if kwargs.get('observeVelocities', True):
-        #     self.state_mask = self.obs_space.create_mask(
-        #         'Effector_X', 'Effector_Z', 'Effector_Xd', 'Effector_Zd',
-        #     )
-        # else:
-        #     self.state_mask = self.obs_space.create_mask(
-        #         'Effector_X', 'Effector_Z'
-        #     )

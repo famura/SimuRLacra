@@ -124,6 +124,7 @@ class MiniGolfSim(RcsSim, Serializable):
             self,
             envType="MiniGolf",
             task_args=task_args,
+            state_mask_labels=("Ball_X", "Ball_Y", "base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"),
             refFrame=ref_frame,
             graphFileName="gMiniGolf.xml",
             physicsConfigFile="pMiniGolf.xml",
@@ -137,7 +138,7 @@ class MiniGolfSim(RcsSim, Serializable):
         hole_pos = task_args.get("hole_pos", None)
         if hole_pos is None:
             # Get the goal position in world coordinates
-            hole_pos = self.get_body_position("Hole", "", "")[:2]  # x and y but not z
+            hole_pos = self.get_body_position("Hole", "", "")[:2]  # x and y positions in world frame
         task_main = create_mini_golf_task(self.spec, hole_pos, succ_thold=0.02)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
 
@@ -150,6 +151,10 @@ class MiniGolfSim(RcsSim, Serializable):
             ball_friction_coefficient=0.111,
             ball_rolling_friction_coefficient=0.0,
             ground_friction_coefficient=0.777,
+            obstacleleft_pos_offset_x=0.0,
+            obstacleleft_pos_offset_y=0.0,
+            obstacleright_pos_offset_x=0.0,
+            obstacleright_pos_offset_y=0.0,
         )
 
 

@@ -30,12 +30,8 @@
 
 <Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="MiniGolf" resourcePath="${HOME}/localdisk/Software/SimuRLacra/RcsPySim/config ${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
-  <Body name="Ground" physics="kinematic" mass="1000">
-    <Shape type="BOX" extents="8 8 0.04" distance="true" physics="true" graphics="true" transform="0 0 -0.02 0 0 0" textureFile="textures/grass_v2.jpg" material="ground_mat"/>
-    <Shape type="BOX" extents="0.1 8 0.2" distance="true" physics="true" graphics="true" transform="3.95 0 0.1 0 0 0" color="LIGHTGRAY" />
-    <Shape type="BOX" extents="0.1 8 0.2" distance="true" physics="true" graphics="true" transform="-3.95 0 0.1 0 0 0" color="LIGHTGRAY" />
-    <Shape type="BOX" extents="8 0.1 0.2" distance="true" physics="true" graphics="true" transform="0 3.95 0.1 0 0 0" color="LIGHTGRAY" />
-    <Shape type="BOX" extents="8 0.1 0.2" distance="true" physics="true" graphics="true" transform="0 -3.95 0.1 0 0 0" color="LIGHTGRAY" />
+  <Body name="Ground" physics="kinematic">
+    <Shape type="BOX" extents="8 8 0.04" distance="true" physics="true" graphics="true" transform="2 0 -0.02 0 0 0" textureFile="textures/grass_v2.jpg" material="ground_mat"/>
     <Shape type="FRAME" scale="0.5" />
   </Body>
 
@@ -120,7 +116,7 @@
     <Sensor name="WristLoadCellLBR" type="LOADCELL" transform="0 0 0 0 0 -165" />
   </Body>
 
-  <Body name="Club" prev="sdh-base" transform="0 0 0.08 0 0 0" physics="fixed" mass="0.5" >
+  <Body name="Club" prev="sdh-base" transform="0 0 0.08 0 0 0" physics="fixed" mass="0.9" >
     <Shape type="SSL" length="0.95" radius="0.01" distance="true" physics="true" graphics="true" transform="0 0 0 90 0 0" />
     <Shape type="SSR" extents="0.04 0.12 0.02" distance="true" physics="true" graphics="true" transform="0.01 -0.98 0 0 0 57" />
     <Shape type="FRAME" scale="0.2" />
@@ -130,19 +126,41 @@
     <Shape type="FRAME" scale="0.3" />
   </Body>
 
-  <Body name="Ball" prev="Ground" physics="dynamic" mass="0.05">
-    <Joint name="Ball_rigidBodyJnt0" range="-8 0.5 8" constraint="true" type="TransX" />
-    <Joint name="Ball_rigidBodyJnt1" range="-8 1.4 8" constraint="true" type="TransY" />
-    <Joint name="Ball_rigidBodyJnt2" range="-8 0.02 8" constraint="true" type="TransZ" />
-    <Joint name="Ball_rigidBodyJnt3" range="-360 0 360" constraint="true" type="RotX" />
-    <Joint name="Ball_rigidBodyJnt4" range="-360 0 360" constraint="true" type="RotY" />
-    <Joint name="Ball_rigidBodyJnt5" range="-360 0 360" constraint="true" type="RotZ" />
+  <Body name="Ball" prev="Ground" physics="dynamic" mass="0.05" rigid_body_joints="0.5 1.4 0.02 0 0 0">
     <Shape type="SPHERE" radius="0.02" distance="true" physics="true" graphics="true" material="ball_mat"/>
     <Shape type="FRAME" scale="0.15" />
   </Body>
 
-  <Body name="Hole" prev="Ground" physics="kinematic" transform="2.5 1.4 0.03 0 0 0" >
-    <Shape type="CYLINDER" length="0.06" radius="0.04" distance="false" physics="true" graphics="true" color="BLACK_RUBBER"/>
+  <Body name="BoundLeft" prev="Ground" physics="kinematic" transform="1.5 2 0.02 0 0 0">
+    <Shape type="BOX" extents="1.5 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  </Body>
+  <Body name="BoundLeftTop" prev="BoundLeft" physics="kinematic" transform="1.1 -0.3 0.0 0 0 -45">
+    <Shape type="BOX" extents="0.8 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  </Body>
+  <Body name="BoundRight" prev="Ground" physics="kinematic" transform="1.5 0.8 0.02 0 0 0" >
+    <Shape type="BOX" extents="1.5 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  </Body>
+  <Body name="BoundRightTop" prev="BoundRight" physics="kinematic" transform="1.1 0.3 0.0 0 0 45">
+    <Shape type="BOX" extents="0.8 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  </Body>
+
+  <Body name="ObstacleRight" prev="Ground" physics="kinematic" transform="1.8 1.1  0.0 0 0 45">
+    <Shape type="BOX" extents="0.4 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  </Body>
+  <Body name="ObstacleLeft" prev="Ground" physics="kinematic" transform="1.9 1.7  0.0 0 0 30">
+    <Shape type="BOX" extents="0.4 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  </Body>
+<!--  <Body name="ObstacleCylinderRight" prev="Ground" physics="kinematic" transform="2.0 1.2 0.0 0 0 0" >-->
+<!--    <Shape type="CYLINDER" length="0.1" radius="0.08" distance="false" physics="true" graphics="true" color="LIGHTGRAY" />-->
+<!--  </Body>-->
+<!--  <Body name="ObstacleCylinderLeft" prev="Ground" physics="kinematic" transform="1.6 1.6 0.0 0 0 0" >-->
+<!--    <Shape type="CYLINDER" length="0.1" radius="0.08" distance="false" physics="true" graphics="true" color="LIGHTGRAY" />-->
+<!--  </Body>-->
+
+  <Body name="Hole" prev="Ground" physics="kinematic" transform="2.3 1.4 0.0 0 0 0" >
+    <Shape type="CYLINDER" length="0.002" radius="0.04" distance="false" physics="true" graphics="true" color="DARKGRAY"/>
+    <Shape type="CYLINDER" radius="0.002" length="0.2" transform="0. 0 0.1 0 0 0" graphics="true" physics="false" color="DARKGRAY"/>
+    <Shape type="BOX" extents="0.06 0.002 0.04" transform="0.0 -0.03 0.18 0 0 90" graphics="true" physics="false" textureFile="textures/fMRT_bavaria.png"/>
   </Body>
 
   <model_state model="MiniGolf" time_stamp="0">

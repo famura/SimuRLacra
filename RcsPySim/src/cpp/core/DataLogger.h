@@ -28,16 +28,16 @@
  POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef SRC_CPP_CORE_DATALOGGER_H_
-#define SRC_CPP_CORE_DATALOGGER_H_
+#ifndef _DATALOGGER_H_
+#define _DATALOGGER_H_
 
 #include "util/BoxSpace.h"
 
 #include <Rcs_MatNd.h>
 
-#include <string>
 #include <mutex>
 #include <fstream>
+#include <string>
 
 namespace Rcs
 {
@@ -45,7 +45,7 @@ namespace Rcs
 /**
  * Logs experiment data to a csv file.
  *
- * For every timestep, it records observations, actions and the reward.
+ * For every time step, it records the observations, actions and the reward.
  */
 class DataLogger
 {
@@ -91,25 +91,15 @@ public:
     }
 
 private:
-    // update mutex
     std::recursive_mutex mutex;
-    
-    // auto log file naming
-    std::string baseFileName;
+    std::string baseFileName; /// automatic log file naming
     unsigned int fileCounter;
-    
-    // true if running
     volatile bool running;
-    
-    // buffer, avoids writing on realtime main thread
-    MatNd* buffer;
-    // step counter in current logging run
-    unsigned int currentStep;
-    
-    // current output stream
-    std::ofstream output;
+    MatNd* buffer; /// buffer to avoid writing on realtime main thread
+    unsigned int currentStep; /// step counter in current logging run
+    std::ofstream output; /// current output stream
 };
 
 } /* namespace Rcs */
 
-#endif /* SRC_CPP_CORE_DATALOGGER_H_ */
+#endif /* _DATALOGGER_H_ */

@@ -28,83 +28,51 @@
  POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "ControlPolicy.h"
-#include "../config/PropertySource.h"
+#include "ActionModelIKPolicy.h"
 
 #include <Rcs_macros.h>
-#include <Rcs_resourcePath.h>
-
-#include <map>
-#include <sstream>
 
 namespace Rcs
 {
 
-// The policy type registry
-static std::map<std::string, ControlPolicy::ControlPolicyCreateFunction> registry;
-
-void ControlPolicy::registerType(const char* name, ControlPolicy::ControlPolicyCreateFunction creator)
+ActionModelIKPolicy::ActionModelIKPolicy(AMIKGeneric* actionModel, double dt)
 {
-    // Store in registry
-    registry[name] = creator;
+    this->actionModel = actionModel;
+    this->q_ctrl = nullptr;
+    this->qd_ctrl = nullptr;
+    this->T_ctrl = nullptr;
+    this->dt = dt;
 }
 
-ControlPolicy* ControlPolicy::create(const char* name, const char* dataFile)
+ActionModelIKPolicy::~ActionModelIKPolicy()
 {
-    // Lookup factory for type
-    auto iter = registry.find(name);
-    if (iter == registry.end()) {
-        std::ostringstream os;
-        os << "Unknown control policy type '" << name << "'!";
-        throw std::invalid_argument(os.str());
+    delete actionModel;
+}
+
+void ActionModelIKPolicy::reset()
+{
+    // Nothing to do
+}
+
+void ActionModelIKPolicy::computeAction(MatNd* action, const MatNd* observation)
+{
+    // Forward to the action model
+    actionModel->computeCommand(q_ctrl, qd_ctrl, T_ctrl, action, dt);
+    RMSG("BLA");
+    REXEC(2) {
+        MatNd_printComment("q_ctrl", q_ctrl);
+        MatNd_printComment("qd_ctrl", qd_ctrl);
+        MatNd_printComment("T_ctrl", T_ctrl);
+        getchar();
     }
-    
-    // Find data file
-    char filepath[256];
-    bool found = Rcs_getAbsoluteFileName(dataFile, filepath);
-    if (!found) {
-        // file does not exist
-        Rcs_printResourcePath();
-        std::ostringstream os;
-        os << "Policy file '" << dataFile << "' does not exist!";
-        throw std::invalid_argument(os.str());
-    }
-    
-    // Create instance
-    return iter->second(filepath);
 }
 
-ControlPolicy* ControlPolicy::create(PropertySource* config)
-{
-    std::string policyType;
-    std::string policyFile;
-    RCHECK(config->getProperty(policyType, "type"));
-    RCHECK(config->getProperty(policyFile, "file"));
-    return Rcs::ControlPolicy::create(policyType.c_str(), policyFile.c_str());
+void ActionModelIKPolicy::setBotInternals(const MatNd* q_ctrl, const MatNd* qd_ctrl, const MatNd* T_ctrl) {
+    this->q_ctrl = nullptr;
+    this->qd_ctrl = nullptr;
+    this->T_ctrl = nullptr;
 }
 
-std::vector<std::string> ControlPolicy::getTypeNames()
-{
-    std::vector<std::string> names;
-    for (auto& elem : registry) {
-        names.push_back(elem.first);
-    }
-    return names;
-}
-
-ControlPolicy::ControlPolicy()
-{
-    // Does nothing
-}
-
-ControlPolicy::~ControlPolicy()
-{
-    // Does nothing
-}
-
-void ControlPolicy::reset()
-{
-    // Does nothing by default
-}
+//static ControlPolicyRegistration<ActionModelIKPolicy> RegActionModelIKPolicy("actionModelIK");
 
 } /* namespace Rcs */

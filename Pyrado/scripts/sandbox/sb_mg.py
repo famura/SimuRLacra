@@ -69,7 +69,8 @@ def create_idle_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: 
 
 def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: str, checkJointLimits: bool):
     # Set up environment
-    env = MiniGolfVelIKSim(
+    env = MiniGolfPosIKSim(
+        # env = MiniGolfVelIKSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         dt=dt,
@@ -81,7 +82,7 @@ def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: s
 
     # Set up policy
     policy = PolySplineTimePolicy(
-        env.spec, dt, t_end=2.0, cond_lvl="vel", cond_final=[0.6, 0.0], overtime_behavior="zero"
+        env.spec, dt, t_end=1.5, cond_lvl="vel", cond_final=[0.6, 0.1], overtime_behavior="zero"
     )
 
     return env, policy
@@ -101,7 +102,7 @@ def create_lin_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: s
 
     # Set up policy
     policy = LinearPolicy(env.spec, FeatureStack([const_feat]))
-    policy.param_values = to.tensor([0.55])
+    policy.param_values = to.tensor([0.6])
 
     return env, policy
 
@@ -114,9 +115,9 @@ if __name__ == "__main__":
     max_steps = int(15 / dt)
     ref_frame = "world"  # world
     checkJointLimits = False
-    randomize = False
+    randomize = True
 
-    if setup_type == "idle":
+    if setup_type == "lin":
         env, policy = create_idle_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == "ik":
         env, policy = create_pst_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
@@ -129,6 +130,10 @@ if __name__ == "__main__":
         dp_nom = env.get_nominal_domain_param()
         randomizer = DomainRandomizer(
             UniformDomainParam(name="ball_mass", mean=dp_nom["ball_mass"], halfspan=dp_nom["ball_mass"] / 5),
+            UniformDomainParam(name="obstacleleft_pos_offset_x", mean=0, halfspan=0.05),
+            UniformDomainParam(name="obstacleleft_pos_offset_y", mean=0, halfspan=0.05),
+            UniformDomainParam(name="obstacleright_pos_offset_x", mean=0, halfspan=0.05),
+            UniformDomainParam(name="obstacleright_pos_offset_y", mean=0, halfspan=0.05),
         )
         env = DomainRandWrapperLive(env, randomizer)
 

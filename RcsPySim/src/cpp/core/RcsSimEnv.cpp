@@ -204,7 +204,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
 {
     REXEC(6) {
         std::cout << "--------------------------------------------------" << std::endl;
-        std::cout << "Iteration " << currentStep << std::endl;
+        std::cout << "Simulation Step " << currentStep << std::endl;
         std::cout << "--------------------------------------------------" << std::endl;
     }
     

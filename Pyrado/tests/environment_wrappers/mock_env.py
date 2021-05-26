@@ -44,8 +44,9 @@ class MockEnv(SimEnv):
     ease assertions. step() and reset() return next_obs as observation. If it is None, a random vector is returned.
     """
 
-    def __init__(self, obs_space=None, act_space=None, init_space=None, task=None):
+    def __init__(self, state_space=None, obs_space=None, act_space=None, init_space=None, task=None):
         # Set spaces
+        self._state_space = state_space
         self._obs_space = obs_space
         self._act_space = act_space
         self._init_space = init_space
@@ -69,10 +70,9 @@ class MockEnv(SimEnv):
 
     @property
     def state_space(self):
-        # Just use observation space here for now
-        if self._obs_space is None:
+        if self._state_space is None:
             raise NotImplementedError
-        return self._obs_space
+        return self._state_space
 
     @property
     def act_space(self):

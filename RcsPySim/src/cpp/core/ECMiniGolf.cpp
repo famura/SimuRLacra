@@ -33,13 +33,15 @@
 #include "initState/ISSMiniGolf.h"
 #include "observation/OMBodyStateLinear.h"
 #include "observation/OMBodyStateAngular.h"
-#include "observation/OMCombined.h"
-#include "observation/OMPartial.h"
-#include "observation/OMForceTorque.h"
 #include "observation/OMCollisionCost.h"
 #include "observation/OMCollisionCostPrediction.h"
+#include "observation/OMCombined.h"
+#include "observation/OMJointState.h"
+#include "observation/OMForceTorque.h"
+#include "observation/OMPartial.h"
 #include "observation/OMTaskSpaceDiscrepancy.h"
 #include "physics/PhysicsParameterManager.h"
+#include "physics/PPDBodyPosition.h"
 #include "physics/PPDMassProperties.h"
 #include "physics/PPDMaterialProperties.h"
 #include "physics/ForceDisturber.h"
@@ -49,6 +51,7 @@
 #include <Rcs_Vec3d.h>
 #include <Rcs_typedef.h>
 #include <Rcs_macros.h>
+//#include <TaskDistance1D.h>
 #include <TaskPosition1D.h>
 #include <TaskVelocity1D.h>
 
@@ -74,7 +77,7 @@ protected:
     {
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
-    
+        
         // Common for the action models
         RcsBody* ground = RcsGraph_getBodyByName(graph, "Ground");
         RCHECK(ground);
@@ -82,7 +85,7 @@ protected:
         RCHECK(clubTip);
         RcsBody* ball = RcsGraph_getBodyByName(graph, "Ball");
         RCHECK(ball);
-    
+        
         // Get reference frames for the position and orientation tasks
         std::string refFrameType = "world";
         properties->getProperty(refFrameType, "refFrame");
@@ -100,14 +103,14 @@ protected:
             os << "Unsupported reference frame type: " << refFrame;
             throw std::invalid_argument(os.str());
         }
-    
+        
         if (actionModelType == "ik") {
             // Create the action model
             auto amIK = new AMIKGeneric(graph);
             if (properties->getPropertyBool("positionTasks", true)) {
                 amIK->addTask(new TaskPosition1D("X", graph, clubTip, refBody, refFrame));
             }
-            else{
+            else {
                 amIK->addTask(new TaskVelocity1D("Xd", graph, clubTip, refBody, refFrame));
             }
             
@@ -115,12 +118,13 @@ protected:
             MatNd* fixedClubTipY = MatNd_create(1, 1);
             MatNd* fixedClubTipZ = MatNd_create(1, 1);
             MatNd_set(fixedClubTipY, 0, 0, -0.0);
-            MatNd_set(fixedClubTipZ, 0, 0, -0.02);
+            MatNd_set(fixedClubTipZ, 0, 0, -0.03);
             amIK->addFixedTask(new TaskPosition1D("Y", graph, ball, clubTip, ground), fixedClubTipY);
             amIK->addFixedTask(new TaskPosition1D("Z", graph, ball, clubTip, ground), fixedClubTipZ);
+//            amIK->addFixedTask(new TaskDistance1D(graph, clubTip, ground, 2), fixedClubTipZ);
             return amIK;
         }
-
+        
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;
@@ -131,7 +135,7 @@ protected:
     virtual ObservationModel* createObservationModel()
     {
         auto fullState = new OMCombined();
-    
+        
         // Observe the ball's position
         auto omLinBall = new OMBodyStateLinear(graph, "Ball", nullptr); // former: "Ground"
         omLinBall->setMaxVelocity(10.); // [m/s]
@@ -141,11 +145,18 @@ protected:
         auto omLinClub = new OMBodyStateLinear(graph, "ClubTip", nullptr); // former: "Ground"
         omLinClub->setMaxVelocity(5.); // [m/s]
         fullState->addPart(omLinClub);
-    
+        
+        // Observe the club's orientation
         auto omAng = new OMBodyStateAngular(graph, "ClubTip", nullptr); // former: "Ground"
         omAng->setMaxVelocity(20.); // [rad/s]
         fullState->addPart(omAng);
-    
+        
+        // Observe the robot's joints
+        std::list<std::string> listOfJointNames = {"base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"};
+        for (std::string jointName : listOfJointNames) {
+            fullState->addPart(new OMJointState(graph, jointName.c_str(), false));
+        }
+        
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         
@@ -174,7 +185,7 @@ protected:
             auto omCollisionCost = new OMCollisionCostPrediction(graph, collisionMdl, actionModel, 50);
             fullState->addPart(omCollisionCost);
         }
-
+        
         // Add the task space discrepancy observation model
         if (properties->getPropertyBool("observeTaskSpaceDiscrepancy", false)) {
             auto wamIK = actionModel->unwrap<ActionModelIK>();
@@ -197,6 +208,9 @@ protected:
         manager->addParam("Ball", new PPDMaterialProperties());
         manager->addParam("Club", new PPDMassProperties());
         manager->addParam("Ground", new PPDMaterialProperties());
+        manager->addParam("Ground", new PPDMaterialProperties());
+        manager->addParam("ObstacleLeft", new PPDBodyPosition(true, true, false));
+        manager->addParam("ObstacleRight", new PPDBodyPosition(true, true, false));
     }
 
 public:
@@ -210,15 +224,15 @@ public:
 #ifdef GRAPHICS_AVAILABLE
         // Set the camera center
         double cameraCenter[3];
-        cameraCenter[0] = 1.75;
-        cameraCenter[1] = 1.1;
+        cameraCenter[0] = 2.0;
+        cameraCenter[1] = 1.0;
         cameraCenter[2] = 0.0;
         
         // Set the camera position
         double cameraLocation[3];
-        cameraLocation[0] = -3.8;
-        cameraLocation[1] = 2.5;
-        cameraLocation[2] = 4.5;
+        cameraLocation[0] = -4.5;
+        cameraLocation[1] = 4.5;
+        cameraLocation[2] = 3.5;
         
         // Camera up vector defaults to z
         double cameraUp[3];
@@ -268,11 +282,11 @@ public:
         linesOut.emplace_back(
             string_format("num joints:    %d total, %d pos ctrl, %d trq ctrl", graph->nJ, numPosCtrlJoints,
                           numTrqCtrlJoints));
-        
+
 //        unsigned int sd = observationModel->getStateDim();
         
         auto omLinBall = observationModel->findOffsets<OMBodyStateLinear>(); // finds the first OMBodyStateLinear
-        if (omLinBall){
+        if (omLinBall) {
             linesOut.emplace_back(string_format("ball pos:     [% 1.3f,% 1.3f,% 1.3f] m",
                                                 obs->ele[omLinBall.pos],
                                                 obs->ele[omLinBall.pos + 1],
@@ -295,7 +309,7 @@ public:
         if (omFT) {
             linesOut.emplace_back(
                 string_format("forces:       [% 3.1f,% 3.1f,% 3.1f] N",
-                              obs->ele[omFT.pos], obs->ele[omFT.pos + 1], obs->ele[omFT.pos + 2 ]));
+                              obs->ele[omFT.pos], obs->ele[omFT.pos + 1], obs->ele[omFT.pos + 2]));
         }
         
         auto omTSD = observationModel->findOffsets<OMTaskSpaceDiscrepancy>();
@@ -322,12 +336,12 @@ public:
             BodyParamInfo* ground_bpi = physicsManager->getBodyInfo("Ground");
             
             linesOut.emplace_back(
-                string_format("ball mass:     %1.2f kg                              club mass: %1.2f kg",
+                string_format("ball mass:     %1.2f kg                            club mass: %1.2f kg",
                               ball_bpi->body->m, club_bpi->body->m));
-            linesOut.emplace_back(string_format("ball friction: %1.3f                         ground friction: %1.3f",
+            linesOut.emplace_back(string_format("ball friction: %1.3f                        ground friction: %1.3f",
                                                 ball_bpi->material.getFrictionCoefficient(),
                                                 ground_bpi->material.getFrictionCoefficient()));
-            linesOut.emplace_back(string_format("ball rolling friction: %1.3f         ground rolling friction: %1.3f",
+            linesOut.emplace_back(string_format("ball rolling friction: %1.3f        ground rolling friction: %1.3f",
                                                 ball_bpi->material.getRollingFrictionCoefficient(),
                                                 ground_bpi->material.getRollingFrictionCoefficient()));
         }

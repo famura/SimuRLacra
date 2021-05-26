@@ -27,14 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+import math
 import operator
 import random
 from collections.abc import Iterable
 from copy import deepcopy
-from math import ceil
 from typing import Callable, List, Optional, Sequence, Tuple, Type, Union
 
 import numpy as np
+import pandas as pd
 import scipy.signal as signal
 import torch as to
 
@@ -42,6 +43,7 @@ import pyrado
 from pyrado.sampling.data_format import cat_to_format, new_tuple, stack_to_format, to_format
 from pyrado.sampling.utils import gen_ordered_batch_idcs, gen_shuffled_batch_idcs
 from pyrado.utils.checks import check_all_equal, is_iterable
+from pyrado.utils.data_types import EnvSpec
 
 
 def _index_to_int(idx, n):
@@ -654,7 +656,7 @@ class StepSequence(Sequence[Step]):
 
         # Switch the splitting mode
         if num_batches is not None:
-            batch_size = ceil(self.length / num_batches)
+            batch_size = math.ceil(self.length / num_batches)
 
         if batch_size >= self.length:
             # Yield all at once if there are less steps than the batch size
@@ -856,6 +858,58 @@ class StepSequence(Sequence[Step]):
 
         # Create new object
         return StepSequence(**data_dict, rollout_info=rollout.rollout_info, continuous=rollout.continuous)
+
+    @classmethod
+    def from_pandas(cls, df: pd.DataFrame, env_spec: EnvSpec, continuous: bool = True) -> "StepSequence":
+        """
+        Generate a StepSequence object from a Pandas DataFrame instance.
+        Not all data fields are supported. The fields 'rewards' is mandatory.
+
+        :param df: Pandas DataFrame holding the data in 1-dim arrays
+        :param env_spec: environment specifications which labels are used to slice the DataFrame
+        :param continuous: `True` if the rollout to be reconstructed was continuous
+        :return: new StepSequence
+        """
+        if (
+            env_spec.state_space.labels is None
+            or env_spec.obs_space.labels is None
+            or env_spec.act_space.labels is None
+        ):
+            raise pyrado.ValueErr(
+                msg="The provided EnvSpec instance must contain labels for the state, observation, and action space "
+                "since these are used to filter the pandas DataFrame by!"
+            )
+
+        # Mandatory fields
+        rewards = df["rewards"].to_numpy()
+        states = df[env_spec.state_space.labels].to_numpy()
+        observations = df[env_spec.obs_space.labels].to_numpy()
+        actions = df[env_spec.act_space.labels].to_numpy()
+
+        # Remove NaNs which come from concatenating columns of different length in Pandas
+        rewards = rewards[~np.isnan(rewards)]
+        actions = actions[~np.isnan(actions).any(axis=1), :]  # check if any in a column is none for multi-dim case
+
+        # Other fields
+        mandatory_labels = (
+            ["rewards"]
+            + env_spec.state_space.labels.tolist()
+            + env_spec.obs_space.labels.tolist()
+            + env_spec.act_space.labels.tolist()
+        )
+        other = df.drop(columns=mandatory_labels)
+        other_dict = dict()
+        for name, data in other.iteritems():
+            other_dict[name] = data.values
+
+        return StepSequence(
+            rewards=rewards,
+            states=states,
+            actions=actions,
+            observations=observations,
+            continuous=continuous,
+            **other_dict,
+        )
 
 
 def discounted_reverse_cumsum(data, gamma: float):

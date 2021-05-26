@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import abstractmethod
-from typing import Optional
+from typing import Iterable, Optional
 
 import numpy as np
 from init_args_serializer import Serializable
@@ -66,6 +66,7 @@ class RcsSim(SimEnv, Serializable):
         init_state: Optional[np.ndarray] = None,
         checkJointLimits: bool = False,
         joint_limit_penalty: float = -1e3,
+        state_mask_labels: Optional[Iterable[str]] = None,
         **kwargs,
     ):
         """
@@ -83,6 +84,9 @@ class RcsSim(SimEnv, Serializable):
         :param checkJointLimits: flags if the joint limits should be ignored or not passed to the C++ constructor
         :param joint_limit_penalty: cost returned on termination due to joint limits. This is a different from the
                                     state bounds since `RcsPySim` return an error when the joint limits are violated.
+        :param state_mask_labels: if `None`, the complete observation space (defined on the C++ side) will be used as
+                                  state space. Pass an iterable of stings to select dimensions from the observation
+                                  space as the state space. This is also affects the tasks.
         :param kwargs: keyword arguments which are available for `RcsSim` on the C++ side. These arguments will not
                        be stored in the environment object, thus are saved e.g. when pickled.
         """
@@ -113,7 +117,11 @@ class RcsSim(SimEnv, Serializable):
         self._init_space = to_pyrado_space(self._sim.initStateSpace)
 
         # By default, the state space is a subset of the observation space. Set this to customize in subclass.
-        self.state_mask = None
+        if state_mask_labels is None:
+            self.state_mask = None
+        else:
+            # Mask / redefine the state space, e.g. to match the init state space. This is affects the tasks.
+            self.state_mask = self.obs_space.create_mask(state_mask_labels)
 
         # Dummy initialization, must be set by the derived classes
         self.init_state = None
@@ -188,9 +196,10 @@ class RcsSim(SimEnv, Serializable):
         :param obs: observation from the environment
         :return: state of the environment
         """
+        obs_ = obs.copy()
         if self.state_mask is not None:
-            return obs[self.state_mask]
-        return obs.copy()
+            obs_ = obs_[self.state_mask]
+        return obs_
 
     def _adapt_domain_param(self, params: dict) -> dict:
         """

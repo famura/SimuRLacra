@@ -190,7 +190,7 @@ void ActionModelIK::reset()
 
 void ActionModelIK::computeIK(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* x_des, double dt)
 {
-    // Compute dx from x_des and x_cur (NOTE: dx is the error, not the time derivative)
+    // Compute dx from x_des and x_curr (NOTE: dx is the error, not the time derivative)
     controller->computeDX(dx_des, x_des);
     
     // Compute IK from dx_des
