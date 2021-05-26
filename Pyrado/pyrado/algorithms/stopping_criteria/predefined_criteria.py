@@ -58,7 +58,7 @@ class NeverStopStoppingCriterion(StoppingCriterion):
 
 
 class ToggleableStoppingCriterion(StoppingCriterion):
-    """Stopping criterion that can turned on/off from the outside."""
+    """Stopping criterion that can be turned on/off from the outside."""
 
     def __init__(self, met: bool = False):
         """
@@ -70,12 +70,12 @@ class ToggleableStoppingCriterion(StoppingCriterion):
         self._met = met
 
     def __repr__(self) -> str:
-        return "ToggleableStoppingCriterion"
+        return f"ToggleableStoppingCriterion[met={self._met}]"
 
     def __str__(self) -> str:
         return str(self._met)
 
-    def is_met(self, algo) -> bool:
+    def is_met(self, algo=None) -> bool:
         return self._met
 
     def on(self) -> NoReturn:
@@ -84,8 +84,9 @@ class ToggleableStoppingCriterion(StoppingCriterion):
     def off(self) -> NoReturn:
         self._met = False
 
-    def toggle(self) -> NoReturn:
+    def toggle(self) -> bool:
         self._met = not self._met
+        return self._met
 
 
 class CustomStoppingCriterion(StoppingCriterion):
