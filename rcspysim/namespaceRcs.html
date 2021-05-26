@@ -106,6 +106,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html">ActionModelIK</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIKPolicy.html">ActionModelIKPolicy</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1AMDynamicalSystemActivation.html">AMDynamicalSystemActivation</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1AMIKControllerActivation.html">AMIKControllerActivation</a></td></tr>
@@ -211,8 +213,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1JointLimitException.html">JointLimitException</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1LockedFTS.html">LockedFTS</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1MLPPolicy.html">MLPPolicy</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ObservationModel.html">ObservationModel</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -331,16 +331,6 @@ Functions</h2></td></tr>
 <tr class="separator:a8ed2077f43feb737be0ff3becba8ffd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e9ffc58299d60abd2ffcb72aafc94a8"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a1e9ffc58299d60abd2ffcb72aafc94a8">getVectorProperty</a> (Eigen::VectorXd &amp;out, <a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *ps, const char *property, unsigned int expectedSize)</td></tr>
 <tr class="separator:a1e9ffc58299d60abd2ffcb72aafc94a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb80bb2dd8f83e476d5465a88fdc3e3c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#aeb80bb2dd8f83e476d5465a88fdc3e3c">MatNd_tanh_inplace</a> (MatNd *inout)</td></tr>
-<tr class="separator:aeb80bb2dd8f83e476d5465a88fdc3e3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac0d4e4333e319cdf9abef98f8a31dd2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#aac0d4e4333e319cdf9abef98f8a31dd2">loadParamsFromXml</a> (xmlNodePtr node, std::map&lt; std::string, MatNd *&gt; &amp;parameters)</td></tr>
-<tr class="separator:aac0d4e4333e319cdf9abef98f8a31dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fc20289082607cd98a4131206613ca7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classRcs_1_1MLPPolicy.html#a86bd259f3cd57ef92534754ac56d3d03">MLPPolicy::Nonlinearity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a1fc20289082607cd98a4131206613ca7">loadNonlinearity</a> (xmlNodePtr node, const char *key)</td></tr>
-<tr class="separator:a1fc20289082607cd98a4131206613ca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3946c427bfad84fcce72a96bd65ab4c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRcs_1_1MLPPolicy.html">MLPPolicy</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a3946c427bfad84fcce72a96bd65ab4c5">loadMLPPolicyFromXmlNode</a> (xmlNodePtr node, unsigned int input_size, unsigned int output_size)</td></tr>
-<tr class="separator:a3946c427bfad84fcce72a96bd65ab4c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dcf1f926ab5a11689aaaf9e7d201704"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRcs_1_1MLPPolicy.html">MLPPolicy</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a8dcf1f926ab5a11689aaaf9e7d201704">loadMLPPolicyFromXml</a> (const char *xmlFile, unsigned int input_size, unsigned int output_size)</td></tr>
-<tr class="separator:a8dcf1f926ab5a11689aaaf9e7d201704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4f18d98e4d113e47a5d868c85ee62da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#af4f18d98e4d113e47a5d868c85ee62da">for</a> (auto &amp;name :actionSpace-&gt;getNames())</td></tr>
 <tr class="separator:af4f18d98e4d113e47a5d868c85ee62da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b3665f8f03983d495ecac0d52b8b8ba"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a9b3665f8f03983d495ecac0d52b8b8ba">copy_prop_to_xml_attr</a> (xmlNodePtr node, <a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *source, const char *name, const char *xmlName=nullptr)</td></tr>
@@ -802,7 +792,7 @@ template&lt;typename M &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00092">92</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00089">89</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
 
 </div>
 </div>
@@ -1203,146 +1193,6 @@ template&lt;typename M &gt; </div>
 
 </div>
 </div>
-<a id="a8dcf1f926ab5a11689aaaf9e7d201704"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8dcf1f926ab5a11689aaaf9e7d201704">&#9670;&nbsp;</a></span>loadMLPPolicyFromXml()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classRcs_1_1MLPPolicy.html">MLPPolicy</a> * Rcs::loadMLPPolicyFromXml </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>xmlFile</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>input_size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>output_size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="MLPPolicy_8cpp_source.html#l00165">165</a> of file <a class="el" href="MLPPolicy_8cpp_source.html">MLPPolicy.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a3946c427bfad84fcce72a96bd65ab4c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3946c427bfad84fcce72a96bd65ab4c5">&#9670;&nbsp;</a></span>loadMLPPolicyFromXmlNode()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classRcs_1_1MLPPolicy.html">MLPPolicy</a> * Rcs::loadMLPPolicyFromXmlNode </td>
-          <td>(</td>
-          <td class="paramtype">xmlNodePtr&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>input_size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>output_size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="MLPPolicy_8cpp_source.html#l00130">130</a> of file <a class="el" href="MLPPolicy_8cpp_source.html">MLPPolicy.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a1fc20289082607cd98a4131206613ca7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1fc20289082607cd98a4131206613ca7">&#9670;&nbsp;</a></span>loadNonlinearity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="classRcs_1_1MLPPolicy.html#a86bd259f3cd57ef92534754ac56d3d03">MLPPolicy::Nonlinearity</a> Rcs::loadNonlinearity </td>
-          <td>(</td>
-          <td class="paramtype">xmlNodePtr&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>key</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="MLPPolicy_8cpp_source.html#l00114">114</a> of file <a class="el" href="MLPPolicy_8cpp_source.html">MLPPolicy.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aac0d4e4333e319cdf9abef98f8a31dd2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac0d4e4333e319cdf9abef98f8a31dd2">&#9670;&nbsp;</a></span>loadParamsFromXml()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Rcs::loadParamsFromXml </td>
-          <td>(</td>
-          <td class="paramtype">xmlNodePtr&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::map&lt; std::string, MatNd *&gt; &amp;&#160;</td>
-          <td class="paramname"><em>parameters</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="MLPPolicy_8cpp_source.html#l00053">53</a> of file <a class="el" href="MLPPolicy_8cpp_source.html">MLPPolicy.cpp</a>.</p>
-
-</div>
-</div>
 <a id="aacac45efa2c8a06cf4bd7f81e73a54da"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aacac45efa2c8a06cf4bd7f81e73a54da">&#9670;&nbsp;</a></span>MatNd_fabsClipEleSelf()</h2>
 
@@ -1396,27 +1246,6 @@ template&lt;typename M &gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="AMIKControllerActivation_8cpp_source.html#l00058">58</a> of file <a class="el" href="AMIKControllerActivation_8cpp_source.html">AMIKControllerActivation.cpp</a>.</p>
-
-</div>
-</div>
-<a id="aeb80bb2dd8f83e476d5465a88fdc3e3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb80bb2dd8f83e476d5465a88fdc3e3c">&#9670;&nbsp;</a></span>MatNd_tanh_inplace()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Rcs::MatNd_tanh_inplace </td>
-          <td>(</td>
-          <td class="paramtype">MatNd *&#160;</td>
-          <td class="paramname"><em>inout</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Compute the tanh of every element in place. </p>
-
-<p class="definition">Definition at line <a class="el" href="MLPPolicy_8cpp_source.html#l00046">46</a> of file <a class="el" href="MLPPolicy_8cpp_source.html">MLPPolicy.cpp</a>.</p>
 
 </div>
 </div>
@@ -2014,7 +1843,7 @@ template&lt;typename M  = Eigen::MatrixXd&gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li>
-    <li class="footer">Generated on Wed May 26 2021 12:24:38 for RcsPySim by
+    <li class="footer">Generated on Wed May 26 2021 12:55:07 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

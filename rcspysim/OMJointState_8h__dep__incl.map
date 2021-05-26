@@ -1,5 +1,6 @@
 <map id="src/cpp/core/observation/OMJointState.h" name="src/cpp/core/observation/OMJointState.h">
-<area shape="rect" id="node2" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="5,102,216,129"/>
-<area shape="rect" id="node3" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="239,102,462,129"/>
-<area shape="rect" id="node4" href="$OMJointState_8cpp.html" title="src/cpp/core/observation\l/OMJointState.cpp" alt="" coords="485,95,651,136"/>
+<area shape="rect" id="node2" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="5,102,196,129"/>
+<area shape="rect" id="node3" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="221,102,431,129"/>
+<area shape="rect" id="node4" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="455,102,677,129"/>
+<area shape="rect" id="node5" href="$OMJointState_8cpp.html" title="src/cpp/core/observation\l/OMJointState.cpp" alt="" coords="701,95,866,136"/>
 </map>

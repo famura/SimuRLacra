@@ -343,7 +343,8 @@
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idcs</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="c1"># Handle labels</span>
-                <span class="k">assert</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;The space must be labeled to use label-based indexing&quot;</span>
+                <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The space must be labeled to use label-based indexing!&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">idx_label</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="n">idx</span><span class="p">:</span>
                         <span class="n">idx</span> <span class="o">=</span> <span class="n">idx_label</span>
