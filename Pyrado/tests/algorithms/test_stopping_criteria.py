@@ -39,6 +39,7 @@ from pyrado.algorithms.stopping_criteria.predefined_criteria import (
     IterCountStoppingCriterion,
     NeverStopStoppingCriterion,
     SampleCountStoppingCriterion,
+    ToggleableStoppingCriterion,
 )
 from pyrado.algorithms.stopping_criteria.rollout_based_criteria import (
     ConvergenceStoppingCriterion,
@@ -137,13 +138,48 @@ def test_criterion_combination_or():
 
 def test_criterion_always():
     a = AlwaysStopStoppingCriterion()
-
     assert a.is_met(None)
 
 
 def test_criterion_never():
     a = NeverStopStoppingCriterion()
+    assert not a.is_met(None)
 
+
+def test_criterion_toggleable_init_default():
+    a = ToggleableStoppingCriterion()
+    assert not a.is_met(None)
+
+
+def test_criterion_toggleable_init_met():
+    a = ToggleableStoppingCriterion(met=True)
+    assert a.is_met(None)
+
+
+def test_criterion_toggleable_init_not_met():
+    a = ToggleableStoppingCriterion(met=False)
+    assert not a.is_met(None)
+
+
+def test_criterion_toggleable_set_on_off_init_met():
+    a = ToggleableStoppingCriterion(met=True)
+    assert a.is_met(None)
+    a.on()
+    assert a.is_met(None)
+    a.on()
+    assert a.is_met(None)
+    a.off()
+    assert not a.is_met(None)
+
+
+def test_criterion_toggleable_set_on_off_init_not_met():
+    a = ToggleableStoppingCriterion(met=False)
+    assert not a.is_met(None)
+    a.on()
+    assert a.is_met(None)
+    a.on()
+    assert a.is_met(None)
+    a.off()
     assert not a.is_met(None)
 
 

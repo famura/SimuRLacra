@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Any, Callable, Optional
+from typing import Any, Callable, NoReturn, Optional
 
 from pyrado.algorithms.stopping_criteria.stopping_criterion import StoppingCriterion
 
@@ -55,6 +55,37 @@ class NeverStopStoppingCriterion(StoppingCriterion):
 
     def is_met(self, algo) -> bool:
         return False
+
+
+class ToggleableStoppingCriterion(StoppingCriterion):
+    """Stopping criterion that can turned on/off from the outside."""
+
+    def __init__(self, met: bool = False):
+        """
+        Constructor.
+
+        :param met: initialization of the return value of `is_met`
+        """
+        super().__init__()
+        self._met = met
+
+    def __repr__(self) -> str:
+        return "ToggleableStoppingCriterion"
+
+    def __str__(self) -> str:
+        return str(self._met)
+
+    def is_met(self, algo) -> bool:
+        return self._met
+
+    def on(self) -> NoReturn:
+        self._met = True
+
+    def off(self) -> NoReturn:
+        self._met = False
+
+    def toggle(self) -> NoReturn:
+        self._met = not self._met
 
 
 class CustomStoppingCriterion(StoppingCriterion):
