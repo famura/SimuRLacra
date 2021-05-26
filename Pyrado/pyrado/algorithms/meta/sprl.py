@@ -279,7 +279,7 @@ class SPRL(Algorithm):
         optimize_mean: bool = True,
         optimize_cov: bool = True,
         max_subrtn_retries: int = 1,
-        context_changed_threshold: float = 0.01,
+        context_changed_threshold: float = 0.0001,
     ):
         """
         Constructor
@@ -301,7 +301,7 @@ class SPRL(Algorithm):
         :param context_changed_threshold: how different either mean/cov of the context distribution have to be to be
                                           considered different (w.r.t. the Euclidean norm); used for suppressing the
                                           reset of the convergence criterion of the subroutine if the context did not
-                                          change much to detect convergence; defaults to `0.01`
+                                          change much to detect convergence; defaults to `0.0001`
         """
         if not isinstance(subroutine, Algorithm):
             raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
