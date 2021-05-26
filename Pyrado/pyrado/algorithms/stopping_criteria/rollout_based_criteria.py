@@ -126,6 +126,7 @@ class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
         step_sequences = sampler.rollouts[-self._num_lookbacks :]
         returns = [rollout.undiscounted_return() for step_sequence in step_sequences for rollout in step_sequence]
         return_statistic = self._compute_return_statistic(np.asarray(returns))
+        algo.logger.add_value(f"Criterion {self} - Return Statistic", return_statistic)
         return self._is_met_with_return_statistic(algo, sampler, return_statistic)
 
     @abstractmethod
@@ -265,6 +266,9 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
         """Returns whether the convergence probability is greater than or equal to the threshold."""
         self._return_statistic_history.append(return_statistic)
         convergence_prob = self._compute_convergence_probability()
+        algo.logger.add_value(
+            f"Criterion {self} - Convergence Probability", 0.0 if convergence_prob is None else convergence_prob
+        )
         if convergence_prob is None:
             return False
         return convergence_prob >= self._convergence_probability_threshold
