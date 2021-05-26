@@ -753,17 +753,18 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # subsequent deepcopying
         tmp_subrtn_policy = self.__dict__.pop("_subrtn_policy", None)
 
-        # Call Algorithm's __getstate__() without the unpickleable sbi-related members
-        state_dict = super().__getstate__()
+        # Call Algorithm's __getstate__() without the unpickleable sbi-related members.
+        # Make a deepcopy of the state dict such that we can return the pickleable version and insert the sbi variables.
+        state_dict_copy = deepcopy(super().__getstate__())
 
-        # Make a deep copy of the state dict such that we can return the pickleable version and insert the sbi variables
-        state_dict_copy = deepcopy(state_dict)
-
-        # Inset them back
+        # Inset them back to the current state dict
         self.__dict__["_sbi_simulator"] = tmp_sbi_simulator
         self.__dict__["_subrtn_sbi"]._summary_writer = tmp_subrtn_sbi_summary_writer
         self.__dict__["_subrtn_sbi"]._build_neural_net = tmp_subrtn_sbi_build_neural_net
         self.__dict__["_subrtn_policy"] = tmp_subrtn_policy
+
+        # Inset the subroutine from Pyrado back to the pickled state dict
+        state_dict_copy["_subrtn_policy"] = tmp_subrtn_policy
 
         return state_dict_copy
 
