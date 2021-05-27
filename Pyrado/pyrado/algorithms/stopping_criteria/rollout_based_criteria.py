@@ -122,15 +122,20 @@ class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
         :return: `True` if the criterion is met, and `False` otherwise
         """
         if len(sampler.rollouts) < self._num_lookbacks:
-            return False
-        step_sequences = sampler.rollouts[-self._num_lookbacks :]
-        returns = [rollout.undiscounted_return() for step_sequence in step_sequences for rollout in step_sequence]
-        return_statistic = self._compute_return_statistic(np.asarray(returns))
-        algo.logger.add_value(f"Criterion {self} - Return Statistic", return_statistic)
+            return_statistic = None
+        else:
+            step_sequences = sampler.rollouts[-self._num_lookbacks :]
+            returns = [rollout.undiscounted_return() for step_sequence in step_sequences for rollout in step_sequence]
+            return_statistic = self._compute_return_statistic(np.asarray(returns))
+        algo.logger.add_value(
+            f"Criterion {self} - Return Statistic", 0.0 if return_statistic is None else return_statistic
+        )
         return self._is_met_with_return_statistic(algo, sampler, return_statistic)
 
     @abstractmethod
-    def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+    def _is_met_with_return_statistic(
+        self, algo, sampler: RolloutSavingWrapper, return_statistic: Optional[float]
+    ) -> bool:
         """
         Checks whether the stopping criterion is met.
 
@@ -139,7 +144,8 @@ class ReturnStatisticBasedStoppingCriterion(RolloutBasedStoppingCriterion):
 
         :param algo: instance of `Algorithm` that has to be evaluated
         :param sampler: instance of `RolloutSavingWrapper`, the sampler of `algo`, that has to be evaluated
-        :param return_statistic: statistic that has been computed for the latest rollouts
+        :param return_statistic: statistic that has been computed for the latest rollouts; might be `None` if the
+                                 statistic could not be computed yet; should return `False` then
         :return: `True` if the criterion is met, and `False` otherwise
         """
         raise NotImplementedError()
@@ -188,8 +194,12 @@ class MinReturnStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     def __str__(self) -> str:
         return f"({self._return_statistic} return >= {self._return_threshold})"
 
-    def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+    def _is_met_with_return_statistic(
+        self, algo, sampler: RolloutSavingWrapper, return_statistic: Optional[float]
+    ) -> bool:
         """Returns whether the return statistic is greater than or equal to the return threshold."""
+        if return_statistic is None:
+            return False
         return return_statistic >= self._return_threshold
 
 
@@ -262,10 +272,15 @@ class ConvergenceStoppingCriterion(ReturnStatisticBasedStoppingCriterion):
     def _reset(self) -> NoReturn:
         self._return_statistic_history = []
 
-    def _is_met_with_return_statistic(self, algo, sampler: RolloutSavingWrapper, return_statistic: float) -> bool:
+    def _is_met_with_return_statistic(
+        self, algo, sampler: RolloutSavingWrapper, return_statistic: Optional[float]
+    ) -> bool:
         """Returns whether the convergence probability is greater than or equal to the threshold."""
-        self._return_statistic_history.append(return_statistic)
-        convergence_prob = self._compute_convergence_probability()
+        if return_statistic is None:
+            convergence_prob = None
+        else:
+            self._return_statistic_history.append(return_statistic)
+            convergence_prob = self._compute_convergence_probability()
         algo.logger.add_value(
             f"Criterion {self} - Convergence Probability", 0.0 if convergence_prob is None else convergence_prob
         )
