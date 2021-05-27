@@ -39,7 +39,7 @@ from pyrado.utils.data_types import RenderMode
 class MockEnv(SimEnv):
     """
     A mock version of SimEnv, used in env wrapper tests.
-    Observation, action, and init spaces as well as the task are passed to the constructor.
+    State, observation, action, and init spaces as well as the task are passed to the constructor.
     The step() method saves the last action into the last_act attribute. The action value is converted to a list to
     ease assertions. step() and reset() return next_obs as observation. If it is None, a random vector is returned.
     """
@@ -71,7 +71,8 @@ class MockEnv(SimEnv):
     @property
     def state_space(self):
         if self._state_space is None:
-            raise NotImplementedError
+            # Use observation space if no state space was specified (for backwards compatibility)
+            return self._obs_space
         return self._state_space
 
     @property
