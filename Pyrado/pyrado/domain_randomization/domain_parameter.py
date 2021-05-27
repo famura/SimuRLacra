@@ -343,6 +343,9 @@ class SelfPacedDomainParam(DomainParam):
         self.context_mean = init_mean.double()
         self.context_cov_chol_flat = init_cov_chol_flat.double()
 
+        self.init_mean = self.context_mean.detach().clone()
+        self.init_cov_chol_flat = self.context_cov_chol_flat.detach().clone()
+
         self.dim = target_mean.shape[0]
 
         self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
