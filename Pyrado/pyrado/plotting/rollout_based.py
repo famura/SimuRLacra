@@ -687,7 +687,7 @@ def plot_rollouts_segment_wise(
                         pd.DataFrame(dict(mean=m_i, std=s_i)),
                         x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
                         show_legend=False,
-                        curve_label="ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
+                        curve_label=r"ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
                         area_label=None,
                         plot_kwargs=dict(color="gray"),
                     )
