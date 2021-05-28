@@ -175,7 +175,6 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
 
 
 @pytest.mark.longtime
-@pytest.mark.high_memory
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "bayrn_hparam",
@@ -383,7 +382,6 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
 
 
 @pytest.mark.longtime
-@pytest.mark.high_memory
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     pyrado.set_seed(0)
@@ -480,7 +478,6 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.high_memory
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize(
     "policy",
@@ -551,7 +548,6 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.high_memory
 @pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
@@ -674,7 +670,6 @@ def test_npdr_no_policy_optimization(
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.high_memory
 @pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
 @pytest.mark.parametrize("optimize_mean", [False, True])
