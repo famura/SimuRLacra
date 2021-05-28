@@ -261,7 +261,6 @@
     <span class="n">IterCountStoppingCriterion</span><span class="p">,</span>
     <span class="n">NeverStopStoppingCriterion</span><span class="p">,</span>
     <span class="n">SampleCountStoppingCriterion</span><span class="p">,</span>
-    <span class="n">ToggleableStoppingCriterion</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.rollout_based_criteria</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ConvergenceStoppingCriterion</span><span class="p">,</span>
@@ -360,48 +359,13 @@
 
 <div class="viewcode-block" id="test_criterion_always"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_always">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_always</span><span class="p">():</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">AlwaysStopStoppingCriterion</span><span class="p">()</span>
+
     <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_criterion_never"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_never">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_never</span><span class="p">():</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">NeverStopStoppingCriterion</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="test_criterion_toggleable_init_default"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_default">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_toggleable_init_default</span><span class="p">():</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">ToggleableStoppingCriterion</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_criterion_toggleable_init_met"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_met">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_toggleable_init_met</span><span class="p">():</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">ToggleableStoppingCriterion</span><span class="p">(</span><span class="n">met</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_criterion_toggleable_init_not_met"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_not_met">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_toggleable_init_not_met</span><span class="p">():</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">ToggleableStoppingCriterion</span><span class="p">(</span><span class="n">met</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_criterion_toggleable_set_on_off_init_met"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_met">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_toggleable_set_on_off_init_met</span><span class="p">():</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">ToggleableStoppingCriterion</span><span class="p">(</span><span class="n">met</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">a</span><span class="o">.</span><span class="n">on</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">a</span><span class="o">.</span><span class="n">on</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">a</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_criterion_toggleable_set_on_off_init_not_met"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_not_met">[docs]</a><span class="k">def</span> <span class="nf">test_criterion_toggleable_set_on_off_init_not_met</span><span class="p">():</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">ToggleableStoppingCriterion</span><span class="p">(</span><span class="n">met</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">a</span><span class="o">.</span><span class="n">on</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">a</span><span class="o">.</span><span class="n">on</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">a</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">is_met</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
 
 

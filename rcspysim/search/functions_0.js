@@ -2,7 +2,6 @@ var searchData=
 [
   ['actionmodel',['ActionModel',['../classRcs_1_1ActionModel.html#a318629cec207459749ab9d6a0ae5cbd4',1,'Rcs::ActionModel']]],
   ['actionmodelik',['ActionModelIK',['../classRcs_1_1ActionModelIK.html#aada64e82f671803f8305402ba7cbda40',1,'Rcs::ActionModelIK::ActionModelIK(RcsGraph *graph)'],['../classRcs_1_1ActionModelIK.html#a70da2214f4f62b6a4e2abf10af8520ab',1,'Rcs::ActionModelIK::ActionModelIK(RcsGraph *graph, std::vector&lt; Task *&gt; tasks)']]],
-  ['actionmodelikpolicy',['ActionModelIKPolicy',['../classRcs_1_1ActionModelIKPolicy.html#a01e7de1a47225a97a038544deed01732',1,'Rcs::ActionModelIKPolicy']]],
   ['actionspace',['actionSpace',['../classRcs_1_1RcsSimEnv.html#a0065869e6bd6428e3871f65c9863e260',1,'Rcs::RcsSimEnv']]],
   ['addalwaysactivetask',['addAlwaysActiveTask',['../classRcs_1_1AMIKControllerActivation.html#a23efd0ebdb319ce0f7c040a008d07928',1,'Rcs::AMIKControllerActivation']]],
   ['addchild',['addChild',['../classRcs_1_1PPDCompound.html#a8b6bb0b02fe52deead8d297bf1f22619',1,'Rcs::PPDCompound']]],
