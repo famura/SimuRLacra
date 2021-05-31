@@ -288,9 +288,11 @@ def plot_actions(ro: StepSequence, env: Env):
         # Use recorded time stamps if possible
         t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
-        num_rows, num_cols = num_rows_cols_from_length(dim_act)
+        num_rows, num_cols = num_rows_cols_from_length(dim_act, transposed=True)
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(10, 8), tight_layout=True)
         fig.canvas.manager.set_window_title("Actions over Time")
+        axs = np.atleast_2d(axs)
+        axs = correct_atleast_2d(axs)
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
         act_norm_wrapper = typed_env(env, ActNormWrapper)
