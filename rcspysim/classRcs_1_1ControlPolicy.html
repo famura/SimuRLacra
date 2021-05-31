@@ -105,9 +105,9 @@ Inheritance diagram for Rcs::ControlPolicy:</div>
 <div class="dyncontent">
 <div class="center"><img src="classRcs_1_1ControlPolicy__inherit__graph.png" border="0" usemap="#Rcs_1_1ControlPolicy_inherit__map" alt="Inheritance graph"/></div>
 <map name="Rcs_1_1ControlPolicy_inherit__map" id="Rcs_1_1ControlPolicy_inherit__map">
-<area shape="rect" id="node2" href="classRcs_1_1ActionModelIKPolicy.html" title="Rcs::ActionModelIKPolicy" alt="" coords="5,80,180,107"/>
-<area shape="rect" id="node3" href="classRcs_1_1SimpleControlPolicy.html" title="Rcs::SimpleControlPolicy" alt="" coords="204,80,376,107"/>
-<area shape="rect" id="node4" href="classRcs_1_1TorchPolicy.html" title="Rcs::TorchPolicy" alt="" coords="401,80,523,107"/>
+<area shape="rect" id="node2" href="classRcs_1_1MLPPolicy.html" title="Rcs::MLPPolicy" alt="" coords="5,80,123,107"/>
+<area shape="rect" id="node3" href="classRcs_1_1SimpleControlPolicy.html" title="Rcs::SimpleControlPolicy" alt="" coords="147,80,319,107"/>
+<area shape="rect" id="node4" href="classRcs_1_1TorchPolicy.html" title="Rcs::TorchPolicy" alt="" coords="344,80,467,107"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -126,8 +126,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2de659fc6fddd5a24e6d752e3a6988cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae39cb6c31fdfc1baa1d3a37f53fc397b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ControlPolicy.html#ae39cb6c31fdfc1baa1d3a37f53fc397b">computeAction</a> (MatNd *action, const MatNd *observation)=0</td></tr>
 <tr class="separator:ae39cb6c31fdfc1baa1d3a37f53fc397b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06d52937d404d88e1afdec607308d956"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ControlPolicy.html#a06d52937d404d88e1afdec607308d956">setBotInternals</a> (const MatNd *q_ctrl, const MatNd *qd_ctrl, const MatNd *T_ctrl)</td></tr>
-<tr class="separator:a06d52937d404d88e1afdec607308d956"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -179,7 +177,7 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00095">95</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00097">97</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
 
 </div>
 </div>
@@ -206,7 +204,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00100">100</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00102">102</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
 
 </div>
 </div>
@@ -252,7 +250,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classRcs_1_1SimpleControlPolicy.html#a03f0b7176b4f6a200e7d6758932c5f90">Rcs::SimpleControlPolicy</a>, <a class="el" href="classRcs_1_1TorchPolicy.html#a710ae799a03c577f5f01157f8000d582">Rcs::TorchPolicy</a>, and <a class="el" href="classRcs_1_1ActionModelIKPolicy.html#a04e86905670773f3a19b181a0939d699">Rcs::ActionModelIKPolicy</a>.</p>
+<p>Implemented in <a class="el" href="classRcs_1_1MLPPolicy.html#a388c7f9bbad2408d46478779bb3d8ecb">Rcs::MLPPolicy</a>, <a class="el" href="classRcs_1_1SimpleControlPolicy.html#a03f0b7176b4f6a200e7d6758932c5f90">Rcs::SimpleControlPolicy</a>, and <a class="el" href="classRcs_1_1TorchPolicy.html#a710ae799a03c577f5f01157f8000d582">Rcs::TorchPolicy</a>.</p>
 
 </div>
 </div>
@@ -298,7 +296,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>loaded policy </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00052">52</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00054">54</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
 
 </div>
 </div>
@@ -333,7 +331,7 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>loaded policy </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00077">77</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00079">79</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
 
 </div>
 </div>
@@ -362,7 +360,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>List available policy names. </p>
 
-<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00086">86</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00088">88</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
 
 </div>
 </div>
@@ -435,61 +433,9 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Reset internal state if any. The default implementation does nothing. </p>
 
-<p>Reimplemented in <a class="el" href="classRcs_1_1TorchPolicy.html#a5eade28a02db099cd02808c6a727ac8f">Rcs::TorchPolicy</a>, and <a class="el" href="classRcs_1_1ActionModelIKPolicy.html#a34702aab84647360fc5938a71cff1d00">Rcs::ActionModelIKPolicy</a>.</p>
+<p>Reimplemented in <a class="el" href="classRcs_1_1TorchPolicy.html#a5eade28a02db099cd02808c6a727ac8f">Rcs::TorchPolicy</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00105">105</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a06d52937d404d88e1afdec607308d956"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06d52937d404d88e1afdec607308d956">&#9670;&nbsp;</a></span>setBotInternals()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void Rcs::ControlPolicy::setBotInternals </td>
-          <td>(</td>
-          <td class="paramtype">const MatNd *&#160;</td>
-          <td class="paramname"><em>q_ctrl</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const MatNd *&#160;</td>
-          <td class="paramname"><em>qd_ctrl</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const MatNd *&#160;</td>
-          <td class="paramname"><em>T_ctrl</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Propagate the robot's internal state to the policy. The default implementation does nothing. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname"></td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented in <a class="el" href="classRcs_1_1ActionModelIKPolicy.html#a6be8c4e264e9177f9e48bae7f57f6e65">Rcs::ActionModelIKPolicy</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="ControlPolicy_8h_source.html#l00099">99</a> of file <a class="el" href="ControlPolicy_8h_source.html">ControlPolicy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ControlPolicy_8cpp_source.html#l00107">107</a> of file <a class="el" href="ControlPolicy_8cpp_source.html">ControlPolicy.cpp</a>.</p>
 
 </div>
 </div>
@@ -503,7 +449,7 @@ Static Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1ControlPolicy.html">ControlPolicy</a></li>
-    <li class="footer">Generated on Mon May 31 2021 03:41:24 for RcsPySim by
+    <li class="footer">Generated on Mon May 31 2021 11:50:29 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

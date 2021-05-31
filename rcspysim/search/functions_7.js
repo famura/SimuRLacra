@@ -1,24 +1,4 @@
 var searchData=
 [
-  ['ikfromdx',['ikFromDX',['../classRcs_1_1ActionModelIK.html#a15fbea881774f690a1ae48872b94047c',1,'Rcs::ActionModelIK']]],
-  ['init',['init',['../classRcs_1_1PhysicsParameterDescriptor.html#a0829e18ebc5627556d5a8c4a758d8493',1,'Rcs::PhysicsParameterDescriptor::init()'],['../classRcs_1_1PPDBodyPosition.html#a08bdf49b2b19d7e5485e995b438f53b0',1,'Rcs::PPDBodyPosition::init()'],['../classRcs_1_1PPDBoxExtents.html#aaa13c5d252f855509323e18ad8dd6d51',1,'Rcs::PPDBoxExtents::init()'],['../classRcs_1_1PPDCubeExtents.html#ae0a33c8a73ac47d9c9dba8f42a6ae700',1,'Rcs::PPDCubeExtents::init()'],['../classRcs_1_1PPDCompound.html#a457aef549608f6853ee985a1912c0e94',1,'Rcs::PPDCompound::init()'],['../classRcs_1_1PPDRodLength.html#ad3b8820a74c444fdb83489d21395c6a8',1,'Rcs::PPDRodLength::init()'],['../classRcs_1_1PPDSingleVar.html#a60264e73c85854ca7dd54f5489612d71',1,'Rcs::PPDSingleVar::init()'],['../classRcs_1_1PPDSphereRadius.html#a10c04cfbc7a205f75b7ca569fb21e786',1,'Rcs::PPDSphereRadius::init()'],['../classRcs_1_1ViewerComponent.html#a4faad5e24676f91aefc07f60fa29fc29',1,'Rcs::ViewerComponent::init()']]],
-  ['initdefaultnames',['initDefaultNames',['../namespaceRcs.html#a3ce8f979d031c19ee4df38886c5a6419',1,'Rcs']]],
-  ['initstatesetter',['InitStateSetter',['../classRcs_1_1InitStateSetter.html#a063308b174418576eab021ce3a9a4e1f',1,'Rcs::InitStateSetter']]],
-  ['initstatespace',['initStateSpace',['../classRcs_1_1RcsSimEnv.html#aa16ac5d6fd12c21635fd8746613c5ab2',1,'Rcs::RcsSimEnv']]],
-  ['inittaskbodynames',['initTaskBodyNames',['../classRcs_1_1OMTask.html#abe5d910f6be7e9c8db9d8dfd3e21a751',1,'Rcs::OMTask::initTaskBodyNames()'],['../classRcs_1_1OMTaskPositions.html#ae7349a165cb80f813c600bbdd96552c2',1,'Rcs::OMTaskPositions::initTaskBodyNames()']]],
-  ['initviewer',['initViewer',['../classRcs_1_1ECBallInTube.html#a94859410db3ea1ef6f3a25f4f0b928b2',1,'Rcs::ECBallInTube::initViewer()'],['../classRcs_1_1ECBallOnPlate.html#abcd92fb614086bf9a21c8011fa8fd069',1,'Rcs::ECBallOnPlate::initViewer()'],['../classRcs_1_1ECBoxFlipping.html#a5c7d4bbb751826b3ec94d937e02aa43e',1,'Rcs::ECBoxFlipping::initViewer()'],['../classRcs_1_1ECBoxLifting.html#ac2ab1487997c5f03195a304ad9daa565',1,'Rcs::ECBoxLifting::initViewer()'],['../classRcs_1_1ECBoxShelving.html#a6d602779ef6f953b2ada9e8a08fb3695',1,'Rcs::ECBoxShelving::initViewer()'],['../classRcs_1_1ECMiniGolf.html#a8c4f602878af1a79f634eabb32c30be1',1,'Rcs::ECMiniGolf::initViewer()'],['../classRcs_1_1ECMPblending.html#a339af72569dd103e6fa42262f1aa9ed3',1,'Rcs::ECMPblending::initViewer()'],['../classRcs_1_1ECPlanar3Link.html#a20fbcc5852082fc0ab0e565e80c4f7d1',1,'Rcs::ECPlanar3Link::initViewer()'],['../classRcs_1_1ECPlanarInsert.html#ab490517e65c341151533bb5f28d1f033',1,'Rcs::ECPlanarInsert::initViewer()'],['../classRcs_1_1ECQuanserQube.html#a672c8aff2858ef1f26fc484f4dcafb87',1,'Rcs::ECQuanserQube::initViewer()'],['../classRcs_1_1ExperimentConfig.html#a0c16009cb568ad44e1bcaacf97b31c68',1,'Rcs::ExperimentConfig::initViewer()']]],
-  ['intstep1storder',['intStep1stOrder',['../namespaceRcs.html#afa3f19287e0ae5d778831605ac82398d',1,'Rcs']]],
-  ['intstep2ndorder',['intStep2ndOrder',['../namespaceRcs.html#afba8089b4d66e2f3f560e4ef412e67b4',1,'Rcs']]],
-  ['ischanged',['isChanged',['../structRcs_1_1BodyParamInfo.html#a41a1e56841fc78862b444c5dbf133977',1,'Rcs::BodyParamInfo']]],
-  ['isrunning',['isRunning',['../classRcs_1_1DataLogger.html#a2c841763e6b9bacce8b4e38d3316164d',1,'Rcs::DataLogger']]],
-  ['issballintube',['ISSBallInTube',['../classRcs_1_1ISSBallInTube.html#af44bed17dd13d2c5391790e025924b63',1,'Rcs::ISSBallInTube']]],
-  ['issballonplate',['ISSBallOnPlate',['../classRcs_1_1ISSBallOnPlate.html#a97a58253f417ceeb0884227088055b2e',1,'Rcs::ISSBallOnPlate']]],
-  ['issboxflipping',['ISSBoxFlipping',['../classRcs_1_1ISSBoxFlipping.html#a666ae253939ad7c6ce1b30cbb137576d',1,'Rcs::ISSBoxFlipping']]],
-  ['issboxlifting',['ISSBoxLifting',['../classRcs_1_1ISSBoxLifting.html#a8a8ff46579a101739479f9dccdf2b5c0',1,'Rcs::ISSBoxLifting']]],
-  ['issboxshelving',['ISSBoxShelving',['../classRcs_1_1ISSBoxShelving.html#a081e7b898e86753802a7ba6c564dafb4',1,'Rcs::ISSBoxShelving']]],
-  ['issminigolf',['ISSMiniGolf',['../classRcs_1_1ISSMiniGolf.html#a68129f164787d6fd60729354d37461a9',1,'Rcs::ISSMiniGolf']]],
-  ['issmpblending',['ISSMPBlending',['../classRcs_1_1ISSMPBlending.html#a57c9376a0f99d9139ecb18f3ba1fcfbd',1,'Rcs::ISSMPBlending']]],
-  ['issplanar3link',['ISSPlanar3Link',['../classRcs_1_1ISSPlanar3Link.html#a71118989fbc8bfb53fd6ec11ac106fd6',1,'Rcs::ISSPlanar3Link']]],
-  ['issplanarinsert',['ISSPlanarInsert',['../classRcs_1_1ISSPlanarInsert.html#ac9496b6e6b79498a7cf8eb91bde3d479',1,'Rcs::ISSPlanarInsert']]],
-  ['issquanserqube',['ISSQuanserQube',['../classRcs_1_1ISSQuanserQube.html#a6a688b6afb4e11b59e76053d703695e3',1,'Rcs::ISSQuanserQube']]]
+  ['hiddenlayer',['HiddenLayer',['../structRcs_1_1MLPPolicy_1_1HiddenLayer.html#a1a9cb459f99474ae233bccd0e59f4800',1,'Rcs::MLPPolicy::HiddenLayer']]]
 ];

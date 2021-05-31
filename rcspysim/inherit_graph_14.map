@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structRcs_1_1ObservationModel_1_1Offsets.html" title="result of findOffsets " alt="" coords="5,5,164,47"/>
+<area shape="rect" id="node1" href="$structRcs_1_1MLPPolicy_1_1MLPLayer.html" title="Rcs::MLPPolicy::MLPLayer" alt="" coords="5,5,189,32"/>
+<area shape="rect" id="node2" href="$structRcs_1_1MLPPolicy_1_1HiddenLayer.html" title="Rcs::MLPPolicy::HiddenLayer" alt="" coords="237,5,436,32"/>
 </map>
