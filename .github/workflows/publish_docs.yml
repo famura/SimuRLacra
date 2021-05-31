@@ -3,7 +3,7 @@ name: Deploy Documentation
 on:
   workflow_run:
     workflows: ["Publish Docker Images"]
-    branches: [cicd, master]
+    branches: [master]
     types: [completed]
 
 jobs:
