@@ -8,5 +8,6 @@ var classRcs_1_1ControlPolicy =
     [ "create", "classRcs_1_1ControlPolicy.html#a76e727cab6db2ba0ece80f016993a07d", null ],
     [ "getTypeNames", "classRcs_1_1ControlPolicy.html#a0f895412ed116ad4dd21a114ed7b1115", null ],
     [ "registerType", "classRcs_1_1ControlPolicy.html#aa3308b7f7ce4bfc15aa5c9c3670d2180", null ],
-    [ "reset", "classRcs_1_1ControlPolicy.html#a2de659fc6fddd5a24e6d752e3a6988cb", null ]
+    [ "reset", "classRcs_1_1ControlPolicy.html#a2de659fc6fddd5a24e6d752e3a6988cb", null ],
+    [ "setBotInternals", "classRcs_1_1ControlPolicy.html#a06d52937d404d88e1afdec607308d956", null ]
 ];

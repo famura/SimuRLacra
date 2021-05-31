@@ -1,12 +1,15 @@
 var searchData=
 [
   ['action',['action',['../classRcs_1_1RcsPyBot.html#aaa44af9b7d4d61188b267f5fd47fb6b9',1,'Rcs::RcsPyBot::action()'],['../classRcs_1_1PolicyComponent.html#a17609db60bbfb1c11e8ae1db0eb8f0bd',1,'Rcs::PolicyComponent::action()']]],
-  ['actionmodel',['ActionModel',['../classRcs_1_1ActionModel.html',1,'Rcs::ActionModel'],['../classRcs_1_1ExperimentConfig.html#a77b01c5422b27509ed450109ffb143d4',1,'Rcs::ExperimentConfig::actionModel()'],['../classRcs_1_1OMDynamicalSystemDiscrepancy.html#af2e0833709eb1ec74b82e81cb8496299',1,'Rcs::OMDynamicalSystemDiscrepancy::actionModel()'],['../classRcs_1_1OMDynamicalSystemGoalDistance.html#a50ee4605fa8dcab639771f66f472058d',1,'Rcs::OMDynamicalSystemGoalDistance::actionModel()'],['../classRcs_1_1ActionModel.html#a318629cec207459749ab9d6a0ae5cbd4',1,'Rcs::ActionModel::ActionModel()']]],
+  ['actionmodel',['ActionModel',['../classRcs_1_1ActionModel.html',1,'Rcs::ActionModel'],['../classRcs_1_1ActionModelIKPolicy.html#af64bb093aa1b730b0cfa48e9660b4f49',1,'Rcs::ActionModelIKPolicy::actionModel()'],['../classRcs_1_1ExperimentConfig.html#a77b01c5422b27509ed450109ffb143d4',1,'Rcs::ExperimentConfig::actionModel()'],['../classRcs_1_1OMDynamicalSystemDiscrepancy.html#af2e0833709eb1ec74b82e81cb8496299',1,'Rcs::OMDynamicalSystemDiscrepancy::actionModel()'],['../classRcs_1_1OMDynamicalSystemGoalDistance.html#a50ee4605fa8dcab639771f66f472058d',1,'Rcs::OMDynamicalSystemGoalDistance::actionModel()'],['../classRcs_1_1ActionModel.html#a318629cec207459749ab9d6a0ae5cbd4',1,'Rcs::ActionModel::ActionModel()']]],
   ['actionmodel_2ecpp',['ActionModel.cpp',['../ActionModel_8cpp.html',1,'']]],
   ['actionmodel_2eh',['ActionModel.h',['../ActionModel_8h.html',1,'']]],
   ['actionmodelik',['ActionModelIK',['../classRcs_1_1ActionModelIK.html',1,'Rcs::ActionModelIK'],['../classRcs_1_1ActionModelIK.html#aada64e82f671803f8305402ba7cbda40',1,'Rcs::ActionModelIK::ActionModelIK(RcsGraph *graph)'],['../classRcs_1_1ActionModelIK.html#a70da2214f4f62b6a4e2abf10af8520ab',1,'Rcs::ActionModelIK::ActionModelIK(RcsGraph *graph, std::vector&lt; Task *&gt; tasks)']]],
   ['actionmodelik_2ecpp',['ActionModelIK.cpp',['../ActionModelIK_8cpp.html',1,'']]],
   ['actionmodelik_2eh',['ActionModelIK.h',['../ActionModelIK_8h.html',1,'']]],
+  ['actionmodelikpolicy',['ActionModelIKPolicy',['../classRcs_1_1ActionModelIKPolicy.html',1,'Rcs::ActionModelIKPolicy'],['../classRcs_1_1ActionModelIKPolicy.html#a01e7de1a47225a97a038544deed01732',1,'Rcs::ActionModelIKPolicy::ActionModelIKPolicy()']]],
+  ['actionmodelikpolicy_2ecpp',['ActionModelIKPolicy.cpp',['../ActionModelIKPolicy_8cpp.html',1,'']]],
+  ['actionmodelikpolicy_2eh',['ActionModelIKPolicy.h',['../ActionModelIKPolicy_8h.html',1,'']]],
   ['actionspace',['actionSpace',['../classRcs_1_1RcsSimEnv.html#a0065869e6bd6428e3871f65c9863e260',1,'Rcs::RcsSimEnv']]],
   ['activation',['activation',['../classRcs_1_1AMDynamicalSystemActivation.html#a8803494f798a23407e5d2c2beecb52a3',1,'Rcs::AMDynamicalSystemActivation::activation()'],['../classRcs_1_1AMIKControllerActivation.html#a23781dd23bb6fafd72a02dbb1dc4c39c',1,'Rcs::AMIKControllerActivation::activation()']]],
   ['addalwaysactivetask',['addAlwaysActiveTask',['../classRcs_1_1AMIKControllerActivation.html#a23efd0ebdb319ce0f7c040a008d07928',1,'Rcs::AMIKControllerActivation']]],

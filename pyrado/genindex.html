@@ -1370,6 +1370,8 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcn">ForwardVelocityRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
+      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.from_pandas">from_pandas() (StepSequence class method)</a>
+</li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.from_stacked">from_stacked() (MultivariateNormalWrapper static method)</a>
 
       <ul>
@@ -1801,6 +1803,8 @@
 </li>
         <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.is_met">(StoppingCriterion method)</a>
 </li>
+        <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.is_met">(ToggleableStoppingCriterion method)</a>
+</li>
       </ul></li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.is_open">is_open() (QSocket method)</a>
 </li>
@@ -2021,6 +2025,8 @@
       <li><a href="tasks.html#pyrado.tasks.reward_functions.MinusOnePerStepRewFcn">MinusOnePerStepRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d">MirrConv1d (class in pyrado.utils.nn_layers)</a>
+</li>
+      <li><a href="tests.html#tests.test_rollout_result.mock_data">mock_data() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_observation_normalization.mock_obs_space">mock_obs_space() (in module tests.environment_wrappers.test_observation_normalization)</a>
 </li>
@@ -2813,15 +2819,19 @@
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper">ObsNormWrapper (class in pyrado.environment_wrappers.observation_normalization)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_partial.ObsPartialWrapper">ObsPartialWrapper (class in pyrado.environment_wrappers.observation_partial)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsRunningNormWrapper">ObsRunningNormWrapper (class in pyrado.environment_wrappers.observation_normalization)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper">ObsVelFiltWrapper (class in pyrado.environment_wrappers.observation_velfilter)</a>
 </li>
+      <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.off">off() (ToggleableStoppingCriterion method)</a>
+</li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.offset">offset (StateAugmentationWrapper property)</a>
+</li>
+      <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.on">on() (ToggleableStoppingCriterion method)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator">OneMassOscillatorDomainParamEstimator (class in pyrado.environments.pysim.one_mass_oscillator)</a>
 </li>
@@ -5700,6 +5710,16 @@
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_sample_count_lower">test_criterion_sample_count_lower() (in module tests.algorithms.test_stopping_criteria)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_default">test_criterion_toggleable_init_default() (in module tests.algorithms.test_stopping_criteria)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_met">test_criterion_toggleable_init_met() (in module tests.algorithms.test_stopping_criteria)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_not_met">test_criterion_toggleable_init_not_met() (in module tests.algorithms.test_stopping_criteria)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_met">test_criterion_toggleable_set_on_off_init_met() (in module tests.algorithms.test_stopping_criteria)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_not_met">test_criterion_toggleable_set_on_off_init_not_met() (in module tests.algorithms.test_stopping_criteria)</a>
+</li>
       <li><a href="tests.html#tests.test_step_logger.test_csv_logger_serializer">test_csv_logger_serializer() (in module tests.test_step_logger)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_cuda_sampling_w_dr">test_cuda_sampling_w_dr() (in module tests.test_sampling)</a>
@@ -5900,10 +5920,10 @@
         <li><a href="tests.html#tests.test_environments.test_reset">(in module tests.test_environments)</a>
 </li>
       </ul></li>
-      <li><a href="tests.html#tests.test_tasks.test_rew_fcn_constructor">test_rew_fcn_constructor() (in module tests.test_tasks)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tests.html#tests.test_tasks.test_rew_fcn_constructor">test_rew_fcn_constructor() (in module tests.test_tasks)</a>
+</li>
       <li><a href="tests.html#tests.test_policies.test_rfb_policy_batch">test_rfb_policy_batch() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rfb_policy_serial">test_rfb_policy_serial() (in module tests.test_policies)</a>
@@ -6005,6 +6025,8 @@
       <li><a href="tests.html#tests.test_utils.test_stateful_standardizer">test_stateful_standardizer() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_step_iter">test_step_iter() (in module tests.test_rollout_result)</a>
+</li>
+      <li><a href="tests.html#tests.test_rollout_result.test_stepsequence_from_pandas">test_stepsequence_from_pandas() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_string_representation">test_string_representation() (in module tests.test_spaces)</a>
 </li>
@@ -6302,6 +6324,10 @@
       <li><a href="utils.html#pyrado.utils.data_types.to_float_relentless">to_float_relentless() (in module pyrado.utils.data_types)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.data_format.to_format">to_format() (in module pyrado.sampling.data_format)</a>
+</li>
+      <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.toggle">toggle() (ToggleableStoppingCriterion method)</a>
+</li>
+      <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion">ToggleableStoppingCriterion (class in pyrado.algorithms.stopping_criteria.predefined_criteria)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.torch">torch() (StepSequence method)</a>
 </li>

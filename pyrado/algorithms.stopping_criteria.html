@@ -350,6 +350,46 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ToggleableStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">met</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion" title="pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion</span></code></a></p>
+<p>Stopping criterion that can be turned on/off from the outside.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.is_met">
+<span class="sig-name descname"><span class="pre">is_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.is_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.is_met" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the stopping criterion is met.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Has to be overwritten by sub-classes.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>algo</strong> – instance of <cite>Algorithm</cite> that has to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if the criterion is met, and <cite>False</cite> otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.off">
+<span class="sig-name descname"><span class="pre">off</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">NoReturn</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.off"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.off" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.on">
+<span class="sig-name descname"><span class="pre">on</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">NoReturn</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.on"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.on" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.toggle">
+<span class="sig-name descname"><span class="pre">toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="reference internal" href="_modules/pyrado/algorithms/stopping_criteria/predefined_criteria.html#ToggleableStoppingCriterion.toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.toggle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.algorithms.stopping_criteria.rollout_based_criteria">
 <span id="rollout-based-criteria"></span><h2>rollout_based_criteria<a class="headerlink" href="#module-pyrado.algorithms.stopping_criteria.rollout_based_criteria" title="Permalink to this headline">¶</a></h2>
