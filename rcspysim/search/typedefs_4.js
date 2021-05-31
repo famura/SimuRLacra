@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nonlinearity',['Nonlinearity',['../classRcs_1_1MLPPolicy.html#a86bd259f3cd57ef92534754ac56d3d03',1,'Rcs::MLPPolicy']]]
+  ['variableaccessor',['VariableAccessor',['../classRcs_1_1PPDSingleVar.html#aab87a089fd8db503c008e03c62d7f816',1,'Rcs::PPDSingleVar']]]
 ];

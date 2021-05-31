@@ -1564,6 +1564,25 @@ gradient tracking risks lingering incomplete graphs.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pyrado.sampling.step_sequence.StepSequence.from_pandas">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">continuous</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.from_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.from_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a StepSequence object from a Pandas DataFrame instance.
+Not all data fields are supported. The fields ‘rewards’ is mandatory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame holding the data in 1-dim arrays</p></li>
+<li><p><strong>env_spec</strong> – environment specifications which labels are used to slice the DataFrame</p></li>
+<li><p><strong>continuous</strong> – <cite>True</cite> if the rollout to be reconstructed was continuous</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>new StepSequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pyrado.sampling.step_sequence.StepSequence.get_data_values">
 <span class="sig-name descname"><span class="pre">get_data_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncate_last</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.get_data_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.get_data_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data tensor stored under the given name.</p>

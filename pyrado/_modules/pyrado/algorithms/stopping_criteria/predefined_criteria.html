@@ -250,7 +250,7 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">NoReturn</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.stopping_criteria.stopping_criterion</span> <span class="kn">import</span> <span class="n">StoppingCriterion</span>
 
@@ -279,6 +279,38 @@
 
 <div class="viewcode-block" id="NeverStopStoppingCriterion.is_met"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.NeverStopStoppingCriterion.is_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="ToggleableStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">ToggleableStoppingCriterion</span><span class="p">(</span><span class="n">StoppingCriterion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stopping criterion that can be turned on/off from the outside.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">met</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        :param met: initialization of the return value of `is_met`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_met</span> <span class="o">=</span> <span class="n">met</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ToggleableStoppingCriterion[met=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_met</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_met</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ToggleableStoppingCriterion.is_met"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.is_met">[docs]</a>    <span class="k">def</span> <span class="nf">is_met</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_met</span></div>
+
+<div class="viewcode-block" id="ToggleableStoppingCriterion.on"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.on">[docs]</a>    <span class="k">def</span> <span class="nf">on</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_met</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ToggleableStoppingCriterion.off"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.off">[docs]</a>    <span class="k">def</span> <span class="nf">off</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_met</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ToggleableStoppingCriterion.toggle"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.ToggleableStoppingCriterion.toggle">[docs]</a>    <span class="k">def</span> <span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_met</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_met</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_met</span></div></div>
 
 
 <div class="viewcode-block" id="CustomStoppingCriterion"><a class="viewcode-back" href="../../../../algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.predefined_criteria.CustomStoppingCriterion">[docs]</a><span class="k">class</span> <span class="nc">CustomStoppingCriterion</span><span class="p">(</span><span class="n">StoppingCriterion</span><span class="p">):</span>

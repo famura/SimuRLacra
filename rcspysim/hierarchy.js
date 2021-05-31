@@ -61,7 +61,7 @@ var hierarchy =
       [ "Rcs::PolicyComponent", "classRcs_1_1PolicyComponent.html", null ]
     ] ],
     [ "Rcs::ControlPolicy", "classRcs_1_1ControlPolicy.html", [
-      [ "Rcs::MLPPolicy", "classRcs_1_1MLPPolicy.html", null ],
+      [ "Rcs::ActionModelIKPolicy", "classRcs_1_1ActionModelIKPolicy.html", null ],
       [ "Rcs::SimpleControlPolicy", "classRcs_1_1SimpleControlPolicy.html", null ],
       [ "Rcs::TorchPolicy", "classRcs_1_1TorchPolicy.html", null ]
     ] ],
@@ -97,9 +97,6 @@ var hierarchy =
     ] ],
     [ "HardwareComponent", null, [
       [ "Rcs::PhysicsSimulationComponent", "classRcs_1_1PhysicsSimulationComponent.html", null ]
-    ] ],
-    [ "Rcs::MLPPolicy::MLPLayer", "structRcs_1_1MLPPolicy_1_1MLPLayer.html", [
-      [ "Rcs::MLPPolicy::HiddenLayer", "structRcs_1_1MLPPolicy_1_1HiddenLayer.html", null ]
     ] ],
     [ "MotionControlLayer", null, [
       [ "Rcs::RcsPyBot", "classRcs_1_1RcsPyBot.html", null ]

@@ -256,9 +256,11 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NamedTuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.sysid_via_episodic_rl</span> <span class="kn">import</span> <span class="n">SysIdViaEpisodicRL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">ReplayMemory</span>
@@ -266,62 +268,68 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">to_format</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">discounted_value</span><span class="p">,</span> <span class="n">gae_returns</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
 
 
-<span class="n">rewards</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="o">-</span><span class="mf">200.0</span><span class="p">,</span>
-    <span class="o">-</span><span class="mi">100</span><span class="p">,</span>
-    <span class="o">-</span><span class="mi">50</span><span class="p">,</span>
-    <span class="o">-</span><span class="mi">25</span><span class="p">,</span>
-    <span class="o">-</span><span class="mf">17.5</span><span class="p">,</span>
-<span class="p">]</span>
-<span class="c1"># Observations has one additional element</span>
-<span class="n">observations</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<span class="p">]</span>
-<span class="c1"># States has one additional element</span>
-<span class="n">states</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-<span class="p">]</span>
-<span class="c1"># Actions come from PyTorch</span>
-<span class="n">actions</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-    <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-    <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-    <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-    <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-<span class="p">]</span>
-<span class="c1"># Policy infos as dict collapse test</span>
-<span class="n">policy_infos</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">},</span>
-<span class="p">]</span>
-<span class="c1"># Hidden is a tuple, like we see with LSTMs</span>
-<span class="n">hidden</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])),</span>
-    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])),</span>
-    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
-    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">])),</span>
-    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">])),</span>
-<span class="p">]</span>
+<div class="viewcode-block" id="mock_data"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.mock_data">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">mock_data</span><span class="p">():</span>
+    <span class="n">rewards</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="o">-</span><span class="mf">200.0</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">100</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">50</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">25</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">17.5</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="c1"># Observations has one additional element</span>
+    <span class="n">observations</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="c1"># States has one additional element</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="c1"># Actions come from PyTorch</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+    <span class="p">]</span>
+    <span class="c1"># Policy infos as dict collapse test</span>
+    <span class="n">policy_infos</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="mf">0.025</span><span class="p">},</span>
+    <span class="p">]</span>
+    <span class="c1"># Hidden is a tuple, like we see with LSTMs</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">])),</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span></div>
 
 
-<div class="viewcode-block" id="test_additional_required"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_additional_required">[docs]</a><span class="k">def</span> <span class="nf">test_additional_required</span><span class="p">():</span>
+<div class="viewcode-block" id="test_additional_required"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_additional_required">[docs]</a><span class="k">def</span> <span class="nf">test_additional_required</span><span class="p">(</span><span class="n">mock_data</span><span class="p">):</span>
     <span class="c1"># Require the states as additional field for this test</span>
     <span class="n">StepSequence</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;states&quot;</span><span class="p">}</span>
+
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
 
     <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
         <span class="c1"># This should fail</span>
@@ -336,7 +344,9 @@
 <div class="viewcode-block" id="test_create"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_create">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;data_format, tensor_type&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_create</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">tensor_type</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_create</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">data_format</span><span class="p">,</span> <span class="n">tensor_type</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="c1"># With actions, observations and dicts</span>
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
@@ -365,7 +375,9 @@
 <div class="viewcode-block" id="test_convert"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_convert">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;other_format, tensor_type&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;numpy to torch&quot;</span><span class="p">,</span> <span class="s2">&quot;torch to numpy&quot;</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_convert</span><span class="p">(</span><span class="n">other_format</span><span class="p">,</span> <span class="n">tensor_type</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_convert</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">other_format</span><span class="p">,</span> <span class="n">tensor_type</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
         <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span>
@@ -393,7 +405,9 @@
 
 
 <div class="viewcode-block" id="test_step_iter"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_step_iter">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_step_iter</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_step_iter</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
         <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span>
@@ -418,7 +432,9 @@
 
 <div class="viewcode-block" id="test_slice"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_slice">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;sls&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">None</span><span class="p">)])</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_slice</span><span class="p">(</span><span class="n">sls</span><span class="p">,</span> <span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_slice</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">sls</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
         <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span>
@@ -439,7 +455,9 @@
 
 
 <div class="viewcode-block" id="test_add_data"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_add_data">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_add_data</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_add_data</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
         <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span>
@@ -458,7 +476,7 @@
 
 
 <div class="viewcode-block" id="test_concat"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_concat">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_concat</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_concat</span><span class="p">(</span><span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="c1"># Create some rollouts with random rewards</span>
     <span class="n">ros</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">StepSequence</span><span class="p">(</span>
@@ -495,7 +513,7 @@
 
 
 <div class="viewcode-block" id="test_split_multi"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_split_multi">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_split_multi</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_split_multi</span><span class="p">(</span><span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="c1"># Don&#39;t require additional fields for this test</span>
     <span class="n">StepSequence</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -531,7 +549,9 @@
 
 
 <div class="viewcode-block" id="test_pickle"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_pickle">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_pickle</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_pickle</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
         <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span>
@@ -592,7 +612,9 @@
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;8&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_replay_memory</span><span class="p">(</span><span class="n">capacity</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_replay_memory</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">capacity</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="n">rm</span> <span class="o">=</span> <span class="n">ReplayMemory</span><span class="p">(</span><span class="n">capacity</span><span class="p">)</span>
 
     <span class="c1"># Create fake rollouts (of length 5)</span>
@@ -621,7 +643,9 @@
 
 
 <div class="viewcode-block" id="test_namedtuple"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_namedtuple">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_namedtuple</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_namedtuple</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="n">hid_nt</span> <span class="o">=</span> <span class="p">[</span><span class="n">DummyNT</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">)</span> <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">hidden</span><span class="p">]</span>
 
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span>
@@ -682,7 +706,9 @@
 
 
 <div class="viewcode-block" id="test_process"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_process">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_process</span><span class="p">(</span><span class="n">data_format</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_process</span><span class="p">(</span><span class="n">mock_data</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+
     <span class="c1"># Create the rollout</span>
     <span class="n">ro</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="p">(</span><span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span> <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="n">hidden</span><span class="p">)</span>
 
@@ -696,7 +722,7 @@
         <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Tranform to PyTorch data and define a simple function</span>
+        <span class="c1"># Transform to PyTorch data and define a simple function</span>
         <span class="n">ro</span><span class="o">.</span><span class="n">torch</span><span class="p">()</span>
         <span class="n">ro_proc</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">process_data</span><span class="p">(</span>
             <span class="n">ro</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fcn_arg_name</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">include_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="n">fcn_arg_types</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span>
@@ -704,6 +730,45 @@
 
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro_proc</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">ro_proc</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="n">ro</span><span class="o">.</span><span class="n">length</span></div>
+
+
+<div class="viewcode-block" id="test_stepsequence_from_pandas"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_stepsequence_from_pandas">[docs]</a><span class="k">def</span> <span class="nf">test_stepsequence_from_pandas</span><span class="p">(</span><span class="n">mock_data</span><span class="p">):</span>
+    <span class="n">rewards</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">hidden</span><span class="p">,</span> <span class="n">policy_infos</span> <span class="o">=</span> <span class="n">mock_data</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+    <span class="n">observations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
+
+    <span class="c1"># Create fake observed data set. The labels must match the labels of the spaces. The order can be mixed.</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">,</span>
+        <span class="n">s0</span><span class="o">=</span><span class="n">states</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">s1</span><span class="o">=</span><span class="n">states</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">s2</span><span class="o">=</span><span class="n">states</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="n">o3</span><span class="o">=</span><span class="n">observations</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="n">o0</span><span class="o">=</span><span class="n">observations</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">o2</span><span class="o">=</span><span class="n">observations</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="n">o1</span><span class="o">=</span><span class="n">observations</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">a1</span><span class="o">=</span><span class="n">actions</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">a0</span><span class="o">=</span><span class="n">actions</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="c1"># Some content that was not in</span>
+        <span class="n">steps</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">states</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">infos</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">foo</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">items</span><span class="p">()]))</span>
+
+    <span class="n">env</span> <span class="o">=</span> <span class="n">MockEnv</span><span class="p">(</span>
+        <span class="n">state_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;s0&quot;</span><span class="p">,</span> <span class="s2">&quot;s1&quot;</span><span class="p">,</span> <span class="s2">&quot;s2&quot;</span><span class="p">]),</span>
+        <span class="n">obs_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">observations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o0&quot;</span><span class="p">,</span> <span class="s2">&quot;o1&quot;</span><span class="p">,</span> <span class="s2">&quot;o2&quot;</span><span class="p">,</span> <span class="s2">&quot;o3&quot;</span><span class="p">]),</span>
+        <span class="n">act_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">actions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;a0&quot;</span><span class="p">,</span> <span class="s2">&quot;a1&quot;</span><span class="p">]),</span>
+    <span class="p">)</span>
+
+    <span class="n">reconstructed</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">reconstructed</span><span class="o">.</span><span class="n">rewards</span><span class="p">,</span> <span class="n">rewards</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">reconstructed</span><span class="o">.</span><span class="n">states</span><span class="p">,</span> <span class="n">states</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">reconstructed</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">observations</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">reconstructed</span><span class="o">.</span><span class="n">actions</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

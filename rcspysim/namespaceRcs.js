@@ -2,6 +2,7 @@ var namespaceRcs =
 [
     [ "ActionModel", "classRcs_1_1ActionModel.html", "classRcs_1_1ActionModel" ],
     [ "ActionModelIK", "classRcs_1_1ActionModelIK.html", "classRcs_1_1ActionModelIK" ],
+    [ "ActionModelIKPolicy", "classRcs_1_1ActionModelIKPolicy.html", "classRcs_1_1ActionModelIKPolicy" ],
     [ "AMDynamicalSystemActivation", "classRcs_1_1AMDynamicalSystemActivation.html", "classRcs_1_1AMDynamicalSystemActivation" ],
     [ "AMIKControllerActivation", "classRcs_1_1AMIKControllerActivation.html", "classRcs_1_1AMIKControllerActivation" ],
     [ "AMIKGeneric", "classRcs_1_1AMIKGeneric.html", "classRcs_1_1AMIKGeneric" ],
@@ -55,7 +56,6 @@ var namespaceRcs =
     [ "ISSQuanserQube", "classRcs_1_1ISSQuanserQube.html", "classRcs_1_1ISSQuanserQube" ],
     [ "JointLimitException", "classRcs_1_1JointLimitException.html", null ],
     [ "LockedFTS", "classRcs_1_1LockedFTS.html", "classRcs_1_1LockedFTS" ],
-    [ "MLPPolicy", "classRcs_1_1MLPPolicy.html", "classRcs_1_1MLPPolicy" ],
     [ "ObservationModel", "classRcs_1_1ObservationModel.html", "classRcs_1_1ObservationModel" ],
     [ "OMBallPos", "classRcs_1_1OMBallPos.html", "classRcs_1_1OMBallPos" ],
     [ "OMBodyStateAngular", "classRcs_1_1OMBodyStateAngular.html", "classRcs_1_1OMBodyStateAngular" ],
