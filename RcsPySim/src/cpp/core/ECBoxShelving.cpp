@@ -71,7 +71,6 @@ namespace Rcs
 {
 class ECBoxShelving : public ExperimentConfig
 {
-protected:
     virtual ActionModel* createActionModel()
     {
         // Setup inner action model
@@ -307,8 +306,7 @@ protected:
         manager->addParam("Box", new PPDMassProperties());
         manager->addParam("Box", new PPDMaterialProperties());
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSBoxShelving(graph, properties->getPropertyBool("fixedInitState", false));

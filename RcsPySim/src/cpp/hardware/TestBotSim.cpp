@@ -29,11 +29,9 @@
 *******************************************************************************/
 
 #include <RcsPyBot.h>
-#include <action/ActionModel.h>
 #include <action/ActionModelIK.h>
 #include <config/PropertySourceXml.h>
 #include <control/ControlPolicy.h>
-#include <control/ActionModelIKPolicy.h>
 #include <observation/ObservationModel.h>
 #include <physics/PhysicsParameterManager.h>
 
@@ -80,11 +78,12 @@ static void quit(int /*sig*/)
 
 int main(int argc, char** argv)
 {
-    RMSG("Starting Rcs...");
+    std::cout << "Starting Rcs ..." << std::endl;
     
     Rcs::KeyCatcherBase::registerKey("q", "Quit");
     Rcs::KeyCatcherBase::registerKey("l", "Start/stop data logging");
-    Rcs::KeyCatcherBase::registerKey("h", "Deactivate policy and return to initial state");
+    Rcs::KeyCatcherBase::registerKey("o", "Deactivate policy and go to home position (behind ball)");
+    Rcs::KeyCatcherBase::registerKey("u", "Deactivate policy and go to a position up and above the ball");
     Rcs::KeyCatcherBase::registerKey("b", "Reset ball to a new random initial position");
     Rcs::KeyCatcherBase::registerKey("n", "Move the a to the position in front of the ball (pre-strike)");
     Rcs::KeyCatcherBase::registerKey("p", "Activate control policy (strike)");
@@ -98,7 +97,7 @@ int main(int argc, char** argv)
     
     // Parse command line arguments
     Rcs::CmdLineParser argP(argc, argv);
-    char xmlFileName[128] = "ex_<ENVIRONMENT-NAME>_export.xml";
+    char xmlFileName[128] = "ex_config_export.xml";
     char directory[128] = "../config/<ENVIRONMENT-FOLDER>";
     argP.getArgument("-dl", &RcsLogLevel, "Debug level (default is 0)");
     argP.getArgument("-f", xmlFileName, "Configuration file name");
@@ -107,7 +106,7 @@ int main(int argc, char** argv)
     //    bool simpleGraphics = argP.hasArgument("-simpleGraphics", "OpenGL without fancy stuff (shadows, anti-aliasing)");
     
     const char* hgr = getenv("SIT");
-    if (hgr != NULL) {
+    if (hgr != nullptr) {
         std::string meshDir = std::string(hgr) + std::string("/Data/RobotMeshes/1.0/data");
         Rcs_addResourcePath(meshDir.c_str());
     }
@@ -115,7 +114,7 @@ int main(int argc, char** argv)
     Rcs_addResourcePath("../config");
     Rcs_addResourcePath(directory);
     
-    // show help if requested
+    // Show help if requested
     if (argP.hasArgument("-h", "Show help message")) {
         Rcs::KeyCatcherBase::printRegisteredKeys();
         Rcs::CmdLineParser::print();
@@ -124,10 +123,9 @@ int main(int argc, char** argv)
     }
     
     // Create simulated robot from config file
-    RMSG("Creating robot...");
+    std::cout << "Creating robot ..." << std::endl;
     Rcs::RcsPyBot bot(new Rcs::PropertySourceXml(xmlFileName));
     
-    // TODO add hardware components (which I don't have currently)
     // Add physics simulator for testing
     Rcs::PhysicsParameterManager* ppmanager = bot.getConfig()->createPhysicsParameterManager();
     Rcs::PhysicsBase* simImpl = ppmanager->createSimulator(bot.getConfig()->properties->getChild("initDomainParam"));
@@ -143,19 +141,32 @@ int main(int argc, char** argv)
     bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
 
 #ifdef GRAPHICS_AVAILABLE
-    // Add viewer component
     Rcs::ViewerComponent* vc = nullptr;
     if (!valgrind) {
         //vc = new Rcs::ViewerComponent(bot.getGraph(), bot.getCurrentGraph(), true);
         vc = new Rcs::ViewerComponent(nullptr, nullptr, true);
         vc->getViewer()->add(new Rcs::PhysicsNode(simImpl));
         
+        // Add the desired graph node of the action model
+//        auto nodeAMGraph = new Rcs::GraphNode(bot.getConfig()->actionModel->getGraph());
+//        nodeAMGraph->setGhostMode(true);
+//        vc->getViewer()->add(nodeAMGraph);
+        
+        // Optionally add the desired graph node of the IK-based action model
+        Rcs::ActionModelIK* amIK = dynamic_cast<Rcs::ActionModelIK*>(bot.getConfig()->actionModel);
+        if (amIK) {
+            auto nodeAMDesGraph = new Rcs::GraphNode(amIK->getDesiredGraph());
+            nodeAMDesGraph->setGhostMode(true);
+            vc->getViewer()->add(nodeAMDesGraph);
+        }
+    
+        // Add the viewer component
         bot.getConfig()->initViewer(vc->getViewer());
         bot.addHardwareComponent(vc);
     }
 #endif
     
-    // Load control policy
+    // Load the (learned) control policy
     Rcs::ControlPolicy* controlPolicy = nullptr;
     auto policyConfig = bot.getConfig()->properties->getChild("policy");
     if (policyConfig->exists()) {
@@ -170,14 +181,24 @@ int main(int argc, char** argv)
         }
     }
     
+    // Load additional (optional) policies
+    Rcs::ControlPolicy* preStrikePolicy = nullptr;
+    auto preStrikePolicyConfig = bot.getConfig()->properties->getChild("preStrikePolicy");
+    if (preStrikePolicyConfig->exists()) {
+        preStrikePolicy = Rcs::ControlPolicy::create(preStrikePolicyConfig);
+        REXEC(1) {
+            std::cout << "Loaded pre-strike policy specified in the config file." << std::endl;
+        }
+    }
+    
     // Start
     bot.startThreads();
-    RMSG("Started robot.");
+    std::cout << "Started robot." << std::endl;
     bool startLoggerNextPolicyStart = false;
     
     // Main loop
     runLoop = true;
-    RMSG("Main loop is running ...");
+    std::cout << "Main loop is running ..." << std::endl;
     while (runLoop) {
 
 #ifdef GRAPHICS_AVAILABLE
@@ -192,28 +213,27 @@ int main(int argc, char** argv)
             else if (bot.getControlPolicy() != controlPolicy) {
                 // Defer until policy start
                 startLoggerNextPolicyStart = true;
-                RMSG("Deferring logger start until the policy is activated.");
+                REXEC(1) { std::cout << "Deferring logger start until the policy is activated." << std::endl; }
             }
             else {
                 bot.logger.start(bot.getConfig()->observationModel->getSpace(),
-                                 bot.getConfig()->actionModel->getSpace(), 5000);
+                                 bot.getConfig()->actionModel->getSpace(), 1000);
             }
         }
         if (vc && vc->getKeyCatcher()->getAndResetKey('b')) {
-            RcsBody* ball = RcsGraph_getBodyByName(simImpl->getGraph(), "Ball");
+            RcsBody* ball = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ball");
             if (ball) {
                 // Set the ball to a random position
                 std::random_device rd;  // used to obtain a seed for the random number engine
                 std::mt19937 gen(rd()); // standard mersenne_twister_engine seeded with rd()
-                std::uniform_real_distribution<> distrX(0.48, 0.52);
-                std::uniform_real_distribution<> distrY(1.3, 1.5);
+                std::uniform_real_distribution<> distrX(0.27, 0.33);
+                std::uniform_real_distribution<> distrY(1.35, 1.45);
                 
                 const double ballRBJAngles[6] = {distrX(gen), distrY(gen), ball->shape[0]->extents[0], 0, 0, 0};
-                RcsGraph_setRigidBodyDoFs(simImpl->getGraph(), ball, ballRBJAngles);
+                RcsGraph_setRigidBodyDoFs(bot.getCurrentGraph(), ball, ballRBJAngles);
                 
-                // Update the forward kinematics
-                RcsGraph_setState(simImpl->getGraph(), simImpl->getGraph()->q,
-                                  simImpl->getGraph()->q_dot);  // TODO @Michael: is this correct?
+                // Reset the physics simulation
+                simImpl->reset(bot.getCurrentGraph()->q);
                 
                 REXEC(1) {
                     std::cout << "Set ball to new x, y position: " <<
@@ -223,48 +243,66 @@ int main(int argc, char** argv)
         }
         if (vc && vc->getKeyCatcher()->getAndResetKey('n')) {
             // Check if we are in the MiniGolfSim
-            RcsBody* ball = RcsGraph_getBodyByName(simImpl->getGraph(), "Ball");
-            RcsBody* clubTip = RcsGraph_getBodyByName(simImpl->getGraph(), "ClubTip");
-            RcsBody* ground = RcsGraph_getBodyByName(simImpl->getGraph(), "Ground");
+            RcsBody* ball = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ball");
+            RcsBody* clubTip = RcsGraph_getBodyByName(bot.getCurrentGraph(), "ClubTip");
+            RcsBody* ground = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ground");
+            auto amIK = dynamic_cast<Rcs::AMIKGeneric*>(bot.getConfig()->actionModel);
             
-            if (dynamic_cast<Rcs::ActionModelIKPolicy*>(bot.getControlPolicy())) {
-                RMSG("Already going to the ball...");
-            }
-            else if (ball != nullptr && clubTip != nullptr && ball != ground) {
-                // Deactivate any policy
-                bot.setControlPolicy(nullptr);
-                
-                Rcs::AMIKGeneric* amIK = new Rcs::AMIKGeneric(simImpl->getGraph());
-                MatNd* fixedTaskValue = MatNd_create(3, 1);
-                MatNd_set(fixedTaskValue, 0, 0, -0.0);
-                MatNd_set(fixedTaskValue, 1, 0, -0.03);
-                MatNd_set(fixedTaskValue, 2, 0, 0.00);
-                amIK->addFixedTask(new Rcs::TaskPosition3D(simImpl->getGraph(), ball, clubTip, ground),
-                                   fixedTaskValue);
-                
-                Rcs::ActionModelIKPolicy newPolicy = Rcs::ActionModelIKPolicy(amIK, bot.getConfig()->dt);
-                
-                RMSG("Going to a position in front of the ball...");
+            if (ball != nullptr && clubTip != nullptr && ground != nullptr && amIK != nullptr) {
+                // Set the control policy active
+                preStrikePolicy->reset();
+                bot.setControlPolicy(preStrikePolicy);
+                REXEC(1) { std::cout << "Going to a position in front of the ball ..." << std::endl; }
             }
             
             else {
-                REXEC(2) {
-                    std::cout << "Ignoring the 'n' key stroke" << std::endl;
-                }
+                REXEC(2) { std::cout << "Ignoring the 'n' key stroke" << std::endl; }
             }
         }
         if (vc && vc->getKeyCatcher()->getAndResetKey('p')) {
+            // Start the logger now if desired
             if (startLoggerNextPolicyStart) {
                 bot.logger.start(bot.getConfig()->observationModel->getSpace(),
-                                 bot.getConfig()->actionModel->getSpace(), 5000);
+                                 bot.getConfig()->actionModel->getSpace(), 1000);
             }
+    
+            // Overwrite the current action model by re-creating the one form the experiment config
+            bot.getConfig()->actionModel = bot.getConfig()->createActionModel();
+    
+            // Set the control policy active
             controlPolicy->reset();
             bot.setControlPolicy(controlPolicy);
-            RMSG("Control policy was reset and is active...");
+            REXEC(1) { std::cout << "Control policy was reset and is active ..." << std::endl; }
+        }
+        if (vc && vc->getKeyCatcher()->getAndResetKey('u')) {
+            // Command an initial pose (specified by overwriting some joint values of the desired graph)
+            MatNd* q_des = MatNd_clone(bot.getGraph()->q);
+            q_des->ele[0] = 1.325;
+            q_des->ele[1] = RCS_DEG2RAD(9.296357);
+            q_des->ele[2] = RCS_DEG2RAD(-96.02338);
+            q_des->ele[3] = RCS_DEG2RAD(71.864794);
+            q_des->ele[4] = RCS_DEG2RAD(-78.378359);
+            q_des->ele[5] = RCS_DEG2RAD(54.895289);
+            q_des->ele[6] = RCS_DEG2RAD(-178.449129);
+            q_des->ele[7] = RCS_DEG2RAD(-32.954162);
+            bot.setControlPolicy(nullptr, q_des);
+            MatNd_destroy(q_des);
+            REXEC(1) { std::cout << "Moving to pre-initial state and holding it ..." << std::endl; }
         }
         if (vc && vc->getKeyCatcher()->getAndResetKey('o')) {
-            bot.setControlPolicy(NULL);
-            RMSG("Moving to initial state and holding it...");
+            // Command the initial pose from the desired graph
+            MatNd* q_des_home = MatNd_clone(bot.getGraph()->q);
+            q_des_home->ele[0] = 1.325;
+            q_des_home->ele[1] = RCS_DEG2RAD(-15.926275);
+            q_des_home->ele[2] = RCS_DEG2RAD(-90.195774);
+            q_des_home->ele[3] = RCS_DEG2RAD(68.020458);
+            q_des_home->ele[4] = RCS_DEG2RAD(-88.097549);
+            q_des_home->ele[5] = RCS_DEG2RAD(35.54782);
+            q_des_home->ele[6] = RCS_DEG2RAD(-186.316634);
+            q_des_home->ele[7] = RCS_DEG2RAD(-22.276096);
+            bot.setControlPolicy(nullptr, q_des_home);
+            MatNd_destroy(q_des_home);
+            REXEC(1) { std::cout << "Moving to initial state and holding it ..." << std::endl; }
         }
         
         auto hudText = bot.getConfig()->getHUDText(
@@ -273,11 +311,11 @@ int main(int argc, char** argv)
 #endif
         
         // Wait a bit till next update
-        Timer_waitDT(0.01);
+        Timer_waitDT(0.01);  // TODO @ Michael: is this dangerous here?
     }
     
     // Terminate
-    RMSG("Terminating...");
+    std::cout << "Terminating ..." << std::endl;
     bot.stopThreads();
     bot.disconnectCallback();
     
@@ -293,6 +331,6 @@ int main(int argc, char** argv)
     // before calling exit() to avoid leak reports from valgrind !
     xmlCleanupParser();
     
-    fprintf(stderr, "Thanks for using the Rcs libraries\n");
+    std::cerr << "Thanks for using the Rcs libraries" << std::endl;
     return 0;
 }

@@ -28,41 +28,38 @@
  POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _ACTIONMODELIKPOLICY_H_
-#define _ACTIONMODELIKPOLICY_H_
+#ifndef _PPDBODYORIENTATION_H_
+#define _PPDBODYORIENTATION_H_
 
-#include "../action/ActionModelIK.h"
-#include "ControlPolicy.h"
+#include "PPDCompound.h"
 
 namespace Rcs
 {
 
-/*!
- * ControlPolicy backed by an ActionModelIK. Takes the ownership of the action model.
+/**
+ * Adjusts the angular orientation of a body in space by adding an offset.
+ * The individual dimensions can be masked out by passing false.
  */
-class ActionModelIKPolicy : public ControlPolicy
+class PPDBodyOrientation : public PPDCompound
 {
 public:
-    ActionModelIKPolicy(AMIKGeneric* actionModel, double dt);
+    PPDBodyOrientation(bool includeA, bool includeB, bool includeC);
     
-    virtual ~ActionModelIKPolicy();
+    ~PPDBodyOrientation();
     
-    virtual void reset();
-    
-    virtual void computeAction(MatNd* action, const MatNd* observation);
-    
-    void setBotInternals(const MatNd* q_ctrl, const MatNd* qd_ctrl, const MatNd* T_ctrl);
+    virtual void setValues(PropertySource* inValues);
+
+protected:
+    virtual void init(BodyParamInfo* bpi);
 
 private:
-    AMIKGeneric* actionModel;
+    //! The body's nominal orientation (in world coordinates / the parent's coordinates)
+    double initRot[3][3];
     
-    // Variables from the outside, i.e. PyBot
-    MatNd* q_ctrl;
-    MatNd* qd_ctrl;
-    MatNd* T_ctrl;
-    double dt;
+    //! Angular (around the elementary axes) offset values
+    double offsetRot[3];
 };
 
-} /* namespace Rcs */
+}
 
-#endif /* _ACTIONMODELIKPOLICY_H_ */
+#endif //_PPDBODYORIENTATION_H_

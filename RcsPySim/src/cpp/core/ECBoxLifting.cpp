@@ -74,7 +74,6 @@ namespace Rcs
 {
 class ECBoxLifting : public ExperimentConfig
 {
-protected:
     virtual ActionModel* createActionModel()
     {
         // Get the relevant bodies
@@ -382,8 +381,7 @@ protected:
         manager->addParam("Basket", new PPDMassProperties());
         manager->addParam("Basket", new PPDMaterialProperties());
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSBoxLifting(graph, properties->getPropertyBool("fixedInitState", false));

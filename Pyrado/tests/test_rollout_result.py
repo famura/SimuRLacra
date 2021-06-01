@@ -510,7 +510,8 @@ def test_process(mock_data, data_format: str):
     assert ro_proc.length == ro.length
 
 
-def test_stepsequence_from_pandas(mock_data):
+@pytest.mark.parametrize("given_rewards", [True, False], ids=["rewards", "norewards"])
+def test_stepsequence_from_pandas(mock_data, given_rewards: bool):
     rewards, states, observations, actions, hidden, policy_infos = mock_data
     states = np.asarray(states)
     observations = np.asarray(observations)
@@ -519,7 +520,6 @@ def test_stepsequence_from_pandas(mock_data):
 
     # Create fake observed data set. The labels must match the labels of the spaces. The order can be mixed.
     content = dict(
-        rewards=rewards,
         s0=states[:, 0],
         s1=states[:, 1],
         s2=states[:, 2],
@@ -533,6 +533,8 @@ def test_stepsequence_from_pandas(mock_data):
         steps=np.arange(0, states.shape[0]),
         infos=[dict(foo="bar")] * 6,
     )
+    if given_rewards:
+        content["rewards"] = rewards
     df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in content.items()]))
 
     env = MockEnv(
@@ -543,7 +545,7 @@ def test_stepsequence_from_pandas(mock_data):
 
     reconstructed = StepSequence.from_pandas(df, env.spec)
 
-    assert np.allclose(reconstructed.rewards, rewards)
+    assert len(reconstructed.rewards) == len(rewards)
     assert np.allclose(reconstructed.states, states)
     assert np.allclose(reconstructed.observations, observations)
     assert np.allclose(reconstructed.actions, actions)

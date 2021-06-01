@@ -113,7 +113,7 @@ class RcsSim(SimEnv, Serializable):
             raise pyrado.ValueErr(given=joint_limit_penalty, le_constraint="0")
         self._joint_limit_penalty = joint_limit_penalty
 
-        # Initial init state space is taken from C++
+        # Initial init state space is taken from C++ which can be overwritten by setting a new init_space
         self._init_space = to_pyrado_space(self._sim.initStateSpace)
 
         # By default, the state space is a subset of the observation space. Set this to customize in subclass.
@@ -146,12 +146,18 @@ class RcsSim(SimEnv, Serializable):
         return to_pyrado_space(self._sim.observationSpace)
 
     @property
-    def init_space(self) -> Space:
-        return to_pyrado_space(self._sim.initStateSpace)
-
-    @property
     def act_space(self) -> Space:
         return to_pyrado_space(self._sim.actionSpace)
+
+    @property
+    def init_space(self) -> Space:
+        return self._init_space
+
+    @init_space.setter
+    def init_space(self, space: Space):
+        if not isinstance(space, Space):
+            raise pyrado.TypeErr(given=space, expected_type=Space)
+        self._init_space = space
 
     @property
     def task(self) -> Task:

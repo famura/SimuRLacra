@@ -55,10 +55,10 @@ unsigned int ISSMiniGolf::getDim() const
 
 void ISSMiniGolf::getMinMax(double* min, double* max) const
 {
-    min[0] = 0.48;  // ball_x [m]
-    max[0] = 0.52;
-    min[1] = 1.3;  // ball_y [m]
-    max[1] = 1.5;
+    min[0] = 0.27;  // ball_x [m]
+    max[0] = 0.33;
+    min[1] = 1.35;  // ball_y [m]
+    max[1] = 1.45;
     min[2] = RCS_DEG2RAD(-4.490844-1);  // base-m3 [rad]
     max[2] = RCS_DEG2RAD(-4.490844+1);
     min[3] = RCS_DEG2RAD(-85.619975-1);  // m3-m4 [rad]
@@ -85,9 +85,8 @@ void ISSMiniGolf::applyInitialState(const MatNd* initialState)
     // Set the position to the box' rigid body joints directly in global world coordinates
     double* ballRBJ = &graph->q->ele[ball->jnt->jointIndex];
     if (fixedInitState) {
-        ballRBJ[0] = 0.5; // ball_x [m]
+        ballRBJ[0] = 0.3; // ball_x [m]
         ballRBJ[1] = 1.4; // ball_y [m]
-        ballRBJ[2] = ball->shape[0]->extents[0]; // set ball_z RBJ to the sphere's radius (Ball is relative to Ground)
         RcsGraph_setJoint(graph, "base-m3", RCS_DEG2RAD(-4.490844));
         RcsGraph_setJoint(graph, "m3-m4", RCS_DEG2RAD(-85.619975));
         RcsGraph_setJoint(graph, "m4-m5", RCS_DEG2RAD(+66.87262));
@@ -99,7 +98,6 @@ void ISSMiniGolf::applyInitialState(const MatNd* initialState)
     else {
         ballRBJ[0] = initialState->ele[0];
         ballRBJ[1] = initialState->ele[1];
-        ballRBJ[2] = ball->shape[0]->extents[0]; // set ball_z RBJ to the sphere's radius (Ball is relative to Ground)
         RcsGraph_setJoint(graph, "base-m3", initialState->ele[2]);
         RcsGraph_setJoint(graph, "m3-m4", initialState->ele[3]);
         RcsGraph_setJoint(graph, "m4-m5", initialState->ele[4]);

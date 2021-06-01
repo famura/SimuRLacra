@@ -59,10 +59,17 @@ def init_param(m, **kwargs):
     """
     kwargs = kwargs if kwargs is not None else dict()
 
-    if isinstance(m, (nn.Linear, nn.RNN, nn.GRU, nn.GRUCell)):
+    if isinstance(m, nn.Parameter):  # stores the weights/data directly
+        if m.ndim >= 2:
+            # Most common case
+            init.orthogonal_(m.data)  # former: init.xavier_normal_(param.data)
+        else:
+            init.normal_(m.data)
+
+    elif isinstance(m, (nn.Linear, nn.RNN, nn.GRU, nn.GRUCell)):
         for name, param in m.named_parameters():
             if "weight" in name:
-                if len(param.shape) >= 2:
+                if param.ndim >= 2:
                     # Most common case
                     init.orthogonal_(param.data)  # former: init.xavier_normal_(param.data)
                 else:

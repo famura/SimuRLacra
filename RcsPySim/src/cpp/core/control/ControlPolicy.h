@@ -89,14 +89,6 @@ public:
      * @param[in]  observation current observed state
      */
     virtual void computeAction(MatNd* action, const MatNd* observation) = 0;
-    
-    /*!
-     * Propagate the robot's internal state to the policy. The default implementation does nothing.
-     * @param[in]
-     * @param[in] TODO
-     * @param[in] TODO
-     */
-    virtual void setBotInternals(const MatNd* q_ctrl, const MatNd* qd_ctrl, const MatNd* T_ctrl){}
 };
 
 /**

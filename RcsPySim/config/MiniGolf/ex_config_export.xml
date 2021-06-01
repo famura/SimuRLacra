@@ -1,0 +1,5 @@
+<Experiment actionModelType="ik" checkJointLimits="True" collisionAvoidanceIK="False" dt="0.01" envType="MiniGolf" extraConfigDir="/home/muratore/Software/SimuRLacra/RcsPySim/src/python/rcsenv/config/MiniGolf" fixedInitState="True" graphFileName="gMiniGolf.xml" observeForceTorque="False" physicsConfigFile="pMiniGolf.xml" physicsEngine="Bullet" positionTasks="True" usePhysicsNode="True">
+  <collisionConfig predCollHorizon="20" threshold="0.05">
+    <pairs body1="Club" body2="Ground" />
+  </collisionConfig>
+<policy file="policy_export.pt" type="torch" /><preStrikePolicy file="pre_strike_policy_export.pt" type="torch" /></Experiment>

@@ -268,7 +268,7 @@ void ExperimentConfig::load(PropertySource* properties)
         auto inner = observationModel;
         observationModel = new OMNormalized(inner, minOverride, maxOverride);
     }
-
+    
     // Make observation partial if desired
     auto partialObs = properties->getChild("partialObservation");
     if (partialObs) {

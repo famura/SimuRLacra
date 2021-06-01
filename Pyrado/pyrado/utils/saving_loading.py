@@ -67,7 +67,15 @@ def _load_fcn(path, extension):
     return obj
 
 
-def save(obj, name: str, save_dir: PathLike, prefix: str = "", suffix: str = "", use_state_dict: bool = False):
+def save(
+    obj,
+    name: str,
+    save_dir: PathLike,
+    prefix: str = "",
+    suffix: str = "",
+    use_state_dict: bool = False,
+    verbose: bool = False,
+):
     """
     Save an object object using a prefix or suffix, depending on the meta information.
 
@@ -79,6 +87,7 @@ def save(obj, name: str, save_dir: PathLike, prefix: str = "", suffix: str = "",
     :param suffix: suffix for altering the name, e.g. '..._ref'
     :param use_state_dict: if `True` save the `state_dict`, else save the entire module. This only has an effect if
                            PyTorch modules (file_ext = 'pt') are saved.
+    :param verbose: if `True`, print the path where the object has been saved to
 
     .. seealso::
         https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference
@@ -115,7 +124,11 @@ def save(obj, name: str, save_dir: PathLike, prefix: str = "", suffix: str = "",
 
     # Save the data
     name_wo_file_ext = name[: name.find(".")]
-    _save_fcn(obj_, osp.join(save_dir, f"{prefix}{name_wo_file_ext}{suffix}.{file_ext}"), file_ext)
+    name_save = f"{prefix}{name_wo_file_ext}{suffix}.{file_ext}"
+    _save_fcn(obj_, path=osp.join(save_dir, name_save), extension=file_ext)
+
+    if verbose:
+        print_cbt(f"Loaded {osp.join(save_dir, name_save)}", "g")
 
 
 def load(name: str, load_dir: PathLike, prefix: str = "", suffix: str = "", obj=None, verbose: bool = False):
@@ -157,7 +170,7 @@ def load(name: str, load_dir: PathLike, prefix: str = "", suffix: str = "", obj=
     # Load the data
     name_wo_file_ext = name[: name.find(".")]
     name_load = f"{prefix}{name_wo_file_ext}{suffix}.{file_ext}"
-    obj_ = _load_fcn(osp.join(load_dir, name_load), file_ext)
+    obj_ = _load_fcn(path=osp.join(load_dir, name_load), extension=file_ext)
     assert obj_ is not None
 
     if isinstance(obj_, dict) and file_ext == "pt":

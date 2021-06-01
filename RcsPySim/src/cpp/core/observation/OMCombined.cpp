@@ -35,7 +35,6 @@ namespace Rcs
 
 OMCombined::~OMCombined()
 {
-    // delete parts
     for (auto part : parts) {
         delete part;
     }

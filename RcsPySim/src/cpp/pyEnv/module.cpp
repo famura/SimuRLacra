@@ -52,7 +52,9 @@ namespace py = pybind11;
 
 RCS_INSTALL_ERRORHANDLERS
 
+/* Could be done in the future
 void define_gui_classes(py::module& m);
+ */
 
 PYBIND11_MODULE(_rcsenv, m)
 {
@@ -200,10 +202,12 @@ PYBIND11_MODULE(_rcsenv, m)
 //    py::class_<Rcs::ActionModelIKPolicy>(m, "ActionModelIKPolicy", controlPolicy)
 //        .def(py::init(&Rcs::loadMLPPolicyFromXml));
     
-    // Define gui stuff if available
+/* Could be done in the future
 #ifdef GUI_AVAILABLE
+    // Define gui stuff if available
     define_gui_classes(m);
 #endif
+ */
 
     m.def("saveExperimentParams", [](py::dict& config, const char* filename){
         std::unique_ptr<Rcs::PropertySource> ps(new Rcs::PropertySourceDict(config));

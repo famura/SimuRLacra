@@ -56,8 +56,8 @@ private:
     //! The body's nominal position (in world coordinates / the parent's coordinates)
     double initPos[3];
     
-    //! Offset
-    double offset[3];
+    //! Position offset values
+    double offsetPos[3];
 };
 
 }

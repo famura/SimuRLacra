@@ -51,7 +51,6 @@ set(CORE_SRCS
     config/PropertySourceXml.cpp
     
     control/ControlPolicy.cpp
-    control/ActionModelIKPolicy.cpp
     
     initState/InitStateSetter.cpp
     initState/ISSBallInTube.cpp
@@ -101,6 +100,7 @@ set(CORE_SRCS
     physics/PhysicsParameterManager.cpp
     physics/BodyParamInfo.cpp
     physics/PhysicsParameterDescriptor.cpp
+    physics/PPDBodyOrientation.cpp
     physics/PPDBodyPosition.cpp
     physics/PPDBoxExtents.cpp
     physics/PPDCompound.cpp

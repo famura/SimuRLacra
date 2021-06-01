@@ -34,6 +34,7 @@
 #include "ExperimentConfig.h"
 #include "DataLogger.h"
 
+#include <Rcs_filters.h>
 #include <MotionControlLayer.h>
 
 #include <mutex>
@@ -61,18 +62,15 @@ public:
     // not copy- or movable
     RCSPYSIM_NOCOPY_NOMOVE(RcsPyBot)
     
-    ExperimentConfig* getConfig()
-    {
-        return config;
-    }
+    ExperimentConfig* getConfig() { return config; }
     
     /**
      * Replace the control policy.
      * This method may be called while the bot is running.
-     * Setting NULL causes the bot to return to it's initial position.
-     * Does NOT take ownership.
+     * Setting `controlPolicy` to`nullptr` and `q_des` to a joint config causes the bot to go to this configuration.
+     * Does **not** take ownership.
      */
-    void setControlPolicy(ControlPolicy* controlPolicy);
+    void setControlPolicy(ControlPolicy* controlPolicy, const MatNd* q_des = nullptr);
     
     ControlPolicy* getControlPolicy() const
     {
@@ -110,8 +108,12 @@ protected:
     //! Control policy
     ControlPolicy* controlPolicy;
     
-    // Temporary matrices
+    //! Filter for going to the home pose
+    Rcs::SecondOrderLPFND* homePoseFilt;
+    
+    //! Temporary matrices
     MatNd* q_ctrl;
+    MatNd* q_ctrl_filt_targ;
     MatNd* qd_ctrl;
     MatNd* T_ctrl;
     

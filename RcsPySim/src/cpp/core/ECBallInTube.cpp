@@ -73,7 +73,6 @@ namespace Rcs
 {
 class ECBallInTube : public ExperimentConfig
 {
-protected:
     virtual ActionModel* createActionModel()
     {
         // Setup inner action model
@@ -81,7 +80,7 @@ protected:
         RCHECK(leftEffector);
         RcsBody* rightEffector = RcsGraph_getBodyByName(graph, "Effector_R");
         RCHECK(rightEffector);
-    
+        
         // Get reference frames for the position and orientation tasks
         std::string refFrameType = "world";
         properties->getProperty(refFrameType, "refFrame");
@@ -107,20 +106,20 @@ protected:
             os << "Unsupported reference frame type: " << refFrame;
             throw std::invalid_argument(os.str());
         }
-    
+        
         // Get the method how to combine the movement primitives / tasks given their activation
         std::string taskCombinationMethod = "unspecified";
         properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
         TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
-    
+        
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
-    
+        
         if (actionModelType == "ik") {
             // Create the action model
             auto amIK = new AMIKGeneric(graph);
             std::vector<Task*> tasks;
-        
+            
             if (properties->getPropertyBool("positionTasks", true)) {
                 throw std::invalid_argument("Position tasks are not implemented for AMIKGeneric in this environment.");
             }
@@ -138,7 +137,7 @@ protected:
                 tasks.back()->resetParameter(Task::Parameters(-dt*M_PI_2, dt*M_PI_2, 1.0, "Bd Left [deg/s]"));
                 tasks.emplace_back(new TaskOmega1D("Cd", graph, leftEffector, refBody, refFrame));
                 tasks.back()->resetParameter(Task::Parameters(-dt*M_PI_2, dt*M_PI_2, 1.0, "Cd Left [deg/s]"));
-            
+                
                 // Right
                 tasks.emplace_back(new TaskVelocity1D("Xd", graph, rightEffector, refBody, refFrame));
                 tasks.back()->resetParameter(Task::Parameters(-dt, dt, 1.0, "Xd Right [m/s]"));
@@ -152,19 +151,19 @@ protected:
                 tasks.back()->resetParameter(Task::Parameters(-dt*M_PI_2, dt*M_PI_2, 1.0, "Bd Right [deg/s]"));
                 tasks.emplace_back(new TaskOmega1D("Cd", graph, rightEffector, refBody, refFrame));
                 tasks.back()->resetParameter(Task::Parameters(-dt*M_PI_2, dt*M_PI_2, 1.0, "Cd Right [deg/s]"));
-            
+                
                 // Add the tasks
                 for (auto t : tasks) { amIK->addTask(t); }
-            
+                
                 return amIK;
             }
         }
-    
+        
         else if (actionModelType == "ik_activation") {
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
-        
+            
             if (properties->getPropertyBool("positionTasks", true)) {
                 RcsBody* ball = RcsGraph_getBodyByName(graph, "Ball");
                 RcsBody* table = RcsGraph_getBodyByName(graph, "Table");
@@ -173,7 +172,7 @@ protected:
                 RCHECK(table);
                 RCHECK(slider);
                 std::string taskName;
-            
+                
                 // Left
                 auto tl0 = new TaskPosition3D(graph, leftEffector, nullptr, nullptr);
                 taskName = " Position Home [m]";
@@ -211,14 +210,14 @@ protected:
                 tasks.emplace_back(tr2);
                 auto tr3 = new TaskEuler3D(graph, rightEffector, slider, nullptr);
                 tasks.emplace_back(tr3);
-            
+                
                 // Add the tasks
                 for (auto t : tasks) { amIK->addTask(t); }
-            
+                
                 // Set the tasks' desired states
                 std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
                 amIK->setXdesFromTaskSpec(taskSpec);
-            
+                
                 // Incorporate collision costs into IK
                 if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                     REXEC(4) {
@@ -230,15 +229,15 @@ protected:
             else {
                 throw std::invalid_argument("Velocity tasks are not supported for AMIKControllerActivation.");
             }
-        
+            
             return amIK;
         }
-    
+        
         else if (actionModelType == "ds_activation") {
             // Initialize action model and tasks
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
             std::vector<std::unique_ptr<DynamicalSystem>> tasks;
-        
+            
             // Control effector positions and orientation
             if (properties->getPropertyBool("positionTasks", false)) {
                 RcsBody* slider = RcsGraph_getBodyByName(graph, "Slider");
@@ -249,7 +248,7 @@ protected:
                 // Right
                 innerAM->addTask(new TaskPosition3D(graph, rightEffector, slider, slider));
                 innerAM->addTask(new TaskEuler3D(graph, rightEffector, slider, slider));
-    
+                
                 // Obtain task data (depends on the order of the MPs coming from Pyrado)
                 // Left
                 unsigned int i = 0;
@@ -281,7 +280,7 @@ protected:
                     i++;
                 }
             }
-    
+                
                 // Control effector velocity and orientation
             else {
                 // Left
@@ -298,7 +297,7 @@ protected:
                 innerAM->addTask(new TaskOmega1D("Ad", graph, rightEffector, refBody, refFrame));
                 innerAM->addTask(new TaskOmega1D("Bd", graph, rightEffector, refBody, refFrame));
                 innerAM->addTask(new TaskOmega1D("Cd", graph, rightEffector, refBody, refFrame));
-    
+                
                 // Obtain task data (depends on the order of the MPs coming from Pyrado)
                 // Left
                 unsigned int i = 0;
@@ -330,27 +329,27 @@ protected:
                     i++;
                 }
             }
-        
+            
             if (tasks.empty()) {
                 throw std::invalid_argument("No tasks specified!");
             }
-        
+            
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                 std::cout << "IK considers the provided collision model" << std::endl;
                 innerAM->setupCollisionModel(collisionMdl);
             }
-        
+            
             // Setup task-based action model
             std::vector<DynamicalSystem*> taskRel;
             for (auto& task : tasks) {
                 taskRel.push_back(task.release());
             }
-        
+            
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
-    
+        
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;
@@ -480,7 +479,7 @@ protected:
                 RCHECK(amAct);
                 fullState->addPart(new OMDynamicalSystemGoalDistance(amAct));
             }
-    
+            
             // Add the dynamical system discrepancy observation model
             if (properties->getPropertyBool("observeDynamicalSystemDiscrepancy", false) & (collisionMdl != nullptr)) {
                 auto castedAM = dynamic_cast<AMDynamicalSystemActivation*>(actionModel);
@@ -504,8 +503,7 @@ protected:
         manager->addParam("Ball", new PPDMaterialProperties());
         manager->addParam("Slider", new PPDMassProperties());
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSBallInTube(graph, properties->getPropertyBool("fixedInitState", false));
@@ -580,7 +578,7 @@ public:
         }
         linesOut.emplace_back(
             string_format("physics engine: %s                     sim time:        %2.3f s", simName, currentTime));
-    
+        
         unsigned int numPosCtrlJoints = 0;
         unsigned int numTrqCtrlJoints = 0;
         // Iterate over unconstrained joints
@@ -597,9 +595,9 @@ public:
         linesOut.emplace_back(
             string_format("num joints:    %d total, %d pos ctrl, %d trq ctrl", graph->nJ, numPosCtrlJoints,
                           numTrqCtrlJoints));
-    
+        
         unsigned int sd = observationModel->getStateDim();
-    
+        
         auto omLeftLin = observationModel->findOffsets<OMBodyStateLinear>(); // there are two, we find the first
         if (omLeftLin) {
             linesOut.emplace_back(
@@ -613,13 +611,13 @@ public:
                               obs->ele[sd + omLeftLin.vel + 3], obs->ele[sd + omLeftLin.vel + 4],
                               obs->ele[sd + omLeftLin.vel + 5]));
         }
-
+        
         else if (omLeftLin) {
             linesOut.emplace_back(
                 string_format("box absolute:  [% 1.3f,% 1.3f,% 1.3f] m",
                               obs->ele[omLeftLin.pos + 6], obs->ele[omLeftLin.pos + 7], obs->ele[omLeftLin.pos + 8]));
         }
-    
+        
         auto omFTS = observationModel->findOffsets<OMForceTorque>();
         if (omFTS) {
             linesOut.emplace_back(
@@ -627,14 +625,14 @@ public:
                               obs->ele[omFTS.pos], obs->ele[omFTS.pos + 1], obs->ele[omFTS.pos + 2],
                               obs->ele[omFTS.pos + 3], obs->ele[omFTS.pos + 4], obs->ele[omFTS.pos + 5]));
         }
-    
+        
         auto omColl = observationModel->findOffsets<OMCollisionCost>();
         auto omCollPred = observationModel->findOffsets<OMCollisionCostPrediction>();
         if (omColl && omCollPred) {
             linesOut.emplace_back(
                 string_format("coll cost:       %3.2f                    pred coll cost: %3.2f",
                               obs->ele[omColl.pos], obs->ele[omCollPred.pos]));
-    
+            
         }
         else if (omColl) {
             linesOut.emplace_back(string_format("coll cost:       %3.2f", obs->ele[omColl.pos]));
@@ -642,16 +640,15 @@ public:
         else if (omCollPred) {
             linesOut.emplace_back(string_format("pred coll cost:   %3.2f", obs->ele[omCollPred.pos]));
         }
-    
+        
         auto omMI = observationModel->findOffsets<OMManipulabilityIndex>();
         if (omMI) {
             linesOut.emplace_back(string_format("manip idx:       %1.3f", obs->ele[omMI.pos]));
         }
-    
+        
         auto omGD = observationModel->findOffsets<OMDynamicalSystemGoalDistance>();
         if (omGD) {
-            if (properties->getPropertyBool("positionTasks", false))
-            {
+            if (properties->getPropertyBool("positionTasks", false)) {
                 linesOut.emplace_back(
                     string_format("goal distance: [% 1.2f,% 1.2f,% 1.2f,% 1.2f,% 1.2f,\n"
                                   "               % 1.2f,% 1.2f,% 1.2f,% 1.2f,% 1.2f,% 1.2f]",
@@ -661,14 +658,14 @@ public:
                                   obs->ele[omGD.pos + 8], obs->ele[omGD.pos + 9], obs->ele[omGD.pos + 10]));
             }
         }
-    
+        
         auto omTSD = observationModel->findOffsets<OMTaskSpaceDiscrepancy>();
         if (omTSD) {
             linesOut.emplace_back(
                 string_format("ts delta:      [% 1.3f,% 1.3f,% 1.3f] m",
                               obs->ele[omTSD.pos], obs->ele[omTSD.pos + 1], obs->ele[omTSD.pos + 2]));
         }
-    
+        
         std::stringstream ss;
         ss << "actions:       [";
         for (unsigned int i = 0; i < currentAction->m - 1; i++) {
@@ -679,7 +676,7 @@ public:
         }
         ss << std::fixed << std::setprecision(2) << MatNd_get(currentAction, currentAction->m - 1, 0) << "]";
         linesOut.emplace_back(string_format(ss.str()));
-    
+        
         if (physicsManager != nullptr) {
             // Get the parameters that are not stored in the Rcs graph
             BodyParamInfo* ball_bpi = physicsManager->getBodyInfo("Ball");
@@ -687,16 +684,16 @@ public:
             double ball_radius = ball_bpi->body->shape[0]->extents[0];
             double slip = 0;
             ball_bpi->material.getDouble("slip", slip);
-        
+            
             linesOut.emplace_back(string_format(
                 "ball mass:      %2.2f kg           ball radius:             %2.3f cm",
                 ball_bpi->body->m, ball_radius*100));
-        
+            
             linesOut.emplace_back(string_format(
                 "ball friction:  %1.2f    ball rolling friction:             %1.3f",
                 ball_bpi->material.getFrictionCoefficient(),
                 ball_bpi->material.getRollingFrictionCoefficient()/ball_radius));
-        
+            
             linesOut.emplace_back(string_format(
                 "ball slip:      %3.1f rad/(Ns)       CoM offset:[% 2.1f, % 2.1f, % 2.1f] mm",
                 slip, com[0]*1000, com[1]*1000, com[2]*1000));

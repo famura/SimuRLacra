@@ -82,7 +82,7 @@ void DataLogger::start(
     output.open(fname);
     
     // Write header (column names)
-    output << R"("steps","rewards)";
+    output << R"("steps)";
     for (auto& name : observationSpace->getNames()) {
         output << "\",\"" << name;
     }
@@ -92,7 +92,7 @@ void DataLogger::start(
     output << "\"" << std::endl;
     
     // Allocate buffer
-    buffer = MatNd_create(maxStepCount, 1 + observationSpace->getNames().size() + actionSpace->getNames().size());
+    buffer = MatNd_create(maxStepCount, observationSpace->getNames().size() + actionSpace->getNames().size());
     currentStep = 0;
     
     RLOG(0, "Logging started!");
@@ -131,7 +131,7 @@ void DataLogger::stop()
     RLOG(0, "Logging stopped!");
 }
 
-void DataLogger::record(const MatNd* observation, const MatNd* action, double reward)
+void DataLogger::record(const MatNd* observation, const MatNd* action)
 {
     // Try to obtain lock. If it's blocked, it's blocked by start or stop, so we don't want to lock anyways.
     std::unique_lock<std::recursive_mutex> lock(mutex, std::try_to_lock);
@@ -146,9 +146,8 @@ void DataLogger::record(const MatNd* observation, const MatNd* action, double re
     }
     double* lineBuffer = MatNd_getRowPtr(buffer, currentStep++);
     
-    lineBuffer[0] = reward;
-    VecNd_copy(&lineBuffer[1], observation->ele, observation->m);
-    VecNd_copy(&lineBuffer[1 + observation->m], action->ele, action->m);
+    VecNd_copy(&lineBuffer[0], observation->ele, observation->m);
+    VecNd_copy(&lineBuffer[observation->m], action->ele, action->m);
 }
 
 } /* namespace Rcs */

@@ -107,7 +107,8 @@ protected:
      * @param properties property source to read configuration from. Takes ownership.
      */
     virtual void load(PropertySource* properties);
-    
+
+public:
     /**
      * Create the action model. Read any configuration from this->properties.
      * @return the new action model
@@ -119,8 +120,6 @@ protected:
      * @return the new observation model
      */
     virtual ObservationModel* createObservationModel() = 0;
-
-public:
     
     /**
      * Create the init state setter. Read any configuration from this->properties.
@@ -148,8 +147,15 @@ public:
     PhysicsParameterManager* createPhysicsParameterManager();
     
     /**
+     * Add the physics parameter descriptors to the given physics parameter manager.
+     * @param manager parameter manager to populate.
+     */
+    virtual void populatePhysicsParameters(PhysicsParameterManager* manager);
+    
+    /**
      * Called to update the HUD text for the viewer.
-     * The default implementation will show the physics engine name, the current time and the last step reward.
+     * The default implementation will show the physics engine name, the current time.
+     *
      * @param[out] linesOut          vector of HUD lines. initially empty.
      * @param[in] currentTime        simulation time
      * @param[in] currentObservation latest observation
@@ -186,13 +192,6 @@ public:
      */
     virtual void initViewer(Rcs::Viewer* viewer);
 
-protected:
-    /**
-     * Add the physics parameter descriptors to the given physics parameter manager.
-     * @param manager parameter manager to populate.
-     */
-    virtual void populatePhysicsParameters(PhysicsParameterManager* manager);
-
 public:
     //! Property source (owned)
     PropertySource* properties;
@@ -200,7 +199,7 @@ public:
     //! Graph description
     RcsGraph* graph;
     
-    //! Action model (pluggable).
+    //! Action model (pluggable)
     ActionModel* actionModel;
     
     //! Observation model (pluggable) used to create the observation which will be returned from step()

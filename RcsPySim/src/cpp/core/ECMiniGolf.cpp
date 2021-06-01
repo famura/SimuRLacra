@@ -41,17 +41,20 @@
 #include "observation/OMPartial.h"
 #include "observation/OMTaskSpaceDiscrepancy.h"
 #include "physics/PhysicsParameterManager.h"
+#include "physics/PPDBodyOrientation.h"
 #include "physics/PPDBodyPosition.h"
 #include "physics/PPDMassProperties.h"
 #include "physics/PPDMaterialProperties.h"
-#include "physics/ForceDisturber.h"
+#include "physics/PPDSphereRadius.h"
 #include "util/string_format.h"
 
 #include <Rcs_Mat3d.h>
 #include <Rcs_Vec3d.h>
 #include <Rcs_typedef.h>
 #include <Rcs_macros.h>
-//#include <TaskDistance1D.h>
+#include <TaskDistance1D.h>
+#include <TaskEuler1D.h>
+#include <TaskFactory.h>
 #include <TaskPosition1D.h>
 #include <TaskVelocity1D.h>
 
@@ -71,8 +74,7 @@ namespace Rcs
 
 class ECMiniGolf : public ExperimentConfig
 {
-
-protected:
+    
     virtual ActionModel* createActionModel()
     {
         std::string actionModelType = "unspecified";
@@ -81,47 +83,51 @@ protected:
         // Common for the action models
         RcsBody* ground = RcsGraph_getBodyByName(graph, "Ground");
         RCHECK(ground);
+        RcsBody* club = RcsGraph_getBodyByName(graph, "Club");
+        RCHECK(club);
         RcsBody* clubTip = RcsGraph_getBodyByName(graph, "ClubTip");
         RCHECK(clubTip);
         RcsBody* ball = RcsGraph_getBodyByName(graph, "Ball");
         RCHECK(ball);
         
-        // Get reference frames for the position and orientation tasks
-        std::string refFrameType = "world";
-        properties->getProperty(refFrameType, "refFrame");
-        RcsBody* refBody = nullptr;
-        RcsBody* refFrame = nullptr;
-        if (refFrameType == "world") {
-            // Keep nullptr
-        }
-        else if (refFrameType == "ball") {
-            refBody = ball;
-            refFrame = ball;
-        }
-        else {
-            std::ostringstream os;
-            os << "Unsupported reference frame type: " << refFrame;
-            throw std::invalid_argument(os.str());
-        }
-        
         if (actionModelType == "ik") {
-            // Create the action model
+            // Create the action model. Every but the x tasks have been fixed tasks originally, but now are constant
+            // outputs on the policy. This way, we can use the same policy structure in the pre-strike ControlPolicy
+            // on the real robot.
             auto amIK = new AMIKGeneric(graph);
             if (properties->getPropertyBool("positionTasks", true)) {
+                // Driving
+                auto tmpTask = new TaskVelocity1D("Zd", graph, ball, clubTip, nullptr);
+                tmpTask->resetParameter(Task::Parameters(-7.0, 7.0, 1.0, "Z Velocity [m/s]"));
+                amIK->addTask(tmpTask);
+//                amIK->addTask(new TaskPosition1D("Z", graph, ball, clubTip, nullptr));
+                // Centering
+//                amIK->addTask(new TaskPosition1D("X", graph, ball, clubTip, nullptr));
+                amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, nullptr));
+                amIK->addTask(new TaskDistance1D(graph, club, ground, 2));
+                amIK->addTask(TaskFactory::createTask(
+                    R"(<Task name="ClubTip_Polar" controlVariable="POLAR" effector="ClubTip"  active="true" />)",
+                    graph)
+                );
+                /*
                 amIK->addTask(new TaskPosition1D("X", graph, clubTip, refBody, refFrame));
+                amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, ground));
+                amIK->addTask(new TaskDistance1D(graph, club, ground, 2));
+                amIK->addTask(new TaskEuler1D("C", graph, clubTip, nullptr, ground));
+                 */
             }
             else {
-                amIK->addTask(new TaskVelocity1D("Xd", graph, clubTip, refBody, refFrame));
+                throw std::invalid_argument("Velocity tasks are not implemented for AMIKGeneric in this environment.");
             }
             
-            // Add fixed tasks after the ones controlled by th policy
-            MatNd* fixedClubTipY = MatNd_create(1, 1);
-            MatNd* fixedClubTipZ = MatNd_create(1, 1);
-            MatNd_set(fixedClubTipY, 0, 0, -0.0);
-            MatNd_set(fixedClubTipZ, 0, 0, -0.03);
-            amIK->addFixedTask(new TaskPosition1D("Y", graph, ball, clubTip, ground), fixedClubTipY);
-            amIK->addFixedTask(new TaskPosition1D("Z", graph, ball, clubTip, ground), fixedClubTipZ);
-//            amIK->addFixedTask(new TaskDistance1D(graph, clubTip, ground, 2), fixedClubTipZ);
+            // Incorporate collision costs into IK
+            if (properties->getPropertyBool("collisionAvoidanceIK", false)) {
+                REXEC(4) {
+                    std::cout << "IK considers the provided collision model" << std::endl;
+                }
+                amIK->setupCollisionModel(collisionMdl);
+            }
+            
             return amIK;
         }
         
@@ -136,20 +142,46 @@ protected:
     {
         auto fullState = new OMCombined();
         
-        // Observe the ball's position
-        auto omLinBall = new OMBodyStateLinear(graph, "Ball", nullptr); // former: "Ground"
-        omLinBall->setMaxVelocity(10.); // [m/s]
-        fullState->addPart(omLinBall);
+        // Observe the ball
+        if (properties->getPropertyBool("observeVelocities", false)) {
+            auto omLinBall = new OMBodyStateLinear(graph, "Ball", nullptr);
+            omLinBall->setMinState({-5, -5, 0}); // [m]
+            omLinBall->setMaxState({3, 3, 0.1}); // [m]
+            omLinBall->setMaxVelocity(10); // [m/s]
+            fullState->addPart(omLinBall);
+        }
+        else {
+            auto omLinBall = new OMBodyStateLinearPositions(graph, "Ball", nullptr);
+            omLinBall->setMinState({-3, -3, 0}); // [m]
+            omLinBall->setMaxState({3, 3, 0.1}); // [m]
+            fullState->addPart(omLinBall);
+        }
         
-        // Observe the club's position
-        auto omLinClub = new OMBodyStateLinear(graph, "ClubTip", nullptr); // former: "Ground"
-        omLinClub->setMaxVelocity(5.); // [m/s]
-        fullState->addPart(omLinClub);
+        // Observe the club
+        if (properties->getPropertyBool("observeVelocities", false)) {
+            auto omLinClub = new OMBodyStateLinear(graph, "ClubTip", nullptr);
+            omLinClub->setMinState({-3, -3, 0}); // [m]
+            omLinClub->setMaxState({3, 3, 2}); // [m]
+            omLinClub->setMaxVelocity(5); // [m/s]
+            fullState->addPart(omLinClub);
+        }
+        else {
+            auto omLinClub = new OMBodyStateLinearPositions(graph, "ClubTip", nullptr);
+            omLinClub->setMinState({-3, -3, 0}); // [m]
+            omLinClub->setMaxState({3, 3, 2}); // [m]
+            fullState->addPart(omLinClub);
+        }
         
-        // Observe the club's orientation
-        auto omAng = new OMBodyStateAngular(graph, "ClubTip", nullptr); // former: "Ground"
-        omAng->setMaxVelocity(20.); // [rad/s]
-        fullState->addPart(omAng);
+        // Observe the club
+        if (properties->getPropertyBool("observeVelocities", false)) {
+            auto omAng = new OMBodyStateAngular(graph, "ClubTip", nullptr);
+            omAng->setMaxVelocity(20); // [rad/s]
+            fullState->addPart(omAng);
+        }
+        else {
+            auto omAng = new OMBodyStateAngularPositions(graph, "ClubTip", nullptr);
+            fullState->addPart(omAng);
+        }
         
         // Observe the robot's joints
         std::list<std::string> listOfJointNames = {"base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"};
@@ -161,10 +193,10 @@ protected:
         properties->getProperty(actionModelType, "actionModelType");
         
         // Add force/torque measurements
-        if (properties->getPropertyBool("observeForceTorque", true)) {
-            RcsSensor* fts = RcsGraph_getSensorByName(graph, "WristLoadCellLBR");
+        if (properties->getPropertyBool("observeForceTorque", false)) {
+            RcsSensor* fts = RcsGraph_getSensorByName(graph, "WristLoadCellSchunk");
             if (fts) {
-                auto omForceTorque = new OMForceTorque(graph, fts->name, 300);
+                auto omForceTorque = new OMForceTorque(graph, fts->name, 1000);
                 fullState->addPart(OMPartial::fromMask(omForceTorque, {true, true, true, false, false, false}));
             }
         }
@@ -186,37 +218,26 @@ protected:
             fullState->addPart(omCollisionCost);
         }
         
-        // Add the task space discrepancy observation model
-        if (properties->getPropertyBool("observeTaskSpaceDiscrepancy", false)) {
-            auto wamIK = actionModel->unwrap<ActionModelIK>();
-            if (wamIK) {
-                auto omTSDescr = new OMTaskSpaceDiscrepancy("ClubTip", graph, wamIK->getController()->getGraph());
-                fullState->addPart(omTSDescr);
-            }
-            else {
-                delete fullState;
-                throw std::invalid_argument("The action model needs to be of type ActionModelIK!");
-            }
-        }
-        
         return fullState;
     }
     
     virtual void populatePhysicsParameters(PhysicsParameterManager* manager)
     {
+        manager->addParam("Ball", new PPDSphereRadius("Ground"));
         manager->addParam("Ball", new PPDMassProperties());
         manager->addParam("Ball", new PPDMaterialProperties());
         manager->addParam("Club", new PPDMassProperties());
         manager->addParam("Ground", new PPDMaterialProperties());
         manager->addParam("Ground", new PPDMaterialProperties());
         manager->addParam("ObstacleLeft", new PPDBodyPosition(true, true, false));
+        manager->addParam("ObstacleLeft", new PPDBodyOrientation(false, false, true));
         manager->addParam("ObstacleRight", new PPDBodyPosition(true, true, false));
+        manager->addParam("ObstacleRight", new PPDBodyOrientation(false, false, true));
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
-        return new ISSMiniGolf(graph, properties->getPropertyBool("fixedInitState", true));
+        return new ISSMiniGolf(graph, properties->getPropertyBool("fixedInitState", false));
     }
     
     virtual void initViewer(Rcs::Viewer* viewer)
@@ -224,15 +245,15 @@ public:
 #ifdef GRAPHICS_AVAILABLE
         // Set the camera center
         double cameraCenter[3];
-        cameraCenter[0] = 2.0;
-        cameraCenter[1] = 1.0;
+        cameraCenter[0] = 1.5;
+        cameraCenter[1] = 0.5;
         cameraCenter[2] = 0.0;
         
         // Set the camera position
         double cameraLocation[3];
-        cameraLocation[0] = -4.5;
+        cameraLocation[0] = -1.5;
         cameraLocation[1] = 4.5;
-        cameraLocation[2] = 3.5;
+        cameraLocation[2] = 2.8;
         
         // Camera up vector defaults to z
         double cameraUp[3];
@@ -243,13 +264,6 @@ public:
                                       osg::Vec3d(cameraCenter[0], cameraCenter[1], cameraCenter[2]),
                                       osg::Vec3d(cameraUp[0], cameraUp[1], cameraUp[2]));
 #endif
-    }
-    
-    virtual ForceDisturber* createForceDisturber()
-    {
-        RcsBody* effector = RcsGraph_getBodyByName(graph, "ClubTip");
-        RCHECK(effector);
-        return new ForceDisturber(effector, effector);
     }
     
     void
@@ -310,12 +324,6 @@ public:
             linesOut.emplace_back(
                 string_format("forces:       [% 3.1f,% 3.1f,% 3.1f] N",
                               obs->ele[omFT.pos], obs->ele[omFT.pos + 1], obs->ele[omFT.pos + 2]));
-        }
-        
-        auto omTSD = observationModel->findOffsets<OMTaskSpaceDiscrepancy>();
-        if (omTSD) {
-            linesOut.emplace_back(
-                string_format("ts delta:     [% 1.3f,% 1.3f] m", obs->ele[omTSD.pos], obs->ele[omTSD.pos + 1]));
         }
         
         std::stringstream ss;

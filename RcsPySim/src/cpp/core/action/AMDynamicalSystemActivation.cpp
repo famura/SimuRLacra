@@ -50,7 +50,7 @@ AMDynamicalSystemActivation::AMDynamicalSystemActivation(
 AMDynamicalSystemActivation::~AMDynamicalSystemActivation()
 {
     delete wrapped;
-    delete activation;
+    MatNd_destroy(activation);
     for (auto* ds : dynamicalSystems) {
         delete ds;
     }

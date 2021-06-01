@@ -236,7 +236,7 @@ void ActionModelIK::ikFromDX(MatNd* q_des, MatNd* q_dot_des, double dt) const
 //        MatNd* dq_ref_ts = MatNd_create(graph->dof, 1);
 //        MatNd* dq_ref_ns = MatNd_create(graph->dof, 1);
 //        MatNd* a_temp = MatNd_create(controller->getNumberOfTasks(), 1);
-//        solver->solveLeftInverse(dq_ref_ts, dq_ref_ns, dx_des, dH, a_temp, lambda); // tries to solve everything exactly
+//        solver->solveLeftInverse(dq_ref_ts, dq_ref_ns, dx_des, dH, a_temp, lambda); // does not try to solve everything exactly
 //        MatNd_add(dq_ref, dq_ref_ts, dq_ref_ns);
 //        MatNd_destroy(dq_ref_ts);
 //        MatNd_destroy(dq_ref_ns);
@@ -278,7 +278,7 @@ void ActionModelIK::setupCollisionModel(const RcsCollisionMdl* modelToCopy)
 void ActionModelIK::addFixedTask(Task* task, MatNd* value)
 {
     if (fixedTasksValues) {
-        // Not the first time, append
+        // Not the first time, append (copies the value MatNd)
         MatNd_appendRows(fixedTasksValues, value);
     }
     else{
@@ -340,9 +340,9 @@ void AMIKGeneric::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, c
     // Copy the ExperimentConfig graph which has been updated by the physics simulation into the desired graph
     RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, nullptr);
     
-    computeIK(q_des, q_dot_des, T_des, augmentedAction, dt);
+    computeIK(q_des, q_dot_des, T_des, static_cast<const MatNd*>(augmentedAction), dt);
     
-    delete augmentedAction;
+    MatNd_destroy(augmentedAction);
 }
 
 void AMIKGeneric::getStableAction(MatNd* action) const
@@ -354,7 +354,7 @@ void AMIKGeneric::getStableAction(MatNd* action) const
     
     controller->computeX(augmentedAction);
     
-    delete augmentedAction;
+    MatNd_destroy(augmentedAction);
 }
 
 ActionModel* AMIKGeneric::clone(RcsGraph* newGraph) const

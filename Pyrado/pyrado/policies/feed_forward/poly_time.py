@@ -34,6 +34,7 @@ from torch.jit import ScriptModule, export, script
 
 import pyrado
 from pyrado.policies.base import Policy
+from pyrado.policies.initialization import init_param
 from pyrado.utils.data_processing import correct_atleast_2d
 from pyrado.utils.data_types import EnvSpec
 
@@ -49,8 +50,8 @@ class PolySplineTimePolicy(Policy):
         dt: float,
         t_end: float,
         cond_lvl: str,
-        cond_final: Union[to.Tensor, List[float]],
-        cond_init: Optional[Union[to.Tensor, List[float]]] = None,
+        cond_final: Optional[Union[to.Tensor, List[float], List[List[float]]]] = None,
+        cond_init: Optional[Union[to.Tensor, List[float], List[List[float]]]] = None,
         t_init: float = 0.0,
         overtime_behavior: str = "hold",
         init_param_kwargs: Optional[dict] = None,
@@ -84,7 +85,7 @@ class PolySplineTimePolicy(Policy):
         self._dt = float(dt)
         self._t_end = float(t_end)
         self._t_init = float(t_init)
-        self._curr_time = float(t_init)
+        self._t_curr = float(t_init)
         self._overtime_behavior = overtime_behavior.lower()
 
         # Determine the initial and final conditions used to compute the coefficients of the polynomials
@@ -95,26 +96,46 @@ class PolySplineTimePolicy(Policy):
         else:
             raise pyrado.ValueErr(given=cond_lvl, eq_constraint="'vel' or 'acc'")
         num_cond = (self._order + 1) // 2
-        cond_final = to.as_tensor(cond_final, dtype=to.get_default_dtype())
-        cond_final = correct_atleast_2d(to.atleast_2d(cond_final))
-        if cond_final.shape != (num_cond, spec.act_space.flat_dim):
-            raise pyrado.ShapeErr(given=cond_final, expected_match=(num_cond, spec.act_space.flat_dim))
+
+        if cond_final is not None:
+            # Given initialization
+            rand_init = False
+            cond_final = to.as_tensor(cond_final, dtype=to.get_default_dtype())
+            cond_final = correct_atleast_2d(to.atleast_2d(cond_final))
+            if cond_final.shape != (num_cond, spec.act_space.flat_dim):
+                raise pyrado.ShapeErr(given=cond_final, expected_match=(num_cond, spec.act_space.flat_dim))
+        else:
+            # Empty initialization
+            rand_init = True
+            cond_final = to.empty(num_cond, spec.act_space.flat_dim)
+
         if cond_init is not None:
+            # Given initialization
             cond_init = to.as_tensor(cond_init, dtype=to.get_default_dtype())
             cond_init = correct_atleast_2d(to.atleast_2d(cond_init))
             if cond_init.shape != (num_cond, spec.act_space.flat_dim):
                 raise pyrado.ShapeErr(given=cond_init, expected_match=(num_cond, spec.act_space.flat_dim))
         else:
+            # Zero initialization
             cond_init = to.zeros(num_cond, spec.act_space.flat_dim)
-        self.conds = to.cat([cond_init, cond_final], dim=0)
-        assert self.conds.shape[0] in [4, 6]
+
+        conds = to.cat([cond_init, cond_final], dim=0)
+        assert conds.shape[0] in [4, 6]
+
+        # Define the policy parameters
+        self.conds = nn.Parameter(conds, requires_grad=False)
 
         # Store the polynomial coefficients for each output dimension in a matrix
-        self.net = nn.Parameter(to.empty(self._order + 1, spec.act_space.flat_dim, device=self.device))
+        self.coeffs = to.empty(self._order + 1, spec.act_space.flat_dim, device=self.device)
 
-        # Call custom initialization function after PyTorch network parameter initialization
-        init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
-        self.init_param(None, **init_param_kwargs)
+        if rand_init:
+            # Call custom initialization function after PyTorch network parameter initialization
+            init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
+            self.init_param(None, **init_param_kwargs)
+        else:
+            # Compute the coefficients to match the given (initial and) final conditions
+            self._compute_coefficients()
+
         self.to(self.device)
 
     @to.no_grad()
@@ -131,7 +152,7 @@ class PolySplineTimePolicy(Policy):
             coeffs = to.lstsq(self.conds[:, idx_act], feats).solution
 
             # Store
-            self.net[:, idx_act] = coeffs.squeeze()
+            self.coeffs[:, idx_act] = coeffs.squeeze()
 
     @to.no_grad()
     def _compute_feats(self, t: float) -> to.Tensor:
@@ -141,7 +162,7 @@ class PolySplineTimePolicy(Policy):
         :param t: time to evaluate at [s]
         :return: feature matrix, either of shape [2, 4], or shape [3, 6]
         """
-        if self.conds.shape[0] == 4:
+        if self._order == 3:
             # 3rd order polynomials, i.e. position and velocity level constrains
             feats = to.tensor(
                 [
@@ -162,36 +183,36 @@ class PolySplineTimePolicy(Policy):
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
-            self._compute_coefficients()
+            init_param(self.conds, **kwargs)
         else:
             self.param_values = init_values  # ignore the IntelliJ warning
 
     def reset(self, *args, **kwargs):
-        self._curr_time = self._t_init
+        self._t_curr = self._t_init
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
         # Check in which time regime the policy/environment is currently in
-        if self._curr_time < self._t_end:
+        if self._t_curr < self._t_end:
             # Get a vector of powers of the current time
             t_powers = to.tensor(
-                [self._curr_time ** o for o in range(self._order + 1)], dtype=self.net.dtype, device=self.device
+                [self._t_curr ** o for o in range(self._order + 1)], dtype=self.coeffs.dtype, device=self.device
             )
             # Compute the action
-            act = to.mv(self.net.T, t_powers)
+            act = to.mv(self.coeffs.T, t_powers)
 
         elif self._overtime_behavior == "hold":
             # Get a vector of powers of the current time
             t_powers = to.tensor(
-                [self._t_end ** o for o in range(self._order + 1)], dtype=self.net.dtype, device=self.device
+                [self._t_end ** o for o in range(self._order + 1)], dtype=self.coeffs.dtype, device=self.device
             )
             # Compute the action
-            act = to.mv(self.net.T, t_powers)
+            act = to.mv(self.coeffs.T, t_powers)
 
         else:  # self._overtime_behavior == "zero"
-            act = to.zeros(self.env_spec.act_space.shape, dtype=self.net.dtype)
+            act = to.zeros(self.env_spec.act_space.shape, dtype=self.coeffs.dtype)
 
         # Advance the internal time counter
-        self._curr_time += self._dt
+        self._t_curr += self._dt
 
         return to.atleast_1d(act)
 
@@ -200,14 +221,14 @@ class PolySplineTimePolicy(Policy):
         cond_init, cond_final = to.chunk(self.conds, 2)
         return script(
             TraceablePolySplineTimePolicy(
-                self.env_spec,
-                self._dt,
-                self._t_end,
-                cond_lvl,
-                cond_final,
-                cond_init,
-                self._t_init,
-                self._overtime_behavior,
+                spec=self.env_spec,
+                dt=self._dt,
+                t_end=self._t_end,
+                cond_lvl=cond_lvl,
+                cond_final=cond_final,
+                cond_init=cond_init,
+                t_init=self._t_init,
+                overtime_behavior=self._overtime_behavior,
             )
         )
 
@@ -228,7 +249,7 @@ class TraceablePolySplineTimePolicy(nn.Module):
     dt: float
     t_end: float
     t_init: float
-    curr_time: float
+    t_curr: float
     overtime_behavior: str
     act_space_shape: Tuple[
         int,
@@ -241,13 +262,14 @@ class TraceablePolySplineTimePolicy(nn.Module):
         dt: float,
         t_end: float,
         cond_lvl: str,
-        cond_final: Union[to.Tensor, List[float]],
-        cond_init: Optional[Union[to.Tensor, List[float]]] = None,
+        cond_final: Union[to.Tensor, List[float], List[List[float]]],
+        cond_init: Union[to.Tensor, List[float], List[List[float]]],
         t_init: float = 0.0,
         overtime_behavior: str = "hold",
     ):
         """
-        Constructor
+        In contrast to PolySplineTimePolicy, this constructor needs to be called with learned / working values for
+        `cond_final` and `cond_init`.
 
         :param spec: environment specification
         :param dt: time step [s]
@@ -269,7 +291,7 @@ class TraceablePolySplineTimePolicy(nn.Module):
         self.dt = float(dt)
         self.t_end = float(t_end)
         self.t_init = float(t_init)
-        self.curr_time = float(t_init)
+        self.t_curr = float(t_init)
         self.overtime_behavior = overtime_behavior.lower()
 
         # Could not be converted
@@ -284,22 +306,22 @@ class TraceablePolySplineTimePolicy(nn.Module):
         else:
             raise pyrado.ValueErr(given=cond_lvl, eq_constraint="'vel' or 'acc'")
         num_cond = (self.order + 1) // 2
+
         cond_final = to.as_tensor(cond_final, dtype=to.get_default_dtype())
         cond_final = correct_atleast_2d(to.atleast_2d(cond_final))
         if cond_final.shape != (num_cond, spec.act_space.flat_dim):
             raise pyrado.ShapeErr(given=cond_final, expected_match=(num_cond, spec.act_space.flat_dim))
-        if cond_init is not None:
-            cond_init = to.as_tensor(cond_init, dtype=to.get_default_dtype())
-            cond_init = correct_atleast_2d(to.atleast_2d(cond_init))
-            if cond_init.shape != (num_cond, spec.act_space.flat_dim):
-                raise pyrado.ShapeErr(given=cond_init, expected_match=(num_cond, spec.act_space.flat_dim))
-        else:
-            cond_init = to.zeros(num_cond, spec.act_space.flat_dim)
+
+        cond_init = to.as_tensor(cond_init, dtype=to.get_default_dtype())
+        cond_init = correct_atleast_2d(to.atleast_2d(cond_init))
+        if cond_init.shape != (num_cond, spec.act_space.flat_dim):
+            raise pyrado.ShapeErr(given=cond_init, expected_match=(num_cond, spec.act_space.flat_dim))
+
         self.conds = to.cat([cond_init, cond_final], dim=0)
         assert self.conds.shape[0] in [4, 6]
 
         # Store the polynomial coefficients for each output dimension in a matrix
-        self.net = to.empty(self.order + 1, spec.act_space.flat_dim)
+        self.coeffs = to.empty(self.order + 1, spec.act_space.flat_dim)
 
         self.compute_coefficients()
 
@@ -317,7 +339,7 @@ class TraceablePolySplineTimePolicy(nn.Module):
             coeffs = to.lstsq(self.conds[:, idx_act], feats).solution
 
             # Store
-            self.net[:, idx_act] = coeffs.squeeze()
+            self.coeffs[:, idx_act] = coeffs.squeeze()
 
     @export
     def compute_feats(self, t: float) -> to.Tensor:
@@ -327,7 +349,7 @@ class TraceablePolySplineTimePolicy(nn.Module):
         :param t: time to evaluate at [s]
         :return: feature matrix, either of shape [2, 4], or shape [3, 6]
         """
-        if self.conds.shape[0] == 4:
+        if self.order == 3:
             # 3rd order polynomials, i.e. position and velocity level constrains
             feats = to.tensor(
                 [
@@ -349,26 +371,26 @@ class TraceablePolySplineTimePolicy(nn.Module):
     @export
     def reset(self):
         """Reset the policy's internal state."""
-        self.curr_time = self.t_init
+        self.t_curr = self.t_init
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
         # Check in which time regime the policy/environment is currently in
-        if self.curr_time < self.t_end:
+        if self.t_curr < self.t_end:
             # Get a vector of powers of the current time
-            t_powers = to.tensor([self.curr_time ** o for o in range(self.order + 1)], dtype=self.net.dtype)
+            t_powers = to.tensor([self.t_curr ** o for o in range(self.order + 1)], dtype=self.coeffs.dtype)
             # Compute the action
-            act = to.mv(self.net.T, t_powers)
+            act = to.mv(self.coeffs.T, t_powers)
 
         elif self.overtime_behavior == "hold":
             # Get a vector of powers of the current time
-            t_powers = to.tensor([self.t_end ** o for o in range(self.order + 1)], dtype=self.net.dtype)
+            t_powers = to.tensor([self.t_end ** o for o in range(self.order + 1)], dtype=self.coeffs.dtype)
             # Compute the action
-            act = to.mv(self.net.T, t_powers)
+            act = to.mv(self.coeffs.T, t_powers)
 
         else:  # self.overtime_behavior == "zero"
-            act = to.zeros(self.act_space_shape, dtype=self.net.dtype)
+            act = to.zeros(self.act_space_shape, dtype=self.coeffs.dtype)
 
         # Advance the internal time counter
-        self.curr_time += self.dt
+        self.t_curr += self.dt
 
         return to.atleast_1d(act)

@@ -51,9 +51,10 @@ void PPDSphereRadius::setValues(PropertySource* inValues)
     // Check if the ball position variable is relative to another body
     RcsBody* prevBody = RcsGraph_getBodyByName(bodyParamInfo->graph, prevBodyName.c_str());
     double zOffset = 0.;
-    if (prevBody != NULL) {
+    if (prevBody != nullptr) {
         if (bodyParamInfo->body->parent == prevBody) {
-            // Sphere rigid body coordinates are relative
+            // Sphere rigid body coordinates are relative. Add relative transform of the previous body's shape.
+            zOffset += prevBody->shape[shapeIdxPrevBody]->A_CB.org[2];
         }
         else {
             // The sphere's rigid body coordinates are absolute, shift them accordingly
@@ -89,7 +90,7 @@ void PPDSphereRadius::setValues(PropertySource* inValues)
     bodyParamInfo->graph->q->ele[bodyParamInfo->body->jnt->jointIndex + 2] = zOffset + newRadius;
     
     // Make sure the state is propagated
-    RcsGraph_setState(bodyParamInfo->graph, NULL, bodyParamInfo->graph->q_dot);
+    RcsGraph_setState(bodyParamInfo->graph, nullptr, bodyParamInfo->graph->q_dot);
     
     RLOG(4, "New radius = %f; New z-position = %f", newRadius, zOffset + newRadius);
 }
@@ -98,8 +99,8 @@ void PPDSphereRadius::init(BodyParamInfo* bodyParamInfo)
 {
     // Check if the ball is valid
     PPDSingleVar::init(bodyParamInfo);
-    RCHECK_MSG(bodyParamInfo->body->shape != NULL, "Invalid ball body %s", bodyParamInfo->body->name);
-    RCHECK_MSG(bodyParamInfo->body->shape[shapeIdx] != NULL, "Invalid ball body %s", bodyParamInfo->body->name);
+    RCHECK_MSG(bodyParamInfo->body->shape != nullptr, "Invalid ball body %s", bodyParamInfo->body->name);
+    RCHECK_MSG(bodyParamInfo->body->shape[shapeIdx] != nullptr, "Invalid ball body %s", bodyParamInfo->body->name);
     RCHECK_MSG(bodyParamInfo->body->shape[shapeIdx]->type == RCSSHAPE_SPHERE, "Invalid ball body %s",
                bodyParamInfo->body->name);
     RCHECK_MSG((bodyParamInfo->body->shape[shapeIdx]->computeType & RCSSHAPE_COMPUTE_PHYSICS) != 0,

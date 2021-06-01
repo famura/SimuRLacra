@@ -85,20 +85,6 @@ public:
      * @param modelToCopy collision model to copy
      */
     void setupCollisionModel(const RcsCollisionMdl* modelToCopy);
-
-protected:
-    /*! Add a task to the controller.
-     * This works exactly as getController()->addTask() would. However, tasks may only be added before the first
-     * reset() call. Thus, getController() returns a const reference, and this method makes sure reset has not been
-     * called yet.
-     * @param[in] task task to add. Takes ownership.
-     */
-    void addTask(Task* task);
-    
-    //! Add Rcs controller tasks that is always fixed to one target value. Do this after adding the regular tasks.
-    void addFixedTask(Task* task, MatNd* value);
-    
-    unsigned int getNumActiveTasks() const;
     
     /*! Compute IK solution from desired task space state.
      *
@@ -119,6 +105,20 @@ protected:
      * @param[in]  dt        time step since the last call
      */
     void computeIKVel(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* x_dot_des, double dt);
+
+protected:
+    /*! Add a task to the controller.
+     * This works exactly as getController()->addTask() would. However, tasks may only be added before the first
+     * reset() call. Thus, getController() returns a const reference, and this method makes sure reset has not been
+     * called yet.
+     * @param[in] task task to add. Takes ownership.
+     */
+    void addTask(Task* task);
+    
+    //! Add Rcs controller tasks that is always fixed to one target value. Do this after adding the regular tasks.
+    void addFixedTask(Task* task, MatNd* value);
+    
+    unsigned int getNumActiveTasks() const;
     
     // Desired state graph (owned by the controller)
     RcsGraph* desiredGraph;

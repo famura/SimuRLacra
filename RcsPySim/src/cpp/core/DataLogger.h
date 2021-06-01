@@ -44,8 +44,8 @@ namespace Rcs
 
 /**
  * Logs experiment data to a csv file.
- *
- * For every time step, it records the observations, actions and the reward.
+ * For every time step, it records the observations and the actions.
+ * The reward can be computed later on the Python side.
  */
 class DataLogger
 {
@@ -80,7 +80,7 @@ public:
     /**
      * Record data for the current step.
      */
-    void record(const MatNd* observation, const MatNd* action, double reward);
+    void record(const MatNd* observation, const MatNd* action);
     
     /**
      * Return true if running.
@@ -92,12 +92,22 @@ public:
 
 private:
     std::recursive_mutex mutex;
-    std::string baseFileName; /// automatic log file naming
+    
+    //! Automatic log file naming
+    std::string baseFileName;
     unsigned int fileCounter;
+    
+    //! Flag if the logger is currently recording
     volatile bool running;
-    MatNd* buffer; /// buffer to avoid writing on realtime main thread
-    unsigned int currentStep; /// step counter in current logging run
-    std::ofstream output; /// current output stream
+    
+    //! Buffer to avoid writing on realtime main thread
+    MatNd* buffer;
+    
+    //! Step counter in current logging run
+    unsigned int currentStep;
+    
+    //! Current output stream
+    std::ofstream output;
 };
 
 } /* namespace Rcs */

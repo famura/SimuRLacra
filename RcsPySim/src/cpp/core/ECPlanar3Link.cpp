@@ -77,8 +77,6 @@ namespace Rcs
 
 class ECPlanar3Link : public ExperimentConfig
 {
-
-protected:
     virtual ActionModel* createActionModel()
     {
         std::string actionModelType = "unspecified";
@@ -91,17 +89,17 @@ protected:
         if (actionModelType == "joint_pos") {
             return new AMJointControlPosition(graph);
         }
-
+        
         else if (actionModelType == "joint_vel") {
             double max_action = 90*M_PI/180; // [rad/s]
             return new AMIntegrate1stOrder(new AMJointControlPosition(graph), max_action);
         }
-
+        
         else if (actionModelType == "joint_acc") {
             double max_action = RCS_DEG2RAD(120); // [rad/s^2]
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), max_action);
         }
-
+        
         else if (actionModelType == "ik") {
             // Create the action model
             auto amIK = new AMIKGeneric(graph);
@@ -114,7 +112,7 @@ protected:
                 return amIK;
             }
         }
-
+        
         else if (actionModelType == "ik_activation") {
             // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
             std::string taskCombinationMethod = "unspecified";
@@ -124,7 +122,7 @@ protected:
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
-    
+            
             // Check if the tasks are defined on position or velocity level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
                 // Define the Rcs controller tasks
@@ -160,14 +158,14 @@ protected:
             else {
                 throw std::invalid_argument("Velocity tasks are not supported for AMIKControllerActivation.");
             }
-    
+            
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-    
+            
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
             amIK->setXdesFromTaskSpec(taskSpec);
-    
+            
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                 REXEC(4) {
@@ -175,10 +173,10 @@ protected:
                 }
                 amIK->setupCollisionModel(collisionMdl);
             }
-    
+            
             return amIK;
         }
-
+        
         else if (actionModelType == "ds_activation") {
             // Obtain the inner action model
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
@@ -222,11 +220,11 @@ protected:
             std::string taskCombinationMethod = "unspecified";
             properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
             TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
-    
+            
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
-
+        
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;
@@ -298,15 +296,15 @@ protected:
                 throw std::invalid_argument("The action model needs to be of type ActionModelIK!");
             }
         }
-    
+        
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         bool haveJointPos = actionModelType == "joint_pos";
-    
+        
         if (haveJointPos) {
             fullState->addPart(OMJointState::observeUnconstrainedJoints(graph));
         }
-    
+        
         else if (actionModelType == "ds_activation") {
             if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
                 // Add goal distances
@@ -322,7 +320,7 @@ protected:
                     throw std::invalid_argument(os.str());
                 }
             }
-        
+            
             if (properties->getPropertyBool("observeDynamicalSystemDiscrepancy", false)) {
                 // Add the discrepancies between commanded and executed the task space changes
                 auto castedAM = dynamic_cast<AMDynamicalSystemActivation*>(actionModel);
@@ -348,8 +346,7 @@ protected:
         manager->addParam("Link2", new PPDMassProperties());
         manager->addParam("Link3", new PPDMassProperties());
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSPlanar3Link(graph);
@@ -450,13 +447,13 @@ public:
                 string_format("goal dist pos: [% 1.3f,% 1.3f,% 1.3f] m",
                               obs->ele[omGD.pos + 0], obs->ele[omGD.pos + 1], obs->ele[omGD.pos + 2]));
         }
-    
+        
         auto omFT = observationModel->findOffsets<OMForceTorque>();
         if (omFT) {
             linesOut.emplace_back(
                 string_format("forces:        [% 3.1f,% 3.1f] N", obs->ele[omFT.pos + 0], obs->ele[omFT.pos + 1]));
         }
-    
+        
         if (forceDisturber) {
             const double* distForce = forceDisturber->getLastForce();
             linesOut.emplace_back(
@@ -466,7 +463,7 @@ public:
         linesOut.emplace_back(
             string_format("actions:       [% 1.3f,% 1.3f,% 1.3f]",
                           currentAction->ele[0], currentAction->ele[1], currentAction->ele[2]));
-    
+        
         if (physicsManager != nullptr) {
             // Get the parameters that are not stored in the Rcs graph
             BodyParamInfo* link1_bpi = physicsManager->getBodyInfo("Link1");

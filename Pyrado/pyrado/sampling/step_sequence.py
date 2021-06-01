@@ -42,6 +42,7 @@ import torch as to
 import pyrado
 from pyrado.sampling.data_format import cat_to_format, new_tuple, stack_to_format, to_format
 from pyrado.sampling.utils import gen_ordered_batch_idcs, gen_shuffled_batch_idcs
+from pyrado.tasks.base import Task
 from pyrado.utils.checks import check_all_equal, is_iterable
 from pyrado.utils.data_types import EnvSpec
 
@@ -860,7 +861,9 @@ class StepSequence(Sequence[Step]):
         return StepSequence(**data_dict, rollout_info=rollout.rollout_info, continuous=rollout.continuous)
 
     @classmethod
-    def from_pandas(cls, df: pd.DataFrame, env_spec: EnvSpec, continuous: bool = True) -> "StepSequence":
+    def from_pandas(
+        cls, df: pd.DataFrame, env_spec: EnvSpec, continuous: bool = True, task: Optional[Task] = None
+    ) -> "StepSequence":
         """
         Generate a StepSequence object from a Pandas DataFrame instance.
         Not all data fields are supported. The fields 'rewards' is mandatory.
@@ -868,7 +871,9 @@ class StepSequence(Sequence[Step]):
         :param df: Pandas DataFrame holding the data in 1-dim arrays
         :param env_spec: environment specifications which labels are used to slice the DataFrame
         :param continuous: `True` if the rollout to be reconstructed was continuous
-        :return: new StepSequence
+        :param task: task containing the reward function(s) that can be used to recompute the rewards from the recorded
+                     observations and actions
+        :return: new `StepSequence`
         """
         if (
             env_spec.state_space.labels is None
@@ -881,18 +886,27 @@ class StepSequence(Sequence[Step]):
             )
 
         # Mandatory fields
-        rewards = df["rewards"].to_numpy()
         states = df[env_spec.state_space.labels].to_numpy()
         observations = df[env_spec.obs_space.labels].to_numpy()
         actions = df[env_spec.act_space.labels].to_numpy()
+        if task is not None:
+            # Recompute the rewards from the recorded observations and actions
+            rewards = np.array([task.step_rew(s, a, 0) for s, a in zip(states, actions)])
+        elif "rewards" in df.columns:
+            # Use recorded rewards
+            rewards = df["rewards"].to_numpy()
+        else:
+            # Set all rewards to zero s a last resort
+            rewards = np.zeros(states.shape[0] - 1)
 
         # Remove NaNs which come from concatenating columns of different length in Pandas
         rewards = rewards[~np.isnan(rewards)]
         actions = actions[~np.isnan(actions).any(axis=1), :]  # check if any in a column is none for multi-dim case
 
         # Other fields
+        rew_label = ["rewards"] if "rewards" in df.columns else []
         mandatory_labels = (
-            ["rewards"]
+            rew_label
             + env_spec.state_space.labels.tolist()
             + env_spec.obs_space.labels.tolist()
             + env_spec.act_space.labels.tolist()

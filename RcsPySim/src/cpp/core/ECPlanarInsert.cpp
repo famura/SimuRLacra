@@ -76,8 +76,6 @@ namespace Rcs
 
 class ECPlanarInsert : public ExperimentConfig
 {
-
-protected:
     virtual ActionModel* createActionModel()
     {
         std::string actionModelType = "unspecified";
@@ -108,14 +106,14 @@ protected:
                 tasks[0]->resetParameter(Task::Parameters(-0.5, 0.5, 1.0, "X Velocity [m/s]"));
                 tasks[1]->resetParameter(Task::Parameters(-0.5, 0.5, 1.0, "Z Velocity [m/s]"));
             }
-    
+            
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-    
+            
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
             amIK->setXdesFromTaskSpec(taskSpec);
-    
+            
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                 REXEC(4) {
@@ -123,10 +121,10 @@ protected:
                 }
                 amIK->setupCollisionModel(collisionMdl);
             }
-    
+            
             return amIK;
         }
-
+        
         else if (actionModelType == "ds_activation") {
             // Obtain the inner action model
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
@@ -166,7 +164,7 @@ protected:
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
-
+        
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;
@@ -177,18 +175,18 @@ protected:
     virtual ObservationModel* createObservationModel()
     {
         auto fullState = new OMCombined();
-    
+        
         // Observe effector position
         auto omLin = new OMBodyStateLinear(graph, "Effector", "GroundPlane"); // Base center is above ground level
         omLin->setMinState(-1.7); // [m]
         omLin->setMaxState(1.7); // [m]
         omLin->setMaxVelocity(5.); // [m/s]
         fullState->addPart(OMPartial::fromMask(omLin, {true, false, true}));  // mask out y axis
-    
+        
         auto omAng = new OMBodyStateAngular(graph, "Effector", "GroundPlane"); // Base center is above ground level
         omAng->setMaxVelocity(20.); // [rad/s]
         fullState->addPart(OMPartial::fromMask(omAng, {false, true, false}));  // only y axis
-    
+        
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         if (actionModelType == "ds_activation") {
@@ -282,8 +280,7 @@ protected:
         manager->addParam("UpperWall", new PPDBodyPosition(false, false, true)); // only z position
         manager->addParam("UpperWall", new PPDMaterialProperties());
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSPlanarInsert(graph);
@@ -410,7 +407,7 @@ public:
             linesOut.emplace_back(string_format("tcm:            %s", castedAM->getTaskCombinationMethodName()));
         }
         
-        if (forceDisturber){
+        if (forceDisturber) {
             const double* distForce = forceDisturber->getLastForce();
             linesOut.emplace_back(
                 string_format("disturbances:  [% 3.1f,% 3.1f,% 3.1f] N", distForce[0], distForce[1], distForce[2]));
