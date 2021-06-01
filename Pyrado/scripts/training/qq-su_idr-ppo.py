@@ -63,7 +63,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 500, max_steps=1200)
+    env_hparams = dict(dt=1 / 100.0, max_steps=600)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
