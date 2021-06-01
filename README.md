@@ -97,6 +97,8 @@ Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
 pip install torch==1.8.1
+# or if CUDA 11 is needed (for modern GPUs)
+# pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
 # or if CUDA support not needed
 # pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py wo_rcs_wo_pytorch -j8
@@ -131,6 +133,8 @@ Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
 pip install torch==1.8.1
+# or if CUDA 11 is needed (for modern GPUs)
+# pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
 # or if CUDA support not needed
 # pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py w_rcs_wo_pytorch -j8
