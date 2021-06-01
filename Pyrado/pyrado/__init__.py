@@ -25,12 +25,12 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+import hashlib
 import os
 import os.path as osp
 import platform
 import random
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Union
 
 import numpy as np
 import torch as to
@@ -129,13 +129,19 @@ __all__ = [
 ]
 
 
-def set_seed(seed: Optional[int], verbose: bool = False):
+def set_seed(seed: Optional[Union[int, str]], verbose: bool = False):
     """
     Set the seed for the random number generators
 
     :param seed: value for the random number generators' seeds, pass `None` to skip seeding
     :param verbose: if `True` the seed is printed
     """
+    if isinstance(seed, str):
+        # If there is a hash collision in the modulo space, this might produce the same seed for two different strings!
+        # But this behavior is unavoidable as even parsing the string in base 36 (or similar) would result in a number
+        # greater than `2 ** 32 - 1` which is the maximum number for a seed in NumPy. Also, seeds cannot be negative in
+        # NumPy.
+        seed = int(hashlib.md5("abc".encode()).hexdigest(), 16) % (2 ** 32 - 1)
     if isinstance(seed, int):
         random.seed(seed)
         np.random.seed(seed)

@@ -68,31 +68,33 @@ def _ps_sample_one(G, eval: bool):
     return ro, len(ro)
 
 
-def _ps_run_one(G, num: int, eval: bool):
+def _ps_run_one(G, num: int, eval: bool, seed: str):
     """
     Sample one rollout without specifying the initial state or the domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval)
+    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}")
 
 
-def _ps_run_one_init_state(G, init_state: np.ndarray, eval: bool):
+def _ps_run_one_init_state(G, init_state: np.ndarray, eval: bool, seed: str):
     """
     Sample one rollout with given init state.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=init_state))
+    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-is{init_state}", reset_kwargs=dict(init_state=init_state))
 
 
-def _ps_run_one_domain_param(G, domain_param: dict, eval: bool):
+def _ps_run_one_domain_param(G, domain_param: dict, eval: bool, seed: str):
     """
     Sample one rollout with given domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(domain_param=domain_param))
+    return rollout(
+        G.env, G.policy, eval=eval, seed=f"{seed}-dp{domain_param}", reset_kwargs=dict(domain_param=domain_param)
+    )
 
 
-def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
+def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool, seed: str):
     """
     Sample one rollout with given init state and domain parameters, passed as a tuple for simplicity at the other end.
     This function is used when a minimum number of rollouts was given.
@@ -105,7 +107,11 @@ def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
         raise pyrado.TypeErr(given=reset_kwargs[1], expected_type=dict)
 
     return rollout(
-        G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1])
+        G.env,
+        G.policy,
+        eval=eval,
+        seed=f"{seed}-rkwa{reset_kwargs}",
+        reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]),
     )
 
 
@@ -189,20 +195,11 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         # Create parallel pool. We use one thread per env because it's easier.
         self.pool = SamplerPool(num_workers)
 
-        # Set all rngs' seeds
-        if seed is not None:
-            self.set_seed(seed)
+        self._seed = seed
+        self._sample_count = 0
 
         # Distribute environments. We use pickle to make sure a copy is created for n_envs=1
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
-
-    def set_seed(self, seed):
-        """
-        Set a deterministic seed on all workers.
-
-        :param seed: seed value for the random number generators
-        """
-        self.pool.set_seed(seed)
 
     def reinit(self, env: Optional[Env] = None, policy: Optional[Policy] = None):
         """
@@ -235,6 +232,8 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         :param eval: pass `False` if the rollout is executed during training, else `True`. Forwarded to `rollout()`.
         :return: list of sampled rollouts
         """
+        self._sample_count += 1
+
         # Update policy's state
         self.pool.invoke_all(_ps_update_policy, self.policy.state_dict())
 
@@ -271,7 +270,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                     arglist = rep_factor * allcombs
 
                 # Only minimum number of rollouts given, thus use run_map
-                return self.pool.run_map(func, arglist, pb)
+                return self.pool.run_map(partial(func, seed=f"{self._seed}-s{self._sample_count}"), arglist, pb)
 
             else:
                 # Minimum number of steps given, thus use run_collect (automatically handles min_runs=None)

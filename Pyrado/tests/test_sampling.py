@@ -28,6 +28,7 @@
 
 import random
 import time
+from typing import List, Optional
 
 import pytest
 from tests.conftest import m_needs_bullet, m_needs_cuda
@@ -39,6 +40,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
+from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.cvar_sampler import select_cvar
 from pyrado.sampling.data_format import to_format
@@ -494,23 +496,57 @@ def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
     ids=["pend", "qbb", "qqsurcs_bt"],
     indirect=True,
 )
-@pytest.mark.parametrize("policy", ["idle_policy"], ids=["idle"], indirect=True)  # ad deterministic policy
-@pytest.mark.parametrize(
-    "num_simulations", [1, 4], ids=["1sim", "4sims"]  # must be lower than the number of cores on the machine
-)
-def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_simulations: int):
-    # Do the rollouts explicitly sequentially without a sampler
-    # Do not set the init state to check if this was sampled correctly
+@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+@pytest.mark.parametrize("num_rollouts", [1, 2, 4, 6])
+@pytest.mark.parametrize("num_workers", [1, 2, 4])
+def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_rollouts: int, num_workers: int):
+    # Do the rollouts explicitly sequentially without a sampler.
+    # Do not set the init state to check if this was sampled correctly.
     ros_sequential = []
-    for i in range(num_simulations):
-        ros_sequential.append(rollout(env, policy, eval=True, seed=i))
+    for i in range(num_rollouts):
+        # Reproduce seed created by the ParallelRolloutSampler here.
+        ros_sequential.append(rollout(env, policy, eval=True, seed=f"0-s1-n{i}"))
 
-    # Do the rollouts in parallel with a sampler. Create one worker for every rollout
-    # Do not set the init state to check if this was sampled correctly
-    sampler = ParallelRolloutSampler(env, policy, num_workers=num_simulations, min_rollouts=num_simulations, seed=0)
+    # Do the rollouts in parallel with a sampler.
+    # Do not set the init state to check if this was sampled correctly.
+    sampler = ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=num_rollouts, seed=0)
     ros_parallel = sampler.sample()
-    assert len(ros_parallel) == num_simulations
+    assert len(ros_parallel) == num_rollouts
 
-    for ro_s in ros_sequential:
-        # The parallel rollouts are not necessarily in the same order as the sequential ones, thus compare to all
-        assert any([ro_s.observations == pytest.approx(ro_p.observations) for ro_p in ros_parallel])
+    for ro_s, ro_p in zip(ros_sequential, ros_parallel):
+        assert ro_s.rewards == pytest.approx(ro_p.rewards)
+        assert ro_s.observations == pytest.approx(ro_p.observations)
+        assert ro_s.actions == pytest.approx(ro_p.actions)
+
+
+@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("min_rollouts", [2, 4, 5])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("init_states", [None, 2])
+@pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
+def test_parallel_sampling_deterministic_wo_min_steps(
+    env: SimEnv,
+    policy: Policy,
+    min_rollouts: Optional[int],
+    init_states: Optional[int],
+    domain_params: Optional[List[dict]],
+):
+    if init_states is not None:
+        init_states = [env.spec.state_space.sample_uniform() for _ in range(init_states)]
+
+    nums_workers = (1, 2, 4)
+
+    all_rollouts = []
+    for num_workers in nums_workers:
+        all_rollouts.append(
+            ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=min_rollouts, seed=0).sample(
+                init_states=init_states, domain_params=domain_params
+            )
+        )
+
+    for ros_a, ros_b in [(a, b) for a in all_rollouts for b in all_rollouts]:
+        assert len(ros_a) == len(ros_b)
+        for ro_a, ro_b in zip(ros_a, ros_b):
+            assert ro_a.rewards == pytest.approx(ro_b.rewards)
+            assert ro_a.observations == pytest.approx(ro_b.observations)
+            assert ro_a.actions == pytest.approx(ro_b.actions)

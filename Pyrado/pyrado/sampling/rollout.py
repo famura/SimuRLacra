@@ -71,7 +71,7 @@ def rollout(
     no_close: bool = False,
     record_dts: bool = False,
     stop_on_done: bool = True,
-    seed: Optional[int] = None,
+    seed: Optional[Union[int, str]] = None,
 ) -> StepSequence:
     """
     Perform a rollout (i.e. sample a trajectory) in the given environment using given policy.
