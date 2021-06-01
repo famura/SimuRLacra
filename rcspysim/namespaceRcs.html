@@ -106,8 +106,6 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html">ActionModelIK</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIKPolicy.html">ActionModelIKPolicy</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1AMDynamicalSystemActivation.html">AMDynamicalSystemActivation</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1AMIKControllerActivation.html">AMIKControllerActivation</a></td></tr>
@@ -262,6 +260,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1PolicyComponent.html">PolicyComponent</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1PPDBodyOrientation.html">PPDBodyOrientation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1PPDBodyPosition.html">PPDBodyPosition</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1PPDBoxExtents.html">PPDBoxExtents</a></td></tr>
@@ -346,6 +346,10 @@ Functions</h2></td></tr>
 <tr class="memitem:abd58c0b062333ccbadbafef6d7661bf6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:abd58c0b062333ccbadbafef6d7661bf6"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#abd58c0b062333ccbadbafef6d7661bf6">apply</a> (T &amp;partial, const T &amp;full, const std::vector&lt; unsigned int &gt; &amp;keptIndices)</td></tr>
 <tr class="separator:abd58c0b062333ccbadbafef6d7661bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9601b17573b1c768ec20630ed0464caf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a9601b17573b1c768ec20630ed0464caf">Vec33d_setZero</a> (double v[3][3])</td></tr>
+<tr class="separator:a9601b17573b1c768ec20630ed0464caf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13299209b449723a8e9ed1978c7dc11a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a13299209b449723a8e9ed1978c7dc11a">Vec33d_add</a> (double dst[3][3], const double v1[3][3], const double v2[3][3])</td></tr>
+<tr class="separator:a13299209b449723a8e9ed1978c7dc11a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a735193ae50cb3ec081531fb365c8a77a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a735193ae50cb3ec081531fb365c8a77a">setVortexLogLevel</a> (const char *level)</td></tr>
 <tr class="separator:a735193ae50cb3ec081531fb365c8a77a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ce8f979d031c19ee4df38886c5a6419"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a3ce8f979d031c19ee4df38886c5a6419">initDefaultNames</a> (std::vector&lt; std::string &gt; &amp;out, unsigned int dim)</td></tr>
@@ -1375,6 +1379,62 @@ template&lt;typename ... Args&gt; </div>
 
 </div>
 </div>
+<a id="a13299209b449723a8e9ed1978c7dc11a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13299209b449723a8e9ed1978c7dc11a">&#9670;&nbsp;</a></span>Vec33d_add()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Rcs::Vec33d_add </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>dst</em>[3][3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>v1</em>[3][3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>v2</em>[3][3]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PPDBodyOrientation_8cpp_source.html#l00052">52</a> of file <a class="el" href="PPDBodyOrientation_8cpp_source.html">PPDBodyOrientation.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9601b17573b1c768ec20630ed0464caf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9601b17573b1c768ec20630ed0464caf">&#9670;&nbsp;</a></span>Vec33d_setZero()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Rcs::Vec33d_setZero </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>v</em>[3][3]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PPDBodyOrientation_8cpp_source.html#l00043">43</a> of file <a class="el" href="PPDBodyOrientation_8cpp_source.html">PPDBodyOrientation.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a0ba7ef060b5b70c311378cacbcd7236a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0ba7ef060b5b70c311378cacbcd7236a">&#9670;&nbsp;</a></span>viewEigen2MatNd()</h2>
 
@@ -1843,7 +1903,7 @@ template&lt;typename M  = Eigen::MatrixXd&gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li>
-    <li class="footer">Generated on Tue Jun 1 2021 15:25:26 for RcsPySim by
+    <li class="footer">Generated on Tue Jun 1 2021 15:59:57 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

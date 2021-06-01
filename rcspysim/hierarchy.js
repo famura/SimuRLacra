@@ -61,7 +61,6 @@ var hierarchy =
       [ "Rcs::PolicyComponent", "classRcs_1_1PolicyComponent.html", null ]
     ] ],
     [ "Rcs::ControlPolicy", "classRcs_1_1ControlPolicy.html", [
-      [ "Rcs::ActionModelIKPolicy", "classRcs_1_1ActionModelIKPolicy.html", null ],
       [ "Rcs::SimpleControlPolicy", "classRcs_1_1SimpleControlPolicy.html", null ],
       [ "Rcs::TorchPolicy", "classRcs_1_1TorchPolicy.html", null ]
     ] ],
@@ -110,6 +109,7 @@ var hierarchy =
         [ "Rcs::PPDSphereRadius", "classRcs_1_1PPDSphereRadius.html", null ]
       ] ],
       [ "Rcs::PPDCompound", "classRcs_1_1PPDCompound.html", [
+        [ "Rcs::PPDBodyOrientation", "classRcs_1_1PPDBodyOrientation.html", null ],
         [ "Rcs::PPDBodyPosition", "classRcs_1_1PPDBodyPosition.html", null ],
         [ "Rcs::PPDBoxExtents", "classRcs_1_1PPDBoxExtents.html", null ],
         [ "Rcs::PPDCubeExtents", "classRcs_1_1PPDCubeExtents.html", null ],

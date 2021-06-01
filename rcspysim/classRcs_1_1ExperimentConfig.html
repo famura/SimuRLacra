@@ -144,12 +144,18 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a97edcd6828132d244543ad79f6281094"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a744bf873abd087cbc866913ce38715"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a4a744bf873abd087cbc866913ce38715">~ExperimentConfig</a> ()</td></tr>
 <tr class="separator:a4a744bf873abd087cbc866913ce38715"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f5b00190985eb0b0704c5c7251eff8f"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classRcs_1_1ActionModel.html">ActionModel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a5f5b00190985eb0b0704c5c7251eff8f">createActionModel</a> ()=0</td></tr>
+<tr class="separator:a5f5b00190985eb0b0704c5c7251eff8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06ae7f47dd6339ef3aa816c57657967c"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classRcs_1_1ObservationModel.html">ObservationModel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a06ae7f47dd6339ef3aa816c57657967c">createObservationModel</a> ()=0</td></tr>
+<tr class="separator:a06ae7f47dd6339ef3aa816c57657967c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dde6554ebaae0bcb19022643652f210"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classRcs_1_1InitStateSetter.html">InitStateSetter</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a3dde6554ebaae0bcb19022643652f210">createInitStateSetter</a> ()</td></tr>
 <tr class="separator:a3dde6554ebaae0bcb19022643652f210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66fc5a99238eb238ec81104baf0684ba"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classRcs_1_1ForceDisturber.html">ForceDisturber</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a66fc5a99238eb238ec81104baf0684ba">createForceDisturber</a> ()</td></tr>
 <tr class="separator:a66fc5a99238eb238ec81104baf0684ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36b3263ff6ebcf93caca25956162f116"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRcs_1_1PhysicsParameterManager.html">PhysicsParameterManager</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a36b3263ff6ebcf93caca25956162f116">createPhysicsParameterManager</a> ()</td></tr>
 <tr class="separator:a36b3263ff6ebcf93caca25956162f116"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25b6a4e0aba6e32dd87f068dda7369fd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a25b6a4e0aba6e32dd87f068dda7369fd">populatePhysicsParameters</a> (<a class="el" href="classRcs_1_1PhysicsParameterManager.html">PhysicsParameterManager</a> *manager)</td></tr>
+<tr class="separator:a25b6a4e0aba6e32dd87f068dda7369fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1807fe8d81bed34ac86197f324a4e5c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#aa1807fe8d81bed34ac86197f324a4e5c">getHUDText</a> (std::vector&lt; std::string &gt; &amp;linesOut, double currentTime, const MatNd *currentObservation, const MatNd *currentAction, PhysicsBase *simulator, <a class="el" href="classRcs_1_1PhysicsParameterManager.html">PhysicsParameterManager</a> *physicsManager, <a class="el" href="classRcs_1_1ForceDisturber.html">ForceDisturber</a> *forceDisturber)</td></tr>
 <tr class="separator:aa1807fe8d81bed34ac86197f324a4e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a430c26934ca1b531a0fdc887c54f3a78"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a430c26934ca1b531a0fdc887c54f3a78">getHUDText</a> (double currentTime, const MatNd *currentObservation, const MatNd *currentAction, PhysicsBase *simulator, <a class="el" href="classRcs_1_1PhysicsParameterManager.html">PhysicsParameterManager</a> *physicsManager, <a class="el" href="classRcs_1_1ForceDisturber.html">ForceDisturber</a> *forceDisturber)</td></tr>
@@ -185,12 +191,6 @@ Public Attributes</h2></td></tr>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab38cc857b9a12366d17208f140caf2bf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#ab38cc857b9a12366d17208f140caf2bf">load</a> (<a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *<a class="el" href="classRcs_1_1ExperimentConfig.html#a6ca37f02de78869ff7b6d9a7d2bd3f8e">properties</a>)</td></tr>
 <tr class="separator:ab38cc857b9a12366d17208f140caf2bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f5b00190985eb0b0704c5c7251eff8f"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classRcs_1_1ActionModel.html">ActionModel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a5f5b00190985eb0b0704c5c7251eff8f">createActionModel</a> ()=0</td></tr>
-<tr class="separator:a5f5b00190985eb0b0704c5c7251eff8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06ae7f47dd6339ef3aa816c57657967c"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classRcs_1_1ObservationModel.html">ObservationModel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a06ae7f47dd6339ef3aa816c57657967c">createObservationModel</a> ()=0</td></tr>
-<tr class="separator:a06ae7f47dd6339ef3aa816c57657967c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25b6a4e0aba6e32dd87f068dda7369fd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ExperimentConfig.html#a25b6a4e0aba6e32dd87f068dda7369fd">populatePhysicsParameters</a> (<a class="el" href="classRcs_1_1PhysicsParameterManager.html">PhysicsParameterManager</a> *manager)</td></tr>
-<tr class="separator:a25b6a4e0aba6e32dd87f068dda7369fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the experiment setup. There should be one subclass per experiment type, IE BallOnPlate or QuanserQube. </p>
@@ -314,13 +314,13 @@ Protected Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>Create the action model. Read any configuration from this-&gt;properties. </p><dl class="section return"><dt>Returns</dt><dd>the new action model </dd></dl>
 
-<p>Implemented in <a class="el" href="classRcs_1_1ECPlanar3Link.html#a428dbb6dc88977113a7f9ec74a4aa56a">Rcs::ECPlanar3Link</a>, <a class="el" href="classRcs_1_1ECPlanarInsert.html#aa95247bbc29de17a609ff740b2906199">Rcs::ECPlanarInsert</a>, <a class="el" href="classRcs_1_1ECBoxLifting.html#a8fc04676253f92d7f9b03ebf398face8">Rcs::ECBoxLifting</a>, <a class="el" href="classRcs_1_1ECBallInTube.html#a51143e3746c08cfb8a4c60d3f3654abf">Rcs::ECBallInTube</a>, <a class="el" href="classRcs_1_1ECBoxFlipping.html#a574e9f67c87a41765dab6bdd79d9f925">Rcs::ECBoxFlipping</a>, <a class="el" href="classRcs_1_1ECMiniGolf.html#ac553025abb9bf1f820f58b12a1be2176">Rcs::ECMiniGolf</a>, <a class="el" href="classRcs_1_1ECBoxShelving.html#a0741ce95c9b14efa0602ece282409e65">Rcs::ECBoxShelving</a>, <a class="el" href="classRcs_1_1ECBallOnPlate.html#ae026472fdf3b69f9c759f83715fd6b0a">Rcs::ECBallOnPlate</a>, <a class="el" href="classRcs_1_1ECMPblending.html#ac5ad9faed17e5e793bdc7b1a1bfefda7">Rcs::ECMPblending</a>, <a class="el" href="classRcs_1_1ECQuanserQube.html#af6d6b21c46bee19d497f0266865b763f">Rcs::ECQuanserQube</a>, and <a class="el" href="classRcs_1_1ECTargetTracking.html#a6f7acfa2a23cc08a195fe5070bdde967">Rcs::ECTargetTracking</a>.</p>
+<p>Implemented in <a class="el" href="classRcs_1_1ECPlanar3Link.html#a428dbb6dc88977113a7f9ec74a4aa56a">Rcs::ECPlanar3Link</a>, <a class="el" href="classRcs_1_1ECPlanarInsert.html#aa95247bbc29de17a609ff740b2906199">Rcs::ECPlanarInsert</a>, <a class="el" href="classRcs_1_1ECMiniGolf.html#ac553025abb9bf1f820f58b12a1be2176">Rcs::ECMiniGolf</a>, <a class="el" href="classRcs_1_1ECBoxLifting.html#a8fc04676253f92d7f9b03ebf398face8">Rcs::ECBoxLifting</a>, <a class="el" href="classRcs_1_1ECBallInTube.html#a51143e3746c08cfb8a4c60d3f3654abf">Rcs::ECBallInTube</a>, <a class="el" href="classRcs_1_1ECBoxFlipping.html#a574e9f67c87a41765dab6bdd79d9f925">Rcs::ECBoxFlipping</a>, <a class="el" href="classRcs_1_1ECBoxShelving.html#a0741ce95c9b14efa0602ece282409e65">Rcs::ECBoxShelving</a>, <a class="el" href="classRcs_1_1ECBallOnPlate.html#ae026472fdf3b69f9c759f83715fd6b0a">Rcs::ECBallOnPlate</a>, <a class="el" href="classRcs_1_1ECMPblending.html#ac5ad9faed17e5e793bdc7b1a1bfefda7">Rcs::ECMPblending</a>, <a class="el" href="classRcs_1_1ECQuanserQube.html#af6d6b21c46bee19d497f0266865b763f">Rcs::ECQuanserQube</a>, and <a class="el" href="classRcs_1_1ECTargetTracking.html#a6f7acfa2a23cc08a195fe5070bdde967">Rcs::ECTargetTracking</a>.</p>
 
 </div>
 </div>
@@ -348,7 +348,7 @@ Protected Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Create a model for artificial external disturbing forces. The default implementation returns NULL to ignore this. </p><dl class="section return"><dt>Returns</dt><dd>the new force disturber </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classRcs_1_1ECBallInTube.html#a4c2a5bc5d2996ad6d9e5a603347acb6b">Rcs::ECBallInTube</a>, <a class="el" href="classRcs_1_1ECBoxFlipping.html#aeb77d7e781790d730410030929b899ca">Rcs::ECBoxFlipping</a>, <a class="el" href="classRcs_1_1ECBoxLifting.html#abf49c51fd23768d72ab7800270f5ba3e">Rcs::ECBoxLifting</a>, <a class="el" href="classRcs_1_1ECPlanar3Link.html#aa1f54cb0f957bd2f13a745cb04a077a5">Rcs::ECPlanar3Link</a>, <a class="el" href="classRcs_1_1ECBoxShelving.html#a99e2a03345840b7b0e5460800c89f8d9">Rcs::ECBoxShelving</a>, <a class="el" href="classRcs_1_1ECPlanarInsert.html#ac3ac144ec47c10bebec526086e1a9c0e">Rcs::ECPlanarInsert</a>, <a class="el" href="classRcs_1_1ECMiniGolf.html#a8a38df3d1e0894a5a339c9333fbe659d">Rcs::ECMiniGolf</a>, <a class="el" href="classRcs_1_1ECMPblending.html#aa727939a0613f20c1f9705eb48ebb1c2">Rcs::ECMPblending</a>, <a class="el" href="classRcs_1_1ECBallOnPlate.html#aa80f2b11876f37064a592f567e66582b">Rcs::ECBallOnPlate</a>, and <a class="el" href="classRcs_1_1ECQuanserQube.html#a068e77383c453c43f3a8f547ddb94e3e">Rcs::ECQuanserQube</a>.</p>
+<p>Reimplemented in <a class="el" href="classRcs_1_1ECBallInTube.html#a4c2a5bc5d2996ad6d9e5a603347acb6b">Rcs::ECBallInTube</a>, <a class="el" href="classRcs_1_1ECBoxFlipping.html#aeb77d7e781790d730410030929b899ca">Rcs::ECBoxFlipping</a>, <a class="el" href="classRcs_1_1ECBoxLifting.html#abf49c51fd23768d72ab7800270f5ba3e">Rcs::ECBoxLifting</a>, <a class="el" href="classRcs_1_1ECPlanar3Link.html#aa1f54cb0f957bd2f13a745cb04a077a5">Rcs::ECPlanar3Link</a>, <a class="el" href="classRcs_1_1ECBoxShelving.html#a99e2a03345840b7b0e5460800c89f8d9">Rcs::ECBoxShelving</a>, <a class="el" href="classRcs_1_1ECPlanarInsert.html#ac3ac144ec47c10bebec526086e1a9c0e">Rcs::ECPlanarInsert</a>, <a class="el" href="classRcs_1_1ECMPblending.html#aa727939a0613f20c1f9705eb48ebb1c2">Rcs::ECMPblending</a>, <a class="el" href="classRcs_1_1ECBallOnPlate.html#aa80f2b11876f37064a592f567e66582b">Rcs::ECBallOnPlate</a>, and <a class="el" href="classRcs_1_1ECQuanserQube.html#a068e77383c453c43f3a8f547ddb94e3e">Rcs::ECQuanserQube</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00301">301</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
 
@@ -402,7 +402,7 @@ Protected Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -497,7 +497,8 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Called to update the HUD text for the viewer. The default implementation will show the physics engine name, the current time and the last step reward. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Called to update the HUD text for the viewer. The default implementation will show the physics engine name, the current time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">linesOut</td><td>vector of HUD lines. initially empty. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">currentTime</td><td>simulation time </td></tr>
@@ -511,7 +512,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>concatenated HUD lines </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classRcs_1_1ECBallInTube.html#a91baba9ef167e70643798f56cded0019">Rcs::ECBallInTube</a>, <a class="el" href="classRcs_1_1ECBoxFlipping.html#aa1266a048497d9f444f9622162cd8d3e">Rcs::ECBoxFlipping</a>, <a class="el" href="classRcs_1_1ECBoxLifting.html#ac6babf8f9420a6ebc5f67de25e41b332">Rcs::ECBoxLifting</a>, <a class="el" href="classRcs_1_1ECPlanar3Link.html#ab3e6fa4627b42032b22966e7e332c413">Rcs::ECPlanar3Link</a>, <a class="el" href="classRcs_1_1ECBoxShelving.html#a257a530b51363b7e4e9ab7664c510396">Rcs::ECBoxShelving</a>, <a class="el" href="classRcs_1_1ECPlanarInsert.html#a68c7d359c40a4a6c6a81825cd198dfbf">Rcs::ECPlanarInsert</a>, <a class="el" href="classRcs_1_1ECBallOnPlate.html#ae30aee04864a8466975b3e2a04f69074">Rcs::ECBallOnPlate</a>, <a class="el" href="classRcs_1_1ECMiniGolf.html#ac68b9bf6494c4ecf855c678ee4ecbac4">Rcs::ECMiniGolf</a>, <a class="el" href="classRcs_1_1ECMPblending.html#a7603e59d867d6bf21b8ad5ede9c05c7e">Rcs::ECMPblending</a>, <a class="el" href="classRcs_1_1ECTargetTracking.html#a0d3ebb5add8b8fb817a8f4a66d817b86">Rcs::ECTargetTracking</a>, and <a class="el" href="classRcs_1_1ECQuanserQube.html#ad0ce4cd60e99d85cfdd2e0b4e430b9f6">Rcs::ECQuanserQube</a>.</p>
+<p>Reimplemented in <a class="el" href="classRcs_1_1ECBallInTube.html#a91baba9ef167e70643798f56cded0019">Rcs::ECBallInTube</a>, <a class="el" href="classRcs_1_1ECBoxFlipping.html#aa1266a048497d9f444f9622162cd8d3e">Rcs::ECBoxFlipping</a>, <a class="el" href="classRcs_1_1ECBoxLifting.html#ac6babf8f9420a6ebc5f67de25e41b332">Rcs::ECBoxLifting</a>, <a class="el" href="classRcs_1_1ECPlanar3Link.html#ab3e6fa4627b42032b22966e7e332c413">Rcs::ECPlanar3Link</a>, <a class="el" href="classRcs_1_1ECBoxShelving.html#a257a530b51363b7e4e9ab7664c510396">Rcs::ECBoxShelving</a>, <a class="el" href="classRcs_1_1ECPlanarInsert.html#a68c7d359c40a4a6c6a81825cd198dfbf">Rcs::ECPlanarInsert</a>, <a class="el" href="classRcs_1_1ECMiniGolf.html#ac68b9bf6494c4ecf855c678ee4ecbac4">Rcs::ECMiniGolf</a>, <a class="el" href="classRcs_1_1ECBallOnPlate.html#ae30aee04864a8466975b3e2a04f69074">Rcs::ECBallOnPlate</a>, <a class="el" href="classRcs_1_1ECMPblending.html#a7603e59d867d6bf21b8ad5ede9c05c7e">Rcs::ECMPblending</a>, <a class="el" href="classRcs_1_1ECTargetTracking.html#a0d3ebb5add8b8fb817a8f4a66d817b86">Rcs::ECTargetTracking</a>, and <a class="el" href="classRcs_1_1ECQuanserQube.html#ad0ce4cd60e99d85cfdd2e0b4e430b9f6">Rcs::ECQuanserQube</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00347">347</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
 
@@ -667,7 +668,7 @@ Protected Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -742,9 +743,9 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Action model (pluggable). </p>
+<p>Action model (pluggable) </p>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00204">204</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00203">203</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
 
 </div>
 </div>
@@ -762,7 +763,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Flag to enable joint limit checking. </p>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00216">216</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00215">215</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
 
 </div>
 </div>
@@ -780,7 +781,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Collision model to use. Is based on the graph, so take care when using with IK etc. </p>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00210">210</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00209">209</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
 
 </div>
 </div>
@@ -798,7 +799,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>The time step [s]. </p>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00213">213</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00212">212</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
 
 </div>
 </div>
@@ -816,7 +817,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Graph description. </p>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00201">201</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00200">200</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
 
 </div>
 </div>
@@ -834,7 +835,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Observation model (pluggable) used to create the observation which will be returned from step() </p>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00207">207</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00206">206</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
 
 </div>
 </div>
@@ -852,7 +853,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Property source (owned) </p>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00198">198</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8h_source.html#l00197">197</a> of file <a class="el" href="ExperimentConfig_8h_source.html">ExperimentConfig.h</a>.</p>
 
 </div>
 </div>
@@ -866,7 +867,7 @@ Protected Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1ExperimentConfig.html">ExperimentConfig</a></li>
-    <li class="footer">Generated on Tue Jun 1 2021 15:25:26 for RcsPySim by
+    <li class="footer">Generated on Tue Jun 1 2021 15:59:57 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

@@ -16,6 +16,10 @@ var dir_4339cdf4a1f023992e7732a8ffaf5341 =
     [ "PhysicsParameterManager.h", "PhysicsParameterManager_8h.html", [
       [ "PhysicsParameterManager", "classRcs_1_1PhysicsParameterManager.html", "classRcs_1_1PhysicsParameterManager" ]
     ] ],
+    [ "PPDBodyOrientation.cpp", "PPDBodyOrientation_8cpp.html", "PPDBodyOrientation_8cpp" ],
+    [ "PPDBodyOrientation.h", "PPDBodyOrientation_8h.html", [
+      [ "PPDBodyOrientation", "classRcs_1_1PPDBodyOrientation.html", "classRcs_1_1PPDBodyOrientation" ]
+    ] ],
     [ "PPDBodyPosition.cpp", "PPDBodyPosition_8cpp.html", null ],
     [ "PPDBodyPosition.h", "PPDBodyPosition_8h.html", [
       [ "PPDBodyPosition", "classRcs_1_1PPDBodyPosition.html", "classRcs_1_1PPDBodyPosition" ]

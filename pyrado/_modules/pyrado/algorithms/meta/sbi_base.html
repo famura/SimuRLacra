@@ -752,7 +752,6 @@
         <span class="n">data_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">num_eval_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_ml_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">calculate_log_probs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">return_as_tensor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -768,7 +767,6 @@
 <span class="sd">                          [num_iter, num_rollouts_per_iter, time_series_length, dim_data]</span>
 <span class="sd">        :param num_eval_samples: number of samples to draw from the posterior</span>
 <span class="sd">        :param num_ml_samples: number of most likely samples, i.e. 1 equals argmax</span>
-<span class="sd">        :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned</span>
 <span class="sd">        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
 <span class="sd">        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi&#39;s `DirectPosterior.sample()` function</span>
 <span class="sd">        :param return_as_tensor: if `True`, return the most likely domain parameter sets as a tensor of shape</span>
@@ -780,12 +778,12 @@
 
         <span class="c1"># Evaluate the posterior</span>
         <span class="n">domain_params</span><span class="p">,</span> <span class="n">log_probs</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">eval_posterior</span><span class="p">(</span>
-            <span class="n">posterior</span><span class="p">,</span>
-            <span class="n">data_real</span><span class="p">,</span>
-            <span class="n">num_eval_samples</span><span class="p">,</span>
-            <span class="n">calculate_log_probs</span><span class="p">,</span>
-            <span class="n">normalize_posterior</span><span class="p">,</span>
-            <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span>
+            <span class="n">posterior</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span>
+            <span class="n">data_real</span><span class="o">=</span><span class="n">data_real</span><span class="p">,</span>
+            <span class="n">num_samples</span><span class="o">=</span><span class="n">num_eval_samples</span><span class="p">,</span>
+            <span class="n">calculate_log_probs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">normalize_posterior</span><span class="o">=</span><span class="n">normalize_posterior</span><span class="p">,</span>
+            <span class="n">subrtn_sbi_sampling_hparam</span><span class="o">=</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Extract the most likely domain parameter sets for every target domain data set</span>

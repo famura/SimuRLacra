@@ -1,5 +1,4 @@
 <map id="Rcs::ControlPolicy" name="Rcs::ControlPolicy">
-<area shape="rect" id="node2" href="$classRcs_1_1ActionModelIKPolicy.html" title="Rcs::ActionModelIKPolicy" alt="" coords="5,80,180,107"/>
-<area shape="rect" id="node3" href="$classRcs_1_1SimpleControlPolicy.html" title="Rcs::SimpleControlPolicy" alt="" coords="204,80,376,107"/>
-<area shape="rect" id="node4" href="$classRcs_1_1TorchPolicy.html" title="Rcs::TorchPolicy" alt="" coords="401,80,523,107"/>
+<area shape="rect" id="node2" href="$classRcs_1_1SimpleControlPolicy.html" title="Rcs::SimpleControlPolicy" alt="" coords="5,80,177,107"/>
+<area shape="rect" id="node3" href="$classRcs_1_1TorchPolicy.html" title="Rcs::TorchPolicy" alt="" coords="202,80,325,107"/>
 </map>

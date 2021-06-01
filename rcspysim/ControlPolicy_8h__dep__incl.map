@@ -1,13 +1,11 @@
 <map id="src/cpp/core/control/ControlPolicy.h" name="src/cpp/core/control/ControlPolicy.h">
-<area shape="rect" id="node2" href="$ActionModelIKPolicy_8h.html" title="src/cpp/core/control\l/ActionModelIKPolicy.h" alt="" coords="91,95,249,136"/>
-<area shape="rect" id="node4" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="201,184,373,225"/>
-<area shape="rect" id="node5" href="$ControlPolicy_8cpp.html" title="src/cpp/core/control\l/ControlPolicy.cpp" alt="" coords="325,95,463,136"/>
-<area shape="rect" id="node6" href="$TorchPolicy_8h.html" title="src/cpp/core/control\l/TorchPolicy.h" alt="" coords="487,95,624,136"/>
-<area shape="rect" id="node8" href="$RcsPyBot_8cpp.html" title="src/cpp/core/RcsPyBot.cpp" alt="" coords="648,102,831,129"/>
-<area shape="rect" id="node9" href="$PolicyComponent_8h.html" title="src/cpp/hardware/PolicyComponent.h" alt="" coords="855,102,1095,129"/>
-<area shape="rect" id="node12" href="$module_8cpp.html" title="src/cpp/pyEnv/module.cpp" alt="" coords="1120,102,1297,129"/>
-<area shape="rect" id="node3" href="$ActionModelIKPolicy_8cpp.html" title="src/cpp/core/control\l/ActionModelIKPolicy.cpp" alt="" coords="5,184,177,225"/>
-<area shape="rect" id="node7" href="$TorchPolicy_8cpp.html" title="src/cpp/core/control\l/TorchPolicy.cpp" alt="" coords="487,184,624,225"/>
-<area shape="rect" id="node10" href="$ECSRobo_8cpp.html" title="src/cpp/hardware/ECSRobo.cpp" alt="" coords="759,191,970,218"/>
-<area shape="rect" id="node11" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="995,191,1249,218"/>
+<area shape="rect" id="node2" href="$ControlPolicy_8cpp.html" title="src/cpp/core/control\l/ControlPolicy.cpp" alt="" coords="5,95,143,136"/>
+<area shape="rect" id="node3" href="$TorchPolicy_8h.html" title="src/cpp/core/control\l/TorchPolicy.h" alt="" coords="167,95,304,136"/>
+<area shape="rect" id="node5" href="$RcsPyBot_8cpp.html" title="src/cpp/core/RcsPyBot.cpp" alt="" coords="328,102,511,129"/>
+<area shape="rect" id="node6" href="$PolicyComponent_8h.html" title="src/cpp/hardware/PolicyComponent.h" alt="" coords="535,102,775,129"/>
+<area shape="rect" id="node9" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="800,95,972,136"/>
+<area shape="rect" id="node10" href="$module_8cpp.html" title="src/cpp/pyEnv/module.cpp" alt="" coords="996,102,1173,129"/>
+<area shape="rect" id="node4" href="$TorchPolicy_8cpp.html" title="src/cpp/core/control\l/TorchPolicy.cpp" alt="" coords="167,184,304,225"/>
+<area shape="rect" id="node7" href="$ECSRobo_8cpp.html" title="src/cpp/hardware/ECSRobo.cpp" alt="" coords="439,191,650,218"/>
+<area shape="rect" id="node8" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="675,191,929,218"/>
 </map>

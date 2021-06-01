@@ -1,20 +1,19 @@
 <map id="src/cpp/hardware/TestBotSim.cpp" name="src/cpp/hardware/TestBotSim.cpp">
-<area shape="rect" id="node2" href="$RcsPyBot_8h.html" title="RcsPyBot.h" alt="" coords="198,259,292,285"/>
-<area shape="rect" id="node15" href="$ActionModel_8h.html" title="action/ActionModel.h" alt="" coords="568,259,712,285"/>
-<area shape="rect" id="node18" href="$ActionModelIK_8h.html" title="action/ActionModelIK.h" alt="" coords="778,177,936,203"/>
-<area shape="rect" id="node21" href="$PropertySourceXml_8h.html" title="config/PropertySourceXml.h" alt="" coords="1167,95,1352,121"/>
-<area shape="rect" id="node24" href="$ControlPolicy_8h.html" title="control/ControlPolicy.h" alt="" coords="920,408,1074,435"/>
-<area shape="rect" id="node25" href="$ActionModelIKPolicy_8h.html" title="control/ActionModelIKPolicy.h" alt="" coords="894,95,1092,121"/>
-<area shape="rect" id="node26" href="$ObservationModel_8h.html" title="observation/ObservationModel.h" alt="" coords="334,259,543,285"/>
-<area shape="rect" id="node27" href="$PhysicsParameterManager_8h.html" title="physics/PhysicsParameter\lManager.h" alt="" coords="1406,169,1585,211"/>
-<area shape="rect" id="node41" href="$PhysicsSimulationComponent_8h.html" title="PhysicsSimulationComponent.h" alt="" coords="1677,177,1885,203"/>
-<area shape="rect" id="node3" href="$ExperimentConfig_8h.html" title="ExperimentConfig.h" alt="" coords="570,333,707,360"/>
-<area shape="rect" id="node10" href="$DataLogger_8h.html" title="DataLogger.h" alt="" coords="195,333,295,360"/>
-<area shape="rect" id="node4" href="$PropertySource_8h.html" title="config/PropertySource.h" alt="" coords="1098,408,1261,435"/>
-<area shape="rect" id="node8" href="$nocopy_8h.html" title="util/nocopy.h" alt="" coords="592,408,688,435"/>
-<area shape="rect" id="node11" href="$BoxSpace_8h.html" title="util/BoxSpace.h" alt="" coords="453,408,568,435"/>
-<area shape="rect" id="node16" href="$BoxSpaceProvider_8h.html" title="../util/BoxSpaceProvider.h" alt="" coords="371,333,546,360"/>
-<area shape="rect" id="node28" href="$BodyParamInfo_8h.html" title="BodyParamInfo.h" alt="" coords="1452,333,1574,360"/>
-<area shape="rect" id="node30" href="$PhysicsParameterDescriptor_8h.html" title="PhysicsParameterDescriptor.h" alt="" coords="1280,259,1480,285"/>
-<area shape="rect" id="node31" href="$PropertySink_8h.html" title="../config/PropertySink.h" alt="" coords="1268,333,1427,360"/>
+<area shape="rect" id="node2" href="$RcsPyBot_8h.html" title="RcsPyBot.h" alt="" coords="201,184,295,211"/>
+<area shape="rect" id="node16" href="$ActionModelIK_8h.html" title="action/ActionModelIK.h" alt="" coords="524,102,681,129"/>
+<area shape="rect" id="node22" href="$PropertySourceXml_8h.html" title="config/PropertySourceXml.h" alt="" coords="807,102,993,129"/>
+<area shape="rect" id="node25" href="$ControlPolicy_8h.html" title="control/ControlPolicy.h" alt="" coords="1587,333,1741,360"/>
+<area shape="rect" id="node26" href="$ObservationModel_8h.html" title="observation/ObservationModel.h" alt="" coords="937,184,1146,211"/>
+<area shape="rect" id="node27" href="$PhysicsParameterManager_8h.html" title="physics/PhysicsParameter\lManager.h" alt="" coords="1387,95,1565,136"/>
+<area shape="rect" id="node41" href="$PhysicsSimulationComponent_8h.html" title="PhysicsSimulationComponent.h" alt="" coords="2585,102,2793,129"/>
+<area shape="rect" id="node3" href="$ExperimentConfig_8h.html" title="ExperimentConfig.h" alt="" coords="955,259,1093,285"/>
+<area shape="rect" id="node10" href="$DataLogger_8h.html" title="DataLogger.h" alt="" coords="177,259,277,285"/>
+<area shape="rect" id="node4" href="$PropertySource_8h.html" title="config/PropertySource.h" alt="" coords="1207,333,1369,360"/>
+<area shape="rect" id="node8" href="$nocopy_8h.html" title="util/nocopy.h" alt="" coords="893,333,989,360"/>
+<area shape="rect" id="node11" href="$BoxSpace_8h.html" title="util/BoxSpace.h" alt="" coords="755,333,869,360"/>
+<area shape="rect" id="node17" href="$ActionModel_8h.html" title="ActionModel.h" alt="" coords="618,184,723,211"/>
+<area shape="rect" id="node18" href="$BoxSpaceProvider_8h.html" title="../util/BoxSpaceProvider.h" alt="" coords="705,259,879,285"/>
+<area shape="rect" id="node28" href="$BodyParamInfo_8h.html" title="BodyParamInfo.h" alt="" coords="1504,259,1627,285"/>
+<area shape="rect" id="node30" href="$PhysicsParameterDescriptor_8h.html" title="PhysicsParameterDescriptor.h" alt="" coords="1376,184,1576,211"/>
+<area shape="rect" id="node31" href="$PropertySink_8h.html" title="../config/PropertySink.h" alt="" coords="1219,259,1378,285"/>
 </map>

@@ -109,7 +109,8 @@ Public Types</h2></td></tr>
 <a class="el" href="structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a1ecf2518799a905fdab48d3d22f392f5">MOD_INERTIA</a> = 1 &lt;&lt; 2, 
 <a class="el" href="structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0aa70c39971ac0b344f09819a011166759">MOD_SHAPE</a> = 1 &lt;&lt; 3, 
 <br />
-&#160;&#160;<a class="el" href="structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a2f8b9a2acd49eff7d457b591b7dbaec6">MOD_POSITION</a> = 1 &lt;&lt; 4
+&#160;&#160;<a class="el" href="structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a2f8b9a2acd49eff7d457b591b7dbaec6">MOD_POSITION</a> = 1 &lt;&lt; 4, 
+<a class="el" href="structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0acbb3d9efe942cd66c1c99f149717e822">MOD_ORIENTATION</a> = 1 &lt;&lt; 5
 <br />
  }</td></tr>
 <tr class="separator:ae23486ffc04900ba351d409d337f72c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,6 +162,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="ae23486ffc04900ba351d409d337f72c0a1ecf2518799a905fdab48d3d22f392f5"></a>MOD_INERTIA&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ae23486ffc04900ba351d409d337f72c0aa70c39971ac0b344f09819a011166759"></a>MOD_SHAPE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ae23486ffc04900ba351d409d337f72c0a2f8b9a2acd49eff7d457b591b7dbaec6"></a>MOD_POSITION&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ae23486ffc04900ba351d409d337f72c0acbb3d9efe942cd66c1c99f149717e822"></a>MOD_ORIENTATION&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 <p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00050">50</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
@@ -229,7 +231,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00085">85</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
+<p>Check if a parameter changed. </p>
+
+<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00081">81</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
 
 </div>
 </div>
@@ -257,7 +261,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00092">92</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
+<p>Mark if a parameter as changed. </p>
+
+<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00087">87</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
 
 </div>
 </div>
@@ -276,6 +282,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Reset all change flags. </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -291,7 +299,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00068">68</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
+<p>The body. </p>
+
+<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00064">64</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
 
 </div>
 </div>
@@ -307,7 +317,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00065">65</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
+<p>The graph containing the body. </p>
+
+<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00061">61</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
 
 </div>
 </div>
@@ -323,7 +335,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00074">74</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
+<p>Material of the body's first shape. </p>
+
+<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00070">70</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
 
 </div>
 </div>
@@ -339,7 +353,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00077">77</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
+<p>Flags tracking the modified state of the body. </p>
+
+<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00073">73</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
 
 </div>
 </div>
@@ -355,7 +371,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00071">71</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
+<p>prefix for parameter names </p>
+
+<p class="definition">Definition at line <a class="el" href="BodyParamInfo_8h_source.html#l00067">67</a> of file <a class="el" href="BodyParamInfo_8h_source.html">BodyParamInfo.h</a>.</p>
 
 </div>
 </div>
@@ -369,7 +387,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="structRcs_1_1BodyParamInfo.html">BodyParamInfo</a></li>
-    <li class="footer">Generated on Tue Jun 1 2021 15:25:26 for RcsPySim by
+    <li class="footer">Generated on Tue Jun 1 2021 15:59:57 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

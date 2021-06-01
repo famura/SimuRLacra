@@ -2,7 +2,6 @@ var searchData=
 [
   ['_7eactionmodel',['~ActionModel',['../classRcs_1_1ActionModel.html#a6b88e07bedd8e501159bd2f30c0a85c6',1,'Rcs::ActionModel']]],
   ['_7eactionmodelik',['~ActionModelIK',['../classRcs_1_1ActionModelIK.html#a723bcb76f60bf51939db3cf4ae4577cc',1,'Rcs::ActionModelIK']]],
-  ['_7eactionmodelikpolicy',['~ActionModelIKPolicy',['../classRcs_1_1ActionModelIKPolicy.html#abe92691602372eaa8265bf49291f9502',1,'Rcs::ActionModelIKPolicy']]],
   ['_7eamdynamicalsystemactivation',['~AMDynamicalSystemActivation',['../classRcs_1_1AMDynamicalSystemActivation.html#a32237356ff2f63179df5ea9515122522',1,'Rcs::AMDynamicalSystemActivation']]],
   ['_7eamikcontrolleractivation',['~AMIKControllerActivation',['../classRcs_1_1AMIKControllerActivation.html#a08c9352fed10c0babbe729b0ac17a9fd',1,'Rcs::AMIKControllerActivation']]],
   ['_7eamintegrate1storder',['~AMIntegrate1stOrder',['../classRcs_1_1AMIntegrate1stOrder.html#a66d5d857412f0c18e66f9bc6d370d787',1,'Rcs::AMIntegrate1stOrder']]],
@@ -53,6 +52,7 @@ var searchData=
   ['_7ephysicsparametermanager',['~PhysicsParameterManager',['../classRcs_1_1PhysicsParameterManager.html#a93b3c3e8298a1e79c95710ad9a7c4833',1,'Rcs::PhysicsParameterManager']]],
   ['_7ephysicssimulationcomponent',['~PhysicsSimulationComponent',['../classRcs_1_1PhysicsSimulationComponent.html#a3736d64e575031b12abcabe89a385f68',1,'Rcs::PhysicsSimulationComponent']]],
   ['_7epolicycomponent',['~PolicyComponent',['../classRcs_1_1PolicyComponent.html#a0e02fc564cfb54c3870c78746aa6afb9',1,'Rcs::PolicyComponent']]],
+  ['_7eppdbodyorientation',['~PPDBodyOrientation',['../classRcs_1_1PPDBodyOrientation.html#a3019b84c418241442b2134b73a7e761d',1,'Rcs::PPDBodyOrientation']]],
   ['_7eppdbodyposition',['~PPDBodyPosition',['../classRcs_1_1PPDBodyPosition.html#a52766b749e88e002a4ef33f25c20eaf2',1,'Rcs::PPDBodyPosition']]],
   ['_7eppdboxextents',['~PPDBoxExtents',['../classRcs_1_1PPDBoxExtents.html#aa35975753673f65c4cddbd794b05239d',1,'Rcs::PPDBoxExtents']]],
   ['_7eppdcompound',['~PPDCompound',['../classRcs_1_1PPDCompound.html#a18a411e79698ff7c72fffd48b22343ea',1,'Rcs::PPDCompound']]],

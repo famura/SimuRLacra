@@ -5,7 +5,8 @@ var structRcs_1_1BodyParamInfo =
       [ "MOD_COM", "structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a6c719c3ec4ad1d7f511e343cca4a2cba", null ],
       [ "MOD_INERTIA", "structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a1ecf2518799a905fdab48d3d22f392f5", null ],
       [ "MOD_SHAPE", "structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0aa70c39971ac0b344f09819a011166759", null ],
-      [ "MOD_POSITION", "structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a2f8b9a2acd49eff7d457b591b7dbaec6", null ]
+      [ "MOD_POSITION", "structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a2f8b9a2acd49eff7d457b591b7dbaec6", null ],
+      [ "MOD_ORIENTATION", "structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0acbb3d9efe942cd66c1c99f149717e822", null ]
     ] ],
     [ "BodyParamInfo", "structRcs_1_1BodyParamInfo.html#ab4ed09a0504d8db2cc3b67afd7fee5e0", null ],
     [ "isChanged", "structRcs_1_1BodyParamInfo.html#a41a1e56841fc78862b444c5dbf133977", null ],

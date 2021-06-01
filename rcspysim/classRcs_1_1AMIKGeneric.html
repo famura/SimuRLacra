@@ -150,6 +150,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab4bc77f91d9f0b11b0c04dc940cd5c26 inherit pub_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33e276f956d371bba1c9a936e5319243 inherit pub_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a33e276f956d371bba1c9a936e5319243">setupCollisionModel</a> (const RcsCollisionMdl *modelToCopy)</td></tr>
 <tr class="separator:a33e276f956d371bba1c9a936e5319243 inherit pub_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1912eb532fb3c1b87c2f2f38e2d8fc91 inherit pub_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a1912eb532fb3c1b87c2f2f38e2d8fc91">computeIK</a> (MatNd *q_des, MatNd *q_dot_des, MatNd *T_des, const MatNd *x_des, double dt)</td></tr>
+<tr class="separator:a1912eb532fb3c1b87c2f2f38e2d8fc91 inherit pub_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d6eb4d751fababd30aff6838f5213b8 inherit pub_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a9d6eb4d751fababd30aff6838f5213b8">computeIKVel</a> (MatNd *q_des, MatNd *q_dot_des, MatNd *T_des, const MatNd *x_dot_des, double dt)</td></tr>
+<tr class="separator:a9d6eb4d751fababd30aff6838f5213b8 inherit pub_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classRcs_1_1ActionModel"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classRcs_1_1ActionModel')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classRcs_1_1ActionModel.html">Rcs::ActionModel</a></td></tr>
 <tr class="memitem:a318629cec207459749ab9d6a0ae5cbd4 inherit pub_methods_classRcs_1_1ActionModel"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModel.html#a318629cec207459749ab9d6a0ae5cbd4">ActionModel</a> (RcsGraph *<a class="el" href="classRcs_1_1ActionModel.html#a3b81fd76a409b0fe8ad952a103d257e6">graph</a>)</td></tr>
 <tr class="separator:a318629cec207459749ab9d6a0ae5cbd4 inherit pub_methods_classRcs_1_1ActionModel"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,10 +200,6 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a42021dbe312d14921f1fa60941146c95 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a894b0cfed20a52a1a42ec6b540644706 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a894b0cfed20a52a1a42ec6b540644706">getNumActiveTasks</a> () const</td></tr>
 <tr class="separator:a894b0cfed20a52a1a42ec6b540644706 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1912eb532fb3c1b87c2f2f38e2d8fc91 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a1912eb532fb3c1b87c2f2f38e2d8fc91">computeIK</a> (MatNd *q_des, MatNd *q_dot_des, MatNd *T_des, const MatNd *x_des, double dt)</td></tr>
-<tr class="separator:a1912eb532fb3c1b87c2f2f38e2d8fc91 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d6eb4d751fababd30aff6838f5213b8 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a9d6eb4d751fababd30aff6838f5213b8">computeIKVel</a> (MatNd *q_des, MatNd *q_dot_des, MatNd *T_des, const MatNd *x_dot_des, double dt)</td></tr>
-<tr class="separator:a9d6eb4d751fababd30aff6838f5213b8 inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15fbea881774f690a1ae48872b94047c inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ActionModelIK.html#a15fbea881774f690a1ae48872b94047c">ikFromDX</a> (MatNd *q_des, MatNd *q_dot_des, double dt) const</td></tr>
 <tr class="separator:a15fbea881774f690a1ae48872b94047c inherit pro_methods_classRcs_1_1ActionModelIK"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classRcs_1_1ActionModelIK"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classRcs_1_1ActionModelIK')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classRcs_1_1ActionModelIK.html">Rcs::ActionModelIK</a></td></tr>
@@ -497,7 +497,7 @@ am-&gt;reset(); // now it can be used, and no new tasks must be added.</pre>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1AMIKGeneric.html">AMIKGeneric</a></li>
-    <li class="footer">Generated on Tue Jun 1 2021 15:25:26 for RcsPySim by
+    <li class="footer">Generated on Tue Jun 1 2021 15:59:57 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

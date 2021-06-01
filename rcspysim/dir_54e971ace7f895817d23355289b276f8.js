@@ -1,9 +1,5 @@
 var dir_54e971ace7f895817d23355289b276f8 =
 [
-    [ "ActionModelIKPolicy.cpp", "ActionModelIKPolicy_8cpp.html", null ],
-    [ "ActionModelIKPolicy.h", "ActionModelIKPolicy_8h.html", [
-      [ "ActionModelIKPolicy", "classRcs_1_1ActionModelIKPolicy.html", "classRcs_1_1ActionModelIKPolicy" ]
-    ] ],
     [ "ControlPolicy.cpp", "ControlPolicy_8cpp.html", "ControlPolicy_8cpp" ],
     [ "ControlPolicy.h", "ControlPolicy_8h.html", [
       [ "ControlPolicy", "classRcs_1_1ControlPolicy.html", "classRcs_1_1ControlPolicy" ],

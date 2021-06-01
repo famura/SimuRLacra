@@ -110,8 +110,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afa442edc11f056bc931930092c571985"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36669576b064c97e1e386eadcc6cc581"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a36669576b064c97e1e386eadcc6cc581">stop</a> ()</td></tr>
 <tr class="separator:a36669576b064c97e1e386eadcc6cc581"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac94541310ae2a10f1e1a8ac3de684d46"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#ac94541310ae2a10f1e1a8ac3de684d46">record</a> (const MatNd *observation, const MatNd *action, double reward)</td></tr>
-<tr class="separator:ac94541310ae2a10f1e1a8ac3de684d46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a047c016dc71364c6fc8973176520a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a7a047c016dc71364c6fc8973176520a1">record</a> (const MatNd *observation, const MatNd *action)</td></tr>
+<tr class="separator:a7a047c016dc71364c6fc8973176520a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c841763e6b9bacce8b4e38d3316164d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a2c841763e6b9bacce8b4e38d3316164d">isRunning</a> () const</td></tr>
 <tr class="separator:a2c841763e6b9bacce8b4e38d3316164d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -133,8 +133,7 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a2bf31bd7c9ede32ea226bea41a6d2105"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Logs experiment data to a csv file.</p>
-<p>For every time step, it records the observations, actions and the reward. </p>
+<div class="textblock"><p>Logs experiment data to a csv file. For every time step, it records the observations and the actions. The reward can be computed later on the Python side. </p>
 
 <p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00050">50</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -221,8 +220,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ac94541310ae2a10f1e1a8ac3de684d46"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac94541310ae2a10f1e1a8ac3de684d46">&#9670;&nbsp;</a></span>record()</h2>
+<a id="a7a047c016dc71364c6fc8973176520a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a047c016dc71364c6fc8973176520a1">&#9670;&nbsp;</a></span>record()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,13 +236,7 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const MatNd *&#160;</td>
-          <td class="paramname"><em>action</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>reward</em>&#160;</td>
+          <td class="paramname"><em>action</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -351,7 +344,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00095">95</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p>Automatic log file naming. </p>
+
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00097">97</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -375,7 +370,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00098">98</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p>Buffer to avoid writing on realtime main thread. </p>
+
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00104">104</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -399,9 +396,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>buffer to avoid writing on realtime main thread </p>
+<p>Step counter in current logging run. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00099">99</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00107">107</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -425,9 +422,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>automatic log file naming </p>
-
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00096">96</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00098">98</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -475,9 +470,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>step counter in current logging run </p>
+<p>Current output stream. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00100">100</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00110">110</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -501,7 +496,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00097">97</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p>Flag if the logger is currently recording. </p>
+
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00101">101</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -515,7 +512,7 @@ Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1DataLogger.html">DataLogger</a></li>
-    <li class="footer">Generated on Tue Jun 1 2021 15:25:26 for RcsPySim by
+    <li class="footer">Generated on Tue Jun 1 2021 15:59:57 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

@@ -2,7 +2,6 @@ var namespaceRcs =
 [
     [ "ActionModel", "classRcs_1_1ActionModel.html", "classRcs_1_1ActionModel" ],
     [ "ActionModelIK", "classRcs_1_1ActionModelIK.html", "classRcs_1_1ActionModelIK" ],
-    [ "ActionModelIKPolicy", "classRcs_1_1ActionModelIKPolicy.html", "classRcs_1_1ActionModelIKPolicy" ],
     [ "AMDynamicalSystemActivation", "classRcs_1_1AMDynamicalSystemActivation.html", "classRcs_1_1AMDynamicalSystemActivation" ],
     [ "AMIKControllerActivation", "classRcs_1_1AMIKControllerActivation.html", "classRcs_1_1AMIKControllerActivation" ],
     [ "AMIKGeneric", "classRcs_1_1AMIKGeneric.html", "classRcs_1_1AMIKGeneric" ],
@@ -80,6 +79,7 @@ var namespaceRcs =
     [ "PhysicsParameterManager", "classRcs_1_1PhysicsParameterManager.html", "classRcs_1_1PhysicsParameterManager" ],
     [ "PhysicsSimulationComponent", "classRcs_1_1PhysicsSimulationComponent.html", "classRcs_1_1PhysicsSimulationComponent" ],
     [ "PolicyComponent", "classRcs_1_1PolicyComponent.html", "classRcs_1_1PolicyComponent" ],
+    [ "PPDBodyOrientation", "classRcs_1_1PPDBodyOrientation.html", "classRcs_1_1PPDBodyOrientation" ],
     [ "PPDBodyPosition", "classRcs_1_1PPDBodyPosition.html", "classRcs_1_1PPDBodyPosition" ],
     [ "PPDBoxExtents", "classRcs_1_1PPDBoxExtents.html", "classRcs_1_1PPDBoxExtents" ],
     [ "PPDCompound", "classRcs_1_1PPDCompound.html", "classRcs_1_1PPDCompound" ],

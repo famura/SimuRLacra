@@ -1,6 +1,7 @@
 <map id="src/cpp/core/physics/PPDSphereRadius.h" name="src/cpp/core/physics/PPDSphereRadius.h">
 <area shape="rect" id="node2" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,102,209,129"/>
 <area shape="rect" id="node3" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="234,102,445,129"/>
-<area shape="rect" id="node4" href="$ECTargetTracking_8cpp.html" title="src/cpp/core/ECTargetTracking.cpp" alt="" coords="469,102,698,129"/>
-<area shape="rect" id="node5" href="$PPDSphereRadius_8cpp.html" title="src/cpp/core/physics\l/PPDSphereRadius.cpp" alt="" coords="723,95,884,136"/>
+<area shape="rect" id="node4" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="469,102,660,129"/>
+<area shape="rect" id="node5" href="$ECTargetTracking_8cpp.html" title="src/cpp/core/ECTargetTracking.cpp" alt="" coords="685,102,914,129"/>
+<area shape="rect" id="node6" href="$PPDSphereRadius_8cpp.html" title="src/cpp/core/physics\l/PPDSphereRadius.cpp" alt="" coords="939,95,1100,136"/>
 </map>

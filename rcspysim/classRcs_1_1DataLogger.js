@@ -3,7 +3,7 @@ var classRcs_1_1DataLogger =
     [ "DataLogger", "classRcs_1_1DataLogger.html#aabd0a62e6f356507de44605d5a0184fb", null ],
     [ "~DataLogger", "classRcs_1_1DataLogger.html#a64b877261826d605b8467e9a5a651f5c", null ],
     [ "isRunning", "classRcs_1_1DataLogger.html#a2c841763e6b9bacce8b4e38d3316164d", null ],
-    [ "record", "classRcs_1_1DataLogger.html#ac94541310ae2a10f1e1a8ac3de684d46", null ],
+    [ "record", "classRcs_1_1DataLogger.html#a7a047c016dc71364c6fc8973176520a1", null ],
     [ "start", "classRcs_1_1DataLogger.html#afa442edc11f056bc931930092c571985", null ],
     [ "stop", "classRcs_1_1DataLogger.html#a36669576b064c97e1e386eadcc6cc581", null ],
     [ "baseFileName", "classRcs_1_1DataLogger.html#a9b72ee64b4657eb32a8efb451a833afe", null ],
