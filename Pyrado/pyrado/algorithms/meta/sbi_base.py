@@ -528,7 +528,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
         data_real: to.Tensor,
         num_eval_samples: int,
         num_ml_samples: int = 1,
-        calculate_log_probs: bool = True,
         normalize_posterior: bool = True,
         subrtn_sbi_sampling_hparam: Optional[dict] = None,
         return_as_tensor: bool = False,
@@ -544,7 +543,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
                           [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
         :param num_eval_samples: number of samples to draw from the posterior
         :param num_ml_samples: number of most likely samples, i.e. 1 equals argmax
-        :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned
         :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :param return_as_tensor: if `True`, return the most likely domain parameter sets as a tensor of shape
@@ -556,12 +554,12 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Evaluate the posterior
         domain_params, log_probs = SBIBase.eval_posterior(
-            posterior,
-            data_real,
-            num_eval_samples,
-            calculate_log_probs,
-            normalize_posterior,
-            subrtn_sbi_sampling_hparam,
+            posterior=posterior,
+            data_real=data_real,
+            num_samples=num_eval_samples,
+            calculate_log_probs=True,
+            normalize_posterior=normalize_posterior,
+            subrtn_sbi_sampling_hparam=subrtn_sbi_sampling_hparam,
         )
 
         # Extract the most likely domain parameter sets for every target domain data set
