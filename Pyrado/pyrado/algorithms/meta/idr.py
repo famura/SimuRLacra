@@ -106,6 +106,9 @@ class IDR(Algorithm):
             self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
 
+        self._subroutine.reset()
+        # Also reset the rollouts to not stop too early because the stopping criterion is fulfilled.
+        self._subroutine.sampler.reset_rollouts()
         self._subroutine.train(snapshot_mode, None, meta_info)
 
         for param in self._parameters:
