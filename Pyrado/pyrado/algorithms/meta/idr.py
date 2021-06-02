@@ -25,6 +25,8 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import numpy as np
+import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -112,15 +114,20 @@ class IDR(Algorithm):
         self._subroutine.train(snapshot_mode, None, meta_info)
 
         for param in self._parameters:
-            param.adapt(
-                "context_mean",
-                param.context_mean + (param.target_mean - param.init_mean) / self._param_adjustment_scale,
-            )
-            param.adapt(
-                "context_cov_chol_flat",
-                param.context_cov_chol_flat
-                + (param.target_cov_chol_flat - param.init_cov_chol_flat) / self._param_adjustment_scale,
-            )
+            # Prevents the parameters from overshooting the target.
+            if self.curr_iter >= self._param_adjustment_scale:
+                context_mean_new = param.target_mean
+                context_cov_chol_flat_new = param.target_cov_chol_flat
+            else:
+                context_mean_new = (
+                    param.context_mean + (param.target_mean - param.init_mean) / self._param_adjustment_scale,
+                )
+                context_cov_chol_flat_new = (
+                    param.context_cov_chol_flat
+                    + (param.target_cov_chol_flat - param.init_cov_chol_flat) / self._param_adjustment_scale
+                )
+            param.adapt("context_mean", context_mean_new)
+            param.adapt("context_cov_chol_flat", context_cov_chol_flat_new)
 
     def reset(self, seed: int = None):
         # Forward to subroutine.
