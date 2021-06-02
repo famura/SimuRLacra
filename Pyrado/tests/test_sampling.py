@@ -428,6 +428,58 @@ def test_parameter_exploration_sampler(env: SimEnv, policy: Policy, num_workers:
     assert len(psr.rollouts) >= 1 * 1 * num_ps
 
 
+@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("num_params", [2])
+@pytest.mark.parametrize("num_init_states_per_domain", [2])
+@pytest.mark.parametrize("num_domains", [2])
+@pytest.mark.parametrize("set_init_states", [False, True], ids=["wo_init_states", "w_init_states"])
+def test_parameter_exploration_sampler_deterministic(
+    env: SimEnv,
+    policy: Policy,
+    num_params: int,
+    num_init_states_per_domain: int,
+    num_domains: int,
+    set_init_states: bool,
+):
+    param_sets = to.rand(num_params, policy.num_param)
+
+    if set_init_states:
+        init_states = [env.spec.state_space.sample_uniform() for _ in range(num_init_states_per_domain * num_domains)]
+    else:
+        init_states = None
+
+    nums_workers = (1, 2, 4)
+
+    all_results = []
+    for num_workers in nums_workers:
+        # Reset the seed every time because sample() uses the root sampler. This does not matter for regular runs, but
+        # for this tests it is very relevant.
+        pyrado.set_seed(0)
+        all_results.append(
+            ParameterExplorationSampler(
+                env,
+                policy,
+                num_init_states_per_domain=num_init_states_per_domain,
+                num_domains=num_domains,
+                num_workers=num_workers,
+                seed=0,
+            ).sample(param_sets=param_sets, init_states=init_states)
+        )
+
+    # Test that the rollouts for all number of workers are equal.
+    for psr_a, psr_b in [(a, b) for a in all_results for b in all_results]:
+        assert psr_a.parameters == pytest.approx(psr_b.parameters)
+        assert psr_a.mean_returns == pytest.approx(psr_b.mean_returns)
+        assert psr_a.num_rollouts == psr_b.num_rollouts
+        assert len(psr_a.rollouts) == len(psr_b.rollouts)
+        for ros_a, ros_b in zip(psr_a.rollouts, psr_b.rollouts):
+            for ro_a, ro_b in zip(ros_a, ros_b):
+                assert ro_a.rewards == pytest.approx(ro_b.rewards)
+                assert ro_a.observations == pytest.approx(ro_b.observations)
+                assert ro_a.actions == pytest.approx(ro_b.actions)
+
+
 @pytest.mark.parametrize("env", ["default_bob"], indirect=True, ids=["bob"])
 @pytest.mark.parametrize(
     "policy",

@@ -30,6 +30,7 @@ import itertools
 import multiprocessing as mp
 import pickle
 import sys
+from functools import partial
 from typing import List, NamedTuple, Optional, Sequence, Union
 
 import numpy as np
@@ -126,9 +127,9 @@ def _pes_init(G, env, policy):
     G.policy = pickle.loads(policy)
 
 
-def _pes_sample_one(G, param):
+def _pes_sample_one(G, param, seed: str):
     """Sample one rollout with the current setting."""
-    pol_param, dom_param, init_state = param
+    num, (pol_param, dom_param, init_state) = param
     vector_to_parameters(pol_param, G.policy.parameters())
 
     return rollout(
@@ -138,6 +139,7 @@ def _pes_sample_one(G, param):
             "init_state": init_state,
             "domain_param": dom_param,
         },
+        seed=f"{seed}-n{num}",
     )
 
 
@@ -192,9 +194,8 @@ class ParameterExplorationSampler(Serializable):
         # Create parallel pool. We use one thread per environment because it's easier.
         self.pool = SamplerPool(num_workers)
 
-        # Set all rngs' seeds
-        if seed is not None:
-            self.pool.set_seed(seed)
+        self._seed = seed
+        self._sample_count = 0
 
         # Distribute environments. We use pickle to make sure a copy is created for n_envs = 1
         self.pool.invoke_all(_pes_init, pickle.dumps(self.env), pickle.dumps(self.policy))
@@ -269,6 +270,9 @@ class ParameterExplorationSampler(Serializable):
         if not isinstance(domain_params, list):
             raise pyrado.TypeErr(given=domain_params, expected_type=list)
 
+        self._sample_count += 1
+        seed = f"{self._seed}-s{self._sample_count}"
+
         # Sample the initial states for every domain, but reset before. Hence they are associated to their domain.
         if init_states is None:
             init_states = [
@@ -287,7 +291,7 @@ class ParameterExplorationSampler(Serializable):
 
         # Sample rollouts in parallel
         with tqdm(leave=False, file=sys.stdout, desc="Sampling", unit="rollouts") as pb:
-            all_ros = self.pool.run_map(_pes_sample_one, all_params, pb)
+            all_ros = self.pool.run_map(partial(_pes_sample_one, seed=seed), list(enumerate(all_params)), pb)
 
         # Group rollouts by parameters
         ros_iter = iter(all_ros)
