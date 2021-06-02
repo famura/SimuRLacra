@@ -120,7 +120,7 @@ class IDR(Algorithm):
                 context_cov_chol_flat_new = param.target_cov_chol_flat
             else:
                 context_mean_new = (
-                    param.context_mean + (param.target_mean - param.init_mean) / self._param_adjustment_scale,
+                    param.context_mean + (param.target_mean - param.init_mean) / self._param_adjustment_scale
                 )
                 context_cov_chol_flat_new = (
                     param.context_cov_chol_flat
