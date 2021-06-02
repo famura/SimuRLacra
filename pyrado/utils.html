@@ -163,7 +163,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_sets">data_sets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_types">data_types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.exceptions">exceptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#experiments">experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.experiments">experiments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.functions">functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.input_output">input_output</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.math">math</a></li>
@@ -943,8 +943,95 @@ Convert a scalar to a float.
 </dd></dl>
 
 </div>
-<div class="section" id="experiments">
-<h2>experiments<a class="headerlink" href="#experiments" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.utils.experiments">
+<span id="experiments"></span><h2>experiments<a class="headerlink" href="#module-pyrado.utils.experiments" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.utils.experiments.cpp_export">
+<span class="sig-name descname"><span class="pre">cpp_export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_export_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'policy_export'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_policy_node</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_node_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'policy'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#cpp_export"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.experiments.cpp_export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function to export the policy using PyTorch’s scripting or tracing, and the experiment’s XML
+configuration if the environment from RcsPySim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – directory to save in</p></li>
+<li><p><strong>policy</strong> – (trained) policy</p></li>
+<li><p><strong>env</strong> – environment the policy was trained in</p></li>
+<li><p><strong>policy_export_name</strong> – name of the exported policy file without the file type ending</p></li>
+<li><p><strong>write_policy_node</strong> – if <cite>True</cite>, write the PyTorch-based control policy into the experiment’s XML configuration.
+This requires the experiment’s XML configuration to be exported beforehand.</p></li>
+<li><p><strong>policy_node_name</strong> – name of the control policies node in the XML file, e.g. ‘policy’ or ‘preStrikePolicy’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.utils.experiments.fcn_from_str">
+<span class="sig-name descname"><span class="pre">fcn_from_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Callable</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#fcn_from_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.experiments.fcn_from_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the matching function. This method is a workaround / utility tool to intended to work with optuna. Since we can
+not pass functions directly, we pass a sting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – name of the function</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.utils.experiments.load_experiment">
+<span class="sig-name descname"><span class="pre">load_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the (training) environment and the policy.
+This helper function first tries to read the hyper-parameters yaml-file in the experiment’s directory to infer
+why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ex_dir</strong> – experiment’s parent directory</p></li>
+<li><p><strong>args</strong> – arguments from the argument parser, pass <cite>None</cite> to fall back to the values from the default argparser</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>environment, policy, and optional output (e.g. valuefcn)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.utils.experiments.load_rollouts_from_dir">
+<span class="sig-name descname"><span class="pre">load_rollouts_from_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'rollout'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_exts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">('pt',</span> <span class="pre">'pkl')</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_rollouts_from_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.experiments.load_rollouts_from_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crawl through the given directory and load all rollouts, i.e. all files that include the key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ex_dir</strong> – directory, e.g. and experiment folder</p></li>
+<li><p><strong>key</strong> – word or part of a word that needs to the in the name of a file for it to be loaded</p></li>
+<li><p><strong>file_exts</strong> – file extensions to be considered for loading</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of loaded rollouts, and list of file names without extension</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.utils.experiments.read_csv_w_replace">
+<span class="sig-name descname"><span class="pre">read_csv_w_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#read_csv_w_replace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.experiments.read_csv_w_replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom function to read a CSV file. Turns white paces into underscores for accessing the columns as exposed
+properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – path to the CSV file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas <cite>DataFrame</cite> with replaced chars in columns</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.utils.functions">
 <span id="functions"></span><h2>functions<a class="headerlink" href="#module-pyrado.utils.functions" title="Permalink to this headline">¶</a></h2>
