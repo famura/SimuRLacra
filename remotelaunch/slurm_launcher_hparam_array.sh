@@ -44,7 +44,7 @@
 ###############################################################################
 
 # Your program call starts here
-echo "Starting Job $SLURM_JOB_ID, Index $SLURM_ARRAY_TASK_ID"
+echo "Starting Job $SLURM_JOB_ID, Array Job $SLURM_ARRAY_JOB_ID Index $SLURM_ARRAY_TASK_ID"
 
 # Activate the pyrado anaconda environment
 eval "$($HOME/Software/anaconda3/bin/conda shell.bash hook)"
