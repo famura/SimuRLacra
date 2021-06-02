@@ -59,12 +59,12 @@ def _ps_update_policy(G, state):
     G.policy.load_state_dict(state)
 
 
-def _ps_sample_one(G, eval: bool):
+def _ps_sample_one(G, num: int, eval: bool, seed: str):
     """
     Sample one rollout and return step count if counting steps, rollout count (1) otherwise.
     This function is used when a minimum number of steps was given.
     """
-    ro = rollout(G.env, G.policy, eval=eval)
+    ro = rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}")
     return ro, len(ro)
 
 
@@ -82,9 +82,7 @@ def _ps_run_one_init_state(G, init_state: Tuple[int, np.ndarray], eval: bool, se
     This function is used when a minimum number of rollouts was given.
     """
     num, init_state = init_state
-    return rollout(
-        G.env, G.policy, eval=eval, seed=f"{seed}-n{num}-is{init_state}", reset_kwargs=dict(init_state=init_state)
-    )
+    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}", reset_kwargs=dict(init_state=init_state))
 
 
 def _ps_run_one_domain_param(G, domain_param: Tuple[int, dict], eval: bool, seed: str):
@@ -93,9 +91,7 @@ def _ps_run_one_domain_param(G, domain_param: Tuple[int, dict], eval: bool, seed
     This function is used when a minimum number of rollouts was given.
     """
     num, domain_param = domain_param
-    return rollout(
-        G.env, G.policy, eval=eval, seed=f"{seed}-n{num}-dp{domain_param}", reset_kwargs=dict(domain_param=domain_param)
-    )
+    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}", reset_kwargs=dict(domain_param=domain_param))
 
 
 def _ps_run_one_reset_kwargs(G, reset_kwargs: Tuple[int, Tuple[np.ndarray, dict]], eval: bool, seed: str):
@@ -108,7 +104,7 @@ def _ps_run_one_reset_kwargs(G, reset_kwargs: Tuple[int, Tuple[np.ndarray, dict]
         G.env,
         G.policy,
         eval=eval,
-        seed=f"{seed}-n{num}-rkwa{reset_kwargs}",
+        seed=f"{seed}-n{num}",
         reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]),
     )
 
@@ -244,6 +240,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
             unit="steps" if self.min_steps is not None else "rollouts",
         ) as pb:
 
+            seed = f"{self._seed}-s{self._sample_count}"
             if self.min_steps is None:
                 if init_states is None and domain_params is None:
                     # Simply run min_rollouts times
@@ -268,14 +265,14 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                     arglist = list(product(range(rep_factor), allcombs))
 
                 # Only minimum number of rollouts given, thus use run_map
-                return self.pool.run_map(partial(func, seed=f"{self._seed}-s{self._sample_count}"), arglist, pb)
+                return self.pool.run_map(partial(func, seed=seed), arglist, pb)
 
             else:
                 # Minimum number of steps given, thus use run_collect (automatically handles min_runs=None)
                 if init_states is None:
                     return self.pool.run_collect(
                         self.min_steps,
-                        partial(_ps_sample_one, eval=eval),
+                        partial(_ps_sample_one, eval=eval, seed=seed),
                         collect_progressbar=pb,
                         min_runs=self.min_rollouts,
                     )[0]

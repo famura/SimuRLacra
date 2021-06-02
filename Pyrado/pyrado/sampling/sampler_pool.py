@@ -30,11 +30,13 @@ import traceback
 from copy import deepcopy
 from enum import Enum, auto
 from queue import Empty
+from typing import List, Tuple
 
 import torch.multiprocessing as mp
 from tqdm import tqdm
 
 import pyrado
+from pyrado.sampling.step_sequence import StepSequence
 
 
 class GlobalNamespace:
@@ -201,19 +203,25 @@ def _run_set_seed(G, seed):
     pyrado.set_seed(seed)
 
 
-def _run_collect(G, counter, run_counter, lock, n, min_runs, func, args, kwargs):
+def _run_collect(
+    G, counter, run_counter, lock, n, min_runs, func, args, kwargs
+) -> List[Tuple[int, List[StepSequence]]]:
     """Worker function for run_collect"""
     result = []
     while True:
+        with lock:
+            # increment the run counter here to get the id for the next seed
+            run_counter.value += 1
+            run_num = run_counter.value
+
         # Invoke once
-        res, n_done = func(G, *args, **kwargs)
+        res, n_done = func(G, run_num, *args, **kwargs)
 
         # Add to result and record increment
-        result.append(res)
+        result.append((run_num, res))
         with lock:
-            # decrement work counter
+            # increment done counter
             counter.value += n_done
-            run_counter.value += 1
             # Check if done
             if counter.value >= n and (min_runs is None or run_counter.value >= min_runs):
                 break
@@ -380,8 +388,9 @@ class SamplerPool:
         specify the minimum amount of samples to collect before returning.
 
         Since the workers can only check the amount of samples before starting a run, you will likely
-        get more samples than the minimum. No generated samples are dropped; if that is desired,
-        do so manually.
+        get more samples than the minimum. No generated samples that are part of a rollout are dropped.
+        However, if some rollouts where sampled that are "too much", those will be dropped to get seed-
+        determinism across different number of workers.
 
         :param n: minimum number of samples to collect
         :param func: sampler function. Must be pickleable.
@@ -389,7 +398,7 @@ class SamplerPool:
         :param collect_progressbar: tdqm progress bar to use; default None
         :param min_runs: optionally specify a minimum amount of runs to be executed before returning
         :param kwargs: remaining keyword args are passed to the function
-        :return: list of all results
+        :return: list of results
         :return: total number of samples
         """
 
@@ -403,7 +412,7 @@ class SamplerPool:
             counter = 0
             while counter < n or (min_runs is not None and len(result) < min_runs):
                 # Invoke once
-                res, n_done = func(self._G, *args, **kwargs)
+                res, n_done = func(self._G, num=len(result) + 1, *args, **kwargs)
 
                 # Add to result and record increment
                 result.append(res)
@@ -436,8 +445,17 @@ class SamplerPool:
         # Collect results in one list
         allres = self._await_result()
         result = [item for res in allres for item in res]
-
-        return result, counter.value
+        # Sort results by index to ensure consistent order
+        result.sort(key=lambda t: t[0])
+        result = [item for _, item in result]
+        result_filtered = []
+        steps = 0
+        for i, item in enumerate(result):
+            steps += len(item)
+            result_filtered.append(item)
+            if steps >= n and (min_runs is None or i + 1 >= min_runs):
+                break
+        return result_filtered, counter.value
 
     def set_seed(self, seed):
         """

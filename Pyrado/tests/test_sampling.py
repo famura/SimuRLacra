@@ -568,3 +568,50 @@ def test_parallel_sampling_deterministic_wo_min_steps(
             assert ro_a.rewards == pytest.approx(ro_b.rewards)
             assert ro_a.observations == pytest.approx(ro_b.observations)
             assert ro_a.actions == pytest.approx(ro_b.actions)
+
+
+# Does not test `initial_states` other than `None` as this is not supported by the ParallelRolloutSampler.
+@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("min_rollouts", [None])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("min_steps", [2, 10, 30])
+@pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
+def test_parallel_sampling_deterministic_w_min_steps(
+    env: SimEnv,
+    policy: Policy,
+    min_rollouts: Optional[int],
+    min_steps: int,
+    domain_params: Optional[List[dict]],
+):
+    nums_workers = (1, 2, 4)
+
+    all_rollouts = []
+    for num_workers in nums_workers:
+        all_rollouts.append(
+            ParallelRolloutSampler(
+                env,
+                policy,
+                num_workers=num_workers,
+                min_rollouts=min_rollouts,
+                min_steps=min_steps * env.max_steps,
+                seed=0,
+            ).sample(domain_params=domain_params)
+        )
+
+    # Test that the rollouts are actually different, i.e., that not the same seed is used for all rollouts.
+    for ros in all_rollouts:
+        for ro_a, ro_b in [(a, b) for a in ros for b in ros if a is not b]:
+            # The idle policy iy deterministic and always outputs the zero action. Hence, do not check that the actions
+            # are different when using the idle policy.
+            if not isinstance(policy, IdlePolicy):
+                assert ro_a.rewards != pytest.approx(ro_b.rewards)
+                assert ro_a.observations != pytest.approx(ro_b.observations)
+                assert ro_a.actions != pytest.approx(ro_b.actions)
+
+    # Test that the rollouts for all number of workers are equal.
+    for ros_a, ros_b in [(a, b) for a in all_rollouts for b in all_rollouts]:
+        assert len(ros_a) == len(ros_b)
+        for ro_a, ro_b in zip(ros_a, ros_b):
+            assert ro_a.rewards == pytest.approx(ro_b.rewards)
+            assert ro_a.observations == pytest.approx(ro_b.observations)
+            assert ro_a.actions == pytest.approx(ro_b.actions)
