@@ -129,7 +129,7 @@ __all__ = [
 ]
 
 
-def set_seed(seed: Optional[Union[int, str]], verbose: bool = False):
+def set_seed(seed: Optional[Union[int, str]], verbose: bool = True):
     """
     Set the seed for the random number generators
 
@@ -141,7 +141,9 @@ def set_seed(seed: Optional[Union[int, str]], verbose: bool = False):
         # But this behavior is unavoidable as even parsing the string in base 36 (or similar) would result in a number
         # greater than `2 ** 32 - 1` which is the maximum number for a seed in NumPy. Also, seeds cannot be negative in
         # NumPy.
-        seed = int(hashlib.md5("abc".encode()).hexdigest(), 16) % (2 ** 32 - 1)
+        if verbose:
+            print(f"Hashing string-seed '{seed}'.")
+        seed = int(hashlib.md5(seed.encode()).hexdigest(), 16) % (2 ** 32 - 1)
     if isinstance(seed, int):
         random.seed(seed)
         np.random.seed(seed)

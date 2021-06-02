@@ -31,7 +31,7 @@ import sys
 from functools import partial
 from itertools import product
 from math import ceil
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 import torch.multiprocessing as mp
@@ -76,41 +76,39 @@ def _ps_run_one(G, num: int, eval: bool, seed: str):
     return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}")
 
 
-def _ps_run_one_init_state(G, init_state: np.ndarray, eval: bool, seed: str):
+def _ps_run_one_init_state(G, init_state: Tuple[int, np.ndarray], eval: bool, seed: str):
     """
     Sample one rollout with given init state.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-is{init_state}", reset_kwargs=dict(init_state=init_state))
+    num, init_state = init_state
+    return rollout(
+        G.env, G.policy, eval=eval, seed=f"{seed}-n{num}-is{init_state}", reset_kwargs=dict(init_state=init_state)
+    )
 
 
-def _ps_run_one_domain_param(G, domain_param: dict, eval: bool, seed: str):
+def _ps_run_one_domain_param(G, domain_param: Tuple[int, dict], eval: bool, seed: str):
     """
     Sample one rollout with given domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
+    num, domain_param = domain_param
     return rollout(
-        G.env, G.policy, eval=eval, seed=f"{seed}-dp{domain_param}", reset_kwargs=dict(domain_param=domain_param)
+        G.env, G.policy, eval=eval, seed=f"{seed}-n{num}-dp{domain_param}", reset_kwargs=dict(domain_param=domain_param)
     )
 
 
-def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool, seed: str):
+def _ps_run_one_reset_kwargs(G, reset_kwargs: Tuple[int, Tuple[np.ndarray, dict]], eval: bool, seed: str):
     """
     Sample one rollout with given init state and domain parameters, passed as a tuple for simplicity at the other end.
     This function is used when a minimum number of rollouts was given.
     """
-    if len(reset_kwargs) != 2:
-        raise pyrado.ShapeErr(given=reset_kwargs, expected_match=(2,))
-    if not isinstance(reset_kwargs[0], np.ndarray):
-        raise pyrado.TypeErr(given=reset_kwargs[0], expected_type=np.ndarray)
-    if not isinstance(reset_kwargs[1], dict):
-        raise pyrado.TypeErr(given=reset_kwargs[1], expected_type=dict)
-
+    num, reset_kwargs = reset_kwargs
     return rollout(
         G.env,
         G.policy,
         eval=eval,
-        seed=f"{seed}-rkwa{reset_kwargs}",
+        seed=f"{seed}-n{num}-rkwa{reset_kwargs}",
         reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]),
     )
 
@@ -255,19 +253,19 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                     # Run every initial state so often that we at least get min_rollouts trajectories
                     func = partial(_ps_run_one_init_state, eval=eval)
                     rep_factor = ceil(self.min_rollouts / len(init_states))
-                    arglist = rep_factor * init_states
+                    arglist = list(product(range(rep_factor), init_states))
                 elif init_states is None and domain_params is not None:
                     # Run every domain parameter set so often that we at least get min_rollouts trajectories
                     func = partial(_ps_run_one_domain_param, eval=eval)
                     rep_factor = ceil(self.min_rollouts / len(domain_params))
-                    arglist = rep_factor * domain_params
+                    arglist = list(product(range(rep_factor), domain_params))
                 elif init_states is not None and domain_params is not None:
                     # Run every combination of initial state and domain parameter so often that we at least get
                     # min_rollouts trajectories
                     func = partial(_ps_run_one_reset_kwargs, eval=eval)
                     allcombs = list(product(init_states, domain_params))
                     rep_factor = ceil(self.min_rollouts / len(allcombs))
-                    arglist = rep_factor * allcombs
+                    arglist = list(product(range(rep_factor), allcombs))
 
                 # Only minimum number of rollouts given, thus use run_map
                 return self.pool.run_map(partial(func, seed=f"{self._seed}-s{self._sample_count}"), arglist, pb)

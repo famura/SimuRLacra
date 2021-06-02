@@ -544,6 +544,24 @@ def test_parallel_sampling_deterministic_wo_min_steps(
             )
         )
 
+    # Test that the rollouts are actually different, i.e., that not the same seed is used for all rollouts.
+    for ros in all_rollouts:
+        for ro_a, ro_b in [(a, b) for a in ros for b in ros if a is not b]:
+            # The idle policy iy deterministic and always outputs the zero action. Hence, do not check that the actions
+            # are different when using the idle policy.
+            if isinstance(policy, IdlePolicy):
+                # The Quanser Ball Balancer is a deterministic environment (conditioned on the initial state). As the
+                # idle policy is a deterministic policy, this will result in the rollouts being equivalent for each
+                # initial state, so do not check for difference if the initial states where set.
+                if init_states is None:
+                    assert ro_a.rewards != pytest.approx(ro_b.rewards)
+                    assert ro_a.observations != pytest.approx(ro_b.observations)
+            else:
+                assert ro_a.rewards != pytest.approx(ro_b.rewards)
+                assert ro_a.observations != pytest.approx(ro_b.observations)
+                assert ro_a.actions != pytest.approx(ro_b.actions)
+
+    # Test that the rollouts for all number of workers are equal.
     for ros_a, ros_b in [(a, b) for a in all_rollouts for b in all_rollouts]:
         assert len(ros_a) == len(ros_b)
         for ro_a, ro_b in zip(ros_a, ros_b):
