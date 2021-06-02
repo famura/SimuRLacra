@@ -129,7 +129,7 @@ __all__ = [
 ]
 
 
-def set_seed(seed: Optional[Union[int, str]], verbose: bool = True):
+def set_seed(seed: Optional[Union[int, str]], verbose: bool = False):
     """
     Set the seed for the random number generators
 
