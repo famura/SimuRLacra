@@ -6,6 +6,7 @@
 #include <HUD.h>
 #include <Rcs_typedef.h>
 #include <Rcs_macros.h>
+#include <Rcs_timer.h>
 
 
 namespace Rcs
@@ -94,9 +95,22 @@ public:
         
         pthread_mutex_unlock(&this->graphMtx);
         
+        double dtFrame = Timer_getSystemTime();
+        
+        // Publish all queued events before the frame() call
+        userEventMtx.lock();
+        for (size_t i = 0; i < userEventStack.size(); ++i) {
+            getOsgViewer()->getEventQueue()->userEvent(userEventStack[i].get());
+        }
+        userEventStack.clear();
+        userEventMtx.unlock();
+        
         lock();
         viewer->frame();
         unlock();
+        
+        dtFrame = Timer_getSystemTime() - dtFrame;
+        this->fps = 0.9*this->fps + 0.1*(1.0/dtFrame);
     }
     
     void setText(const std::string& text)

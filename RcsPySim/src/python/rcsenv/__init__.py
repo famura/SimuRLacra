@@ -39,7 +39,7 @@ __all__ = [
     "BoxSpace",
     "RcsSimEnv",
     "ControlPolicy",
-    "MLPPolicy",
+    "ActionModelIKPolicy",
     "setLogLevel",
     "addResourcePath",
     "setVortexLogLevel",

@@ -34,9 +34,11 @@ import pickle
 from typing import NamedTuple
 
 import numpy as np
+import pandas as pd
 import pytest
 import torch as to
 from scipy import signal
+from tests.environment_wrappers.mock_env import MockEnv
 
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import ReplayMemory
@@ -44,62 +46,68 @@ from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence, discounted_value, gae_returns
+from pyrado.spaces.box import InfBoxSpace
 
 
-rewards = [
-    -200.0,
-    -100,
-    -50,
-    -25,
-    -17.5,
-]
-# Observations has one additional element
-observations = [
-    np.array([3, 2, 7], dtype=np.float64),
-    np.array([3, 1, 7], dtype=np.float64),
-    np.array([2, 0, 7], dtype=np.float64),
-    np.array([3, 1, 3], dtype=np.float64),
-    np.array([0, 2, 4], dtype=np.float64),
-    np.array([1, 1, 1], dtype=np.float64),
-]
-# States has one additional element
-states = [
-    np.array([4, 2, 7], dtype=np.float64),
-    np.array([2, 1, 7], dtype=np.float64),
-    np.array([1, 0, 7], dtype=np.float64),
-    np.array([4, 1, 3], dtype=np.float64),
-    np.array([0, 2, 4], dtype=np.float64),
-    np.array([0, 1, 1], dtype=np.float64),
-]
-# Actions come from PyTorch
-actions = [
-    to.tensor([0, 1], dtype=to.get_default_dtype()),
-    to.tensor([0, 3], dtype=to.get_default_dtype()),
-    to.tensor([2, 4], dtype=to.get_default_dtype()),
-    to.tensor([3, 1], dtype=to.get_default_dtype()),
-    to.tensor([0, 0], dtype=to.get_default_dtype()),
-]
-# Policy infos as dict collapse test
-policy_infos = [
-    {"mean": np.array([0, 1]), "std": 0.4},
-    {"mean": np.array([0, 3]), "std": 0.2},
-    {"mean": np.array([2, 4]), "std": 0.1},
-    {"mean": np.array([3, 1]), "std": 0.05},
-    {"mean": np.array([0, 0]), "std": 0.025},
-]
-# Hidden is a tuple, like we see with LSTMs
-hidden = [
-    (np.array([3, 2, 7]), np.array([2, 1])),
-    (np.array([4, 9, 8]), np.array([5, 6])),
-    (np.array([1, 4, 9]), np.array([7, 3])),
-    (np.array([0, 8, 2]), np.array([4, 9])),
-    (np.array([2, 7, 6]), np.array([8, 0])),
-]
+@pytest.fixture
+def mock_data():
+    rewards = [
+        -200.0,
+        -100,
+        -50,
+        -25,
+        -17.5,
+    ]
+    # Observations has one additional element
+    observations = [
+        np.array([3, 2, 7, 5], dtype=np.float64),
+        np.array([3, 1, 9, 5], dtype=np.float64),
+        np.array([2, 0, 7, 5], dtype=np.float64),
+        np.array([3, 1, 3, 5], dtype=np.float64),
+        np.array([0, 2, 4, 5], dtype=np.float64),
+        np.array([1, 8, 1, 5], dtype=np.float64),
+    ]
+    # States has one additional element
+    states = [
+        np.array([4, 8, 7], dtype=np.float64),
+        np.array([2, 1, 7], dtype=np.float64),
+        np.array([1, 0, 7], dtype=np.float64),
+        np.array([4, 1, 7], dtype=np.float64),
+        np.array([0, 2, 7], dtype=np.float64),
+        np.array([0, 1, 7], dtype=np.float64),
+    ]
+    # Actions come from PyTorch
+    actions = [
+        to.tensor([0, 1], dtype=to.get_default_dtype()),
+        to.tensor([0, 3], dtype=to.get_default_dtype()),
+        to.tensor([2, 4], dtype=to.get_default_dtype()),
+        to.tensor([3, 1], dtype=to.get_default_dtype()),
+        to.tensor([0, 0], dtype=to.get_default_dtype()),
+    ]
+    # Policy infos as dict collapse test
+    policy_infos = [
+        {"mean": np.array([0, 1]), "std": 0.4},
+        {"mean": np.array([0, 3]), "std": 0.2},
+        {"mean": np.array([2, 4]), "std": 0.1},
+        {"mean": np.array([3, 1]), "std": 0.05},
+        {"mean": np.array([0, 0]), "std": 0.025},
+    ]
+    # Hidden is a tuple, like we see with LSTMs
+    hidden = [
+        (np.array([3, 2, 7]), np.array([2, 1])),
+        (np.array([4, 9, 8]), np.array([5, 6])),
+        (np.array([1, 4, 9]), np.array([7, 3])),
+        (np.array([0, 8, 2]), np.array([4, 9])),
+        (np.array([2, 7, 6]), np.array([8, 0])),
+    ]
+    return rewards, states, observations, actions, hidden, policy_infos
 
 
-def test_additional_required():
+def test_additional_required(mock_data):
     # Require the states as additional field for this test
     StepSequence.required_fields = {"states"}
+
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
 
     with pytest.raises(Exception) as err:
         # This should fail
@@ -114,7 +122,9 @@ def test_additional_required():
 @pytest.mark.parametrize(
     "data_format, tensor_type", [("numpy", np.ndarray), ("torch", to.Tensor)], ids=["numpy", "torch"]
 )
-def test_create(data_format, tensor_type):
+def test_create(mock_data, data_format, tensor_type):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     # With actions, observations and dicts
     ro = StepSequence(
         rewards=rewards,
@@ -143,7 +153,9 @@ def test_create(data_format, tensor_type):
 @pytest.mark.parametrize(
     "other_format, tensor_type", [("torch", np.ndarray), ("numpy", to.Tensor)], ids=["numpy to torch", "torch to numpy"]
 )
-def test_convert(other_format, tensor_type):
+def test_convert(mock_data, other_format, tensor_type):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
@@ -171,7 +183,9 @@ def test_convert(other_format, tensor_type):
 
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_step_iter(data_format):
+def test_step_iter(mock_data, data_format: str):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
@@ -196,7 +210,9 @@ def test_step_iter(data_format):
 
 @pytest.mark.parametrize("sls", [slice(2, 4), slice(2, 5, 2), slice(3), slice(4, None)])
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_slice(sls, data_format):
+def test_slice(mock_data, sls, data_format: str):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
@@ -217,7 +233,9 @@ def test_slice(sls, data_format):
 
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_add_data(data_format):
+def test_add_data(mock_data, data_format: str):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
@@ -236,7 +254,7 @@ def test_add_data(data_format):
 
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_concat(data_format):
+def test_concat(data_format: str):
     # Create some rollouts with random rewards
     ros = [
         StepSequence(
@@ -273,7 +291,7 @@ def test_concat(data_format):
 
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_split_multi(data_format):
+def test_split_multi(data_format: str):
     # Don't require additional fields for this test
     StepSequence.required_fields = {}
 
@@ -309,7 +327,9 @@ def test_split_multi(data_format):
 
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_pickle(data_format):
+def test_pickle(mock_data, data_format: str):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     ro = StepSequence(
         rewards=rewards,
         observations=observations,
@@ -370,7 +390,9 @@ def test_advantage_calculation(env, policy):
     ],
     ids=["1", "2", "8"],
 )
-def test_replay_memory(capacity):
+def test_replay_memory(mock_data, capacity):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     rm = ReplayMemory(capacity)
 
     # Create fake rollouts (of length 5)
@@ -399,7 +421,9 @@ class DummyNT(NamedTuple):
 
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_namedtuple(data_format):
+def test_namedtuple(mock_data, data_format: str):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     hid_nt = [DummyNT(*it) for it in hidden]
 
     ro = StepSequence(
@@ -460,7 +484,9 @@ def test_truncate_rollouts(env, num_real_ros, num_sim_ros, max_real_steps, max_s
 
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"])
-def test_process(data_format):
+def test_process(mock_data, data_format: str):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+
     # Create the rollout
     ro = StepSequence(rewards=rewards, observations=observations, states=states, actions=actions, hidden=hidden)
 
@@ -474,7 +500,7 @@ def test_process(data_format):
         )
 
     else:
-        # Tranform to PyTorch data and define a simple function
+        # Transform to PyTorch data and define a simple function
         ro.torch()
         ro_proc = StepSequence.process_data(
             ro, lambda x: x * 2, fcn_arg_name="x", include_fields=["time"], fcn_arg_types=to.Tensor
@@ -482,3 +508,44 @@ def test_process(data_format):
 
     assert isinstance(ro_proc, StepSequence)
     assert ro_proc.length == ro.length
+
+
+@pytest.mark.parametrize("given_rewards", [True, False], ids=["rewards", "norewards"])
+def test_stepsequence_from_pandas(mock_data, given_rewards: bool):
+    rewards, states, observations, actions, hidden, policy_infos = mock_data
+    states = np.asarray(states)
+    observations = np.asarray(observations)
+    actions = to.stack(actions).numpy()
+    rewards = np.asarray(rewards)
+
+    # Create fake observed data set. The labels must match the labels of the spaces. The order can be mixed.
+    content = dict(
+        s0=states[:, 0],
+        s1=states[:, 1],
+        s2=states[:, 2],
+        o3=observations[:, 3],
+        o0=observations[:, 0],
+        o2=observations[:, 2],
+        o1=observations[:, 1],
+        a1=actions[:, 1],
+        a0=actions[:, 0],
+        # Some content that was not in
+        steps=np.arange(0, states.shape[0]),
+        infos=[dict(foo="bar")] * 6,
+    )
+    if given_rewards:
+        content["rewards"] = rewards
+    df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in content.items()]))
+
+    env = MockEnv(
+        state_space=InfBoxSpace(shape=states[0].shape, labels=["s0", "s1", "s2"]),
+        obs_space=InfBoxSpace(shape=observations[0].shape, labels=["o0", "o1", "o2", "o3"]),
+        act_space=InfBoxSpace(shape=actions[0].shape, labels=["a0", "a1"]),
+    )
+
+    reconstructed = StepSequence.from_pandas(df, env.spec)
+
+    assert len(reconstructed.rewards) == len(rewards)
+    assert np.allclose(reconstructed.states, states)
+    assert np.allclose(reconstructed.observations, observations)
+    assert np.allclose(reconstructed.actions, actions)

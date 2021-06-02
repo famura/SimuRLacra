@@ -72,7 +72,6 @@ namespace Rcs
 {
 class ECBoxFlipping : public ExperimentConfig
 {
-protected:
     virtual ActionModel* createActionModel()
     {
         // Setup inner action model
@@ -112,7 +111,7 @@ protected:
             os << "Unsupported reference frame type: " << refFrame;
             throw std::invalid_argument(os.str());
         }
-    
+        
         // Get the type of action model
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
@@ -146,14 +145,14 @@ protected:
                 tasks.emplace_back(new TaskVelocity1D("Yd", graph, rightCP, refBody, refFrame));
                 tasks.emplace_back(new TaskVelocity1D("Zd", graph, rightCP, refBody, refFrame));
             }
-    
+            
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-    
+            
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
             amIK->setXdesFromTaskSpec(taskSpec);
-    
+            
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                 REXEC(4) {
@@ -161,10 +160,10 @@ protected:
                 }
                 amIK->setupCollisionModel(collisionMdl);
             }
-    
+            
             return amIK;
         }
-
+        
         else if (actionModelType == "ds_activation") {
             // Initialize action model and tasks
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
@@ -205,7 +204,7 @@ protected:
                     i++;
                 }
             }
-            // Control effector velocity and orientation
+                // Control effector velocity and orientation
             else {
                 // Left
                 innerAM->addTask(new TaskVelocity1D("Yd", graph, leftCP, refBody, refFrame));
@@ -259,7 +258,7 @@ protected:
             
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
-
+        
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;
@@ -409,8 +408,7 @@ protected:
         manager->addParam("Table", new PPDMassProperties());
         manager->addParam("Table", new PPDMaterialProperties());
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSBoxFlipping(graph);

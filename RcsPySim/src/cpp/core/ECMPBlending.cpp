@@ -67,8 +67,6 @@ namespace Rcs
 
 class ECMPblending : public ExperimentConfig
 {
-
-protected:
     virtual ActionModel* createActionModel()
     {
         std::string actionModelType = "unspecified";
@@ -121,7 +119,7 @@ protected:
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
-    
+            
             // Check if the tasks are defined on position or velocity level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
                 RcsBody* goalLL = RcsGraph_getBodyByName(graph, "GoalLL");
@@ -152,14 +150,14 @@ protected:
                 throw std::invalid_argument("The combination of velocity-based tasks and AMIKControllerActivation is"
                                             "not supported!");
             }
-    
+            
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-    
+            
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
             amIK->setXdesFromTaskSpec(taskSpec);
-    
+            
             return amIK;
         }
         
@@ -185,8 +183,7 @@ protected:
     {
         manager->addParam("Effector", new PPDMassProperties());  // not necessary
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSMPBlending(graph);

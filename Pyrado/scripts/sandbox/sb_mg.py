@@ -29,6 +29,8 @@
 """
 Script to test the simplified box flipping task using a hard-coded time-based policy
 """
+import math
+
 import rcsenv
 import torch as to
 
@@ -36,7 +38,7 @@ import pyrado
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.rcspysim.mini_golf import MiniGolfPosIKSim, MiniGolfVelIKSim
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
 from pyrado.policies.features import FeatureStack, const_feat
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.dummy import IdlePolicy
@@ -49,16 +51,16 @@ from pyrado.utils.input_output import print_cbt
 rcsenv.setLogLevel(4)
 
 
-def create_idle_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: str, checkJointLimits: bool):
+def create_idle_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLimits: bool):
     # Set up environment
-    env = MiniGolfPosIKSim(
+    env = MiniGolfIKSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         dt=dt,
         max_steps=max_steps,
-        ref_frame=ref_frame,
         checkJointLimits=checkJointLimits,
         fixedInitState=True,
+        observeForceTorque=True,
     )
 
     # Set up policy
@@ -67,68 +69,98 @@ def create_idle_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: 
     return env, policy
 
 
-def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: str, checkJointLimits: bool):
+def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLimits: bool):
     # Set up environment
-    env = MiniGolfVelIKSim(
+    env = MiniGolfIKSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         dt=dt,
         max_steps=max_steps,
-        ref_frame=ref_frame,
         checkJointLimits=checkJointLimits,
         fixedInitState=True,
+        observeForceTorque=False,
+        collisionAvoidanceIK=True,
     )
 
     # Set up policy
     policy = PolySplineTimePolicy(
-        env.spec, dt, t_end=2.0, cond_lvl="vel", cond_final=[0.6, 0.0], overtime_behavior="zero"
+        env.spec,
+        dt,
+        t_end=6.0,
+        cond_lvl="vel",
+        # X (abs), Y (rel), Z (abs), A (abs), C (abs)
+        # cond_final=[[0.5, 0.0, 0.04, -0.876], [0.5, 0.0, 0.0, 0.0]],
+        # cond_init=[[0.1, 0.0, 0.04, -0.876], [0.0, 0.0, 0.0, 0.0]],
+        # # Zd (rel), X (rel), Y (rel), PHI (abs), THETA (abs)
+        # cond_final=[
+        #     [0.0, 0.0, 0.0, math.pi / 2, 0.0],
+        #     [0.0, 0.0, 0.0, 0.0, 0.0],
+        # ],
+        # cond_init=[
+        #     [-0.2, 0.0, 0.0, math.pi / 2, 0.0],
+        #     [0.0, 0.0, 0.0, 0.0, 0.0],
+        # ],
+        # Zd (rel), Y (rel2), Zdist (abs), PHI (abs), THETA (abs)
+        cond_final=[
+            [0.0, 0.0, 0.01, math.pi / 2, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0],
+        ],
+        cond_init=[
+            [-7.0, 0.0, 0.01, math.pi / 2, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0],
+        ],
+        overtime_behavior="hold",
     )
 
     return env, policy
 
 
-def create_lin_setup(physicsEngine: str, dt: float, max_steps: int, ref_frame: str, checkJointLimits: bool):
+def create_lin_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLimits: bool):
     # Set up environment
-    env = MiniGolfPosIKSim(
+    env = MiniGolfIKSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         dt=dt,
         max_steps=max_steps,
-        ref_frame=ref_frame,
         checkJointLimits=checkJointLimits,
         fixedInitState=True,
     )
 
     # Set up policy
     policy = LinearPolicy(env.spec, FeatureStack([const_feat]))
-    policy.param_values = to.tensor([0.55])
+    policy.param_values = to.tensor([0.6, 0.0, 0.03])  # X (abs), Y (rel), Z (abs), C (abs)
 
     return env, policy
 
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "ik"  # idle, ik, or lin
+    setup_type = "pst"  # idle, pst-pos, or lin
     physicsEngine = "Bullet"  # Bullet or Vortex
     dt = 1 / 100.0
-    max_steps = int(15 / dt)
-    ref_frame = "world"  # world
-    checkJointLimits = False
+    max_steps = int(13 / dt)
+    checkJointLimits = True
     randomize = False
 
-    if setup_type == "idle":
-        env, policy = create_idle_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
-    elif setup_type == "ik":
-        env, policy = create_pst_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
+    if setup_type == "lin":
+        env, policy = create_idle_setup(physicsEngine, dt, max_steps, checkJointLimits)
+    elif setup_type == "pst":
+        env, policy = create_pst_setup(physicsEngine, dt, max_steps, checkJointLimits)
     elif setup_type == "lin":
-        env, policy = create_lin_setup(physicsEngine, dt, max_steps, ref_frame, checkJointLimits)
+        env, policy = create_lin_setup(physicsEngine, dt, max_steps, checkJointLimits)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="idle, ik, or lin")
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="idle, pst, or lin")
 
     if randomize:
         dp_nom = env.get_nominal_domain_param()
         randomizer = DomainRandomizer(
+            UniformDomainParam(name="ball_radius", mean=dp_nom["ball_radius"], halfspan=dp_nom["ball_radius"] / 3),
             UniformDomainParam(name="ball_mass", mean=dp_nom["ball_mass"], halfspan=dp_nom["ball_mass"] / 5),
+            UniformDomainParam(name="obstacleleft_pos_offset_x", mean=0, halfspan=0.05),
+            UniformDomainParam(name="obstacleleft_pos_offset_y", mean=0, halfspan=0.05),
+            UniformDomainParam(name="obstacleright_pos_offset_x", mean=0, halfspan=0.01),
+            UniformDomainParam(name="obstacleright_pos_offset_y", mean=0, halfspan=0.01),
+            UniformDomainParam(name="obstacleright_rot_offset_c", mean=0.2, halfspan=0.02),
         )
         env = DomainRandWrapperLive(env, randomizer)
 

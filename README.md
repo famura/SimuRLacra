@@ -96,10 +96,15 @@ In all cases you will download Rcs, eigen3, pybind11, catch2, and mujoco-py, int
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.8.1
-# or if CUDA support not needed
+# For CUDA ≥ 11 (for RTX 3000 Series or Newer):
+# pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+# For CUDA < 11:
+# pip install torch==1.8.1
+# Without CUDA:
 # pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py wo_rcs_wo_pytorch -j8
+# or if running headless, e.g., on a computation cluster
+# python setup_deps.py wo_rcs_wo_pytorch -j8 --headless
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
 
@@ -109,6 +114,8 @@ Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
 python setup_deps.py wo_rcs_w_pytorch -j8
+# or if running headless, e.g., on a computation cluster
+# python setup_deps.py wo_rcs_w_pytorch -j8 --headless
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
 
@@ -126,10 +133,15 @@ If you can't install the libraries, you can still use the Python part of this fr
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.8.1
-# or if CUDA support not needed
+# For CUDA ≥ 11 (for RTX 3000 Series or Newer):
+# pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+# For CUDA < 11:
+# pip install torch==1.8.1
+# Without CUDA:
 # pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py w_rcs_wo_pytorch -j8
+# or if running headless, e.g., on a computation cluster
+# python setup_deps.py w_rcs_wo_pytorch -j8 --headless
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
 
@@ -148,6 +160,8 @@ Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
 python setup_deps.py w_rcs_w_pytorch -j8
+# or if running headless, e.g., on a computation cluster
+# python setup_deps.py w_rcs_w_pytorch -j8 --headless
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
 

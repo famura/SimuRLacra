@@ -41,7 +41,6 @@ namespace Rcs
 
 /**
  * The ObservationModel encapsulates the computation of the state vector from the current graph state.
- * This is used both for the observations returned to the policy as well as the state used to compute the reward.
  */
 class ObservationModel : public BoxSpaceProvider
 {

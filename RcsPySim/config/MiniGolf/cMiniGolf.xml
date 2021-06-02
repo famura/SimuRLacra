@@ -30,18 +30,12 @@
 
 <Controller graph="gMiniGolf.xml">
 
-  <Task name="ClubTip_A" controlVariable="A" effector="ClubTip" active="false" />
-  <Task name="ClubTip_B" controlVariable="B" effector="ClubTip" active="false" />
-  <Task name="ClubTip_C" controlVariable="C" effector="ClubTip" active="false" />
-  <Task name="Ball_rel_X" controlVariable="X" effector="Ball" refBody="ClubTip" refFrame="Ground" active="false" />
-  <Task name="Ball_rel_Y" controlVariable="Y" effector="Ball" refBody="ClubTip" refFrame="Ground" active="false" />
-  <Task name="Ball_rel_Z" controlVariable="Z" effector="Ball" refBody="ClubTip" refFrame="Ground" active="false" />
-
-<!--  <Task name="Club forward" controlVariable="Y" effector="ClubTip" active="true" />-->
-<!--  <Task name="Club inclination" controlVariable="B" effector="ClubTip" active="true" />-->
-<!--  <Task name="5" controlVariable="C" effector="ClubTip" active="true" />-->
-<!--  <Task name="6" controlVariable="Z" effector="ClubTip" active="true" />-->
-<!--  <Task name="7" controlVariable="Y" effector="sdh-base" active="true" />-->
-<!--  <Task name="8" controlVariable="X" effector="ClubTip" active="true" />-->
+  <Task name="ClubTip_A" controlVariable="A" effector="ClubTip"  refFrame="Ground" active="false" />
+  <Task name="ClubTip_B" controlVariable="B" effector="ClubTip"  refFrame="Ground" active="false" />
+  <Task name="ClubTip_C" controlVariable="C" effector="ClubTip"  refFrame="Ground" active="false" />
+  <Task name="ClubTip_Polar" controlVariable="POLAR" effector="ClubTip"  active="false" />
+  <Task name="Ball_rel_X" controlVariable="X" effector="Ball" refBody="ClubTip" active="false" />
+  <Task name="Ball_rel_Y" controlVariable="Y" effector="Ball" refBody="ClubTip" active="false" />
+  <Task name="Ball_rel_Z" controlVariable="Z" effector="Ball" refBody="ClubTip" active="false" />
 
 </Controller>

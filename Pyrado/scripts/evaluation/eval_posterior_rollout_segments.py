@@ -145,7 +145,7 @@ if __name__ == "__main__":
     # occurred during the rollout. This is necessary since we are running the evaluation in segments.
     env_sim.init_space = InfBoxSpace(shape=env_sim.init_space.shape)
 
-    # Old solution with parallelization of the rollouts. Has been double-checked.
+    # New solution with parallelization of the rollouts. Has been double-checked.
     if True:
         # Create a new sampler pool for every policy to synchronize the random seeds i.e. init states
         pool = SamplerPool(args.num_workers)

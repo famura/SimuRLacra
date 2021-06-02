@@ -59,8 +59,6 @@ namespace Rcs
 
 class ECTargetTracking : public ExperimentConfig
 {
-
-protected:
     virtual ActionModel* createActionModel()
     {
         // Setup inner action model
@@ -145,8 +143,7 @@ protected:
         
         return fullState.release();
     }
-
-public:
+    
     void
     getHUDText(
         std::vector<std::string>& linesOut, double currentTime, const MatNd* obs, const MatNd* currentAction,

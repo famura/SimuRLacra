@@ -28,24 +28,24 @@
  POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef SRC_CPP_CORE_DATALOGGER_H_
-#define SRC_CPP_CORE_DATALOGGER_H_
+#ifndef _DATALOGGER_H_
+#define _DATALOGGER_H_
 
 #include "util/BoxSpace.h"
 
 #include <Rcs_MatNd.h>
 
-#include <string>
 #include <mutex>
 #include <fstream>
+#include <string>
 
 namespace Rcs
 {
 
 /**
  * Logs experiment data to a csv file.
- *
- * For every timestep, it records observations, actions and the reward.
+ * For every time step, it records the observations and the actions.
+ * The reward can be computed later on the Python side.
  */
 class DataLogger
 {
@@ -80,7 +80,7 @@ public:
     /**
      * Record data for the current step.
      */
-    void record(const MatNd* observation, const MatNd* action, double reward);
+    void record(const MatNd* observation, const MatNd* action);
     
     /**
      * Return true if running.
@@ -91,25 +91,25 @@ public:
     }
 
 private:
-    // update mutex
     std::recursive_mutex mutex;
     
-    // auto log file naming
+    //! Automatic log file naming
     std::string baseFileName;
     unsigned int fileCounter;
     
-    // true if running
+    //! Flag if the logger is currently recording
     volatile bool running;
     
-    // buffer, avoids writing on realtime main thread
+    //! Buffer to avoid writing on realtime main thread
     MatNd* buffer;
-    // step counter in current logging run
+    
+    //! Step counter in current logging run
     unsigned int currentStep;
     
-    // current output stream
+    //! Current output stream
     std::ofstream output;
 };
 
 } /* namespace Rcs */
 
-#endif /* SRC_CPP_CORE_DATALOGGER_H_ */
+#endif /* _DATALOGGER_H_ */

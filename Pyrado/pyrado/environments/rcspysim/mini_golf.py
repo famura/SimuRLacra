@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import functools
 import os.path as osp
-from functools import partial
 from typing import Optional
 
 import numpy as np
@@ -38,6 +38,7 @@ import pyrado
 from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
+from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
 from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.parallel import ParallelTasks
 from pyrado.tasks.predefined import create_check_all_boundaries_task
@@ -77,18 +78,19 @@ def create_mini_golf_task(env_spec: EnvSpec, hole_pos: np.ndarray, succ_thold: f
     dst = DesStateTask(
         spec,
         state_des=hole_pos,
-        rew_fcn=AbsErrRewFcn(q=np.ones(2), r=np.zeros(spec.act_space.shape)),
-        success_fcn=partial(proximity_succeeded, thold_dist=succ_thold),
+        rew_fcn=AbsErrRewFcn(q=np.ones(2), r=1e-4 * np.ones(spec.act_space.shape)),
+        success_fcn=functools.partial(proximity_succeeded, thold_dist=succ_thold),
     )
+    frt = FinalRewTask(dst, FinalRewMode(always_positive=True))
 
     # Return the masked tasks
-    return MaskedTask(env_spec, dst, idcs)
+    return MaskedTask(env_spec, frt, idcs)
 
 
 class MiniGolfSim(RcsSim, Serializable):
     """A 7-dof Schunk robot playing mini golf"""
 
-    def __init__(self, task_args: dict, ref_frame: str, **kwargs):
+    def __init__(self, task_args: dict, **kwargs):
         """
         Constructor
 
@@ -96,13 +98,12 @@ class MiniGolfSim(RcsSim, Serializable):
             This constructor should only be called via the subclasses.
 
         :param task_args: arguments for the task construction
-        :param ref_frame: reference frame for the Rcs tasks, e.g. 'world' or 'ball'
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = True,
                        checkJointLimits: bool = False,
-                       collisionAvoidanceIK: bool = True,
-                       observeVelocities: bool = True,
-                       observeForceTorque: bool = True,
+                       collisionAvoidanceIK: bool = False,
+                       observeVelocities: bool = False,
+                       observeForceTorque: bool = False,
                        observeCollisionCost: bool = False,
                        observePredictedCollisionCost: bool = False,
         """
@@ -124,8 +125,8 @@ class MiniGolfSim(RcsSim, Serializable):
             self,
             envType="MiniGolf",
             task_args=task_args,
-            refFrame=ref_frame,
-            graphFileName="gMiniGolf.xml",
+            state_mask_labels=("Ball_X", "Ball_Y", "base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"),
+            graphFileName="gMiniGolf_FTS.xml" if kwargs.get("observeForceTorque", False) else "gMiniGolf.xml",
             physicsConfigFile="pMiniGolf.xml",
             collisionConfig=collision_config,
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "MiniGolf"),
@@ -137,8 +138,8 @@ class MiniGolfSim(RcsSim, Serializable):
         hole_pos = task_args.get("hole_pos", None)
         if hole_pos is None:
             # Get the goal position in world coordinates
-            hole_pos = self.get_body_position("Hole", "", "")[:2]  # x and y but not z
-        task_main = create_mini_golf_task(self.spec, hole_pos, succ_thold=0.02)
+            hole_pos = self.get_body_position("Hole", "", "")[:2]  # x and y positions in world frame
+        task_main = create_mini_golf_task(self.spec, hole_pos, succ_thold=0.05)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
 
         return ParallelTasks([task_main, task_check_bounds], hold_rew_when_done=False)
@@ -146,30 +147,38 @@ class MiniGolfSim(RcsSim, Serializable):
     @classmethod
     def get_nominal_domain_param(cls):
         return dict(
-            ball_mass=0.05,
-            ball_friction_coefficient=0.111,
-            ball_rolling_friction_coefficient=0.0,
-            ground_friction_coefficient=0.777,
+            ball_radius=0.02,  # [m]
+            ball_mass=0.05,  # [kg]
+            club_mass=0.05,  # [kg]
+            ball_friction_coefficient=0.6,  # [-]
+            ball_rolling_friction_coefficient=1e-5,  # [m]
+            ball_slip=5e-4,  # [-]
+            ground_friction_coefficient=0.7,  # [-]
+            obstacleleft_pos_offset_x=0.0,  # [m]
+            obstacleleft_pos_offset_y=0.0,  # [m]
+            obstacleleft_rot_offset_c=0.0,  # [rad]
+            obstacleright_pos_offset_x=0.0,  # [m]
+            obstacleright_pos_offset_y=0.0,  # [m]
+            obstacleright_rot_offset_c=0.0,  # [rad]
         )
 
 
-class MiniGolfPosIKSim(MiniGolfSim, Serializable):
+class MiniGolfIKSim(MiniGolfSim, Serializable):
     """A 7-dof Schunk robot playing mini golf by setting the input to an Rcs IK-based controller on position level"""
 
     name: str = "mg-ik"
 
-    def __init__(self, ref_frame: str = "world", task_args: Optional[dict] = None, **kwargs):
+    def __init__(self, task_args: Optional[dict] = None, **kwargs):
         """
         Constructor
 
-        :param ref_frame: reference frame for the Rcs tasks, e.g. 'world' or 'ball'
         :param task_args: arguments for the task construction
         :param kwargs: keyword arguments forwarded to `RcsSim`
                        fixedInitState: bool = True,
                        checkJointLimits: bool = False,
-                       collisionAvoidanceIK: bool = True,
-                       observeVelocities: bool = True,
-                       observeForceTorque: bool = True,
+                       collisionAvoidanceIK: bool = False,
+                       observeVelocities: bool = False,
+                       observeForceTorque: bool = False,
                        observeCollisionCost: bool = False,
                        observePredictedCollisionCost: bool = False,
         """
@@ -178,40 +187,7 @@ class MiniGolfPosIKSim(MiniGolfSim, Serializable):
         # Forward to the MiniGolfSim's constructor, specifying the characteristic action model
         super().__init__(
             task_args=dict() if task_args is None else task_args,
-            ref_frame=ref_frame,
             actionModelType="ik",
             positionTasks=True,
-            **kwargs,
-        )
-
-
-class MiniGolfVelIKSim(MiniGolfSim, Serializable):
-    """A 7-dof Schunk robot playing mini golf by setting the input to an Rcs IK-based controller on velocity level"""
-
-    name: str = "mg-ik"
-
-    def __init__(self, ref_frame: str = "world", task_args: Optional[dict] = None, **kwargs):
-        """
-        Constructor
-
-        :param ref_frame: reference frame for the Rcs tasks, e.g. 'world' or 'ball'
-        :param task_args: arguments for the task construction
-        :param kwargs: keyword arguments forwarded to `RcsSim`
-                       fixedInitState: bool = True,
-                       checkJointLimits: bool = False,
-                       collisionAvoidanceIK: bool = True,
-                       observeVelocities: bool = True,
-                       observeForceTorque: bool = True,
-                       observeCollisionCost: bool = False,
-                       observePredictedCollisionCost: bool = False,
-        """
-        Serializable._init(self, locals())
-
-        # Forward to the MiniGolfSim's constructor, specifying the characteristic action model
-        super().__init__(
-            task_args=dict() if task_args is None else task_args,
-            ref_frame=ref_frame,
-            actionModelType="ik",
-            positionTasks=False,
             **kwargs,
         )

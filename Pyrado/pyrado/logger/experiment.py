@@ -79,8 +79,8 @@ class Experiment:
         """
 
         slurm_id = None
-        if include_slurm_id and "SLURM_JOB_ID" in os.environ:
-            slurm_id = str(os.environ["SLURM_JOB_ID"])
+        if include_slurm_id and "SLURM_ARRAY_JOB_ID" in os.environ:
+            slurm_id = str(os.environ["SLURM_ARRAY_JOB_ID"])
             if "SLURM_ARRAY_TASK_ID" in os.environ:
                 slurm_id += "_" + str(os.environ["SLURM_ARRAY_TASK_ID"])
         if exp_id is None:

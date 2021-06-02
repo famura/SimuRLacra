@@ -65,8 +65,6 @@ namespace Rcs
 
 class ECQuanserQube : public ExperimentConfig
 {
-
-protected:
     virtual ActionModel* createActionModel()
     {
         std::string actionModelType = "unspecified";
@@ -83,7 +81,7 @@ protected:
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), max_action);
             // return new AMJointControlAcceleration(graph); // not working
         }
-
+        
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;
@@ -107,8 +105,7 @@ protected:
         manager->addParam("Pendulum", new PPDMassProperties());
         manager->addParam("Pendulum", new PPDMaterialProperties());
     }
-
-public:
+    
     virtual InitStateSetter* createInitStateSetter()
     {
         return new ISSQuanserQube(graph);

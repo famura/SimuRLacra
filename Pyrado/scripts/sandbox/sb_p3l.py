@@ -230,7 +230,7 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "adn"  # joint, ika, ds, manual, adn
+    setup_type = "ika"  # joint, ika, ds, manual, adn
     common_hparam = dict(
         dt=0.01,
         max_steps=1800,

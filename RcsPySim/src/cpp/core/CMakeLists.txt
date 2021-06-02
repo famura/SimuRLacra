@@ -50,7 +50,6 @@ set(CORE_SRCS
     config/PropertySource.cpp
     config/PropertySourceXml.cpp
     
-    control/MLPPolicy.cpp
     control/ControlPolicy.cpp
     
     initState/InitStateSetter.cpp
@@ -101,6 +100,7 @@ set(CORE_SRCS
     physics/PhysicsParameterManager.cpp
     physics/BodyParamInfo.cpp
     physics/PhysicsParameterDescriptor.cpp
+    physics/PPDBodyOrientation.cpp
     physics/PPDBodyPosition.cpp
     physics/PPDBoxExtents.cpp
     physics/PPDCompound.cpp

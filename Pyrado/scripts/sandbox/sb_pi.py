@@ -110,7 +110,7 @@ def create_ds_aktivation_setup(dt, max_steps, max_dist_force, physics_engine, gr
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "ika"  # ika, or ds
+    setup_type = "dsa"  # ika, or dsa
     common_hparam = dict(
         dt=0.01,
         max_steps=1200,
@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     if setup_type == "ika":
         ro = create_ik_aktivation_setup(**common_hparam)
-    elif setup_type == "ds":
+    elif setup_type == "dsa":
         ro = create_ds_aktivation_setup(**common_hparam)
         plot_potentials(ro)
     else:

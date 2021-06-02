@@ -99,7 +99,6 @@ Rcs::RcsSimEnv::RcsSimEnv(PropertySource* propertySource)
     
     currentStep = 0;
     currentTime = 0;
-//    lastStepReward = 0;
     
     // Initialize transition noise (unused if not explicitly flagged)
     transitionNoiseBuffer = nullptr;
@@ -142,17 +141,19 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
     
     // Apply the initial state
     if (initState && initStateSetter != nullptr) {
+        // TODO find a more flexible solution to set arbitrary init states when needed
+        /*
         std::string errorMsg;
         if (!initStateSetter->getSpace()->contains(initState, &errorMsg)) {
             throw std::invalid_argument("init state space does not contain the init state: " + errorMsg);
         }
+         */
         initStateSetter->applyInitialState(initState);
     }
 
 #ifdef GRAPHICS_AVAILABLE
     // If we are resetting the simulation the viewer already exists
-    if (viewer && usePhysicsNode)
-    {
+    if (viewer && usePhysicsNode) {
         viewer->removeInternal("PhysicsNode");
     }
 #endif
@@ -162,11 +163,10 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
     delete physicsSim;
     physicsSim = nullptr;
     physicsSim = physicsManager->createSimulator(domainParam);
-    
- #ifdef GRAPHICS_AVAILABLE
+
+#ifdef GRAPHICS_AVAILABLE
     // If we are resetting the simulation the viewer already exists
-    if (viewer)
-    {
+    if (viewer) {
         if (usePhysicsNode) {
             Rcs::PhysicsNode* pNode = new Rcs::PhysicsNode(physicsSim, true);
             viewer->add(pNode);
@@ -174,8 +174,8 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
             pNode->physicsNd->toggleGraphicsModel(); // switch on
         }
     }
- #endif
- 
+#endif
+    
     // Reset control command vectors
     MatNd_copy(q_ctrl, config->graph->q);
     MatNd_setZero(qd_ctrl);
@@ -194,7 +194,6 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
     // Reset local counters
     currentStep = 0;
     currentTime = 0;
-//    lastStepReward = 0;
     
     // Return initial observation
     return config->observationModel->computeObservation(nullptr, config->dt);
@@ -204,7 +203,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
 {
     REXEC(6) {
         std::cout << "--------------------------------------------------" << std::endl;
-        std::cout << "Iteration " << currentStep << std::endl;
+        std::cout << "Simulation Step " << currentStep << std::endl;
         std::cout << "--------------------------------------------------" << std::endl;
     }
     
@@ -342,15 +341,6 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
         // get explicitly if not
         state = config->stateModel->computeObservation(config->dt);
     }
-
-    // compute reward
-    auto stepReward = config->goalMonitor->stepReward(state, action);
-    // cleanup temporary state mat if any
-    if (state != observation) {
-        MatNd_destroy(state);
-    }
-
-    lastStepReward = stepReward.reward;
     */
     
     return observation;

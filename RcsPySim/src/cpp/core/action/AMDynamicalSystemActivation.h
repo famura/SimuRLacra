@@ -89,17 +89,17 @@ public:
     const char* getTaskCombinationMethodName() const;
 
 protected:
-    //! wrapped action model
+    //! Wrapped action model
     ActionModel* wrapped;
-    //! list of dynamical systems
+    //! List of dynamical systems
     std::vector<DynamicalSystem*> dynamicalSystems;
-    //! current state in task space
+    //! Current state in task space
     Eigen::VectorXd x;
-    //! current velocity in task space
+    //! Current velocity in task space
     Eigen::VectorXd x_dot;
-    //! the activation resulting from the action and the task combination method (used for logging)
+    //! The activation resulting from the action and the task combination method (used for logging)
     MatNd* activation;
-    //! way to combine the tasks' contribution
+    //! Way to combine the tasks' contribution
     TaskCombinationMethod taskCombinationMethod;
 };
 

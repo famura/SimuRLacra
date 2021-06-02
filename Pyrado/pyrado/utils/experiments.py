@@ -29,6 +29,7 @@
 import itertools
 import os
 import os.path as osp
+import xml.etree.ElementTree as et
 from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
 
 import pandas as pd
@@ -43,7 +44,8 @@ from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperLive,
     remove_all_dr_wrappers,
 )
-from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environment_wrappers.utils import inner_env, typed_env
+from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_hyperparameters
 from pyrado.policies.base import Policy
@@ -332,3 +334,56 @@ def load_rollouts_from_dir(
         rollouts = list(itertools.chain(*rollouts))
 
     return rollouts, names
+
+
+def cpp_export(
+    save_dir: pyrado.PathLike,
+    policy: Policy,
+    env: Optional[SimEnv] = None,
+    policy_export_name: str = "policy_export",
+    write_policy_node: bool = True,
+    policy_node_name: str = "policy",
+):
+    """
+    Convenience function to export the policy using PyTorch's scripting or tracing, and the experiment's XML
+    configuration if the environment from RcsPySim.
+
+    :param save_dir: directory to save in
+    :param policy: (trained) policy
+    :param env: environment the policy was trained in
+    :param policy_export_name: name of the exported policy file without the file type ending
+    :param write_policy_node: if `True`, write the PyTorch-based control policy into the experiment's XML configuration.
+                              This requires the experiment's XML configuration to be exported beforehand.
+    :param policy_node_name: name of the control policies node in the XML file, e.g. 'policy' or 'preStrikePolicy'
+    """
+    if not osp.isdir(save_dir):
+        raise pyrado.PathErr(given=save_dir)
+    if not isinstance(policy, Policy):
+        raise pyrado.TypeErr(given=policy, expected_type=Policy)
+    if not isinstance(policy_export_name, str):
+        raise pyrado.TypeErr(given=policy_export_name, expected_type=str)
+
+    # Use torch.jit.trace / torch.jit.script (the latter if recurrent) to generate a torch.jit.ScriptModule
+    ts_module = policy.double().script()  # can be evaluated like a regular PyTorch module
+
+    # Serialize the script module to a file and save it in the same directory we loaded the policy from
+    policy_export_file = osp.join(save_dir, f"{policy_export_name}.pt")
+    ts_module.save(policy_export_file)  # former .zip, and before that .pth
+    print_cbt(f"Exported the loaded policy to {policy_export_file}", "g", bright=True)
+
+    # Export the experiment config for C++
+    exp_export_file = osp.join(save_dir, "ex_config_export.xml")
+    if env is not None and isinstance(inner_env(env), RcsSim):
+        inner_env(env).save_config_xml(exp_export_file)
+        print_cbt(f"Exported experiment configuration to {exp_export_file}", "g", bright=True)
+
+    # Open the XML file again to add the policy node
+    if write_policy_node and osp.isfile(exp_export_file):
+        tree = et.parse(exp_export_file)
+        root = tree.getroot()
+        policy_node = et.Element(policy_node_name)
+        policy_node.set("type", "torch")
+        policy_node.set("file", f"{policy_export_name}.pt")
+        root.append(policy_node)
+        tree.write(exp_export_file)
+        print_cbt(f"Added {policy_export_name}.pt to the experiment configuration.", "g")

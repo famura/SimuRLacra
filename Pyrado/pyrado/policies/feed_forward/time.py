@@ -63,17 +63,17 @@ class TimePolicy(Policy):
         # Script the function eagerly
         self._fcn_of_time = fcn_of_time
         self._dt = dt
-        self._curr_time = None
+        self._t_curr = None
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         pass
 
     def reset(self, *args, **kwargs):
-        self._curr_time = 0.0
+        self._t_curr = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
-        act = to.tensor(self._fcn_of_time(self._curr_time), dtype=to.get_default_dtype(), device=self.device)
-        self._curr_time += self._dt
+        act = to.tensor(self._fcn_of_time(self._t_curr), dtype=to.get_default_dtype(), device=self.device)
+        self._t_curr += self._dt
         return to.atleast_1d(act)
 
     def script(self) -> ScriptModule:
@@ -94,7 +94,7 @@ class TraceableTimePolicy(nn.Module):
     input_size: int
     output_size: int
     dt: float
-    curr_time: float
+    t_curr: float
 
     def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], Sequence[float]], dt: float):
         """
@@ -111,7 +111,7 @@ class TraceableTimePolicy(nn.Module):
         self.input_size = spec.obs_space.flat_dim
         self.output_size = spec.act_space.flat_dim
         self.dt = dt
-        self.curr_time = 0.0
+        self.t_curr = 0.0
 
         # Validate function signature
         sig = inspect.signature(fcn_of_time, follow_wrapped=False)
@@ -137,9 +137,9 @@ class TraceableTimePolicy(nn.Module):
     @export
     def reset(self):
         """Reset the policy's internal state."""
-        self.curr_time = 0.0
+        self.t_curr = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
-        act = to.tensor(self.fcn_of_time(self.curr_time), dtype=to.double)
-        self.curr_time = self.curr_time + self.dt
+        act = to.tensor(self.fcn_of_time(self.t_curr), dtype=to.double)
+        self.t_curr = self.t_curr + self.dt
         return act

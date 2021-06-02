@@ -31,7 +31,7 @@
 #include "RcsSimEnv.h"
 #include "config/PropertySourceDict.h"
 #include "config/PropertySourceXml.h"
-#include "control/MLPPolicy.h"
+#include "control/ControlPolicy.h"
 #include "physics/vortex_log.h"
 #include "util/BoxSpace.h"
 #include "util/type_casters.h"
@@ -52,7 +52,9 @@ namespace py = pybind11;
 
 RCS_INSTALL_ERRORHANDLERS
 
-//void define_gui_classes(py::module& m);
+/* Could be done in the future
+void define_gui_classes(py::module& m);
+ */
 
 PYBIND11_MODULE(_rcsenv, m)
 {
@@ -61,19 +63,20 @@ PYBIND11_MODULE(_rcsenv, m)
     
     // Define BoxSpace as class. It's not providing a constructor here, it's just meant to be passed to python for information
     py::class_<Rcs::BoxSpace>(m, "BoxSpace")
-        .def_property_readonly("min", &Rcs::BoxSpace::getMin,
-                               py::return_value_policy::reference_internal).def_property_readonly(
-        "max", &Rcs::BoxSpace::getMax, py::return_value_policy::reference_internal).def_property_readonly("names", [](
-        const Rcs::BoxSpace& thiz) -> py::object {
-        auto& names = thiz.getNames();
-        if (names.empty()) {
-            return py::none();
-        }
-        return py::cast(names);
-    });
+        .def_property_readonly("min", &Rcs::BoxSpace::getMin, py::return_value_policy::reference_internal)
+        .def_property_readonly("max", &Rcs::BoxSpace::getMax, py::return_value_policy::reference_internal)
+        .def_property_readonly("names", [](
+            const Rcs::BoxSpace& thiz) -> py::object {
+            auto& names = thiz.getNames();
+            if (names.empty()) {
+                return py::none();
+            }
+            return py::cast(names);
+        });
     
     // Define simulator base class
-    py::class_<Rcs::RcsSimEnv>(m, "RcsSimEnv").def(py::init([](py::kwargs kwargs) {
+    py::class_<Rcs::RcsSimEnv>(m, "RcsSimEnv")
+        .def(py::init([](py::kwargs kwargs) {
                // Get properties from xml or python
                Rcs::PropertySource* config;
                std::string configFileName;
@@ -163,7 +166,7 @@ PYBIND11_MODULE(_rcsenv, m)
              py::arg("bodyName"), py::arg("shapeIdx")
         )
             
-            // Properties
+        // Properties
         .def_property_readonly("observationSpace", &Rcs::RcsSimEnv::observationSpace)
         .def_property_readonly("actionSpace", &Rcs::RcsSimEnv::actionSpace)
         .def_property_readonly("initStateSpace", &Rcs::RcsSimEnv::initStateSpace)
@@ -182,7 +185,7 @@ PYBIND11_MODULE(_rcsenv, m)
         .def_property_readonly("lastObservation", &Rcs::RcsSimEnv::getCurrentObservation,
                                py::return_value_policy::copy);
     
-    // Define ControlPolicy and MLPPolicy for tests
+    // Define ControlPolicy for tests
     py::class_<Rcs::ControlPolicy> controlPolicy(m, "ControlPolicy");
     controlPolicy.def(py::init<Rcs::ControlPolicy* (*)(const char*, const char*)>(&Rcs::ControlPolicy::create));
     controlPolicy.def("__call__", [](Rcs::ControlPolicy& self, const MatNd* input, unsigned int output_size) {
@@ -195,22 +198,22 @@ PYBIND11_MODULE(_rcsenv, m)
         return Rcs::ControlPolicy::getTypeNames();
     });
     
-    // Due to the way this class works, we don't use it in practice
-    py::class_<Rcs::MLPPolicy>(m, "MLPPolicy", controlPolicy)
-        .def(py::init(&Rcs::loadMLPPolicyFromXml));
+    // Expose the ControlPolicy classes to the Python side
+//    py::class_<Rcs::ActionModelIKPolicy>(m, "ActionModelIKPolicy", controlPolicy)
+//        .def(py::init(&Rcs::loadMLPPolicyFromXml));
     
+/* Could be done in the future
+#ifdef GUI_AVAILABLE
     // Define gui stuff if available
-//#ifdef GUI_AVAILABLE
-//    define_gui_classes(m);
-//#endif
+    define_gui_classes(m);
+#endif
+ */
 
     m.def("saveExperimentParams", [](py::dict& config, const char* filename){
         std::unique_ptr<Rcs::PropertySource> ps(new Rcs::PropertySourceDict(config));
         ps->saveXML(filename, "Experiment");
     }, py::arg("config"), py::arg("filename"));
 
-    // Define some utility functions for interacting with RCS
-    
     // Sets the rcs log level
     m.def("setLogLevel", [](int level) { RcsLogLevel = level; });
     

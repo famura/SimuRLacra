@@ -78,8 +78,8 @@ AMIKControllerActivation::AMIKControllerActivation(RcsGraph* graph, TaskCombinat
 
 AMIKControllerActivation::~AMIKControllerActivation()
 {
-    delete x_des;
-    delete activation;
+    MatNd_destroy(x_des);
+    MatNd_destroy(activation);
 }
 
 void AMIKControllerActivation::addAlwaysActiveTask(Task* task)
@@ -190,7 +190,7 @@ void AMIKControllerActivation::computeCommand(
     for (unsigned int i = action_tmp->m; i < activation->m; i++) {
         activation->ele[i] = 1.;
     }
-    delete action_tmp;
+    MatNd_destroy(action_tmp);
     
     // Compute the differences in task space and weight them
     getController()->computeDX(dx_des, x_des, activation);

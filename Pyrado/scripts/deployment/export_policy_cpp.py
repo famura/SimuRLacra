@@ -35,15 +35,11 @@ The converted policy is saved same directory where the original policy was loade
     [2] https://pytorch.org/tutorials/advanced/cpp_export.html
     [3[ https://pytorch.org/docs/stable/jit.html
 """
-import os.path as osp
 
 import pyrado
-from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import load_experiment
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.experiments import cpp_export, load_experiment
 
 
 if __name__ == "__main__":
@@ -62,16 +58,5 @@ if __name__ == "__main__":
         policy = pyrado.load("policy.pt", ex_dir, verbose=True)  # no state_dict loading
         env = pyrado.load("env.pkl", ex_dir, verbose=True)
 
-    # Use torch.jit.trace / torch.jit.script (the latter if recurrent) to generate a torch.jit.ScriptModule
-    ts_module = policy.double().script()  # can be evaluated like a regular PyTorch module
-
-    # Serialize the script module to a file and save it in the same directory we loaded the policy from
-    policy_export_file = osp.join(ex_dir, "policy_export.pt")
-    ts_module.save(policy_export_file)  # former .zip, and before that .pth
-    print_cbt(f"Exported the loaded policy to\n{policy_export_file}", "g", bright=True)
-
-    # Export the experiment config for C++
-    if isinstance(inner_env(env), RcsSim):
-        exp_export_file = osp.join(ex_dir, f"ex_{env.name}_export.xml")
-        inner_env(env).save_config_xml(exp_export_file)
-        print_cbt(f"Exported experiment configuration to\n{exp_export_file}", "g", bright=True)
+    # Export the policy to C++ and the experiment's config
+    cpp_export(ex_dir, policy, env)

@@ -28,10 +28,11 @@
  POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "PPDBodyPosition.h"
+#include "PPDBodyOrientation.h"
 #include "PPDSingleVar.h"
 
 #include <Rcs_typedef.h>
+#include <Rcs_Mat3d.h>
 #include <Rcs_Vec3d.h>
 
 #include <stdexcept>
@@ -39,51 +40,78 @@
 namespace Rcs
 {
 
-
-PPDBodyPosition::PPDBodyPosition(const bool includeX, const bool includeY, const bool includeZ)
+void Vec33d_setZero(double v[3][3])
 {
-    Vec3d_setZero(initPos);
-    Vec3d_setZero(offsetPos);
+    for (unsigned int i = 0; i < 3; i++) {
+        for (unsigned int j = 0; j < 3; j++) {
+            v[i][j] = 0.0;
+        }
+    }
+}
+
+void Vec33d_add(double dst[3][3], const double v1[3][3], const double v2[3][3])
+{
+    for (unsigned int i = 0; i < 3; i++) {
+        for (unsigned int j = 0; j < 3; j++) {
+            dst[i][j] = v1[i][j] + v2[i][j];
+        }
+    }
+}
+
+PPDBodyOrientation::PPDBodyOrientation(const bool includeA, const bool includeB, const bool includeC)
+{
+    Vec33d_setZero(initRot); // undefined
+    Vec3d_setZero(offsetRot);
     
-    if (includeX) {
+    if (includeA) {
         addChild(new PPDSingleVar<double>(
-            "pos_offset_x", BodyParamInfo::MOD_POSITION,
-            [this](BodyParamInfo& bpi) -> double& { return (offsetPos[0]); })
+            "rot_offset_a", BodyParamInfo::MOD_ORIENTATION,
+            [this](BodyParamInfo& bpi) -> double& { return (offsetRot[0]); })
         );
     }
-    if (includeY) {
+    if (includeB) {
         addChild(new PPDSingleVar<double>(
-            "pos_offset_y", BodyParamInfo::MOD_POSITION,
-            [this](BodyParamInfo& bpi) -> double& { return (offsetPos[1]); })
+            "rot_offset_b", BodyParamInfo::MOD_ORIENTATION,
+            [this](BodyParamInfo& bpi) -> double& { return (offsetRot[1]); })
         );
     }
-    if (includeZ) {
+    if (includeC) {
         addChild(new PPDSingleVar<double>(
-            "pos_offset_z", BodyParamInfo::MOD_POSITION,
-            [this](BodyParamInfo& bpi) -> double& { return (offsetPos[2]); })
+            "rot_offset_c", BodyParamInfo::MOD_ORIENTATION,
+            [this](BodyParamInfo& bpi) -> double& { return (offsetRot[2]); })
         );
     }
     
     if (getChildren().empty()) {
-        throw std::invalid_argument("No position specified for PPDBodyPosition!");
+        throw std::invalid_argument("No position specified for PPDBodyOrientation!");
     }
 }
 
-PPDBodyPosition::~PPDBodyPosition() = default;
+PPDBodyOrientation::~PPDBodyOrientation() = default;
 
-void PPDBodyPosition::init(Rcs::BodyParamInfo* bpi)
+void PPDBodyOrientation::init(Rcs::BodyParamInfo* bpi)
 {
     PPDCompound::init(bpi);
     
-    Vec3d_copy(initPos, bpi->body->A_BP->org);
+    // Copy the rotation about the world x, y, and z axis. Here, a special case of MatNd_copy().
+    memmove(initRot, bpi->body->A_BP->rot, 3*3*sizeof(double));
 }
 
-void PPDBodyPosition::setValues(PropertySource* inValues)
+void PPDBodyOrientation::setValues(PropertySource* inValues)
 {
     PPDCompound::setValues(inValues);
     
-    // Apply the position offset to the body
-    Vec3d_add(this->bodyParamInfo->body->A_BP->org, initPos, offsetPos);
+    // Copy the rotation about the world x, y, and z axis. Here, a special case of MatNd_copy().
+    double tmpRot[3][3];
+    memmove(tmpRot, initRot, 3*3*sizeof(double));
+    
+    // Apply the orientation to the body. The default value for offsetRot is zero.
+    Mat3d_rotateSelfAboutXYZAxis(tmpRot, 0, offsetRot[0]);
+    Mat3d_rotateSelfAboutXYZAxis(tmpRot, 1, offsetRot[1]);
+    Mat3d_rotateSelfAboutXYZAxis(tmpRot, 2, offsetRot[2]);
+    
+    // Copy the rotation about the world x, y, and z axis. Here, a special case of MatNd_copy().
+    memmove(this->bodyParamInfo->body->A_BP->rot, tmpRot, 3*3*sizeof(double));
 }
 
 } /* namespace Rcs */

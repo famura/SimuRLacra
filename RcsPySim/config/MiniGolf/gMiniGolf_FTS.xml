@@ -32,7 +32,12 @@
 
   <xi:include href="gMiniGolf_common_part1.xml"/>
 
-  <Body name="Club" prev="m9" transform="0.164 0 0 0 90 -165" physics="fixed" mass="0.9" > <!-- 0.164 is arbitrary-->
+  <Body name="SchunkFTS" prev="m9" transform="0.104 0 0 0 90 0" physics="fixed" mass="1.92" inertia="0.00058672 0 0   0 0.00058672 0   0 0 0.00104544" >
+    <Shape type="CYLINDER" length="0.02" radius="0.033" distance="false" physics="true" graphics="true" transform="0 0 0.02 0 0 0" color="BLUE" />
+    <Sensor name="WristLoadCellSchunk" type="LOADCELL" />
+  </Body>
+
+  <Body name="Club" prev="SchunkFTS" transform="0 0 0.06 0 0 -165" physics="fixed" mass="0.9" > <!-- 0.06 is arbitrary-->
     <Shape type="SSL" length="0.95" radius="0.01" distance="true" physics="true" graphics="true" transform="0 0 0 90 0 0" />
     <Shape type="SSR" extents="0.04 0.12 0.02" distance="true" physics="true" graphics="true" transform="0.01 -0.98 0 0 0 57" />
     <Shape type="FRAME" scale="0.2" />
@@ -41,7 +46,6 @@
   <xi:include href="gMiniGolf_common_part2.xml"/>
 
   <model_state model="MiniGolf" time_stamp="0">
-    <!--    <joint_state joint="ArmHeight" position="1.325" />-->
     <joint_state joint="base-m3" position="-15.926275" />
     <joint_state joint="m3-m4" position="-90.195774" />
     <joint_state joint="m4-m5" position="68.020458" />
@@ -61,5 +65,4 @@
   <!--    <joint_state joint="m7-m8" position="-190.958411" />-->
   <!--    <joint_state joint="m8-m9" position="-47.75292" />-->
   <!--  </model_state>-->
-
 </Graph>

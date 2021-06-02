@@ -288,8 +288,11 @@ def plot_actions(ro: StepSequence, env: Env):
         # Use recorded time stamps if possible
         t = getattr(ro, "time", np.arange(0, ro.length + 1))[:-1]
 
-        fig, axs = plt.subplots(*num_rows_cols_from_length(dim_act), figsize=(10, 8), tight_layout=True)
+        num_rows, num_cols = num_rows_cols_from_length(dim_act, transposed=True)
+        fig, axs = plt.subplots(num_rows, num_cols, figsize=(10, 8), tight_layout=True)
         fig.canvas.manager.set_window_title("Actions over Time")
+        axs = np.atleast_2d(axs)
+        axs = correct_atleast_2d(axs)
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
         act_norm_wrapper = typed_env(env, ActNormWrapper)
@@ -307,11 +310,11 @@ def plot_actions(ro: StepSequence, env: Env):
             axs.legend(ncol=2)
             axs.set_ylabel(_get_act_label(ro, 0))
         else:
-            for i in range(dim_act):
-                axs[i].plot(t, act_denorm[:, i], label="to env", c=colors[i])
-                axs[i].plot(t, act_clipped[:, i], label="clipped", c="k", ls="--")
-                axs[i].legend(ncol=2)
-                axs[i].set_ylabel(_get_act_label(ro, i))
+            for idx_a in range(dim_act):
+                axs[idx_a // num_cols, idx_a % num_cols].plot(t, act_denorm[:, idx_a], label="to env", c=colors[idx_a])
+                axs[idx_a // num_cols, idx_a % num_cols].plot(t, act_clipped[:, idx_a], label="clipped", c="k", ls="--")
+                axs[idx_a // num_cols, idx_a % num_cols].legend(ncol=2)
+                axs[idx_a // num_cols, idx_a % num_cols].set_ylabel(_get_act_label(ro, idx_a))
 
         # Put legends to the right of the plot
         if dim_act < 8:  # otherwise it gets too cluttered
@@ -686,7 +689,7 @@ def plot_rollouts_segment_wise(
                         pd.DataFrame(dict(mean=m_i, std=s_i)),
                         x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
                         show_legend=False,
-                        curve_label="ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
+                        curve_label=r"ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
                         area_label=None,
                         plot_kwargs=dict(color="gray"),
                     )

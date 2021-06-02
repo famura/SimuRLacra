@@ -39,7 +39,7 @@ namespace Rcs
 {
 
 /*!
- * ControlPolicy backed by a torchscript module.
+ * ControlPolicy backed by a scripted torch module.
  */
 class TorchPolicy : public ControlPolicy
 {
