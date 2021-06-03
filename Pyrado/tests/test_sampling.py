@@ -576,7 +576,7 @@ def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_rollouts: i
         assert ro_s.actions == pytest.approx(ro_p.actions)
 
 
-@pytest.mark.parametrize("policy", ["dummy_policy", "fnn_policy"], ids=["dummy", "fnn"], indirect=True)
+@pytest.mark.parametrize("policy", ["dummy_policy"], indirect=True)
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
 @pytest.mark.parametrize("init_states", [None, 2])
@@ -588,6 +588,8 @@ def test_parallel_sampling_deterministic_wo_min_steps(
     init_states: Optional[int],
     domain_params: Optional[List[dict]],
 ):
+    env.max_steps = 20
+
     if init_states is not None:
         init_states = [env.spec.state_space.sample_uniform() for _ in range(init_states)]
 
@@ -633,11 +635,10 @@ def test_parallel_sampling_deterministic_wo_min_steps(
             assert ro_a.actions == pytest.approx(ro_b.actions)
 
 
-# Include the FNN policy as it requires initialization which also has to be seeded.
-@pytest.mark.parametrize("policy", ["dummy_policy", "fnn_policy"], ids=["dummy", "fnn"], indirect=True)
+@pytest.mark.parametrize("policy", ["dummy_policy"], indirect=True)
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize("min_rollouts", [None, 2, 4, 6])  # Once less, equal, and more rollouts than workers.
-@pytest.mark.parametrize("min_steps", [2, 10, 30])
+@pytest.mark.parametrize("min_steps", [2, 10])
 @pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
 def test_parallel_sampling_deterministic_w_min_steps(
     env: SimEnv,
@@ -646,6 +647,8 @@ def test_parallel_sampling_deterministic_w_min_steps(
     min_steps: int,
     domain_params: Optional[List[dict]],
 ):
+    env.max_steps = 20
+
     nums_workers = (1, 2, 4)
 
     all_rollouts = []
@@ -675,23 +678,28 @@ def test_parallel_sampling_deterministic_w_min_steps(
 
     # Test that the rollouts for all number of workers are equal.
     for ros_a, ros_b in [(a, b) for a in all_rollouts for b in all_rollouts]:
+        assert sum([len(ro) for ro in ros_a]) == sum([len(ro) for ro in ros_b])
         assert sum([len(ro) for ro in ros_a]) >= min_steps * env.max_steps
         assert sum([len(ro) for ro in ros_b]) >= min_steps * env.max_steps
-        assert sum([len(ro) for ro in ros_a]) == sum([len(ro) for ro in ros_b])
         assert len(ros_a) == len(ros_b)
+        if min_rollouts is not None:
+            assert len(ros_a) >= min_rollouts
+            assert len(ros_b) >= min_rollouts
         for ro_a, ro_b in zip(ros_a, ros_b):
             assert ro_a.rewards == pytest.approx(ro_b.rewards)
             assert ro_a.observations == pytest.approx(ro_b.observations)
             assert ro_a.actions == pytest.approx(ro_b.actions)
 
 
-@pytest.mark.parametrize("env", ["default_qbb", "default_bob"], ids=["qbb", "bob"], indirect=True)
+@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
 @pytest.mark.parametrize("policy", ["fnn_policy"], indirect=True)
-@pytest.mark.parametrize("algo", [A2C, PPO])
+@pytest.mark.parametrize("algo", [PPO])
 @pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
 def test_parallel_sampling_deterministic_smoke_test_wo_min_steps(
     tmpdir_factory, env: SimEnv, policy: Policy, algo, min_rollouts: int
 ):
+    env.max_steps = 20
+
     seeds = (0, 1)
     nums_workers = (1, 2, 4)
 
@@ -708,6 +716,69 @@ def test_parallel_sampling_deterministic_smoke_test_wo_min_steps(
             vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
             critic = GAE(vfcn, gamma=0.98, lamda=0.95, batch_size=32, lr=1e-3, standardize_adv=False)
             alg = algo(ex_dir, env, policy, critic, max_iter=3, min_rollouts=min_rollouts, num_workers=num_workers)
+            alg.sampler = RolloutSavingWrapper(alg.sampler)
+            alg.train()
+            with open(f"{ex_dir}/progress.csv") as f:
+                logging_results[-1][1].append(str(f.read()))
+            rollout_results[-1].append(alg.sampler.rollouts)
+
+    # Test that the observations for all number of workers are equal.
+    for rollouts in rollout_results:
+        for ros_a, ros_b in [(a, b) for a in rollouts for b in rollouts]:
+            assert len(ros_a) == len(ros_b)
+            for ro_a, ro_b in zip(ros_a, ros_b):
+                assert len(ro_a) == len(ro_b)
+                for r_a, r_b in zip(ro_a, ro_b):
+                    assert r_a.observations == pytest.approx(r_b.observations)
+
+    # Test that different seeds actually produce different results.
+    for results_a, results_b in [
+        (a, b) for seed_a, a in logging_results for seed_b, b in logging_results if seed_a != seed_b
+    ]:
+        for result_a, result_b in [(a, b) for a in results_a for b in results_b if a is not b]:
+            assert result_a != result_b
+
+    # Test that same seeds produce same results.
+    for _, results in logging_results:
+        for result_a, result_b in [(a, b) for a in results for b in results]:
+            assert result_a == result_b
+
+
+@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
+@pytest.mark.parametrize("policy", ["fnn_policy"], indirect=True)
+@pytest.mark.parametrize("algo", [PPO])
+@pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("min_steps", [2, 10])
+def test_parallel_sampling_deterministic_smoke_test_w_min_steps(
+    tmpdir_factory, env: SimEnv, policy: Policy, algo, min_rollouts: int, min_steps: int
+):
+    env.max_steps = 20
+
+    seeds = (0, 1)
+    nums_workers = (1, 2, 4)
+
+    logging_results = []
+    rollout_results: List[List[List[List[StepSequence]]]] = []
+    for seed in seeds:
+        logging_results.append((seed, []))
+        rollout_results.append([])
+        for num_workers in nums_workers:
+            pyrado.set_seed(seed)
+            policy.init_param(None)
+            ex_dir = str(tmpdir_factory.mktemp(f"seed={seed}-num_workers={num_workers}"))
+            set_log_prefix_dir(ex_dir)
+            vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+            critic = GAE(vfcn, gamma=0.98, lamda=0.95, batch_size=32, lr=1e-3, standardize_adv=False)
+            alg = algo(
+                ex_dir,
+                env,
+                policy,
+                critic,
+                max_iter=3,
+                min_rollouts=min_rollouts,
+                min_steps=min_steps * env.max_steps,
+                num_workers=num_workers,
+            )
             alg.sampler = RolloutSavingWrapper(alg.sampler)
             alg.train()
             with open(f"{ex_dir}/progress.csv") as f:
