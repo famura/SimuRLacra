@@ -33,6 +33,7 @@ import os
 import os.path as osp
 from typing import Optional, Tuple
 
+import joblib as jl
 import pandas as pd
 from matplotlib import colors
 from matplotlib import pyplot as plt
@@ -258,7 +259,7 @@ def _main():
     if args.dir is None:
         ex_dirs = []
         while True:
-            ex_dirs.append(ask_for_experiment(show_hyper_parameters=args.show_hyperparameters, max_display=50))
+            ex_dirs.append(ask_for_experiment(hparam_list=args.show_hparams, max_display=50))
             if input("Ask for more (Y/n)? ") == "n":
                 break
     else:
@@ -286,7 +287,7 @@ def _main():
         if not osp.isfile(pickle_file):
             print(f"{pickle_file} is not a file! Skipping...")
             continue
-        df = pd.read_pickle(pickle_file)
+        df = jl.load(pickle_file)
 
         dataframes.append(df)
         eval_dirs.append(eval_dir)
