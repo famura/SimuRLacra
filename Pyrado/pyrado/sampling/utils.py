@@ -46,7 +46,6 @@ def gen_shuffled_batch_idcs(batch_size: int, data_size: int):
     """
     # random.seed(0)
     idx_all = random.sample(range(data_size), data_size)
-    print("idx_all: " + str(idx_all))
     idx_iter = iter(idx_all)
     return iter(lambda: list(islice(idx_iter, batch_size)), [])
 
