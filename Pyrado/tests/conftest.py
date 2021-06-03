@@ -52,6 +52,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeStabSim, QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
 from pyrado.policies.features import *
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
@@ -612,6 +613,17 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
+    def default_mg_ik_bt():
+        return MiniGolfIKSim(
+            dt=1 / 100.0,
+            max_steps=1500,
+            checkJointLimits=True,
+            fixedInitState=True,
+            observeForceTorque=True,
+        )
+
+    @staticmethod
+    @m_needs_bullet
     def default_qqsurcs_bt():
         return QQubeRcsSim(physicsEngine="Bullet", dt=1 / 250.0, max_steps=3000)
 
@@ -717,7 +729,8 @@ class DefaultPolicies:
             dt=env.dt,
             t_end=int(env.max_steps / env.dt),
             cond_lvl="acc",
-            cond_final=to.zeros(3, env.spec.act_space.flat_dim),
+            cond_final=to.rand(3, env.spec.act_space.flat_dim),
+            cond_init=to.zeros(3, env.spec.act_space.flat_dim),
         )
 
     @staticmethod
