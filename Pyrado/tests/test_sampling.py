@@ -28,19 +28,25 @@
 
 import random
 import time
-from typing import List, Optional
+from typing import Optional
 
 import pytest
 from tests.conftest import m_needs_bullet, m_needs_cuda
 from torch.distributions.multivariate_normal import MultivariateNormal
 
-import pyrado
+from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.utils import RolloutSavingWrapper
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
+from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
+from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
-from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
+from pyrado.policies.feed_back.fnn import FNN
+from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.cvar_sampler import select_cvar
 from pyrado.sampling.data_format import to_format
@@ -75,7 +81,7 @@ def _cb_test_eachhandler(G, arg):
     return arg * 2
 
 
-def _cb_test_collecthandler(G):
+def _cb_test_collecthandler(G, num):
     nsample = random.randint(5, 15)
     return nsample, nsample
 
@@ -556,8 +562,7 @@ def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_rollouts: i
     # Do not set the init state to check if this was sampled correctly.
     ros_sequential = []
     for i in range(num_rollouts):
-        # Reproduce seed created by the ParallelRolloutSampler here.
-        ros_sequential.append(rollout(env, policy, eval=True, seed=f"0-s1-n{i}"))
+        ros_sequential.append(rollout(env, policy, eval=True, seed=0, sub_seed=0, sub_sub_seed=i))
 
     # Do the rollouts in parallel with a sampler.
     # Do not set the init state to check if this was sampled correctly.
@@ -571,9 +576,9 @@ def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_rollouts: i
         assert ro_s.actions == pytest.approx(ro_p.actions)
 
 
-@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+@pytest.mark.parametrize("policy", ["dummy_policy", "fnn_policy"], ids=["dummy", "fnn"], indirect=True)
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
-@pytest.mark.parametrize("min_rollouts", [2, 4, 5])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
 @pytest.mark.parametrize("init_states", [None, 2])
 @pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
 def test_parallel_sampling_deterministic_wo_min_steps(
@@ -590,10 +595,16 @@ def test_parallel_sampling_deterministic_wo_min_steps(
 
     all_rollouts = []
     for num_workers in nums_workers:
+        # Act an exploration strategy to test if that works too (it should as the policy gets pickled and distributed
+        # anyway).
         all_rollouts.append(
-            ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=min_rollouts, seed=0).sample(
-                init_states=init_states, domain_params=domain_params
-            )
+            ParallelRolloutSampler(
+                env,
+                NormalActNoiseExplStrat(policy, std_init=1.0),
+                num_workers=num_workers,
+                min_rollouts=min_rollouts,
+                seed=0,
+            ).sample(init_states=init_states, domain_params=domain_params)
         )
 
     # Test that the rollouts are actually different, i.e., that not the same seed is used for all rollouts.
@@ -622,10 +633,10 @@ def test_parallel_sampling_deterministic_wo_min_steps(
             assert ro_a.actions == pytest.approx(ro_b.actions)
 
 
-# Does not test `initial_states` other than `None` as this is not supported by the ParallelRolloutSampler.
-@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+# Include the FNN policy as it requires initialization which also has to be seeded.
+@pytest.mark.parametrize("policy", ["dummy_policy", "fnn_policy"], ids=["dummy", "fnn"], indirect=True)
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
-@pytest.mark.parametrize("min_rollouts", [None])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("min_rollouts", [None, 2, 4, 6])  # Once less, equal, and more rollouts than workers.
 @pytest.mark.parametrize("min_steps", [2, 10, 30])
 @pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
 def test_parallel_sampling_deterministic_w_min_steps(
@@ -639,10 +650,12 @@ def test_parallel_sampling_deterministic_w_min_steps(
 
     all_rollouts = []
     for num_workers in nums_workers:
+        # Act an exploration strategy to test if that works too (it should as the policy gets pickled and distributed
+        # anyway).
         all_rollouts.append(
             ParallelRolloutSampler(
                 env,
-                policy,
+                NormalActNoiseExplStrat(policy, std_init=1.0),
                 num_workers=num_workers,
                 min_rollouts=min_rollouts,
                 min_steps=min_steps * env.max_steps,
@@ -662,8 +675,62 @@ def test_parallel_sampling_deterministic_w_min_steps(
 
     # Test that the rollouts for all number of workers are equal.
     for ros_a, ros_b in [(a, b) for a in all_rollouts for b in all_rollouts]:
+        assert sum([len(ro) for ro in ros_a]) >= min_steps * env.max_steps
+        assert sum([len(ro) for ro in ros_b]) >= min_steps * env.max_steps
+        assert sum([len(ro) for ro in ros_a]) == sum([len(ro) for ro in ros_b])
         assert len(ros_a) == len(ros_b)
         for ro_a, ro_b in zip(ros_a, ros_b):
             assert ro_a.rewards == pytest.approx(ro_b.rewards)
             assert ro_a.observations == pytest.approx(ro_b.observations)
             assert ro_a.actions == pytest.approx(ro_b.actions)
+
+
+@pytest.mark.parametrize("env", ["default_qbb", "default_bob"], ids=["qbb", "bob"], indirect=True)
+@pytest.mark.parametrize("policy", ["fnn_policy"], indirect=True)
+@pytest.mark.parametrize("algo", [A2C, PPO])
+@pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
+def test_parallel_sampling_deterministic_smoke_test_wo_min_steps(
+    tmpdir_factory, env: SimEnv, policy: Policy, algo, min_rollouts: int
+):
+    seeds = (0, 1)
+    nums_workers = (1, 2, 4)
+
+    logging_results = []
+    rollout_results: List[List[List[List[StepSequence]]]] = []
+    for seed in seeds:
+        logging_results.append((seed, []))
+        rollout_results.append([])
+        for num_workers in nums_workers:
+            pyrado.set_seed(seed)
+            policy.init_param(None)
+            ex_dir = str(tmpdir_factory.mktemp(f"seed={seed}-num_workers={num_workers}"))
+            set_log_prefix_dir(ex_dir)
+            vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+            critic = GAE(vfcn, gamma=0.98, lamda=0.95, batch_size=32, lr=1e-3, standardize_adv=False)
+            alg = algo(ex_dir, env, policy, critic, max_iter=3, min_rollouts=min_rollouts, num_workers=num_workers)
+            alg.sampler = RolloutSavingWrapper(alg.sampler)
+            alg.train()
+            with open(f"{ex_dir}/progress.csv") as f:
+                logging_results[-1][1].append(str(f.read()))
+            rollout_results[-1].append(alg.sampler.rollouts)
+
+    # Test that the observations for all number of workers are equal.
+    for rollouts in rollout_results:
+        for ros_a, ros_b in [(a, b) for a in rollouts for b in rollouts]:
+            assert len(ros_a) == len(ros_b)
+            for ro_a, ro_b in zip(ros_a, ros_b):
+                assert len(ro_a) == len(ro_b)
+                for r_a, r_b in zip(ro_a, ro_b):
+                    assert r_a.observations == pytest.approx(r_b.observations)
+
+    # Test that different seeds actually produce different results.
+    for results_a, results_b in [
+        (a, b) for seed_a, a in logging_results for seed_b, b in logging_results if seed_a != seed_b
+    ]:
+        for result_a, result_b in [(a, b) for a in results_a for b in results_b if a is not b]:
+            assert result_a != result_b
+
+    # Test that same seeds produce same results.
+    for _, results in logging_results:
+        for result_a, result_b in [(a, b) for a in results for b in results]:
+            assert result_a == result_b

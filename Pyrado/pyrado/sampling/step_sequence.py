@@ -343,6 +343,12 @@ class StepSequence(Sequence[Step]):
         else:
             self._rollout_bounds = None
 
+    def __repr__(self) -> str:
+        return f"StepSequence[rewards={self.rewards}, observations={self.observations}, actions={self.actions}]"
+
+    def __str__(self) -> str:
+        return str(self.observations)
+
     @property
     def data_format(self) -> str:
         """Get the name of data format ('torch' or 'numpy')."""

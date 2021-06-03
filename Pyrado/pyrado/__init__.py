@@ -129,12 +129,17 @@ __all__ = [
     "timestamp_date_format",
 ]
 
+pyrado_base_seed = None
 
-def set_seed(seed: Optional[int], sub_seed: int = 0, sub_sub_seed: int = 0, verbose: bool = False) -> Optional[int]:
+
+def set_seed(
+    seed: Optional[int], sub_seed: int = None, sub_sub_seed: int = None, verbose: bool = False
+) -> Optional[int]:
     """
     Set the seed for the random number generators. The actual seed is computed from the base seed `seed´, and the first-
     and second-order sub-seeds (`sub_seed` and `sub_sub_seed`, respectively). The former two will be concatenated using
-    a bit-wise or, and the latter will be added. The whole seed is then masked back into a 32-bit seed.
+    a bit-wise or, and the latter will be added. The whole seed is then masked back into a 32-bit seed. Additionally,
+    the base seed is stored such that is get be retrieved with `pyrado.set_seed`.
 
     The result seed is computed as:
 
@@ -151,9 +156,15 @@ def set_seed(seed: Optional[int], sub_seed: int = 0, sub_sub_seed: int = 0, verb
     :return: the seed that was set
     """
 
+    global pyrado_base_seed
+
     # The better parameter name would be 'base_seed', but keep 'seed' for backward compatibility.
     base_seed = seed
     del seed
+    if sub_seed is None:
+        sub_seed = 0
+    if sub_sub_seed is None:
+        sub_sub_seed = 0
 
     if not isinstance(base_seed, int):
         if verbose:
@@ -161,31 +172,7 @@ def set_seed(seed: Optional[int], sub_seed: int = 0, sub_sub_seed: int = 0, verb
         return None
 
     # Previously, combining information into a single seed was done based on a string with an MD5 hash. But we decided
-    # for this method instead. See https://github.com/famura/SimuRLacra/pull/69 for the whole discussion or read this
-    # excerpt:
-    #  fdamken:
-    #    It might be faster and more stable to restrict the base seed to a size of 15 Bits and use the remaining 16 Bits
-    #    for the sub-seed. This would allow for 65,536 different seeds for a given base seed and for 32,768 base seeds.
-    #    The seeds can simply be concatenated with (base_seed << 16) | sub_seed.
-    #    This is less flexible than using a string seed, but more predictable. I'll implement this tomorrow. The seed
-    #    will then be the base seed and the num will be the sub-seed. I'll add this to the pyrado.set_seed method and
-    #    add a sub-seed parameter to rollout.
-    #  famura:
-    #    I think that the more interpretable solution (2nd) is the better choice, since one typically uses only a few
-    #    integer values for the seed anyways.
-    #  fdamken:
-    #    Yes, I think that, too. But I just noticed another problem with it, but it is fixable: there is not one sub-
-    #    seed, but two: the sample number (i.e., how often things where sampled) and the rollout number. The former is
-    #    needed to not some the same rollouts over and over again. This means the number of bits for each of them had to
-    #    be adjusted. I suggest allocating 14 bits for the sample number, allowing 16,384 sample calls it total (after
-    #    that I would just wrap around to zero again, the policy should be different enough after this many iterations
-    #    to not cause much problems here (i.e., it will only result in the same init state). Then 7 bits for the rollout
-    #    number, allowing 128 rollouts (I would not wrap the to zero but rather just add it up to the sample count to
-    #    not prevent sampling equivalent rollouts – but in theory, this many rollouts should be plenty). And finally the
-    #    remaining 10 bits for the base seed, allowing 1024 different seeds. Assuming only every 10th seed is able to
-    #    actually learn something, this would give approximately 100 seeds, which should be plenty.
-    #  fdamken:
-    #    Correction: The NumPy seed can be 32 bits long, so I would reserve 8 bits for the sub-sub-seed.
+    # for this method instead. See https://github.com/famura/SimuRLacra/pull/69.
     if not (0 <= base_seed < 2 ** 10):
         raise ValueErr(msg=f"base seed {base_seed} is not an unsigned 10-bit integer (either too low or too high)")
     if not (0 <= sub_seed < 2 ** 14):
@@ -198,15 +185,17 @@ def set_seed(seed: Optional[int], sub_seed: int = 0, sub_sub_seed: int = 0, verb
             "sub-sub-seed is not an unsigned 8-bit integer (either too low or too high) -- taking absolute value and ignoring too high values"
         )
         sub_sub_seed = abs(sub_sub_seed)
-    seed = (
-        (base_seed << (14 + 8)) | ((sub_seed & 0b11111111111111) << 8) + sub_sub_seed
-    ) & 0b1111111111_11111111111111_11111111
+
+    seed = (base_seed << (14 + 8)) | ((sub_seed & 0b11111111111111) << 8) + sub_sub_seed
+    # Mask the seed to a 32-bit integer
+    seed &= 0b1111111111_11111111111111_11111111
 
     random.seed(seed)
     np.random.seed(seed)
     to.manual_seed(seed)
     if to.cuda.is_available():
         to.cuda.manual_seed_all(seed)
+    pyrado_base_seed = base_seed
 
     if verbose:
         print(
@@ -214,3 +203,9 @@ def set_seed(seed: Optional[int], sub_seed: int = 0, sub_sub_seed: int = 0, verb
         )
 
     return seed
+
+
+def get_base_seed() -> Optional[int]:
+    """Gets the last seed that was set with `pyrado.set_seed`. If no seed was every set, `None`."""
+    global pyrado_base_seed
+    return pyrado_base_seed

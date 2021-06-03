@@ -56,6 +56,9 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.properties import cached_property
 
 
+NO_SEED_PASSED = object()
+
+
 class ParameterSample(NamedTuple):
     """Stores policy parameters and associated rollouts."""
 
@@ -165,7 +168,8 @@ class ParameterExplorationSampler(Serializable):
         :param num_init_states_per_domain: number of rollouts to cover the variance over initial states
         :param num_domains: number of rollouts due to the variance over domain parameters
         :param num_workers: number of parallel samplers
-        :param seed: seed value for the random number generators, pass `None` for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding; defaults to the last seed
+                     that was set with `pyrado.set_seed`
         """
         if not isinstance(num_init_states_per_domain, int):
             raise pyrado.TypeErr(given=num_init_states_per_domain, expected_type=int)
@@ -196,6 +200,8 @@ class ParameterExplorationSampler(Serializable):
         # Create parallel pool. We use one thread per environment because it's easier.
         self.pool = SamplerPool(num_workers)
 
+        if seed is NO_SEED_PASSED:
+            seed = pyrado.get_base_seed()
         self._seed = seed
         # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when
         # the sampling crashes and the sample count is not incremented.

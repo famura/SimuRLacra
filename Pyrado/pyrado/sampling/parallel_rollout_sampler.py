@@ -48,6 +48,9 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.box import InfBoxSpace
 
 
+NO_SEED_PASSED = object()
+
+
 def _ps_init(G, env, policy):
     """Store pickled (and thus copied) environment and policy."""
     G.env = pickle.loads(env)
@@ -182,7 +185,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         min_rollouts: int = None,
         min_steps: int = None,
         show_progress_bar: bool = True,
-        seed: int = None,
+        seed: int = NO_SEED_PASSED,
     ):
         """
         Constructor
@@ -193,7 +196,8 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         :param min_rollouts: minimum number of complete rollouts to sample
         :param min_steps: minimum total number of steps to sample
         :param show_progress_bar: it `True`, display a progress bar using `tqdm`
-        :param seed: seed value for the random number generators, pass `None` for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding; defaults to the last seed
+                     that was set with `pyrado.set_seed`
         """
         Serializable._init(self, locals())
         super().__init__(min_rollouts=min_rollouts, min_steps=min_steps)
@@ -209,6 +213,8 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         # Create parallel pool. We use one thread per env because it's easier.
         self.pool = SamplerPool(num_workers)
 
+        if seed is NO_SEED_PASSED:
+            seed = pyrado.get_base_seed()
         self._seed = seed
         # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when
         # the sampling crashes and the sample count is not incremented.

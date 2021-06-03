@@ -25,7 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+import os
 import traceback
 from copy import deepcopy
 from enum import Enum, auto
@@ -49,6 +49,8 @@ _CMD_STOP = "stop"
 _RES_SUCCESS = "success"
 _RES_ERROR = "error"
 _RES_FATAL = "fatal"
+
+ENABLE_SINGLE_WORKER_OPTIMIZATION = os.getenv("ENABLE_SINGLE_WORKER_OPTIMIZATION", None) is not None
 
 
 def _pool_worker(from_master, to_master):
@@ -205,7 +207,7 @@ def _run_set_seed(G, seed):
 
 def _run_collect(
     G, counter, run_counter, lock, n, min_runs, func, args, kwargs
-) -> List[Tuple[int, List[StepSequence]]]:
+) -> List[Tuple[int, List[StepSequence], int]]:
     """Worker function for run_collect"""
     result = []
     while True:
@@ -218,7 +220,7 @@ def _run_collect(
         res, n_done = func(G, run_num, *args, **kwargs)
 
         # Add to result and record increment
-        result.append((run_num, res))
+        result.append((run_num, res, n_done))
         with lock:
             # increment done counter
             counter.value += n_done
@@ -260,7 +262,7 @@ class SamplerPool:
             raise pyrado.ValueErr(given=num_threads, ge_constraint="1")
 
         self._n_threads = num_threads
-        if num_threads > 1:
+        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or num_threads > 1:
             # Create workers
             self._workers = [_WorkerInfo(i + 1) for i in range(num_threads)]
             self._manager = mp.Manager()
@@ -268,7 +270,7 @@ class SamplerPool:
 
     def stop(self):
         """Terminate all workers."""
-        if self._n_threads > 1:
+        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or self._n_threads > 1:
             for w in self._workers:
                 w.stop()
 
@@ -296,7 +298,7 @@ class SamplerPool:
 
         :param func: the first argument of func will be a worker-local namespace
         """
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             return [func(self._G, *args, **kwargs)]
 
         # Start invocation
@@ -314,7 +316,7 @@ class SamplerPool:
         """
         assert self._n_threads == len(arglist)
 
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             return [func(self._G, arglist[0])]
 
         # Start invocation
@@ -338,7 +340,7 @@ class SamplerPool:
             progressbar.total = len(arglist)
 
         # Single thread optimization
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             res = []
             for arg in arglist:
                 res.append(func(self._G, deepcopy(arg)))  # numpy arrays and others are passed by reference
@@ -406,7 +408,7 @@ class SamplerPool:
         if collect_progressbar is not None:
             collect_progressbar.total = n
 
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             # Do locally
             result = []
             counter = 0
@@ -447,13 +449,12 @@ class SamplerPool:
         result = [item for res in allres for item in res]
         # Sort results by index to ensure consistent order
         result.sort(key=lambda t: t[0])
-        result = [item for _, item in result]
         result_filtered = []
-        steps = 0
-        for i, item in enumerate(result):
-            steps += len(item)
+        n_total = 0
+        for i, (_, item, n_of_item) in enumerate(result):
+            n_total += n_of_item
             result_filtered.append(item)
-            if steps >= n and (min_runs is None or i + 1 >= min_runs):
+            if n_total >= n and (min_runs is None or i + 1 >= min_runs):
                 break
         return result_filtered, counter.value
 
