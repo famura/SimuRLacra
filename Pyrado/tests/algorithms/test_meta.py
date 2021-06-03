@@ -78,6 +78,7 @@ from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import (
+    AllStepsEmbedding,
     BayesSimEmbedding,
     DeltaStepsEmbedding,
     DynamicTimeWarpingEmbedding,
@@ -554,12 +555,13 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     "embedding_name",
     [
         LastStepEmbedding.name,
+        AllStepsEmbedding.name,
         DeltaStepsEmbedding.name,
         BayesSimEmbedding.name,
         DynamicTimeWarpingEmbedding.name,
         RNNEmbedding.name,
     ],
-    ids=["laststep", "deltasteps", "bayessim", "dtw", "rnn"],
+    ids=["laststep", "allsteps", "deltasteps", "bayessim", "dtw", "rnn"],
 )
 @pytest.mark.parametrize("idcs_data", [None, (0, 1)], ids=["allstatedims", "selstatedim"])
 @pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
@@ -585,8 +587,8 @@ def test_npdr_no_policy_optimization(
     env_real.domain_param = dict(Rm=dp_nom["Rm"] * 1.2, km=dp_nom["km"] * 0.8)
 
     # Reduce the number of steps to make this test run faster
-    env.max_steps = 50
-    env_real.max_steps = 50
+    env.max_steps = 40
+    env_real.max_steps = 40
 
     # Policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
@@ -604,6 +606,14 @@ def test_npdr_no_policy_optimization(
     # Time series embedding
     if embedding_name == LastStepEmbedding.name:
         embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), idcs_data=idcs_data)
+    elif embedding_name == AllStepsEmbedding.name:
+        embedding = AllStepsEmbedding(
+            env.spec,
+            RolloutSamplerForSBI.get_dim_data(env.spec),
+            env.max_steps,
+            downsampling_factor=7,
+            idcs_data=idcs_data,
+        )
     elif embedding_name == DeltaStepsEmbedding.name:
         embedding = DeltaStepsEmbedding(
             env.spec,
@@ -645,7 +655,7 @@ def test_npdr_no_policy_optimization(
         num_sbi_rounds=num_sbi_rounds,
         simulation_batch_size=1,
         normalize_posterior=False,
-        num_eval_samples=3,
+        num_eval_samples=2,
         num_segments=num_segments,
         len_segments=len_segments,
         use_rec_act=use_rec_act,
