@@ -30,6 +30,7 @@ import os
 import os.path as osp
 import platform
 import random
+import warnings
 from typing import Optional, TypeVar, Union
 
 import numpy as np
@@ -129,29 +130,87 @@ __all__ = [
 ]
 
 
-def set_seed(seed: Optional[Union[int, str]], verbose: bool = False):
+def set_seed(seed: Optional[int], sub_seed: int = 0, sub_sub_seed: int = 0, verbose: bool = False) -> Optional[int]:
     """
-    Set the seed for the random number generators
+    Set the seed for the random number generators. The actual seed is computed from the base seed `seed´, and the first-
+    and second-order sub-seeds (`sub_seed` and `sub_sub_seed`, respectively). The former two will be concatenated using
+    a bit-wise or, and the latter will be added. The whole seed is then masked back into a 32-bit seed.
 
-    :param seed: value for the random number generators' seeds, pass `None` to skip seeding
+    The result seed is computed as:
+
+    .. code::
+        ((base_seed << (14 + 8)) | ((sub_seed & 0b11111111111111) << 8) + sub_sub_seed) & 0b1111111111_11111111111111_1111111
+
+    :param seed: base seed, pass `None` to skip seeding; must be an unsigned 10-bit integer
+    :param sub_seed: sub-seed, defaults to zero; must be an unsigned 14-bit integer; overflows will be cast back into
+                     the interval by masking, i.e., only the last 14 bits will be kept; underflows are first made
+                     positive by taking the absolute value
+    :param sub_sub_seed: sub-sub-seed, defaults to zero; must be an unsigned 8-bit integer; underflows will be cast back
+                         into the interval by taking the absolute value
     :param verbose: if `True` the seed is printed
+    :return: the seed that was set
     """
-    if isinstance(seed, str):
-        # If there is a hash collision in the modulo space, this might produce the same seed for two different strings!
-        # But this behavior is unavoidable as even parsing the string in base 36 (or similar) would result in a number
-        # greater than `2 ** 32 - 1` which is the maximum number for a seed in NumPy. Also, seeds cannot be negative in
-        # NumPy.
+
+    # The better parameter name would be 'base_seed', but keep 'seed' for backward compatibility.
+    base_seed = seed
+    del seed
+
+    if not isinstance(base_seed, int):
         if verbose:
-            print(f"Hashing string-seed '{seed}'.")
-        seed = int(hashlib.md5(seed.encode()).hexdigest(), 16) % (2 ** 32 - 1)
-    if isinstance(seed, int):
-        random.seed(seed)
-        np.random.seed(seed)
-        to.manual_seed(seed)
-        if to.cuda.is_available():
-            to.cuda.manual_seed_all(seed)
-        if verbose:
-            print(f"Set the random number generators' seed to {seed}.")
-    else:
-        if verbose:
-            print(f"The random number generators' seeds were not set.")
+            print(f"Base seed is not an integer (is {base_seed}) -- the random number generators' seeds were not set.")
+        return None
+
+    # Previously, combining information into a single seed was done based on a string with an MD5 hash. But we decided
+    # for this method instead. See https://github.com/famura/SimuRLacra/pull/69 for the whole discussion or read this
+    # excerpt:
+    #  fdamken:
+    #    It might be faster and more stable to restrict the base seed to a size of 15 Bits and use the remaining 16 Bits
+    #    for the sub-seed. This would allow for 65,536 different seeds for a given base seed and for 32,768 base seeds.
+    #    The seeds can simply be concatenated with (base_seed << 16) | sub_seed.
+    #    This is less flexible than using a string seed, but more predictable. I'll implement this tomorrow. The seed
+    #    will then be the base seed and the num will be the sub-seed. I'll add this to the pyrado.set_seed method and
+    #    add a sub-seed parameter to rollout.
+    #  famura:
+    #    I think that the more interpretable solution (2nd) is the better choice, since one typically uses only a few
+    #    integer values for the seed anyways.
+    #  fdamken:
+    #    Yes, I think that, too. But I just noticed another problem with it, but it is fixable: there is not one sub-
+    #    seed, but two: the sample number (i.e., how often things where sampled) and the rollout number. The former is
+    #    needed to not some the same rollouts over and over again. This means the number of bits for each of them had to
+    #    be adjusted. I suggest allocating 14 bits for the sample number, allowing 16,384 sample calls it total (after
+    #    that I would just wrap around to zero again, the policy should be different enough after this many iterations
+    #    to not cause much problems here (i.e., it will only result in the same init state). Then 7 bits for the rollout
+    #    number, allowing 128 rollouts (I would not wrap the to zero but rather just add it up to the sample count to
+    #    not prevent sampling equivalent rollouts – but in theory, this many rollouts should be plenty). And finally the
+    #    remaining 10 bits for the base seed, allowing 1024 different seeds. Assuming only every 10th seed is able to
+    #    actually learn something, this would give approximately 100 seeds, which should be plenty.
+    #  fdamken:
+    #    Correction: The NumPy seed can be 32 bits long, so I would reserve 8 bits for the sub-sub-seed.
+    if not (0 <= base_seed < 2 ** 10):
+        raise ValueErr(msg=f"base seed {base_seed} is not an unsigned 10-bit integer (either too low or too high)")
+    if not (0 <= sub_seed < 2 ** 14):
+        warnings.warn(
+            "sub-seed is not an unsigned 14-bit integer (either too low or too high) -- using modulus operation to make it so"
+        )
+        sub_seed = abs(sub_seed)
+    if not (0 <= sub_sub_seed < 2 ** 8):
+        warnings.warn(
+            "sub-sub-seed is not an unsigned 8-bit integer (either too low or too high) -- taking absolute value and ignoring too high values"
+        )
+        sub_sub_seed = abs(sub_sub_seed)
+    seed = (
+        (base_seed << (14 + 8)) | ((sub_seed & 0b11111111111111) << 8) + sub_sub_seed
+    ) & 0b1111111111_11111111111111_11111111
+
+    random.seed(seed)
+    np.random.seed(seed)
+    to.manual_seed(seed)
+    if to.cuda.is_available():
+        to.cuda.manual_seed_all(seed)
+
+    if verbose:
+        print(
+            f"Set the random number generators' seed to {seed} (computed from base seed {base_seed}, sub-seed {sub_seed}, and sub-sub-seed {sub_sub_seed})."
+        )
+
+    return seed

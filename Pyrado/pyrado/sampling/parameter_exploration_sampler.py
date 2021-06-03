@@ -127,7 +127,7 @@ def _pes_init(G, env, policy):
     G.policy = pickle.loads(policy)
 
 
-def _pes_sample_one(G, param, seed: str):
+def _pes_sample_one(G, param, seed: int, sub_seed: int):
     """Sample one rollout with the current setting."""
     num, (pol_param, dom_param, init_state) = param
     vector_to_parameters(pol_param, G.policy.parameters())
@@ -139,7 +139,9 @@ def _pes_sample_one(G, param, seed: str):
             "init_state": init_state,
             "domain_param": dom_param,
         },
-        seed=f"{seed}-n{num}",
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
     )
 
 
@@ -195,7 +197,9 @@ class ParameterExplorationSampler(Serializable):
         self.pool = SamplerPool(num_workers)
 
         self._seed = seed
-        self._sample_count = 0
+        # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when
+        # the sampling crashes and the sample count is not incremented.
+        self._sample_count = -1
 
         # Distribute environments. We use pickle to make sure a copy is created for n_envs = 1
         self.pool.invoke_all(_pes_init, pickle.dumps(self.env), pickle.dumps(self.policy))
@@ -258,6 +262,9 @@ class ParameterExplorationSampler(Serializable):
         """
         Sample rollouts for a given set of parameters.
 
+        .. note::
+            This method is **not** thread-safe! See for example the usage of `self._sample_count`.
+
         :param param_sets: sets of policy parameters
         :param init_states: fixed initial states, pass `None` to randomly sample initial states
         :return: data structure containing the policy parameter sets and the associated rollout data
@@ -265,13 +272,12 @@ class ParameterExplorationSampler(Serializable):
         if init_states is not None and not isinstance(init_states, list):
             pyrado.TypeErr(given=init_states, expected_type=list)
 
+        self._sample_count += 1
+
         # Sample domain parameter sets
         domain_params = self._sample_domain_params()
         if not isinstance(domain_params, list):
             raise pyrado.TypeErr(given=domain_params, expected_type=list)
-
-        self._sample_count += 1
-        seed = f"{self._seed}-s{self._sample_count}"
 
         # Sample the initial states for every domain, but reset before. Hence they are associated to their domain.
         if init_states is None:
@@ -291,7 +297,9 @@ class ParameterExplorationSampler(Serializable):
 
         # Sample rollouts in parallel
         with tqdm(leave=False, file=sys.stdout, desc="Sampling", unit="rollouts") as pb:
-            all_ros = self.pool.run_map(partial(_pes_sample_one, seed=seed), list(enumerate(all_params)), pb)
+            all_ros = self.pool.run_map(
+                partial(_pes_sample_one, seed=self._seed, sub_seed=self._sample_count), list(enumerate(all_params)), pb
+            )
 
         # Group rollouts by parameters
         ros_iter = iter(all_ros)

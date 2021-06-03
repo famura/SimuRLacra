@@ -59,42 +59,60 @@ def _ps_update_policy(G, state):
     G.policy.load_state_dict(state)
 
 
-def _ps_sample_one(G, num: int, eval: bool, seed: str):
+def _ps_sample_one(G, num: int, eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout and return step count if counting steps, rollout count (1) otherwise.
     This function is used when a minimum number of steps was given.
     """
-    ro = rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}")
+    ro = rollout(G.env, G.policy, eval=eval, seed=seed, sub_seed=sub_seed, sub_sub_seed=num)
     return ro, len(ro)
 
 
-def _ps_run_one(G, num: int, eval: bool, seed: str):
+def _ps_run_one(G, num: int, eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout without specifying the initial state or the domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}")
+    return rollout(G.env, G.policy, eval=eval, seed=seed, sub_seed=sub_seed, sub_sub_seed=num)
 
 
-def _ps_run_one_init_state(G, init_state: Tuple[int, np.ndarray], eval: bool, seed: str):
+def _ps_run_one_init_state(G, init_state: Tuple[int, np.ndarray], eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout with given init state.
     This function is used when a minimum number of rollouts was given.
     """
     num, init_state = init_state
-    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}", reset_kwargs=dict(init_state=init_state))
+    return rollout(
+        G.env,
+        G.policy,
+        eval=eval,
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
+        reset_kwargs=dict(init_state=init_state),
+    )
 
 
-def _ps_run_one_domain_param(G, domain_param: Tuple[int, dict], eval: bool, seed: str):
+def _ps_run_one_domain_param(G, domain_param: Tuple[int, dict], eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout with given domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
     num, domain_param = domain_param
-    return rollout(G.env, G.policy, eval=eval, seed=f"{seed}-n{num}", reset_kwargs=dict(domain_param=domain_param))
+    return rollout(
+        G.env,
+        G.policy,
+        eval=eval,
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
+        reset_kwargs=dict(domain_param=domain_param),
+    )
 
 
-def _ps_run_one_reset_kwargs(G, reset_kwargs: Tuple[int, Tuple[np.ndarray, dict]], eval: bool, seed: str):
+def _ps_run_one_reset_kwargs(
+    G, reset_kwargs: Tuple[int, Tuple[np.ndarray, dict]], eval: bool, seed: int, sub_seed: int
+):
     """
     Sample one rollout with given init state and domain parameters, passed as a tuple for simplicity at the other end.
     This function is used when a minimum number of rollouts was given.
@@ -104,7 +122,9 @@ def _ps_run_one_reset_kwargs(G, reset_kwargs: Tuple[int, Tuple[np.ndarray, dict]
         G.env,
         G.policy,
         eval=eval,
-        seed=f"{seed}-n{num}",
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
         reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]),
     )
 
@@ -190,7 +210,9 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         self.pool = SamplerPool(num_workers)
 
         self._seed = seed
-        self._sample_count = 0
+        # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when
+        # the sampling crashes and the sample count is not incremented.
+        self._sample_count = -1
 
         # Distribute environments. We use pickle to make sure a copy is created for n_envs=1
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
@@ -220,6 +242,9 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         """
         Do the sampling according to the previously given environment, policy, and number of steps/rollouts.
 
+        .. note::
+            This method is **not** thread-safe! See for example the usage of `self._sample_count`.
+
         :param init_states: initial states forw `run_map()`, pass `None` (default) to sample from the environment's
                             initial state space
         :param domain_params: domain parameters for `run_map()`, pass `None` (default) to not explicitly set them
@@ -240,39 +265,38 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
             unit="steps" if self.min_steps is not None else "rollouts",
         ) as pb:
 
-            seed = f"{self._seed}-s{self._sample_count}"
             if self.min_steps is None:
                 if init_states is None and domain_params is None:
                     # Simply run min_rollouts times
                     func = partial(_ps_run_one, eval=eval)
-                    arglist = range(self.min_rollouts)
+                    arglist = list(range(self.min_rollouts))
                 elif init_states is not None and domain_params is None:
                     # Run every initial state so often that we at least get min_rollouts trajectories
                     func = partial(_ps_run_one_init_state, eval=eval)
                     rep_factor = ceil(self.min_rollouts / len(init_states))
-                    arglist = list(product(range(rep_factor), init_states))
+                    arglist = list(enumerate(rep_factor * init_states))
                 elif init_states is None and domain_params is not None:
                     # Run every domain parameter set so often that we at least get min_rollouts trajectories
                     func = partial(_ps_run_one_domain_param, eval=eval)
                     rep_factor = ceil(self.min_rollouts / len(domain_params))
-                    arglist = list(product(range(rep_factor), domain_params))
+                    arglist = list(enumerate(rep_factor * domain_params))
                 elif init_states is not None and domain_params is not None:
                     # Run every combination of initial state and domain parameter so often that we at least get
                     # min_rollouts trajectories
                     func = partial(_ps_run_one_reset_kwargs, eval=eval)
                     allcombs = list(product(init_states, domain_params))
                     rep_factor = ceil(self.min_rollouts / len(allcombs))
-                    arglist = list(product(range(rep_factor), allcombs))
+                    arglist = list(enumerate(rep_factor * allcombs))
 
                 # Only minimum number of rollouts given, thus use run_map
-                return self.pool.run_map(partial(func, seed=seed), arglist, pb)
+                return self.pool.run_map(partial(func, seed=self._seed, sub_seed=self._sample_count), arglist, pb)
 
             else:
                 # Minimum number of steps given, thus use run_collect (automatically handles min_runs=None)
                 if init_states is None:
                     return self.pool.run_collect(
                         self.min_steps,
-                        partial(_ps_sample_one, eval=eval, seed=seed),
+                        partial(_ps_sample_one, eval=eval, seed=self._seed, sub_seed=self._sample_count),
                         collect_progressbar=pb,
                         min_runs=self.min_rollouts,
                     )[0]

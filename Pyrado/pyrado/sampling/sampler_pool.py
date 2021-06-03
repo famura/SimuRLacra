@@ -461,6 +461,10 @@ class SamplerPool:
         """
         Set a deterministic seed on all workers.
 
+        .. note::
+            This is intended to only be used in **legacy** evaluation scripts! For new code and everything that should
+            really be reproducible, pass the seed to the `sample()` method of a `ParallelRolloutSampler`.
+
         :param seed: seed value for the random number generators
         """
         self.invoke_all_map(_run_set_seed, [seed + i for i in range(self._n_threads)])
