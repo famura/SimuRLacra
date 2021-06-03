@@ -137,14 +137,8 @@ def set_seed(
 ) -> Optional[int]:
     """
     Set the seed for the random number generators. The actual seed is computed from the base seed `seed´, and the first-
-    and second-order sub-seeds (`sub_seed` and `sub_sub_seed`, respectively). The former two will be concatenated using
-    a bit-wise or, and the latter will be added. The whole seed is then masked back into a 32-bit seed. Additionally,
-    the base seed is stored such that is get be retrieved with `pyrado.set_seed`.
-
-    The result seed is computed as:
-
-    .. code::
-        ((base_seed << (14 + 8)) | ((sub_seed & 0b11111111111111) << 8) + sub_sub_seed) & 0b1111111111_11111111111111_1111111
+    and second-order sub-seeds (`sub_seed` and `sub_sub_seed`, respectively). All of these seeds get concatenated in a
+    string which is then MD5-hashed and crushed into a 32-bit integer.
 
     :param seed: base seed, pass `None` to skip seeding; must be an unsigned 10-bit integer
     :param sub_seed: sub-seed, defaults to zero; must be an unsigned 14-bit integer; overflows will be cast back into
@@ -168,27 +162,10 @@ def set_seed(
 
     if not isinstance(base_seed, int):
         if verbose:
-            print(f"Base seed is not an integer (is {base_seed}) -- the random number generators' seeds were not set.")
+            print(f"Base seed {base_seed} is not an integer -- the random number generators' seeds were not set.")
         return None
 
-    # Previously, combining information into a single seed was done based on a string with an MD5 hash. But we decided
-    # for this method instead. See https://github.com/famura/SimuRLacra/pull/69.
-    if not (0 <= base_seed < 2 ** 10):
-        raise ValueErr(msg=f"base seed {base_seed} is not an unsigned 10-bit integer (either too low or too high)")
-    if not (0 <= sub_seed < 2 ** 14):
-        warnings.warn(
-            "sub-seed is not an unsigned 14-bit integer (either too low or too high) -- using modulus operation to make it so"
-        )
-        sub_seed = abs(sub_seed)
-    if not (0 <= sub_sub_seed < 2 ** 8):
-        warnings.warn(
-            "sub-sub-seed is not an unsigned 8-bit integer (either too low or too high) -- taking absolute value and ignoring too high values"
-        )
-        sub_sub_seed = abs(sub_sub_seed)
-
-    seed = (base_seed << (14 + 8)) | ((sub_seed & 0b11111111111111) << 8) + sub_sub_seed
-    # Mask the seed to a 32-bit integer
-    seed &= 0b1111111111_11111111111111_11111111
+    seed = int(hashlib.md5(f"{base_seed}-{sub_seed}-{sub_sub_seed}".encode()).hexdigest(), 16) % (2 ** 32)
 
     random.seed(seed)
     np.random.seed(seed)
