@@ -305,9 +305,9 @@ class DeltaStepsEmbedding(Embedding):
     @property
     def dim_output(self) -> int:
         if self._idcs_data is not None:
-            return (self._len_rollouts - 1) * len(self._idcs_data)
+            return self._len_rollouts * len(self._idcs_data)
         else:
-            return (self._len_rollouts - 1) * self._env_spec.state_space.flat_dim
+            return self._len_rollouts * self._env_spec.state_space.flat_dim
 
     @to.no_grad()
     def summary_statistic(self, data: to.Tensor) -> to.Tensor:
