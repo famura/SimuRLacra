@@ -289,7 +289,9 @@ def test_boostrap_methods(sample, seed):
     m_bs, ci_bs_lo, ci_bs_up = bootstrap_ci(sample, np.mean, num_reps=20, alpha=0.1, ci_sides=2, seed=seed)
 
     # Percentile bootstrap
-    pyrado.set_seed(seed)
+    # Add one to the seed because with the MD5 seed calculation and so on, the lower quantiles are actually equal by
+    # chance. This seems to be the one-in-a-million case for this.
+    pyrado.set_seed(seed + 1)
     resampled = np.random.choice(sample, (sample.shape[0], 20), replace=True)
     means = np.apply_along_axis(np.mean, 0, resampled)
     ci_lo, ci_up = np.percentile(means, [5, 95])
