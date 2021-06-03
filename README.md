@@ -23,7 +23,7 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 __Pros__  
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
 * __C++ export of policies based on PyTorch Modules.__ Since the `Policy` class is a subclass of PyTorch's `nn.Module`, you can port your neural-network policies, learned with Python, to you C++ applications. This also holds for stateful recurrent networks.
-* __CPU-based parallelization for sampling the environments.__ Similar to the OpenAI Gym, SimuRLacra offers parallelized environments for sampling. This is done by employing [Serializable](https://github.com/Xfel/init-args-serializer), making the simulation environments fully pickleable.
+* __CPU-based parallelization for sampling the environments.__ Similar to the OpenAI Gym, SimuRLacra offers parallelized environments for sampling. This is done by employing [Serializable](https://github.com/Xfel/init-args-serializer), making the simulation environments fully pickleable. The sampling is also deterministic conditioned on the seed!
 * __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
 * __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
 * __Tested integration of [BoTorch](https://botorch.org/), and [Optuna](https://optuna.org/)__.
@@ -294,6 +294,9 @@ function pretty_csv {
 ```
 into your sell's rc-file. Executing `pretty_csv progress.csv` in the experiments folder will yield a nicely formatted table.
 I found this neat little trick on [Stefaan Lippens blog](https://www.stefaanlippens.net/pretty-csv.html). You might need to install `column` depending on your OS.
+
+### PDB (The Python Debugger) and Multiprocessing
+Due to the multiprocessing, it is possible that PDB (the Python Debugger) hangs after executing an inspection command. You can set the environment variable `ENABLE_SINGLE_WORKER_OPTIMIZATION` to disable the sampling parallelization if the number of workers is set to one. **However, this will destroy the seed-determinism!** Thus only enable it for debugging purposes and not for evaluating an algorithm and similar.
 
 
 ## Troubleshooting
