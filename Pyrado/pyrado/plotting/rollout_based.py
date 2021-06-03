@@ -161,8 +161,8 @@ def plot_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
         if len(dim_obs) == 1:
             axs[0, 0].plot(t, ro.observations[:, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
             axs[0, 0].legend()
-            axs.plot(t, ro.observations[:, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
-            axs.legend()
+            axs[0, 0].plot(t, ro.observations[:, dim_obs[0]], label=_get_obs_label(ro, dim_obs[0]))
+            axs[0, 0].legend()
         else:
             for i in range(num_rows):
                 for j in range(num_cols):
@@ -210,8 +210,8 @@ def plot_states(ro: StepSequence, idcs_sel: Sequence[int] = None):
         if len(dim_states) == 1:
             axs[0, 0].plot(t, ro.states[:, dim_states[0]], label=_get_state_label(ro, dim_states[0]))
             axs[0, 0].legend()
-            axs.plot(t, ro.states[:, dim_states[0]], label=_get_state_label(ro, dim_states[0]))
-            axs.legend()
+            axs[0, 0].plot(t, ro.states[:, dim_states[0]], label=_get_state_label(ro, dim_states[0]))
+            axs[0, 0].legend()
         else:
             for i in range(num_rows):
                 for j in range(num_cols):
@@ -259,8 +259,8 @@ def plot_features(ro: StepSequence, policy: Policy):
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_feat)))
 
         if len(dim_feat) == 1:
-            axs.plot(t, feat_vals[:-1, dim_feat[0]], label=_get_obs_label(ro, dim_feat[0]))
-            axs.legend()
+            axs[0, 0].plot(t, feat_vals[:-1, dim_feat[0]], label=_get_obs_label(ro, dim_feat[0]))
+            axs[0, 0].legend()
         else:
             for i in range(num_rows):
                 for j in range(num_cols):
@@ -305,10 +305,10 @@ def plot_actions(ro: StepSequence, env: Env):
             act_clipped = np.array([env.limit_act(a) for a in ro.actions])
 
         if dim_act == 1:
-            axs.plot(t, act_denorm, label="to env")
-            axs.plot(t, act_clipped, label="clipped", c="k", ls="--")
-            axs.legend(ncol=2)
-            axs.set_ylabel(_get_act_label(ro, 0))
+            axs[0, 0].plot(t, act_denorm, label="to env")
+            axs[0, 0].plot(t, act_clipped, label="clipped", c="k", ls="--")
+            axs[0, 0].legend(ncol=2)
+            axs[0, 0].set_ylabel(_get_act_label(ro, 0))
         else:
             for idx_a in range(dim_act):
                 axs[idx_a // num_cols, idx_a % num_cols].plot(t, act_denorm[:, idx_a], label="to env", c=colors[idx_a])
