@@ -314,7 +314,7 @@
 <div class="viewcode-block" id="MiniGolfSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.mini_golf.MiniGolfSim">[docs]</a><span class="k">class</span> <span class="nc">MiniGolfSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A 7-dof Schunk robot playing mini golf&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">relativeZdTask</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -322,6 +322,7 @@
 <span class="sd">            This constructor should only be called via the subclasses.</span>
 
 <span class="sd">        :param task_args: arguments for the task construction</span>
+<span class="sd">        :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = True,</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
@@ -349,6 +350,7 @@
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">envType</span><span class="o">=</span><span class="s2">&quot;MiniGolf&quot;</span><span class="p">,</span>
             <span class="n">task_args</span><span class="o">=</span><span class="n">task_args</span><span class="p">,</span>
+            <span class="n">relativeZdTask</span><span class="o">=</span><span class="n">relativeZdTask</span><span class="p">,</span>
             <span class="n">state_mask_labels</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Ball_X&quot;</span><span class="p">,</span> <span class="s2">&quot;Ball_Y&quot;</span><span class="p">,</span> <span class="s2">&quot;base-m3&quot;</span><span class="p">,</span> <span class="s2">&quot;m3-m4&quot;</span><span class="p">,</span> <span class="s2">&quot;m4-m5&quot;</span><span class="p">,</span> <span class="s2">&quot;m5-m6&quot;</span><span class="p">,</span> <span class="s2">&quot;m6-m7&quot;</span><span class="p">,</span> <span class="s2">&quot;m7-m8&quot;</span><span class="p">,</span> <span class="s2">&quot;m8-m9&quot;</span><span class="p">),</span>
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gMiniGolf_FTS.xml&quot;</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observeForceTorque&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;gMiniGolf.xml&quot;</span><span class="p">,</span>
             <span class="n">physicsConfigFile</span><span class="o">=</span><span class="s2">&quot;pMiniGolf.xml&quot;</span><span class="p">,</span>
@@ -373,10 +375,11 @@
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">ball_radius</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>  <span class="c1"># [m]</span>
             <span class="n">ball_mass</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>  <span class="c1"># [kg]</span>
-            <span class="n">club_mass</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>  <span class="c1"># [kg]</span>
+            <span class="n">club_mass</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># [kg]</span>
             <span class="n">ball_friction_coefficient</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>  <span class="c1"># [-]</span>
             <span class="n">ball_rolling_friction_coefficient</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>  <span class="c1"># [m]</span>
-            <span class="n">ball_slip</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>  <span class="c1"># [-]</span>
+            <span class="n">ball_slip</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">,</span>  <span class="c1"># [rad/(Ns)]</span>
+            <span class="n">ground_slip</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>  <span class="c1"># [rad/(Ns)]</span>
             <span class="n">ground_friction_coefficient</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>  <span class="c1"># [-]</span>
             <span class="n">obstacleleft_pos_offset_x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [m]</span>
             <span class="n">obstacleleft_pos_offset_y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># [m]</span>
@@ -392,11 +395,12 @@
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mg-ik&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relativeZdTask</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param task_args: arguments for the task construction</span>
+<span class="sd">        :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion</span>
 <span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = True,</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
@@ -413,6 +417,7 @@
             <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
             <span class="n">actionModelType</span><span class="o">=</span><span class="s2">&quot;ik&quot;</span><span class="p">,</span>
             <span class="n">positionTasks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">relativeZdTask</span><span class="o">=</span><span class="n">relativeZdTask</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 </pre></div>

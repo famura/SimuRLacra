@@ -262,8 +262,8 @@
 <span class="kn">from</span> <span class="nn">sbi</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">NeuralInference</span>
 <span class="kn">from</span> <span class="nn">sbi.inference.posteriors.direct_posterior</span> <span class="kn">import</span> <span class="n">DirectPosterior</span>
-<span class="kn">from</span> <span class="nn">sbi.inference.snpe</span> <span class="kn">import</span> <span class="n">PosteriorEstimator</span>
 <span class="kn">from</span> <span class="nn">sbi.utils.user_input_checks</span> <span class="kn">import</span> <span class="n">prepare_for_sbi</span>
+<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
 <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
@@ -329,6 +329,7 @@
         <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">subrtn_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Algorithm</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subrtn_policy_snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+        <span class="n">train_initial_policy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">thold_succ_subrtn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
         <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
@@ -345,7 +346,6 @@
 <span class="sd">                       for generating the target domain rollouts, but also optimized in simulation</span>
 <span class="sd">        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)</span>
 <span class="sd">        :param prior: distribution used by sbi as a prior</span>
-<span class="sd">        :param subrtn_sbi_class: sbi algorithm calls for executing the LFI, e.g. SNPE</span>
 <span class="sd">        :param embedding: embedding used for pre-processing the data before passing it to the posterior</span>
 <span class="sd">        :param num_checkpoints: total number of checkpoints</span>
 <span class="sd">        :param init_checkpoint: initial value of the cyclic counter, defaults to 0, use negative values can to mark</span>
@@ -371,12 +371,13 @@
 <span class="sd">        :param posterior_hparam: hyper parameters for creating the posterior&#39;s density estimator</span>
 <span class="sd">        :param subrtn_sbi_training_hparam: dict forwarded to sbi&#39;s `PosteriorEstimator.train()` function like</span>
 <span class="sd">                                           `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.</span>
-<span class="sd">        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi&#39;s `DirectPosterior.sample()` function like</span>
-<span class="sd">                                          `sample_with_mcmc`, ect.</span>
 <span class="sd">        :param simulation_batch_size: batch size forwarded to the sbi toolbox, requires batched simulator</span>
 <span class="sd">        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
 <span class="sd">        :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)</span>
 <span class="sd">        :param subrtn_policy_snapshot_mode: snapshot mode for saving during policy optimization</span>
+<span class="sd">        :param train_initial_policy: choose if a policy should be pretrained in the first iteration</span>
+<span class="sd">                                     before collecting real rollouts. Choose `False`, if you want to use a pre-defined</span>
+<span class="sd">                                     policy.</span>
 <span class="sd">        :param thold_succ_subrtn: success threshold on the simulated system&#39;s return for the subroutine, repeat the</span>
 <span class="sd">                                  subroutine until the threshold is exceeded or the for a given number of iterations</span>
 <span class="sd">        :param warmstart: initialize the policy (and value function) parameters with the one of the previous iteration.</span>
@@ -418,7 +419,7 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_sbi</span> <span class="o">=</span> <span class="n">env_sim</span>  <span class="c1"># will be randomized explicitly by sbi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">env_sim</span><span class="p">),</span> <span class="n">randomizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim_trn</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">env_sim</span><span class="p">),</span> <span class="n">randomizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">selection</span><span class="o">=</span><span class="s2">&quot;cyclic&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span> <span class="o">=</span> <span class="n">env_real</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dp_mapping</span> <span class="o">=</span> <span class="n">dp_mapping</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_embedding</span> <span class="o">=</span> <span class="n">embedding</span>
@@ -452,6 +453,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy_snapshot_mode</span> <span class="o">=</span> <span class="n">subrtn_policy_snapshot_mode</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s2">&quot;subrtn_policy&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_train_initial_policy</span> <span class="o">=</span> <span class="n">train_initial_policy</span>
             <span class="c1"># Check that the behavioral policy is the one that is being updated</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_policy</span><span class="o">.</span><span class="n">policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
@@ -514,15 +516,9 @@
 <span class="sd">        :return: proposal for simulating with sbi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Multi-round or single-round sbi, 1st iteration</span>
             <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># Single-round sbi, 2nd iteration</span>
-                <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Multi-round sbi, 2nd iteration</span>
-                <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">proposal</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;posterior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">proposal</span></div>
 
@@ -574,29 +570,50 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rollout_worker</span> <span class="o">=</span> <span class="n">RealRolloutSamplerForSBI</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">,</span> <span class="n">len_segments</span><span class="p">)</span>
 
-        <span class="n">data_real</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">rollouts_real</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Initialize data containers</span>
+        <span class="n">data_real</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">rollouts_real</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">num_found_rollouts</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="n">rollouts_real</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data_real</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                        <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">data_real</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> entries in data_real.pt, but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">)</span><span class="si">}</span><span class="s2"> rollouts in &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;rollouts_real.pkl!&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">num_found_rollouts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">)</span>
+                <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">num_found_rollouts</span><span class="si">}</span><span class="s2"> rollout(s) in </span><span class="si">{</span><span class="n">save_dir</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># in the first attempt no files can be found</span>
+
         <span class="n">collect_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Collecting data&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Collecting data using </span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_policy&quot;</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
-            <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">),</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">num_found_rollouts</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="p">),</span>
             <span class="n">total</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">,</span>
             <span class="n">desc</span><span class="o">=</span><span class="n">Fore</span><span class="o">.</span><span class="n">CYAN</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="n">collect_str</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">,</span>
             <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rollouts&quot;</span><span class="p">,</span>
             <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
         <span class="p">):</span>
+            <span class="c1"># Do the rollout</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">rollout</span> <span class="o">=</span> <span class="n">rollout_worker</span><span class="p">()</span>
-            <span class="n">data_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-            <span class="n">rollouts_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rollout</span><span class="p">)</span>
 
-        <span class="c1"># Stacked to tensor of shape [1, num_rollouts * dim_feat]</span>
-        <span class="n">data_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">data_real</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Fill data container</span>
+            <span class="k">if</span> <span class="n">data_real</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rollouts_real</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data_real</span> <span class="o">=</span> <span class="n">data</span>  <span class="c1"># data is of shape [1, dim_feat]</span>
+                <span class="n">rollouts_real</span> <span class="o">=</span> <span class="p">[</span><span class="n">rollout</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">data_real</span><span class="p">,</span> <span class="n">data</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># stack to final shape [1, num_rollouts * dim_feat]</span>
+                <span class="n">rollouts_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rollout</span><span class="p">)</span>
+
+            <span class="c1"># Optionally save the data (do this at every iteration to continue)</span>
+            <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data_real</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">,</span> <span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">data_real</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rollouts</span> <span class="o">*</span> <span class="n">embedding</span><span class="o">.</span><span class="n">dim_output</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data_real</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rollouts</span> <span class="o">*</span> <span class="n">embedding</span><span class="o">.</span><span class="n">dim_output</span><span class="p">))</span>
-
-        <span class="c1"># Optionally save the data</span>
-        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data_real</span><span class="p">,</span> <span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
-            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">,</span> <span class="s2">&quot;rollouts_real.pkl&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data_real</span><span class="p">,</span> <span class="n">rollouts_real</span></div>
 
@@ -752,6 +769,7 @@
         <span class="n">data_real</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">num_eval_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_ml_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">calculate_log_probs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">normalize_posterior</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">return_as_tensor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -767,31 +785,34 @@
 <span class="sd">                          [num_iter, num_rollouts_per_iter, time_series_length, dim_data]</span>
 <span class="sd">        :param num_eval_samples: number of samples to draw from the posterior</span>
 <span class="sd">        :param num_ml_samples: number of most likely samples, i.e. 1 equals argmax</span>
+<span class="sd">        :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned</span>
 <span class="sd">        :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi</span>
 <span class="sd">        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi&#39;s `DirectPosterior.sample()` function</span>
 <span class="sd">        :param return_as_tensor: if `True`, return the most likely domain parameter sets as a tensor of shape</span>
 <span class="sd">                                 [num_iter, num_ml_samples, dim_domain_param], else as a list of dict</span>
-<span class="sd">        :return: most likely domain parameters sets sampled form the posterior</span>
+<span class="sd">        :return: most likely domain parameters sets sampled form the posterior, and the associated log probabilities</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">num_ml_samples</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s2">&quot;0 (int)&quot;</span><span class="p">)</span>
 
         <span class="c1"># Evaluate the posterior</span>
         <span class="n">domain_params</span><span class="p">,</span> <span class="n">log_probs</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">eval_posterior</span><span class="p">(</span>
-            <span class="n">posterior</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span>
-            <span class="n">data_real</span><span class="o">=</span><span class="n">data_real</span><span class="p">,</span>
-            <span class="n">num_samples</span><span class="o">=</span><span class="n">num_eval_samples</span><span class="p">,</span>
-            <span class="n">calculate_log_probs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">normalize_posterior</span><span class="o">=</span><span class="n">normalize_posterior</span><span class="p">,</span>
-            <span class="n">subrtn_sbi_sampling_hparam</span><span class="o">=</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span>
+            <span class="n">posterior</span><span class="p">,</span>
+            <span class="n">data_real</span><span class="p">,</span>
+            <span class="n">num_eval_samples</span><span class="p">,</span>
+            <span class="n">calculate_log_probs</span><span class="p">,</span>
+            <span class="n">normalize_posterior</span><span class="p">,</span>
+            <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Extract the most likely domain parameter sets for every target domain data set</span>
         <span class="n">domain_params_ml</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">log_probs_ml</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">log_probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_ml_samples</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">domain_params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">idcs_ml</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">log_probs</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="p">:],</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">idcs_sel</span> <span class="o">=</span> <span class="n">idcs_ml</span><span class="p">[:</span><span class="n">num_ml_samples</span><span class="p">]</span>
-            <span class="n">dp_vals</span> <span class="o">=</span> <span class="n">domain_params</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="n">idcs_sel</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">idcs_sorted</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">log_probs</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="p">:],</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">idcs_ml</span> <span class="o">=</span> <span class="n">idcs_sorted</span><span class="p">[:</span><span class="n">num_ml_samples</span><span class="p">]</span>
+            <span class="n">log_probs_ml</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">log_probs</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="n">idcs_ml</span><span class="p">]</span>
+            <span class="n">dp_vals</span> <span class="o">=</span> <span class="n">domain_params</span><span class="p">[</span><span class="n">idx_r</span><span class="p">,</span> <span class="n">idcs_ml</span><span class="p">,</span> <span class="p">:]</span>
 
             <span class="k">if</span> <span class="n">return_as_tensor</span><span class="p">:</span>
                 <span class="c1"># Return as tensor</span>
@@ -799,7 +820,7 @@
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Return as dict</span>
-                <span class="n">dp_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">dp_vals</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">dp_vals</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">dp_vals</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
                 <span class="n">domain_param_ml</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dpv</span><span class="p">))</span> <span class="k">for</span> <span class="n">dpv</span> <span class="ow">in</span> <span class="n">dp_vals</span><span class="p">]</span>
                 <span class="n">domain_params_ml</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">domain_param_ml</span><span class="p">)</span>
 
@@ -819,7 +840,7 @@
                     <span class="sa">f</span><span class="s2">&quot;are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">domain_params_ml</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">!&quot;</span>
                 <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">domain_params_ml</span><span class="p">,</span> <span class="n">log_probs</span></div>
+        <span class="k">return</span> <span class="n">domain_params_ml</span><span class="p">,</span> <span class="n">log_probs_ml</span></div>
 
 <div class="viewcode-block" id="SBIBase.eval_policy"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.eval_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
