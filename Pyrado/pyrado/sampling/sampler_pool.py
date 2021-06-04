@@ -25,16 +25,18 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+import os
 import traceback
 from copy import deepcopy
 from enum import Enum, auto
 from queue import Empty
+from typing import List, Tuple
 
 import torch.multiprocessing as mp
 from tqdm import tqdm
 
 import pyrado
+from pyrado.sampling.step_sequence import StepSequence
 
 
 class GlobalNamespace:
@@ -47,6 +49,8 @@ _CMD_STOP = "stop"
 _RES_SUCCESS = "success"
 _RES_ERROR = "error"
 _RES_FATAL = "fatal"
+
+ENABLE_SINGLE_WORKER_OPTIMIZATION = os.getenv("ENABLE_SINGLE_WORKER_OPTIMIZATION", None) is not None
 
 
 def _pool_worker(from_master, to_master):
@@ -201,19 +205,25 @@ def _run_set_seed(G, seed):
     pyrado.set_seed(seed)
 
 
-def _run_collect(G, counter, run_counter, lock, n, min_runs, func, args, kwargs):
+def _run_collect(
+    G, counter, run_counter, lock, n, min_runs, func, args, kwargs
+) -> List[Tuple[int, List[StepSequence], int]]:
     """Worker function for run_collect"""
     result = []
     while True:
+        with lock:
+            # increment the run counter here to get the id for the next seed
+            run_counter.value += 1
+            run_num = run_counter.value
+
         # Invoke once
-        res, n_done = func(G, *args, **kwargs)
+        res, n_done = func(G, run_num, *args, **kwargs)
 
         # Add to result and record increment
-        result.append(res)
+        result.append((run_num, res, n_done))
         with lock:
-            # decrement work counter
+            # increment done counter
             counter.value += n_done
-            run_counter.value += 1
             # Check if done
             if counter.value >= n and (min_runs is None or run_counter.value >= min_runs):
                 break
@@ -252,7 +262,7 @@ class SamplerPool:
             raise pyrado.ValueErr(given=num_threads, ge_constraint="1")
 
         self._n_threads = num_threads
-        if num_threads > 1:
+        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or num_threads > 1:
             # Create workers
             self._workers = [_WorkerInfo(i + 1) for i in range(num_threads)]
             self._manager = mp.Manager()
@@ -260,7 +270,7 @@ class SamplerPool:
 
     def stop(self):
         """Terminate all workers."""
-        if self._n_threads > 1:
+        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or self._n_threads > 1:
             for w in self._workers:
                 w.stop()
 
@@ -288,7 +298,7 @@ class SamplerPool:
 
         :param func: the first argument of func will be a worker-local namespace
         """
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             return [func(self._G, *args, **kwargs)]
 
         # Start invocation
@@ -306,7 +316,7 @@ class SamplerPool:
         """
         assert self._n_threads == len(arglist)
 
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             return [func(self._G, arglist[0])]
 
         # Start invocation
@@ -330,7 +340,7 @@ class SamplerPool:
             progressbar.total = len(arglist)
 
         # Single thread optimization
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             res = []
             for arg in arglist:
                 res.append(func(self._G, deepcopy(arg)))  # numpy arrays and others are passed by reference
@@ -380,8 +390,9 @@ class SamplerPool:
         specify the minimum amount of samples to collect before returning.
 
         Since the workers can only check the amount of samples before starting a run, you will likely
-        get more samples than the minimum. No generated samples are dropped; if that is desired,
-        do so manually.
+        get more samples than the minimum. No generated samples that are part of a rollout are dropped.
+        However, if some rollouts where sampled that are "too much", those will be dropped to get seed-
+        determinism across different number of workers.
 
         :param n: minimum number of samples to collect
         :param func: sampler function. Must be pickleable.
@@ -389,7 +400,7 @@ class SamplerPool:
         :param collect_progressbar: tdqm progress bar to use; default None
         :param min_runs: optionally specify a minimum amount of runs to be executed before returning
         :param kwargs: remaining keyword args are passed to the function
-        :return: list of all results
+        :return: list of results
         :return: total number of samples
         """
 
@@ -397,13 +408,13 @@ class SamplerPool:
         if collect_progressbar is not None:
             collect_progressbar.total = n
 
-        if self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
             # Do locally
             result = []
             counter = 0
             while counter < n or (min_runs is not None and len(result) < min_runs):
                 # Invoke once
-                res, n_done = func(self._G, *args, **kwargs)
+                res, n_done = func(self._G, num=len(result) + 1, *args, **kwargs)
 
                 # Add to result and record increment
                 result.append(res)
@@ -436,12 +447,24 @@ class SamplerPool:
         # Collect results in one list
         allres = self._await_result()
         result = [item for res in allres for item in res]
-
-        return result, counter.value
+        # Sort results by index to ensure consistent order
+        result.sort(key=lambda t: t[0])
+        result_filtered = []
+        n_total = 0
+        for i, (_, item, n_of_item) in enumerate(result):
+            n_total += n_of_item
+            result_filtered.append(item)
+            if n_total >= n and (min_runs is None or i + 1 >= min_runs):
+                break
+        return result_filtered, counter.value
 
     def set_seed(self, seed):
         """
         Set a deterministic seed on all workers.
+
+        .. note::
+            This is intended to only be used in **legacy** evaluation scripts! For new code and everything that should
+            really be reproducible, pass the seed to the `sample()` method of a `ParallelRolloutSampler`.
 
         :param seed: seed value for the random number generators
         """

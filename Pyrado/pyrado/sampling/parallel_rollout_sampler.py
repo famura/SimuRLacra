@@ -31,7 +31,7 @@ import sys
 from functools import partial
 from itertools import product
 from math import ceil
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 import torch.multiprocessing as mp
@@ -48,6 +48,9 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.box import InfBoxSpace
 
 
+NO_SEED_PASSED = object()
+
+
 def _ps_init(G, env, policy):
     """Store pickled (and thus copied) environment and policy."""
     G.env = pickle.loads(env)
@@ -59,53 +62,73 @@ def _ps_update_policy(G, state):
     G.policy.load_state_dict(state)
 
 
-def _ps_sample_one(G, eval: bool):
+def _ps_sample_one(G, num: int, eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout and return step count if counting steps, rollout count (1) otherwise.
     This function is used when a minimum number of steps was given.
     """
-    ro = rollout(G.env, G.policy, eval=eval)
+    ro = rollout(G.env, G.policy, eval=eval, seed=seed, sub_seed=sub_seed, sub_sub_seed=num)
     return ro, len(ro)
 
 
-def _ps_run_one(G, num: int, eval: bool):
+def _ps_run_one(G, num: int, eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout without specifying the initial state or the domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval)
+    return rollout(G.env, G.policy, eval=eval, seed=seed, sub_seed=sub_seed, sub_sub_seed=num)
 
 
-def _ps_run_one_init_state(G, init_state: np.ndarray, eval: bool):
+def _ps_run_one_init_state(G, init_state: Tuple[int, np.ndarray], eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout with given init state.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=init_state))
+    num, init_state = init_state
+    return rollout(
+        G.env,
+        G.policy,
+        eval=eval,
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
+        reset_kwargs=dict(init_state=init_state),
+    )
 
 
-def _ps_run_one_domain_param(G, domain_param: dict, eval: bool):
+def _ps_run_one_domain_param(G, domain_param: Tuple[int, dict], eval: bool, seed: int, sub_seed: int):
     """
     Sample one rollout with given domain parameters.
     This function is used when a minimum number of rollouts was given.
     """
-    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(domain_param=domain_param))
+    num, domain_param = domain_param
+    return rollout(
+        G.env,
+        G.policy,
+        eval=eval,
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
+        reset_kwargs=dict(domain_param=domain_param),
+    )
 
 
-def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
+def _ps_run_one_reset_kwargs(
+    G, reset_kwargs: Tuple[int, Tuple[np.ndarray, dict]], eval: bool, seed: int, sub_seed: int
+):
     """
     Sample one rollout with given init state and domain parameters, passed as a tuple for simplicity at the other end.
     This function is used when a minimum number of rollouts was given.
     """
-    if len(reset_kwargs) != 2:
-        raise pyrado.ShapeErr(given=reset_kwargs, expected_match=(2,))
-    if not isinstance(reset_kwargs[0], np.ndarray):
-        raise pyrado.TypeErr(given=reset_kwargs[0], expected_type=np.ndarray)
-    if not isinstance(reset_kwargs[1], dict):
-        raise pyrado.TypeErr(given=reset_kwargs[1], expected_type=dict)
-
+    num, reset_kwargs = reset_kwargs
     return rollout(
-        G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1])
+        G.env,
+        G.policy,
+        eval=eval,
+        seed=seed,
+        sub_seed=sub_seed,
+        sub_sub_seed=num,
+        reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]),
     )
 
 
@@ -162,7 +185,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         min_rollouts: int = None,
         min_steps: int = None,
         show_progress_bar: bool = True,
-        seed: int = None,
+        seed: int = NO_SEED_PASSED,
     ):
         """
         Constructor
@@ -173,7 +196,8 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         :param min_rollouts: minimum number of complete rollouts to sample
         :param min_steps: minimum total number of steps to sample
         :param show_progress_bar: it `True`, display a progress bar using `tqdm`
-        :param seed: seed value for the random number generators, pass `None` for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding; defaults to the last seed
+                     that was set with `pyrado.set_seed`
         """
         Serializable._init(self, locals())
         super().__init__(min_rollouts=min_rollouts, min_steps=min_steps)
@@ -189,20 +213,15 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         # Create parallel pool. We use one thread per env because it's easier.
         self.pool = SamplerPool(num_workers)
 
-        # Set all rngs' seeds
-        if seed is not None:
-            self.set_seed(seed)
+        if seed is NO_SEED_PASSED:
+            seed = pyrado.get_base_seed()
+        self._seed = seed
+        # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when
+        # the sampling crashes and the sample count is not incremented.
+        self._sample_count = -1
 
         # Distribute environments. We use pickle to make sure a copy is created for n_envs=1
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
-
-    def set_seed(self, seed):
-        """
-        Set a deterministic seed on all workers.
-
-        :param seed: seed value for the random number generators
-        """
-        self.pool.set_seed(seed)
 
     def reinit(self, env: Optional[Env] = None, policy: Optional[Policy] = None):
         """
@@ -229,12 +248,17 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         """
         Do the sampling according to the previously given environment, policy, and number of steps/rollouts.
 
+        .. note::
+            This method is **not** thread-safe! See for example the usage of `self._sample_count`.
+
         :param init_states: initial states forw `run_map()`, pass `None` (default) to sample from the environment's
                             initial state space
         :param domain_params: domain parameters for `run_map()`, pass `None` (default) to not explicitly set them
         :param eval: pass `False` if the rollout is executed during training, else `True`. Forwarded to `rollout()`.
         :return: list of sampled rollouts
         """
+        self._sample_count += 1
+
         # Update policy's state
         self.pool.invoke_all(_ps_update_policy, self.policy.state_dict())
 
@@ -251,34 +275,34 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                 if init_states is None and domain_params is None:
                     # Simply run min_rollouts times
                     func = partial(_ps_run_one, eval=eval)
-                    arglist = range(self.min_rollouts)
+                    arglist = list(range(self.min_rollouts))
                 elif init_states is not None and domain_params is None:
                     # Run every initial state so often that we at least get min_rollouts trajectories
                     func = partial(_ps_run_one_init_state, eval=eval)
                     rep_factor = ceil(self.min_rollouts / len(init_states))
-                    arglist = rep_factor * init_states
+                    arglist = list(enumerate(rep_factor * init_states))
                 elif init_states is None and domain_params is not None:
                     # Run every domain parameter set so often that we at least get min_rollouts trajectories
                     func = partial(_ps_run_one_domain_param, eval=eval)
                     rep_factor = ceil(self.min_rollouts / len(domain_params))
-                    arglist = rep_factor * domain_params
+                    arglist = list(enumerate(rep_factor * domain_params))
                 elif init_states is not None and domain_params is not None:
                     # Run every combination of initial state and domain parameter so often that we at least get
                     # min_rollouts trajectories
                     func = partial(_ps_run_one_reset_kwargs, eval=eval)
                     allcombs = list(product(init_states, domain_params))
                     rep_factor = ceil(self.min_rollouts / len(allcombs))
-                    arglist = rep_factor * allcombs
+                    arglist = list(enumerate(rep_factor * allcombs))
 
                 # Only minimum number of rollouts given, thus use run_map
-                return self.pool.run_map(func, arglist, pb)
+                return self.pool.run_map(partial(func, seed=self._seed, sub_seed=self._sample_count), arglist, pb)
 
             else:
                 # Minimum number of steps given, thus use run_collect (automatically handles min_runs=None)
                 if init_states is None:
                     return self.pool.run_collect(
                         self.min_steps,
-                        partial(_ps_sample_one, eval=eval),
+                        partial(_ps_sample_one, eval=eval, seed=self._seed, sub_seed=self._sample_count),
                         collect_progressbar=pb,
                         min_runs=self.min_rollouts,
                     )[0]
