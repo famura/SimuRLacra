@@ -2600,6 +2600,8 @@
 </li>
         <li><a href="tests.html#module-tests.test_sampling">tests.test_sampling</a>
 </li>
+        <li><a href="tests.html#module-tests.test_set_seed">tests.test_set_seed</a>
+</li>
         <li><a href="tests.html#module-tests.test_spaces">tests.test_spaces</a>
 </li>
         <li><a href="tests.html#module-tests.test_step_logger">tests.test_step_logger</a>
@@ -5444,8 +5446,6 @@
       <li><a href="pyrado.html#pyrado.set_seed">set_seed() (in module pyrado)</a>
 
       <ul>
-        <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.set_seed">(ParallelRolloutSampler method)</a>
-</li>
         <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.set_seed">(SamplerPool method)</a>
 </li>
       </ul></li>
@@ -5889,6 +5889,8 @@
 </li>
       <li><a href="logger.html#pyrado.logger.step.TensorBoardPrinter">TensorBoardPrinter (class in pyrado.logger.step)</a>
 </li>
+      <li><a href="tests.html#tests.test_set_seed.test__base_seed">test__base_seed() (in module tests.test_set_seed)</a>
+</li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_delay.test_act_delay">test_act_delay() (in module tests.environment_wrappers.test_action_delay)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_downsampling.test_act_downsampling">test_act_downsampling() (in module tests.environment_wrappers.test_action_downsampling)</a>
@@ -6159,6 +6161,8 @@
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">test_order_act_noise_act_norm() (in module tests.environment_wrappers.test_action_noise)</a>
 </li>
+      <li><a href="tests.html#tests.test_set_seed.test_out_of_bounds_base_seed">test_out_of_bounds_base_seed() (in module tests.test_set_seed)</a>
+</li>
       <li><a href="tests.html#tests.test_plotting.test_pair_plot">test_pair_plot() (in module tests.test_plotting)</a>
 </li>
       <li><a href="tests.html#tests.test_plotting.test_pair_plot_scatter">test_pair_plot_scatter() (in module tests.test_plotting)</a>
@@ -6166,6 +6170,14 @@
       <li><a href="tests.html#tests.test_environments.test_panda3d_animations">test_panda3d_animations() (in module tests.test_environments)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_parallel_rollout_sampler">test_parallel_rollout_sampler() (in module tests.test_sampling)</a>
+</li>
+      <li><a href="tests.html#tests.test_sampling.test_parallel_sampling_deterministic_smoke_test_w_min_steps">test_parallel_sampling_deterministic_smoke_test_w_min_steps() (in module tests.test_sampling)</a>
+</li>
+      <li><a href="tests.html#tests.test_sampling.test_parallel_sampling_deterministic_smoke_test_wo_min_steps">test_parallel_sampling_deterministic_smoke_test_wo_min_steps() (in module tests.test_sampling)</a>
+</li>
+      <li><a href="tests.html#tests.test_sampling.test_parallel_sampling_deterministic_w_min_steps">test_parallel_sampling_deterministic_w_min_steps() (in module tests.test_sampling)</a>
+</li>
+      <li><a href="tests.html#tests.test_sampling.test_parallel_sampling_deterministic_wo_min_steps">test_parallel_sampling_deterministic_wo_min_steps() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_tasks.test_parallel_task_function">test_parallel_task_function() (in module tests.test_tasks)</a>
 </li>
@@ -6176,6 +6188,8 @@
       <li><a href="tests.html#tests.test_domain_randomization.test_param_grid">test_param_grid() (in module tests.test_domain_randomization)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_parameter_exploration_sampler">test_parameter_exploration_sampler() (in module tests.test_sampling)</a>
+</li>
+      <li><a href="tests.html#tests.test_sampling.test_parameter_exploration_sampler_deterministic">test_parameter_exploration_sampler_deterministic() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_parameterized_policies_init_param">test_parameterized_policies_init_param() (in module tests.test_policies)</a>
 </li>
@@ -6229,6 +6243,8 @@
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_rescaling">test_rescaling() (in module tests.test_domain_randomization)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_delay.test_reset">test_reset() (in module tests.environment_wrappers.test_action_delay)</a>
 
       <ul>
@@ -6237,8 +6253,6 @@
         <li><a href="tests.html#tests.test_environments.test_reset">(in module tests.test_environments)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_tasks.test_rew_fcn_constructor">test_rew_fcn_constructor() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rfb_policy_batch">test_rfb_policy_batch() (in module tests.test_policies)</a>
@@ -6346,6 +6360,10 @@
       <li><a href="tests.html#tests.test_rollout_result.test_stepsequence_from_pandas">test_stepsequence_from_pandas() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_string_representation">test_string_representation() (in module tests.test_spaces)</a>
+</li>
+      <li><a href="tests.html#tests.test_set_seed.test_sub_seed">test_sub_seed() (in module tests.test_set_seed)</a>
+</li>
+      <li><a href="tests.html#tests.test_set_seed.test_sub_sub_seed">test_sub_sub_seed() (in module tests.test_set_seed)</a>
 </li>
       <li><a href="tests.html#tests.test_spaces.test_subspace_box_space">test_subspace_box_space() (in module tests.test_spaces)</a>
 </li>
@@ -6581,6 +6599,13 @@
 
       <ul>
         <li><a href="tests.html#module-tests.test_sampling">module</a>
+</li>
+      </ul></li>
+      <li>
+    tests.test_set_seed
+
+      <ul>
+        <li><a href="tests.html#module-tests.test_set_seed">module</a>
 </li>
       </ul></li>
       <li>

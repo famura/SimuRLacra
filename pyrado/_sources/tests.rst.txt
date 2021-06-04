@@ -91,6 +91,15 @@ test\_sampling
    :show-inheritance:
 
 
+test\_set\_seed
+---------------
+
+.. automodule:: tests.test_set_seed
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 test\_spaces
 ------------
 

@@ -247,12 +247,13 @@
 <span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
-
+<span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -350,25 +351,63 @@
     <span class="s2">&quot;timestamp_date_format&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
+<span class="n">pyrado_base_seed</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="set_seed"><a class="viewcode-back" href="../pyrado.html#pyrado.set_seed">[docs]</a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="set_seed"><a class="viewcode-back" href="../pyrado.html#pyrado.set_seed">[docs]</a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sub_sub_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set the seed for the random number generators</span>
+<span class="sd">    Set the seed for the random number generators. The actual seed is computed from the base seed `seed´, and the first-</span>
+<span class="sd">    and second-order sub-seeds (`sub_seed` and `sub_sub_seed`, respectively). All of these seeds get concatenated in a</span>
+<span class="sd">    string which is then MD5-hashed and crushed into a 32-bit integer.</span>
 
-<span class="sd">    :param seed: value for the random number generators&#39; seeds, pass `None` to skip seeding</span>
+<span class="sd">    :param seed: base seed, pass `None` to skip seeding; must be an unsigned 10-bit integer</span>
+<span class="sd">    :param sub_seed: sub-seed, defaults to zero; must be an unsigned 14-bit integer; overflows will be cast back into</span>
+<span class="sd">                     the interval by masking, i.e., only the last 14 bits will be kept; underflows are first made</span>
+<span class="sd">                     positive by taking the absolute value</span>
+<span class="sd">    :param sub_sub_seed: sub-sub-seed, defaults to zero; must be an unsigned 8-bit integer; underflows will be cast back</span>
+<span class="sd">                         into the interval by taking the absolute value</span>
 <span class="sd">    :param verbose: if `True` the seed is printed</span>
+<span class="sd">    :return: the seed that was set</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-            <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">global</span> <span class="n">pyrado_base_seed</span>
+
+    <span class="c1"># The better parameter name would be &#39;base_seed&#39;, but keep &#39;seed&#39; for backward compatibility.</span>
+    <span class="n">base_seed</span> <span class="o">=</span> <span class="n">seed</span>
+    <span class="k">del</span> <span class="n">seed</span>
+    <span class="k">if</span> <span class="n">sub_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sub_seed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">sub_sub_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sub_sub_seed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set the random number generators&#39; seed to </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The random number generators&#39; seeds were not set.&quot;</span><span class="p">)</span></div>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base seed </span><span class="si">{</span><span class="n">base_seed</span><span class="si">}</span><span class="s2"> is not an integer -- the random number generators&#39; seeds were not set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_seed</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">sub_seed</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">sub_sub_seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">32</span><span class="p">)</span>
+
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">to</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">pyrado_base_seed</span> <span class="o">=</span> <span class="n">base_seed</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Set the random number generators&#39; seed to </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2"> (computed from base seed </span><span class="si">{</span><span class="n">base_seed</span><span class="si">}</span><span class="s2">, sub-seed </span><span class="si">{</span><span class="n">sub_seed</span><span class="si">}</span><span class="s2">, and sub-sub-seed </span><span class="si">{</span><span class="n">sub_sub_seed</span><span class="si">}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">seed</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_base_seed</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Gets the last seed that was set with `pyrado.set_seed`. If no seed was every set, `None`.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">pyrado_base_seed</span>
+    <span class="k">return</span> <span class="n">pyrado_base_seed</span>
 </pre></div>
 
            </div>

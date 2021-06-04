@@ -249,16 +249,18 @@
 <span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
-
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
 <span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Empty</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">torch.multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 
 
 <div class="viewcode-block" id="GlobalNamespace"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.GlobalNamespace">[docs]</a><span class="k">class</span> <span class="nc">GlobalNamespace</span><span class="p">:</span>
@@ -271,6 +273,8 @@
 <span class="n">_RES_SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;success&quot;</span>
 <span class="n">_RES_ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
 <span class="n">_RES_FATAL</span> <span class="o">=</span> <span class="s2">&quot;fatal&quot;</span>
+
+<span class="n">ENABLE_SINGLE_WORKER_OPTIMIZATION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ENABLE_SINGLE_WORKER_OPTIMIZATION&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
 
 <span class="k">def</span> <span class="nf">_pool_worker</span><span class="p">(</span><span class="n">from_master</span><span class="p">,</span> <span class="n">to_master</span><span class="p">):</span>
@@ -425,19 +429,25 @@
     <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_run_collect</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">counter</span><span class="p">,</span> <span class="n">run_counter</span><span class="p">,</span> <span class="n">lock</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">min_runs</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_run_collect</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span> <span class="n">counter</span><span class="p">,</span> <span class="n">run_counter</span><span class="p">,</span> <span class="n">lock</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">min_runs</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;Worker function for run_collect&quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
+            <span class="c1"># increment the run counter here to get the id for the next seed</span>
+            <span class="n">run_counter</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">run_num</span> <span class="o">=</span> <span class="n">run_counter</span><span class="o">.</span><span class="n">value</span>
+
         <span class="c1"># Invoke once</span>
-        <span class="n">res</span><span class="p">,</span> <span class="n">n_done</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">,</span> <span class="n">n_done</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">run_num</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Add to result and record increment</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">run_num</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">n_done</span><span class="p">))</span>
         <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
-            <span class="c1"># decrement work counter</span>
+            <span class="c1"># increment done counter</span>
             <span class="n">counter</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">n_done</span>
-            <span class="n">run_counter</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="c1"># Check if done</span>
             <span class="k">if</span> <span class="n">counter</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">n</span> <span class="ow">and</span> <span class="p">(</span><span class="n">min_runs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">run_counter</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">min_runs</span><span class="p">):</span>
                 <span class="k">break</span>
@@ -476,7 +486,7 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_threads</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
-        <span class="k">if</span> <span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ENABLE_SINGLE_WORKER_OPTIMIZATION</span> <span class="ow">or</span> <span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Create workers</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span> <span class="o">=</span> <span class="p">[</span><span class="n">_WorkerInfo</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
@@ -484,7 +494,7 @@
 
 <div class="viewcode-block" id="SamplerPool.stop"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.SamplerPool.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Terminate all workers.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ENABLE_SINGLE_WORKER_OPTIMIZATION</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workers</span><span class="p">:</span>
                 <span class="n">w</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
 
@@ -512,7 +522,7 @@
 
 <span class="sd">        :param func: the first argument of func will be a worker-local namespace</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ENABLE_SINGLE_WORKER_OPTIMIZATION</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
 
         <span class="c1"># Start invocation</span>
@@ -530,7 +540,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">arglist</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ENABLE_SINGLE_WORKER_OPTIMIZATION</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">,</span> <span class="n">arglist</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
 
         <span class="c1"># Start invocation</span>
@@ -554,7 +564,7 @@
             <span class="n">progressbar</span><span class="o">.</span><span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arglist</span><span class="p">)</span>
 
         <span class="c1"># Single thread optimization</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ENABLE_SINGLE_WORKER_OPTIMIZATION</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arglist</span><span class="p">:</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">arg</span><span class="p">)))</span>  <span class="c1"># numpy arrays and others are passed by reference</span>
@@ -604,8 +614,9 @@
 <span class="sd">        specify the minimum amount of samples to collect before returning.</span>
 
 <span class="sd">        Since the workers can only check the amount of samples before starting a run, you will likely</span>
-<span class="sd">        get more samples than the minimum. No generated samples are dropped; if that is desired,</span>
-<span class="sd">        do so manually.</span>
+<span class="sd">        get more samples than the minimum. No generated samples that are part of a rollout are dropped.</span>
+<span class="sd">        However, if some rollouts where sampled that are &quot;too much&quot;, those will be dropped to get seed-</span>
+<span class="sd">        determinism across different number of workers.</span>
 
 <span class="sd">        :param n: minimum number of samples to collect</span>
 <span class="sd">        :param func: sampler function. Must be pickleable.</span>
@@ -613,7 +624,7 @@
 <span class="sd">        :param collect_progressbar: tdqm progress bar to use; default None</span>
 <span class="sd">        :param min_runs: optionally specify a minimum amount of runs to be executed before returning</span>
 <span class="sd">        :param kwargs: remaining keyword args are passed to the function</span>
-<span class="sd">        :return: list of all results</span>
+<span class="sd">        :return: list of results</span>
 <span class="sd">        :return: total number of samples</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -621,13 +632,13 @@
         <span class="k">if</span> <span class="n">collect_progressbar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">collect_progressbar</span><span class="o">.</span><span class="n">total</span> <span class="o">=</span> <span class="n">n</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ENABLE_SINGLE_WORKER_OPTIMIZATION</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Do locally</span>
             <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">while</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="ow">or</span> <span class="p">(</span><span class="n">min_runs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_runs</span><span class="p">):</span>
                 <span class="c1"># Invoke once</span>
-                <span class="n">res</span><span class="p">,</span> <span class="n">n_done</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">res</span><span class="p">,</span> <span class="n">n_done</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_G</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
                 <span class="c1"># Add to result and record increment</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
@@ -660,12 +671,24 @@
         <span class="c1"># Collect results in one list</span>
         <span class="n">allres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_await_result</span><span class="p">()</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">allres</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">counter</span><span class="o">.</span><span class="n">value</span></div>
+        <span class="c1"># Sort results by index to ensure consistent order</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">result_filtered</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">n_total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">n_of_item</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="n">n_total</span> <span class="o">+=</span> <span class="n">n_of_item</span>
+            <span class="n">result_filtered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_total</span> <span class="o">&gt;=</span> <span class="n">n</span> <span class="ow">and</span> <span class="p">(</span><span class="n">min_runs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="n">min_runs</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">result_filtered</span><span class="p">,</span> <span class="n">counter</span><span class="o">.</span><span class="n">value</span></div>
 
 <div class="viewcode-block" id="SamplerPool.set_seed"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.SamplerPool.set_seed">[docs]</a>    <span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set a deterministic seed on all workers.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This is intended to only be used in **legacy** evaluation scripts! For new code and everything that should</span>
+<span class="sd">            really be reproducible, pass the seed to the `sample()` method of a `ParallelRolloutSampler`.</span>
 
 <span class="sd">        :param seed: seed value for the random number generators</span>
 <span class="sd">        &quot;&quot;&quot;</span>

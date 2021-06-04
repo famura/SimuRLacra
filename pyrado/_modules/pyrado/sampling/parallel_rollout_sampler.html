@@ -255,7 +255,7 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch.multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
@@ -272,6 +272,9 @@
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
 
 
+<span class="n">NO_SEED_PASSED</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+
 <span class="k">def</span> <span class="nf">_ps_init</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Store pickled (and thus copied) environment and policy.&quot;&quot;&quot;</span>
     <span class="n">G</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -283,53 +286,73 @@
     <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_ps_sample_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_ps_sample_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout and return step count if counting steps, rollout count (1) otherwise.</span>
 <span class="sd">    This function is used when a minimum number of steps was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">)</span>
+    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">sub_seed</span><span class="o">=</span><span class="n">sub_seed</span><span class="p">,</span> <span class="n">sub_sub_seed</span><span class="o">=</span><span class="n">num</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ro</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_ps_run_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_ps_run_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout without specifying the initial state or the domain parameters.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">sub_seed</span><span class="o">=</span><span class="n">sub_seed</span><span class="p">,</span> <span class="n">sub_sub_seed</span><span class="o">=</span><span class="n">num</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_ps_run_one_init_state</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_ps_run_one_init_state</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout with given init state.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">))</span>
+    <span class="n">num</span><span class="p">,</span> <span class="n">init_state</span> <span class="o">=</span> <span class="n">init_state</span>
+    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
+        <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="n">sub_seed</span><span class="o">=</span><span class="n">sub_seed</span><span class="p">,</span>
+        <span class="n">sub_sub_seed</span><span class="o">=</span><span class="n">num</span><span class="p">,</span>
+        <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">),</span>
+    <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_ps_run_one_domain_param</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_ps_run_one_domain_param</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout with given domain parameters.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">))</span>
+    <span class="n">num</span><span class="p">,</span> <span class="n">domain_param</span> <span class="o">=</span> <span class="n">domain_param</span>
+    <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
+        <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="n">sub_seed</span><span class="o">=</span><span class="n">sub_seed</span><span class="p">,</span>
+        <span class="n">sub_sub_seed</span><span class="o">=</span><span class="n">num</span><span class="p">,</span>
+        <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">),</span>
+    <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_ps_run_one_reset_kwargs</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_ps_run_one_reset_kwargs</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span> <span class="nb">eval</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample one rollout with given init state and domain parameters, passed as a tuple for simplicity at the other end.</span>
 <span class="sd">    This function is used when a minimum number of rollouts was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reset_kwargs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-
+    <span class="n">num</span><span class="p">,</span> <span class="n">reset_kwargs</span> <span class="o">=</span> <span class="n">reset_kwargs</span>
     <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span>
-        <span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
+        <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="n">sub_seed</span><span class="o">=</span><span class="n">sub_seed</span><span class="p">,</span>
+        <span class="n">sub_sub_seed</span><span class="o">=</span><span class="n">num</span><span class="p">,</span>
+        <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">reset_kwargs</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
     <span class="p">)</span>
 
 
@@ -386,7 +409,7 @@
         <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">show_progress_bar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">NO_SEED_PASSED</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -397,7 +420,8 @@
 <span class="sd">        :param min_rollouts: minimum number of complete rollouts to sample</span>
 <span class="sd">        :param min_steps: minimum total number of steps to sample</span>
 <span class="sd">        :param show_progress_bar: it `True`, display a progress bar using `tqdm`</span>
-<span class="sd">        :param seed: seed value for the random number generators, pass `None` for no seeding</span>
+<span class="sd">        :param seed: seed value for the random number generators, pass `None` for no seeding; defaults to the last seed</span>
+<span class="sd">                     that was set with `pyrado.set_seed`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">)</span>
@@ -413,20 +437,15 @@
         <span class="c1"># Create parallel pool. We use one thread per env because it&#39;s easier.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
 
-        <span class="c1"># Set all rngs&#39; seeds</span>
-        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="n">NO_SEED_PASSED</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">get_base_seed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="c1"># Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when</span>
+        <span class="c1"># the sampling crashes and the sample count is not incremented.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_count</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="c1"># Distribute environments. We use pickle to make sure a copy is created for n_envs=1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">))</span>
-
-<div class="viewcode-block" id="ParallelRolloutSampler.set_seed"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.set_seed">[docs]</a>    <span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set a deterministic seed on all workers.</span>
-
-<span class="sd">        :param seed: seed value for the random number generators</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ParallelRolloutSampler.reinit"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.reinit">[docs]</a>    <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -453,12 +472,17 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Do the sampling according to the previously given environment, policy, and number of steps/rollouts.</span>
 
+<span class="sd">        .. note::</span>
+<span class="sd">            This method is **not** thread-safe! See for example the usage of `self._sample_count`.</span>
+
 <span class="sd">        :param init_states: initial states forw `run_map()`, pass `None` (default) to sample from the environment&#39;s</span>
 <span class="sd">                            initial state space</span>
 <span class="sd">        :param domain_params: domain parameters for `run_map()`, pass `None` (default) to not explicitly set them</span>
 <span class="sd">        :param eval: pass `False` if the rollout is executed during training, else `True`. Forwarded to `rollout()`.</span>
 <span class="sd">        :return: list of sampled rollouts</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
         <span class="c1"># Update policy&#39;s state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_update_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
 
@@ -475,34 +499,34 @@
                 <span class="k">if</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">domain_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># Simply run min_rollouts times</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_ps_run_one</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">)</span>
-                    <span class="n">arglist</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rollouts</span><span class="p">)</span>
+                    <span class="n">arglist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rollouts</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">domain_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># Run every initial state so often that we at least get min_rollouts trajectories</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_ps_run_one_init_state</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">)</span>
                     <span class="n">rep_factor</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rollouts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">init_states</span><span class="p">))</span>
-                    <span class="n">arglist</span> <span class="o">=</span> <span class="n">rep_factor</span> <span class="o">*</span> <span class="n">init_states</span>
+                    <span class="n">arglist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">rep_factor</span> <span class="o">*</span> <span class="n">init_states</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">domain_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># Run every domain parameter set so often that we at least get min_rollouts trajectories</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_ps_run_one_domain_param</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">)</span>
                     <span class="n">rep_factor</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rollouts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">domain_params</span><span class="p">))</span>
-                    <span class="n">arglist</span> <span class="o">=</span> <span class="n">rep_factor</span> <span class="o">*</span> <span class="n">domain_params</span>
+                    <span class="n">arglist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">rep_factor</span> <span class="o">*</span> <span class="n">domain_params</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">domain_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># Run every combination of initial state and domain parameter so often that we at least get</span>
                     <span class="c1"># min_rollouts trajectories</span>
                     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_ps_run_one_reset_kwargs</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">)</span>
                     <span class="n">allcombs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="n">domain_params</span><span class="p">))</span>
                     <span class="n">rep_factor</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rollouts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">allcombs</span><span class="p">))</span>
-                    <span class="n">arglist</span> <span class="o">=</span> <span class="n">rep_factor</span> <span class="o">*</span> <span class="n">allcombs</span>
+                    <span class="n">arglist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">rep_factor</span> <span class="o">*</span> <span class="n">allcombs</span><span class="p">))</span>
 
                 <span class="c1"># Only minimum number of rollouts given, thus use run_map</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">arglist</span><span class="p">,</span> <span class="n">pb</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">,</span> <span class="n">sub_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_count</span><span class="p">),</span> <span class="n">arglist</span><span class="p">,</span> <span class="n">pb</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Minimum number of steps given, thus use run_collect (automatically handles min_runs=None)</span>
                 <span class="k">if</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">run_collect</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">min_steps</span><span class="p">,</span>
-                        <span class="n">partial</span><span class="p">(</span><span class="n">_ps_sample_one</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">),</span>
+                        <span class="n">partial</span><span class="p">(</span><span class="n">_ps_sample_one</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">,</span> <span class="n">sub_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_count</span><span class="p">),</span>
                         <span class="n">collect_progressbar</span><span class="o">=</span><span class="n">pb</span><span class="p">,</span>
                         <span class="n">min_runs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rollouts</span><span class="p">,</span>
                     <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>

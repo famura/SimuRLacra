@@ -254,6 +254,7 @@
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -277,6 +278,9 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="n">SamplerPool</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.properties</span> <span class="kn">import</span> <span class="n">cached_property</span>
+
+
+<span class="n">NO_SEED_PASSED</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="ParameterSample"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSample">[docs]</a><span class="k">class</span> <span class="nc">ParameterSample</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
@@ -350,9 +354,9 @@
     <span class="n">G</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_pes_sample_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_pes_sample_one</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sample one rollout with the current setting.&quot;&quot;&quot;</span>
-    <span class="n">pol_param</span><span class="p">,</span> <span class="n">dom_param</span><span class="p">,</span> <span class="n">init_state</span> <span class="o">=</span> <span class="n">param</span>
+    <span class="n">num</span><span class="p">,</span> <span class="p">(</span><span class="n">pol_param</span><span class="p">,</span> <span class="n">dom_param</span><span class="p">,</span> <span class="n">init_state</span><span class="p">)</span> <span class="o">=</span> <span class="n">param</span>
     <span class="n">vector_to_parameters</span><span class="p">(</span><span class="n">pol_param</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 
     <span class="k">return</span> <span class="n">rollout</span><span class="p">(</span>
@@ -362,6 +366,9 @@
             <span class="s2">&quot;init_state&quot;</span><span class="p">:</span> <span class="n">init_state</span><span class="p">,</span>
             <span class="s2">&quot;domain_param&quot;</span><span class="p">:</span> <span class="n">dom_param</span><span class="p">,</span>
         <span class="p">},</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="n">sub_seed</span><span class="o">=</span><span class="n">sub_seed</span><span class="p">,</span>
+        <span class="n">sub_sub_seed</span><span class="o">=</span><span class="n">num</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -385,7 +392,8 @@
 <span class="sd">        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states</span>
 <span class="sd">        :param num_domains: number of rollouts due to the variance over domain parameters</span>
 <span class="sd">        :param num_workers: number of parallel samplers</span>
-<span class="sd">        :param seed: seed value for the random number generators, pass `None` for no seeding</span>
+<span class="sd">        :param seed: seed value for the random number generators, pass `None` for no seeding; defaults to the last seed</span>
+<span class="sd">                     that was set with `pyrado.set_seed`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_init_states_per_domain</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_init_states_per_domain</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
@@ -416,9 +424,12 @@
         <span class="c1"># Create parallel pool. We use one thread per environment because it&#39;s easier.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
 
-        <span class="c1"># Set all rngs&#39; seeds</span>
-        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="n">NO_SEED_PASSED</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">get_base_seed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="c1"># Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when</span>
+        <span class="c1"># the sampling crashes and the sample count is not incremented.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_count</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="c1"># Distribute environments. We use pickle to make sure a copy is created for n_envs = 1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_pes_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">))</span>
@@ -481,12 +492,17 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sample rollouts for a given set of parameters.</span>
 
+<span class="sd">        .. note::</span>
+<span class="sd">            This method is **not** thread-safe! See for example the usage of `self._sample_count`.</span>
+
 <span class="sd">        :param param_sets: sets of policy parameters</span>
 <span class="sd">        :param init_states: fixed initial states, pass `None` to randomly sample initial states</span>
 <span class="sd">        :return: data structure containing the policy parameter sets and the associated rollout data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_states</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">init_states</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sample_count</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># Sample domain parameter sets</span>
         <span class="n">domain_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_domain_params</span><span class="p">()</span>
@@ -511,7 +527,9 @@
 
         <span class="c1"># Sample rollouts in parallel</span>
         <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Sampling&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rollouts&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pb</span><span class="p">:</span>
-            <span class="n">all_ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span><span class="n">_pes_sample_one</span><span class="p">,</span> <span class="n">all_params</span><span class="p">,</span> <span class="n">pb</span><span class="p">)</span>
+            <span class="n">all_ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span>
+                <span class="n">partial</span><span class="p">(</span><span class="n">_pes_sample_one</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">,</span> <span class="n">sub_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sample_count</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">all_params</span><span class="p">)),</span> <span class="n">pb</span>
+            <span class="p">)</span>
 
         <span class="c1"># Group rollouts by parameters</span>
         <span class="n">ros_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">all_ros</span><span class="p">)</span>

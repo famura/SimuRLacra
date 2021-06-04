@@ -229,14 +229,24 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrado.set_seed">
-<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado.html#set_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.set_seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the seed for the random number generators</p>
+<span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_sub_seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado.html#set_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.set_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the seed for the random number generators. The actual seed is computed from the base seed <cite>seed´, and the first-
+and second-order sub-seeds (`sub_seed</cite> and <cite>sub_sub_seed</cite>, respectively). All of these seeds get concatenated in a
+string which is then MD5-hashed and crushed into a 32-bit integer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> – value for the random number generators’ seeds, pass <cite>None</cite> to skip seeding</p></li>
+<li><p><strong>seed</strong> – base seed, pass <cite>None</cite> to skip seeding; must be an unsigned 10-bit integer</p></li>
+<li><p><strong>sub_seed</strong> – sub-seed, defaults to zero; must be an unsigned 14-bit integer; overflows will be cast back into
+the interval by masking, i.e., only the last 14 bits will be kept; underflows are first made
+positive by taking the absolute value</p></li>
+<li><p><strong>sub_sub_seed</strong> – sub-sub-seed, defaults to zero; must be an unsigned 8-bit integer; underflows will be cast back
+into the interval by taking the absolute value</p></li>
 <li><p><strong>verbose</strong> – if <cite>True</cite> the seed is printed</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the seed that was set</p>
 </dd>
 </dl>
 </dd></dl>
