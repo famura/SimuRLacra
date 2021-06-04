@@ -344,7 +344,7 @@ class StepSequence(Sequence[Step]):
             self._rollout_bounds = None
 
     def __repr__(self) -> str:
-        return f"StepSequence[\n  rewards={self.rewards},\n  observations={self.observations},\n  actions={self.actions}\n]"
+        return f"StepSequence[\n rewards=\n {self.rewards}\n observations=\n {self.observations}\n actions=\n {self.actions}\n ]"
 
     def __str__(self) -> str:
         return str(self.observations)
