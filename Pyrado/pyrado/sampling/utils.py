@@ -44,7 +44,6 @@ def gen_shuffled_batch_idcs(batch_size: int, data_size: int):
 
         If num_rollouts = 2 and data_size = 5, then the output might be ((0, 3), (2, 1), (4,))
     """
-    # random.seed(0)
     idx_all = random.sample(range(data_size), data_size)
     idx_iter = iter(idx_all)
     return iter(lambda: list(islice(idx_iter, batch_size)), [])
