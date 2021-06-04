@@ -33,6 +33,7 @@ from typing import List, Optional, Sequence, Tuple
 import numpy as np
 import pandas as pd
 import torch as to
+from matplotlib import colors
 from matplotlib import pyplot as plt
 
 import pyrado
@@ -579,6 +580,7 @@ def plot_rollouts_segment_wise(
     show_act: bool = False,
     save_dir: Optional[pyrado.PathLike] = None,
     data_field: str = "states",
+    cmap_samples: Optional[colors.Colormap] = None,
 ) -> List[plt.Figure]:
     r"""
     Plot the different rollouts in separate figures and the different state dimensions along the columns.
@@ -598,6 +600,7 @@ def plot_rollouts_segment_wise(
     :param show_act: if `True`, also plot the actions
     :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
     :param data_field: data field of the rollout, e.g. "states" or "observations"
+    :param cmap_samples: color map for the trajectories resulting from different domain parameter samples
     :return: list of handles to the created figures
     """
     if not plot_type.lower() in ["samples", "confidence"]:
@@ -628,8 +631,10 @@ def plot_rollouts_segment_wise(
         if len(act_labels) != dim_act:
             raise pyrado.ShapeErr(given=act_labels, expected_match=(dim_act,))
 
-    colors = plt.get_cmap("Reds")(np.linspace(0.6, 1.0, num_samples))
+    if cmap_samples is None:
+        cmap_samples = plt.get_cmap("Reds")(np.linspace(0.6, 0.8, num_samples))
     fig_list = []
+    label_samples = "ml" if plot_type == "confidence" else "samples"
 
     for idx_r in range(len(segments_ground_truth)):
         num_rows = dim_state + dim_act if show_act else dim_state
@@ -658,7 +663,9 @@ def plot_rollouts_segment_wise(
                         zorder=2 if idx_dp == 0 else 0,  # most likely on top
                         c=colors[idx_dp],
                         ls="--",
-                        label=f"ml sim {idx_dp}" if cnt_step[idx_seg] == 0 else "",  # only print once for each dp
+                        lw=1.5 if plot_type == "confidence" or idx_dp == 0 else 0.5,
+                        alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.4,
+                        label=label_samples if cnt_step[idx_seg] == idx_seg == idx_dp == 0 else "",  # print once
                     )
                     if plot_type.lower() != "samples":
                         # Stop here, unless the rollouts of most likely all domain parameters should be plotted
@@ -731,7 +738,9 @@ def plot_rollouts_segment_wise(
                             zorder=2 if idx_dp == 0 else 0,  # most likely on top
                             c=colors[idx_dp],
                             ls="--",
-                            label=f"ml sim {idx_dp}" if cnt_step[idx_seg] == 0 else "",  # only print once for each dp
+                            lw=1.5 if plot_type == "confidence" or idx_dp == 0 else 0.5,
+                            alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.4,
+                            label=label_samples if cnt_step[idx_seg] == idx_seg == idx_dp == 0 else "",  # print once
                         )
                         if plot_type.lower() != "samples":
                             # Stop here, unless the rollouts of most likely all domain parameters should be plotted

@@ -117,10 +117,6 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
         # Forward to the wrapped DomainRandWrapper
         self._wrapped_env.randomizer = dr
 
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
-        # Forward to the wrapped DomainRandWrapper
-        return self._wrapped_env.reset(init_state=init_state, domain_param=domain_param)
-
     def adapt_randomizer(self, domain_distr_param_values: np.ndarray):
         # Check the input dimension and reshape if necessary
         if domain_distr_param_values.ndim == 1:
@@ -148,8 +144,8 @@ class DomainRandWrapperLive(DomainRandWrapper, Serializable):
             self._randomizer.randomize(num_samples=1)
             domain_param = self._randomizer.get_params(fmt="dict", dtype="numpy")
 
-        # Set the new domain parameters (and the initial sate) by calling the reset method of the wrapped env
-        return self._wrapped_env.reset(init_state=init_state, domain_param=domain_param)
+        # Forward to EnvWrapper
+        return super().reset(init_state=init_state, domain_param=domain_param)
 
 
 class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
@@ -247,12 +243,9 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
                     self._ring_idx = randint(0, len(self._buffer) - 1)
             else:
                 raise pyrado.TypeErr(given=self._buffer, expected_type=[dict, list])
-        else:
-            # Explicit specification of domain parameters
-            self._get_wrapper_domain_param(domain_param)
 
-        # Forward to the reset method of the wrapped env
-        return self._wrapped_env.reset(init_state=init_state, domain_param=domain_param)
+        # Forward to EnvWrapper
+        return super().reset(init_state=init_state, domain_param=domain_param)
 
     def _get_state(self, state_dict: dict):
         super()._get_state(state_dict)

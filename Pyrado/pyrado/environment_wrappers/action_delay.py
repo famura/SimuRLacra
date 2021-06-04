@@ -78,19 +78,17 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
 
         :param domain_param: domain parameter dict
         """
-        # Cast the delay value to int, since randomizer yields ndarrays or Tensors
-        self._delay = int(domain_param.get("act_delay", self._delay))
+        # Cast the delay value to int, since randomizer yields numpy arrays or PyTorch tensors
+        self._delay = round(domain_param.get("act_delay", self._delay))
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
-        # Adapt _delay to the new act_delay if provided
-        if domain_param is not None:
-            self._get_wrapper_domain_param(domain_param)
+        # Forward to EnvWrapper, also handles self._delay
+        init_obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         # Init action queue with the right amount of 0 actions
-        self._act_queue = [np.zeros(self.act_space.shape)] * self._delay
+        self._act_queue = [np.zeros(self.act_space.shape)] * round(self._delay)
 
-        # Call the reset function of the super class and forwards the arguments
-        return super().reset(init_state, domain_param)
+        return init_obs
 
     def _process_act(self, act: np.ndarray) -> np.ndarray:
         """
@@ -99,7 +97,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         :param act: commanded action which will be delayed by _delay time steps
         :return: next action that has been commanded _delay time steps before
         """
-        if self._delay != 0:
+        if round(self._delay) != 0:
             # Append current action to queue
             self._act_queue.append(act)
 

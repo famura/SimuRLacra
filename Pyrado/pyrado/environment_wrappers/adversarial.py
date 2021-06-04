@@ -169,7 +169,9 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         self.re_adv()
         self.saw.set_param(to.tensor(self.adv))
-        return self.wrapped_env.reset(init_state, domain_param)
+
+        # Forward to EnvWrapper
+        return super().reset(init_state=init_state, domain_param=domain_param)
 
     def step(self, act: np.ndarray) -> tuple:
         obs, reward, done, info = self.wrapped_env.step(act)

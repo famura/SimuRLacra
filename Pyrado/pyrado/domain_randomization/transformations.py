@@ -75,7 +75,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
 
     def forward_domain_param(self, domain_param: dict) -> dict:
         """
-        Map a domain parameter set to the transformed space.
+        Map a domain parameter set from the actual domain parameter space to the transformed space.
 
         :param domain_param: domain parameter set in the original space
         :return: domain parameter set in the transformed space
@@ -88,7 +88,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
     @abstractmethod
     def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         """
-        Map a domain parameter value to the transformed space.
+        Map a domain parameter value from the actual domain parameter space to the transformed space.
 
         :param value: domain parameter value in the original space
         :return: domain parameter value in the transformed space
@@ -97,7 +97,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
 
     def inverse_domain_param(self, domain_param: dict) -> dict:
         """
-        Map a domain parameter set back from the transformed space.
+        Map a domain parameter set from the transformed space to the actual domain parameter space.
 
         :param domain_param: domain parameter set in the transformed space
         :return: domain parameter set in the original space
@@ -110,12 +110,21 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
     @abstractmethod
     def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         """
-        Map a domain parameter value back from the transformed space.
+        Map a domain parameter value from the transformed space to the actual domain parameter space.
 
         :param value: domain parameter value in the transformed space
         :return: domain parameter value in the original space
         """
         raise NotImplementedError
+
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
+        if domain_param is not None:
+            # From the outside, transformed domain parameter values are set, thus we transform them back before setting
+            self._get_wrapper_domain_param(domain_param)  # see EnvWrapper
+            domain_param = self.inverse_domain_param(domain_param)
+
+        # Forward to EnvWrapper
+        return super().reset(init_state=init_state, domain_param=domain_param)
 
     @property
     def domain_param(self) -> dict:
@@ -126,7 +135,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
 
     @domain_param.setter
     def domain_param(self, domain_param: dict):
-        # From the outside, to transformed domain parameter values are set, thus we transform them back before setting.
+        # From the outside, transformed domain parameter values are set, thus we transform them back before setting
         self._get_wrapper_domain_param(domain_param)  # see EnvWrapper
         self._wrapped_env.domain_param = self.inverse_domain_param(domain_param)
 
@@ -137,20 +146,20 @@ class LogDomainParamTransform(DomainParamTransform):
     @staticmethod
     def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
-            return np.exp(value)
-        elif isinstance(value, to.Tensor):
-            return to.exp(value)
-        else:
-            return math.exp(value)
-
-    @staticmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
-        if isinstance(value, np.ndarray):
             return np.log(value)
         elif isinstance(value, to.Tensor):
             return to.log(value)
         else:
             return math.log(value)
+
+    @staticmethod
+    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        if isinstance(value, np.ndarray):
+            return np.exp(value)
+        elif isinstance(value, to.Tensor):
+            return to.exp(value)
+        else:
+            return math.exp(value)
 
 
 class SqrtDomainParamTransform(DomainParamTransform):
@@ -159,17 +168,17 @@ class SqrtDomainParamTransform(DomainParamTransform):
     @staticmethod
     def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
-            return np.power(value, 2)
-        elif isinstance(value, to.Tensor):
-            return to.pow(value, 2)
-        else:
-            return math.pow(value, 2)
-
-    @staticmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
-        if isinstance(value, np.ndarray):
             return np.sqrt(value)
         elif isinstance(value, to.Tensor):
             return to.sqrt(value)
         else:
             return math.sqrt(value)
+
+    @staticmethod
+    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+        if isinstance(value, np.ndarray):
+            return np.power(value, 2)
+        elif isinstance(value, to.Tensor):
+            return to.pow(value, 2)
+        else:
+            return math.pow(value, 2)
