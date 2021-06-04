@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # Set up the policies
     # dp_nom = env.get_nominal_domain_param()
     policy_hparam = dict(
-        t_end=2.8,
+        t_end=6.0,
         cond_lvl="vel",
         # X (abs), Y (rel), Z (abs), A (abs), C (abs)
         # cond_final=[[0.5, 0.0, 0.04, -0.876], [0.5, 0.0, 0.0, 0.0]],

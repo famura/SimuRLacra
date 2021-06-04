@@ -38,8 +38,8 @@ from colorama import Fore, Style
 from sbi import utils as utils
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
-from sbi.inference.snpe import PosteriorEstimator
 from sbi.utils.user_input_checks import prepare_for_sbi
+from tabulate import tabulate
 from torch.distributions import Distribution, Normal
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -105,6 +105,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         normalize_posterior: bool = True,
         subrtn_policy: Optional[Algorithm] = None,
         subrtn_policy_snapshot_mode: str = "latest",
+        train_initial_policy: bool = True,
         thold_succ_subrtn: float = -pyrado.inf,
         warmstart: bool = True,
         num_workers: int = 4,
@@ -121,7 +122,6 @@ class SBIBase(InterruptableAlgorithm, ABC):
                        for generating the target domain rollouts, but also optimized in simulation
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param prior: distribution used by sbi as a prior
-        :param subrtn_sbi_class: sbi algorithm calls for executing the LFI, e.g. SNPE
         :param embedding: embedding used for pre-processing the data before passing it to the posterior
         :param num_checkpoints: total number of checkpoints
         :param init_checkpoint: initial value of the cyclic counter, defaults to 0, use negative values can to mark
@@ -147,12 +147,13 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param posterior_hparam: hyper parameters for creating the posterior's density estimator
         :param subrtn_sbi_training_hparam: dict forwarded to sbi's `PosteriorEstimator.train()` function like
                                            `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
-        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
-                                          `sample_with_mcmc`, ect.
         :param simulation_batch_size: batch size forwarded to the sbi toolbox, requires batched simulator
         :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
         :param subrtn_policy_snapshot_mode: snapshot mode for saving during policy optimization
+        :param train_initial_policy: choose if a policy should be pretrained in the first iteration
+                                     before collecting real rollouts. Choose `False`, if you want to use a pre-defined
+                                     policy.
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
                                   subroutine until the threshold is exceeded or the for a given number of iterations
         :param warmstart: initialize the policy (and value function) parameters with the one of the previous iteration.
@@ -194,7 +195,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         )
 
         self._env_sim_sbi = env_sim  # will be randomized explicitly by sbi
-        self._env_sim_trn = DomainRandWrapperBuffer(deepcopy(env_sim), randomizer=None, selection="random")
+        self._env_sim_trn = DomainRandWrapperBuffer(deepcopy(env_sim), randomizer=None, selection="cyclic")
         self._env_real = env_real
         self.dp_mapping = dp_mapping
         self._embedding = embedding
@@ -228,6 +229,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         if isinstance(self._subrtn_policy, Algorithm):
             self._subrtn_policy_snapshot_mode = subrtn_policy_snapshot_mode
             self._subrtn_policy.save_name = "subrtn_policy"
+            self._train_initial_policy = train_initial_policy
             # Check that the behavioral policy is the one that is being updated
             if self._subrtn_policy.policy is not self.policy:
                 raise pyrado.ValueErr(
@@ -290,15 +292,9 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :return: proposal for simulating with sbi
         """
         if self._curr_iter == 0:
-            # Multi-round or single-round sbi, 1st iteration
             proposal = self._sbi_prior
         else:
-            if self.num_sbi_rounds == 1:
-                # Single-round sbi, 2nd iteration
-                prefix = f"iter_{self._curr_iter - 1}"
-            else:
-                # Multi-round sbi, 2nd iteration
-                prefix = f"iter_{self._curr_iter - 1}_round_{self.num_sbi_rounds - 1}"
+            prefix = f"iter_{self._curr_iter - 1}_round_{self.num_sbi_rounds - 1}"
             proposal = pyrado.load("posterior.pt", self._save_dir, prefix=prefix)
         return proposal
 
@@ -350,29 +346,50 @@ class SBIBase(InterruptableAlgorithm, ABC):
         else:
             rollout_worker = RealRolloutSamplerForSBI(env, policy, embedding, num_segments, len_segments)
 
-        data_real = []
-        rollouts_real = []
+        # Initialize data containers
+        data_real = None
+        rollouts_real = None
+        num_found_rollouts = 0
+        if save_dir is not None:
+            try:
+                data_real = pyrado.load("data_real.pt", save_dir, prefix=prefix)
+                rollouts_real = pyrado.load("rollouts_real.pkl", save_dir, prefix=prefix)
+                if not data_real.shape[0] == len(rollouts_real):
+                    raise pyrado.ShapeErr(
+                        msg=f"Found {data_real.shape[0]} entries in data_real.pt, but {len(rollouts_real)} rollouts in "
+                        f"rollouts_real.pkl!"
+                    )
+                num_found_rollouts = len(rollouts_real)
+                print_cbt(f"Found {num_found_rollouts} rollout(s) in {save_dir}.", "w")
+            except FileNotFoundError:
+                pass  # in the first attempt no files can be found
+
         collect_str = f"Collecting data" if prefix == "" else f"Collecting data using {prefix}_policy"
         for _ in tqdm(
-            range(num_rollouts),
+            range(num_found_rollouts, num_rollouts),
             total=num_rollouts,
             desc=Fore.CYAN + Style.BRIGHT + collect_str + Style.RESET_ALL,
             unit="rollouts",
             file=sys.stdout,
         ):
+            # Do the rollout
             data, rollout = rollout_worker()
-            data_real.append(data)
-            rollouts_real.append(rollout)
 
-        # Stacked to tensor of shape [1, num_rollouts * dim_feat]
-        data_real = to.cat(data_real, dim=1)
+            # Fill data container
+            if data_real is None or rollouts_real is None:
+                data_real = data  # data is of shape [1, dim_feat]
+                rollouts_real = [rollout]
+            else:
+                data_real = to.cat([data_real, data], dim=1)  # stack to final shape [1, num_rollouts * dim_feat]
+                rollouts_real.append(rollout)
+
+            # Optionally save the data (do this at every iteration to continue)
+            if save_dir is not None:
+                pyrado.save(data_real, "data_real.pt", save_dir, prefix=prefix)
+                pyrado.save(rollouts_real, "rollouts_real.pkl", save_dir, prefix=prefix)
+
         if data_real.shape != (1, num_rollouts * embedding.dim_output):
             raise pyrado.ShapeErr(given=data_real, expected_match=(1, num_rollouts * embedding.dim_output))
-
-        # Optionally save the data
-        if save_dir is not None:
-            pyrado.save(data_real, "data_real.pt", save_dir, prefix=prefix)
-            pyrado.save(rollouts_real, "rollouts_real.pkl", save_dir, prefix=prefix)
 
         return data_real, rollouts_real
 
@@ -528,6 +545,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         data_real: to.Tensor,
         num_eval_samples: int,
         num_ml_samples: int = 1,
+        calculate_log_probs: bool = True,
         normalize_posterior: bool = True,
         subrtn_sbi_sampling_hparam: Optional[dict] = None,
         return_as_tensor: bool = False,
@@ -543,31 +561,34 @@ class SBIBase(InterruptableAlgorithm, ABC):
                           [num_iter, num_rollouts_per_iter, time_series_length, dim_data]
         :param num_eval_samples: number of samples to draw from the posterior
         :param num_ml_samples: number of most likely samples, i.e. 1 equals argmax
+        :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned
         :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :param return_as_tensor: if `True`, return the most likely domain parameter sets as a tensor of shape
                                  [num_iter, num_ml_samples, dim_domain_param], else as a list of dict
-        :return: most likely domain parameters sets sampled form the posterior
+        :return: most likely domain parameters sets sampled form the posterior, and the associated log probabilities
         """
         if not isinstance(num_ml_samples, int) or num_ml_samples < 1:
             raise pyrado.ValueErr(given=num_ml_samples, g_constraint="0 (int)")
 
         # Evaluate the posterior
         domain_params, log_probs = SBIBase.eval_posterior(
-            posterior=posterior,
-            data_real=data_real,
-            num_samples=num_eval_samples,
-            calculate_log_probs=True,
-            normalize_posterior=normalize_posterior,
-            subrtn_sbi_sampling_hparam=subrtn_sbi_sampling_hparam,
+            posterior,
+            data_real,
+            num_eval_samples,
+            calculate_log_probs,
+            normalize_posterior,
+            subrtn_sbi_sampling_hparam,
         )
 
         # Extract the most likely domain parameter sets for every target domain data set
         domain_params_ml = []
+        log_probs_ml = to.empty(log_probs.shape[0], num_ml_samples)
         for idx_r in range(domain_params.shape[0]):
-            idcs_ml = to.argsort(log_probs[idx_r, :], descending=True)
-            idcs_sel = idcs_ml[:num_ml_samples]
-            dp_vals = domain_params[idx_r, idcs_sel, :]
+            idcs_sorted = to.argsort(log_probs[idx_r, :], descending=True)
+            idcs_ml = idcs_sorted[:num_ml_samples]
+            log_probs_ml[idx_r, :] = log_probs[idx_r, idcs_ml]
+            dp_vals = domain_params[idx_r, idcs_ml, :]
 
             if return_as_tensor:
                 # Return as tensor
@@ -575,7 +596,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
             else:
                 # Return as dict
-                dp_vals = np.atleast_1d(dp_vals.numpy())
+                dp_vals = to.atleast_1d(dp_vals).numpy()
                 domain_param_ml = [dict(zip(dp_mapping.values(), dpv)) for dpv in dp_vals]
                 domain_params_ml.append(domain_param_ml)
 
@@ -595,7 +616,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
                     f"are {len(domain_params_ml[0][0])}!"
                 )
 
-        return domain_params_ml, log_probs
+        return domain_params_ml, log_probs_ml
 
     @staticmethod
     @to.no_grad()

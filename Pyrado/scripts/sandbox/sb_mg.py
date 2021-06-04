@@ -48,7 +48,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.setLogLevel(4)
+rcsenv.setLogLevel(2)
 
 
 def create_idle_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLimits: bool):
@@ -71,7 +71,10 @@ def create_idle_setup(physicsEngine: str, dt: float, max_steps: int, checkJointL
 
 def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLimits: bool):
     # Set up environment
+    relativeZdTask = True
+    print_cbt(f"relativeZdTask = {relativeZdTask}", "c", bright=True)
     env = MiniGolfIKSim(
+        relativeZdTask=relativeZdTask,
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         dt=dt,
@@ -83,34 +86,41 @@ def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLi
     )
 
     # Set up policy
-    policy = PolySplineTimePolicy(
-        env.spec,
-        dt,
-        t_end=6.0,
-        cond_lvl="vel",
-        # X (abs), Y (rel), Z (abs), A (abs), C (abs)
-        # cond_final=[[0.5, 0.0, 0.04, -0.876], [0.5, 0.0, 0.0, 0.0]],
-        # cond_init=[[0.1, 0.0, 0.04, -0.876], [0.0, 0.0, 0.0, 0.0]],
-        # # Zd (rel), X (rel), Y (rel), PHI (abs), THETA (abs)
-        # cond_final=[
-        #     [0.0, 0.0, 0.0, math.pi / 2, 0.0],
-        #     [0.0, 0.0, 0.0, 0.0, 0.0],
-        # ],
-        # cond_init=[
-        #     [-0.2, 0.0, 0.0, math.pi / 2, 0.0],
-        #     [0.0, 0.0, 0.0, 0.0, 0.0],
-        # ],
-        # Zd (rel), Y (rel2), Zdist (abs), PHI (abs), THETA (abs)
-        cond_final=[
-            [0.0, 0.0, 0.01, math.pi / 2, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.0],
-        ],
-        cond_init=[
-            [-7.0, 0.0, 0.01, math.pi / 2, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.0],
-        ],
-        overtime_behavior="hold",
-    )
+    if relativeZdTask:
+        policy_hparam = dict(
+            t_end=1.0,
+            cond_lvl="vel",
+            # Zd (rel), Y (rel), Zdist (abs), PHI (abs), THETA (abs)
+            cond_final=[
+                [0.0, 0.0, 0.01, math.pi / 2, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            cond_init=[
+                [-7.0, 0.0, 0.01, math.pi / 2, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            overtime_behavior="hold",
+        )
+
+    else:
+        policy_hparam = dict(
+            t_end=3.0,
+            cond_lvl="vel",
+            # X (abs), Y (rel), Z (abs), A (abs), C (abs)
+            # cond_final=[[0.5, 0.0, 0.04, -0.876], [0.5, 0.0, 0.0, 0.0]],
+            # cond_init=[[0.1, 0.0, 0.04, -0.876], [0.0, 0.0, 0.0, 0.0]],
+            # X (abs), Y (rel), Zdist (abs), PHI (abs), THETA (abs)
+            cond_final=[
+                [0.9, 0.0, 0.005, math.pi / 2, 0.0],  # math.pi / 2 - 0.4
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            cond_init=[
+                [0.3, 0.0, 0.01, math.pi / 2, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            overtime_behavior="hold",
+        )
+    policy = PolySplineTimePolicy(env.spec, dt, **policy_hparam)
 
     return env, policy
 
@@ -135,14 +145,14 @@ def create_lin_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLi
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "pst"  # idle, pst-pos, or lin
+    setup_type = "pst"  # idle, pst, or lin
     physicsEngine = "Bullet"  # Bullet or Vortex
     dt = 1 / 100.0
     max_steps = int(13 / dt)
     checkJointLimits = True
-    randomize = False
+    randomize = True
 
-    if setup_type == "lin":
+    if setup_type == "idle":
         env, policy = create_idle_setup(physicsEngine, dt, max_steps, checkJointLimits)
     elif setup_type == "pst":
         env, policy = create_pst_setup(physicsEngine, dt, max_steps, checkJointLimits)
@@ -154,13 +164,37 @@ if __name__ == "__main__":
     if randomize:
         dp_nom = env.get_nominal_domain_param()
         randomizer = DomainRandomizer(
-            UniformDomainParam(name="ball_radius", mean=dp_nom["ball_radius"], halfspan=dp_nom["ball_radius"] / 3),
+            UniformDomainParam(name="ball_radius", mean=dp_nom["ball_radius"], halfspan=dp_nom["ball_radius"] / 5),
             UniformDomainParam(name="ball_mass", mean=dp_nom["ball_mass"], halfspan=dp_nom["ball_mass"] / 5),
-            UniformDomainParam(name="obstacleleft_pos_offset_x", mean=0, halfspan=0.05),
-            UniformDomainParam(name="obstacleleft_pos_offset_y", mean=0, halfspan=0.05),
+            UniformDomainParam(name="club_mass", mean=dp_nom["club_mass"], halfspan=dp_nom["club_mass"] / 5),
+            UniformDomainParam(
+                name="ball_friction_coefficient",
+                mean=dp_nom["ball_friction_coefficient"],
+                halfspan=dp_nom["ball_friction_coefficient"] / 4,
+                clip_lo=0,
+            ),
+            UniformDomainParam(
+                name="ball_rolling_friction_coefficient",
+                mean=dp_nom["ball_rolling_friction_coefficient"],
+                halfspan=dp_nom["ball_rolling_friction_coefficient"] / 3,
+                clip_lo=0,
+            ),
+            UniformDomainParam(
+                name="ground_friction_coefficient",
+                mean=dp_nom["ground_friction_coefficient"],
+                halfspan=dp_nom["ground_friction_coefficient"] / 4,
+                clip_lo=0,
+            ),
+            UniformDomainParam(name="ball_slip", mean=dp_nom["ball_slip"], halfspan=dp_nom["ball_slip"] / 2, clip_lo=0),
+            UniformDomainParam(
+                name="ground_slip", mean=dp_nom["ground_slip"], halfspan=dp_nom["ground_slip"] / 2, clip_lo=0
+            ),
+            UniformDomainParam(name="obstacleleft_pos_offset_x", mean=0, halfspan=0.01),
+            UniformDomainParam(name="obstacleleft_pos_offset_y", mean=-0.1, halfspan=0.01),
+            UniformDomainParam(name="obstacleleft_rot_offset_c", mean=15 / 180 * math.pi, halfspan=1 / 180 * math.pi),
             UniformDomainParam(name="obstacleright_pos_offset_x", mean=0, halfspan=0.01),
-            UniformDomainParam(name="obstacleright_pos_offset_y", mean=0, halfspan=0.01),
-            UniformDomainParam(name="obstacleright_rot_offset_c", mean=0.2, halfspan=0.02),
+            UniformDomainParam(name="obstacleright_pos_offset_y", mean=0.1, halfspan=0.01),
+            UniformDomainParam(name="obstacleright_rot_offset_c", mean=-15 / 180 * math.pi, halfspan=1 / 180 * math.pi),
         )
         env = DomainRandWrapperLive(env, randomizer)
 

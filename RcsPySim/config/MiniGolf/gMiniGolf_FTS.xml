@@ -37,7 +37,7 @@
     <Sensor name="WristLoadCellSchunk" type="LOADCELL" />
   </Body>
 
-  <Body name="Club" prev="SchunkFTS" transform="0 0 0.06 0 0 -165" physics="fixed" mass="0.9" > <!-- 0.06 is arbitrary-->
+  <Body name="Club" prev="SchunkFTS" transform="0 -0.05 0.06 0 0 -165" physics="fixed" mass="0.9" > <!-- 0.06 is arbitrary-->
     <Shape type="SSL" length="0.95" radius="0.01" distance="true" physics="true" graphics="true" transform="0 0 0 90 0 0" />
     <Shape type="SSR" extents="0.04 0.12 0.02" distance="true" physics="true" graphics="true" transform="0.01 -0.98 0 0 0 57" />
     <Shape type="FRAME" scale="0.2" />

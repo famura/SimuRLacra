@@ -38,7 +38,7 @@ namespace Rcs
 
 // Vortex extended property list
 static const char* extended_xml_material_props[] = {
-    "slip",
+//    "slip", // TODO detect which solver bullet is suing and then automatically add this entry
     "compliance",
 };
 
@@ -57,14 +57,17 @@ void PPDMaterialProperties::getValues(PropertySink* outValues)
     outValues->setProperty(prefixedName.c_str(), bodyParamInfo->material.getRollingFrictionCoefficient());
     prefixedName = bodyParamInfo->paramNamePrefix + "restitution";
     outValues->setProperty(prefixedName.c_str(), bodyParamInfo->material.getRestitution());
+    prefixedName = bodyParamInfo->paramNamePrefix + "slip";
+    double slip = 0; // TODO @Michael: there is no bodyParamInfo->material.getSlip()
+    bodyParamInfo->material.getDouble("slip", slip);
+    outValues->setProperty(prefixedName.c_str(), slip);
     
     // Extension properties stored in the config xml-file
     for (auto propname : extended_xml_material_props) {
         auto configValue = xmlGetProp(bodyParamInfo->material.materialNode, BAD_CAST propname);
-        if (configValue != NULL) {
+        if (configValue != nullptr) {
             prefixedName = bodyParamInfo->paramNamePrefix + propname;
-            // TODO the types aren't well defined here. We just assume string for now.
-            outValues->setProperty(prefixedName.c_str(), configValue);
+            outValues->setProperty(prefixedName.c_str(), configValue);  // types aren't well defined, assuming string
         }
     }
 }
@@ -85,6 +88,11 @@ void PPDMaterialProperties::setValues(PropertySource* inValues)
     prefixedName = bodyParamInfo->paramNamePrefix + "restitution";
     if (inValues->getProperty(value, prefixedName.c_str())) {
         bodyParamInfo->material.setRestitution(value);
+    }
+    prefixedName = bodyParamInfo->paramNamePrefix + "slip";
+    if (inValues->getProperty(value, prefixedName.c_str())) {
+//        bodyParamInfo->material.setSlip(value); / TODO @Michael: there is no bodyParamInfo->material.setSlip()
+        bodyParamInfo->material.setDouble("slip", value);
     }
     
     // Extension properties stored in the config xml-file

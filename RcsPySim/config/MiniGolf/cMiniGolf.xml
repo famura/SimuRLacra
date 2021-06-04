@@ -30,10 +30,11 @@
 
 <Controller graph="gMiniGolf.xml">
 
-  <Task name="ClubTip_A" controlVariable="A" effector="ClubTip"  refFrame="Ground" active="false" />
-  <Task name="ClubTip_B" controlVariable="B" effector="ClubTip"  refFrame="Ground" active="false" />
-  <Task name="ClubTip_C" controlVariable="C" effector="ClubTip"  refFrame="Ground" active="false" />
+  <Task name="ClubTip_A" controlVariable="A" effector="ClubTip" active="false" />
+  <Task name="ClubTip_B" controlVariable="B" effector="ClubTip"  active="false" />
+  <Task name="ClubTip_C" controlVariable="C" effector="ClubTip" active="false" />
   <Task name="ClubTip_Polar" controlVariable="POLAR" effector="ClubTip"  active="false" />
+  <Task name="Distance_Z" controlVariable="DistanceZ" effector="Club" refBody="Ground" active="true" />
   <Task name="Ball_rel_X" controlVariable="X" effector="Ball" refBody="ClubTip" active="false" />
   <Task name="Ball_rel_Y" controlVariable="Y" effector="Ball" refBody="ClubTip" active="false" />
   <Task name="Ball_rel_Z" controlVariable="Z" effector="Ball" refBody="ClubTip" active="false" />

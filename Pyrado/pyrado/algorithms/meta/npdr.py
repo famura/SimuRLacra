@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-from typing import Type
+from typing import Optional, Type
 
 import sbi.utils as utils
 import torch as to
@@ -48,8 +48,20 @@ class NPDR(SBIBase):
     name: str = "npdr"
     iteration_key: str = "npdr_iteration"  # logger's iteration key
 
-    def __init__(self, *args, subrtn_sbi_class: Type[PosteriorEstimator], **kwargs):
-        """Constructor forwarding everything to the superclass"""
+    def __init__(
+        self,
+        *args,
+        subrtn_sbi_class: Type[PosteriorEstimator],
+        subrtn_sbi_sampling_hparam: Optional[dict] = None,
+        **kwargs,
+    ):
+        """
+        Constructor forwarding everything to the superclass
+
+        :param subrtn_sbi_class: sbi algorithm calls for executing the LFI, e.g. SNPE-C
+        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
+                                          `sample_with_mcmc`, ect.
+        """
         if not issubclass(subrtn_sbi_class, PosteriorEstimator):
             raise pyrado.TypeErr(
                 msg=f"The given subrtn_sbi_class must be a subclass of PosteriorEstimator, but is {subrtn_sbi_class}!"
@@ -63,9 +75,7 @@ class NPDR(SBIBase):
             mcmc_method="slice_np_vectorized",
             mcmc_parameters=dict(warmup_steps=50, num_chains=100, init_strategy="sir"),  # default: slice_np, 20
         )
-        self.subrtn_sbi_sampling_hparam = merge_dicts(
-            [default_sampling_hparam, kwargs.get("subrtn_sbi_sampling_hparam", dict())]
-        )
+        self.subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
 
         # Create the algorithm instance used in sbi, e.g. SNPE-B/C or SNLE
         density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
@@ -80,7 +90,7 @@ class NPDR(SBIBase):
         self.save_snapshot()
 
         if self.curr_checkpoint == -1:
-            if self._subrtn_policy is not None:
+            if self._subrtn_policy is not None and self._train_initial_policy:
                 # Add dummy values of variables that are logger later
                 self.logger.add_value("avg log prob", -pyrado.inf)
 
@@ -100,6 +110,14 @@ class NPDR(SBIBase):
                 print_cbt(f"Loaded existing rollout data for iteration {self.curr_iter}.", "w")
 
             else:
+                # If the policy depends on the domain-parameters, reset the policy with the
+                # most likely dp-params from the previous round.
+                if self.curr_iter != 0:
+                    ml_domain_param = pyrado.load(
+                        "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter - 1}"
+                    )
+                    self._policy.reset(dict(domain_param=ml_domain_param))
+
                 # Rollout files do not exist yet (usual case)
                 self._curr_data_real, _ = SBIBase.collect_data_real(
                     self.save_dir,
@@ -168,18 +186,17 @@ class NPDR(SBIBase):
                         prefix=f"iter_{self._curr_iter}",
                     )
 
-                if self.num_sbi_rounds > 1:
-                    # Set proposal of the next round to focus on the next data set.
-                    # set_default_x() expects dim [1, num_rollouts * data_samples]
-                    proposal = posterior.set_default_x(self._curr_data_real)
+                # Set proposal of the next round to focus on the next data set.
+                # set_default_x() expects dim [1, num_rollouts * data_samples]
+                proposal = posterior.set_default_x(self._curr_data_real)
 
-                    # Save the posterior tailored to each round
-                    pyrado.save(
-                        posterior,
-                        "posterior.pt",
-                        self._save_dir,
-                        prefix=f"iter_{self._curr_iter}_round_{idx_r}",
-                    )
+                # Save the posterior tailored to each round
+                pyrado.save(
+                    posterior,
+                    "posterior.pt",
+                    self._save_dir,
+                    prefix=f"iter_{self._curr_iter}_round_{idx_r}",
+                )
 
                 # Override the latest posterior
                 pyrado.save(posterior, "posterior.pt", self._save_dir)
@@ -193,22 +210,39 @@ class NPDR(SBIBase):
                 posterior,
                 self._curr_data_real,
                 self.num_eval_samples,
+                calculate_log_probs=True,
                 normalize_posterior=self.normalize_posterior,
+                subrtn_sbi_sampling_hparam=self.subrtn_sbi_sampling_hparam,
             )
             self.logger.add_value("avg log prob", to.mean(log_probs), 4)
             self.logger.add_value("num total samples", self._cnt_samples)
+
+            # Extract the most likely domain parameter set out of all target domain data sets
+            current_domain_param = self._env_sim_sbi.domain_param
+            idx_ml = to.argmax(log_probs).item()
+            dp_vals = self._curr_domain_param_eval[idx_ml // self.num_eval_samples, idx_ml % self.num_eval_samples, :]
+            dp_vals = to.atleast_1d(dp_vals).numpy()
+            ml_domain_param = dict(zip(self.dp_mapping.values(), dp_vals.tolist()))
+
+            # Update the unchanged domain parameters with the most likely ones obtained from the posterior
+            current_domain_param.update(ml_domain_param)
+            pyrado.save(current_domain_param, "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter}")
 
             self.reached_checkpoint()  # setting counter to 3
 
         if self.curr_checkpoint == 3:
             # Policy optimization
             if self._subrtn_policy is not None:
-                # Train the behavioral policy using the posterior samples obtained before, repeat if the resulting
-                # policy did not exceed the success threshold
+                print_cbt(
+                    "Training the next policy using domain parameter sets sampled from the current posterior.", "c"
+                )
+
+                # Train the behavioral policy using the posterior samples obtained before. Repeat the training
+                # if the resulting policy did not exceed the success threshold
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(self._curr_domain_param_eval.squeeze(), prefix=f"iter_{self._curr_iter}")
+                wrapped_trn_fcn(self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}")
 
             self.reached_checkpoint()  # setting counter to 0
 

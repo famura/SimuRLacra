@@ -34,13 +34,12 @@ Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
 By default (args.iter = -1), the all iterations are evaluated.
 """
 import os.path as osp
-import sys
+from typing import Optional
 
+import dtw
 import numpy as np
-from dtw import dtw, rabinerJuangStepPattern
 from matplotlib import pyplot as plt
 from tabulate import tabulate
-from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -57,15 +56,91 @@ from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.data_types import repeat_interleave
+from pyrado.utils.data_types import merge_dicts, repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import rmse
 
 
+def compute_traj_distance_metrics(
+    states_real: np.ndarray,
+    states_ml: np.ndarray,
+    states_nom: np.ndarray,
+    num_rollouts_real: int,
+    normalize: bool = True,
+    dtw_config: Optional[dict] = None,
+    save: bool = True,
+):
+    """
+    Compute the DTW distance and the RMSE for 2 trajectories w.r.t. a ground truth trajectory, and store it in a table.
+
+    :param states_real: numpy array of states from the real system of shape [num_rollouts, len_time_series, dim_state]
+    :param states_ml: numpy array of states from the most likely system [num_rollouts, len_time_series, dim_state]
+    :param states_nom: numpy array of states from the nominal system [num_rollouts, len_time_series, dim_state]
+    :param num_rollouts_real: number of rollouts
+    :param normalize: it `True`, normalize all trajectories by the max. abs. values of the ground truth trajectory for
+                      each dimension before computing the metrics
+    :param dtw_config: dictionary with options for the `dtw.dtw()` command, e.g.
+                       `dict(step_pattern=dtw.rabinerJuangStepPattern(6, "c"))`
+    :param save: it `True`, save table as tex-file
+    """
+    # Configure the metric computations
+    default_dtw_config = dict(open_end=True, step_pattern="symmetric2", distance_only=True)
+    dtw_config = merge_dicts([default_dtw_config, dtw_config or dict()])
+
+    # Iterate over all rollouts and compute the performance metrics
+    table = []
+    dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg = 0, 0, 0, 0
+    for idx_r in range(num_rollouts_real):
+        if normalize:
+            # Normalize all trajectories by the max. abs. values of the ground truth trajectory for each dimension
+            max_abs_state = np.max(np.abs(states_real[idx_r]), axis=0)
+            states_real[idx_r] /= max_abs_state
+            states_ml[idx_r] /= max_abs_state
+            states_nom[idx_r] /= max_abs_state
+
+        # DTW
+        dtw_dist_ml = dtw.dtw(states_real[idx_r], states_ml[idx_r], **dtw_config).distance
+        dtw_dist_nom = dtw.dtw(states_real[idx_r], states_nom[idx_r], **dtw_config).distance
+        dtw_dist_ml_avg += dtw_dist_ml / num_rollouts_real
+        dtw_dist_nom_avg += dtw_dist_nom / num_rollouts_real
+
+        # RMSE averaged over the states
+        rmse_ml = np.mean(rmse(states_real[idx_r], states_ml[idx_r], dim=0))
+        rmse_nom = np.mean(rmse(states_real[idx_r], states_nom[idx_r], dim=0))
+        rmse_ml_avg += rmse_ml / num_rollouts_real
+        rmse_nom_avg += rmse_nom / num_rollouts_real
+
+        table.append([idx_r, dtw_dist_ml, dtw_dist_nom, rmse_ml, rmse_nom])
+
+    # Add last row separately
+    table.append(["average", dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg])
+
+    # Print the tabulated data
+    headers = ("rollout", "DTW dist. ml", "DTW dist. nom", "mean RMSE ml", "mean RMSE nom")
+    print(tabulate(table, headers))
+
+    if save:
+        # Save the table for LaTeX
+        table_latex_str = tabulate(table, headers, tablefmt="latex")
+        str_iter = f"_iter_{args.iter}"
+        str_round = f"_round_{args.round}"
+        use_rec_str = "_use_rec" if args.use_rec else ""
+        with open(osp.join(ex_dir, f"distance_metrics{str_iter}{str_round}{use_rec_str}.tex"), "w") as tab_file:
+            print(table_latex_str, file=tab_file)
+
+
 if __name__ == "__main__":
+    parser = get_argparser()
+    parser.add_argument(
+        "--data_type",
+        type=str,
+        default="states",
+        help="select data type for plotting, e.g. 'observations' or 'states' (default: 'states')",
+    )
+
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    args = parser.parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
     if not isinstance(args.num_rollouts_per_config, int) or args.num_rollouts_per_config < 1:
@@ -164,6 +239,10 @@ if __name__ == "__main__":
 
     # Old solution without parallelization of the rollouts. Only use this when deeply mistrusting the one above.
     else:
+        import sys
+
+        from tqdm import tqdm
+
         # Sample rollouts with the most likely domain parameter sets associated to that observation
         segments_ml_all = []  # all top max likelihood segments for all target domain rollouts
         for idx_r, (segments_real, domain_params_ml) in tqdm(
@@ -255,35 +334,8 @@ if __name__ == "__main__":
     assert states_real.shape == states_nom.shape == states_ml.shape
     assert states_real.shape[0] == num_rollouts_real
 
-    # Iterate over all rollouts and compute the performance metrics
-    table = []
-    dtw_config = dict(open_end=True, step_pattern=rabinerJuangStepPattern(6, "c"))
-    dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg = 0, 0, 0, 0
-    for idx_r in range(num_rollouts_real):
-        # DTW
-        dtw_dist_ml = dtw(states_real[idx_r], states_ml[idx_r], **dtw_config).distance
-        dtw_dist_nom = dtw(states_real[idx_r], states_nom[idx_r], **dtw_config).distance
-        dtw_dist_ml_avg += dtw_dist_ml / num_rollouts_real
-        dtw_dist_nom_avg += dtw_dist_nom / num_rollouts_real
-
-        # RMSE averaged over the states
-        rmse_ml = np.mean(rmse(states_real[idx_r], states_ml[idx_r], dim=0))
-        rmse_nom = np.mean(rmse(states_real[idx_r], states_nom[idx_r], dim=0))
-        rmse_ml_avg += rmse_ml / num_rollouts_real
-        rmse_nom_avg += rmse_nom / num_rollouts_real
-
-        table.append([idx_r, dtw_dist_ml, dtw_dist_nom, rmse_ml, rmse_nom])
-    table.append(["average", dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg])
-
-    # Print the tabulated data
-    headers = ("rollout", "DTW dist. ml", "DTW dist. nom", "mean RMSE ml", "mean RMSE nom")
-    print(tabulate(table, headers))
-    table_latex_str = tabulate(table, headers, tablefmt="latex")
-    str_iter = f"_iter_{args.iter}"
-    str_round = f"_round_{args.round}"
-    use_rec_str = "_use_rec" if args.use_rec else ""
-    with open(osp.join(ex_dir, f"distance_metrics{str_iter}{str_round}{use_rec_str}.tex"), "w") as tab_file:
-        print(table_latex_str, file=tab_file)
+    # Compute the DTW and RMSE distance and store it in a table
+    table = compute_traj_distance_metrics(states_real, states_ml, states_nom, num_rollouts_real)
 
     # Plot
     plot_rollouts_segment_wise(
@@ -297,7 +349,7 @@ if __name__ == "__main__":
         show_act=False,
         save_dir=ex_dir if args.save else None,
         x_limits=args.cut_rollout,
-        data_field="states",
+        data_field=args.data_type,
     )
 
     plt.show()

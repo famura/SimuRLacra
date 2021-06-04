@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-from typing import Union
+from typing import Optional
 
 import torch as to
 from sbi import utils as utils
@@ -38,22 +38,18 @@ from torch.utils.tensorboard import SummaryWriter
 import pyrado
 from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.algorithms.utils import until_thold_exceeded
-from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environments.sim_base import SimEnv
-from pyrado.policies.base import Policy
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, RNNEmbedding
 from pyrado.utils.input_output import print_cbt
 
 
 class BayesSim(SBIBase):
     """
-    BayesSim [1] using Sequential Neural Posterior Estimation (SNPE-A) [3]
+    BayesSim [1] as well as it's online variant [2], both using Sequential Neural Posterior Estimation (SNPE-A) [3]
 
     For convenience, we provide the possibility to train a policy of the last posterior, i.e. after the inference was
-    done. This is not part of the original BayesSim algorithm [1]. Note that Online BayesSim [2], apart from using a
-    different embedding, alternates between training the policy or the internal model of the policy (see the last
-    paragraph of Section V.B.), thus has a significantly different data generation procedure.
+    done. This is not part of the original BayesSim algorithm [1]. Note that Online BayesSim [2], apart from using an
+    optionally different embedding, alternates between training the policy or the internal model of the policy
+    (see the last paragraph of Section V.B.), thus has a significantly different data generation procedure.
 
     .. seealso::
         [1] F. Ramos, R.C. Possas, D. Fox, "BayesSim: adaptive domain randomization via probabilistic inference for
@@ -69,52 +65,60 @@ class BayesSim(SBIBase):
 
     def __init__(
         self,
-        env_sim: Union[SimEnv, EnvWrapper],
-        policy: Policy,
-        downsampling_factor: int = 1,
+        *args,
         num_components: int = 5,
         component_perturbation: float = 1e-3,
+        subrtn_sbi_sampling_hparam: Optional[dict] = None,
         **kwargs,
     ):
         """
         Constructor
 
-        :param env_sim: randomized simulation environment a.k.a. source domain
-        :param policy: policy used for sampling the rollouts in the target domain at the beginning of each iteration.
-                       If `subrtn_policy` is not `None` this policy is also trained at the very last iteration.
-        :param downsampling_factor: downsampling factor for the embedding which is used for pre-processing the data
-                                    before passing it to the posterior, 1 means no downsampling
         :param num_components: number of components for the mixture of Gaussians density estimator
         :param component_perturbation: standard deviation applied to all weights and biases when, in the last round of
                                        SNPE-A, the Mixture of Gaussians is build from a single Gaussian.
+        :param subrtn_sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :param kwargs: forwarded the superclass constructor
         """
+        # Determine weather we are using offline [1] or online [2] BayesSim
+        self._online = False if kwargs.get("subrtn_policy", None) is None else True
+
+        # Original BayesSim [1]
+        if not self._online:
+            # BayesSim only runs SNPE-A (could be multi-round) once on the initially collected trajectories
+            kwargs["max_iter"] = 1
+
+            if not isinstance(kwargs["embedding"], BayesSimEmbedding):
+                raise pyrado.TypeErr(msg="The embedding for (the original) BayesSim must be of type BayesSimEmbedding!")
+            if not kwargs.get("use_rec_act", True):
+                # BayesSim requires the trajectories to be recorded beforehand
+                raise pyrado.ValueErr(given_name="use_rec_act", eq_constraint="True")
+
+        # Online BayesSim [2]
+        if self._online:
+            # The pseudo code (see Algorithm 1 in [2]) shows that only one update step is run before the policy is
+            # called again. This is possible because their controller is kept fixed, but its internal model updates.
+            kwargs["subrtn_policy"].max_iter = 1
+
+            if not isinstance(kwargs["embedding"], (BayesSimEmbedding, RNNEmbedding)):
+                raise pyrado.TypeErr(
+                    msg="The embedding for online BayesSim must be of type BayesSimEmbedding or RNNEmbedding!"
+                )
+
         if component_perturbation <= 0:
             raise pyrado.ValueErr(given=component_perturbation, g_constraint="0")
 
-        # Construct the same embedding as in [1]
-        embedding = BayesSimEmbedding(
-            spec=env_sim.spec,
-            dim_data=RolloutSamplerForSBI.get_dim_data(env_sim.spec),
-            downsampling_factor=downsampling_factor,
-            use_cuda=policy.device != "cpu",
-        )
-
         # Call SBIBase's constructor
         super().__init__(
-            env_sim=env_sim,
-            policy=policy,
-            embedding=embedding,
+            *args,
             num_checkpoints=3,
-            init_checkpoint=0,
-            posterior_hparam=dict(model="mdn_snpe_a"),  # could be something else but SNPE-A practically too special
-            max_iter=1,  # BayesSim only runs SNPE-A (could be multi-round) once on the initially collected trajectories
-            use_rec_act=True,  # BayesSim requires the trajectories to be recorded beforehand
+            init_checkpoint=-1 if self._online else 0,  # train an initial policy in simulation if online BayesSim
+            posterior_hparam=dict(model="mdn_snpe_a"),  # could be something else but SNPE-A is too special in practice
             **kwargs,
         )
 
         # Set the sampling parameters used by the sbi subroutine
-        self.subrtn_sbi_sampling_hparam = kwargs.get("subrtn_sbi_sampling_hparam", dict())
+        self.subrtn_sbi_sampling_hparam = subrtn_sbi_sampling_hparam or dict()
 
         # Create the algorithm instance used in sbi, i.e. SNPE-A  which as a few specialities has a
         density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
@@ -123,17 +127,25 @@ class BayesSim(SBIBase):
         self._subrtn_sbi = SNPE_A(
             prior=self._sbi_prior,
             density_estimator=density_estimator,
-            summary_writer=summary_writer,
             num_components=num_components,
+            summary_writer=summary_writer,
         )
 
         # Custom to SNPE-A
         self._component_perturbation = float(component_perturbation)
-        self._allow_precision_correction = False
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
+
+        if self.curr_checkpoint == -1:
+            if self._subrtn_policy is not None and self._train_initial_policy:
+                # Add dummy values of variables that are logger later
+                self.logger.add_value("avg log prob", -pyrado.inf)
+
+                # Train the behavioral policy using the nominal domain parameters
+                self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode)  # overrides policy.pt
+            self.reached_checkpoint()  # setting counter to 0
 
         if self.curr_checkpoint == 0:
             # Check if the rollout files already exist
@@ -144,9 +156,17 @@ class BayesSim(SBIBase):
             ):
                 # Rollout files do exist (can be when continuing a previous experiment)
                 self._curr_data_real = pyrado.load("data_real.pt", self._save_dir, prefix=f"iter_{self.curr_iter}")
-                print_cbt(f"Loaded existing rollout data.", "w")
+                print_cbt(f"Loaded existing rollout data for iteration {self.curr_iter}.", "w")
 
             else:
+                # If the policy depends on the domain-parameters, reset the policy with the
+                # most likely dp-params from the previous round.
+                if self.curr_iter != 0:
+                    ml_domain_param = pyrado.load(
+                        "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter - 1}"
+                    )
+                    self._policy.reset(dict(domain_param=ml_domain_param))
+
                 # Rollout files do not exist yet (usual case)
                 self._curr_data_real, _ = SBIBase.collect_data_real(
                     self.save_dir,
@@ -160,7 +180,14 @@ class BayesSim(SBIBase):
                 )
 
                 # Save the target domain data
-                pyrado.save(self._curr_data_real, "data_real.pt", self._save_dir)
+                if self._curr_iter == 0:
+                    # Append the first set of data
+                    pyrado.save(self._curr_data_real, "data_real.pt", self._save_dir)
+                else:
+                    # Append and save all data
+                    prev_data = pyrado.load("data_real.pt", self._save_dir)
+                    data_real_hist = to.cat([prev_data, self._curr_data_real], dim=0)
+                    pyrado.save(data_real_hist, "data_real.pt", self._save_dir)
 
             # Initialize sbi simulator and prior
             self._setup_sbi(
@@ -171,8 +198,8 @@ class BayesSim(SBIBase):
             self.reached_checkpoint()  # setting counter to 1
 
         if self.curr_checkpoint == 1:
-            # The proposal of the first round is the prior
-            proposal = self._sbi_prior
+            # Load the latest proposal, this can be the prior or the amortized posterior of the last iteration
+            proposal = self.get_latest_proposal_prev_iter()
 
             # Multi-round sbi
             for idx_r in range(self.num_sbi_rounds):
@@ -200,9 +227,7 @@ class BayesSim(SBIBase):
                     **self.subrtn_sbi_training_hparam,
                 )
                 posterior = self._subrtn_sbi.build_posterior(
-                    density_estimator,
-                    **self.subrtn_sbi_sampling_hparam,
-                    allow_precision_correction=self._allow_precision_correction,
+                    density_estimator=density_estimator, **self.subrtn_sbi_sampling_hparam
                 )
 
                 # Save the posterior of this iteration before tailoring it to the data (when it is still amortized)
@@ -211,21 +236,20 @@ class BayesSim(SBIBase):
                         posterior,
                         "posterior.pt",
                         self._save_dir,
-                        prefix=f"iter_{self._curr_iter}",  # for compatibility with load_posterior()
+                        prefix=f"iter_{self._curr_iter}",
                     )
 
-                if self.num_sbi_rounds > 1:
-                    # Set proposal of the next round to focus on the next data set.
-                    # set_default_x() expects dim [1, num_rollouts * data_samples]
-                    proposal = posterior.set_default_x(self._curr_data_real)
+                # Set proposal of the next round to focus on the next data set.
+                # set_default_x() expects dim [1, num_rollouts * data_samples]
+                proposal = posterior.set_default_x(self._curr_data_real)
 
-                    # Save the posterior tailored to each round
-                    pyrado.save(
-                        posterior,
-                        "posterior.pt",
-                        self._save_dir,
-                        prefix=f"iter_{self._curr_iter}_round_{idx_r}",  # for compatibility with load_posterior()
-                    )
+                # Save the posterior tailored to each round
+                pyrado.save(
+                    posterior,
+                    "posterior.pt",
+                    self._save_dir,
+                    prefix=f"iter_{self._curr_iter}_round_{idx_r}",
+                )
 
                 # Override the latest posterior
                 pyrado.save(posterior, "posterior.pt", self._save_dir)
@@ -239,22 +263,39 @@ class BayesSim(SBIBase):
                 posterior,
                 self._curr_data_real,
                 self.num_eval_samples,
+                calculate_log_probs=True,
                 normalize_posterior=self.normalize_posterior,
+                subrtn_sbi_sampling_hparam=self.subrtn_sbi_sampling_hparam,
             )
             self.logger.add_value("avg log prob", to.mean(log_probs), 4)
-            self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
+            self.logger.add_value("num total samples", self._cnt_samples)
+
+            # Extract the most likely domain parameter set out of all target domain data sets
+            current_domain_param = self._env_sim_sbi.domain_param
+            idx_ml = to.argmax(log_probs).item()
+            dp_vals = self._curr_domain_param_eval[idx_ml // self.num_eval_samples, idx_ml % self.num_eval_samples, :]
+            dp_vals = to.atleast_1d(dp_vals).numpy()
+            ml_domain_param = dict(zip(self.dp_mapping.values(), dp_vals.tolist()))
+
+            # Update the unchanged domain parameters with the most likely ones obtained from the posterior
+            current_domain_param.update(ml_domain_param)
+            pyrado.save(current_domain_param, "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter}")
 
             self.reached_checkpoint()  # setting counter to 3
 
         if self.curr_checkpoint == 3:
             # Policy optimization
             if self._subrtn_policy is not None:
-                # Train the behavioral policy using the posterior samples obtained before, repeat if the resulting
-                # policy did not exceed the success threshold
+                print_cbt(
+                    "Training the next policy using domain parameter sets sampled from the current posterior.", "c"
+                )
+
+                # Train the behavioral policy using the posterior samples obtained before. Repeat the training
+                # if the resulting policy did not exceed the success threshold
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(self._curr_domain_param_eval.squeeze())
+                wrapped_trn_fcn(self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}")
 
             self.reached_checkpoint()  # setting counter to 0
 

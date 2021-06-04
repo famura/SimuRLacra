@@ -34,12 +34,12 @@ import os.path as osp
 
 import joblib
 import numpy as np
+import prettyprinter
 import torch as to
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
 import pyrado
-from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.sampling.rollout import after_rollout_query, rollout
@@ -63,6 +63,9 @@ if __name__ == "__main__":
     # Override the time step size if specified
     if args.dt is not None:
         env_sim.dt = args.dt
+
+    # Use the environments number of steps in case of the default argument (inf)
+    max_steps = env_sim.max_steps if args.max_steps == pyrado.inf else args.max_steps
 
     # Crawl through the given directory and check how many init policies and candidates there are
     found_policies, found_cands = None, None
@@ -119,10 +122,10 @@ if __name__ == "__main__":
             ro = rollout(
                 env_sim,
                 policy,
-                render_mode=RenderMode(video=True),
+                render_mode=RenderMode(video=args.animation, render=args.render),
                 eval=True,
                 reset_kwargs=dict(domain_param=param, init_state=state),
             )  # calls env.reset()
-            print_domain_params(env_sim.domain_param)
+            prettyprinter.pprint(param)
             print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
             done, state, param = after_rollout_query(env_sim, policy, ro)

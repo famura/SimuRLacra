@@ -37,28 +37,32 @@
     <Shape type="FRAME" scale="0.3" />
   </Body>
 
-  <Body name="Ball" prev="Ground" physics="dynamic" mass="0.05" rigid_body_joints="0.3 1.4 0.02 0 0 0">
+  <Body name="Ball" prev="Ground" physics="dynamic" mass="0.05" rigid_body_joints="0.3 1.3 0.02 0 0 0">
     <Shape type="SPHERE" radius="0.02" distance="true" physics="true" graphics="true" material="ball_mat"/>
     <Shape type="FRAME" scale="0.15" />
   </Body>
 
-  <Body name="BoundLeft" prev="Ground" physics="kinematic" transform="1.1 2 0.02 0 0 0">
-    <Shape type="BOX" extents="1.5 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  <Body name="BoundLeft" prev="Ground" physics="kinematic" transform="0.95 1.9 0.02 0 0 0">
+    <Shape type="BOX" extents="1.3 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
   </Body>
-  <Body name="BoundLeftTop" prev="BoundLeft" physics="kinematic" transform="1.1 -0.3 0.0 0 0 -45">
+  <Body name="BoundLeftTop" prev="BoundLeft" physics="kinematic" transform="0.98 -0.3 0.0 0 0 -45">
     <Shape type="BOX" extents="0.8 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
   </Body>
-  <Body name="BoundRight" prev="Ground" physics="kinematic" transform="1.1 0.8 0.02 0 0 0" >
-    <Shape type="BOX" extents="1.5 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
+  <Body name="BoundRight" prev="Ground" physics="kinematic" transform="0.95 0.7 0.02 0 0 0" >
+    <Shape type="BOX" extents="1.3 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
   </Body>
-  <Body name="BoundRightTop" prev="BoundRight" physics="kinematic" transform="1.1 0.3 0.0 0 0 45">
+  <Body name="BoundRightTop" prev="BoundRight" physics="kinematic" transform="0.98 0.3 0.0 0 0 45">
     <Shape type="BOX" extents="0.8 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
   </Body>
 
-  <Body name="ObstacleRight" prev="Ground" physics="kinematic" transform="1.4 1.15  0.0 0 0 45">
+  <Body name="StartingLine" prev="Ground" transform="0.3 1.92 0 90 0 0">
+    <Shape type="SSL" length="1.62" radius="0.002" distance="false" physics="false" graphics="true" color="LIGHTGRAY" />
+  </Body>
+
+  <Body name="ObstacleRight" prev="Ground" physics="kinematic" transform="1.25 1.05  0.0 0 0 45">
     <Shape type="BOX" extents="0.4 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
   </Body>
-  <Body name="ObstacleLeft" prev="Ground" physics="kinematic" transform="1.5 1.65  0.0 0 0 20">
+  <Body name="ObstacleLeft" prev="Ground" physics="kinematic" transform="1.4 1.5  0.0 0 0 -20">
     <Shape type="BOX" extents="0.4 0.04 0.04" distance="true" physics="true" graphics="true" color="LIGHTGRAY" />
   </Body>
 <!--  <Body name="ObstacleCylinderRight" prev="Ground" physics="kinematic" transform="1.4 1.2 0.0 0 0 0" >-->
@@ -68,7 +72,7 @@
 <!--    <Shape type="CYLINDER" length="0.1" radius="0.08" distance="false" physics="true" graphics="true" color="LIGHTGRAY" />-->
 <!--  </Body>-->
 
-  <Body name="Hole" prev="Ground" physics="kinematic" transform="1.9 1.4 0 0 0 0" >
+  <Body name="Hole" prev="Ground" physics="kinematic" transform="1.8 1.3 0 0 0 0" >
     <!-- The radius of the hole's cylinder should be smaller than the one of the real hole since it is super sticky. -->
     <Shape type="CYLINDER" length="0.002" radius="0.04" transform="0 0 -0.001 0 0 0" distance="false" physics="true" graphics="true" color="DARKGRAY" material="hole_mat"/>
     <Shape type="CYLINDER" radius="0.002" length="0.2" transform="0. 0 0.1 0 0 0" graphics="true" physics="false" color="DARKGRAY"/>

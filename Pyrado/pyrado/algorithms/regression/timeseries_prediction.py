@@ -249,7 +249,7 @@ class TSPred(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._policy, "policy.pt", self.save_dir, use_state_dict=True)
+            pyrado.save(self._policy, "policy.pt", self.save_dir, use_state_dict=False)
             pyrado.save(self.dataset, "dataset.pt", self.save_dir)
         else:
             # This algorithm instance is a subroutine of another algorithm

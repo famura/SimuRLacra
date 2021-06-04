@@ -85,7 +85,8 @@ int main(int argc, char** argv)
     Rcs::KeyCatcherBase::registerKey("o", "Deactivate policy and go to home position (behind ball)");
     Rcs::KeyCatcherBase::registerKey("u", "Deactivate policy and go to a position up and above the ball");
     Rcs::KeyCatcherBase::registerKey("b", "Reset ball to a new random initial position");
-    Rcs::KeyCatcherBase::registerKey("n", "Move the a to the position in front of the ball (pre-strike)");
+    Rcs::KeyCatcherBase::registerKey("n", "Move the a to the pre-strike pose in front of the ball (q_des variant)");
+    Rcs::KeyCatcherBase::registerKey("N", "Move the a to the pre-strike pose in front of the ball (policy variant)");
     Rcs::KeyCatcherBase::registerKey("p", "Activate control policy (strike)");
     
     // Ctrl-C callback handler
@@ -102,8 +103,9 @@ int main(int argc, char** argv)
     argP.getArgument("-dl", &RcsLogLevel, "Debug level (default is 0)");
     argP.getArgument("-f", xmlFileName, "Configuration file name");
     argP.getArgument("-dir", directory, "Configuration file directory");
+    bool runningOnRobot = argP.hasArgument("-real", "Run the program in the physical robot");
     bool valgrind = argP.hasArgument("-valgrind", "Start without GUIs and graphics");
-    //    bool simpleGraphics = argP.hasArgument("-simpleGraphics", "OpenGL without fancy stuff (shadows, anti-aliasing)");
+//    bool simpleGraphics = argP.hasArgument("-simpleGraphics", "OpenGL without fancy stuff (shadows, anti-aliasing)");
     
     const char* hgr = getenv("SIT");
     if (hgr != nullptr) {
@@ -133,24 +135,35 @@ int main(int argc, char** argv)
     bot.getConfig()->actionModel->reset();
     bot.getConfig()->observationModel->reset();
     
-    Rcs::PhysicsSimulationComponent* sim = new Rcs::PhysicsSimulationComponent(simImpl);
-    sim->setUpdateFrequency(1.0/bot.getConfig()->dt);
-    //    sim->setSchedulingPolicy(SCHED_FIFO);
+    if (!runningOnRobot) {
+        Rcs::PhysicsSimulationComponent* sim = new Rcs::PhysicsSimulationComponent(simImpl);
+        sim->setUpdateFrequency(1.0/bot.getConfig()->dt);
+        //    sim->setSchedulingPolicy(SCHED_FIFO);
+        bot.addHardwareComponent(sim);
+        bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
+    }
+    else{
+        // TODO @Michael: which components to add
+        throw std::logic_error("Real robot is not implemented yet");
+//        bot.addHardwareComponent(new Rcs::BallTrackingComponent(bot.getCurrentGraph(), trackBallZPos));
+    }
     
-    bot.addHardwareComponent(sim);
-    bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
+    
 
 #ifdef GRAPHICS_AVAILABLE
     Rcs::ViewerComponent* vc = nullptr;
     if (!valgrind) {
-        //vc = new Rcs::ViewerComponent(bot.getGraph(), bot.getCurrentGraph(), true);
-        vc = new Rcs::ViewerComponent(nullptr, nullptr, true);
-        vc->getViewer()->add(new Rcs::PhysicsNode(simImpl));
+        if (!runningOnRobot) {
+            vc = new Rcs::ViewerComponent(nullptr, nullptr, true);
+            vc->getViewer()->add(new Rcs::PhysicsNode(simImpl));
+        }
         
         // Add the desired graph node of the action model
-//        auto nodeAMGraph = new Rcs::GraphNode(bot.getConfig()->actionModel->getGraph());
-//        nodeAMGraph->setGhostMode(true);
-//        vc->getViewer()->add(nodeAMGraph);
+        auto nodeAMGraph = new Rcs::GraphNode(bot.getConfig()->actionModel->getGraph());
+        nodeAMGraph->setGhostMode(true, "RED");
+        vc->getViewer()->add(nodeAMGraph);
+        
+        //vc = new Rcs::ViewerComponent(bot.getGraph(), bot.getCurrentGraph(), true);
         
         // Optionally add the desired graph node of the IK-based action model
         Rcs::ActionModelIK* amIK = dynamic_cast<Rcs::ActionModelIK*>(bot.getConfig()->actionModel);
@@ -159,7 +172,7 @@ int main(int argc, char** argv)
             nodeAMDesGraph->setGhostMode(true);
             vc->getViewer()->add(nodeAMDesGraph);
         }
-    
+        
         // Add the viewer component
         bot.getConfig()->initViewer(vc->getViewer());
         bot.addHardwareComponent(vc);
@@ -220,7 +233,7 @@ int main(int argc, char** argv)
                                  bot.getConfig()->actionModel->getSpace(), 1000);
             }
         }
-        if (vc && vc->getKeyCatcher()->getAndResetKey('b')) {
+        if (!runningOnRobot && vc && vc->getKeyCatcher()->getAndResetKey('b')) {
             RcsBody* ball = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ball");
             if (ball) {
                 // Set the ball to a random position
@@ -241,7 +254,7 @@ int main(int argc, char** argv)
                 }
             }
         }
-        if (vc && vc->getKeyCatcher()->getAndResetKey('n')) {
+        if (vc && vc->getKeyCatcher()->getAndResetKey('N')) {
             // Check if we are in the MiniGolfSim
             RcsBody* ball = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ball");
             RcsBody* clubTip = RcsGraph_getBodyByName(bot.getCurrentGraph(), "ClubTip");
@@ -259,59 +272,83 @@ int main(int argc, char** argv)
                 REXEC(2) { std::cout << "Ignoring the 'n' key stroke" << std::endl; }
             }
         }
+        if (vc && vc->getKeyCatcher()->getAndResetKey('n')) {
+            // Command the pre-strike pose (specified by overwriting some joint values of the desired graph)
+            MatNd* q_des_prestrike = MatNd_clone(bot.getGraph()->q);
+            q_des_prestrike->ele[0] = 1.2;
+            q_des_prestrike->ele[1] = RCS_DEG2RAD(24.990777);
+            q_des_prestrike->ele[2] = RCS_DEG2RAD(-87.187492);
+            q_des_prestrike->ele[3] = RCS_DEG2RAD(77.310272);
+            q_des_prestrike->ele[4] = RCS_DEG2RAD(-71.862892);
+            q_des_prestrike->ele[5] = RCS_DEG2RAD(61.423359);
+            q_des_prestrike->ele[6] = RCS_DEG2RAD(-170.341776);
+            q_des_prestrike->ele[7] = RCS_DEG2RAD(-36.836043);
+            bot.setControlPolicy(nullptr, q_des_prestrike);
+            MatNd_destroy(q_des_prestrike);
+            REXEC(1) { std::cout << "Moving to pre-initial state and holding it ..." << std::endl; }
+        }
         if (vc && vc->getKeyCatcher()->getAndResetKey('p')) {
             // Start the logger now if desired
             if (startLoggerNextPolicyStart) {
                 bot.logger.start(bot.getConfig()->observationModel->getSpace(),
                                  bot.getConfig()->actionModel->getSpace(), 1000);
             }
-    
+            
             // Overwrite the current action model by re-creating the one form the experiment config
             bot.getConfig()->actionModel = bot.getConfig()->createActionModel();
-    
+            
             // Set the control policy active
             controlPolicy->reset();
             bot.setControlPolicy(controlPolicy);
             REXEC(1) { std::cout << "Control policy was reset and is active ..." << std::endl; }
         }
         if (vc && vc->getKeyCatcher()->getAndResetKey('u')) {
-            // Command an initial pose (specified by overwriting some joint values of the desired graph)
-            MatNd* q_des = MatNd_clone(bot.getGraph()->q);
-            q_des->ele[0] = 1.325;
-            q_des->ele[1] = RCS_DEG2RAD(9.296357);
-            q_des->ele[2] = RCS_DEG2RAD(-96.02338);
-            q_des->ele[3] = RCS_DEG2RAD(71.864794);
-            q_des->ele[4] = RCS_DEG2RAD(-78.378359);
-            q_des->ele[5] = RCS_DEG2RAD(54.895289);
-            q_des->ele[6] = RCS_DEG2RAD(-178.449129);
-            q_des->ele[7] = RCS_DEG2RAD(-32.954162);
-            bot.setControlPolicy(nullptr, q_des);
-            MatNd_destroy(q_des);
+            // Command an initial pose above and in front of the ball (specified by overwriting some joint values of
+            // the desired graph)
+            MatNd* q_des_upfront = MatNd_clone(bot.getGraph()->q);
+            q_des_upfront->ele[0] = 1.2;
+            q_des_upfront->ele[1] = RCS_DEG2RAD(-17.024125);
+            q_des_upfront->ele[2] = RCS_DEG2RAD(-107.651808);
+            q_des_upfront->ele[3] = RCS_DEG2RAD(65.137897);
+            q_des_upfront->ele[4] = RCS_DEG2RAD(-93.876418);
+            q_des_upfront->ele[5] = RCS_DEG2RAD(41.902234);
+            q_des_upfront->ele[6] = RCS_DEG2RAD(-186.725503);
+            q_des_upfront->ele[7] = RCS_DEG2RAD(-29.29585);
+            bot.setControlPolicy(nullptr, q_des_upfront);
+            MatNd_destroy(q_des_upfront);
             REXEC(1) { std::cout << "Moving to pre-initial state and holding it ..." << std::endl; }
         }
         if (vc && vc->getKeyCatcher()->getAndResetKey('o')) {
-            // Command the initial pose from the desired graph
+            // Command the initial pose (specified by overwriting some joint values of the desired graph)
             MatNd* q_des_home = MatNd_clone(bot.getGraph()->q);
-            q_des_home->ele[0] = 1.325;
-            q_des_home->ele[1] = RCS_DEG2RAD(-15.926275);
-            q_des_home->ele[2] = RCS_DEG2RAD(-90.195774);
-            q_des_home->ele[3] = RCS_DEG2RAD(68.020458);
-            q_des_home->ele[4] = RCS_DEG2RAD(-88.097549);
-            q_des_home->ele[5] = RCS_DEG2RAD(35.54782);
-            q_des_home->ele[6] = RCS_DEG2RAD(-186.316634);
-            q_des_home->ele[7] = RCS_DEG2RAD(-22.276096);
+            q_des_home->ele[0] = 1.2;
+            q_des_home->ele[1] = RCS_DEG2RAD(29.821247);
+            q_des_home->ele[2] = RCS_DEG2RAD(-86.89066);
+            q_des_home->ele[3] = RCS_DEG2RAD(88.293785);
+            q_des_home->ele[4] = RCS_DEG2RAD(-66.323556);
+            q_des_home->ele[5] = RCS_DEG2RAD(63.39102);
+            q_des_home->ele[6] = RCS_DEG2RAD(-148.848292);
+            q_des_home->ele[7] = RCS_DEG2RAD(-11.296764);
             bot.setControlPolicy(nullptr, q_des_home);
             MatNd_destroy(q_des_home);
             REXEC(1) { std::cout << "Moving to initial state and holding it ..." << std::endl; }
         }
-        
-        auto hudText = bot.getConfig()->getHUDText(
-            simImpl->time(), bot.getObservation(), bot.getAction(), simImpl, ppmanager, nullptr);
+    
+        std::string hudText = "a";
+        if (!runningOnRobot){
+            hudText = bot.getConfig()->getHUDText(
+                simImpl->time(), bot.getObservation(), bot.getAction(), simImpl, ppmanager, nullptr);
+        }
+        else{
+            hudText = bot.getConfig()->getHUDText(
+                // TODO how to get the time form the real robot?
+                0, bot.getObservation(), bot.getAction(), nullptr, ppmanager, nullptr);
+        }
         vc->setText(hudText);
 #endif
         
         // Wait a bit till next update
-        Timer_waitDT(0.01);  // TODO @ Michael: is this dangerous here?
+        Timer_waitDT(0.01);  // TODO @Michael: is this dangerous here?
     }
     
     // Terminate
@@ -323,7 +360,7 @@ int main(int argc, char** argv)
     delete ppmanager;
     
     // Clean up global stuff. From the libxml2 documentation:
-    // WARNING: if your application is multithreaded or has plugin support
+    // WARNING: if your application is multi-threaded or has plugin support
     // calling this may crash the application if another thread or a plugin is
     // still using libxml2. It's sometimes very hard to guess if libxml2 is in
     // use in the application, some libraries or plugins may use it without
