@@ -901,7 +901,7 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.DomainParamTransform.forward">
 <em class="property"><span class="pre">abstract</span> <span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#DomainParamTransform.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.DomainParamTransform.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter value to the transformed space.</p>
+<dd><p>Map a domain parameter value from the actual domain parameter space to the transformed space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> – domain parameter value in the original space</p>
@@ -915,7 +915,7 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.DomainParamTransform.forward_domain_param">
 <span class="sig-name descname"><span class="pre">forward_domain_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#DomainParamTransform.forward_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.DomainParamTransform.forward_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter set to the transformed space.</p>
+<dd><p>Map a domain parameter set from the actual domain parameter space to the transformed space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>domain_param</strong> – domain parameter set in the original space</p>
@@ -929,7 +929,7 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.DomainParamTransform.inverse">
 <em class="property"><span class="pre">abstract</span> <span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#DomainParamTransform.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.DomainParamTransform.inverse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter value back from the transformed space.</p>
+<dd><p>Map a domain parameter value from the transformed space to the actual domain parameter space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> – domain parameter value in the transformed space</p>
@@ -943,13 +943,30 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.DomainParamTransform.inverse_domain_param">
 <span class="sig-name descname"><span class="pre">inverse_domain_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#DomainParamTransform.inverse_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.DomainParamTransform.inverse_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter set back from the transformed space.</p>
+<dd><p>Map a domain parameter set from the transformed space to the actual domain parameter space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>domain_param</strong> – domain parameter set in the transformed space</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>domain parameter set in the original space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.DomainParamTransform.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#DomainParamTransform.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.DomainParamTransform.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> – set explicit initial state if not None</p></li>
+<li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return obs</dt>
+<dd class="field-even"><p>initial observation of the state.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -964,7 +981,7 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.LogDomainParamTransform.forward">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#LogDomainParamTransform.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.LogDomainParamTransform.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter value to the transformed space.</p>
+<dd><p>Map a domain parameter value from the actual domain parameter space to the transformed space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> – domain parameter value in the original space</p>
@@ -978,7 +995,7 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.LogDomainParamTransform.inverse">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#LogDomainParamTransform.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.LogDomainParamTransform.inverse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter value back from the transformed space.</p>
+<dd><p>Map a domain parameter value from the transformed space to the actual domain parameter space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> – domain parameter value in the transformed space</p>
@@ -999,7 +1016,7 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.SqrtDomainParamTransform.forward">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#SqrtDomainParamTransform.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.SqrtDomainParamTransform.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter value to the transformed space.</p>
+<dd><p>Map a domain parameter value from the actual domain parameter space to the transformed space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> – domain parameter value in the original space</p>
@@ -1013,7 +1030,7 @@ all parameters that can be perturbed a.k.a. randomized, but there might also be 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.domain_randomization.transformations.SqrtDomainParamTransform.inverse">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/domain_randomization/transformations.html#SqrtDomainParamTransform.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.domain_randomization.transformations.SqrtDomainParamTransform.inverse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map a domain parameter value back from the transformed space.</p>
+<dd><p>Map a domain parameter value from the transformed space to the actual domain parameter space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> – domain parameter value in the transformed space</p>

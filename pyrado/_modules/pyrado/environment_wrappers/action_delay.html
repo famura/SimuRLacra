@@ -302,19 +302,17 @@
 
 <span class="sd">        :param domain_param: domain parameter dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Cast the delay value to int, since randomizer yields ndarrays or Tensors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">domain_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;act_delay&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span><span class="p">))</span>
+        <span class="c1"># Cast the delay value to int, since randomizer yields numpy arrays or PyTorch tensors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">domain_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;act_delay&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ActDelayWrapper.reset"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.action_delay.ActDelayWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="c1"># Adapt _delay to the new act_delay if provided</span>
-        <span class="k">if</span> <span class="n">domain_param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_get_wrapper_domain_param</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
+        <span class="c1"># Forward to EnvWrapper, also handles self._delay</span>
+        <span class="n">init_obs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">)</span>
 
         <span class="c1"># Init action queue with the right amount of 0 actions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_act_queue</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_act_queue</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delay</span><span class="p">)</span>
 
-        <span class="c1"># Call the reset function of the super class and forwards the arguments</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">init_obs</span></div>
 
     <span class="k">def</span> <span class="nf">_process_act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -323,7 +321,7 @@
 <span class="sd">        :param act: commanded action which will be delayed by _delay time steps</span>
 <span class="sd">        :return: next action that has been commanded _delay time steps before</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delay</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Append current action to queue</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_act_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
 
