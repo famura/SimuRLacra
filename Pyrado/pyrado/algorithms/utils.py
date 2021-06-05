@@ -279,9 +279,12 @@ class RolloutSavingWrapper:
         return getattr(self.wrapped_sampler, name)
 
     def __getstate__(self):
+        """Do not include the saved rollouts in the pickled object (uses lots of memory)."""
         """Required so that pickle does not end in an endless recursion"""
-        return vars(self)
+        return (self.wrapped_sampler,)
 
     def __setstate__(self, state):
-        """Required so that pickle does not end in an endless recursion"""
-        vars(self).update(state)
+        """Unpickles the object; must be consistent with :py:meth:`.__getstate__`."""
+        (wrapped_sampler,) = state
+        self.wrapped_sampler = wrapped_sampler
+        self.rollouts = []
