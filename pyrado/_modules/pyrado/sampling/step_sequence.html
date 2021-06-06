@@ -502,14 +502,13 @@
 <span class="sd">        :param actions: sequence of action values, the length must be `len(rewards)`</span>
 <span class="sd">        :param data: additional data lists, their length must be `len(rewards)` or `len(rewards) + 1`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Obtain rollout length from reward list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;StepSequence cannot be empty!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;StepSequence must not be empty!&quot;</span><span class="p">)</span>
 
         <span class="c1"># Set singular attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rollout_info</span> <span class="o">=</span> <span class="n">rollout_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span> <span class="o">=</span> <span class="n">continuous</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Infer if this instance is using numpy arrays or PyTorch tensors</span>
         <span class="k">if</span> <span class="n">data_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -523,14 +522,23 @@
                 <span class="n">data_format</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span> <span class="o">=</span> <span class="n">data_format</span>
 
+        <span class="c1"># Add the rewards directly since the length of the StepSequence is derived from it</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)):</span>
+            <span class="c1"># Stack into one array/tensor</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">stack_to_format</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Ensure right array format</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">to_format</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span><span class="p">)</span>
+        <span class="c1"># Store in dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rewards&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
         <span class="c1"># Check for missing extra fields</span>
         <span class="n">missing_fields</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">missing_fields</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required data fields: </span><span class="si">{</span><span class="n">missing_fields</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Set mandatory data fields</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s2">&quot;rewards&quot;</span><span class="p">,</span> <span class="n">rewards</span><span class="p">)</span>
+        <span class="c1"># Set mandatory data fields (rewards are already added)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s2">&quot;observations&quot;</span><span class="p">,</span> <span class="n">observations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
 
@@ -574,6 +582,11 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the length of the rollout (does not include the final step).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get the name of data format (&#39;torch&#39; or &#39;numpy&#39;).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span>
@@ -608,6 +621,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a slice of steps.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
             <span class="c1"># Return a StepSequence object with the subset. Build sliced data dict.</span>
             <span class="n">sliced_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slice_entry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span><span class="p">}</span>
@@ -642,15 +656,15 @@
         <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span>
 
-    <span class="k">def</span> <span class="nf">__map_tensors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_map_tensors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="c1"># Modify dict in-place</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">elem</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">elem</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__map_tensors</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">elem</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="n">elem</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_tensors</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">elem</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">elem</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="c1"># Can&#39;t modify in place since it&#39;s a tuple</span>
-            <span class="k">return</span> <span class="n">new_tuple</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elem</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__map_tensors</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">new_tuple</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elem</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_map_tensors</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">))</span>
 
         <span class="c1"># Tensor element</span>
         <span class="k">return</span> <span class="n">mapper</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
@@ -806,7 +820,7 @@
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span> <span class="o">=</span> <span class="n">data_format</span>
         <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">dn</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__map_tensors</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">to_format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data_format</span><span class="p">,</span> <span class="n">data_type</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">dn</span><span class="p">])</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">dn</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_tensors</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">to_format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data_format</span><span class="p">,</span> <span class="n">data_type</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">dn</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="StepSequence.get_rollout"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.get_rollout">[docs]</a>    <span class="k">def</span> <span class="nf">get_rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
