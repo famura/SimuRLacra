@@ -1,0 +1,50 @@
+
+
+feed\_forward
+=============
+
+
+
+dummy
+-----
+
+.. automodule:: pyrado.policies.feed_forward.dummy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+playback
+--------
+
+.. automodule:: pyrado.policies.feed_forward.playback
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+poly\_time
+----------
+
+.. automodule:: pyrado.policies.feed_forward.poly_time
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+time
+----
+
+.. automodule:: pyrado.policies.feed_forward.time
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.policies.feed_forward
+   :members:
+   :undoc-members:
+   :show-inheritance:
