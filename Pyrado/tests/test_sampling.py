@@ -535,7 +535,7 @@ def test_parallel_rollout_sampler(env: SimEnv, policy: Policy, num_workers: int)
     ids=["fnn", "fnn_cuda", "lstm", "lstm_cuda"],
     indirect=True,
 )
-@pytest.mark.parametrize("num_workers", [1, 2], ids=["1worker", "4workers"])
+@pytest.mark.parametrize("num_workers", [1, 2], ids=["1worker", "2workers"])
 def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
     randomizer = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, randomizer)
@@ -548,17 +548,13 @@ def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
 
 @pytest.mark.parametrize(
     "env",
-    [
-        "default_pend",
-        "default_qbb",
-        pytest.param("default_qqsurcs_bt", marks=m_needs_bullet),
-    ],
-    ids=["pend", "qbb", "qqsurcs_bt"],
+    ["default_pend", pytest.param("default_qqsurcs_bt", marks=m_needs_bullet)],
+    ids=["pend", "qqsurcs_bt"],
     indirect=True,
 )
 @pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
-@pytest.mark.parametrize("num_rollouts", [1, 2, 4, 6])
-@pytest.mark.parametrize("num_workers", [1, 2, 4])
+@pytest.mark.parametrize("num_rollouts", [1, 4, 6])
+@pytest.mark.parametrize("num_workers", [1, 4])
 def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_rollouts: int, num_workers: int):
     # Do the rollouts explicitly sequentially without a sampler.
     # Do not set the init state to check if this was sampled correctly.

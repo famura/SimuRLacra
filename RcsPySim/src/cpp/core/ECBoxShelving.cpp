@@ -44,6 +44,7 @@
 #include "observation/OMDynamicalSystemDiscrepancy.h"
 #include "observation/OMTaskSpaceDiscrepancy.h"
 #include "physics/PhysicsParameterManager.h"
+#include "physics/PPDBoxExtents.h"
 #include "physics/PPDMassProperties.h"
 #include "physics/PPDMaterialProperties.h"
 #include "physics/ForceDisturber.h"
@@ -305,6 +306,7 @@ class ECBoxShelving : public ExperimentConfig
     {
         manager->addParam("Box", new PPDMassProperties());
         manager->addParam("Box", new PPDMaterialProperties());
+        manager->addParam("Box", new PPDBoxExtents(0, true, true, true));
     }
     
     virtual InitStateSetter* createInitStateSetter()

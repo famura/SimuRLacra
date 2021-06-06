@@ -384,19 +384,16 @@ def test_running_normalizer(data_seq):
         assert (data_norm <= 1).all()
 
 
-@pytest.mark.parametrize(
-    "x",
-    [
-        to.rand(1000, 1),
-        to.rand(1, 1000),
-        to.rand(1000, 1000),
-        np.random.rand(1, 1000),
-        np.random.rand(1000, 1),
-        np.random.rand(1000, 1000),
-    ],
-    ids=["to_1x1000", "to_1000x1", "to_1000x1000", "np_1x1000", "np_1000x1", "np_1000x1000"],
-)
-def test_stateful_standardizer(x):
+@pytest.mark.parametrize("data_type", ["numpy", "torch"], ids=["numpy", "torch"])
+@pytest.mark.parametrize("shape", [(1000, 1), (1, 1000), (1000, 1000)], ids=["1x1000", "1000x1", "1000x1000"])
+def test_stateful_standardizer(data_type: str, shape: tuple):
+    pyrado.set_seed(0)
+
+    if data_type == "numpy":
+        x = 100*np.random.rand(*shape)
+    elif data_type == "torch":
+        x = 100*to.rand(shape)
+
     ss = Standardizer()
 
     if isinstance(x, to.Tensor):

@@ -29,6 +29,7 @@
 from copy import deepcopy
 
 import numpy as np
+import pyrado
 import pytest
 
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
@@ -67,6 +68,7 @@ def test_combination_wrappers_domain_params(env: SimEnv):
 @pytest.mark.wrapper
 @pytest.mark.parametrize("env", ["default_qcpsu", "default_qbb"], indirect=True)
 def test_combination(env: SimEnv):
+    pyrado.set_seed(0)
     env.max_steps = 20
 
     randomizer = create_default_randomizer(env)

@@ -102,6 +102,7 @@ def test_domain_param_transforms(env: SimEnv, trafo_class: Type):
     for _ in range(5):
         # Change the selected domain parameter
         new_dp_val = random.random() * env.get_nominal_domain_param()[sel_dp_change]
+        new_dp_val = abs(new_dp_val) + 1e-6  # due to the domain of the new params
         transformed_new_dp_val = wenv.forward(new_dp_val)
         wenv.domain_param = {sel_dp_change: transformed_new_dp_val}  # calls inverse transform
         if not isinstance(inner_env(wenv), SimPyEnv):
