@@ -68,19 +68,11 @@ def init_param(m, **kwargs):
 
     elif isinstance(m, nn.Linear):
         # PyToch's default initalization
-        for name, param in m.named_parameters():
-            if "weight" in name:
-                if param.ndim >= 2:
-                    # Most common case
-                    init.kaiming_uniform_(param.data, a=sqrt(5))
-                else:
-                    init.normal_(param.data)
-            elif "bias" in name:
-                fan_in, _ = init._calculate_fan_in_and_fan_out(param.data)
-                bound = 1 / sqrt(fan_in) if fan_in > 0 else 0
-                init.uniform_(param.data, -bound, bound)
-            else:
-                raise pyrado.KeyErr(keys="weight or bias", container=param)
+        init.kaiming_uniform_(m.weight, a=sqrt(5))
+        if m.bias is not None:
+            fan_in, _ = init._calculate_fan_in_and_fan_out(m.weight)
+            bound = 1 / sqrt(fan_in) if fan_in > 0 else 0
+            init.uniform_(m.bias, -bound, bound)
 
     elif isinstance(m, (nn.RNN, nn.GRU, nn.GRUCell)):
         # PyToch's default initalization
