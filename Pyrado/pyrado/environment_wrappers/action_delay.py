@@ -82,7 +82,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         self._delay = round(domain_param.get("act_delay", self._delay))
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
-        # Forward to EnvWrapper, also handles self._delay
+        # Forward to EnvWrapper, which delegates to self._wrapped_env, also handles self._delay
         init_obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         # Init action queue with the right amount of 0 actions

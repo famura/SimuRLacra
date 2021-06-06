@@ -390,9 +390,9 @@ def test_stateful_standardizer(data_type: str, shape: tuple):
     pyrado.set_seed(0)
 
     if data_type == "numpy":
-        x = 100*np.random.rand(*shape)
+        x = 100 * np.random.rand(*shape)
     elif data_type == "torch":
-        x = 100*to.rand(shape)
+        x = 100 * to.rand(shape)
 
     ss = Standardizer()
 

@@ -29,9 +29,9 @@
 from copy import deepcopy
 
 import numpy as np
-import pyrado
 import pytest
 
+import pyrado
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.domain_randomization.transformations import LogDomainParamTransform
 from pyrado.domain_randomization.utils import wrap_like_other_env

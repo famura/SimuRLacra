@@ -144,7 +144,7 @@ class DomainRandWrapperLive(DomainRandWrapper, Serializable):
             self._randomizer.randomize(num_samples=1)
             domain_param = self._randomizer.get_params(fmt="dict", dtype="numpy")
 
-        # Forward to EnvWrapper
+        # Forward to EnvWrapper, which delegates to self._wrapped_env
         return super().reset(init_state=init_state, domain_param=domain_param)
 
 
@@ -244,7 +244,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
             else:
                 raise pyrado.TypeErr(given=self._buffer, expected_type=[dict, list])
 
-        # Forward to EnvWrapper
+        # Forward to EnvWrapper, which delegates to self._wrapped_env
         return super().reset(init_state=init_state, domain_param=domain_param)
 
     def _get_state(self, state_dict: dict):

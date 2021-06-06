@@ -33,6 +33,7 @@ from tests.conftest import m_needs_bullet, m_needs_vortex
 import pyrado
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.sim_base import SimEnv
 
 
 @pytest.mark.wrapper
@@ -49,7 +50,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
     ids=["bob", "qbb", "bop2d_b", "bop2d_v", "bop5d_b", "bop5d_v"],
     indirect=True,
 )
-def test_act_noise_simple(env):
+def test_act_noise_simple(env: SimEnv):
     # Typical case with zero mean and non-zero std
     wrapped_env = GaussianActNoiseWrapper(env, noise_std=0.2 * np.ones(env.act_space.shape))
     for _ in range(3):
@@ -88,15 +89,9 @@ def test_act_noise_simple(env):
 
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
-    "env",
-    [
-        "default_bob",
-        "default_qbb",
-    ],
-    ids=["bob", "qbb"],
-    indirect=True,
+    "env", ["default_bob", pytest.param("default_bop2d_bt", marks=m_needs_bullet)], ids=["bob", "bop2d"], indirect=True
 )
-def test_order_act_noise_act_norm(env):
+def test_order_act_noise_act_norm(env: SimEnv):
     # First noise wrapper then normalization wrapper
     wrapped_env_noise = GaussianActNoiseWrapper(
         env, noise_mean=0.2 * np.ones(env.act_space.shape), noise_std=0.1 * np.ones(env.act_space.shape)
@@ -118,20 +113,20 @@ def test_order_act_noise_act_norm(env):
         act_norm_noise = wrapped_env_norm_noise.act_space.sample_uniform()
 
         # These samples must be the same since were not passed to _process_act function
-        assert np.all(act_noise_norm == act_norm_noise)
+        assert np.allclose(act_noise_norm, act_norm_noise)
 
     # Process a sampled action
     for i in range(3):
-        # Sample a small random action such that the denormalization doe not map it to the act_space limits
+        # Sample a small random action such that the de-normalization does not map it to the act_space limits
         rand_act = 0.01 * env.act_space.sample_uniform()
 
         pyrado.set_seed(i)
-        o1 = wrapped_env_noise_norm.reset()
+        wrapped_env_noise_norm.reset()
         obs_noise_norm, _, _, _ = wrapped_env_noise_norm.step(rand_act)
 
         pyrado.set_seed(i)
-        o2 = wrapped_env_norm_noise.reset()
+        wrapped_env_norm_noise.reset()
         obs_norm_noise, _, _, _ = wrapped_env_norm_noise.step(rand_act)
 
         # The order of processing (first normalization or first randomization must make a difference)
-        assert not np.all(obs_noise_norm == obs_norm_noise)
+        assert not np.allclose(obs_noise_norm, obs_norm_noise)

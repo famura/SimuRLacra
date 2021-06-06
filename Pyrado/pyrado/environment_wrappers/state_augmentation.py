@@ -78,7 +78,7 @@ class StateAugmentationWrapper(EnvWrapper, Serializable):
         return obs, reward, done, info
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
-        # Forward to EnvWrapper
+        # Forward to EnvWrapper, which delegates to self._wrapped_env
         obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         params = self._params_as_tensor()

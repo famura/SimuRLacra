@@ -123,7 +123,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
             self._get_wrapper_domain_param(domain_param)  # see EnvWrapper
             domain_param = self.inverse_domain_param(domain_param)
 
-        # Forward to EnvWrapper
+        # Forward to EnvWrapper, which delegates to self._wrapped_env
         return super().reset(init_state=init_state, domain_param=domain_param)
 
     @property

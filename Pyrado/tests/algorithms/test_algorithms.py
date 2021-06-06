@@ -192,6 +192,8 @@ def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam)
     ids=["hc_normal", "hc_hyper", "nes", "nes_tr", "nes_symm", "pepg", "power", "cem-fcov", "cem-dcov", "reps"],
 )
 def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
+    pyrado.set_seed(0)
+
     # Hyper-parameters
     common_hparam = dict(max_iter=2, num_init_states_per_domain=4, num_workers=1)
     common_hparam.update(algo_hparam)
