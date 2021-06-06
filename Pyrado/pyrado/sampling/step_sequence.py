@@ -26,12 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import functools
 import math
 import operator
 import random
-from collections.abc import Iterable
-from copy import deepcopy
+from collections.abc import Iterable, Mapping
 from typing import Callable, List, Optional, Sequence, Tuple, Type, Union
 
 import numpy as np
@@ -413,6 +413,11 @@ class StepSequence(Sequence[Step]):
         # Should be a singular element index. Return step proxy.
         return Step(self, _index_to_int(index, self.length))
 
+    def _iter_state_dict(self):
+        """Iterate over the rollout's state dict."""
+        for attr, val in self.__dict__.items():
+            yield attr, val
+
     def __map_tensors(self, mapper, elem):
         if isinstance(elem, dict):
             # Modify dict in-place
@@ -639,8 +644,8 @@ class StepSequence(Sequence[Step]):
 
         shuffled_idcs = random.sample(range(self.length - 2), batch_size)  # - 2 to always have a next step
         shuffled_next_idcs = [i + 1 for i in shuffled_idcs]
-        steps = deepcopy(self[shuffled_idcs])
-        next_steps = deepcopy(self[shuffled_next_idcs])
+        steps = copy.deepcopy(self[shuffled_idcs])
+        next_steps = copy.deepcopy(self[shuffled_next_idcs])
 
         return steps, next_steps
 
@@ -930,6 +935,66 @@ class StepSequence(Sequence[Step]):
             continuous=continuous,
             **other_dict,
         )
+
+    @classmethod
+    def pad(cls, rollout: "StepSequence", len_to_pad_to: int, pad_value: Union[int, float] = 0):
+        """
+        Add steps to the end of a given rollout. The entires of the steps are filled with `pad_value`.
+        So far, only numpy arrays and PyTorch tensors are padded (see `data_format`).
+
+        :param rollout: rollout to be padded, modified in-place
+        :param len_to_pad_to: length of the resulting rollout (without the final state)
+        :param pad_value: scalar value to pad with
+        """
+        if not isinstance(len_to_pad_to, int) or len_to_pad_to < 2:
+            raise pyrado.ValueErr(given=len_to_pad_to, g_constraint=1)
+        if not isinstance(pad_value, (int, float)):
+            raise pyrado.TypeErr(given=pad_value, expected_type=(int, float))
+        if not rollout.continuous:
+            raise pyrado.ValueErr(msg="Padding is currently only supported for continuous rollouts!")
+
+        # Determine how many steps are missing
+        num_pad_steps = len_to_pad_to - len(rollout)
+
+        for attr, val in rollout._iter_state_dict():
+            # Search one level deep
+            if isinstance(val, Mapping):  # e.g. info dicts
+                for k, v in val.items():
+                    if isinstance(v, np.ndarray):
+                        # The padding pattern is a tuple of (n_before, n_after) tuples for each dimension
+                        npad = [(0, num_pad_steps)] + [(0, 0)] * max(v.ndim - 1, 0)
+                        val[k] = np.pad(v, tuple(npad), mode="constant", constant_values=pad_value)
+
+                    elif isinstance(v, to.Tensor):
+                        # The padding pattern is a tuple of (n_before, n_after) for each dimension
+                        npad = [0, num_pad_steps] + [0, 0] * max(v.ndim - 1, 0)
+                        val[k] = to.nn.functional.pad(v, tuple(npad), mode="constant", value=pad_value)
+
+            elif isinstance(val, tuple):  # e.g. hidden states for lstm
+                new_items = []
+                for item in val:
+                    if isinstance(item, np.ndarray):
+                        # The padding pattern is a tuple of (n_before, n_after) tuples for each dimension
+                        npad = [(0, num_pad_steps)] + [(0, 0)] * max(item.ndim - 1, 0)
+                        new_items.append(
+                            np.pad(item, tuple(npad), mode="constant", constant_values=np.asarray(pad_value))
+                        )
+                    elif isinstance(item, to.Tensor):
+                        # The padding pattern is a tuple of (n_before, n_after) for each dimension
+                        npad = [0, num_pad_steps] + [0, 0] * max(item.ndim - 1, 0)
+                        new_items.append(to.nn.functional.pad(item, tuple(npad), mode="constant", value=pad_value))
+                rollout.__setattr__(attr, tuple(new_items))
+
+            else:
+                if isinstance(val, np.ndarray):
+                    # The padding pattern is a tuple of (n_before, n_after) tuples for each dimension
+                    npad = [(0, num_pad_steps)] + [(0, 0)] * max(val.ndim - 1, 0)
+                    rollout.__setattr__(attr, np.pad(val, tuple(npad), mode="constant", constant_values=pad_value))
+
+                elif isinstance(val, to.Tensor):
+                    # The padding pattern is a tuple of (n_before, n_after) for each dimension
+                    npad = [0, num_pad_steps] + [0, 0] * max(val.ndim - 1, 0)
+                    rollout.__setattr__(attr, to.nn.functional.pad(val, tuple(npad), mode="constant", value=pad_value))
 
 
 def discounted_reverse_cumsum(data, gamma: float):
