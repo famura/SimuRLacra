@@ -95,6 +95,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         num_sim_per_round: int,
         num_segments: int = None,
         len_segments: int = None,
+        stop_on_done: bool = True,
         use_rec_act: bool = True,
         num_sbi_rounds: int = 1,
         num_eval_samples: Optional[int] = None,
@@ -136,6 +137,9 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param len_segments: length of the segments in which the rollouts are split into. For every segment, the initial
                              state of the simulation is reset, and thus for every set the features of the trajectories
                              are computed separately. Either specify `num_segments` or `len_segments`.
+        :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space
+                             boundaries. This behavior is save, but can lead to short trajectories which are eventually
+                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).
         :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout
                             during simulation (feed-forward). If `False` there policy is used to generate (potentially)
                             state-dependent actions (feed-back).
@@ -202,6 +206,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.num_real_rollouts = num_real_rollouts
         self.num_segments = num_segments
         self.len_segments = len_segments
+        self.stop_on_done = stop_on_done
         self.use_rec_act = use_rec_act
         self.num_sbi_rounds = num_sbi_rounds
         self.num_eval_samples = num_eval_samples or 10 * 2 ** len(dp_mapping)
@@ -277,6 +282,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             self._embedding,
             self.num_segments,
             self.len_segments,
+            self.stop_on_done,
             rollouts_real,
             self.use_rec_act,
         )

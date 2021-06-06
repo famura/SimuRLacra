@@ -659,6 +659,7 @@ def test_npdr_no_policy_optimization(
         num_segments=num_segments,
         len_segments=len_segments,
         use_rec_act=use_rec_act,
+        stop_on_done=True,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(max_num_epochs=1),  # only train for 1 iteration
         # subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),

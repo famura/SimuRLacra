@@ -123,6 +123,7 @@ if __name__ == "__main__":
         num_eval_samples=100,
         # num_segments=1,
         len_segments=100,
+        stop_on_done=False,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10

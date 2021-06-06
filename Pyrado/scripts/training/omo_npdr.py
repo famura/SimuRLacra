@@ -91,25 +91,25 @@ if __name__ == "__main__":
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
     prior_hparam = dict(
-        low=to.tensor([math.log(dp_nom["m"] * 0.5), dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
-        high=to.tensor([math.log(dp_nom["m"] * 1.5), dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
+        low=to.tensor([math.log(dp_nom["m"] * 0.2), dp_nom["k"] * 0.2, dp_nom["d"] * 0.2]),
+        high=to.tensor([math.log(dp_nom["m"] * 1.8), dp_nom["k"] * 1.8, dp_nom["d"] * 1.8]),
     )
     prior = utils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
         downsampling_factor=1,
-        # len_rollouts=env_sim.max_steps,
+        len_rollouts=env_sim.max_steps,
         # recurrent_network_type=nn.RNN,
         # only_last_output=True,
         # hidden_size=20,
         # num_recurrent_layers=1,
         # output_size=1,
     )
-    embedding = create_embedding(DynamicTimeWarpingEmbedding.name, env_sim.spec, **embedding_hparam)
+    embedding = create_embedding(DeltaStepsEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=30, num_transforms=4)
+    posterior_hparam = dict(model="maf", hidden_features=100, num_transforms=4)
 
     # Algorithm
     algo_hparam = dict(
@@ -122,6 +122,7 @@ if __name__ == "__main__":
         num_eval_samples=2,
         num_segments=2,
         # len_segments=50,
+        stop_on_done=False,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
@@ -136,7 +137,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=4,
+        num_workers=20,
     )
     algo = NPDR(
         ex_dir,

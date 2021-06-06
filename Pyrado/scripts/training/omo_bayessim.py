@@ -86,6 +86,7 @@ if __name__ == "__main__":
         len_segments=args.len_segments,
         num_sbi_rounds=4,
         num_eval_samples=100,
+        stop_on_done=False,
         subrtn_sbi_training_hparam=dict(
             training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4

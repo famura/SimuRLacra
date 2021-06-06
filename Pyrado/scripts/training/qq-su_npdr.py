@@ -196,6 +196,7 @@ if __name__ == "__main__":
         num_eval_samples=2,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
+        stop_on_done=False,
         use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(

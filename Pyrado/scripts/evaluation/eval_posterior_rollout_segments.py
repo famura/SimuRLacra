@@ -288,7 +288,7 @@ if __name__ == "__main__":
                         eval=True,
                         reset_kwargs=dict(init_state=segment_real.states[0, :], domain_param=domain_param),
                         max_steps=segment_real.length,
-                        stop_on_done=False,
+                        stop_on_done=False,  # we can safely ignore the sate boundaries since it will always be in sim
                     )
                     segments_dp.append(sdp)
 
@@ -326,7 +326,7 @@ if __name__ == "__main__":
                 eval=True,
                 reset_kwargs=dict(init_state=segment_real.states[0]),
                 max_steps=segment_real.length,
-                stop_on_done=False,
+                stop_on_done=False,  # we can safely ignore the sate boundaries since it will always be in sim
             )
             segment_nom.append(sn)
             if args.use_rec:

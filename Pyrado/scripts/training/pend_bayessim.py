@@ -99,6 +99,7 @@ if __name__ == "__main__":
         normalize_posterior=False,
         num_eval_samples=1000,
         num_segments=1,
+        stop_on_done=False,
         subrtn_sbi_training_hparam=dict(
             training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4

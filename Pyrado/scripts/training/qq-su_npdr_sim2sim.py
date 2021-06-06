@@ -159,6 +159,7 @@ if __name__ == "__main__":
         num_eval_samples=10,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
+        stop_on_done=False,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10

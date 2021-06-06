@@ -222,7 +222,6 @@ if __name__ == "__main__":
                     prior=prior,
                     env_sim=env_sim,
                     env_real=env_real,
-                    axis_limits=None,
                     marginal_layout=args.layout,
                     legend_labels=legend_labels,
                     color_palette=color_palette,

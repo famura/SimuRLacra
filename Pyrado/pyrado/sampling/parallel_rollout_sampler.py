@@ -169,7 +169,7 @@ def _ps_run_one_reset_kwargs_segment(
         eval=eval,
         reset_kwargs=dict(init_state=init_state, domain_param=domain_param),
         max_steps=len_segment,
-        stop_on_done=False,
+        stop_on_done=False,  # we can safely ignore the sate boundaries since it will always be in sim
     )
 
 

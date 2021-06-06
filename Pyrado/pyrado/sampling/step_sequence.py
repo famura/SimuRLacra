@@ -969,6 +969,8 @@ class StepSequence(Sequence[Step]):
 
         # Determine how many steps are missing
         num_pad_steps = len_to_pad_to - len(rollout)
+        if num_pad_steps < 1:
+            return None  # nothing to do
 
         for attr, val in rollout._iter_state_dict():
             # Search one level deep

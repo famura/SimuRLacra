@@ -111,6 +111,7 @@ if __name__ == "__main__":
         normalize_posterior=False,
         num_eval_samples=20,
         posterior_hparam=posterior_hparam,
+        stop_on_done=False,
         use_rec_act=True,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
