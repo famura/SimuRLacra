@@ -1117,7 +1117,9 @@ def draw_posterior_pairwise_scatter(
                 )
 
     # Format pair axes. Set matplotlib axis limits based on the y-axis of the first column or cast them if were given.
+    trafo_axis = False
     if prior is not None:
+        trafo_axis = True
         # Extract limits from the prior
         if isinstance(prior, BoxUniform):
             if not hasattr(prior, "base_dist"):
@@ -1141,6 +1143,13 @@ def draw_posterior_pairwise_scatter(
         assert axis_limits.ndim == 2 and axis_limits.shape[0] == 2
     else:
         raise pyrado.ValueErr(msg="Neither explicit axis limits nor a prior has been provided!")
+
+    if trafo_axis and env_sim is not None and typed_env(env_sim, DomainParamTransform) is not None:
+        # Some of the domain parameters are assumed to by sbi be in a different space
+        for idx, name in dp_mapping.items():
+            if name in env_sim.trafo_mask:
+                # Transform back to domain parameter space if selected
+                axis_limits[:, idx] = env_sim.inverse(axis_limits[:, idx])
 
     for i, j in idcs_pair:
         dim_x, dim_y = j, i  # dim_x, dim_y specify the data indices
