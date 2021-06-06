@@ -67,7 +67,7 @@ def init_param(m, **kwargs):
             init.normal_(m.data)
 
     elif isinstance(m, nn.Linear):
-        # PyToch's default initalization
+        # PyTorch's default initialization
         init.kaiming_uniform_(m.weight, a=sqrt(5))
         if m.bias is not None:
             fan_in, _ = init._calculate_fan_in_and_fan_out(m.weight)
@@ -75,7 +75,7 @@ def init_param(m, **kwargs):
             init.uniform_(m.bias, -bound, bound)
 
     elif isinstance(m, (nn.RNN, nn.GRU, nn.GRUCell)):
-        # PyToch's default initalization
+        # PyTorch's default initialization
         stdv = 1.0 / sqrt(m.hidden_size)
         for name, param in m.named_parameters():
             init.uniform_(param, -stdv, stdv)
