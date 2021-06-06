@@ -24,5 +24,11 @@ coverage:
   status:
     project:
       default:
-        target: auto
-        threshold: 20%
+        target: auto # minimum coverage ratio that the commit must meet to be considered a success
+        threshold: 5% # allow the coverage to drop by X%, and posting a success status
+        if_ci_failed: error # success, failure, error, or ignore
+    patch: # about the individual commit
+      default:
+        target: 30% # minimum coverage ratio that the commit must meet to be considered a success
+        threshold: 0% # allow the coverage to drop by X%, and posting a success status
+        if_ci_failed: error # success, failure, error, or ignore
