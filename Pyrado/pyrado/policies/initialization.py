@@ -67,6 +67,7 @@ def init_param(m, **kwargs):
             init.normal_(m.data)
 
     elif isinstance(m, nn.Linear):
+        # PyToch's default initalization
         for name, param in m.named_parameters():
             if "weight" in name:
                 if param.ndim >= 2:
@@ -82,6 +83,7 @@ def init_param(m, **kwargs):
                 raise pyrado.KeyErr(keys="weight or bias", container=param)
 
     elif isinstance(m, (nn.RNN, nn.GRU, nn.GRUCell)):
+        # PyToch's default initalization
         stdv = 1.0 / sqrt(m.hidden_size)
         for name, param in m.named_parameters():
             init.uniform_(param, -stdv, stdv)
@@ -89,6 +91,7 @@ def init_param(m, **kwargs):
     elif isinstance(m, (nn.LSTM, nn.LSTMCell)):
         for name, param in m.named_parameters():
             if "t_max" in kwargs:
+                # Custom initialization (see [2])
                 if "weight_ih" in name:
                     # Initialize the input to hidden weights orthogonally
                     # w_ii, w_if, w_ic, w_io
@@ -121,6 +124,7 @@ def init_param(m, **kwargs):
                         nn.init.constant_(param.data, val=0)
                         param.data[m.hidden_size : m.hidden_size * 2].fill_(1)
             else:
+                # PyToch's default initalization
                 stdv = 1.0 / sqrt(m.hidden_size)
                 for name, param in m.named_parameters():
                     init.uniform_(param, -stdv, stdv)
