@@ -980,8 +980,9 @@ class StepSequence(Sequence[Step]):
                         val[k] = np.pad(v, tuple(npad), mode="constant", constant_values=pad_value)
 
                     elif isinstance(v, to.Tensor):
-                        # The padding pattern is a tuple of (n_before, n_after) for each dimension
-                        npad = [0, num_pad_steps] + [0, 0] * max(v.ndim - 1, 0)
+                        # The padding pattern is a tuple of (begin last axis, end last axis, begin 2nd to last axis,
+                        # end 2nd to last axis, begin 3rd to last axis, ...)
+                        npad = [0, 0] * max(v.ndim - 1, 0) + [0, num_pad_steps]
                         val[k] = to.nn.functional.pad(v, tuple(npad), mode="constant", value=pad_value)
 
             elif isinstance(val, tuple):  # e.g. hidden states for lstm
@@ -994,8 +995,9 @@ class StepSequence(Sequence[Step]):
                             np.pad(item, tuple(npad), mode="constant", constant_values=np.asarray(pad_value))
                         )
                     elif isinstance(item, to.Tensor):
-                        # The padding pattern is a tuple of (n_before, n_after) for each dimension
-                        npad = [0, num_pad_steps] + [0, 0] * max(item.ndim - 1, 0)
+                        # The padding pattern is a tuple of (begin last axis, end last axis, begin 2nd to last axis,
+                        # end 2nd to last axis, begin 3rd to last axis, ...)
+                        npad = [0, 0] * max(item.ndim - 1, 0) + [0, num_pad_steps]
                         new_items.append(to.nn.functional.pad(item, tuple(npad), mode="constant", value=pad_value))
                 rollout.__setattr__(attr, tuple(new_items))
 
@@ -1006,8 +1008,9 @@ class StepSequence(Sequence[Step]):
                     rollout.__setattr__(attr, np.pad(val, tuple(npad), mode="constant", constant_values=pad_value))
 
                 elif isinstance(val, to.Tensor):
-                    # The padding pattern is a tuple of (n_before, n_after) for each dimension
-                    npad = [0, num_pad_steps] + [0, 0] * max(val.ndim - 1, 0)
+                    # The padding pattern is a tuple of (begin last axis, end last axis, begin 2nd to last axis,
+                    # end 2nd to last axis, begin 3rd to last axis, ...)
+                    npad = [0, 0] * max(val.ndim - 1, 0) + [0, num_pad_steps]
                     rollout.__setattr__(attr, to.nn.functional.pad(val, tuple(npad), mode="constant", value=pad_value))
 
 
