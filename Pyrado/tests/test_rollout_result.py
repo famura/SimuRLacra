@@ -580,4 +580,4 @@ def test_stepsequence_padding(mock_data, data_format: str, pad_value: Union[int,
     assert np.allclose(ro.rewards[len_orig:], pad_value * np.ones_like(ro.rewards[len_orig:]))
     for k, v in ro.policy_infos.items():
         assert np.allclose(v[len_orig:], pad_value * np.ones_like(v[len_orig:]))
-    # assert ro.length == le.n_orig + 7
+    assert ro.length == len_orig + 7

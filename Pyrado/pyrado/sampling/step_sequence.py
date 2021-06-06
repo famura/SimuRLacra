@@ -278,14 +278,13 @@ class StepSequence(Sequence[Step]):
         :param actions: sequence of action values, the length must be `len(rewards)`
         :param data: additional data lists, their length must be `len(rewards)` or `len(rewards) + 1`
         """
-        # Obtain rollout length from reward list
-        self.length = len(rewards)
-        if self.length == 0:
-            raise pyrado.ShapeErr(msg="StepSequence cannot be empty!")
+        if len(rewards) == 0 or len(observations) == 0 or len(actions) == 0:
+            raise pyrado.ShapeErr(msg="StepSequence must not be empty!")
 
         # Set singular attributes
         self.rollout_info = rollout_info
         self.continuous = continuous
+        self._data_names = []
 
         # Infer if this instance is using numpy arrays or PyTorch tensors
         if data_format is None:
@@ -299,14 +298,23 @@ class StepSequence(Sequence[Step]):
                 data_format = "numpy"
         self._data_format = data_format
 
+        # Add the rewards directly since the length of the StepSequence is derived from it
+        if not isinstance(rewards, (np.ndarray, to.Tensor)):
+            # Stack into one array/tensor
+            value = stack_to_format(rewards, self._data_format)
+        else:
+            # Ensure right array format
+            value = to_format(rewards, self._data_format)
+        # Store in dict
+        self._data_names.append("rewards")
+        self.__dict__["rewards"] = value
+
         # Check for missing extra fields
         missing_fields = StepSequence.required_fields - data.keys()
         if missing_fields:
             raise ValueError(f"Missing required data fields: {missing_fields}")
 
-        # Set mandatory data fields
-        self._data_names = []
-        self.add_data("rewards", rewards)
+        # Set mandatory data fields (rewards are already added)
         self.add_data("observations", observations)
         self.add_data("actions", actions)
 
@@ -350,6 +358,11 @@ class StepSequence(Sequence[Step]):
         return str(self.observations)
 
     @property
+    def length(self) -> int:
+        """Get the length of the rollout (does not include the final step)."""
+        return len(self.rewards)
+
+    @property
     def data_format(self) -> str:
         """Get the name of data format ('torch' or 'numpy')."""
         return self._data_format
@@ -384,6 +397,7 @@ class StepSequence(Sequence[Step]):
         return self.length
 
     def __getitem__(self, index):
+        """Get a slice of steps."""
         if isinstance(index, slice) or isinstance(index, Iterable):
             # Return a StepSequence object with the subset. Build sliced data dict.
             sliced_data = {name: self._slice_entry(self.__dict__[name], index) for name in self._data_names}
@@ -418,15 +432,15 @@ class StepSequence(Sequence[Step]):
         for attr, val in self.__dict__.items():
             yield attr, val
 
-    def __map_tensors(self, mapper, elem):
+    def _map_tensors(self, mapper, elem):
         if isinstance(elem, dict):
             # Modify dict in-place
             for k in elem.keys():
-                elem[k] = self.__map_tensors(mapper, elem[k])
+                elem[k] = self._map_tensors(mapper, elem[k])
             return elem
         if isinstance(elem, tuple):
             # Can't modify in place since it's a tuple
-            return new_tuple(type(elem), (self.__map_tensors(mapper, part) for part in elem))
+            return new_tuple(type(elem), (self._map_tensors(mapper, part) for part in elem))
 
         # Tensor element
         return mapper(elem)
@@ -582,7 +596,7 @@ class StepSequence(Sequence[Step]):
             return
         self._data_format = data_format
         for dn in self._data_names:
-            self.__dict__[dn] = self.__map_tensors(lambda t: to_format(t, data_format, data_type), self.__dict__[dn])
+            self.__dict__[dn] = self._map_tensors(lambda t: to_format(t, data_format, data_type), self.__dict__[dn])
 
     def get_rollout(self, index):
         """
