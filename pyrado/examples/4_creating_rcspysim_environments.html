@@ -1,0 +1,506 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>How to create an RcsPySim environment &mdash; Pyrado 0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="How to create a visualization" href="5_panda3d_visualization.html" />
+    <link rel="prev" title="How to create an algorithm" href="3_algorithm_skeleton.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>How to create an RcsPySim environment</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/examples/4_creating_rcspysim_environments.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-create-an-rcspysim-environment">
+<h1>How to create an RcsPySim environment<a class="headerlink" href="#how-to-create-an-rcspysim-environment" title="Permalink to this headline">¶</a></h1>
+<p>While Pyrado environments are quite easy to implement by inheriting from <cite>SimEnv</cite> or <cite>RealEnv</cite>, the environments
+compatible with <a class="reference external" href="https://github.com/HRI-EU/Rcs">Rcs</a> require an implementation on the Python side as well as on the
+C++ side.</p>
+<p><strong>Part 0: Creating the XML specification</strong></p>
+<p>I assume you already have a config file and the assets describing your complete simulation environment. For
+information on how to create these Rcs-specific config files, you can either look at <a class="reference external" href="https://github.com/HRI-EU/Rcs">Rcs</a>
+or at the other environments in <cite>PATH_TO/SimuRLacra/RcsPySim/config</cite>. Say you created a folder <cite>HelloMichael</cite> in that
+directory, containing at least an Rcs graph file called <cite>gHelloMichael.xml</cite>.</p>
+<p><strong>Part 1: RcsPySim</strong></p>
+<p>For implementing your environment in RcsPySim, it is recommended way to start is by inheriting from <cite>ExperimentConfig</cite>
+which can be found in <cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core</cite>. The subclass, let’s call it <cite>ECHelloMichael</cite>, only
+needs a .cpp file. It is highly recommended to check out the existing ExperimentConfig files for inspiration. Here is a
+basic template:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ExperimentConfig.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;action/THE_ACTION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;action/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;initState/THE_INIT_SPACE_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;observation/THE_OBSERVATION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;observation/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;physics/PhysicsParameterManager.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;physics/PPD_PARAMETER_TO_RANDOMIZE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;physics/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;physics/ForceDisturber.h&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;Rcs_INCLUDES_YOU_NEED.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#ifdef GRAPHICS_AVAILABLE</span>
+<span class="cp">#include</span> <span class="cpf">&lt;RcsViewer.h&gt;</span><span class="cp"></span>
+<span class="cp">#endif</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;OTHER_LIBS&gt;</span><span class="cp"></span>
+
+<span class="k">namespace</span> <span class="nn">Rcs</span>
+<span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">ECHelloMichael</span> <span class="o">:</span> <span class="k">public</span> <span class="n">ExperimentConfig</span>
+<span class="p">{</span>
+
+<span class="k">protected</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="n">ActionModel</span><span class="o">*</span> <span class="n">createActionModel</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// TODO Create an action model.</span>
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="n">ObservationModel</span><span class="o">*</span> <span class="n">createObservationModel</span><span class="p">(){</span>
+    <span class="c1">// TODO Create an observation model.</span>
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">populatePhysicsParameters</span><span class="p">(</span><span class="n">PhysicsParameterManager</span><span class="o">*</span> <span class="n">manager</span><span class="p">){</span>
+    <span class="c1">// TODO (OPTIONAL) Add domain parameters for randomization.</span>
+    <span class="p">}</span>
+
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="n">InitStateSetter</span><span class="o">*</span> <span class="n">createInitStateSetter</span><span class="p">(){</span>
+    <span class="c1">// TODO Create an initial state space model.</span>
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="n">ForceDisturber</span><span class="o">*</span> <span class="n">createForceDisturber</span><span class="p">(){</span>
+    <span class="c1">// TODO (OPTIONAL) Create force a disturber that hinders your agent.</span>
+    <span class="p">}</span>
+
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">initViewer</span><span class="p">(</span><span class="n">Rcs</span><span class="o">::</span><span class="n">Viewer</span><span class="o">*</span> <span class="n">viewer</span><span class="p">){</span>
+<span class="cp">#ifdef GRAPHICS_AVAILABLE</span>
+    <span class="c1">// TODO (OPTIONAL) Initialize the viewer.</span>
+<span class="cp">#endif</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span>
+    <span class="n">getHUDText</span><span class="p">(</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span> <span class="n">linesOut</span><span class="p">,</span>
+        <span class="kt">double</span> <span class="n">currentTime</span><span class="p">,</span>
+        <span class="k">const</span> <span class="n">MatNd</span><span class="o">*</span> <span class="n">obs</span><span class="p">,</span>
+        <span class="k">const</span> <span class="n">MatNd</span><span class="o">*</span> <span class="n">currentAction</span><span class="p">,</span>
+        <span class="n">PhysicsBase</span><span class="o">*</span> <span class="n">simulator</span><span class="p">,</span>
+        <span class="n">PhysicsParameterManager</span><span class="o">*</span> <span class="n">physicsManager</span><span class="p">,</span>
+        <span class="n">ForceDisturber</span><span class="o">*</span> <span class="n">forceDisturber</span><span class="p">)</span> <span class="k">override</span><span class="p">{</span>
+    <span class="c1">// TODO (OPTIONAL) Set the text for the HUD of the viewer.</span>
+    <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="k">static</span> <span class="n">ExperimentConfigRegistration</span><span class="o">&lt;</span><span class="n">ECHelloMichael</span><span class="o">&gt;</span> <span class="n">RegHelloMichael</span><span class="p">(</span><span class="s">&quot;HelloMichael&quot;</span><span class="p">);</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>An important part of every simulation is the initial state. Therefore, we create an initial state setter in
+<cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/initState</cite> by inheriting from <cite>InitStateSetter</cite>. Simply start by copying
+one of the existing <cite>ISS&lt;NAME&gt;.h</cite> / <cite>ISS&lt;NAME&gt;.cpp</cite> pairs, and do the necessary changes, e.g. renaming the class,
+setting a custom initial state space, ect.</p>
+<p>We also need to add our new experiment configuration to <cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core/CMakeLists.txt</cite></p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="s">CORE_SRCS</span>
+    <span class="s">...</span>
+    <span class="s">ECHelloMichael.cpp</span>
+    <span class="s">...</span>
+    <span class="s">initState/ISSHelloMichael.cpp</span>
+    <span class="s">...</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Part 2: Pyrado</strong></p>
+<p>You already made the more difficult part of the implementation. Next, we create the counterpart of <cite>ECHelloMichael</cite> in
+<cite>PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/hello_michael.py</cite>, by inheriting from <cite>RcsSim</cite> which can be
+found in <cite>PATH_TO/SimuRLacra/Pyrado/pyrado/environments/rcspysim/base.py</cite>. Here is a basic template:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">rcsenv</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
+
+
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;BottleFlip&quot;</span><span class="p">))</span>
+
+<span class="k">class</span> <span class="nc">HelloMichaelSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hm&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_dist_force</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="c1"># TODO Forward basic arguments as well as custom arguments to RcsSim&#39;s constructor, which will then pass it to the ECHelloMichael.</span>
+        <span class="n">RcsSim</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">envType</span><span class="o">=</span><span class="s2">&quot;HelloMichael&quot;</span><span class="p">,</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;graphFileName&quot;</span><span class="p">,</span> <span class="s2">&quot;gHelloMichael.xml&quot;</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_dist_force</span> <span class="o">=</span> <span class="n">max_dist_force</span>
+
+    <span class="k">def</span> <span class="nf">_disturbance_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># TODO (OPTIONAL) Generate 3-dim disturbance force. If not used, return `None`.</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># TODO Define `dict` with domain parameter names as keys and their parameter 1-dim values as value.</span>
+
+    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="c1"># TODO Define a Pyrado Task. There are many possibilities here. In general, the tasks operate on `self.state`.</span>
+</pre></div>
+</div>
+<p>Inheriting from <cite>Serializable</cite> and calling <cite>Serializable._init(self, locals())</cite> right at the beginning of the constructor
+is necessary in order to parallelize the rollouts during training later. The <cite>task_args</cite> are forwarded to the constructor
+of <cite>RcsSim</cite>, which is calling <cite>self._create_task()</cite>. The argument <cite>envType</cite> must match the name we passed to the
+C++ registry function above, since it selects which <cite>ExperimentConfig</cite> we are using. Furthermore, it is very important
+which <cite>graphFileName</cite> we are passing. It is good practice to only use one graph file per <cite>RcsSim</cite> child class, and rather
+create a new sibling class of <cite>HelloMichaelSim</cite> and make both inherit from an (abstract) base class <cite>HelloMichaelBaseSim</cite>
+which implements the common parts. The keyword arguments are forwarded to <cite>RcsSim</cite> and eventually to the C++ implementation.
+Examples for <cite>kwargs</cite> are <cite>checkJointLimits: bool</cite> or <cite>collisionConfig: dict</cite>, but there are many more which can also be
+custom to your environment. On the C++ side, these arguments can be retrieved from the member <cite>properties</cite> which exists
+for every <cite>ExperimentConfig</cite>. Two examples are <cite>properties-&gt;getPropertyBool()</cite> to pass a Boolean or <cite>properties-&gt;getChildList()</cite>
+to pass a python dictionary.</p>
+<p><strong>Part 3: Run it</strong></p>
+<p>Now it is time to build RcsPySim</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate pyrado
+<span class="nb">cd</span> RcsPySim/build
+make
+</pre></div>
+</div>
+<p>The easiest way to inspect your simulation now is to create a simple script, let’s call it <cite>sb_hm.py</cite>, in
+<cite>PATH_TO/SimuRLacra/Pyrado/scripts/sandbox</cite>, which creates an instance of <cite>HelloMichaelSim</cite> and runs a idle policy sending
+zero actions all the time. In the following snippet, we chose the physics engine to be Bullet, the time step size as 0.01s
+and the overall time to 10s. Moreover, we are ignoring joint limits, and have no disturbance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rcsenv</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.bottle_flip</span> <span class="kn">import</span> <span class="n">BottleFlipSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">IdlePolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span><span class="p">,</span> <span class="n">after_rollout_query</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
+
+
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Set up environment</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">HelloMichaelSim</span><span class="p">(</span>
+        <span class="n">physicsEngine</span><span class="o">=</span><span class="s2">&quot;Bullet&quot;</span><span class="p">,</span>
+        <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">max_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">max_dist_force</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Set up policy</span>
+        <span class="n">policy</span> <span class="o">=</span> <span class="n">IdlePolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+
+        <span class="c1"># Simulate</span>
+        <span class="n">done</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span>
+                <span class="n">env</span><span class="p">,</span>
+                <span class="n">policy</span><span class="p">,</span>
+                <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">video</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">init_state</span><span class="o">=</span><span class="n">state</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">done</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">param</span> <span class="o">=</span> <span class="n">after_rollout_query</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">ro</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>(optional) Part 4: Run it from C++</strong></p>
+<p>You can also test your environment and policy from C++. This is however a bit more intrigued and still experimental.
+First, we need to create an experiment description xml-file. One possible case is that you ran an experiment, i.e.
+trained a policy. Next you can go to script’s folder, activate the anaconda environment, and run the script</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> PATH_TO/SimuRLacra/Pyrado/scripts/deployment
+conda activate pyrado
+python export_policy_cpp.py
+</pre></div>
+</div>
+<p>This will create an <cite>ex_&lt;CUSTOM&gt;_export.xml</cite> as well as an <cite>policy_export.pt</cite> file.
+If you want the your trained policy to be played back, you need to insert the line</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;policy</span> <span class="na">type=</span><span class="s">&quot;torch&quot;</span> <span class="na">file=</span><span class="s">&quot;policy_export.pt&quot;</span><span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>into the experiment XML-file. However, this is optional. Actually, you don’t really need to run an experiment to use
+this export script. Feel free to change it, or generate the XML-file manually. The important lines in the export script
+ware are:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exp_export_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ex_</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_export.xml&quot;</span><span class="p">)</span>
+<span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="o">.</span><span class="n">save_config_xml</span><span class="p">(</span><span class="n">exp_export_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, you copy the <cite>ex_&lt;CUSTOM&gt;_export.xml</cite> file (and optionally the policy) to the <cite>RcsPySim/config/HelloMichael</cite>
+folder and run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> PATH_TO/SimuRLacra/RcsPySim/build
+bin/TestBotSim -dl <span class="m">2</span> -dir ../config/HelloMichael -f ex_&lt;CUSTOM&gt;_export.xml<span class="sb">`</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="5_panda3d_visualization.html" class="btn btn-neutral float-right" title="How to create a visualization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="3_algorithm_skeleton.html" class="btn btn-neutral float-left" title="How to create an algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
