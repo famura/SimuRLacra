@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Quanser Qube environment using Neural Posterior Domain Randomization
+Script to identify the domain parameters of the Pendulum environment using Neural Posterior Domain Randomization
 """
 from copy import deepcopy
 
@@ -48,7 +48,6 @@ from pyrado.sampling.sbi_embeddings import (
     LastStepEmbedding,
     RNNEmbedding,
 )
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.sbi import create_embedding
 

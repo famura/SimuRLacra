@@ -78,7 +78,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
+    env_sim_hparams = dict(dt=1 / 250.0, max_steps=int(t_end * 250))
     env_sim = QCartPoleSwingUpSim(**env_sim_hparams)
 
     # Create the ground truth target domain and the behavioral policy

@@ -163,6 +163,9 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
                            buffer manually, the circular reset however works the same way
         :param selection: method to draw samples from the buffer, either cyclic or random
         """
+        if selection not in ["cyclic", "random"]:
+            raise pyrado.ValueErr(given=selection, eq_constraint="cyclic or random")
+
         Serializable._init(self, locals())
 
         # Invoke the DomainRandWrapper's constructor
@@ -192,9 +195,9 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
     @selection.setter
     def selection(self, selection: str):
         """Set the selection method."""
-        if not selection.lower() in ["cyclic", "random"]:
+        if selection not in ["cyclic", "random"]:
             raise pyrado.ValueErr(given=selection, eq_constraint="cyclic or random")
-        self._selection = selection.lower()
+        self._selection = selection
 
     def fill_buffer(self, num_domains: int):
         """

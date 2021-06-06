@@ -198,11 +198,49 @@ def merge_dicts_same_dtype(dicts: Sequence[dict], dtype=set) -> dict:
     return merged
 
 
-def to_float_relentless(inp):
+def update_matching_keys_recursively(base_dict: dict, update_dict: dict):
+    """
+    Update a dictionary inplace with several levels of sub dictionaries with the matching entries of another dictionary.
+
+    :param base_dict: dictionary to update
+    :param update_dict: dictionary used for the update
+    :return: updated base_dict
+    """
+    for key, val in update_dict.items():
+        if key in base_dict.keys():
+            # check if types of both entries match
+            if not isinstance(val, type(base_dict[key])):
+                # TODO: How do you handle warning messages?
+                print(
+                    f"Warning: base_dict entry {key} of type {type(base_dict[key])} "
+                    f"was overwritten with object of type {type(val)}"
+                )
+
+            # Update only if key is in original dictionary
+            if isinstance(val, dict):
+                # Potentially recursive
+                dict_at_key = base_dict.get(key, dict())
+                base_dict[key] = update_matching_keys_recursively(dict_at_key, val)
+            else:
+                # Non-recursive
+                base_dict[key] = val
+
+        else:
+            base_dict[key] = val
+            print(
+                f"Warning: base_dict entry '{key}' of type {type(base_dict[key])} and value '{val}' "
+                f"was not defined in 'update_dict' and has been added to 'base_dict'."
+            )
+
+    return base_dict
+
+
+def _to_float(inp):
     """
     Convert a ndarray to a list of floats or to only one float.
     Convert a list of numerical values to a list of floats to only one float.
     Convert a scalar to a float.
+
     :param inp: ndarray, or list, or scalar
     :return: scalar number or list of floats
     """
@@ -219,7 +257,6 @@ def to_float_relentless(inp):
                 pass
         return inp
     else:
-        # Relentless
         try:
             inp = float(inp)
         except Exception:
@@ -231,17 +268,18 @@ def dict_arraylike_to_float(d: dict):
     """
     Convert every scalar array-like entry the provided dict to to a float.
     This function is useful when the metrics (e.g., calculated with numpy) should be saved in a YAML-file.
+
     :param d: input dict with 1-element arrays
     :return d: output dict with float entries where conversion was possible
     """
     for k, v in d.items():
-        d[k] = to_float_relentless(v)
+        d[k] = _to_float(v)
     return d
 
 
 def fill_list_of_arrays(loa: Sequence[np.ndarray], des_len: int, fill_ele=np.nan) -> Sequence[np.ndarray]:
     """
-    Fill a list of arrays with potential unequal length (first axis) will provided elements
+    Fill a list of arrays with potential unequal length (first axis) will provided elements.
 
     :param loa: list of ndarrays
     :param des_len: desired length of the resulting arrays
@@ -288,11 +326,12 @@ def dict_path_access(
              `default_for_last_layer_only` is `True`, an error is raised; in all other cases, the
              default value is returned
     """
-
     result = d
     path_split = path.split(".")
+
     for i, part in enumerate(path_split):
         if part not in result and (i == len(path_split) - 1 or not default_for_last_layer_only):
             return default
         result = result[part]
+
     return result

@@ -47,6 +47,7 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces import BoxSpace
+from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt_once
 
@@ -353,10 +354,10 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
         # Compute the features
         data_real = data_real.unsqueeze(0)  # only one target domain rollout
-        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, 1, len_time_series * data_dim]
+        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, dim_feat]
 
         # Check shape (here no batching and always one rollout)
-        if data_real.shape[0] != 1:
+        if data_real.shape[0] != 1 or data_real.ndim != 2:
             raise pyrado.ShapeErr(given=data_real, expected_match=(1, -1))
 
         return data_real, ro
@@ -400,6 +401,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         for root, dirs, files in os.walk(rollouts_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             rollouts_rec = [pyrado.load(name=f, load_dir=root) for f in files if f.startswith("rollout")]
+            check_all_lengths_equal(rollouts_rec)
         if not rollouts_rec:
             raise pyrado.ValueErr(msg="No rollouts have been found!")
 
@@ -447,10 +449,10 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
 
         # Compute the features
         data_real = data_real.unsqueeze(0)  # only one target domain rollout
-        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, 1, len_time_series * data_dim]
+        data_real = self._embedding(Embedding.pack(data_real))  # shape [1, dim_feat]
 
         # Check shape (here no batching and always one rollout)
-        if data_real.shape[0] != 1:
+        if data_real.shape[0] != 1 or data_real.ndim != 2:
             raise pyrado.ShapeErr(given=data_real, expected_match=(1, -1))
 
         return data_real, ro

@@ -42,6 +42,7 @@ from torch.distributions import Distribution, MultivariateNormal
 from torch.distributions.uniform import Uniform
 
 import pyrado
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
@@ -125,10 +126,10 @@ def draw_posterior_1d(
     dp_mapping: Mapping[int, str],
     dim: Union[int, Tuple[int]],
     prior: Optional[BoxUniform] = None,
+    env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     prob: Optional[to.Tensor] = None,
     condition: Optional[to.Tensor] = None,
-    show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
     grid_res: int = 500,
     normalize_posterior: bool = False,
@@ -149,6 +150,8 @@ def draw_posterior_1d(
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param dim: selected dimension
+    :param env_sim: (randomized) simulation environment a.k.a. source domain used to check if domain parameters have
+                    been transformed by a wrapper
     :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
                      get the ground truth domain parameters
     :param prior: prior distribution used to extract the evaluation/plotting boundaries
@@ -158,9 +161,8 @@ def draw_posterior_1d(
     :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions. `None`
                       can be used in case of a 1-dim domain parameter mapping, else it must be a tensor of shape
                       [num_iter, 1, dim_domain_param]
-    :param show_prior: display the prior as a box
     :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [1 x 2]. Can be set
-                        arbitrarily, but should contain the prior if `show_prior` is `True`.
+                        arbitrarily.
     :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
     :param rescale_posterior: if `True` scale the probabilities to [0, 1], also if `True` the `normalize_posterior`
                               argument is ignored since it would be a wasted computation
@@ -248,6 +250,14 @@ def draw_posterior_1d(
         if prob.shape != (grid_res,):
             raise pyrado.ShapeErr(given=prob, expected_match=(grid_res,))
 
+    # Adjust the axis for the transformed domain parameters
+    if env_sim is not None and typed_env(env_sim, DomainParamTransform) is not None:
+        # Some of the domain parameters are assumed to by sbi be in a different space
+        for idx, name in dp_mapping.items():
+            if name in env_sim.trafo_mask and idx == dim:
+                # Transform back to domain parameter space if selected
+                grid_x = env_sim.inverse(grid_x)
+
     # Plot the posterior
     if transposed:
         ax.plot(prob.numpy(), grid_x.numpy(), **plot_kwargs)
@@ -259,13 +269,9 @@ def draw_posterior_1d(
     # Plot the ground truth parameters
     if dp_gt is not None:
         if transposed:
-            ax.hlines(dp_gt[:, dim], xmin=ax.get_xlim()[0], xmax=ax.get_xlim()[1], colors="k")  # firebrick
+            ax.hlines(dp_gt[:, dim], xmin=ax.get_xlim()[0], xmax=ax.get_xlim()[1], colors="k")
         else:
-            ax.vlines(dp_gt[:, dim], ymin=ax.get_ylim()[0], ymax=ax.get_ylim()[1], colors="k")  # firebrick
-
-    # Plot bounding box for the prior
-    if prior is not None and show_prior:
-        _draw_prior(ax, prior, dim, None, num_dim=1, transposed=transposed)
+            ax.vlines(dp_gt[:, dim], ymin=ax.get_ylim()[0], ymax=ax.get_ylim()[1], colors="k")
 
     # Annotate
     if transposed:
@@ -275,7 +281,6 @@ def draw_posterior_1d(
         ax.set_xlabel(f"${dp_mapping[dim]}$" if x_label == "" else x_label)
         ax.set_ylabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
     ax.set_aspect(1.0 / ax.get_data_ratio(), adjustable="box")
-    ax.set_title(f"")
 
     return plt.gcf()
 
@@ -289,9 +294,9 @@ def draw_posterior_heatmap_2d(
     dp_mapping: Mapping[int, str],
     dims: Tuple[int, int],
     prior: Optional[Union[BoxUniform, MultivariateNormal]] = None,
+    env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     condition: Optional[to.Tensor] = None,
-    show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
     grid_res: int = 100,
     normalize_posterior: bool = False,
@@ -321,15 +326,16 @@ def draw_posterior_heatmap_2d(
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param prior: prior distribution used to extract the evaluation/plotting boundaries
+    :param env_sim: (randomized) simulation environment a.k.a. source domain used to check if domain parameters have
+                    been transformed by a wrapper
     :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
                      get the ground truth domain parameters
     :param dims: selected dimensions
     :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions. `None`
                       can be used in case of a 2-dim domain parameter mapping, else it must be a tensor of shape
                       [num_iter, 1, dim_domain_param]
-    :param show_prior: display the prior as a box
     :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set
-                        arbitrarily, but should contain the prior if `show_prior` is `True`.
+                        arbitrarily.
     :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
     :param rescale_posterior: if `True` scale the probabilities to [0, 1], also if `True` the `normalize_posterior`
                               argument is ignored since it would be a wasted computation
@@ -457,6 +463,17 @@ def draw_posterior_heatmap_2d(
                 prob = to.exp(log_prob)
         prob = prob.reshape(grid_res, grid_res)
 
+        # Adjust the axis for the transformed domain parameters
+        if env_sim is not None and typed_env(env_sim, DomainParamTransform) is not None:
+            # Some of the domain parameters are assumed to by sbi be in a different space
+            for idx, name in dp_mapping.items():
+                if name in env_sim.trafo_mask:
+                    # Transform back to domain parameter space if selected
+                    if idx == dim_x:
+                        grid_x = env_sim.inverse(grid_x)
+                    elif idx == dim_y:
+                        grid_y = env_sim.inverse(grid_y)
+
         # Plot the posterior
         axs.contourf(
             grid_x.numpy(),
@@ -470,10 +487,6 @@ def draw_posterior_heatmap_2d(
         # Plot the ground truth parameters
         if dp_gt is not None:
             axs.scatter(dp_gt[:, dim_x], dp_gt[:, dim_y], **scatter_kwargs)
-
-        # Plot bounding box for the prior
-        if prior is not None and show_prior:
-            _draw_prior(axs, prior, dim_x, dim_y)
 
         # Annotate
         axs.set_aspect(1.0 / axs.get_data_ratio(), adjustable="box")
@@ -515,10 +528,6 @@ def draw_posterior_heatmap_2d(
                 if dp_gt is not None:
                     axs[i, j].scatter(dp_gt[:, dim_x], dp_gt[:, dim_y], **scatter_kwargs)
 
-                # Plot bounding box for the prior
-                if prior is not None and show_prior:
-                    _draw_prior(axs[i, j], prior, dim_x, dim_y)
-
                 # Annotate
                 axs[i, j].set_aspect(1.0 / axs[i, j].get_data_ratio(), adjustable="box")
                 axs[i, j].set_xlabel(f"${dp_mapping[dim_x]}$" if x_label == "" else x_label)
@@ -540,36 +549,6 @@ def draw_posterior_heatmap_2d(
     marginal_prob[1, :] = to.mean(prob, dim=1)
 
     return fig, fig_cb, marginal_prob
-
-
-def _draw_prior(ax, prior: BoxUniform, dim_x: int, dim_y: int, num_dim: int = 2, transposed: bool = False):
-    """Helper function to draw a rectangle for the prior (assuming uniform distribution)"""
-    if not hasattr(prior, "base_dist"):
-        raise AttributeError(
-            "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
-        )
-
-    if num_dim == 1:
-        if transposed:
-            y = [
-                prior.base_dist.support.lower_bound[dim_x],
-                prior.base_dist.support.upper_bound[dim_x],
-            ]  # double-use of x
-            ax.hlines(y, 0, 1, transform=ax.get_xaxis_transform(), lw=1, ls="--", edgecolor="gray", facecolor="none")
-        else:
-            x = [prior.base_dist.support.lower_bound[dim_x], prior.base_dist.support.upper_bound[dim_x]]
-            ax.vlines(x, 0, 1, transform=ax.get_xaxis_transform(), lw=1, ls="--", edgecolor="gray", facecolor="none")
-
-    elif num_dim == 2:
-        x = prior.base_dist.support.lower_bound[dim_x]
-        y = prior.base_dist.support.lower_bound[dim_y]
-        dx = prior.base_dist.support.upper_bound[dim_x] - prior.base_dist.support.lower_bound[dim_x]
-        dy = prior.base_dist.support.upper_bound[dim_y] - prior.base_dist.support.lower_bound[dim_y]
-        rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
-        ax.add_patch(rect)
-
-    else:
-        return NotImplementedError
 
 
 @to.no_grad()
@@ -605,7 +584,8 @@ def draw_posterior_scatter_2d(
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param dims: selected dimensions
     :param prior: prior distribution used to extract the evaluation/plotting boundaries
-    :param env_sim: simulation environment a.k.a. source domain. Used to get the nominal domain parameters.
+    :param env_sim: simulation environment a.k.a. source domain. Used to get the nominal domain parameters ,and to
+                    check if domain parameters have been transformed by a wrapper.
     :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
                      get the ground truth domain parameters
     :param axis_limits: define the lower and upper limits of shape [2, num_domain_param] for each domain parameter.
@@ -760,8 +740,8 @@ def draw_posterior_pairwise_heatmap(
     dp_mapping: Mapping[int, str],
     condition: to.Tensor,
     prior: Optional[Union[BoxUniform, Uniform]] = None,
+    env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
-    show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
     grid_res: int = 100,
     marginal_layout: str = "inside",
@@ -784,12 +764,12 @@ def draw_posterior_pairwise_heatmap(
                       can be used in case of a 2-dim domain parameter mapping, else it must be a tensor of shape
                       [num_iter, 1, dim_domain_param]
     :param prior: prior distribution used to extract the evaluation/plotting boundaries
+    :param env_sim: (randomized) simulation environment a.k.a. source domain used to check if domain parameters have
+                    been transformed by a wrapper
     :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
                      get the ground truth domain parameters
-    :param show_prior: display the prior as a box or as two lines
-    :param dims: selected dimensions
     :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [num_domain_param x 2].
-                        Can be set arbitrarily, but should contain the prior if `show_prior` is `True`.
+                        Can be set arbitrarily.
     :param grid_res: number of elements on one axis of the evaluation gird
     :param marginal_layout: choose between `inside` for plotting the marginals on the diagonal (more dense), and
                            `outside` plotting the marginals on the side (better comparison)
@@ -873,11 +853,11 @@ def draw_posterior_pairwise_heatmap(
             dp_mapping,
             dims=(dim_x, dim_y),
             prior=prior,
+            env_sim=env_sim,
             env_real=env_real,
             condition=condition,
             grid_bounds=grid_bounds_sel,
             grid_res=grid_res,
-            show_prior=show_prior,
             normalize_posterior=normalize_posterior,
             rescale_posterior=rescale_posterior,
             x_label=None,  # will be set later
@@ -917,10 +897,10 @@ def draw_posterior_pairwise_heatmap(
             dp_mapping,
             dim,
             prior=prior,
+            env_sim=env_sim,
             env_real=env_real,
             prob=marginal_probs[dim],
             condition=condition,
-            show_prior=show_prior,
             grid_bounds=grid_bounds_sel,
             grid_res=grid_res,
             normalize_posterior=normalize_posterior,
@@ -970,7 +950,8 @@ def draw_posterior_pairwise_scatter(
     :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
                        Here this mapping must not have more than 2 elements since we can't plot more.
     :param prior: prior distribution used to extract the evaluation/plotting boundaries
-    :param env_sim: simulation environment a.k.a. source domain. Used to get the nominal domain parameters.
+    :param env_sim: simulation environment a.k.a. source domain. Used to get the nominal domain parameters, to check if
+                    domain parameters have been transformed by a wrapper.
     :param env_real: real-world environment a.k.a. target domain. Used in case of a sim-2-sim example to
                      get the ground truth domain parameters
     :param axis_limits: define the lower and upper limits of shape [2, num_domain_param] for each domain parameter.
@@ -1040,7 +1021,8 @@ def draw_posterior_pairwise_scatter(
 
     # Get the nominal domain parameters
     if isinstance(env_sim, (SimEnv, EnvWrapper)):
-        dp_nom = to.tensor([env_sim.domain_param[v] for v in dp_mapping.values()])
+        dp_nom = env_sim.get_nominal_domain_param()
+        dp_nom = to.tensor([dp_nom[v] for v in dp_mapping.values()])
         dp_samples.append(to.atleast_2d(dp_nom))
         if legend_labels is not None:
             legend_labels.append("nom")
@@ -1095,6 +1077,16 @@ def draw_posterior_pairwise_scatter(
         # There is only one sample for the nominal and the ground truth domain parameters, make it opaque
         alphas.append(1.0 if len(dp_samples[idx_obs]) == 1 else alpha)
 
+    # Adjust the data for the transformed domain parameters
+    for idx_obs in range(len(dp_samples)):
+        if len(dp_samples[idx_obs]) > 1:  # do not transform ground truth or nominal
+            if env_sim is not None and typed_env(env_sim, DomainParamTransform) is not None:
+                # Some of the domain parameters are assumed to by sbi be in a different space
+                for idx, name in dp_mapping.items():
+                    if name in env_sim.trafo_mask:
+                        # Transform back to domain parameter space if selected
+                        dp_samples[idx_obs][:, idx] = env_sim.inverse(dp_samples[idx_obs][:, idx])
+
     # Plot data in pair axes
     for i, j in idcs_pair:
         plt.sca(axs[i, j])
@@ -1142,9 +1134,9 @@ def draw_posterior_pairwise_scatter(
         else:
             raise pyrado.TypeErr(given=prior, expected_type=(BoxUniform, MultivariateNormal))
     elif axis_limits is None:
-        i = 1 if marginal_layout == "outside" else 0
-        axis_limits = [axs[i, 1].get_ylim()] + [axs[dim, 0].get_ylim() for dim in range(i + 1, plot_shape[0])]
-        axis_limits = np.array(axis_limits).T
+        axis_limits_min = np.min(to.cat(dp_samples).numpy(), axis=0)
+        axis_limits_max = np.max(to.cat(dp_samples).numpy(), axis=0)
+        axis_limits = np.stack([axis_limits_min, axis_limits_max])
     elif isinstance(axis_limits, np.ndarray):
         assert axis_limits.ndim == 2 and axis_limits.shape[0] == 2
     else:

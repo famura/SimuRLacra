@@ -82,7 +82,10 @@ class NPDR(SBIBase):
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
         self._subrtn_sbi = subrtn_sbi_class(
-            prior=self._sbi_prior, density_estimator=density_estimator, summary_writer=summary_writer
+            prior=self._sbi_prior,
+            density_estimator=density_estimator,
+            device=self.policy.device,
+            summary_writer=summary_writer,
         )
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
@@ -94,8 +97,15 @@ class NPDR(SBIBase):
                 # Add dummy values of variables that are logger later
                 self.logger.add_value("avg log prob", -pyrado.inf)
 
-                # Train the behavioral policy using the nominal domain parameters
-                self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode)  # overrides policy.pt
+                # Train the behavioral policy using the samples obtained from the prior.
+                # Repeat the training if the resulting policy did not exceed the success threshold.
+                domain_params = self._sbi_prior.sample(sample_shape=(self.num_eval_samples,))
+                print_cbt("Training the initial policy using domain parameter sets sampled from prior.", "c")
+                wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
+                    self.train_policy_sim
+                )
+                wrapped_trn_fcn(domain_params, prefix="")  # overrides policy.pt
+
             self.reached_checkpoint()  # setting counter to 0
 
         if self.curr_checkpoint == 0:
@@ -113,10 +123,11 @@ class NPDR(SBIBase):
                 # If the policy depends on the domain-parameters, reset the policy with the
                 # most likely dp-params from the previous round.
                 if self.curr_iter != 0:
+                    pyrado.load("policy.pt", self._save_dir, prefix=f"iter_{self._curr_iter - 1}", obj=self._policy)
                     ml_domain_param = pyrado.load(
                         "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter - 1}"
                     )
-                    self._policy.reset(dict(domain_param=ml_domain_param))
+                    self._policy.reset(**dict(domain_param=ml_domain_param))
 
                 # Rollout files do not exist yet (usual case)
                 self._curr_data_real, _ = SBIBase.collect_data_real(
@@ -233,12 +244,11 @@ class NPDR(SBIBase):
         if self.curr_checkpoint == 3:
             # Policy optimization
             if self._subrtn_policy is not None:
+                # Train the behavioral policy using the posterior samples obtained before.
+                # Repeat the training if the resulting policy did not exceed the success threshold.
                 print_cbt(
                     "Training the next policy using domain parameter sets sampled from the current posterior.", "c"
                 )
-
-                # Train the behavioral policy using the posterior samples obtained before. Repeat the training
-                # if the resulting policy did not exceed the success threshold
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )

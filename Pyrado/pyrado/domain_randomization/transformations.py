@@ -73,6 +73,11 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
             )
         self._mask = mask
 
+    @property
+    def trafo_mask(self) -> Union[List[str], Tuple[str]]:
+        """Get the mask of transformed domain parameters."""
+        return self._mask
+
     def forward_domain_param(self, domain_param: dict) -> dict:
         """
         Map a domain parameter set from the actual domain parameter space to the transformed space.

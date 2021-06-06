@@ -163,10 +163,13 @@ def load_experiment(
         # Extra (prior, posterior, data)
         extra["prior"] = pyrado.load("prior.pt", ex_dir, verbose=True)
         # By default load the latest posterior (latest iteration and the last round)
-        extra["posterior"] = algo.load_posterior(ex_dir, args.iter, args.round, obj=None, verbose=True)
-        # Load the complete data or the data of the given iteration
-        prefix = "" if args.iter == -1 else f"iter_{args.iter}"
-        extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
+        try:
+            extra["posterior"] = algo.load_posterior(ex_dir, args.iter, args.round, obj=None, verbose=True)
+            # Load the complete data or the data of the given iteration
+            prefix = "" if args.iter == -1 else f"iter_{args.iter}"
+            extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
+        except:
+            pass
 
     elif algo.name in ["a2c", "ppo", "ppo2"]:
         # Environment

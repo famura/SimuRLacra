@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Pendulum environment using Neural Posterior Domain Randomization
+Script to identify the domain parameters of the Pendulum environment using BayesSim
 """
 from copy import deepcopy
 
@@ -40,7 +40,9 @@ from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.policies.special.environment_specific import create_pend_excitation_policy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -79,6 +81,10 @@ if __name__ == "__main__":
     # )
     # prior = to.distributions.MultivariateNormal(**prior_hparam)
 
+    # Time series embedding
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
+
     # Behavioral policy
     policy = create_pend_excitation_policy(env_sim, 1)
 
@@ -92,7 +98,6 @@ if __name__ == "__main__":
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=1000,
-        downsampling_factor=1,
         num_segments=1,
         subrtn_sbi_training_hparam=dict(
             training_batch_size=50,  # default: 50
@@ -113,6 +118,7 @@ if __name__ == "__main__":
         policy=policy,
         dp_mapping=dp_mapping,
         prior=prior,
+        embedding=embedding,
         **algo_hparam,
     )
 
@@ -121,6 +127,7 @@ if __name__ == "__main__":
         dict(env=env_hparams, seed=args.seed),
         dict(policy_name=policy.name),
         dict(prior=prior_hparam),
+        dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
     )

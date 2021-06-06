@@ -112,6 +112,7 @@ class BayesSim(SBIBase):
         super().__init__(
             *args,
             num_checkpoints=3,
+            # TODO actually (online) Bayessim does not train the initial policy. See Algorithm 1, line 7 in [2]
             init_checkpoint=-1 if self._online else 0,  # train an initial policy in simulation if online BayesSim
             posterior_hparam=dict(model="mdn_snpe_a"),  # could be something else but SNPE-A is too special in practice
             **kwargs,
@@ -127,6 +128,7 @@ class BayesSim(SBIBase):
         self._subrtn_sbi = SNPE_A(
             prior=self._sbi_prior,
             density_estimator=density_estimator,
+            device=self.policy.device,
             num_components=num_components,
             summary_writer=summary_writer,
         )
@@ -143,8 +145,15 @@ class BayesSim(SBIBase):
                 # Add dummy values of variables that are logger later
                 self.logger.add_value("avg log prob", -pyrado.inf)
 
-                # Train the behavioral policy using the nominal domain parameters
-                self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode)  # overrides policy.pt
+                # Train the behavioral policy using the samples obtained from the prior.
+                # Repeat the training if the resulting policy did not exceed the success threshold.
+                domain_params = self._sbi_prior.sample(sample_shape=(self.num_eval_samples,))
+                print_cbt("Training the initial policy using domain parameter sets sampled from prior.", "c")
+                wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
+                    self.train_policy_sim
+                )
+                wrapped_trn_fcn(domain_params, prefix="")  # overrides policy.pt
+
             self.reached_checkpoint()  # setting counter to 0
 
         if self.curr_checkpoint == 0:
@@ -286,12 +295,11 @@ class BayesSim(SBIBase):
         if self.curr_checkpoint == 3:
             # Policy optimization
             if self._subrtn_policy is not None:
+                # Train the behavioral policy using the posterior samples obtained before.
+                # Repeat the training if the resulting policy did not exceed the success threshold.
                 print_cbt(
                     "Training the next policy using domain parameter sets sampled from the current posterior.", "c"
                 )
-
-                # Train the behavioral policy using the posterior samples obtained before. Repeat the training
-                # if the resulting policy did not exceed the success threshold
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )

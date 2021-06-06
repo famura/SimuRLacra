@@ -27,15 +27,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube environment using Neural Posterior Domain Randomization
+Train an agent to solve the Quanser Qube environment using BayesSim
 """
 import torch as to
 from sbi import utils
-from sbi.inference import SNPE_C
 
 import pyrado
 from pyrado.algorithms.episodic.power import PoWER
-from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
@@ -67,7 +66,7 @@ if __name__ == "__main__":
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
-        f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}",
+        f"{BayesSim.name}_{QQubeSwingUpAndBalanceCtrl.name}",
         num_segs_str + len_seg_str + seed_str,
     )
 
@@ -132,9 +131,6 @@ if __name__ == "__main__":
     )
     embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
-    # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
-
     # Policy optimization subroutine
     subrtn_policy_hparam = dict(
         max_iter=5,
@@ -154,39 +150,34 @@ if __name__ == "__main__":
         max_iter=5,
         num_real_rollouts=num_real_rollouts,
         num_sim_per_round=5000,
-        num_sbi_rounds=3,
+        num_sbi_rounds=2,
         simulation_batch_size=10,
         normalize_posterior=False,
         num_eval_samples=num_eval_samples,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
         use_rec_act=True,
-        posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
-            num_atoms=10,  # default: 10
             training_batch_size=50,  # default: 50
-            learning_rate=3e-4,  # default: 5e-4
+            learning_rate=5e-4,  # default: 5e-4
             validation_fraction=0.2,  # default: 0.1
-            stop_after_epochs=10,  # default: 20
-            discard_prior_samples=False,  # default: False
-            use_combined_loss=True,  # default: False
+            stop_after_epochs=20,  # default: 20
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
+            # max_num_epochs=5,  # only use for debugging
         ),
-        subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        train_initial_policy=True,
         subrtn_policy_snapshot_mode="best",
+        train_initial_policy=True,
         num_workers=args.num_workers,
     )
-    algo = NPDR(
-        ex_dir,
-        env_sim,
-        env_real,
-        policy,
-        dp_mapping,
-        prior,
-        embedding,
-        subrtn_sbi_class=SNPE_C,
+    algo = BayesSim(
+        save_dir=ex_dir,
+        env_sim=env_sim,
+        env_real=env_real,
+        policy=policy,
+        dp_mapping=dp_mapping,
+        prior=prior,
+        embedding=embedding,
         subrtn_policy=subrtn_policy,
         **algo_hparam,
     )
@@ -196,7 +187,6 @@ if __name__ == "__main__":
         dict(env=env_sim_hparams, seed=args.seed),
         dict(prior=prior_hparam),
         dict(embedding=embedding_hparam, embedding_name=embedding.name),
-        dict(posterior_nn=posterior_hparam),
         dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

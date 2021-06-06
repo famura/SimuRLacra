@@ -139,6 +139,21 @@ if __name__ == "__main__":
         help="select data type for plotting, e.g. 'observations' or 'states' (default: 'states')",
     )
 
+    parser.add_argument(
+        "--save_format",
+        nargs="+",
+        type=str,
+        default=["pdf", "pgf", "png"],
+        help="select file format for plot saving, without commas (e.g., 'pdf png')",
+    )
+
+    parser.add_argument(
+        "--console",
+        action="store_true",
+        default=False,
+        help="set flag to not run plt.show. Make sure that the --save flag is set",
+    )
+
     # Parse command line arguments
     args = parser.parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
@@ -350,6 +365,8 @@ if __name__ == "__main__":
         save_dir=ex_dir if args.save else None,
         x_limits=args.cut_rollout,
         data_field=args.data_type,
+        file_format=args.save_format,
     )
 
-    plt.show()
+    if not args.console:
+        plt.show()

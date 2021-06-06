@@ -581,6 +581,7 @@ def plot_rollouts_segment_wise(
     save_dir: Optional[pyrado.PathLike] = None,
     data_field: str = "states",
     cmap_samples: Optional[colors.Colormap] = None,
+    file_format=["pdf", "pgf", "png"],
 ) -> List[plt.Figure]:
     r"""
     Plot the different rollouts in separate figures and the different state dimensions along the columns.
@@ -601,26 +602,26 @@ def plot_rollouts_segment_wise(
     :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
     :param data_field: data field of the rollout, e.g. "states" or "observations"
     :param cmap_samples: color map for the trajectories resulting from different domain parameter samples
+    :param file_format: select the file format to store the plots
     :return: list of handles to the created figures
     """
-    if not plot_type.lower() in ["samples", "confidence"]:
+    if plot_type not in ["samples", "confidence"]:
         raise pyrado.ValueErr(given=plot_type, eq_constraint="samples or confidence")
-    if not data_field.lower() in ["states", "observations"]:
-        raise pyrado.ValueErr(given=plot_type, eq_constraint="states or observations")
+    if data_field not in ["states", "observations"]:
+        raise pyrado.ValueErr(given=data_field, eq_constraint="states or observations")
 
     # Extract the state dimension, and the number of most likely samples from the data
-    dim_state = segments_ground_truth[0][0].get_data_values(data_field.lower())[0, :].size
+    dim_state = segments_ground_truth[0][0].get_data_values(data_field)[0, :].size
     dim_act = segments_ground_truth[0][0].get_data_values("actions")[0, :].size
     num_samples = len(segments_multiple_envs[0][0])
 
     # Extract the state labels if not explicitly given
     if state_labels is None:
         env_spec = segments_ground_truth[0][0].rollout_info.get("env_spec", None)
-        if data_field.lower() == "states":
+        if data_field == "states":
             state_labels = env_spec.state_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
-        elif data_field.lower() == "observations":
+        elif data_field == "observations":
             state_labels = env_spec.obs_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
-
     else:
         if len(state_labels) != dim_state:
             raise pyrado.ShapeErr(given=state_labels, expected_match=(dim_state,))
@@ -647,10 +648,10 @@ def plot_rollouts_segment_wise(
             for segment_gt in segments_ground_truth[idx_r]:
                 axs[idx_state].plot(
                     np.arange(cnt_step[-1], cnt_step[-1] + segment_gt.length),
-                    segment_gt.get_data_values(data_field.lower(), truncate_last=True)[:, idx_state],
+                    segment_gt.get_data_values(data_field, truncate_last=True)[:, idx_state],
                     zorder=0,
                     c="black",
-                    label="target" if cnt_step[-1] == 0 else "",  # only print once
+                    label="target" if cnt_step[-1] == 0 else "",  # print once
                 )
                 cnt_step.append(cnt_step[-1] + segment_gt.length)
 
@@ -659,19 +660,19 @@ def plot_rollouts_segment_wise(
                 for idx_dp, sdp in enumerate(sml):
                     axs[idx_state].plot(
                         np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sdp.length),
-                        sdp.get_data_values(data_field.lower(), truncate_last=True)[:, idx_state],
+                        sdp.get_data_values(data_field, truncate_last=True)[:, idx_state],
                         zorder=2 if idx_dp == 0 else 0,  # most likely on top
-                        c=colors[idx_dp],
+                        c=cmap_samples[idx_dp],
                         ls="--",
                         lw=1.5 if plot_type == "confidence" or idx_dp == 0 else 0.5,
                         alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.4,
                         label=label_samples if cnt_step[idx_seg] == idx_seg == idx_dp == 0 else "",  # print once
                     )
-                    if plot_type.lower() != "samples":
+                    if plot_type != "samples":
                         # Stop here, unless the rollouts of most likely all domain parameters should be plotted
                         break
 
-            if plot_type.lower() == "confidence":
+            if plot_type == "confidence":
                 assert check_all_lengths_equal(segments_multiple_envs[idx_r][0])  # all segments need to be equally long
 
                 states_all = []
@@ -680,7 +681,7 @@ def plot_rollouts_segment_wise(
                     ss_dp = StepSequence.concat(
                         [seg_dp[idx_dp] for seg_dp in [segs_ro for segs_ro in segments_multiple_envs[idx_r]]]
                     )
-                    states = ss_dp.get_data_values(data_field.lower(), truncate_last=True)
+                    states = ss_dp.get_data_values(data_field, truncate_last=True)
                     states_all.append(states)
                 states_all = np.stack(states_all, axis=0)
                 states_mean = np.mean(states_all, axis=0)
@@ -691,25 +692,24 @@ def plot_rollouts_segment_wise(
                     m_i = states_mean[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
                     s_i = states_std[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_state]
                     draw_curve(
-                        "mean_std",
+                        "std",
                         axs[idx_state],
                         pd.DataFrame(dict(mean=m_i, std=s_i)),
                         x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
                         show_legend=False,
-                        curve_label=r"ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
-                        area_label=None,
-                        plot_kwargs=dict(color="gray"),
+                        area_label="2 std" if idx_seg == 0 else None,
+                        plot_kwargs=dict(color=cmap_samples[0]),
                     )
 
             # Plot the nominal simulation's segments
             for idx_seg, sn in enumerate(segments_nominal[idx_r]):
                 axs[idx_state].plot(
                     np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sn.length),
-                    sn.get_data_values(data_field.lower(), truncate_last=True)[:, idx_state],
+                    sn.get_data_values(data_field, truncate_last=True)[:, idx_state],
                     zorder=2,
                     c="steelblue",
                     ls="-.",
-                    label="nom sim" if cnt_step[idx_seg] == 0 else "",  # only print once
+                    label="nom sim" if cnt_step[idx_seg] == 0 else "",  # print once
                 )
 
             axs[idx_state].set_ylabel(state_labels[idx_state])
@@ -725,7 +725,7 @@ def plot_rollouts_segment_wise(
                         segment_gt.get_data_values("actions", truncate_last=False)[:, idx_act],
                         zorder=0,
                         c="black",
-                        label="target" if cnt_step[-1] == 0 else "",  # only print once
+                        label="target" if cnt_step[-1] == 0 else "",  # print once
                     )
                     cnt_step.append(cnt_step[-1] + segment_gt.length)
 
@@ -736,17 +736,17 @@ def plot_rollouts_segment_wise(
                             np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sdp.length),
                             sdp.get_data_values("actions", truncate_last=False)[:, idx_act],
                             zorder=2 if idx_dp == 0 else 0,  # most likely on top
-                            c=colors[idx_dp],
+                            c=cmap_samples[idx_dp],
                             ls="--",
                             lw=1.5 if plot_type == "confidence" or idx_dp == 0 else 0.5,
                             alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.4,
                             label=label_samples if cnt_step[idx_seg] == idx_seg == idx_dp == 0 else "",  # print once
                         )
-                        if plot_type.lower() != "samples":
+                        if plot_type != "samples":
                             # Stop here, unless the rollouts of most likely all domain parameters should be plotted
                             break
 
-                if plot_type.lower() == "confidence":
+                if plot_type == "confidence":
                     len_segs = len(segments_multiple_envs[idx_r][0][0])
                     assert check_all_lengths_equal(
                         segments_multiple_envs[idx_r][0]
@@ -768,14 +768,13 @@ def plot_rollouts_segment_wise(
                         m_i = acts_mean[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_act]
                         s_i = acts_std[cnt_step[idx_seg] : cnt_step[idx_seg] + len_segs, idx_act]
                         draw_curve(
-                            "mean_std",
+                            "std",
                             axs[dim_state + idx_act],
                             pd.DataFrame(dict(mean=m_i, std=s_i)),
                             x_grid=np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + len_segs),
                             show_legend=False,
-                            curve_label="ml sim mean $\pm$ 2 std" if idx_seg == 0 else None,
-                            area_label=None,
-                            plot_kwargs=dict(color="gray"),
+                            area_label="2 std" if idx_seg == 0 else None,
+                            plot_kwargs=dict(color=cmap_samples[0]),
                         )
 
                 # Plot the nominal simulation's segments
@@ -786,7 +785,7 @@ def plot_rollouts_segment_wise(
                         zorder=2,
                         c="steelblue",
                         ls="-.",
-                        label="nom sim" if cnt_step[idx_seg] == 0 else "",  # only print once
+                        label="nom sim" if cnt_step[idx_seg] == 0 else "",  # print once
                     )
 
                 axs[dim_state + idx_act].set_ylabel(act_labels[idx_act])
@@ -812,7 +811,7 @@ def plot_rollouts_segment_wise(
 
         # Save if desired
         if save_dir is not None:
-            for fmt in ["pdf", "pgf", "png"]:
+            for fmt in file_format:
                 os.makedirs(os.path.join(save_dir, "plots"), exist_ok=True)
                 len_seg_str = f"seglen_{segments_ground_truth[0][0].length}"
                 use_rec_str = "_use_rec" if use_rec_str else ""

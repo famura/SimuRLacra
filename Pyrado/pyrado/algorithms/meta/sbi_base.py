@@ -151,9 +151,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param normalize_posterior: if `True` the normalization of the posterior density is enforced by sbi
         :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
         :param subrtn_policy_snapshot_mode: snapshot mode for saving during policy optimization
-        :param train_initial_policy: choose if a policy should be pretrained in the first iteration
-                                     before collecting real rollouts. Choose `False`, if you want to use a pre-defined
-                                     policy.
+        :param train_initial_policy: choose if a policy should be pretrained in the first iteration before collecting
+                                     real rollouts. Choose `False`, if you want to use a pre-defined policy.
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
                                   subroutine until the threshold is exceeded or the for a given number of iterations
         :param warmstart: initialize the policy (and value function) parameters with the one of the previous iteration.
