@@ -393,7 +393,7 @@
         <span class="nb">eval</span><span class="o">=</span><span class="nb">eval</span><span class="p">,</span>
         <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="n">domain_param</span><span class="p">),</span>
         <span class="n">max_steps</span><span class="o">=</span><span class="n">len_segment</span><span class="p">,</span>
-        <span class="n">stop_on_done</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">stop_on_done</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># we can safely ignore the sate boundaries since it will always be in sim</span>
     <span class="p">)</span>
 
 
