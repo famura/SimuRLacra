@@ -334,7 +334,7 @@ class StepSequence(Sequence[Step]):
 
         # Compute rollout bounds from done list (yes this is not exactly safe...)
         # The bounds list has one extra entry 0, this simplifies queries greatly.
-        # bounds[i] = start of rollout i; bounds[i+1]=end of rollout i
+        # bounds[i] = start of rollout i; bounds[i+1] = end of rollout i
         if self.continuous:
             if rollout_bounds is None:
                 rollout_bounds = [0]
@@ -344,11 +344,19 @@ class StepSequence(Sequence[Step]):
             else:
                 # Validate externally passed bounds.
                 for i in range(len(rollout_bounds) - 1):
-                    assert rollout_bounds[i] < rollout_bounds[i + 1]
-                assert rollout_bounds[0] == 0
-                assert rollout_bounds[-1] == self.length
+                    if not rollout_bounds[i] < rollout_bounds[i + 1]:
+                        raise pyrado.ValueErr(
+                            msg=f"The lower rollout bound must be smaller than the upper for every rollout in the "
+                            f"StepSequence, but it is {rollout_bounds[i]} >= {rollout_bounds[i + 1]} for bound {i}!"
+                        )
+                if rollout_bounds[0] != 0:
+                    raise pyrado.ValueErr(given=rollout_bounds[0], eq_constraint=self.length)
+                if rollout_bounds[-1] != self.length:
+                    raise pyrado.ValueErr(given=rollout_bounds[-1], eq_constraint=self.length)
             self._rollout_bounds = np.array(rollout_bounds)
+
         else:
+            # StepSequence of discontinuous rollouts
             self._rollout_bounds = None
 
     def __repr__(self) -> str:
@@ -972,9 +980,14 @@ class StepSequence(Sequence[Step]):
         if num_pad_steps < 1:
             return None  # nothing to do
 
+        # Add the new data
         for attr, val in rollout._iter_state_dict():
+            # Extend the upper rollout bound (this would have to be reworked for non-continuous rollouts)
+            if attr == "_rollout_bounds":
+                rollout._rollout_bounds[1] = len_to_pad_to
+
             # Search one level deep
-            if isinstance(val, Mapping):  # e.g. info dicts
+            elif isinstance(val, Mapping):  # e.g. info dicts
                 for k, v in val.items():
                     if isinstance(v, np.ndarray):
                         # The padding pattern is a tuple of (n_before, n_after) tuples for each dimension

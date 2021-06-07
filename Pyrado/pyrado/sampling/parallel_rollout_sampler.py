@@ -137,6 +137,7 @@ def _ps_run_one_reset_kwargs_segment(
     domain_param: dict,
     init_state: np.ndarray,
     len_segment: int,
+    stop_on_done: bool,
     use_rec: bool,
     idx_r: int,
     cnt_step: int,
@@ -163,14 +164,19 @@ def _ps_run_one_reset_kwargs_segment(
         G.policy.curr_rec = idx_r
         G.policy.curr_step = cnt_step
 
-    return rollout(
+    ro = rollout(
         G.env,
         G.policy,
         eval=eval,
         reset_kwargs=dict(init_state=init_state, domain_param=domain_param),
         max_steps=len_segment,
-        stop_on_done=False,  # we can safely ignore the sate boundaries since it will always be in sim
+        stop_on_done=stop_on_done,
     )
+
+    # Pad if necessary
+    StepSequence.pad(ro, len_segment)
+
+    return ro
 
 
 class ParallelRolloutSampler(SamplerBase, Serializable):

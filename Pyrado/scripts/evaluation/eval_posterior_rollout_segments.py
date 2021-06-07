@@ -249,7 +249,7 @@ if __name__ == "__main__":
 
         # Append all segments for the current target domain rollout
         segments_ml_all = eval_domain_params_with_segmentwise_reset(
-            pool, env_sim, policy, segments_real_all, domain_params_ml_all, args.use_rec
+            pool, env_sim, policy, segments_real_all, domain_params_ml_all, algo.stop_on_done, args.use_rec
         )
 
     # Old solution without parallelization of the rollouts. Only use this when deeply mistrusting the one above.
@@ -288,13 +288,16 @@ if __name__ == "__main__":
                         eval=True,
                         reset_kwargs=dict(init_state=segment_real.states[0, :], domain_param=domain_param),
                         max_steps=segment_real.length,
-                        stop_on_done=False,  # we can safely ignore the sate boundaries since it will always be in sim
+                        stop_on_done=algo.stop_on_done,
                     )
                     segments_dp.append(sdp)
 
                     assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
                     if args.use_rec:
                         check_act_equal(segment_real, sdp)
+
+                    # Pad if necessary
+                    StepSequence.pad(sdp, segment_real.length)
 
                 # Increase step counter for next segment, and append all domain parameter segments
                 cnt_step += segment_real.length
@@ -326,11 +329,14 @@ if __name__ == "__main__":
                 eval=True,
                 reset_kwargs=dict(init_state=segment_real.states[0]),
                 max_steps=segment_real.length,
-                stop_on_done=False,  # we can safely ignore the sate boundaries since it will always be in sim
+                stop_on_done=algo.stop_on_done,
             )
             segment_nom.append(sn)
             if args.use_rec:
                 check_act_equal(segment_real, sn)
+
+            # Pad if necessary
+            StepSequence.pad(sn, segment_real.length)
 
         # Append individual segments
         segments_nom.append(segment_nom)

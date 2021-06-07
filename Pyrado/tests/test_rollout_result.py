@@ -553,7 +553,8 @@ def test_stepsequence_from_pandas(mock_data, given_rewards: bool):
 
 @pytest.mark.parametrize("data_format", ["numpy", "torch"], ids=["numpy", "torch"])
 @pytest.mark.parametrize("pad_value", [0, 0.14], ids=["zero", "somefloat"])
-def test_stepsequence_padding(mock_data, data_format: str, pad_value: Union[int, float]):
+@pytest.mark.parametrize("pad_len", [7], ids=["7"])
+def test_stepsequence_padding(mock_data, data_format: str, pad_value: Union[int, float], pad_len: int):
     # Create too short rollout
     rewards, states, observations, actions, hidden, policy_infos = mock_data
     ro = StepSequence(
@@ -570,7 +571,7 @@ def test_stepsequence_padding(mock_data, data_format: str, pad_value: Union[int,
         ro.torch()
 
     # Pad it
-    StepSequence.pad(ro, len_to_pad_to=len(ro) + 7, pad_value=pad_value)
+    StepSequence.pad(ro, len_to_pad_to=len(ro) + pad_len, pad_value=pad_value)
 
     # Check
     ro.numpy()  # for simplified checking
@@ -580,10 +581,13 @@ def test_stepsequence_padding(mock_data, data_format: str, pad_value: Union[int,
     assert np.allclose(ro.rewards[len_orig:], pad_value * np.ones_like(ro.rewards[len_orig:]))
     for k, v in ro.policy_infos.items():
         assert np.allclose(v[len_orig:], pad_value * np.ones_like(v[len_orig:]))
-    assert ro.length == len_orig + 7
+
+    assert ro.length == len_orig + pad_len
+    assert all(ro.rollout_bounds == np.array([0, len_orig + pad_len]))
+
     assert len(ro.states) == len_orig + 8  # check for final step
     assert len(ro.observations) == len_orig + 8  # check for final step
-    assert len(ro.actions) == len_orig + 7
-    assert len(ro.rewards) == len_orig + 7
+    assert len(ro.actions) == len_orig + pad_len
+    assert len(ro.rewards) == len_orig + pad_len
     for h in ro.hidden:
-        assert len(h) == len_orig + 7
+        assert len(h) == len_orig + pad_len
