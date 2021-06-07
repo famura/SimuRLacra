@@ -30,8 +30,8 @@ from copy import deepcopy
 from typing import List
 
 import pytest
+import sbi.utils as sbiutils
 import torch.nn as nn
-from sbi import utils
 from sbi.inference import SNPE_C
 
 from pyrado.algorithms.base import Algorithm
@@ -615,7 +615,7 @@ def test_npdr_no_policy_optimization(
         low=to.tensor([dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
         high=to.tensor([dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     if embedding_name == LastStepEmbedding.name:

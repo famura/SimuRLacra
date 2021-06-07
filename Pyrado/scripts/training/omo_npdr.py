@@ -33,9 +33,9 @@ import copy
 import math
 
 import numpy as np
+import sbi.utils as sbiutils
 import torch as to
 import torch.nn as nn
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -91,25 +91,25 @@ if __name__ == "__main__":
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
     prior_hparam = dict(
-        low=to.tensor([math.log(dp_nom["m"] * 0.2), dp_nom["k"] * 0.2, dp_nom["d"] * 0.2]),
-        high=to.tensor([math.log(dp_nom["m"] * 1.8), dp_nom["k"] * 1.8, dp_nom["d"] * 1.8]),
+        low=to.tensor([math.log(dp_nom["m"] * 0.5), dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
+        high=to.tensor([math.log(dp_nom["m"] * 1.5), dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
         downsampling_factor=1,
-        len_rollouts=env_sim.max_steps,
+        # len_rollouts=env_sim.max_steps,
         # recurrent_network_type=nn.RNN,
         # only_last_output=True,
         # hidden_size=20,
         # num_recurrent_layers=1,
         # output_size=1,
     )
-    embedding = create_embedding(DeltaStepsEmbedding.name, env_sim.spec, **embedding_hparam)
+    embedding = create_embedding(DynamicTimeWarpingEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=100, num_transforms=4)
+    posterior_hparam = dict(model="maf", hidden_features=30, num_transforms=4)
 
     # Algorithm
     algo_hparam = dict(

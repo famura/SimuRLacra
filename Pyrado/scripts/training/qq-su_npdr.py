@@ -31,9 +31,9 @@ Script to identify the domain parameters of the Pendulum environment using Neura
 """
 import os.path as osp
 
+import sbi.utils as sbiutils
 import torch as to
 import torch.nn as nn
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -165,7 +165,7 @@ if __name__ == "__main__":
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     lstm = pyrado.load("policy.pt", osp.join(pyrado.EXP_DIR, "qq-tspred", "lstm", "2021-05-31_19-48-32"))

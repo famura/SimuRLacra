@@ -5,8 +5,8 @@ Script to identify the domain parameters of the Pendulum environment using Bayes
 from copy import deepcopy
 
 import numpy as np
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 
 import pyrado
 from pyrado.algorithms.meta.bayessim import BayesSim
@@ -69,7 +69,11 @@ if __name__ == "__main__":
         low=to.tensor([dp_nom["m"] * 0.5, dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
         high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
+
+    # Time series embedding
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Time series embedding
     embedding_hparam = dict(downsampling_factor=1)

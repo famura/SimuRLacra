@@ -31,8 +31,8 @@ Train an agent to solve the Pendulum environment using Neural Posterior Domain R
 """
 from copy import deepcopy
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
         high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(

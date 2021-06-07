@@ -29,8 +29,8 @@
 import os.path as osp
 from typing import Optional
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils as utils
 from sbi.inference import SNPE_A
 from sbi.inference.base import simulate_for_sbi
 from torch.utils.tensorboard import SummaryWriter
@@ -112,8 +112,8 @@ class BayesSim(SBIBase):
         super().__init__(
             *args,
             num_checkpoints=3,
-            # TODO actually (online) Bayessim does not train the initial policy. See Algorithm 1, line 7 in [2]
-            init_checkpoint=-1 if self._online else 0,  # train an initial policy in simulation if online BayesSim
+            # Both variants of Bayessim does not train the initial policy. See [1] and Algorithm 1 (line 7) in [2].
+            init_checkpoint=0,  # set to -1 to nevertheless train an initial policy
             posterior_hparam=dict(model="mdn_snpe_a"),  # could be something else but SNPE-A is too special in practice
             **kwargs,
         )
@@ -122,7 +122,7 @@ class BayesSim(SBIBase):
         self.subrtn_sbi_sampling_hparam = subrtn_sbi_sampling_hparam or dict()
 
         # Create the algorithm instance used in sbi, i.e. SNPE-A  which as a few specialities has a
-        density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
+        density_estimator = sbiutils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
         self._subrtn_sbi = SNPE_A(
@@ -152,7 +152,7 @@ class BayesSim(SBIBase):
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(domain_params, prefix="")  # overrides policy.pt
+                wrapped_trn_fcn(domain_params, prefix="", use_rec_init_states=False)  # overrides policy.pt
 
             self.reached_checkpoint()  # setting counter to 0
 
@@ -171,10 +171,11 @@ class BayesSim(SBIBase):
                 # If the policy depends on the domain-parameters, reset the policy with the
                 # most likely dp-params from the previous round.
                 if self.curr_iter != 0:
+                    pyrado.load("policy.pt", self._save_dir, prefix=f"iter_{self._curr_iter - 1}", obj=self._policy)
                     ml_domain_param = pyrado.load(
                         "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter - 1}"
                     )
-                    self._policy.reset(dict(domain_param=ml_domain_param))
+                    self._policy.reset(**dict(domain_param=ml_domain_param))
 
                 # Rollout files do not exist yet (usual case)
                 self._curr_data_real, _ = SBIBase.collect_data_real(
@@ -303,7 +304,9 @@ class BayesSim(SBIBase):
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}")
+                wrapped_trn_fcn(
+                    self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}", use_rec_init_states=True
+                )
 
             self.reached_checkpoint()  # setting counter to 0
 

@@ -29,8 +29,8 @@
 """
 Train an agent to solve the Quanser Qube environment using BayesSim
 """
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 
 import pyrado
 from pyrado.algorithms.episodic.power import PoWER
@@ -117,7 +117,7 @@ if __name__ == "__main__":
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(

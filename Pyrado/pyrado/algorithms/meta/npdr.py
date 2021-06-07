@@ -29,7 +29,7 @@
 import os.path as osp
 from typing import Optional, Type
 
-import sbi.utils as utils
+import sbi.utils as sbiutils
 import torch as to
 from sbi.inference.base import simulate_for_sbi
 from sbi.inference.snpe import PosteriorEstimator
@@ -78,7 +78,7 @@ class NPDR(SBIBase):
         self.subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
 
         # Create the algorithm instance used in sbi, e.g. SNPE-B/C or SNLE
-        density_estimator = utils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
+        density_estimator = sbiutils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
         self._subrtn_sbi = subrtn_sbi_class(
@@ -104,7 +104,7 @@ class NPDR(SBIBase):
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(domain_params, prefix="")  # overrides policy.pt
+                wrapped_trn_fcn(domain_params, prefix="", use_rec_init_states=False)  # overrides policy.pt
 
             self.reached_checkpoint()  # setting counter to 0
 
@@ -252,7 +252,9 @@ class NPDR(SBIBase):
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}")
+                wrapped_trn_fcn(
+                    self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}", use_rec_init_states=True
+                )
 
             self.reached_checkpoint()  # setting counter to 0
 

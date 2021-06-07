@@ -132,14 +132,20 @@ class Embedding(ABC, nn.Module):
                 self._state_data_mask = np.concatenate(  # to select the states from the joint data
                     [state_data_mask, np.zeros(spec.act_space.flat_dim, dtype=np.bool_)]
                 )
+            else:
+                state_data_mask = np.ones(spec.state_space.flat_dim)
             if act_mask_labels is not None:
                 act_data_mask = spec.act_space.create_mask(act_mask_labels)
                 self._act_data_mask = np.concatenate(  # to select the states from the joint data
                     [np.zeros(spec.state_space.flat_dim, dtype=np.bool_), act_data_mask]
                 )
-            self.data_mask = np.concatenate([mask for mask in [state_data_mask, act_data_mask] if mask is not None])
+            else:
+                act_data_mask = np.ones(spec.act_space.flat_dim)
+            self.data_mask = np.concatenate([mask for mask in [state_data_mask, act_data_mask]])
             if len(self.data_mask) != spec.state_space.flat_dim + spec.act_space.flat_dim:
-                raise pyrado.ShapeErr(given=self.data_mask, expected_match=(self._dim_data_orig,))
+                raise pyrado.ShapeErr(
+                    given=self.data_mask, expected_match=(spec.state_space.flat_dim + spec.act_space.flat_dim,)
+                )
 
         # Manage device
         if not use_cuda:

@@ -29,8 +29,8 @@
 """
 Train an agent to solve the Quanser Qube environment using Neural Posterior Domain Randomization
 """
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -118,7 +118,7 @@ if __name__ == "__main__":
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(

@@ -32,8 +32,8 @@ Domain parameter identification experiment on the Mini-Golf environment using Ne
 import copy
 import math
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -94,6 +94,7 @@ if __name__ == "__main__":
         obstacleright_pos_offset_y=0.1,
         obstacleright_rot_offset_c=-15 / 180 * math.pi,
     )
+    env_real.reset()  # need to call reset for RcsPySim envs to actually create a new simulation with the new params
 
     # Behavioral policy
     policy_hparam = dict(
@@ -139,10 +140,10 @@ if __name__ == "__main__":
                 dp_nom["ball_radius"] * 0.5,
                 dp_nom["ball_mass"] * 0.5,
                 dp_nom["club_mass"] * 0.5,
-                dp_nom["ball_friction_coefficient"] * 0.5,
+                dp_nom["ball_friction_coefficient"] * 0.0,
                 0,  # ball_rolling_friction_coefficient
                 0,  # ball_slip
-                dp_nom["ground_friction_coefficient"] * 0.5,
+                dp_nom["ground_friction_coefficient"] * 0.0,
                 -0.2,  # obstacleleft_pos_offset_x
                 -0.2,  # obstacleleft_pos_offset_y
                 -math.pi / 2,  # obstacleleft_rot_offset_c
@@ -156,10 +157,10 @@ if __name__ == "__main__":
                 dp_nom["ball_radius"] * 1.5,
                 dp_nom["ball_mass"] * 1.5,
                 dp_nom["club_mass"] * 1.5,
-                dp_nom["ball_friction_coefficient"] * 1.5,
+                dp_nom["ball_friction_coefficient"] * 2.0,
                 1e-4,  # ball_rolling_friction_coefficient
                 1e-3,  # ball_slip
-                dp_nom["ground_friction_coefficient"] * 1.5,
+                dp_nom["ground_friction_coefficient"] * 2.0,
                 0.2,  # obstacleleft_pos_offset_x
                 0.2,  # obstacleleft_pos_offset_y
                 math.pi / 2,  # obstacleleft_rot_offset_c
@@ -169,7 +170,7 @@ if __name__ == "__main__":
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
@@ -180,17 +181,18 @@ if __name__ == "__main__":
         # hidden_size=20,
         # num_recurrent_layers=1,
         # output_size=1,
+        state_mask_labels=("Ball_X", "Ball_Y"),
     )
     embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
+    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=8)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=2000,
+        num_sim_per_round=1000,
         num_sbi_rounds=3,
         simulation_batch_size=10,
         normalize_posterior=False,
@@ -212,7 +214,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        num_workers=12,
+        num_workers=20,
     )
     algo = NPDR(
         save_dir=ex_dir,

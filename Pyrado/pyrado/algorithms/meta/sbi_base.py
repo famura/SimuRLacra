@@ -33,9 +33,9 @@ from copy import deepcopy
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Union
 
 import numpy as np
+import sbi.utils as sbiutils
 import torch as to
 from colorama import Fore, Style
-from sbi import utils as utils
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils.user_input_checks import prepare_for_sbi
@@ -246,6 +246,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         pyrado.save(self._env_real, "env_real.pkl", self._save_dir)
         pyrado.save(embedding, "embedding.pt", self._save_dir)
         pyrado.save(prior, "prior.pt", self._save_dir)
+        pyrado.save(policy, "policy_init.pt", self._save_dir, use_state_dict=True)
 
     @property
     def subroutine_policy(self) -> Algorithm:
@@ -290,7 +291,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
-    def get_latest_proposal_prev_iter(self) -> Union[utils.BoxUniform, DirectPosterior]:
+    def get_latest_proposal_prev_iter(self) -> Union[sbiutils.BoxUniform, DirectPosterior]:
         """
         Get either the prior or the conditioned posterior from the (last round of) previous iteration.
 
@@ -704,7 +705,9 @@ class SBIBase(InterruptableAlgorithm, ABC):
         env.ring_idx = 0
         print_cbt(f"Filled the environment's buffer with {len(env.buffer)} domain parameters sets.", "g")
 
-    def train_policy_sim(self, domain_params: to.Tensor, prefix: str, cnt_rep: int) -> float:
+    def train_policy_sim(
+        self, domain_params: to.Tensor, prefix: str, cnt_rep: int, use_rec_init_states: bool = True
+    ) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
@@ -712,6 +715,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
                               samples and D is the number of domain parameters]
         :param prefix: set a prefix to the saved file name, use "" for no prefix
         :param cnt_rep: current repetition count, coming from the wrapper function
+        :param use_rec_init_states: if `True`, the previous rollout will be loaded to extract the initial states, and
+                                    sync them with the recorded ones
         :return: estimated return of the trained policy in the target domain
         """
         if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):
@@ -721,13 +726,15 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
 
         # Set the initial state spaces of the simulation environment to match the observed initial states
-        rollouts_real = pyrado.load("rollouts_real.pkl", self._save_dir, prefix=prefix)
-        init_states_real = np.stack([ro.states[0, :] for ro in rollouts_real])
-        if not init_states_real.shape == (len(rollouts_real), self._env_sim_trn.state_space.flat_dim):
-            raise pyrado.ShapeErr(
-                given=init_states_real, expected_match=(len(rollouts_real), self._env_sim_trn.state_space.flat_dim)
-            )
-        self._env_sim_trn.wrapped_env.init_space = DiscreteSpace(init_states_real)
+        if use_rec_init_states:
+            rollouts_real = pyrado.load("rollouts_real.pkl", self._save_dir, prefix=prefix)
+            init_states_real = np.stack([ro.states[0, :] for ro in rollouts_real])
+            if not init_states_real.shape == (len(rollouts_real), self._env_sim_trn.state_space.flat_dim):
+                raise pyrado.ShapeErr(
+                    given=init_states_real, expected_match=(len(rollouts_real), self._env_sim_trn.state_space.flat_dim)
+                )
+            inner_env(self._env_sim_trn).init_space = DiscreteSpace(init_states_real)
+            print_cbt("The simulation environment's initial states have been set to the recorded ones.", "w")
 
         # Reset the subroutine algorithm which includes resetting the exploration
         self._cnt_samples += self._subrtn_policy.sample_count
@@ -812,4 +819,4 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.__dict__["_subrtn_sbi"]._summary_writer = summary_writer
 
         # Set the internal sbi construction callable given the predefined posterior hyper-parameter.
-        self.__dict__["_subrtn_sbi"]._build_neural_net = utils.posterior_nn(**self.posterior_hparam)
+        self.__dict__["_subrtn_sbi"]._build_neural_net = sbiutils.posterior_nn(**self.posterior_hparam)

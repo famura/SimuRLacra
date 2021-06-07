@@ -30,14 +30,13 @@ from copy import deepcopy
 from typing import Any, List, Mapping, Optional, Sequence, Tuple, Union
 
 import numpy as np
+import sbi.utils as sbiutils
 import seaborn as sns
 import torch as to
-from matplotlib import patches
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
 from matplotlib.ticker import ScalarFormatter
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
-from sbi.utils import BoxUniform
 from torch.distributions import Distribution, MultivariateNormal
 from torch.distributions.uniform import Uniform
 
@@ -125,7 +124,7 @@ def draw_posterior_1d(
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dim: Union[int, Tuple[int]],
-    prior: Optional[BoxUniform] = None,
+    prior: Optional[sbiutils.BoxUniform] = None,
     env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     prob: Optional[to.Tensor] = None,
@@ -216,7 +215,7 @@ def draw_posterior_1d(
         grid_bounds = to.atleast_2d(grid_bounds)
         if not grid_bounds.shape == (1, 2):
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(1, 2))
-    elif isinstance(prior, BoxUniform):
+    elif isinstance(prior, sbiutils.BoxUniform):
         if not hasattr(prior, "base_dist"):
             raise AttributeError(
                 "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
@@ -293,7 +292,7 @@ def draw_posterior_heatmap_2d(
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     dims: Tuple[int, int],
-    prior: Optional[Union[BoxUniform, MultivariateNormal]] = None,
+    prior: Optional[Union[sbiutils.BoxUniform, MultivariateNormal]] = None,
     env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     condition: Optional[to.Tensor] = None,
@@ -415,7 +414,7 @@ def draw_posterior_heatmap_2d(
         grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
         if grid_bounds.shape != (2, 2):
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(2, 2))
-    elif isinstance(prior, BoxUniform):
+    elif isinstance(prior, sbiutils.BoxUniform):
         if not hasattr(prior, "base_dist"):
             raise AttributeError(
                 "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
@@ -557,7 +556,7 @@ def draw_posterior_scatter_2d(
     dp_samples: List[to.Tensor],
     dp_mapping: Mapping[int, str],
     dims: Tuple[int, int],
-    prior: Optional[Union[BoxUniform, MultivariateNormal]] = None,
+    prior: Optional[Union[sbiutils.BoxUniform, MultivariateNormal]] = None,
     env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     axis_limits: Optional[np.array] = None,
@@ -687,7 +686,7 @@ def draw_posterior_scatter_2d(
     # Format pair axes. Set matplotlib axis limits based on the y-axis of the first column or cast them if were given.
     if prior is not None:
         # Extract limits from the prior
-        if isinstance(prior, BoxUniform):
+        if isinstance(prior, sbiutils.BoxUniform):
             if not hasattr(prior, "base_dist"):
                 raise AttributeError(
                     "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."
@@ -739,7 +738,7 @@ def draw_posterior_pairwise_heatmap(
     data_real: to.Tensor,
     dp_mapping: Mapping[int, str],
     condition: to.Tensor,
-    prior: Optional[Union[BoxUniform, Uniform]] = None,
+    prior: Optional[Union[sbiutils.BoxUniform, Uniform]] = None,
     env_sim: Optional[Union[SimEnv, EnvWrapper]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
@@ -926,7 +925,7 @@ def draw_posterior_pairwise_scatter(
     axs: plt.Axes,
     dp_samples: List[to.Tensor],
     dp_mapping: Mapping[int, str],
-    prior: Optional[Union[BoxUniform, Uniform]] = None,
+    prior: Optional[Union[sbiutils.BoxUniform, Uniform]] = None,
     env_sim: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     env_real: Optional[Union[SimEnv, DomainRandWrapperBuffer]] = None,
     axis_limits: Optional[np.array] = None,
@@ -1121,7 +1120,7 @@ def draw_posterior_pairwise_scatter(
     if prior is not None:
         trafo_axis = True
         # Extract limits from the prior
-        if isinstance(prior, BoxUniform):
+        if isinstance(prior, sbiutils.BoxUniform):
             if not hasattr(prior, "base_dist"):
                 raise AttributeError(
                     "The prior does not have the attribute base_distr! Maybe you are using a sbi version < 0.15."

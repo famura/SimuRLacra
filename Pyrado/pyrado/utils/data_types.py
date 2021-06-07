@@ -208,9 +208,9 @@ def update_matching_keys_recursively(base_dict: dict, update_dict: dict):
     """
     for key, val in update_dict.items():
         if key in base_dict.keys():
-            # check if types of both entries match
+            # Check if types of both entries match
             if not isinstance(val, type(base_dict[key])):
-                # TODO: How do you handle warning messages?
+                # TODO: How do you handle warning messages? --> I would say either you want this and there is no print, or you dont want this and revert back to the old behavior
                 print(
                     f"Warning: base_dict entry {key} of type {type(base_dict[key])} "
                     f"was overwritten with object of type {type(val)}"
@@ -226,11 +226,8 @@ def update_matching_keys_recursively(base_dict: dict, update_dict: dict):
                 base_dict[key] = val
 
         else:
+            # Key did not exist, add it
             base_dict[key] = val
-            print(
-                f"Warning: base_dict entry '{key}' of type {type(base_dict[key])} and value '{val}' "
-                f"was not defined in 'update_dict' and has been added to 'base_dict'."
-            )
 
     return base_dict
 

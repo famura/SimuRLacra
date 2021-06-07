@@ -39,7 +39,7 @@ Note that this script is supposed to work only on a single condition/real-rollou
 
 import os.path as osp
 
-import sbi.utils as utils
+import sbi.utils as sbiutils
 import torch as to
 from sbi.inference import SNPE_C
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     # Prior
     prior_hparam = dict(low=-3 * to.ones((5,)), high=3 * to.ones((5,)))
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Embedding
     embedding = LastStepEmbedding(env_sim.spec, RolloutSamplerForSBI.get_dim_data(env_sim.spec))

@@ -780,7 +780,7 @@ def test_update_matching_keys_recursively(base, updater):
     assert base["y"] is None
     assert base["z"] == 26
     assert base["c"]["c2"] == 4
-    assert base.get("x", None) is None
+    assert base.get("x", None) == 13
 
     # Check shallow changed
     assert base["a"] == updater["a"]
