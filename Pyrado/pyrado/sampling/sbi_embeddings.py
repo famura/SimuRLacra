@@ -31,6 +31,7 @@ from typing import Callable, List, Optional, Tuple, Union
 from warnings import warn
 
 import dtw
+import numpy as np
 import torch as to
 import torch.nn as nn
 from torch.nn.utils import convert_parameters as cp
@@ -90,7 +91,8 @@ class Embedding(ABC, nn.Module):
         spec: EnvSpec,
         dim_data: int,
         downsampling_factor: int = 1,
-        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
+        state_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
+        act_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
         use_cuda: bool = False,
     ):
         """
@@ -101,8 +103,10 @@ class Embedding(ABC, nn.Module):
                          states and action spaces' flat dimensions. This number is doubled if the embedding
                          target domain data.
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default
-        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
-                          by default `None` to select all states
+        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.
+                                  By default `None` all states are passed to sbi.
+        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.
+                                  By default `None` all actions are passed to sbi.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(spec, EnvSpec):
@@ -116,8 +120,26 @@ class Embedding(ABC, nn.Module):
 
         self._env_spec = spec
         self._dim_data_orig = 2 * dim_data if self.requires_target_domain_data else dim_data
-        self._idcs_data = tuple(idcs_data) if idcs_data is not None else None
         self.downsampling_factor = downsampling_factor
+
+        # Optionally create a mask for filtering the states and actions that are passed to sbi
+        self._state_data_mask, self._act_data_mask = None, None
+        if state_mask_labels is None and act_mask_labels is None:
+            self.data_mask = None
+        else:
+            if state_mask_labels is not None:
+                state_data_mask = spec.state_space.create_mask(state_mask_labels)
+                self._state_data_mask = np.concatenate(  # to select the states from the joint data
+                    [state_data_mask, np.zeros(spec.act_space.flat_dim, dtype=np.bool_)]
+                )
+            if act_mask_labels is not None:
+                act_data_mask = spec.act_space.create_mask(act_mask_labels)
+                self._act_data_mask = np.concatenate(  # to select the states from the joint data
+                    [np.zeros(spec.state_space.flat_dim, dtype=np.bool_), act_data_mask]
+                )
+            self.data_mask = np.concatenate([mask for mask in [state_data_mask, act_data_mask] if mask is not None])
+            if len(self.data_mask) != spec.state_space.flat_dim + spec.act_space.flat_dim:
+                raise pyrado.ShapeErr(given=self.data_mask, expected_match=(self._dim_data_orig,))
 
         # Manage device
         if not use_cuda:
@@ -239,8 +261,8 @@ class LastStepEmbedding(Embedding):
 
     @property
     def dim_output(self) -> int:
-        if self._idcs_data is not None:
-            return len(self._idcs_data)
+        if self._state_data_mask is not None:
+            return np.count_nonzero(self._state_data_mask)
         else:
             return self._env_spec.state_space.flat_dim
 
@@ -252,8 +274,8 @@ class LastStepEmbedding(Embedding):
         :param data: states and actions of a rollout or segment to be transformed for inference
         :return: last states as a vector
         """
-        if self._idcs_data is not None:
-            last_state = data[-1, self._idcs_data]
+        if self._state_data_mask is not None:
+            last_state = data[-1, self._state_data_mask]
         else:
             last_state = data[-1, : self._env_spec.state_space.flat_dim]
         return last_state.reshape(-1)
@@ -277,7 +299,8 @@ class AllStepsEmbedding(Embedding):
         dim_data: int,
         len_rollouts: int,
         downsampling_factor: int = 1,
-        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
+        state_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
+        act_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
         use_cuda: bool = False,
     ):
         """
@@ -291,22 +314,24 @@ class AllStepsEmbedding(Embedding):
                              (must be the same for all rollouts)
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
                                     base class before calling `summary_statistic()`
-        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
-                          by default `None` to select all states
+        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.
+                                  By default `None` all states are passed to sbi.
+        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.
+                                  By default `None` all actions are passed to sbi.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(len_rollouts, int) or len_rollouts < 0:
             raise pyrado.ValueErr(given=len_rollouts, eq_constraint="1 (int)")
 
-        super().__init__(spec, dim_data, downsampling_factor, idcs_data, use_cuda)
+        super().__init__(spec, dim_data, downsampling_factor, state_mask_labels, act_mask_labels, use_cuda)
 
         self._len_rollouts = (len_rollouts - 1) // downsampling_factor + 1
         self.to(self.device)
 
     @property
     def dim_output(self) -> int:
-        if self._idcs_data is not None:
-            return len(self._idcs_data) * self._len_rollouts
+        if self._state_data_mask is not None:
+            return np.count_nonzero(self._state_data_mask) * self._len_rollouts
         else:
             return self._env_spec.state_space.flat_dim * self._len_rollouts
 
@@ -323,8 +348,8 @@ class AllStepsEmbedding(Embedding):
             raise pyrado.ShapeErr(msg="The data tensor needs to contain at least two samples!")
 
         # Extract the states, and compute the deltas
-        if self._idcs_data is not None:
-            states = data[:, self._idcs_data]
+        if self._state_data_mask is not None:
+            states = data[:, self._state_data_mask]
         else:
             states = data[:, : self._env_spec.state_space.flat_dim]
 
@@ -346,7 +371,8 @@ class DeltaStepsEmbedding(Embedding):
         dim_data: int,
         len_rollouts: int,
         downsampling_factor: int = 1,
-        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
+        state_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
+        act_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
         use_cuda: bool = False,
     ):
         """
@@ -360,22 +386,24 @@ class DeltaStepsEmbedding(Embedding):
                              (must be the same for all rollouts)
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
                                     base class before calling `summary_statistic()`
-        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
-                          by default `None` to select all states
+        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.
+                                  By default `None` all states are passed to sbi.
+        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.
+                                  By default `None` all actions are passed to sbi.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(len_rollouts, int) or len_rollouts < 0:
             raise pyrado.ValueErr(given=len_rollouts, eq_constraint="1 (int)")
 
-        super().__init__(spec, dim_data, downsampling_factor, idcs_data, use_cuda)
+        super().__init__(spec, dim_data, downsampling_factor, state_mask_labels, act_mask_labels, use_cuda)
 
         self._len_rollouts = (len_rollouts - 1) // downsampling_factor
         self.to(self.device)
 
     @property
     def dim_output(self) -> int:
-        if self._idcs_data is not None:
-            return self._len_rollouts * len(self._idcs_data)
+        if self._state_data_mask is not None:
+            return self._len_rollouts * np.count_nonzero(self._state_data_mask)
         else:
             return self._len_rollouts * self._env_spec.state_space.flat_dim
 
@@ -391,8 +419,8 @@ class DeltaStepsEmbedding(Embedding):
             raise pyrado.ShapeErr(msg="The data tensor needs to contain at least two samples!")
 
         # Extract the states, and compute the deltas
-        if self._idcs_data is not None:
-            states = data[:, self._idcs_data]
+        if self._state_data_mask is not None:
+            states = data[:, self._state_data_mask]
         else:
             states = data[:, : self._env_spec.state_space.flat_dim]
 
@@ -414,11 +442,14 @@ class BayesSimEmbedding(Embedding):
 
     @property
     def dim_output(self) -> int:
-        if self._idcs_data is not None:
-            state_dim = len(self._idcs_data)
+        if self._state_data_mask is not None:
+            state_dim = np.count_nonzero(self._state_data_mask)
         else:
-            state_dim = self._env_spec.state_space.shape[0]
-        act_dim = self._env_spec.act_space.shape[0]  # always use the full action
+            state_dim = self._env_spec.state_space.flat_dim
+        if self._act_data_mask is not None:
+            act_dim = np.count_nonzero(self._act_data_mask)
+        else:
+            act_dim = self._env_spec.act_space.flat_dim
         return state_dim * act_dim + 2 * state_dim
 
     @to.no_grad()
@@ -437,14 +468,17 @@ class BayesSimEmbedding(Embedding):
             raise pyrado.ShapeErr(msg="The data tensor needs to contain at least two samples!")
 
         # Extract the states and actions from the data
-        if self._idcs_data is not None:
-            state = data[:, self._idcs_data]
+        if self._state_data_mask is not None:
+            state = data[:, self._state_data_mask]
         else:
             state = data[:, : self._env_spec.state_space.flat_dim]
-        act = data[:-1, self._env_spec.state_space.flat_dim :]  # need to cut off one act due to using the delta state
-        state_diff = state[1:] - state[:-1]
+        if self._act_data_mask is not None:
+            act = data[:-1, self._act_data_mask]  # cut off one act due to using the delta state
+        else:
+            act = data[:-1, self._env_spec.state_space.flat_dim :]  # cut off one act due to using the delta state
 
         # Compute the statistics
+        state_diff = state[1:] - state[:-1]
         act_state_dot_prod = to.einsum("ij,ik->jk", act, state_diff).view(-1)
         mean_state_diff = to.mean(state_diff, dim=0)
         var_state_diff = to.mean((mean_state_diff - state_diff) ** 2, dim=0)
@@ -476,7 +510,8 @@ class RNNEmbedding(Embedding):
         dropout: float = 0.0,
         init_param_kwargs: Optional[dict] = None,
         downsampling_factor: int = 1,
-        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
+        state_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
+        act_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
         use_cuda: bool = False,
         **recurrent_net_kwargs,
     ):
@@ -502,11 +537,13 @@ class RNNEmbedding(Embedding):
         :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net's constructor
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
                                     base class before calling `summary_statistic()`
-        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
-                          by default `None` to select all states
+        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.
+                                  By default `None` all states are passed to sbi.
+        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.
+                                  By default `None` all actions are passed to sbi.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        super().__init__(spec, dim_data, downsampling_factor, idcs_data, use_cuda)
+        super().__init__(spec, dim_data, downsampling_factor, state_mask_labels, act_mask_labels, use_cuda)
 
         # Check the time sequence length if necessary
         if not only_last_output:
@@ -521,7 +558,7 @@ class RNNEmbedding(Embedding):
 
         # Create the RNN layers
         self.rnn_layers = recurrent_network_type(
-            input_size=dim_data if idcs_data is None else len(idcs_data),
+            input_size=dim_data if self.data_mask is None else np.count_nonzero(self.data_mask),  # includes actions
             hidden_size=hidden_size,
             num_layers=num_recurrent_layers,
             bias=True,
@@ -571,8 +608,8 @@ class RNNEmbedding(Embedding):
         :param data: states and actions of a rollout or segment to be transformed for inference
         :return: features obtained from the RNN at every time step, fattened into a vector
         """
-        if self._idcs_data is not None:
-            data = data[:, self._idcs_data]
+        if self.data_mask is not None:
+            data = data[:, self.data_mask]
 
         # Reshape the data to match the shape desired by PyTorch
         data = data.unsqueeze(1)  # shape [len_time_series, 1, dim_data]
@@ -609,7 +646,8 @@ class DynamicTimeWarpingEmbedding(Embedding):
         dim_data: int,
         step_pattern: Optional[Union[str, dtw.stepPattern.StepPattern]] = None,
         downsampling_factor: int = 1,
-        idcs_data: Optional[Union[Tuple[int], List[int]]] = None,
+        state_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
+        act_mask_labels: Optional[Union[Tuple[Union[int, str]], List[Union[int, str]]]] = None,
         use_cuda: bool = False,
     ):
         """
@@ -624,19 +662,25 @@ class DynamicTimeWarpingEmbedding(Embedding):
                              unsmoothed recursion step pattern pass `dtw.stepPattern.rabinerJuangStepPattern(6, "c")`
         :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the
                                     base class before calling `summary_statistic()`
-        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),
-                          by default `None` to select all states
+        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.
+                                  By default `None` all states are passed to sbi.
+        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.
+                                  By default `None` all actions are passed to sbi.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
 
-        super().__init__(spec, dim_data, downsampling_factor, idcs_data, use_cuda)
+        super().__init__(spec, dim_data, downsampling_factor, state_mask_labels, act_mask_labels, use_cuda)
 
         self.step_pattern = step_pattern or "symmetric2"
         self.to(self.device)
 
     @property
     def dim_output(self) -> int:
-        return self._env_spec.state_space.flat_dim if self._idcs_data is None else len(self._idcs_data)
+        return (
+            self._env_spec.state_space.flat_dim
+            if self._state_data_mask is None
+            else np.count_nonzero(self._state_data_mask)
+        )
 
     @to.no_grad()
     def summary_statistic(self, data: to.Tensor) -> to.Tensor:
@@ -657,9 +701,9 @@ class DynamicTimeWarpingEmbedding(Embedding):
         data_sim, data_real = to.chunk(data, 2, dim=1)
 
         # Extract the states
-        if self._idcs_data is not None:
-            data_sim = data_sim[:, self._idcs_data]
-            data_real = data_real[:, self._idcs_data]
+        if self._state_data_mask is not None:
+            data_sim = data_sim[:, self._state_data_mask]
+            data_real = data_real[:, self._state_data_mask]
         else:
             data_sim = data_sim[:, : self._env_spec.state_space.flat_dim]
             data_real = data_real[:, : self._env_spec.state_space.flat_dim]

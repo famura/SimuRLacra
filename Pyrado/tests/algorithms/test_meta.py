@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
+from typing import List
 
 import pytest
 import torch.nn as nn
@@ -433,7 +434,7 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
         num_epoch=3,
         batch_size=128,
         std_init=0.75,
-        lr=7e-04,
+        lr=3e-04,
         max_grad_norm=1.0,
         num_workers=1,
     )
@@ -563,7 +564,19 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     ],
     ids=["laststep", "allsteps", "deltasteps", "bayessim", "dtw", "rnn"],
 )
-@pytest.mark.parametrize("idcs_data", [None, (0, 1)], ids=["allstatedims", "selstatedim"])
+@pytest.mark.parametrize(
+    "state_mask_labels, act_mask_labels",
+    [
+        (None, None),
+        (
+            ["alpha", "theta"],
+            [
+                "V",
+            ],
+        ),
+    ],
+    ids=["alldims", "seldims"],
+)
 @pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
 @pytest.mark.parametrize("num_real_rollouts", [2], ids=["2ros"])
 @pytest.mark.parametrize("num_sbi_rounds", [1, 2], ids=["1round", "2rounds"])
@@ -572,7 +585,8 @@ def test_npdr_no_policy_optimization(
     ex_dir,
     env: SimEnv,
     embedding_name: str,
-    idcs_data: Union[None, Tuple[int]],
+    state_mask_labels: Union[None, List[str]],
+    act_mask_labels: Union[None, List[str]],
     num_segments: int,
     len_segments: int,
     num_real_rollouts: int,
@@ -605,30 +619,45 @@ def test_npdr_no_policy_optimization(
 
     # Time series embedding
     if embedding_name == LastStepEmbedding.name:
-        embedding = LastStepEmbedding(env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), idcs_data=idcs_data)
+        embedding = LastStepEmbedding(
+            env.spec,
+            RolloutSamplerForSBI.get_dim_data(env.spec),
+            state_mask_labels=state_mask_labels,
+            act_mask_labels=act_mask_labels,
+        )
     elif embedding_name == AllStepsEmbedding.name:
         embedding = AllStepsEmbedding(
             env.spec,
             RolloutSamplerForSBI.get_dim_data(env.spec),
             env.max_steps,
-            downsampling_factor=7,
-            idcs_data=idcs_data,
+            downsampling_factor=3,
+            state_mask_labels=state_mask_labels,
+            act_mask_labels=act_mask_labels,
         )
     elif embedding_name == DeltaStepsEmbedding.name:
         embedding = DeltaStepsEmbedding(
             env.spec,
             RolloutSamplerForSBI.get_dim_data(env.spec),
             env.max_steps,
-            downsampling_factor=7,
-            idcs_data=idcs_data,
+            downsampling_factor=3,
+            state_mask_labels=state_mask_labels,
+            act_mask_labels=act_mask_labels,
         )
     elif embedding_name == BayesSimEmbedding.name:
         embedding = BayesSimEmbedding(
-            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=7, idcs_data=idcs_data
+            env.spec,
+            RolloutSamplerForSBI.get_dim_data(env.spec),
+            downsampling_factor=3,
+            state_mask_labels=state_mask_labels,
+            act_mask_labels=act_mask_labels,
         )
     elif embedding_name == DynamicTimeWarpingEmbedding.name:
         embedding = DynamicTimeWarpingEmbedding(
-            env.spec, RolloutSamplerForSBI.get_dim_data(env.spec), downsampling_factor=7, idcs_data=idcs_data
+            env.spec,
+            RolloutSamplerForSBI.get_dim_data(env.spec),
+            downsampling_factor=3,
+            state_mask_labels=state_mask_labels,
+            act_mask_labels=act_mask_labels,
         )
     elif embedding_name == RNNEmbedding.name:
         embedding = RNNEmbedding(
@@ -639,7 +668,8 @@ def test_npdr_no_policy_optimization(
             output_size=1,
             len_rollouts=env.max_steps,
             downsampling_factor=1,
-            idcs_data=idcs_data,
+            state_mask_labels=state_mask_labels,
+            act_mask_labels=act_mask_labels,
         )
     else:
         raise NotImplementedError
@@ -718,7 +748,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
         max_iter=1,
         eps_clip=0.12648736789309026,
         min_steps=10 * env.max_steps,
-        num_epoch=7,
+        num_epoch=3,
         batch_size=150,
         std_init=0.7573286998997557,
         lr=6.999956625305722e-04,

@@ -172,7 +172,7 @@ if __name__ == "__main__":
     # lstm = pyrado.load("policy.pt", osp.join(pyrado.EXP_DIR, "qq-tspred", "lstm", "2021-06-02_17-01-07"))
     embedding_hparam = dict(
         downsampling_factor=1,
-        # idcs_data=(0, 1, 4),
+        # state_mask_labels=(0, 1, 4),
         len_rollouts=env_sim.max_steps,
         recurrent_network_type=nn.LSTM,
         hidden_size=lstm.rnn_layers.hidden_size,

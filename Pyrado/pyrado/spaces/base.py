@@ -100,13 +100,13 @@ class Space(ABC):
         else:
             return False
 
-    def create_mask(self, *idcs):
+    def create_mask(self, *idcs) -> np.ndarray:
         """
         Create a mask selecting the given indices from this space.
-        Every index should be a number or a name in labels.
+        Every index should be a number or a name in the space's labels.
 
         :param idcs: index list, which can either be varargs or a single iterable
-        :return: mask array with 1 at each index
+        :return: boolean mask array with `1` at each index specified by the indices or labels
         """
         mask = np.zeros(self.shape, dtype=np.bool_)
 
@@ -114,22 +114,23 @@ class Space(ABC):
             # Unwrap single iterable argument
             idcs = idcs[0]
 
-        labels = self.labels
         # Set selected values to 1
         for idx in idcs:
             if isinstance(idx, str):
                 # Handle labels
-                if labels is None:
+                if self.labels is None:
                     raise pyrado.TypeErr(msg="The space must be labeled to use label-based indexing!")
-                for idx_label, label in np.ndenumerate(labels):
+                for idx_label, label in np.ndenumerate(self.labels):
                     if label == idx:
                         idx = idx_label
                         break
                 else:
                     raise pyrado.ValueErr(msg=f"Label {idx} not found in {self}")
+
             if np.all(mask[idx] == 1):
-                label_desc = f" ({labels[idx]})" if labels is not None else ""
+                label_desc = f" ({self.labels[idx]})" if self.labels is not None else ""
                 raise pyrado.ValueErr(msg=f"Duplicate index {idx}{label_desc}")
+
             mask[idx] = 1
 
         return mask

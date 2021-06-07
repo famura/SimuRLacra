@@ -968,8 +968,8 @@ class StepSequence(Sequence[Step]):
         :param len_to_pad_to: length of the resulting rollout (without the final state)
         :param pad_value: scalar value to pad with
         """
-        if not isinstance(len_to_pad_to, int) or len_to_pad_to < 2:
-            raise pyrado.ValueErr(given=len_to_pad_to, g_constraint=1)
+        if not isinstance(len_to_pad_to, int) or len_to_pad_to < 1:
+            raise pyrado.ValueErr(given=len_to_pad_to, ge_constraint=1)
         if not isinstance(pad_value, (int, float)):
             raise pyrado.TypeErr(given=pad_value, expected_type=(int, float))
         if not rollout.continuous:
