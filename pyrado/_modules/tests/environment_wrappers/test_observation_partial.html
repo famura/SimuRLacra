@@ -306,8 +306,7 @@
     <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="test_mask_from_indices"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_mask_from_indices">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
-<span class="k">def</span> <span class="nf">test_mask_from_indices</span><span class="p">():</span>
+<div class="viewcode-block" id="test_mask_from_indices"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_mask_from_indices">[docs]</a><span class="k">def</span> <span class="nf">test_mask_from_indices</span><span class="p">():</span>
     <span class="c1"># Test the create_mask helper separately</span>
     <span class="n">space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
@@ -316,8 +315,7 @@
     <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="test_mask_from_labels"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_mask_from_labels">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
-<span class="k">def</span> <span class="nf">test_mask_from_labels</span><span class="p">():</span>
+<div class="viewcode-block" id="test_mask_from_labels"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_mask_from_labels">[docs]</a><span class="k">def</span> <span class="nf">test_mask_from_labels</span><span class="p">():</span>
     <span class="c1"># Test the create_mask helper separately</span>
     <span class="n">space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">])</span>
     <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">]</span>

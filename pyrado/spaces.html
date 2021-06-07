@@ -304,15 +304,15 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyrado.spaces.base.Space.create_mask">
-<span class="sig-name descname"><span class="pre">create_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">idcs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.create_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.create_mask" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">idcs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.create_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.spaces.base.Space.create_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a mask selecting the given indices from this space.
-Every index should be a number or a name in labels.</p>
+Every index should be a number or a name in the space’s labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>idcs</strong> – index list, which can either be varargs or a single iterable</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>mask array with 1 at each index</p>
+<dd class="field-even"><p>boolean mask array with <cite>1</cite> at each index specified by the indices or labels</p>
 </dd>
 </dl>
 </dd></dl>

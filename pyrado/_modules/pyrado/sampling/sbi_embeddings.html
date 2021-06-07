@@ -255,6 +255,7 @@
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="kn">import</span> <span class="nn">dtw</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">torch.nn.utils</span> <span class="kn">import</span> <span class="n">convert_parameters</span> <span class="k">as</span> <span class="n">cp</span>
@@ -314,7 +315,8 @@
         <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
         <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">idcs_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -325,8 +327,10 @@
 <span class="sd">                         states and action spaces&#39; flat dimensions. This number is doubled if the embedding</span>
 <span class="sd">                         target domain data.</span>
 <span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, no downsampling by default</span>
-<span class="sd">        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),</span>
-<span class="sd">                          by default `None` to select all states</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">):</span>
@@ -340,8 +344,26 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span> <span class="o">=</span> <span class="n">spec</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dim_data_orig</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dim_data</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_target_domain_data</span> <span class="k">else</span> <span class="n">dim_data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">idcs_data</span><span class="p">)</span> <span class="k">if</span> <span class="n">idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">downsampling_factor</span> <span class="o">=</span> <span class="n">downsampling_factor</span>
+
+        <span class="c1"># Optionally create a mask for filtering the states and actions that are passed to sbi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">state_mask_labels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">act_mask_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">state_mask_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">state_data_mask</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">state_mask_labels</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>  <span class="c1"># to select the states from the joint data</span>
+                    <span class="p">[</span><span class="n">state_data_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">act_mask_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">act_data_mask</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">act_mask_labels</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>  <span class="c1"># to select the states from the joint data</span>
+                    <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">),</span> <span class="n">act_data_mask</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">mask</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="p">[</span><span class="n">state_data_mask</span><span class="p">,</span> <span class="n">act_data_mask</span><span class="p">]</span> <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">)</span> <span class="o">!=</span> <span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="o">+</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dim_data_orig</span><span class="p">,))</span>
 
         <span class="c1"># Manage device</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">use_cuda</span><span class="p">:</span>
@@ -463,8 +485,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
 
@@ -476,8 +498,8 @@
 <span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
 <span class="sd">        :return: last states as a vector</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">last_state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">last_state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">last_state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">last_state</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div></div>
@@ -501,7 +523,8 @@
         <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">len_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">idcs_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -515,22 +538,24 @@
 <span class="sd">                             (must be the same for all rollouts)</span>
 <span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
 <span class="sd">                                    base class before calling `summary_statistic()`</span>
-<span class="sd">        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),</span>
-<span class="sd">                          by default `None` to select all states</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_rollouts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">idcs_data</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">=</span> <span class="p">(</span><span class="n">len_rollouts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">downsampling_factor</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span>
 
@@ -547,8 +572,8 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor needs to contain at least two samples!&quot;</span><span class="p">)</span>
 
         <span class="c1"># Extract the states, and compute the deltas</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
 
@@ -570,7 +595,8 @@
         <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">len_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">idcs_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -584,22 +610,24 @@
 <span class="sd">                             (must be the same for all rollouts)</span>
 <span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
 <span class="sd">                                    base class before calling `summary_statistic()`</span>
-<span class="sd">        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),</span>
-<span class="sd">                          by default `None` to select all states</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">len_rollouts</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">len_rollouts</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 (int)&quot;</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">idcs_data</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">=</span> <span class="p">(</span><span class="n">len_rollouts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">downsampling_factor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_rollouts</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
 
@@ -615,8 +643,8 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor needs to contain at least two samples!&quot;</span><span class="p">)</span>
 
         <span class="c1"># Extract the states, and compute the deltas</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">states</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
 
@@ -638,11 +666,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">state_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">state_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">act_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># always use the full action</span>
+            <span class="n">state_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">act_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">act_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span>
         <span class="k">return</span> <span class="n">state_dim</span> <span class="o">*</span> <span class="n">act_dim</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">state_dim</span>
 
 <div class="viewcode-block" id="BayesSimEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.BayesSimEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
@@ -661,14 +692,17 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data tensor needs to contain at least two samples!&quot;</span><span class="p">)</span>
 
         <span class="c1"># Extract the states and actions from the data</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
-        <span class="n">act</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="p">:]</span>  <span class="c1"># need to cut off one act due to using the delta state</span>
-        <span class="n">state_diff</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_data_mask</span><span class="p">]</span>  <span class="c1"># cut off one act due to using the delta state</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="p">:]</span>  <span class="c1"># cut off one act due to using the delta state</span>
 
         <span class="c1"># Compute the statistics</span>
+        <span class="n">state_diff</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">act_state_dot_prod</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ij,ik-&gt;jk&quot;</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">state_diff</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">mean_state_diff</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">state_diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">var_state_diff</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">mean_state_diff</span> <span class="o">-</span> <span class="n">state_diff</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -700,7 +734,8 @@
         <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">idcs_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -726,11 +761,13 @@
 <span class="sd">        :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net&#39;s constructor</span>
 <span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
 <span class="sd">                                    base class before calling `summary_statistic()`</span>
-<span class="sd">        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),</span>
-<span class="sd">                          by default `None` to select all states</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">idcs_data</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
         <span class="c1"># Check the time sequence length if necessary</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">only_last_output</span><span class="p">:</span>
@@ -745,7 +782,7 @@
 
         <span class="c1"># Create the RNN layers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span> <span class="o">=</span> <span class="n">recurrent_network_type</span><span class="p">(</span>
-            <span class="n">input_size</span><span class="o">=</span><span class="n">dim_data</span> <span class="k">if</span> <span class="n">idcs_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">idcs_data</span><span class="p">),</span>
+            <span class="n">input_size</span><span class="o">=</span><span class="n">dim_data</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">),</span>  <span class="c1"># includes actions</span>
             <span class="n">hidden_size</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span>
             <span class="n">num_layers</span><span class="o">=</span><span class="n">num_recurrent_layers</span><span class="p">,</span>
             <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -795,8 +832,8 @@
 <span class="sd">        :param data: states and actions of a rollout or segment to be transformed for inference</span>
 <span class="sd">        :return: features obtained from the RNN at every time step, fattened into a vector</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_mask</span><span class="p">]</span>
 
         <span class="c1"># Reshape the data to match the shape desired by PyTorch</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># shape [len_time_series, 1, dim_data]</span>
@@ -833,7 +870,8 @@
         <span class="n">dim_data</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">step_pattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dtw</span><span class="o">.</span><span class="n">stepPattern</span><span class="o">.</span><span class="n">StepPattern</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">downsampling_factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">idcs_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -848,19 +886,25 @@
 <span class="sd">                             unsmoothed recursion step pattern pass `dtw.stepPattern.rabinerJuangStepPattern(6, &quot;c&quot;)`</span>
 <span class="sd">        :param downsampling_factor: skip evey `downsampling_factor` time series sample, the downsampling is done in the</span>
 <span class="sd">                                    base class before calling `summary_statistic()`</span>
-<span class="sd">        :param idcs_data: list or tuple of integers to select specific states from the data (always using all actions),</span>
-<span class="sd">                          by default `None` to select all states</span>
+<span class="sd">        :param state_mask_labels: list or tuple of integers or stings to select specific states from their space.</span>
+<span class="sd">                                  By default `None` all states are passed to sbi.</span>
+<span class="sd">        :param act_mask_labels: list or tuple of integers or stings to select specific actions from their space.</span>
+<span class="sd">                                  By default `None` all actions are passed to sbi.</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">idcs_data</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dim_data</span><span class="p">,</span> <span class="n">downsampling_factor</span><span class="p">,</span> <span class="n">state_mask_labels</span><span class="p">,</span> <span class="n">act_mask_labels</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">step_pattern</span> <span class="o">=</span> <span class="n">step_pattern</span> <span class="ow">or</span> <span class="s2">&quot;symmetric2&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dim_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">)</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="DynamicTimeWarpingEmbedding.summary_statistic"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sbi_embeddings.DynamicTimeWarpingEmbedding.summary_statistic">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">summary_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
@@ -881,9 +925,9 @@
         <span class="n">data_sim</span><span class="p">,</span> <span class="n">data_real</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># Extract the states</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">data_sim</span> <span class="o">=</span> <span class="n">data_sim</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">]</span>
-            <span class="n">data_real</span> <span class="o">=</span> <span class="n">data_real</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs_data</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_sim</span> <span class="o">=</span> <span class="n">data_sim</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
+            <span class="n">data_real</span> <span class="o">=</span> <span class="n">data_real</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_data_mask</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">data_sim</span> <span class="o">=</span> <span class="n">data_sim</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
             <span class="n">data_real</span> <span class="o">=</span> <span class="n">data_real</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">]</span>
