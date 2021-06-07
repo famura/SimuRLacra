@@ -558,7 +558,7 @@
 
         <span class="c1"># Compute rollout bounds from done list (yes this is not exactly safe...)</span>
         <span class="c1"># The bounds list has one extra entry 0, this simplifies queries greatly.</span>
-        <span class="c1"># bounds[i] = start of rollout i; bounds[i+1]=end of rollout i</span>
+        <span class="c1"># bounds[i] = start of rollout i; bounds[i+1] = end of rollout i</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rollout_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">rollout_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -568,11 +568,19 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Validate externally passed bounds.</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rollout_bounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-                    <span class="k">assert</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
-                <span class="k">assert</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The lower rollout bound must be smaller than the upper for every rollout in the &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;StepSequence, but it is </span><span class="si">{</span><span class="n">rollout_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2"> &gt;= </span><span class="si">{</span><span class="n">rollout_bounds</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> for bound </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">!&quot;</span>
+                        <span class="p">)</span>
+                <span class="k">if</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">rollout_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">rollout_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">rollout_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rollout_bounds</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># StepSequence of discontinuous rollouts</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -1196,9 +1204,14 @@
         <span class="k">if</span> <span class="n">num_pad_steps</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># nothing to do</span>
 
+        <span class="c1"># Add the new data</span>
         <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rollout</span><span class="o">.</span><span class="n">_iter_state_dict</span><span class="p">():</span>
+            <span class="c1"># Extend the upper rollout bound (this would have to be reworked for non-continuous rollouts)</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;_rollout_bounds&quot;</span><span class="p">:</span>
+                <span class="n">rollout</span><span class="o">.</span><span class="n">_rollout_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">len_to_pad_to</span>
+
             <span class="c1"># Search one level deep</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>  <span class="c1"># e.g. info dicts</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>  <span class="c1"># e.g. info dicts</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                         <span class="c1"># The padding pattern is a tuple of (n_before, n_after) tuples for each dimension</span>
