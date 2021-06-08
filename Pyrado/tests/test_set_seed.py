@@ -25,55 +25,36 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import hashlib
+
 import pytest
 
 import pyrado
 
 
-@pytest.mark.parametrize("base_seed", [-500, -1, 0b1_0000000000])
-def test_out_of_bounds_base_seed(base_seed):
-    with pytest.raises(
-        pyrado.ValueErr, match=r"^base seed -?\d+ is not an unsigned 10-bit integer \(either too low or too high\)$"
-    ):
-        pyrado.set_seed(seed=base_seed, verbose=True)
-
-
 @pytest.mark.parametrize(
-    ["base_seed", "expected"],
+    ["base_seed", "sub_seed", "sub_sub_seed", "expected"],
     [
-        (0b0000000000, 0b0000000000_00000000000000_00000000),
-        (0b0101010101, 0b0101010101_00000000000000_00000000),
-        (0b1111111111, 0b1111111111_00000000000000_00000000),
+        (0, None, None, 813134492),
+        (0, None, 0, 813134492),
+        (0, None, 1, 4276188331),
+        (0, 0, None, 813134492),
+        (0, 0, 0, 813134492),
+        (0, 0, 1, 4276188331),
+        (0, 1, None, 229607210),
+        (0, 1, 0, 229607210),
+        (0, 1, 1, 3918913762),
+        (1, None, None, 532102107),
+        (1, None, 0, 532102107),
+        (1, None, 1, 2754337450),
+        (1, 0, None, 532102107),
+        (1, 0, 0, 532102107),
+        (1, 0, 1, 2754337450),
+        (1, 1, None, 713485941),
+        (1, 1, 0, 713485941),
+        (1, 1, 1, 3511146676),
     ],
 )
-def test__base_seed(base_seed, expected):
-    assert pyrado.set_seed(seed=base_seed, verbose=True) == expected
-
-
-@pytest.mark.parametrize("multiplier", [-1, +1])
-@pytest.mark.parametrize(
-    ["sub_seed", "expected"],
-    [
-        (0b00000000000000, 0b0000000000_00000000000000_00000000),
-        (0b01010101010101, 0b0000000000_01010101010101_00000000),
-        (0b11111111111111, 0b0000000000_11111111111111_00000000),
-        (0b1_00000000000011, 0b0000000000_00000000000011_00000000),
-    ],
-)
-def test_sub_seed(multiplier, sub_seed, expected):
-    assert pyrado.set_seed(seed=0, sub_seed=multiplier * sub_seed, verbose=True) == expected
-
-
-@pytest.mark.parametrize("multiplier", [-1, +1])
-@pytest.mark.parametrize(
-    ["sub_sub_seed", "expected"],
-    [
-        (0b00000000, 0b0000000000_00000000000000_00000000),
-        (0b01010101, 0b0000000000_00000000000000_01010101),
-        (0b11111111, 0b0000000000_00000000000000_11111111),
-        (0b1_00000110, 0b0000000000_00000000000001_00000110),
-        (0b1_0000000000_00000000000001_00000110, 0b0000000000_00000000000001_00000110),
-    ],
-)
-def test_sub_sub_seed(multiplier, sub_sub_seed, expected):
-    assert pyrado.set_seed(seed=0, sub_sub_seed=multiplier * sub_sub_seed, verbose=True) == expected
+def test_out_of_bounds_base_seed(base_seed, sub_seed, sub_sub_seed, expected):
+    assert pyrado.set_seed(base_seed, sub_seed, sub_sub_seed, verbose=True) == expected
+    assert pyrado.get_base_seed() == base_seed
