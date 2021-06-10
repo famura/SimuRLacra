@@ -148,6 +148,8 @@ class ValueBased(Algorithm, ABC):
         self._expl_strat = None  # must be implemented by subclass
         self._sampler = None  # must be implemented by subclass
 
+        self._fill_with_init_sampler = True  # use the init sampler with the dummy policy on first run
+
     @property
     def expl_strat(self) -> Union[SACExplStrat, EpsGreedyExplStrat]:
         return self._expl_strat
@@ -160,9 +162,20 @@ class ValueBased(Algorithm, ABC):
     def step(self, snapshot_mode: str, meta_info: dict = None):
         if self._memory.isempty:
             # Warm-up phase
-            print_cbt_once("Collecting samples until replay memory if full.", "w")
+            print_cbt_once(f"Empty replay memory, collecting {self.num_init_memory_steps} samples.", "w")
             # Sample steps and store them in the replay memory
-            ros = self.sampler_init.sample()
+            if self._fill_with_init_sampler:
+                ros = self.sampler_init.sample()
+                self._fill_with_init_sampler = False
+            else:
+                # save old bounds from the sampler
+                min_rollouts = self.sampler.min_rollouts
+                min_steps = self.sampler.min_steps
+                # set and sample with the init sampler settings
+                self.sampler.set_min_count(min_steps=self.num_init_memory_steps)
+                ros = self.sampler.sample()
+                # revert back to initial parameters
+                self.sampler.set_min_count(min_rollouts=min_rollouts, min_steps=min_steps)
             self._memory.push(ros)
         else:
             # Sample steps and store them in the replay memory
@@ -211,6 +224,15 @@ class ValueBased(Algorithm, ABC):
 
         # Reset the replay memory
         self._memory.reset()
+
+    def hard_reset(self, seed: Optional[int] = None):
+        """Do a normal `reset` but also force the usage of the init_sampler instead of the trained sampler
+
+        :param seed: New seed, defaults to None
+        :type seed: Optional[int], optional
+        """
+        self.reset()
+        self._fill_with_init_sampler = True
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
