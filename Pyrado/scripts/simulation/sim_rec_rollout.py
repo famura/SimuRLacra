@@ -33,6 +33,8 @@ import time
 
 import pyrado
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.rcspysim.base import RcsSim
+from pyrado.logger.experiment import ask_for_experiment
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
@@ -42,8 +44,9 @@ from pyrado.utils.experiments import load_rollouts_from_dir
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    if args.dir is None:
-        raise pyrado.ValueErr(msg="Please provide a directory using -d or --dir")
+
+    # Get the experiment's directory to load from
+    args.dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the rollouts and select one
     rollouts, file_names = load_rollouts_from_dir(args.dir)
@@ -54,7 +57,8 @@ if __name__ == "__main__":
             raise pyrado.TypeErr(given=args, expected_type=int)
         rollout = rollouts[args.iter]
 
-    if hasattr(rollout, "rollout_info") and "env_name" in rollout.rollout_info:
+    # Extract the environment's name if possible
+    if getattr(rollout, "rollout_info", None) and "env_name" in rollout.rollout_info:
         env_name = rollout.rollout_info["env_name"]
     elif args.env_name is not None:
         env_name = args.env_name.lower()
@@ -64,6 +68,13 @@ if __name__ == "__main__":
             "it been specified explicitly! Please provide the environment's name using -e or --env_name."
         )
 
+    # Extract the domain parameters if possible
+    if getattr(rollout, "rollout_info", None) and "domain_param" in rollout.rollout_info:
+        domain_param = rollout.rollout_info["domain_param"]
+    else:
+        domain_param = None
+
+    # Extract the time if possible
     if hasattr(rollout, "time"):
         dt = rollout.time[1] - rollout.time[0]  # dt is constant
     elif args.dt is not None:
@@ -83,10 +94,16 @@ if __name__ == "__main__":
     elif env_name == QQubeSwingUpSim.name:
         env = QQubeSwingUpSim(dt=dt)
 
+    elif env_name == "mg-ik":  # avoid loading _rcsenv
+        from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+
+        env = MiniGolfIKSim(dt=dt)
+
     else:
-        raise pyrado.ValueErr(given=env_name, eq_constraint=f"wam-jsc, or {QQubeSwingUpSim.name}")
+        raise pyrado.ValueErr(given=env_name, eq_constraint=f"wam-jsc, {QQubeSwingUpSim.name}, or mg-ik")
 
     done = False
+    env.reset(domain_param=domain_param)
     while not done:
         # Simulate like in rollout()
         for step in rollout:
@@ -99,11 +116,15 @@ if __name__ == "__main__":
                 from pyrado.environments.mujoco.base import MujocoSimEnv
 
                 # Use reset() to hammer the current state into MuJoCo at evey step
-                env.reset(step.state)
+                env.reset(init_state=step.state)
 
                 if isinstance(env, MujocoSimEnv):
                     # MuJoCo environments seem to crash on time.sleep()
                     do_sleep = False
+
+            if isinstance(env, RcsSim):
+                # Use reset() to hammer the current state into MuJoCo at evey step
+                env.reset(init_state=step.state)
 
             env.render(RenderMode(video=True))
 

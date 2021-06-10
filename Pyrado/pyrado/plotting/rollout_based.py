@@ -482,9 +482,9 @@ def plot_mean_std_across_rollouts(
     dim_obs = rollouts[0].observations.shape[1]  # assuming same for all rollouts
     dim_act = rollouts[0].actions.shape[1]  # assuming same for all rollouts
     if idcs_obs is None:
-        idcs_obs = slice(0, dim_obs)
+        idcs_obs = np.arange(dim_obs)
     if idcs_act is None:
-        idcs_act = slice(0, idcs_act)
+        idcs_act = np.arange(dim_act)
 
     max_len = 0
     time = None
@@ -498,13 +498,11 @@ def plot_mean_std_across_rollouts(
             time = getattr(ro, "time", None)
 
         # Extract observations
-        df = pd.DataFrame(ro.observations[:, idcs_obs], columns=ro.rollout_info["env_spec"].obs_space.labels[idcs_obs])
+        df = pd.DataFrame(ro.observations[:, idcs_obs], columns=[_get_obs_label(ro, i) for i in idcs_obs])
         data_obs = pd.concat([data_obs, df], axis=1)
 
         # Extract actions
-        df = pd.DataFrame(
-            ro.get_data_values(act_key)[:, idcs_act], columns=ro.rollout_info["env_spec"].act_space.labels[idcs_act]
-        )
+        df = pd.DataFrame(ro.get_data_values(act_key)[:, idcs_act], columns=[_get_act_label(ro, i) for i in idcs_act])
         data_act = pd.concat([data_act, df], axis=1)
 
     # Compute statistics
@@ -514,12 +512,12 @@ def plot_mean_std_across_rollouts(
     stds_act = data_act.groupby(by=data_act.columns, axis=1).std()
 
     # Create figure
-    num_rows, num_cols = num_rows_cols_from_length(dim_obs, transposed=True)
+    num_rows, num_cols = num_rows_cols_from_length(len(idcs_obs), transposed=True)
     fig_obs, axs_obs = plt.subplots(num_rows, num_cols, figsize=(18, 9), tight_layout=True)
     axs_obs = np.atleast_2d(axs_obs)
     axs_obs = correct_atleast_2d(axs_obs)
     fig_obs.canvas.set_window_title("Mean And 2 Standard Deviations of the Observations over Time")
-    colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs))
+    colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(idcs_obs)))
 
     # Plot observations
     for idx_o, c in enumerate(data_obs.columns.unique()):
@@ -530,15 +528,15 @@ def plot_mean_std_across_rollouts(
             "mean_std",
             axs_obs[idx_o // num_cols, idx_o % num_cols] if isinstance(axs_obs, np.ndarray) else axs_obs,
             pd.DataFrame(dict(mean=means_obs[c], std=stds_obs[c])),
-            x_grid=time,
+            x_grid=time if time is not None else np.arange(len(data_obs)),
             show_legend=False,
-            x_label="time [s]" if time is not None else np.arange(len(data_obs)),
+            x_label="time [s]" if time is not None else "steps [-]",
             y_label=str(c),
             plot_kwargs=dict(color=colors[idx_o]),
         )
 
         # Plot individual rollouts
-        ax.plot(time, data_obs[c], c="gray", ls="--")
+        ax.plot(time if time is not None else np.arange(len(data_obs)), data_obs[c], c="gray", ls="--")
 
     # Plot actions
     num_rows, num_cols = num_rows_cols_from_length(dim_act, transposed=True)
@@ -555,15 +553,15 @@ def plot_mean_std_across_rollouts(
             "mean_std",
             ax,
             pd.DataFrame(dict(mean=means_act[c], std=stds_act[c])),
-            x_grid=time[:-1],
+            x_grid=time[:-1] if time is not None else np.arange(len(data_act)),
             show_legend=False,
-            x_label="time [s]" if time is not None else np.arange(len(data_act)),
+            x_label="time [s]" if time is not None else "steps [-]",
             y_label=str(c),
             plot_kwargs=dict(color=colors[idx_a]),
         )
 
         # Plot individual rollouts
-        ax.plot(time[:-1], data_act[c], c="gray", ls="--")
+        ax.plot(time[:-1] if time is not None else np.arange(len(data_act)), data_act[c], c="gray", ls="--")
 
 
 def plot_rollouts_segment_wise(
