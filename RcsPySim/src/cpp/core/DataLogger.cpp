@@ -33,13 +33,15 @@
 #include <Rcs_macros.h>
 #include <Rcs_VecNd.h>
 
+#include <ctime>
 #include <sstream>
+#include <iostream>
+#include <iomanip>
 
 namespace Rcs
 {
 
-DataLogger::DataLogger(std::string fileBaseName) :
-    baseFileName(fileBaseName),
+DataLogger::DataLogger() :
     fileCounter(0),
     running(false),
     buffer(nullptr),
@@ -54,11 +56,7 @@ DataLogger::~DataLogger()
     stop();
 }
 
-void DataLogger::start(
-    const BoxSpace* observationSpace,
-    const BoxSpace* actionSpace,
-    unsigned int maxStepCount,
-    const char* filename)
+void DataLogger::start(const BoxSpace* observationSpace, const BoxSpace* actionSpace, unsigned int maxStepCount)
 {
     // Guard against concurrency
     std::unique_lock<std::recursive_mutex> lock(mutex);
@@ -69,15 +67,13 @@ void DataLogger::start(
     running = true;
     // Determine filename
     std::string fname;
-    if (filename == nullptr) {
-        // Generate
-        std::ostringstream os;
-        os << baseFileName << (fileCounter++) << ".csv";
-        fname = os.str();
-    }
-    else {
-        fname = filename;
-    }
+    std::time_t t = std::time(nullptr); // get time now
+    std::tm* now = std::localtime(&t);
+    std::ostringstream os;
+    os << (now->tm_year + 1900) << '-' << std::setfill('0') << std::setw(2) << (now->tm_mon + 1) << '-' <<
+       std::setfill('0') << std::setw(2) << now->tm_mday << '_' << (fileCounter++) << ".csv";
+    fname = os.str();
+    
     // Open output file
     output.open(fname);
     
@@ -91,11 +87,11 @@ void DataLogger::start(
     }
     output << "\"" << std::endl;
     
-    // Allocate buffer
-    buffer = MatNd_create(maxStepCount, observationSpace->getNames().size() + actionSpace->getNames().size());
+    // Allocate buffer. Use maxStepCount + 1 to also count the final observation
+    buffer = MatNd_create(maxStepCount + 1, observationSpace->getNames().size() + actionSpace->getNames().size());
     currentStep = 0;
     
-    RLOG(0, "Logging started!");
+    std::cout << "Logging started!" << std::endl;;
 }
 
 void DataLogger::stop()
@@ -108,8 +104,7 @@ void DataLogger::stop()
     running = false;
     
     // Write buffer contents to csv
-    for (unsigned int row = 0; row < currentStep; ++row) {
-        
+    for (unsigned int row = 0; row <= currentStep; ++row) { // <= to also write the last row
         // Write step number
         output << row;
         
@@ -128,7 +123,7 @@ void DataLogger::stop()
     // Delete buffer
     MatNd_destroy(buffer);
     
-    RLOG(0, "Logging stopped!");
+    std::cout << "Logging stopped!" << std::endl;;
 }
 
 void DataLogger::record(const MatNd* observation, const MatNd* action)
@@ -139,13 +134,23 @@ void DataLogger::record(const MatNd* observation, const MatNd* action)
         return;
     }
     
-    // Add a line to buffer
-    if (currentStep >= buffer->m) {
+    // Check if the logging is over. The very last step is index by m
+    if (currentStep >= buffer->m - 1) {
+        // Add final observations and dummy actions (to later filter them out) to the buffer
+        double* lineBuffer = MatNd_getRowPtr(buffer, currentStep);
+        VecNd_copy(&lineBuffer[0], observation->ele, observation->m);
+        double nanAction[action->m];
+        for (unsigned int i = 0; i < action->m; i++) {
+            nanAction[i] = NAN;
+        }
+        VecNd_copy(&lineBuffer[observation->m], nanAction, action->m);
+        
         stop();
         return;
     }
-    double* lineBuffer = MatNd_getRowPtr(buffer, currentStep++);
     
+    // Add a line to the buffer
+    double* lineBuffer = MatNd_getRowPtr(buffer, currentStep++);
     VecNd_copy(&lineBuffer[0], observation->ele, observation->m);
     VecNd_copy(&lineBuffer[observation->m], action->ele, action->m);
 }

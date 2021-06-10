@@ -100,6 +100,7 @@ class RolloutSamplerForSBI(ABC, Serializable):
         self.num_segments = num_segments
         self.len_segments = len_segments
         self.stop_on_done = stop_on_done
+        self._action_field = "actions_applied"
 
     @abstractmethod
     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
@@ -114,6 +115,17 @@ class RolloutSamplerForSBI(ABC, Serializable):
         :return: dimension of one data sample, i.e. one time step
         """
         return spec.state_space.flat_dim + spec.act_space.flat_dim
+
+    def _set_action_field(self, rollouts: List[StepSequence]):
+        """
+        Check if there is the `actions_applied` field in all the given rollouts. If not use the `actions` field.
+
+        :param rollouts: list of rollouts to inspect for the action field
+        """
+        has_actions_applied_field = True
+        for ro in rollouts:
+            has_actions_applied_field = has_actions_applied_field and hasattr(ro, "actions_applied")
+        self._action_field = "actions_applied" if has_actions_applied_field else "actions"
 
 
 class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
@@ -172,6 +184,8 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         self.dp_names = dp_mapping.values()
         self.rollouts_real = rollouts_real
         self.use_rec_act = use_rec_act
+        if self.rollouts_real is not None:
+            self._set_action_field(self.rollouts_real)
 
     def __call__(self, dp_values: to.Tensor) -> to.Tensor:
         """
@@ -186,8 +200,11 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         if self.rollouts_real is not None:
             if self.use_rec_act:
                 # Create a policy that simply replays the recorded actions
+                self._set_action_field(self.rollouts_real)
                 policy = PlaybackPolicy(
-                    self._env.spec, [ro.actions_applied for ro in self.rollouts_real], no_reset=True
+                    self._env.spec,
+                    [ro.get_data_values(self._action_field) for ro in self.rollouts_real],
+                    no_reset=True,
                 )
             else:
                 # Use the current policy to generate the actions
@@ -238,7 +255,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                         )
                         # check_domain_params(seg_sim, dp_value, self.dp_names)
                         if self.use_rec_act:
-                            check_act_equal(seg_real, seg_sim, check_applied=True)
+                            check_act_equal(seg_real, seg_sim, check_applied=self._action_field == "actions_applied")
 
                         # Pad if necessary
                         StepSequence.pad(seg_sim, seg_real.length)
@@ -248,12 +265,17 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
 
                         # Concatenate states and actions of the simulated and real segments
                         data_one_seg = np.concatenate(
-                            [seg_sim.states[: len(seg_real), :], seg_sim.actions_applied[: len(seg_real), :]], axis=1
+                            [
+                                seg_sim.states[: len(seg_real), :],
+                                seg_sim.get_data_values(self._action_field)[: len(seg_real), :],
+                            ],
+                            axis=1,
                         )
                         if self._embedding.requires_target_domain_data:
                             # The embedding is also using target domain data (the case for DTW distance)
                             data_one_seg_real = np.concatenate(
-                                [seg_real.states[: len(seg_real), :], seg_real.actions_applied], axis=1
+                                [seg_real.states[: len(seg_real), :], seg_real.get_data_values(self._action_field)],
+                                axis=1,
                             )
                             data_one_seg = np.concatenate([data_one_seg, data_one_seg_real], axis=1)
                         data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
@@ -297,7 +319,9 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                 StepSequence.pad(ro_sim, self._env.max_steps)
 
                 # Concatenate states and actions of the simulated segments
-                data_one_seg = np.concatenate([ro_sim.states[:-1, :], ro_sim.actions_applied], axis=1)
+                data_one_seg = np.concatenate(
+                    [ro_sim.states[:-1, :], ro_sim.get_data_values(self._action_field)], axis=1
+                )
                 if self._embedding.requires_target_domain_data:
                     data_one_seg = np.concatenate([data_one_seg, data_one_seg], axis=1)
                 data_one_seg = to.from_numpy(data_one_seg).to(dtype=to.get_default_dtype())
@@ -372,9 +396,12 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
         # Pad if necessary
         StepSequence.pad(ro_real, self._env.max_steps)
 
-        # Assemble the data
+        # Pre-processing
         ro_real.torch()
-        data_real = to.cat([ro_real.states[:-1, :], ro_real.actions_applied], dim=1)
+        self._set_action_field([ro_real])
+
+        # Assemble the data
+        data_real = to.cat([ro_real.states[:-1, :], ro_real.get_data_values(self._action_field)], dim=1)
         if self._embedding.requires_target_domain_data:
             data_real = to.cat([data_real, data_real], dim=1)
 
@@ -432,6 +459,7 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         self.rollouts_dir = rollouts_dir
         self.rollouts_rec = rollouts_rec
         self._ring_idx = np.random.randint(0, len(rollouts_rec)) if rand_init_rollout else 0
+        self._set_action_field(self.rollouts_rec)
 
     @property
     def ring_idx(self) -> int:
@@ -468,9 +496,11 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
         ro = self.rollouts_rec[self._ring_idx]
         self._ring_idx = (self._ring_idx + 1) % self.num_rollouts
 
-        # Assemble the data
+        # Pre-processing
         ro.torch()
-        data_real = to.cat([ro.states[:-1, :], ro.actions_applied], dim=1)
+
+        # Assemble the data
+        data_real = to.cat([ro.states[:-1, :], ro.get_data_values(self._action_field)], dim=1)
         if self._embedding.requires_target_domain_data:
             data_real = to.cat([data_real, data_real], dim=1)
 

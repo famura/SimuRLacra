@@ -922,6 +922,11 @@ class StepSequence(Sequence[Step]):
         states = df[env_spec.state_space.labels].to_numpy()
         observations = df[env_spec.obs_space.labels].to_numpy()
         actions = df[env_spec.act_space.labels].to_numpy()
+
+        # Remove NaNs which come from concatenating columns of different length in Pandas
+        actions = actions[~np.isnan(actions).any(axis=1), :]  # check if any in a column is none for multi-dim case
+
+        # Reconstruct the reward
         if task is not None:
             # Recompute the rewards from the recorded observations and actions
             rewards = np.array([task.step_rew(s, a, 0) for s, a in zip(states, actions)])
@@ -934,7 +939,12 @@ class StepSequence(Sequence[Step]):
 
         # Remove NaNs which come from concatenating columns of different length in Pandas
         rewards = rewards[~np.isnan(rewards)]
-        actions = actions[~np.isnan(actions).any(axis=1), :]  # check if any in a column is none for multi-dim case
+
+        if rewards.shape[0] != actions.shape[0]:
+            raise pyrado.ShapeErr(
+                msg=f"The actions and rewards time series must be of equal length, but are "
+                f"{actions.shape[0]} and {rewards.shape[0]}!"
+            )
 
         # Other fields
         rew_label = ["rewards"] if "rewards" in df.columns else []

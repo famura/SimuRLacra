@@ -27,27 +27,38 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to plot the observations from rollouts as well as their mean and std
+Script to load the data from a real-world rollouts, written to a file by the RcsPySim DAtaLogger class.
 """
-from matplotlib import pyplot as plt
+import os.path as osp
 
-from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.rollout_based import plot_mean_std_across_rollouts
+import pandas as pd
+
+import pyrado
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import load_rollouts_from_dir
 
 
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    plt.rc("text", usetex=False)
+    if not osp.isfile(args.file):
+        raise pyrado.PathErr(given=args.file)
+    if args.dir is None:
+        # Use the file's directory by default
+        args.dir = osp.dirname(args.file)
+    elif not osp.isdir(args.dir):
+        raise pyrado.PathErr(given=args.dir)
 
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
+    df = pd.read_csv(args.file)
 
-    # Load the rollouts
-    rollouts, _ = load_rollouts_from_dir(ex_dir)
+    if args.env_name is None or args.env_name == MiniGolfIKSim.name:
+        env = MiniGolfIKSim()
+    else:
+        raise NotImplementedError
 
-    # Plot the observations and actions
-    plot_mean_std_across_rollouts(rollouts, idcs_obs=None, idcs_act=None, show_applied_actions=False)
-    plt.show()
+    # Cast the rollout from a DataFrame to a StepSequence
+    reconstructed = StepSequence.from_pandas(df, env.spec, task=env.task)
+
+    if args.dir is not None:
+        pyrado.save(reconstructed, "rollout.pkl", args.dir, verbose=True)

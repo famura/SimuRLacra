@@ -206,7 +206,7 @@ def eval_domain_params_with_segmentwise_reset(
             for sdp in segments_dp:
                 assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
                 if use_rec:
-                    check_act_equal(segment_real, sdp)
+                    check_act_equal(segment_real, sdp, check_applied=hasattr(sdp, "actions_applied"))
 
             # Increase step counter for next segment, and append all domain parameter segments
             cnt_step += segment_real.length

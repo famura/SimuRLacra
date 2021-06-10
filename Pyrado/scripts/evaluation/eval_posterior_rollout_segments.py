@@ -34,7 +34,7 @@ Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
 By default (args.iter = -1), the all iterations are evaluated.
 """
 import os.path as osp
-from typing import Optional
+from typing import Iterable, Optional
 
 import dtw
 import numpy as np
@@ -60,6 +60,56 @@ from pyrado.utils.data_types import merge_dicts, repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import rmse
+
+
+def mask_out(
+    segments_real_all: StepSequence,
+    segments_ml_all: StepSequence,
+    segments_nom: StepSequence,
+    data_field: str,
+    state_mask_labels: Iterable[str] = None,
+    act_mask_labels: Iterable[str] = None,
+):
+    """Helper function to mask out states/observations and actions."""
+    if data_field == "states" and state_mask_labels is not None:
+        state_mask = env_sim.state_space.create_mask(state_mask_labels)
+    elif data_field == "observations" and state_mask_labels is not None:
+        state_mask = env_sim.obs_space.create_mask(state_mask_labels)
+    else:
+        state_mask = None
+
+    if act_mask_labels is not None:
+        act_mask = env_sim.act_space.create_mask(act_mask_labels)
+    else:
+        act_mask = None
+
+    for i, segments_ml in enumerate(segments_ml_all):
+        for j, segment_ml in enumerate(segments_ml):
+            for l, seg_ml in enumerate(segment_ml):
+                if state_mask is not None and data_field == "states":
+                    segments_ml_all[i][j][l].states = seg_ml.states[:, state_mask]
+                elif state_mask is not None and data_field == "observations":
+                    segments_ml_all[i][j].observations = seg_ml.observations[:, state_mask]
+                if act_mask is not None:
+                    segments_ml_all[i][j][l].actions = seg_ml.actions[:, act_mask]
+
+    for i, segment_real in enumerate(segments_real_all):
+        for j, seg_real in enumerate(segment_real):
+            if state_mask is not None and data_field == "states":
+                segments_real_all[i][j].states = seg_real.states[:, state_mask]
+            elif state_mask is not None and data_field == "observations":
+                segments_real_all[i][j].observations = seg_real.observations[:, state_mask]
+            if act_mask is not None:
+                segments_real_all[i][j].actions = seg_real.actions[:, act_mask]
+
+    for i, segment_nom in enumerate(segments_nom):
+        for j, seg_nom in enumerate(segment_nom):
+            if state_mask is not None and data_field == "states":
+                segments_nom[i][j].states = seg_nom.states[:, state_mask]
+            elif state_mask is not None and data_field == "observations":
+                segments_nom[i][j].observations = seg_nom.observations[:, state_mask]
+            if act_mask is not None:
+                segments_nom[i][j].actions = seg_nom.actions[:, act_mask]
 
 
 def compute_traj_distance_metrics(
@@ -145,6 +195,13 @@ if __name__ == "__main__":
         type=str,
         default=["pdf", "pgf", "png"],
         help="select file format for plot saving, without commas (e.g., 'pdf png')",
+    )
+
+    parser.add_argument(
+        "--plot_act",
+        action="store_true",
+        default=False,
+        help="plot the actions (default: False)",
     )
 
     parser.add_argument(
@@ -294,7 +351,7 @@ if __name__ == "__main__":
 
                     assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
                     if args.use_rec:
-                        check_act_equal(segment_real, sdp)
+                        check_act_equal(segment_real, sdp, check_applied=hasattr(sdp, "actions_applied"))
 
                     # Pad if necessary
                     StepSequence.pad(sdp, segment_real.length)
@@ -333,7 +390,7 @@ if __name__ == "__main__":
             )
             segment_nom.append(sn)
             if args.use_rec:
-                check_act_equal(segment_real, sn)
+                check_act_equal(segment_real, sn, check_applied=hasattr(sn, "actions_applied"))
 
             # Pad if necessary
             StepSequence.pad(sn, segment_real.length)
@@ -343,11 +400,13 @@ if __name__ == "__main__":
     assert len(segments_nom) == len(segments_ml_all)
 
     # Get the states for computing the performance metrics
-    states_real = np.stack([ro.get_data_values("states", truncate_last=True) for ro in rollouts_real], axis=0)
-    states_nom = np.stack([StepSequence.concat(segs_nom).states for segs_nom in segments_nom], axis=0)
-    states_ml = np.stack(
+    states_real = np.stack([ro.get_data_values(args.data_type, truncate_last=True) for ro in rollouts_real], axis=0)
+    states_nom = np.stack(
+        [StepSequence.concat(segs_nom).get_data_values(args.data_type) for segs_nom in segments_nom], axis=0
+    )
+    states_ml = np.stack(  # index 0 ist the most likely
         [
-            StepSequence.concat([s[0] for s in [segs_ml for segs_ml in segments_ml]]).states  # 0 ist the most likely
+            StepSequence.concat([s[0] for s in [segs_ml for segs_ml in segments_ml]]).get_data_values(args.data_type)
             for segments_ml in segments_ml_all
         ],
         axis=0,
@@ -356,7 +415,12 @@ if __name__ == "__main__":
     assert states_real.shape[0] == num_rollouts_real
 
     # Compute the DTW and RMSE distance and store it in a table
-    table = compute_traj_distance_metrics(states_real, states_ml, states_nom, num_rollouts_real)
+    compute_traj_distance_metrics(states_real, states_ml, states_nom, num_rollouts_real)
+
+    # Optionally masks out some states/observations and actions for plotting
+    state_mask_labels = None
+    act_mask_labels = None
+    mask_out(segments_real_all, segments_ml_all, segments_nom, args.data_type, state_mask_labels, act_mask_labels)
 
     # Plot
     plot_rollouts_segment_wise(
@@ -367,7 +431,9 @@ if __name__ == "__main__":
         use_rec_str=args.use_rec,
         idx_iter=args.iter,
         idx_round=args.round,
-        show_act=False,
+        state_labels=state_mask_labels or env_sim.state_space.labels,
+        act_labels=act_mask_labels or env_sim.act_space.labels,
+        plot_act=args.plot_act,
         save_dir=ex_dir if args.save else None,
         x_limits=args.cut_rollout,
         data_field=args.data_type,

@@ -28,7 +28,7 @@
 
 import functools
 import os
-from typing import List, Optional, Sequence, Tuple
+from typing import Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -571,15 +571,15 @@ def plot_rollouts_segment_wise(
     segments_nominal: List[List[StepSequence]],
     use_rec_str: bool,
     idx_iter: int,
-    idx_round: int = -1,
-    state_labels: Optional[List[str]] = None,
-    act_labels: Optional[List[str]] = None,
+    idx_round: int,
+    state_labels: Optional[Iterable[str]] = None,
+    act_labels: Optional[Iterable[str]] = None,
     x_limits: Optional[Tuple[int]] = None,
-    show_act: bool = False,
-    save_dir: Optional[pyrado.PathLike] = None,
+    plot_act: bool = False,
     data_field: str = "states",
     cmap_samples: Optional[colors.Colormap] = None,
-    file_format=["pdf", "pgf", "png"],
+    save_dir: Optional[pyrado.PathLike] = None,
+    file_format: Iterable[str] = ("pdf", "pgf", "png"),
 ) -> List[plt.Figure]:
     r"""
     Plot the different rollouts in separate figures and the different state dimensions along the columns.
@@ -593,13 +593,13 @@ def plot_rollouts_segment_wise(
     :param use_rec_str: `True` if pre-recorded actions have been used to generate the rollouts
     :param idx_iter: selected iteration
     :param idx_round: selected round
-    :param state_labels: y-axes labels to override the default value which is extracted from the state space's labels
-    :param act_labels: y-axes labels to override the default value which is extracted from the action space's labels
+    :param state_labels: y-axes labels to for the state trajectories, no label by default
+    :param act_labels: y-axes labels to for the action trajectories, no label by default
     :param x_limits: tuple containing the lower and upper limits for the x-axis
-    :param show_act: if `True`, also plot the actions
-    :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
+    :param plot_act: if `True`, also plot the actions
     :param data_field: data field of the rollout, e.g. "states" or "observations"
     :param cmap_samples: color map for the trajectories resulting from different domain parameter samples
+    :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there
     :param file_format: select the file format to store the plots
     :return: list of handles to the created figures
     """
@@ -613,19 +613,14 @@ def plot_rollouts_segment_wise(
     dim_act = segments_ground_truth[0][0].get_data_values("actions")[0, :].size
     num_samples = len(segments_multiple_envs[0][0])
 
-    # Extract the state labels if not explicitly given
+    # Validate the labels
     if state_labels is None:
-        env_spec = segments_ground_truth[0][0].rollout_info.get("env_spec", None)
-        if data_field == "states":
-            state_labels = env_spec.state_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
-        elif data_field == "observations":
-            state_labels = env_spec.obs_space.labels if env_spec is not None else np.empty(dim_state, dtype=object)
+        state_labels = [""] * dim_state
     else:
         if len(state_labels) != dim_state:
             raise pyrado.ShapeErr(given=state_labels, expected_match=(dim_state,))
     if act_labels is None:
-        env_spec = segments_ground_truth[0][0].rollout_info.get("env_spec", None)
-        act_labels = env_spec.act_space.labels if env_spec is not None else np.empty(dim_act, dtype=object)
+        act_labels = [""] * dim_act
     else:
         if len(act_labels) != dim_act:
             raise pyrado.ShapeErr(given=act_labels, expected_match=(dim_act,))
@@ -635,9 +630,11 @@ def plot_rollouts_segment_wise(
     fig_list = []
     label_samples = "ml" if plot_type == "confidence" else "samples"
 
+    # Plot
     for idx_r in range(len(segments_ground_truth)):
-        num_rows = dim_state + dim_act if show_act else dim_state
+        num_rows = dim_state + dim_act if plot_act else dim_state
         fig, axs = plt.subplots(nrows=num_rows, figsize=(16, 9), tight_layout=True, sharex="col")
+        axs = np.atleast_1d(axs)
 
         # Plot the states
         for idx_state in range(dim_state):
@@ -712,7 +709,7 @@ def plot_rollouts_segment_wise(
 
             axs[idx_state].set_ylabel(state_labels[idx_state])
 
-        if show_act:
+        if plot_act:
             # Plot the actions
             for idx_act in range(dim_act):
                 # Plot the real segments
