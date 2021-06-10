@@ -14,6 +14,6 @@ var searchData=
   ['currentaction',['currentAction',['../classRcs_1_1RcsSimEnv.html#a69465666177a900d0136cb7308c3259f',1,'Rcs::RcsSimEnv']]],
   ['currentgraph',['currentGraph',['../classRcs_1_1PhysicsSimulationComponent.html#a1ec5d7ab792a81428ee9d3fd19d88c31',1,'Rcs::PhysicsSimulationComponent::currentGraph()'],['../classRcs_1_1ViewerComponent.html#a5038020dc1ce7782d20ea793ecf1adc6',1,'Rcs::ViewerComponent::currentGraph()']]],
   ['currentobservation',['currentObservation',['../classRcs_1_1RcsSimEnv.html#a82940bfc94e36b6c6c03e6deb3e9c0da',1,'Rcs::RcsSimEnv']]],
-  ['currentstep',['currentStep',['../classRcs_1_1DataLogger.html#a2721265b6bd64515faf4eec4ab35ce0e',1,'Rcs::DataLogger::currentStep()'],['../classRcs_1_1RcsSimEnv.html#ac7395be1e701b1b44e2d178916d9767b',1,'Rcs::RcsSimEnv::currentStep()']]],
+  ['currentstep',['currentStep',['../classRcs_1_1DataLogger.html#a9bfd8817c6a6f9411044ceedfa024dce',1,'Rcs::DataLogger::currentStep()'],['../classRcs_1_1RcsSimEnv.html#ac7395be1e701b1b44e2d178916d9767b',1,'Rcs::RcsSimEnv::currentStep()']]],
   ['currenttime',['currentTime',['../classRcs_1_1RcsSimEnv.html#a680552a9db954725ce55f60dfe022ba1',1,'Rcs::RcsSimEnv']]]
 ];

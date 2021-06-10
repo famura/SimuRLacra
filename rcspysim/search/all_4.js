@@ -1,7 +1,7 @@
 var searchData=
 [
   ['damping',['damping',['../classRcs_1_1DSMassSpringDamper.html#a5346e461ba43f320403ff7083b6accf7',1,'Rcs::DSMassSpringDamper']]],
-  ['datalogger',['DataLogger',['../classRcs_1_1DataLogger.html',1,'Rcs::DataLogger'],['../classRcs_1_1DataLogger.html#aabd0a62e6f356507de44605d5a0184fb',1,'Rcs::DataLogger::DataLogger()']]],
+  ['datalogger',['DataLogger',['../classRcs_1_1DataLogger.html',1,'Rcs::DataLogger'],['../classRcs_1_1DataLogger.html#abcb0e15023fac9c0a5a0f4d1f4ef4731',1,'Rcs::DataLogger::DataLogger()']]],
   ['datalogger_2ecpp',['DataLogger.cpp',['../DataLogger_8cpp.html',1,'']]],
   ['datalogger_2eh',['DataLogger.h',['../DataLogger_8h.html',1,'']]],
   ['def_5fextent_5fparam',['DEF_EXTENT_PARAM',['../PPDBoxExtents_8cpp.html#a094b73af1687383088480072b113f3bc',1,'PPDBoxExtents.cpp']]],

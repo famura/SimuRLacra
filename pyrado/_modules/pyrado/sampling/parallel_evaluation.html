@@ -430,7 +430,7 @@
             <span class="k">for</span> <span class="n">sdp</span> <span class="ow">in</span> <span class="n">segments_dp</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">sdp</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">segment_real</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
                 <span class="k">if</span> <span class="n">use_rec</span><span class="p">:</span>
-                    <span class="n">check_act_equal</span><span class="p">(</span><span class="n">segment_real</span><span class="p">,</span> <span class="n">sdp</span><span class="p">)</span>
+                    <span class="n">check_act_equal</span><span class="p">(</span><span class="n">segment_real</span><span class="p">,</span> <span class="n">sdp</span><span class="p">,</span> <span class="n">check_applied</span><span class="o">=</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">sdp</span><span class="p">,</span> <span class="s2">&quot;actions_applied&quot;</span><span class="p">))</span>
 
             <span class="c1"># Increase step counter for next segment, and append all domain parameter segments</span>
             <span class="n">cnt_step</span> <span class="o">+=</span> <span class="n">segment_real</span><span class="o">.</span><span class="n">length</span>

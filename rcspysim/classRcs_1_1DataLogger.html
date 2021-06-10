@@ -102,12 +102,12 @@ $(document).ready(function(){initNavTree('classRcs_1_1DataLogger.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aabd0a62e6f356507de44605d5a0184fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#aabd0a62e6f356507de44605d5a0184fb">DataLogger</a> (std::string fileBaseName=&quot;rollout_data_&quot;)</td></tr>
-<tr class="separator:aabd0a62e6f356507de44605d5a0184fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcb0e15023fac9c0a5a0f4d1f4ef4731"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#abcb0e15023fac9c0a5a0f4d1f4ef4731">DataLogger</a> ()</td></tr>
+<tr class="separator:abcb0e15023fac9c0a5a0f4d1f4ef4731"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64b877261826d605b8467e9a5a651f5c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a64b877261826d605b8467e9a5a651f5c">~DataLogger</a> ()</td></tr>
 <tr class="separator:a64b877261826d605b8467e9a5a651f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa442edc11f056bc931930092c571985"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#afa442edc11f056bc931930092c571985">start</a> (const <a class="el" href="classRcs_1_1BoxSpace.html">BoxSpace</a> *observationSpace, const <a class="el" href="classRcs_1_1BoxSpace.html">BoxSpace</a> *actionSpace, unsigned int maxStepCount, const char *filename=NULL)</td></tr>
-<tr class="separator:afa442edc11f056bc931930092c571985"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8578bedf53c6cb649050f6316c3526e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#ab8578bedf53c6cb649050f6316c3526e">start</a> (const <a class="el" href="classRcs_1_1BoxSpace.html">BoxSpace</a> *observationSpace, const <a class="el" href="classRcs_1_1BoxSpace.html">BoxSpace</a> *actionSpace, unsigned int maxStepCount)</td></tr>
+<tr class="separator:ab8578bedf53c6cb649050f6316c3526e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36669576b064c97e1e386eadcc6cc581"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a36669576b064c97e1e386eadcc6cc581">stop</a> ()</td></tr>
 <tr class="separator:a36669576b064c97e1e386eadcc6cc581"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a047c016dc71364c6fc8973176520a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a7a047c016dc71364c6fc8973176520a1">record</a> (const MatNd *observation, const MatNd *action)</td></tr>
@@ -119,16 +119,14 @@ Public Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:ae80e4ed3e5a61f803028c00922588b5f"><td class="memItemLeft" align="right" valign="top">std::recursive_mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#ae80e4ed3e5a61f803028c00922588b5f">mutex</a></td></tr>
 <tr class="separator:ae80e4ed3e5a61f803028c00922588b5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b72ee64b4657eb32a8efb451a833afe"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a9b72ee64b4657eb32a8efb451a833afe">baseFileName</a></td></tr>
-<tr class="separator:a9b72ee64b4657eb32a8efb451a833afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f313afef1b36d8fcfd3af63aa443702"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a1f313afef1b36d8fcfd3af63aa443702">fileCounter</a></td></tr>
 <tr class="separator:a1f313afef1b36d8fcfd3af63aa443702"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a488b204c22407445fc082ada5af9c445"><td class="memItemLeft" align="right" valign="top">volatile bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a488b204c22407445fc082ada5af9c445">running</a></td></tr>
 <tr class="separator:a488b204c22407445fc082ada5af9c445"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ea35eb37ec336a643ea913b4ad08c27"><td class="memItemLeft" align="right" valign="top">MatNd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a2ea35eb37ec336a643ea913b4ad08c27">buffer</a></td></tr>
 <tr class="separator:a2ea35eb37ec336a643ea913b4ad08c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2721265b6bd64515faf4eec4ab35ce0e"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a2721265b6bd64515faf4eec4ab35ce0e">currentStep</a></td></tr>
-<tr class="separator:a2721265b6bd64515faf4eec4ab35ce0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bfd8817c6a6f9411044ceedfa024dce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a9bfd8817c6a6f9411044ceedfa024dce">currentStep</a></td></tr>
+<tr class="separator:a9bfd8817c6a6f9411044ceedfa024dce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bf31bd7c9ede32ea226bea41a6d2105"><td class="memItemLeft" align="right" valign="top">std::ofstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1DataLogger.html#a2bf31bd7c9ede32ea226bea41a6d2105">output</a></td></tr>
 <tr class="separator:a2bf31bd7c9ede32ea226bea41a6d2105"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -137,8 +135,8 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00050">50</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aabd0a62e6f356507de44605d5a0184fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabd0a62e6f356507de44605d5a0184fb">&#9670;&nbsp;</a></span>DataLogger()</h2>
+<a id="abcb0e15023fac9c0a5a0f4d1f4ef4731"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abcb0e15023fac9c0a5a0f4d1f4ef4731">&#9670;&nbsp;</a></span>DataLogger()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,21 +144,14 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">Rcs::DataLogger::DataLogger </td>
           <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>fileBaseName</em> = <code>&quot;rollout_data_&quot;</code></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Constructor.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fileBaseName</td><td>base name for files, will append <code>filenum</code>.csv on start </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Constructor. Automatically names files like <code>TIME_FILENUM</code>.csv on start </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00041">41</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00044">44</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
 
 </div>
 </div>
@@ -187,7 +178,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00051">51</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00053">53</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
 
 </div>
 </div>
@@ -216,7 +207,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Return true if running. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00088">88</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00083">83</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -247,12 +238,12 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Record data for the current step. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00134">134</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00129">129</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
 
 </div>
 </div>
-<a id="afa442edc11f056bc931930092c571985"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa442edc11f056bc931930092c571985">&#9670;&nbsp;</a></span>start()</h2>
+<a id="ab8578bedf53c6cb649050f6316c3526e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8578bedf53c6cb649050f6316c3526e">&#9670;&nbsp;</a></span>start()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,13 +264,7 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>maxStepCount</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>filename</em> = <code>NULL</code>&#160;</td>
+          <td class="paramname"><em>maxStepCount</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -294,12 +279,11 @@ Private Attributes</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">observationSpace</td><td>environment's observation space </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">actionSpace</td><td>environment's action space </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">maxStepCount</td><td>maximum number of time steps </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>filename to override default generated filename </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00057">57</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00059">59</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
 
 </div>
 </div>
@@ -319,37 +303,11 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Stop logging and flush data to file. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00101">101</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8cpp_source.html#l00097">97</a> of file <a class="el" href="DataLogger_8cpp_source.html">DataLogger.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a9b72ee64b4657eb32a8efb451a833afe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b72ee64b4657eb32a8efb451a833afe">&#9670;&nbsp;</a></span>baseFileName</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string Rcs::DataLogger::baseFileName</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Automatic log file naming. </p>
-
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00097">97</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
-
-</div>
-</div>
 <a id="a2ea35eb37ec336a643ea913b4ad08c27"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2ea35eb37ec336a643ea913b4ad08c27">&#9670;&nbsp;</a></span>buffer</h2>
 
@@ -372,12 +330,12 @@ Private Attributes</h2></td></tr>
 
 <p>Buffer to avoid writing on realtime main thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00104">104</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00098">98</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
-<a id="a2721265b6bd64515faf4eec4ab35ce0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2721265b6bd64515faf4eec4ab35ce0e">&#9670;&nbsp;</a></span>currentStep</h2>
+<a id="a9bfd8817c6a6f9411044ceedfa024dce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bfd8817c6a6f9411044ceedfa024dce">&#9670;&nbsp;</a></span>currentStep</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -386,7 +344,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int Rcs::DataLogger::currentStep</td>
+          <td class="memname">int Rcs::DataLogger::currentStep</td>
         </tr>
       </table>
   </td>
@@ -398,7 +356,7 @@ Private Attributes</h2></td></tr>
 
 <p>Step counter in current logging run. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00107">107</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00101">101</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -422,7 +380,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00098">98</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p>Automatic log file naming. </p>
+
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00092">92</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -446,7 +406,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00094">94</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00089">89</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -472,7 +432,7 @@ Private Attributes</h2></td></tr>
 
 <p>Current output stream. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00110">110</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00104">104</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -498,7 +458,7 @@ Private Attributes</h2></td></tr>
 
 <p>Flag if the logger is currently recording. </p>
 
-<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00101">101</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DataLogger_8h_source.html#l00095">95</a> of file <a class="el" href="DataLogger_8h_source.html">DataLogger.h</a>.</p>
 
 </div>
 </div>
@@ -512,7 +472,7 @@ Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1DataLogger.html">DataLogger</a></li>
-    <li class="footer">Generated on Thu Jun 10 2021 13:32:13 for RcsPySim by
+    <li class="footer">Generated on Thu Jun 10 2021 15:33:23 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

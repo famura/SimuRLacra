@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['datalogger',['DataLogger',['../classRcs_1_1DataLogger.html#aabd0a62e6f356507de44605d5a0184fb',1,'Rcs::DataLogger']]],
+  ['datalogger',['DataLogger',['../classRcs_1_1DataLogger.html#abcb0e15023fac9c0a5a0f4d1f4ef4731',1,'Rcs::DataLogger']]],
   ['defaultwrapjointangle',['defaultWrapJointAngle',['../namespaceRcs.html#a18cfa4ebac247348154c3966aacccb57',1,'Rcs']]],
   ['dict2xml',['dict2xml',['../namespaceRcs.html#ade75daa2f3084e7217bc597122c99b3a',1,'Rcs']]],
   ['dsconst',['DSConst',['../classRcs_1_1DSConst.html#a3911871d6ddf96ffb1f6cfcd24350713',1,'Rcs::DSConst']]],

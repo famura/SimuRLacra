@@ -1,6 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"classRcs_1_1ECPlanarInsert.html#a68c7d359c40a4a6c6a81825cd198dfbf":[2,0,0,35,4],
 "classRcs_1_1ECPlanarInsert.html#a6dc23bef100267e8c60a2acf65fbcebf":[2,0,0,35,6],
 "classRcs_1_1ECPlanarInsert.html#a72ddb648d3a97313ab38da48e8b75396":[2,0,0,35,2],
 "classRcs_1_1ECPlanarInsert.html#aa95247bbc29de17a609ff740b2906199":[2,0,0,35,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX3 =
 "classRcs_1_1OMDynamicalSystemDiscrepancy.html#a2dd25bf6e208246c6fe418d9adf7e662":[2,0,0,65,4],
 "classRcs_1_1OMDynamicalSystemDiscrepancy.html#a43c40f307057d289989dc694442cd7be":[2,0,0,65,3],
 "classRcs_1_1OMDynamicalSystemDiscrepancy.html#a98839a6563cbce5465b861af1036267f":[2,0,0,65,5],
-"classRcs_1_1OMDynamicalSystemDiscrepancy.html#ab919f7807b035120530bf32007f6e798":[2,0,0,65,8]
+"classRcs_1_1OMDynamicalSystemDiscrepancy.html#ab919f7807b035120530bf32007f6e798":[2,0,0,65,8],
+"classRcs_1_1OMDynamicalSystemDiscrepancy.html#abc36a1aa4c14550252df4b4be4ea91e3":[2,0,0,65,0]
 };

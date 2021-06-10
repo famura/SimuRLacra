@@ -254,7 +254,7 @@
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -797,15 +797,15 @@
     <span class="n">segments_nominal</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]],</span>
     <span class="n">use_rec_str</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">idx_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">idx_round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">state_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">act_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">idx_round</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">state_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">act_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">x_limits</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">show_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">data_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;states&quot;</span><span class="p">,</span>
     <span class="n">cmap_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">colors</span><span class="o">.</span><span class="n">Colormap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">file_format</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;pgf&quot;</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">],</span>
+    <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">file_format</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;pgf&quot;</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">]:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the different rollouts in separate figures and the different state dimensions along the columns.</span>
@@ -819,13 +819,13 @@
 <span class="sd">    :param use_rec_str: `True` if pre-recorded actions have been used to generate the rollouts</span>
 <span class="sd">    :param idx_iter: selected iteration</span>
 <span class="sd">    :param idx_round: selected round</span>
-<span class="sd">    :param state_labels: y-axes labels to override the default value which is extracted from the state space&#39;s labels</span>
-<span class="sd">    :param act_labels: y-axes labels to override the default value which is extracted from the action space&#39;s labels</span>
+<span class="sd">    :param state_labels: y-axes labels to for the state trajectories, no label by default</span>
+<span class="sd">    :param act_labels: y-axes labels to for the action trajectories, no label by default</span>
 <span class="sd">    :param x_limits: tuple containing the lower and upper limits for the x-axis</span>
-<span class="sd">    :param show_act: if `True`, also plot the actions</span>
-<span class="sd">    :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there</span>
+<span class="sd">    :param plot_act: if `True`, also plot the actions</span>
 <span class="sd">    :param data_field: data field of the rollout, e.g. &quot;states&quot; or &quot;observations&quot;</span>
 <span class="sd">    :param cmap_samples: color map for the trajectories resulting from different domain parameter samples</span>
+<span class="sd">    :param save_dir: if not `None` create a subfolder plots in `save_dir` and save the plots in there</span>
 <span class="sd">    :param file_format: select the file format to store the plots</span>
 <span class="sd">    :return: list of handles to the created figures</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -839,19 +839,14 @@
     <span class="n">dim_act</span> <span class="o">=</span> <span class="n">segments_ground_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s2">&quot;actions&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">size</span>
     <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments_multiple_envs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="c1"># Extract the state labels if not explicitly given</span>
+    <span class="c1"># Validate the labels</span>
     <span class="k">if</span> <span class="n">state_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">segments_ground_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rollout_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;env_spec&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data_field</span> <span class="o">==</span> <span class="s2">&quot;states&quot;</span><span class="p">:</span>
-            <span class="n">state_labels</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">dim_state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">data_field</span> <span class="o">==</span> <span class="s2">&quot;observations&quot;</span><span class="p">:</span>
-            <span class="n">state_labels</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">dim_state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="n">state_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">dim_state</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state_labels</span><span class="p">)</span> <span class="o">!=</span> <span class="n">dim_state</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">state_labels</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">dim_state</span><span class="p">,))</span>
     <span class="k">if</span> <span class="n">act_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">segments_ground_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rollout_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;env_spec&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">act_labels</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">dim_act</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="n">act_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">dim_act</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">act_labels</span><span class="p">)</span> <span class="o">!=</span> <span class="n">dim_act</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">act_labels</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="p">(</span><span class="n">dim_act</span><span class="p">,))</span>
@@ -861,9 +856,11 @@
     <span class="n">fig_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">label_samples</span> <span class="o">=</span> <span class="s2">&quot;ml&quot;</span> <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;confidence&quot;</span> <span class="k">else</span> <span class="s2">&quot;samples&quot;</span>
 
+    <span class="c1"># Plot</span>
     <span class="k">for</span> <span class="n">idx_r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">segments_ground_truth</span><span class="p">)):</span>
-        <span class="n">num_rows</span> <span class="o">=</span> <span class="n">dim_state</span> <span class="o">+</span> <span class="n">dim_act</span> <span class="k">if</span> <span class="n">show_act</span> <span class="k">else</span> <span class="n">dim_state</span>
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="n">dim_state</span> <span class="o">+</span> <span class="n">dim_act</span> <span class="k">if</span> <span class="n">plot_act</span> <span class="k">else</span> <span class="n">dim_state</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="n">tight_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">)</span>
+        <span class="n">axs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
 
         <span class="c1"># Plot the states</span>
         <span class="k">for</span> <span class="n">idx_state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim_state</span><span class="p">):</span>
@@ -938,7 +935,7 @@
 
             <span class="n">axs</span><span class="p">[</span><span class="n">idx_state</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">state_labels</span><span class="p">[</span><span class="n">idx_state</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="n">show_act</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plot_act</span><span class="p">:</span>
             <span class="c1"># Plot the actions</span>
             <span class="k">for</span> <span class="n">idx_act</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim_act</span><span class="p">):</span>
                 <span class="c1"># Plot the real segments</span>
