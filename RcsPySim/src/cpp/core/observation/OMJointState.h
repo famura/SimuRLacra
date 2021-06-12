@@ -37,7 +37,7 @@ namespace Rcs
 {
 
 /*!
- * Observes joint positions for a single joint.
+ * Observes joint positions and velocities for a single joint.
  */
 class OMJointState : public ObservationModel
 {
@@ -68,6 +68,9 @@ public:
     
     virtual unsigned int getStateDim() const;
     
+    // Here to provide th option to be overwritten by OMJointStatePositions
+    virtual unsigned int getVelocityDim() const;
+    
     virtual void computeObservation(double* state, double* velocity, const MatNd* currentAction, double dt) const;
     
     virtual void getLimits(double* minState, double* maxState, double* maxVelocity) const;
@@ -84,6 +87,18 @@ private:
     RcsJoint* joint;
     // Set to true in order to wrap the joint angle into [-pi, pi].
     bool wrapJointAngle;
+};
+
+/*!
+ * Observes joint positions and velocities for a single joint.
+ */
+class OMJointStatePositions : public OMJointState
+{
+public:
+    // Use the base class constructor
+    OMJointStatePositions(RcsGraph* graph, const char* jointName, bool wrapJointAngle);
+    
+    virtual unsigned int getVelocityDim() const;
 };
 
 } /* namespace Rcs */

@@ -90,6 +90,11 @@ unsigned int OMJointState::getStateDim() const
     return 1;
 }
 
+unsigned int OMJointState::getVelocityDim() const
+{
+    return 1;
+}
+
 void OMJointState::computeObservation(double* state, double* velocity, const MatNd* currentAction, double dt) const
 {
     double q = graph->q->ele[joint->jointIndex];
@@ -131,6 +136,15 @@ ObservationModel* OMJointState::observeUnconstrainedJoints(RcsGraph* graph)
             }
         }
     return combined;
+}
+
+// Use the base class constructor
+OMJointStatePositions::OMJointStatePositions(RcsGraph* graph, const char* jointName, bool wrapJointAngle) :
+    OMJointState(graph, jointName, wrapJointAngle) {}
+
+unsigned int OMJointStatePositions::getVelocityDim() const
+{
+    return 0;
 }
 
 } /* namespace Rcs */

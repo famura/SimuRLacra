@@ -199,7 +199,7 @@ class ECMiniGolf : public ExperimentConfig
         // Observe the robot's joints
         std::list<std::string> listOfJointNames = {"base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"};
         for (std::string jointName : listOfJointNames) {
-            fullState->addPart(new OMJointState(graph, jointName.c_str(), false));
+            fullState->addPart(new OMJointStatePositions(graph, jointName.c_str(), false));
         }
         
         std::string actionModelType = "unspecified";
