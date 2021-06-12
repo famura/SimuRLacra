@@ -926,6 +926,9 @@ class StepSequence(Sequence[Step]):
         # Remove NaNs which come from concatenating columns of different length in Pandas
         actions = actions[~np.isnan(actions).any(axis=1), :]  # check if any in a column is none for multi-dim case
 
+        # If the recoding contains a valid but unwanted last action, remove it
+        actions = actions[: states.shape[0] - 1]
+
         # Reconstruct the reward
         if task is not None:
             # Recompute the rewards from the recorded observations and actions
@@ -933,6 +936,8 @@ class StepSequence(Sequence[Step]):
         elif "rewards" in df.columns:
             # Use recorded rewards
             rewards = df["rewards"].to_numpy()
+            # If the recoding contains a valid but unwanted last reward, remove it
+            rewards = rewards[: states.shape[0] - 1]
         else:
             # Set all rewards to zero s a last resort
             rewards = np.zeros(states.shape[0] - 1)
