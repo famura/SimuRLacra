@@ -69,6 +69,7 @@ var namespaceRcs =
     [ "OMDynamicalSystemGoalDistance", "classRcs_1_1OMDynamicalSystemGoalDistance.html", "classRcs_1_1OMDynamicalSystemGoalDistance" ],
     [ "OMForceTorque", "classRcs_1_1OMForceTorque.html", "classRcs_1_1OMForceTorque" ],
     [ "OMJointState", "classRcs_1_1OMJointState.html", "classRcs_1_1OMJointState" ],
+    [ "OMJointStatePositions", "classRcs_1_1OMJointStatePositions.html", "classRcs_1_1OMJointStatePositions" ],
     [ "OMManipulabilityIndex", "classRcs_1_1OMManipulabilityIndex.html", "classRcs_1_1OMManipulabilityIndex" ],
     [ "OMNormalized", "classRcs_1_1OMNormalized.html", "classRcs_1_1OMNormalized" ],
     [ "OMPartial", "classRcs_1_1OMPartial.html", "classRcs_1_1OMPartial" ],

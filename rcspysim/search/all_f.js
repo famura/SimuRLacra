@@ -47,6 +47,7 @@ var searchData=
   ['omjointstate',['OMJointState',['../classRcs_1_1OMJointState.html',1,'Rcs::OMJointState'],['../classRcs_1_1OMJointState.html#af3f4d7cd66ab5120729272c42c548cba',1,'Rcs::OMJointState::OMJointState(RcsGraph *graph, const char *jointName, bool wrapJointAngle)'],['../classRcs_1_1OMJointState.html#a254b0e1fe1af19da454ec6dabde8952e',1,'Rcs::OMJointState::OMJointState(RcsGraph *graph, const char *jointName)'],['../classRcs_1_1OMJointState.html#a454c9e7cef037e2ee3e4ad269758c7e3',1,'Rcs::OMJointState::OMJointState(RcsGraph *graph, RcsJoint *joint)']]],
   ['omjointstate_2ecpp',['OMJointState.cpp',['../OMJointState_8cpp.html',1,'']]],
   ['omjointstate_2eh',['OMJointState.h',['../OMJointState_8h.html',1,'']]],
+  ['omjointstatepositions',['OMJointStatePositions',['../classRcs_1_1OMJointStatePositions.html',1,'Rcs::OMJointStatePositions'],['../classRcs_1_1OMJointStatePositions.html#a39ffe6b6ff1944104f6822bebaab13a4',1,'Rcs::OMJointStatePositions::OMJointStatePositions()']]],
   ['ommanipulabilityindex',['OMManipulabilityIndex',['../classRcs_1_1OMManipulabilityIndex.html',1,'Rcs::OMManipulabilityIndex'],['../classRcs_1_1OMManipulabilityIndex.html#a80d2ded7b03e4823e5540b4bf5086ef3',1,'Rcs::OMManipulabilityIndex::OMManipulabilityIndex()']]],
   ['ommanipulabilityindex_2ecpp',['OMManipulabilityIndex.cpp',['../OMManipulabilityIndex_8cpp.html',1,'']]],
   ['ommanipulabilityindex_2eh',['OMManipulabilityIndex.h',['../OMManipulabilityIndex_8h.html',1,'']]],

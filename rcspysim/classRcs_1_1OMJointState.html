@@ -106,8 +106,9 @@ Inheritance diagram for Rcs::OMJointState:</div>
 <div class="dyncontent">
 <div class="center"><img src="classRcs_1_1OMJointState__inherit__graph.png" border="0" usemap="#Rcs_1_1OMJointState_inherit__map" alt="Inheritance graph"/></div>
 <map name="Rcs_1_1OMJointState_inherit__map" id="Rcs_1_1OMJointState_inherit__map">
-<area shape="rect" id="node2" href="classRcs_1_1ObservationModel.html" title="Rcs::ObservationModel" alt="" coords="7,80,166,107"/>
-<area shape="rect" id="node3" href="classRcs_1_1BoxSpaceProvider.html" title="Rcs::BoxSpaceProvider" alt="" coords="5,5,168,32"/>
+<area shape="rect" id="node4" href="classRcs_1_1OMJointStatePositions.html" title="Rcs::OMJointStatePositions" alt="" coords="5,229,193,256"/>
+<area shape="rect" id="node2" href="classRcs_1_1ObservationModel.html" title="Rcs::ObservationModel" alt="" coords="20,80,179,107"/>
+<area shape="rect" id="node3" href="classRcs_1_1BoxSpaceProvider.html" title="Rcs::BoxSpaceProvider" alt="" coords="18,5,181,32"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -131,6 +132,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af4c3c7d77b5cf7388871ae1f02d5d1a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a768d3ad6b53d725c7587c89e7bd15f67"><td class="memItemLeft" align="right" valign="top">virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMJointState.html#a768d3ad6b53d725c7587c89e7bd15f67">getStateDim</a> () const</td></tr>
 <tr class="separator:a768d3ad6b53d725c7587c89e7bd15f67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4160978f2390c58976fa068eb2595394"><td class="memItemLeft" align="right" valign="top">virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMJointState.html#a4160978f2390c58976fa068eb2595394">getVelocityDim</a> () const</td></tr>
+<tr class="separator:a4160978f2390c58976fa068eb2595394"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60cfdf017e7403d7113f8ce8dc7f0081"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMJointState.html#a60cfdf017e7403d7113f8ce8dc7f0081">computeObservation</a> (double *state, double *velocity, const MatNd *currentAction, double dt) const</td></tr>
 <tr class="separator:a60cfdf017e7403d7113f8ce8dc7f0081"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13300f2a5e620da4265805e87caf0e12"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1OMJointState.html#a13300f2a5e620da4265805e87caf0e12">getLimits</a> (double *minState, double *maxState, double *maxVelocity) const</td></tr>
@@ -144,8 +147,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a950050a7b3c4b6b4f780753476a77f48 inherit pub_methods_classRcs_1_1ObservationModel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a939bc4ba83dc1ea43becd62da7e30cc0 inherit pub_methods_classRcs_1_1ObservationModel"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ObservationModel.html#a939bc4ba83dc1ea43becd62da7e30cc0">computeObservation</a> (MatNd *observation, const MatNd *currentAction, double dt) const</td></tr>
 <tr class="separator:a939bc4ba83dc1ea43becd62da7e30cc0 inherit pub_methods_classRcs_1_1ObservationModel"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad76d451a07bdae6a37ace81526e85fd9 inherit pub_methods_classRcs_1_1ObservationModel"><td class="memItemLeft" align="right" valign="top">virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ObservationModel.html#ad76d451a07bdae6a37ace81526e85fd9">getVelocityDim</a> () const</td></tr>
-<tr class="separator:ad76d451a07bdae6a37ace81526e85fd9 inherit pub_methods_classRcs_1_1ObservationModel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae565d56f30116670d68abb3d1b9468f4 inherit pub_methods_classRcs_1_1ObservationModel"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ObservationModel.html#ae565d56f30116670d68abb3d1b9468f4">reset</a> ()</td></tr>
 <tr class="separator:ae565d56f30116670d68abb3d1b9468f4 inherit pub_methods_classRcs_1_1ObservationModel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade57024f22a790ab93c977e7059c067c inherit pub_methods_classRcs_1_1ObservationModel"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ObservationModel.html#ade57024f22a790ab93c977e7059c067c">getVelocityNames</a> () const</td></tr>
@@ -202,7 +203,7 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a6d33d85100f7fef6c9f1b3d237197397"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Observes joint positions for a single joint. </p>
+<div class="textblock"><p>Observes joint positions and velocities for a single joint. </p>
 
 <p class="definition">Definition at line <a class="el" href="OMJointState_8h_source.html#l00042">42</a> of file <a class="el" href="OMJointState_8h_source.html">OMJointState.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -401,7 +402,7 @@ Private Attributes</h2></td></tr>
 <p>Implement to fill the observation vector with the observed values. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">state</td><td>state observation vector to fill, has <a class="el" href="classRcs_1_1OMJointState.html#a768d3ad6b53d725c7587c89e7bd15f67">getStateDim()</a> elements. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">velocity</td><td>velocity observation vector to fill, has <a class="el" href="classRcs_1_1ObservationModel.html#ad76d451a07bdae6a37ace81526e85fd9">getVelocityDim()</a> elements. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">velocity</td><td>velocity observation vector to fill, has <a class="el" href="classRcs_1_1OMJointState.html#a4160978f2390c58976fa068eb2595394">getVelocityDim()</a> elements. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">currentAction</td><td>action in current step. May be NULL if not available. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>time step since the last observation has been taken </td></tr>
   </table>
@@ -410,7 +411,7 @@ Private Attributes</h2></td></tr>
 
 <p>Implements <a class="el" href="classRcs_1_1ObservationModel.html#aa4385e8e619d3903a3264014d01d1f06">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00093">93</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00098">98</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
 
 </div>
 </div>
@@ -457,14 +458,14 @@ Private Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">minState</td><td>minimum state vector to fill, has <a class="el" href="classRcs_1_1OMJointState.html#a768d3ad6b53d725c7587c89e7bd15f67">getStateDim()</a> elements. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">maxState</td><td>maximum state vector to fill, has <a class="el" href="classRcs_1_1OMJointState.html#a768d3ad6b53d725c7587c89e7bd15f67">getStateDim()</a> elements. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">maxVelocity</td><td>maximum velocity vector to fill, has <a class="el" href="classRcs_1_1ObservationModel.html#ad76d451a07bdae6a37ace81526e85fd9">getVelocityDim()</a> elements. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">maxVelocity</td><td>maximum velocity vector to fill, has <a class="el" href="classRcs_1_1OMJointState.html#a4160978f2390c58976fa068eb2595394">getVelocityDim()</a> elements. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1ObservationModel.html#a96bdd1e9044ed6946286e4bc551d60e3">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00103">103</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00108">108</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
 
 </div>
 </div>
@@ -524,7 +525,39 @@ Private Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1ObservationModel.html#a2a7404a6dacf22c693bae9de5b2120e5">Rcs::ObservationModel</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00111">111</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00116">116</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4160978f2390c58976fa068eb2595394"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4160978f2390c58976fa068eb2595394">&#9670;&nbsp;</a></span>getVelocityDim()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int Rcs::OMJointState::getVelocityDim </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>The number of velocity variables. The default implementation assumes that for each state there is a velocity. </p>
+
+<p>Reimplemented from <a class="el" href="classRcs_1_1ObservationModel.html#ad76d451a07bdae6a37ace81526e85fd9">Rcs::ObservationModel</a>.</p>
+
+<p>Reimplemented in <a class="el" href="classRcs_1_1OMJointStatePositions.html#af581565f7a5874e04e074d704d3f000f">Rcs::OMJointStatePositions</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00093">93</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
 
 </div>
 </div>
@@ -552,7 +585,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00116">116</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00121">121</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
 
 </div>
 </div>
@@ -580,7 +613,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00125">125</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8cpp_source.html#l00130">130</a> of file <a class="el" href="OMJointState_8cpp_source.html">OMJointState.cpp</a>.</p>
 
 </div>
 </div>
@@ -605,7 +638,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8h_source.html#l00082">82</a> of file <a class="el" href="OMJointState_8h_source.html">OMJointState.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8h_source.html#l00085">85</a> of file <a class="el" href="OMJointState_8h_source.html">OMJointState.h</a>.</p>
 
 </div>
 </div>
@@ -629,7 +662,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8h_source.html#l00084">84</a> of file <a class="el" href="OMJointState_8h_source.html">OMJointState.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8h_source.html#l00087">87</a> of file <a class="el" href="OMJointState_8h_source.html">OMJointState.h</a>.</p>
 
 </div>
 </div>
@@ -653,7 +686,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="OMJointState_8h_source.html#l00086">86</a> of file <a class="el" href="OMJointState_8h_source.html">OMJointState.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="OMJointState_8h_source.html#l00089">89</a> of file <a class="el" href="OMJointState_8h_source.html">OMJointState.h</a>.</p>
 
 </div>
 </div>
@@ -667,7 +700,7 @@ Private Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1OMJointState.html">OMJointState</a></li>
-    <li class="footer">Generated on Thu Jun 10 2021 15:35:55 for RcsPySim by
+    <li class="footer">Generated on Sat Jun 12 2021 10:59:19 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

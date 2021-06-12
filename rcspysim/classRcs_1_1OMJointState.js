@@ -8,6 +8,7 @@ var classRcs_1_1OMJointState =
     [ "getLimits", "classRcs_1_1OMJointState.html#a13300f2a5e620da4265805e87caf0e12", null ],
     [ "getStateDim", "classRcs_1_1OMJointState.html#a768d3ad6b53d725c7587c89e7bd15f67", null ],
     [ "getStateNames", "classRcs_1_1OMJointState.html#a9be3b94c54b2991e888e041796e2274b", null ],
+    [ "getVelocityDim", "classRcs_1_1OMJointState.html#a4160978f2390c58976fa068eb2595394", null ],
     [ "observeAllJoints", "classRcs_1_1OMJointState.html#afb180e869bb51ea3561d09d6c6bb60f1", null ],
     [ "observeUnconstrainedJoints", "classRcs_1_1OMJointState.html#a4b9588d8a0c8df507416584fde9316ea", null ],
     [ "graph", "classRcs_1_1OMJointState.html#ae2495c8d673f781379130845d2d1cfa8", null ],

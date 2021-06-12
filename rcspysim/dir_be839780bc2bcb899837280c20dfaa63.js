@@ -49,7 +49,8 @@ var dir_be839780bc2bcb899837280c20dfaa63 =
     ] ],
     [ "OMJointState.cpp", "OMJointState_8cpp.html", "OMJointState_8cpp" ],
     [ "OMJointState.h", "OMJointState_8h.html", [
-      [ "OMJointState", "classRcs_1_1OMJointState.html", "classRcs_1_1OMJointState" ]
+      [ "OMJointState", "classRcs_1_1OMJointState.html", "classRcs_1_1OMJointState" ],
+      [ "OMJointStatePositions", "classRcs_1_1OMJointStatePositions.html", "classRcs_1_1OMJointStatePositions" ]
     ] ],
     [ "OMManipulabilityIndex.cpp", "OMManipulabilityIndex_8cpp.html", null ],
     [ "OMManipulabilityIndex.h", "OMManipulabilityIndex_8h.html", [

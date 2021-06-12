@@ -40,7 +40,9 @@ var hierarchy =
         [ "Rcs::OMDynamicalSystemDiscrepancy", "classRcs_1_1OMDynamicalSystemDiscrepancy.html", null ],
         [ "Rcs::OMDynamicalSystemGoalDistance", "classRcs_1_1OMDynamicalSystemGoalDistance.html", null ],
         [ "Rcs::OMForceTorque", "classRcs_1_1OMForceTorque.html", null ],
-        [ "Rcs::OMJointState", "classRcs_1_1OMJointState.html", null ],
+        [ "Rcs::OMJointState", "classRcs_1_1OMJointState.html", [
+          [ "Rcs::OMJointStatePositions", "classRcs_1_1OMJointStatePositions.html", null ]
+        ] ],
         [ "Rcs::OMManipulabilityIndex", "classRcs_1_1OMManipulabilityIndex.html", null ],
         [ "Rcs::OMNormalized", "classRcs_1_1OMNormalized.html", null ],
         [ "Rcs::OMPartial", "classRcs_1_1OMPartial.html", null ],

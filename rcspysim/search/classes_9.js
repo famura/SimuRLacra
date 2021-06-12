@@ -15,6 +15,7 @@ var searchData=
   ['omdynamicalsystemgoaldistance',['OMDynamicalSystemGoalDistance',['../classRcs_1_1OMDynamicalSystemGoalDistance.html',1,'Rcs']]],
   ['omforcetorque',['OMForceTorque',['../classRcs_1_1OMForceTorque.html',1,'Rcs']]],
   ['omjointstate',['OMJointState',['../classRcs_1_1OMJointState.html',1,'Rcs']]],
+  ['omjointstatepositions',['OMJointStatePositions',['../classRcs_1_1OMJointStatePositions.html',1,'Rcs']]],
   ['ommanipulabilityindex',['OMManipulabilityIndex',['../classRcs_1_1OMManipulabilityIndex.html',1,'Rcs']]],
   ['omnormalized',['OMNormalized',['../classRcs_1_1OMNormalized.html',1,'Rcs']]],
   ['ompartial',['OMPartial',['../classRcs_1_1OMPartial.html',1,'Rcs']]],
