@@ -58,7 +58,7 @@ class GAE(LoggerAware, nn.Module):
 
     def __init__(
         self,
-        vfcn: [nn.Module, Policy],
+        vfcn: Union[nn.Module, Policy],
         gamma: float = 0.99,
         lamda: float = 0.95,
         num_epoch: int = 10,
@@ -119,7 +119,7 @@ class GAE(LoggerAware, nn.Module):
             self._lr_scheduler = lr_scheduler(self.optim, **lr_scheduler_hparam)
 
     @property
-    def vfcn(self) -> [nn.Module, Policy]:
+    def vfcn(self) -> Union[nn.Module, Policy]:
         """Get the value function approximator."""
         return self._vfcn
 
