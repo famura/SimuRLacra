@@ -1,0 +1,989 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>episodic &mdash; Pyrado 0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="step_based" href="algorithms.step_based.html" />
+    <link rel="prev" title="algorithms" href="algorithms.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">episodic</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.cem">cem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.hc">hc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.nes">nes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.parameter_exploring">parameter_exploring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.pepg">pepg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.power">power</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.predefined_lqr">predefined_lqr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.reps">reps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic.sysid_via_episodic_rl">sysid_via_episodic_rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.episodic">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>episodic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/algorithms.episodic.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="episodic">
+<h1>episodic<a class="headerlink" href="#episodic" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pyrado.algorithms.episodic.cem">
+<span id="cem"></span><h2>cem<a class="headerlink" href="#module-pyrado.algorithms.episodic.cem" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.cem.CEM">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">CEM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_is_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_min</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_expl_std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_expl_decay_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_cov</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symm_sampling</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/cem.html#CEM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.cem.CEM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></code></a></p>
+<p>Cross-Entropy Method (CEM)
+This implementation is basically Algorithm 3.3. in [1] with the addition of decreasing noise [2].
+CEM is closely related to PoWER. The most significant difference is that the importance sampels are not kept over
+iterations and that the covariance matrix is not scaled with the returns, thus allowing for negative returns.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] P.T. de Boer, D.P. Kroese, S. Mannor, R.Y. Rubinstein, “A Tutorial on the Cross-Entropy Method”,
+Annals OR, 2005
+[2] I. Szita, A. Lörnicz, “Learning Tetris Using the NoisyCross-Entropy Method”, Neural Computation, 2006</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.cem.CEM.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'cem'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.cem.CEM.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.cem.CEM.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/cem.html#CEM.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.cem.CEM.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy from the given samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
+<li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.hc">
+<span id="hc"></span><h2>hc<a class="headerlink" href="#module-pyrado.algorithms.episodic.hc" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HC">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">HC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></code></a></p>
+<p>Hill Climbing (HC)</p>
+<p>HC is a heuristic-based policy search method that samples a population of policy parameters per iteration
+and evaluates them on multiple rollouts. If one of the new parameters is better than the current one it is kept.
+If the exploration parameters grow too large, they are reset.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HC.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'hc'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HC.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HC.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HC.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HC.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy from the given samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
+<li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HC.update_expl_strat">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">update_expl_strat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rets_avg_ros</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HC.update_expl_strat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HC.update_expl_strat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HCHyper">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">HCHyper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCHyper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCHyper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.hc.HC" title="pyrado.algorithms.episodic.hc.HC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.hc.HC</span></code></a></p>
+<p>Hill Climbing variant using an exploration strategy that samples policy parameters from a hyper-sphere</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HCHyper.update_expl_strat">
+<span class="sig-name descname"><span class="pre">update_expl_strat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rets_avg_ros</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCHyper.update_expl_strat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCHyper.update_expl_strat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HCNormal">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">HCNormal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCNormal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCNormal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.hc.HC" title="pyrado.algorithms.episodic.hc.HC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.hc.HC</span></code></a></p>
+<p>Hill Climbing variant using an exploration strategy with normally distributed noise on the policy parameters</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.hc.HCNormal.update_expl_strat">
+<span class="sig-name descname"><span class="pre">update_expl_strat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rets_avg_ros</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/hc.html#HCNormal.update_expl_strat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.hc.HCNormal.update_expl_strat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.nes">
+<span id="nes"></span><h2>nes<a class="headerlink" href="#module-pyrado.algorithms.episodic.nes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.nes.NES">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">NES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_min</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_std</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symm_sampling</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_returns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/nes.html#NES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.nes.NES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></code></a></p>
+<p>Simplified variant of Natural Evolution Strategies (NES)</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] D. Wierstra, T. Schaul, T. Glasmachers, Y. Sun, J. Peters, J. Schmidhuber, “Natural Evolution Strategies”,
+JMLR, 2014</p>
+<p>[2] This implementation was inspired by <a class="reference external" href="https://github.com/pybrain/pybrain/blob/master/pybrain/optimization/distributionbased/snes.py">https://github.com/pybrain/pybrain/blob/master/pybrain/optimization/distributionbased/snes.py</a></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.nes.NES.compute_utilities">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">compute_utilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_std</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/nes.html#NES.compute_utilities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.nes.NES.compute_utilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the utilities as described in section 3.1 of [1] (a.k.a. Hansen ranking with uniform baseline)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pop_size</strong> – number of solutions in the population</p></li>
+<li><p><strong>eta_mean</strong> – step size factor for the mean</p></li>
+<li><p><strong>eta_std</strong> – step size factor for the standard deviation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>utility coefficient for the mean, and utility coefficient for the standard deviation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.nes.NES.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'nes'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.nes.NES.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.nes.NES.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/nes.html#NES.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.nes.NES.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy from the given samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
+<li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.parameter_exploring">
+<span id="parameter-exploring"></span><h2>parameter_exploring<a class="headerlink" href="#module-pyrado.algorithms.episodic.parameter_exploring" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ParameterExploring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<p>Base for all algorithms that explore directly in the policy parameter space</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.env">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">env</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.environments.base.Env</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the environment in which the algorithm exploration trains.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.expl_strat">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">expl_strat</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.exploration.stochastic_params.StochasticParamExplStrat</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.expl_strat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the algorithm’s exploration strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.sampler">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the sampler. For algorithms with multiple samplers, this is the once collecting the training data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.update">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy from the given samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
+<li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.pepg">
+<span id="pepg"></span><h2>pepg<a class="headerlink" href="#module-pyrado.algorithms.episodic.pepg" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.pepg.PEPG">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PEPG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_min</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_ratio_std</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_update</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_returns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/pepg.html#PEPG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.pepg.PEPG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></code></a></p>
+<p>Parameter-Exploring Policy Gradients (PEPG)</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] F. Sehnke, C. Osendorfer, T. Rueckstiess, A. Graves, J. Peters, J. Schmidhuber, “Parameter-exploring
+Policy Gradients”, Neural Networks, 2010</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.pepg.PEPG.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'pepg'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.pepg.PEPG.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.pepg.PEPG.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/pepg.html#PEPG.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.pepg.PEPG.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy from the given samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
+<li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.pepg.rank_transform">
+<span class="sig-name descname"><span class="pre">rank_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centered</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/pepg.html#rank_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.pepg.rank_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a 1-dim ndarray with arbitrary scalar values to an array with equally spaced rank values.
+This is a nonlinear transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> – input array</p></li>
+<li><p><strong>centered</strong> – if the transform should by centered around zero</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>transformed array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.power">
+<span id="power"></span><h2>power<a class="headerlink" href="#module-pyrado.algorithms.episodic.power" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.power.PoWER">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">PoWER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_is_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_min</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symm_sampling</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/power.html#PoWER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.power.PoWER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></code></a></p>
+<p>Return-based variant of Policy learning by Weighting Exploration with the Returns (PoWER)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PoWER was designed for linear policies.
+PoWER is must use positive reward functions (improper probability distribution) [1, p.10].
+The original implementation is tailored to movement primitives like DMPs.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] J. Kober and J. Peters, “Policy Search for Motor Primitives in Robotics”, Machine Learning, 2011</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.power.PoWER.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'power'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.power.PoWER.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.power.PoWER.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/power.html#PoWER.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.power.PoWER.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.power.PoWER.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/power.html#PoWER.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.power.PoWER.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy from the given samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
+<li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.predefined_lqr">
+<span id="predefined-lqr"></span><h2>predefined_lqr<a class="headerlink" href="#module-pyrado.algorithms.episodic.predefined_lqr" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.predefined_lqr.LQR">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">LQR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ball_z_dim_mismatch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/predefined_lqr.html#LQR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.predefined_lqr.LQR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<p>Linear Quadratic Regulator created using the control module</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.predefined_lqr.LQR.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'lqr'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.predefined_lqr.LQR.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.predefined_lqr.LQR.sampler">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.predefined_lqr.LQR.sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the sampler. For algorithms with multiple samplers, this is the once collecting the training data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.predefined_lqr.LQR.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/predefined_lqr.html#LQR.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.predefined_lqr.LQR.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.predefined_lqr.LQR.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/predefined_lqr.html#LQR.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.predefined_lqr.LQR.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.reps">
+<span id="reps"></span><h2>reps<a class="headerlink" href="#module-pyrado.algorithms.episodic.reps" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">REPS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init_states_per_domain</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_init</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expl_std_min</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_domains</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symm_sampling</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">softmax_transform</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_map</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'scipy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epoch_dual</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_dual</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></code></a></p>
+<p>Episodic variant of Relative Entropy Policy Search (REPS)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>REPS was designed for linear policies.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] J. Peters, K. Mülling, Y. Altuen, “Relative Entropy Policy Search”, AAAI, 2010
+[2] A. Abdolmaleki, J.T. Springenberg, J. Degrave, S. Bohez, Y. Tassa, D. Belov, N. Heess, M. Riedmiller,</p>
+<blockquote>
+<div><p>“Relative Entropy Regularized Policy Iteration”, arXiv, 2018</p>
+</div></blockquote>
+<dl class="simple">
+<dt>[3] This implementation is inspired by the work of H. Abdulsamad</dt><dd><p><a class="reference external" href="https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py">https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py</a></p>
+</dd>
+</dl>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.dual_evaluation">
+<span class="sig-name descname"><span class="pre">dual_evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.dual_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.dual_evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the REPS dual function value for policy evaluation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
+<li><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dual loss value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.dual_improvement">
+<span class="sig-name descname"><span class="pre">dual_improvement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.dual_improvement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.dual_improvement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the REPS dual function value for policy improvement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
+<li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
+<li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dual loss value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.eta">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">eta</span></span><em class="property"><span class="pre">:</span> <span class="pre">torch.Tensor</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Lagrange multiplier <span class="math notranslate nohighlight">\(\eta\)</span>. In [2], <span class="math notranslate nohighlight">\(/eta\)</span> is called <span class="math notranslate nohighlight">\(/alpha\)</span>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss_fcn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimize the given dual function. This function can be called for the dual evaluation loss or the dual
+improvement loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss_fcn</strong> – function to minimize, different for <cite>wml()</cite> and <cite>wmap()</cite></p></li>
+<li><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p></li>
+<li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
+<li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">'reps'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_results</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult"><span class="pre">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_avg_curr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy from the given samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_results</strong> – Sampled parameters with evaluation</p></li>
+<li><p><strong>ret_avg_curr</strong> – Average return for the current parameters</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.Tensor</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the wights which are used to weights thy policy samples by their return.
+As stated in [2, sec 4.1], we could calculate weights using any rank preserving transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>weights of the policy parameter samples</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.wmap">
+<span class="sig-name descname"><span class="pre">wmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.wmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.wmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weighted maximum a-posteriori likelihood update of the policy’s mean and the exploration strategy’s covariance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
+<li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.reps.REPS.wml">
+<span class="sig-name descname"><span class="pre">wml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/reps.html#REPS.wml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.reps.REPS.wml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weighted maximum likelihood update of the policy’s mean and the exploration strategy’s covariance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
+<li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
+<li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic.sysid_via_episodic_rl">
+<span id="sysid-via-episodic-rl"></span><h2>sysid_via_episodic_rl<a class="headerlink" href="#module-pyrado.algorithms.episodic.sysid_via_episodic_rl" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SysIdViaEpisodicRL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subrtn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring"><span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">behavior_policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rollouts_per_distr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_dim_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_obs_filt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_abs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_sq</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<p>Wrapper to frame black-box system identification as an episodic reinforcement learning problem</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This algorithm was designed as a subroutine of SimOpt. However, it could also be used independently.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key">
+<span class="sig-name descname"><span class="pre">iteration_key</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'sysiderl_iteration'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.loss_fcn">
+<span class="sig-name descname"><span class="pre">loss_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout_real</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rollout_sim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.loss_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.loss_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the discrepancy between two time sequences of observations given metric.
+Be sure to align and truncate the rollouts beforehand.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout_real</strong> – (concatenated) real-world rollout containing the observations</p></li>
+<li><p><strong>rollout_sim</strong> – (concatenated) simulated rollout containing the observations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>discrepancy cost summed over the observation dimensions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'sysiderl'</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">override_obs_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">bound_lo:</span> <span class="pre">numpy.ndarray</span></em>, <em class="sig-param"><span class="pre">bound_up:</span> <span class="pre">numpy.ndarray</span></em>, <em class="sig-param"><span class="pre">labels:</span> <span class="pre">numpy.ndarray)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'numpy.ndarray'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.override_obs_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default overriding method for the bounds of an observation space. This is necessary when the observations
+are scaled with their range, e.g. to compare a deviation over different kinds of observations like position and
+annular velocity. Thus, infinite bounds are not feasible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bound_lo</strong> – lower bound of the observation space</p></li>
+<li><p><strong>bound_up</strong> – upper bound of the observation space</p></li>
+<li><p><strong>labels</strong> – label for each dimension of the observation space to override</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>clipped lower and upper bound</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.subrtn">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">subrtn</span></span><em class="property"><span class="pre">:</span> <span class="pre">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</span></em><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.subrtn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the subroutine used for updating the domain parameter distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.truncate_rollouts">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">truncate_rollouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollouts_real</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rollouts_sim</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replicate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.truncate_rollouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.truncate_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>In case (some of the) rollouts failed or succeed in one domain, but not in the other, we truncate the longer
+observation sequence. When truncating, we compare every of the M real rollouts to every of the N simulated
+rollouts, thus replicate the real rollout N times and the simulated rollouts M times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts_real</strong> – M real-world rollouts of different length if <cite>replicate = True</cite>, else K real-world
+rollouts of different length</p></li>
+<li><p><strong>rollouts_sim</strong> – N simulated rollouts of different length if <cite>replicate = True</cite>, else K simulated
+rollouts of different length</p></li>
+<li><p><strong>replicate</strong> – if <cite>False</cite> the i-th rollout from <cite>rollouts_real</cite> is (only) compared with the i-th rollout from
+<cite>rollouts_sim</cite>, in this case the number of rollouts and the initial states have to match</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MxN real-world rollouts and MxN simulated rollouts of equal length if <cite>replicate = True</cite>, else
+K real-world rollouts and K simulated rollouts of equal length</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.weighted_l1_l2_metric">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">weighted_l1_l2_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_abs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_sq</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_dim_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.weighted_l1_l2_metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.weighted_l1_l2_metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the weighted linear combination of the observation error’s MAE and MSE, averaged over time</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In contrast to [1], we are using the mean absolute error and the mean squared error instead of the L1 and
+the L2 norm. The reason for this is that longer time series would be punished otherwise.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>err</strong> – error signal with time steps along the first dimension</p></li>
+<li><p><strong>w_abs</strong> – weight for the mean absolute errors</p></li>
+<li><p><strong>w_sq</strong> – weight for the mean squared errors</p></li>
+<li><p><strong>obs_dim_weight</strong> – (diagonal) weight matrix for the different observation dimensions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>weighted linear combination of the error’s MAE and MSE, averaged over time</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.episodic">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.algorithms.episodic" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="algorithms.step_based.html" class="btn btn-neutral float-right" title="step_based" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="algorithms.html" class="btn btn-neutral float-left" title="algorithms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
