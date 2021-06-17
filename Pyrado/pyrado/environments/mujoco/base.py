@@ -85,7 +85,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             # Specify the time step size explicitly
             with open(self.model_path, mode="r") as file_raw:
                 xml_model_temp = file_raw.read()
-            xml_model_temp = MujocoSimEnv._adapt_model_file(xml_model_temp, self.domain_param)
+            xml_model_temp = self._adapt_model_file(xml_model_temp, self.domain_param)
             # Create a dummy model to extract the solver's time step size
             model_tmp = mujoco_py.load_model_from_xml(xml_model_temp)
             frame_skip = dt / model_tmp.opt.timestep
@@ -188,8 +188,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Update task
         self._task = self._create_task(self.task_args)
 
-    @staticmethod
-    def _adapt_model_file(xml_model: str, domain_param: dict) -> str:
+    def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
         """
         Changes the model's XML-file given the current domain parameters before constructing the MuJoCo simulation.
         One use case is for example the cup_scale for the `WAMBallInCupSim` where multiple values in the model's
