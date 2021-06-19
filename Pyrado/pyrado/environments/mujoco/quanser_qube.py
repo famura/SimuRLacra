@@ -69,7 +69,7 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt
 
 
-class QQubeMujocoSim(MujocoSimEnv, Serializable):
+class QQubeMjSim(MujocoSimEnv, Serializable):
     def __init__(
         self,
         frame_skip: int = 4,
@@ -186,8 +186,8 @@ class QQubeMujocoSim(MujocoSimEnv, Serializable):
         return super()._adapt_model_file(xml_model, domain_param)
 
 
-class QQubeSwingUpMujocoSim(QQubeMujocoSim):
-    name: str = "qq-su-mujoco"
+class QQubeSwingUpMjSim(QQubeMjSim):
+    name: str = "qq-su-mj"
 
     @property
     def state_space(self) -> Space:
@@ -208,8 +208,8 @@ class QQubeSwingUpMujocoSim(QQubeMujocoSim):
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
 
 
-class QQubeStabMujocoSim(QQubeMujocoSim):
-    name: str = "qq-st-mujoco"
+class QQubeStabMjSim(QQubeMjSim):
+    name: str = "qq-st-mj"
 
     @property
     def state_space(self) -> Space:

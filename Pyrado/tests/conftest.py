@@ -41,7 +41,7 @@ from pyrado.domain_randomization.domain_parameter import (
 )
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environments.base import Env
-from pyrado.environments.mujoco.quanser_qube import QQubeStabMujocoSim, QQubeSwingUpMujocoSim
+from pyrado.environments.mujoco.quanser_qube import QQubeStabMjSim, QQubeSwingUpMjSim
 from pyrado.environments.one_step.catapult import CatapultSim
 from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim, BallOnBeamSim
@@ -195,13 +195,13 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_mujoco
-    def default_qqst_mujoco():
-        return QQubeStabMujocoSim(dt=0.01, max_steps=500)
+    def default_qqst_mj():
+        return QQubeStabMjSim(dt=0.01, max_steps=500)
 
     @staticmethod
     @m_needs_mujoco
-    def default_qqsu_mujoco():
-        return QQubeSwingUpMujocoSim(dt=0.004, max_steps=4000)
+    def default_qqsu_mj():
+        return QQubeSwingUpMjSim(dt=0.004, max_steps=4000)
 
     @staticmethod
     @m_needs_bullet
