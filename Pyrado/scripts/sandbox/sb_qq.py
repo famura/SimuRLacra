@@ -45,7 +45,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     dt = 1 / 500.0
-    max_steps = 10_000_000
+    max_steps = 3500
     if args.env_name == "qq-su":
         env = QQubeSwingUpSim(dt=dt, max_steps=max_steps)
     elif args.env_name == "qq-su-mujoco":
