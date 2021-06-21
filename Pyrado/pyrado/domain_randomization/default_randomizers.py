@@ -299,7 +299,9 @@ def create_default_randomizer_qq() -> DomainRandomizer:
         NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
         NormalDomainParam(name="Rm", mean=dp_nom["Rm"], std=dp_nom["Rm"] / 5, clip_lo=1e-3),
         NormalDomainParam(name="km", mean=dp_nom["km"], std=dp_nom["km"] / 5, clip_lo=1e-4),
-        NormalDomainParam(name="Mr", mean=dp_nom["Mr"], std=dp_nom["Mr"] / 5, clip_lo=1e-4),
+        NormalDomainParam(
+            name="mass_rot_pole", mean=dp_nom["mass_rot_pole"], std=dp_nom["mass_rot_pole"] / 5, clip_lo=1e-4
+        ),
         NormalDomainParam(name="Lr", mean=dp_nom["Lr"], std=dp_nom["Lr"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="Dr", mean=dp_nom["Dr"], std=dp_nom["Dr"] / 4, clip_lo=1e-9),
         NormalDomainParam(name="Mp", mean=dp_nom["Mp"], std=dp_nom["Mp"] / 5, clip_lo=1e-4),
@@ -321,7 +323,12 @@ def create_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
     dp_nom = QQubeSim.get_nominal_domain_param()
     return DomainRandomizer(
         UniformDomainParam(name="Mp", mean=dp_nom["Mp"], halfspan=dp_nom["Mp"] / frac_halfspan, clip_lo=1e-3),
-        UniformDomainParam(name="Mr", mean=dp_nom["Mr"], halfspan=dp_nom["Mr"] / frac_halfspan, clip_lo=1e-3),
+        UniformDomainParam(
+            name="mass_rot_pole",
+            mean=dp_nom["mass_rot_pole"],
+            halfspan=dp_nom["mass_rot_pole"] / frac_halfspan,
+            clip_lo=1e-3,
+        ),
         UniformDomainParam(name="Lr", mean=dp_nom["Lr"], halfspan=dp_nom["Lr"] / frac_halfspan, clip_lo=1e-2),
         UniformDomainParam(name="Lp", mean=dp_nom["Lp"], halfspan=dp_nom["Lp"] / frac_halfspan, clip_lo=1e-2),
     )
@@ -661,8 +668,8 @@ def create_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
     return {
         0: ("Mp", "mean"),
         1: ("Mp", "std"),
-        2: ("Mr", "mean"),
-        3: ("Mr", "std"),
+        2: ("mass_rot_pole", "mean"),
+        3: ("mass_rot_pole", "std"),
         4: ("Lp", "mean"),
         5: ("Lp", "std"),
         6: ("Lr", "mean"),

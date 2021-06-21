@@ -144,7 +144,7 @@ if __name__ == "__main__":
         # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
         # param_spec['Rm'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
         # param_spec['km'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
-        # param_spec['Mr'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
+        # param_spec['mass_rot_pole'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
         # param_spec['Lr'] = np.linspace(0.085*0.7, 0.085*1.3, num=11, endpoint=True)
         # param_spec['Dr'] = np.linspace(5e-6*0.2, 5e-6*5, num=11, endpoint=True)  # 5e-6
         # param_spec['Mp'] = np.linspace(0.024*0.7, 0.024*1.3, num=11, endpoint=True)

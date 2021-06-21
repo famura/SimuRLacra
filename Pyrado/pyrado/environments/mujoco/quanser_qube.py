@@ -90,7 +90,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             g=9.81,  # gravity [m/s**2]
             Rm=8.4,  # motor resistance [Ohm]
             km=0.042,  # motor back-emf constant [V*s/rad]
-            Mr=0.095,  # rotary arm mass [kg]
+            mass_rot_pole=0.095,  # rotary arm mass [kg]
             Lr=0.085,  # rotary arm length [m]
             Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             Mp=0.024,  # pendulum link mass [kg]

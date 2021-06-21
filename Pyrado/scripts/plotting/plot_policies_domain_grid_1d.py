@@ -241,7 +241,9 @@ if __name__ == "__main__":
 
     _plot_and_save(df, "km", r"$k_m~[\mathrm{Nm/A}]$", nom_dp_value=0.042, save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "Mr", r"$m_r~[\mathrm{kg}]$", nom_dp_value=0.095, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "mass_rot_pole", r"$m_r~[\mathrm{kg}]$", nom_dp_value=0.095, save_figure=args.save, save_dir=eval_dir
+    )
 
     _plot_and_save(df, "Lr", r"$l_r~[\mathrm{m}]$", nom_dp_value=0.085, save_figure=args.save, save_dir=eval_dir)
 

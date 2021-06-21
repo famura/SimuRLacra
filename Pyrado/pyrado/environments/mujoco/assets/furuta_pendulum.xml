@@ -63,7 +63,7 @@
         <geom type="sphere" pos="+0.0475 +0.0475 0.005" size="0.005" material="foot" mass="0"/>
         <body>
             <joint name="theta" type="hinge" pos="0 0 0.13" axis="0 0 1" damping="[Dr]" frictionloss="0"/>
-            <geom name="rotaryArm" type="cylinder" fromto="0 0 0.13 [Lr] 0 0.13" size="0.003" material="link" mass="[Mr]"/>
+            <geom name="rotaryArm" type="cylinder" fromto="0 0 0.13 [Lr] 0 0.13" size="0.003" material="link" mass="[mass_rot_pole]"/>
             <geom name="rotaryArmExtension" type="cylinder" fromto="[Lr] 0 0.13 [0.0055+Lr] 0 0.13" size="0.003" material="link" mass="0"/>
             <geom name="sensor" type="cylinder" fromto="-0.013 0 0.13 0.013 0 0.13" size="0.0065" material="link" mass="0"/>
             <body>

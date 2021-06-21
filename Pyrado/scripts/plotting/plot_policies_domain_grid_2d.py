@@ -230,7 +230,7 @@ def _plot(dataframes, save_dirs, save_figure):
             )
             # _plot_and_save(
             #     df,
-            #     "Mr",
+            #     "mass_rot_pole",
             #     "Mp",
             #     r"$M_r$",
             #     r"$M_p$",

@@ -53,7 +53,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Directory of reference (BayRn) experiment
-    ref_ex_name = "2020-10-02_19-39-39--rand-Mp-Mr-Lp-Lr_lower-std"
+    ref_ex_name = "2020-10-02_19-39-39--rand-Mp-mass_rot_pole-Lp-Lr_lower-std"
     ref_ex_dir = osp.join(
         pyrado.EXP_DIR, QQubeSwingUpSim.name, f"{BayRn.name}-{PPO.name}_{FNNPolicy.name}", ref_ex_name
     )
@@ -82,12 +82,12 @@ if __name__ == "__main__":
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     randomizer = DomainRandomizer(
         # UniformDomainParam(name='Mp', mean=0.024, halfspan=0.0048),
-        # UniformDomainParam(name='Mr', mean=0.095, halfspan=0.0190),
+        # UniformDomainParam(name='mass_rot_pole', mean=0.095, halfspan=0.0190),
         # UniformDomainParam(name='Lp', mean=0.129, halfspan=0.0258),
         # UniformDomainParam(name='Lr', mean=0.085, halfspan=0.0170),
         # #
         NormalDomainParam(name="Mp", mean=0.0227, std=0.0009),
-        NormalDomainParam(name="Mr", mean=0.0899, std=0.0039),
+        NormalDomainParam(name="mass_rot_pole", mean=0.0899, std=0.0039),
         NormalDomainParam(name="Lp", mean=0.1474, std=0.0046),
         NormalDomainParam(name="Lr", mean=0.0777, std=0.003),
     )

@@ -103,15 +103,26 @@ if __name__ == "__main__":
     # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos", 2: "act_delay"}
     # dp_mapping = {0: "Dr", 1: "Dp"}
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
-    # dp_mapping = {0: "Rm", 1: "km", 2: "Mr", 3: "Mp"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
+    # dp_mapping = {0: "Rm", 1: "km", 2: "mass_rot_pole", 3: "Mp"}
+    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "mass_rot_pole", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    dp_mapping = {
+        0: "Dr",
+        1: "Dp",
+        2: "Rm",
+        3: "km",
+        4: "mass_rot_pole",
+        5: "Mp",
+        6: "Lr",
+        7: "Lp",
+        8: "g",
+        9: "act_delay",
+    }
     # dp_mapping = {
     #     0: "Dr",
     #     1: "Dp",
     #     2: "Rm",
     #     3: "km",
-    #     4: "Mr",
+    #     4: "mass_rot_pole",
     #     5: "Mp",
     #     6: "Lr",
     #     7: "Lp",
@@ -130,15 +141,15 @@ if __name__ == "__main__":
         # high=to.tensor([2 * 0.0015, 2 * 0.0005]),
         # low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
         # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
-        # low=to.tensor([dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5, dp_nom["Mr"] * 0.5, dp_nom["Mp"] * 0.5]),
-        # high=to.tensor([dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5, dp_nom["Mr"] * 1.5, dp_nom["Mp"] * 1.5]),
+        # low=to.tensor([dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5, dp_nom["mass_rot_pole"] * 0.5, dp_nom["Mp"] * 0.5]),
+        # high=to.tensor([dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5, dp_nom["mass_rot_pole"] * 1.5, dp_nom["Mp"] * 1.5]),
         low=to.tensor(
             [
                 dp_nom["Dr"] * 0,
                 dp_nom["Dp"] * 0,
                 dp_nom["Rm"] * 0.1,
                 dp_nom["km"] * 0.2,
-                dp_nom["Mr"] * 0.3,
+                dp_nom["mass_rot_pole"] * 0.3,
                 dp_nom["Mp"] * 0.3,
                 dp_nom["Lr"] * 0.5,
                 dp_nom["Lp"] * 0.5,
@@ -154,7 +165,7 @@ if __name__ == "__main__":
                 dp_nom["Dp"] * 20,
                 dp_nom["Rm"] * 1.9,
                 dp_nom["km"] * 1.8,
-                dp_nom["Mr"] * 1.7,
+                dp_nom["mass_rot_pole"] * 1.7,
                 dp_nom["Mp"] * 1.7,
                 dp_nom["Lr"] * 1.5,
                 dp_nom["Lp"] * 1.5,

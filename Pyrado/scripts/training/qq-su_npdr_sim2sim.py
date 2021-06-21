@@ -77,7 +77,7 @@ if __name__ == "__main__":
         Rm=dp_nom["Rm"] * 1.0,
         km=dp_nom["km"] * 1.0,
         Mp=dp_nom["Mp"] * 1.1,
-        Mr=dp_nom["Mr"] * 1.2,
+        mass_rot_pole=dp_nom["mass_rot_pole"] * 1.2,
         Lp=dp_nom["Lp"] * 0.8,
         Lr=dp_nom["Lr"] * 0.9,
         g=dp_nom["g"] * 1.0,
@@ -97,8 +97,8 @@ if __name__ == "__main__":
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {0: "act_delay"}
-    # dp_mapping = {0: "Mr", 1: "Mp", 2: "Lr", 3: "Lp"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    # dp_mapping = {0: "mass_rot_pole", 1: "Mp", 2: "Lr", 3: "Lp"}
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "mass_rot_pole", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
 
     # Prior and Posterior (normalizing flow)
     prior_hparam = dict(
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                 dp_nom["Dp"] * 0,
                 dp_nom["Rm"] * 0.8,
                 dp_nom["km"] * 0.8,
-                dp_nom["Mr"] * 0.8,
+                dp_nom["mass_rot_pole"] * 0.8,
                 dp_nom["Mp"] * 0.8,
                 dp_nom["Lr"] * 0.8,
                 dp_nom["Lp"] * 0.8,
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                 2 * 0.0005,
                 dp_nom["Rm"] * 1.2,
                 dp_nom["km"] * 1.2,
-                dp_nom["Mr"] * 1.2,
+                dp_nom["mass_rot_pole"] * 1.2,
                 dp_nom["Mp"] * 1.2,
                 dp_nom["Lr"] * 1.2,
                 dp_nom["Lp"] * 1.2,

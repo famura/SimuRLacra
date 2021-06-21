@@ -767,7 +767,7 @@ class QQubeVis(PandaVis):
     def update(self, task: Task):
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
-        Mr = self._env.domain_param["Mr"]
+        mass_rot_pole = self._env.domain_param["mass_rot_pole"]
         Mp = self._env.domain_param["Mp"]
         Lr = float(self._env.domain_param["Lr"])
         Lp = float(self._env.domain_param["Lp"])
@@ -803,7 +803,7 @@ class QQubeVis(PandaVis):
             alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
             dt: {self._env.dt :1.4f}
             g: {g : 1.3f}
-            Mr: {Mr : 1.4f}
+            mass_rot_pole: {mass_rot_pole : 1.4f}
             Mp: {Mp : 1.4f}
             Lr: {Lr : 1.4f}
             Lp: {Lp : 1.4f}

@@ -84,7 +84,18 @@ if __name__ == "__main__":
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
+    dp_mapping = {
+        0: "Dr",
+        1: "Dp",
+        2: "Rm",
+        3: "km",
+        4: "mass_rot_pole",
+        5: "Mp",
+        6: "Lr",
+        7: "Lp",
+        8: "g",
+        9: "act_delay",
+    }
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
@@ -95,7 +106,7 @@ if __name__ == "__main__":
                 dp_nom["Dp"] * 0,
                 dp_nom["Rm"] * 0.1,
                 dp_nom["km"] * 0.2,
-                dp_nom["Mr"] * 0.3,
+                dp_nom["mass_rot_pole"] * 0.3,
                 dp_nom["Mp"] * 0.3,
                 dp_nom["Lr"] * 0.5,
                 dp_nom["Lp"] * 0.5,
@@ -109,7 +120,7 @@ if __name__ == "__main__":
                 dp_nom["Dp"] * 50,
                 dp_nom["Rm"] * 1.9,
                 dp_nom["km"] * 1.8,
-                dp_nom["Mr"] * 1.7,
+                dp_nom["mass_rot_pole"] * 1.7,
                 dp_nom["Mp"] * 1.7,
                 dp_nom["Lr"] * 1.5,
                 dp_nom["Lp"] * 1.5,

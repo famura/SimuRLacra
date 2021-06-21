@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
-        QQubeSwingUpSim.name, f"{BayRn.name}-{PPO.name}_{FNNPolicy.name}", "rand-Mp-Mr-Lp-Lr_lower-std"
+        QQubeSwingUpSim.name, f"{BayRn.name}-{PPO.name}_{FNNPolicy.name}", "rand-Mp-mass_rot_pole-Lp-Lr_lower-std"
     )
 
     # Set seed if desired
@@ -120,8 +120,8 @@ if __name__ == "__main__":
             [
                 0.8 * dp_nom["Mp"],
                 dp_nom["Mp"] / 5000,
-                0.8 * dp_nom["Mr"],
-                dp_nom["Mr"] / 5000,
+                0.8 * dp_nom["mass_rot_pole"],
+                dp_nom["mass_rot_pole"] / 5000,
                 0.8 * dp_nom["Lp"],
                 dp_nom["Lp"] / 5000,
                 0.8 * dp_nom["Lr"],
@@ -132,8 +132,8 @@ if __name__ == "__main__":
             [
                 1.2 * dp_nom["Mp"],
                 dp_nom["Mp"] / 20,
-                1.2 * dp_nom["Mr"],
-                dp_nom["Mr"] / 20,
+                1.2 * dp_nom["mass_rot_pole"],
+                dp_nom["mass_rot_pole"] / 20,
                 1.2 * dp_nom["Lp"],
                 dp_nom["Lp"] / 20,
                 1.2 * dp_nom["Lr"],

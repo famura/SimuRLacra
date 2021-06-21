@@ -57,7 +57,7 @@ class QQubeSim(SimPyEnv, Serializable):
             g=9.81,  # gravity [m/s**2]
             Rm=8.4,  # motor resistance [Ohm]
             km=0.042,  # motor back-emf constant [V*s/rad]
-            Mr=0.095,  # rotary arm mass [kg]
+            mass_rot_pole=0.095,  # rotary arm mass [kg]
             Lr=0.085,  # rotary arm length [m]
             Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             Mp=0.024,  # pendulum link mass [kg]
@@ -68,14 +68,14 @@ class QQubeSim(SimPyEnv, Serializable):
         )
 
     def _calc_constants(self):
-        Mr = self.domain_param["Mr"]
+        mass_rot_pole = self.domain_param["mass_rot_pole"]
         Mp = self.domain_param["Mp"]
         Lr = self.domain_param["Lr"]
         Lp = self.domain_param["Lp"]
         g = self.domain_param["g"]
 
         # Moments of inertia
-        Jr = Mr * Lr ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
+        Jr = mass_rot_pole * Lr ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
         Jp = Mp * Lp ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
 
         # Constants for equations of motion

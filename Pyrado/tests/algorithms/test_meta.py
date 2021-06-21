@@ -219,7 +219,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
     dp_map = create_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
-    env_real.domain_param = dict(Mp=0.024 * 1.1, Mr=0.095 * 1.1)
+    env_real.domain_param = dict(Mp=0.024 * 1.1, mass_rot_pole=0.095 * 1.1)
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy and subroutine
@@ -238,8 +238,8 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     # Set the boundaries for the GP
     dp_nom = inner_env(env_sim).get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-8, 0.8 * dp_nom["Mr"], 1e-8]),
-        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-7, 1.2 * dp_nom["Mr"], 1e-7]),
+        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
     )
 
     # Create algorithm and train
@@ -393,15 +393,15 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     env_real = ActNormWrapper(env_real)
     env_sim = ActNormWrapper(env)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="Lr", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        0: ("Mr", "mean"),
-        1: ("Mr", "std"),
+        0: ("mass_rot_pole", "mean"),
+        1: ("mass_rot_pole", "std"),
         2: ("Mp", "mean"),
         3: ("Mp", "std"),
         4: ("Lr", "mean"),
@@ -441,7 +441,7 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     subrtn_policy = PPO(ex_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
 
     prior = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / 10),
+        NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / 10),
         NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
         NormalDomainParam(name="Lr", mean=0.085, std=0.085 / 10),
         NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
