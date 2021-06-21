@@ -48,17 +48,17 @@ if __name__ == "__main__":
     max_steps = 3500
     if args.env_name == "qq-su":
         env = QQubeSwingUpSim(dt=dt, max_steps=max_steps)
-    elif args.env_name == "qq-su-mj":
+    elif args.env_name == "qq-mj-su":
         env = QQubeSwingUpMjSim(dt=dt, max_steps=max_steps)
     elif args.env_name == "qq-st":
         env = QQubeStabSim(dt=dt, max_steps=max_steps)
-    elif args.env_name == "qq-st-mj":
+    elif args.env_name == "qq-mj-st":
         env = QQubeStabMjSim(dt=dt, max_steps=max_steps)
     else:
         raise pyrado.ValueErr(
             given_name="--env_name",
             given=args.env_name,
-            eq_constraint="'qq-su', 'qq-su-mj', 'qq-st', or 'qq-st-mj'",
+            eq_constraint="'qq-su', 'qq-mj-su', 'qq-st', or 'qq-mj-st'",
         )
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 

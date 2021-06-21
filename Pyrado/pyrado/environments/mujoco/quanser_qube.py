@@ -36,37 +36,13 @@ import torch as to
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.barrett_wam import (
-    act_space_bic_4dof,
-    act_space_bic_7dof,
-    goal_pos_init_sim_4dof,
-    goal_pos_init_sim_7dof,
-    init_qpos_des_4dof,
-    init_qpos_des_7dof,
-    wam_dgains_4dof,
-    wam_dgains_7dof,
-    wam_pgains_4dof,
-    wam_pgains_7dof,
-    wam_q_limits_lo_7dof,
-    wam_q_limits_up_7dof,
-)
 from pyrado.environments.mujoco.base import MujocoSimEnv
-from pyrado.environments.mujoco.wam_base import WAMSim
 from pyrado.environments.quanser import max_act_qq
 from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
-from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
-from pyrado.tasks.condition_only import ConditionOnlyTask
-from pyrado.tasks.desired_state import DesStateTask, RadiallySymmDesStateTask
-from pyrado.tasks.final_reward import BestStateFinalRewTask, FinalRewMode, FinalRewTask
-from pyrado.tasks.goalless import GoallessTask
-from pyrado.tasks.masked import MaskedTask
-from pyrado.tasks.parallel import ParallelTasks
-from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, QuadrErrRewFcn, ZeroPerStepRewFcn
-from pyrado.tasks.sequential import SequentialTasks
-from pyrado.utils.data_types import EnvSpec
-from pyrado.utils.input_output import print_cbt
+from pyrado.tasks.desired_state import RadiallySymmDesStateTask
+from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
 
 class QQubeMjSim(MujocoSimEnv, Serializable):
@@ -89,7 +65,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         :param task_args: arguments for the task construction
         """
         Serializable._init(self, locals())
-        model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, "quanser_qube.xml")
+        model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, "furuta_pendulum.xml")
         super().__init__(model_path, frame_skip, dt, max_steps, task_args)
         self.camera_config = dict(distance=1.0, lookat=np.array((0.0, 0.0, 0.0)), elevation=-25.0, azimuth=180.0)
 
@@ -126,6 +102,11 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
         assert self.act_space.contains(act, verbose=True)
+
+        # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
+        # This is a very simple model of static friction.
+        if self.domain_param["V_thold_neg"] <= act <= self.domain_param["V_thold_pos"]:
+            act = 0
 
         km = self.domain_param["km"]
         Rm = self.domain_param["Rm"]
@@ -164,21 +145,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         )
 
     def observe(self, state: np.ndarray, dtype: type = np.ndarray):
-        if dtype is np.ndarray:
-            return np.array(
-                [np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]]
-            )
-        elif dtype is to.Tensor:
-            return to.cat(
-                (
-                    state[0].sin().view(1),
-                    state[0].cos().view(1),
-                    state[1].sin().view(1),
-                    state[1].cos().view(1),
-                    state[2].view(1),
-                    state[3].view(1),
-                )
-            )
+        return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
         xml_model = xml_model.replace("[0.13-Lp]", str(0.13 - domain_param["Lp"]))
@@ -187,7 +154,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
 
 
 class QQubeSwingUpMjSim(QQubeMjSim):
-    name: str = "qq-su-mj"
+    name: str = "qq-mj-su"
 
     @property
     def state_space(self) -> Space:
@@ -209,7 +176,7 @@ class QQubeSwingUpMjSim(QQubeMjSim):
 
 
 class QQubeStabMjSim(QQubeMjSim):
-    name: str = "qq-st-mj"
+    name: str = "qq-mj-st"
 
     @property
     def state_space(self) -> Space:
