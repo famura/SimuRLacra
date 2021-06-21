@@ -92,7 +92,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             km=0.042,  # motor back-emf constant [V*s/rad]
             mass_rot_pole=0.095,  # rotary arm mass [kg]
             length_rot_pole=0.085,  # rotary arm length [m]
-            Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
+            damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             Mp=0.024,  # pendulum link mass [kg]
             Lp=0.129,  # pendulum link length [m]
             Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6

@@ -218,7 +218,7 @@ def _plot(dataframes, save_dirs, save_figure):
             _plot_and_save(
                 df,
                 "Dp",
-                "Dr",
+                "damping_rot_pole",
                 r"$D_p$",
                 r"$D_r$",
                 add_sep_colorbar=True,

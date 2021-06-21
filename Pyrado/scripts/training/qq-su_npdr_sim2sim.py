@@ -72,7 +72,7 @@ if __name__ == "__main__":
     env_real = deepcopy(env_sim)
     dp_nom = env_sim.get_nominal_domain_param()
     env_real.domain_param = dict(
-        Dr=dp_nom["Dr"] * 1.9,
+        damping_rot_pole=dp_nom["damping_rot_pole"] * 1.9,
         Dp=dp_nom["Dp"] * 0.4,
         Rm=dp_nom["Rm"] * 1.0,
         km=dp_nom["km"] * 1.0,
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         g=dp_nom["g"] * 1.0,
     )
     # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name="Dr", mean=dp_nom["Dr"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
+    #     NormalDomainParam(name="damping_rot_pole", mean=dp_nom["damping_rot_pole"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
     #     NormalDomainParam(name="Dp", mean=dp_nom["Dp"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
     #     NormalDomainParam(name="Rm", mean=dp_nom["Rm"] * 1.1, std=dp_nom["km"] / 50, clip_lo=0.0),
     #     NormalDomainParam(name="Km", mean=dp_nom["km"] * 0.9, std=dp_nom["km"] / 50, clip_lo=0.0),
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     # dp_mapping = {0: "act_delay"}
     # dp_mapping = {0: "mass_rot_pole", 1: "Mp", 2: "length_rot_pole", 3: "Lp"}
     dp_mapping = {
-        0: "Dr",
+        0: "damping_rot_pole",
         1: "Dp",
         2: "Rm",
         3: "km",
@@ -116,7 +116,7 @@ if __name__ == "__main__":
         # high=to.tensor([5.0]),
         low=to.tensor(
             [
-                dp_nom["Dr"] * 0,
+                dp_nom["damping_rot_pole"] * 0,
                 dp_nom["Dp"] * 0,
                 dp_nom["Rm"] * 0.8,
                 dp_nom["km"] * 0.8,

@@ -773,7 +773,7 @@ class QQubeVis(PandaVis):
         Lp = float(self._env.domain_param["Lp"])
         km = self._env.domain_param["km"]
         Rm = self._env.domain_param["Rm"]
-        Dr = self._env.domain_param["Dr"]
+        damping_rot_pole = self._env.domain_param["damping_rot_pole"]
         Dp = self._env.domain_param["Dp"]
         th, al, _, _ = self._env.state
 
@@ -807,7 +807,7 @@ class QQubeVis(PandaVis):
             Mp: {Mp : 1.4f}
             length_rot_pole: {length_rot_pole : 1.4f}
             Lp: {Lp : 1.4f}
-            Dr: {Dr : 1.7f}
+            damping_rot_pole: {damping_rot_pole : 1.7f}
             Dp: {Dp : 1.7f}
             Rm: {Rm : 1.3f}
             km: {km : 1.4f}

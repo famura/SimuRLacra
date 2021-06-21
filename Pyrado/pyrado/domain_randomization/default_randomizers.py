@@ -305,7 +305,9 @@ def create_default_randomizer_qq() -> DomainRandomizer:
         NormalDomainParam(
             name="length_rot_pole", mean=dp_nom["length_rot_pole"], std=dp_nom["length_rot_pole"] / 5, clip_lo=1e-4
         ),
-        NormalDomainParam(name="Dr", mean=dp_nom["Dr"], std=dp_nom["Dr"] / 4, clip_lo=1e-9),
+        NormalDomainParam(
+            name="damping_rot_pole", mean=dp_nom["damping_rot_pole"], std=dp_nom["damping_rot_pole"] / 4, clip_lo=1e-9
+        ),
         NormalDomainParam(name="Mp", mean=dp_nom["Mp"], std=dp_nom["Mp"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="Lp", mean=dp_nom["Lp"], std=dp_nom["Lp"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="Dp", mean=dp_nom["Dp"], std=dp_nom["Dp"] / 4, clip_lo=1e-9),
@@ -683,8 +685,8 @@ def create_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
         7: ("length_rot_pole", "std"),
         8: ("Dp", "mean"),
         9: ("Dp", "std"),
-        10: ("Dr", "mean"),
-        11: ("Dr", "std"),
+        10: ("damping_rot_pole", "mean"),
+        11: ("damping_rot_pole", "std"),
     }
 
 

@@ -59,7 +59,7 @@ class QQubeSim(SimPyEnv, Serializable):
             km=0.042,  # motor back-emf constant [V*s/rad]
             mass_rot_pole=0.095,  # rotary arm mass [kg]
             length_rot_pole=0.085,  # rotary arm length [m]
-            Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
+            damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             Mp=0.024,  # pendulum link mass [kg]
             Lp=0.129,  # pendulum link length [m]
             Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
@@ -97,7 +97,7 @@ class QQubeSim(SimPyEnv, Serializable):
         """
         km = self.domain_param["km"]
         Rm = self.domain_param["Rm"]
-        Dr = self.domain_param["Dr"]
+        damping_rot_pole = self.domain_param["damping_rot_pole"]
         Dp = self.domain_param["Dp"]
 
         # Decompose state
@@ -115,7 +115,7 @@ class QQubeSim(SimPyEnv, Serializable):
         trq = km * (float(u) - km * thd) / Rm  # u is a scalar array, causing warning on later np.array construction
         c0 = self._c[1] * sin_2al * thd * ald - self._c[2] * sin_al * ald * ald
         c1 = -0.5 * self._c[1] * sin_2al * thd * thd + self._c[4] * sin_al
-        x = trq - Dr * thd - c0
+        x = trq - damping_rot_pole * thd - c0
         y = -Dp * ald - c1
 
         # Compute qdd = M^{-1} @ [x, y]

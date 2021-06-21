@@ -229,7 +229,7 @@ if __name__ == "__main__":
         _plot_and_save(
             df,
             "Dp",
-            "Dr",
+            "damping_rot_pole",
             r"$D_p$",
             r"$D_r$",
             add_sep_colorbar=True,

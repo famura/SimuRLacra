@@ -75,7 +75,7 @@ def evaluate_policy(args, ex_dir):
             param_spec[param] = nominal_value
         # param_spec["g"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
         param_spec["Dp"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
-        param_spec["Dr"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
+        param_spec["damping_rot_pole"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
         param_spec_dim = 2
 
     elif isinstance(inner_env(env), QBallBalancerSim):

@@ -146,7 +146,7 @@ if __name__ == "__main__":
         # param_spec['km'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
         # param_spec['mass_rot_pole'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
         # param_spec['length_rot_pole'] = np.linspace(0.085*0.7, 0.085*1.3, num=11, endpoint=True)
-        # param_spec['Dr'] = np.linspace(5e-6*0.2, 5e-6*5, num=11, endpoint=True)  # 5e-6
+        # param_spec['damping_rot_pole'] = np.linspace(5e-6*0.2, 5e-6*5, num=11, endpoint=True)  # 5e-6
         # param_spec['Mp'] = np.linspace(0.024*0.7, 0.024*1.3, num=11, endpoint=True)
         # param_spec['Lp'] = np.linspace(0.129*0.7, 0.129*1.3, num=11, endpoint=True)
         # param_spec['Dp'] = np.linspace(1e-6*0.2, 1e-6n*5, num=11, endpoint=True)  # 1e-6
