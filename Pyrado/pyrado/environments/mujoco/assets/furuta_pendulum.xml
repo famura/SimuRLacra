@@ -49,18 +49,23 @@
         <material name="qube" reflectance="0.7" texture="qube"/>
         <material name="link" rgba="0.75 0.75 0.75 1" reflectance="0.9"/>
         <material name="pole" rgba="1 0 0 1" reflectance="0.9"/>
+        <material name="foot" rgba="0 0 0 1" reflectance="0"/>
     </asset>
     <worldbody>
         <light cutoff="100" diffuse="1 1 1" dir="-0 0 -1.3" directional="true" exponent="1" pos="0 0 1.3" specular=".1 .1 .1"/>
         <geom name="ground" type="plane" pos="0 0 0" size="10 10 0.1" material="floor"/>
-        <geom name="cube" type="box" size="0.05 0.06 0.05" pos="0 0 0.06" euler="90 90 0" material="qube"/>
+        <geom name="cube" type="box" size="0.055 0.055 0.055" pos="0 0 0.06" euler="90 90 0" material="qube"/>
         <geom name="upLink" type="cylinder" fromto="0 0 0.12 0 0 0.13" size="0.003" material="link" mass="0"/>
-        <geom name="mount" type="cylinder" fromto="0 0 0.12 0 0 0.1225" size="0.0075" material="qube" mass="0"/>
+        <geom name="mount" type="cylinder" fromto="0 0 0.115 0 0 0.122" size="0.012" material="qube" mass="0"/>
+        <geom type="sphere" pos="-0.0475 -0.0475 0.005" size="0.005" material="foot" mass="0"/>
+        <geom type="sphere" pos="+0.0475 -0.0475 0.005" size="0.005" material="foot" mass="0"/>
+        <geom type="sphere" pos="-0.0475 +0.0475 0.005" size="0.005" material="foot" mass="0"/>
+        <geom type="sphere" pos="+0.0475 +0.0475 0.005" size="0.005" material="foot" mass="0"/>
         <body>
             <joint name="theta" type="hinge" pos="0 0 0.13" axis="0 0 1" damping="[Dr]" frictionloss="0"/>
             <geom name="rotaryArm" type="cylinder" fromto="0 0 0.13 [Lr] 0 0.13" size="0.003" material="link" mass="[Mr]"/>
             <geom name="rotaryArmExtension" type="cylinder" fromto="[Lr] 0 0.13 [0.0055+Lr] 0 0.13" size="0.003" material="link" mass="0"/>
-            <geom name="sensor" type="cylinder" fromto="-0.012 0 0.13 0.012 0 0.13" size="0.0065" material="link" mass="0"/>
+            <geom name="sensor" type="cylinder" fromto="-0.013 0 0.13 0.013 0 0.13" size="0.0065" material="link" mass="0"/>
             <body>
                 <joint name="alpha" type="hinge" pos="[Lr] 0 0.13" axis="1 0 0" damping="[Dp]" frictionloss="0"/>
                 <geom name="pole" type="capsule" fromto="[Lr] 0 0.13 [Lr] 0 [0.13-Lp]" size="0.004" material="pole" mass="[Mp]"/>
