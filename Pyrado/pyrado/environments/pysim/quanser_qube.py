@@ -61,7 +61,7 @@ class QQubeSim(SimPyEnv, Serializable):
             length_rot_pole=0.085,  # rotary arm length [m]
             damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             mass_pend_pole=0.024,  # pendulum link mass [kg]
-            Lp=0.129,  # pendulum link length [m]
+            length_pend_pole=0.129,  # pendulum link length [m]
             Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
             V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
             V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
@@ -71,20 +71,20 @@ class QQubeSim(SimPyEnv, Serializable):
         mass_rot_pole = self.domain_param["mass_rot_pole"]
         mass_pend_pole = self.domain_param["mass_pend_pole"]
         length_rot_pole = self.domain_param["length_rot_pole"]
-        Lp = self.domain_param["Lp"]
+        length_pend_pole = self.domain_param["length_pend_pole"]
         g = self.domain_param["g"]
 
         # Moments of inertia
         Jr = mass_rot_pole * length_rot_pole ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
-        Jp = mass_pend_pole * Lp ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
+        Jp = mass_pend_pole * length_pend_pole ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
 
         # Constants for equations of motion
         self._c = np.zeros(5)
         self._c[0] = Jr + mass_pend_pole * length_rot_pole ** 2
-        self._c[1] = 0.25 * mass_pend_pole * Lp ** 2
-        self._c[2] = 0.5 * mass_pend_pole * Lp * length_rot_pole
+        self._c[1] = 0.25 * mass_pend_pole * length_pend_pole ** 2
+        self._c[2] = 0.5 * mass_pend_pole * length_pend_pole * length_rot_pole
         self._c[3] = Jp + self._c[1]
-        self._c[4] = 0.5 * mass_pend_pole * Lp * g
+        self._c[4] = 0.5 * mass_pend_pole * length_pend_pole * g
 
     def _dyn(self, t, x, u):
         r"""

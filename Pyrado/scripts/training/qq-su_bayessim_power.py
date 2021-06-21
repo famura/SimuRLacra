@@ -91,7 +91,7 @@ if __name__ == "__main__":
         4: "mass_rot_pole",
         5: "mass_pend_pole",
         6: "length_rot_pole",
-        7: "Lp",
+        7: "length_pend_pole",
         8: "g",
         9: "act_delay",
     }
@@ -108,7 +108,7 @@ if __name__ == "__main__":
                 dp_nom["mass_rot_pole"] * 0.3,
                 dp_nom["mass_pend_pole"] * 0.3,
                 dp_nom["length_rot_pole"] * 0.5,
-                dp_nom["Lp"] * 0.5,
+                dp_nom["length_pend_pole"] * 0.5,
                 dp_nom["g"] * 0.85,
                 0,
             ]
@@ -122,7 +122,7 @@ if __name__ == "__main__":
                 dp_nom["mass_rot_pole"] * 1.7,
                 dp_nom["mass_pend_pole"] * 1.7,
                 dp_nom["length_rot_pole"] * 1.5,
-                dp_nom["Lp"] * 1.5,
+                dp_nom["length_pend_pole"] * 1.5,
                 dp_nom["g"] * 1.15,
                 5,
             ]

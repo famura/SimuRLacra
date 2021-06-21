@@ -464,13 +464,13 @@ class QQubeEnergyCtrl(Policy):
         th, al, thd, ald = obs
 
         # Compute energies
-        J_pole = self._domain_param["mass_pend_pole"] * self._domain_param["Lp"] ** 2 / 12.0
+        J_pole = self._domain_param["mass_pend_pole"] * self._domain_param["length_pend_pole"] ** 2 / 12.0
         E_kin = 0.5 * J_pole * ald ** 2
         E_pot = (
             0.5
             * self._domain_param["mass_pend_pole"]
             * self._domain_param["g"]
-            * self._domain_param["Lp"]
+            * self._domain_param["length_pend_pole"]
             * (1.0 - to.cos(al))
         )
         E = E_kin + E_pot

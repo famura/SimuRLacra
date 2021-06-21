@@ -710,14 +710,14 @@ class QQubeVis(PandaVis):
         # Accessing variables of the environment
         self._env = env
         length_rot_pole = self._env.domain_param["length_rot_pole"]
-        Lp = self._env.domain_param["Lp"]
+        length_pend_pole = self._env.domain_param["length_pend_pole"]
 
         # Only for animation
         arm_radius = 0.0035
         pole_radius = 0.005
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 10 / Lp
+        self._scale = 10 / length_pend_pole
 
         # Set window title
         self.windowProperties.setTitle("Quanser Qube")
@@ -760,7 +760,7 @@ class QQubeVis(PandaVis):
 
         # Pole
         self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_bottom_red.egg"))
-        self.pole.setScale(pole_radius * self._scale, pole_radius * self._scale, Lp * self._scale)
+        self.pole.setScale(pole_radius * self._scale, pole_radius * self._scale, length_pend_pole * self._scale)
         self.pole.setPos(0, (0.07 + 2 * length_rot_pole) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
@@ -770,7 +770,7 @@ class QQubeVis(PandaVis):
         mass_rot_pole = self._env.domain_param["mass_rot_pole"]
         mass_pend_pole = self._env.domain_param["mass_pend_pole"]
         length_rot_pole = float(self._env.domain_param["length_rot_pole"])
-        Lp = float(self._env.domain_param["Lp"])
+        length_pend_pole = float(self._env.domain_param["length_pend_pole"])
         km = self._env.domain_param["km"]
         Rm = self._env.domain_param["Rm"]
         damping_rot_pole = self._env.domain_param["damping_rot_pole"]
@@ -788,9 +788,9 @@ class QQubeVis(PandaVis):
 
         # Calculate position of new point
         current_pos = (
-            pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
-            pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
-            pole_pos[2] - 2 * Lp * np.cos(al) * self._scale,
+            pole_pos[0] + 2 * length_pend_pole * np.sin(al) * np.cos(th) * self._scale,
+            pole_pos[1] + 2 * length_pend_pole * np.sin(al) * np.sin(th) * self._scale,
+            pole_pos[2] - 2 * length_pend_pole * np.cos(al) * self._scale,
         )
 
         # Draw line to that point
@@ -806,7 +806,7 @@ class QQubeVis(PandaVis):
             mass_rot_pole: {mass_rot_pole : 1.4f}
             mass_pend_pole: {mass_pend_pole : 1.4f}
             length_rot_pole: {length_rot_pole : 1.4f}
-            Lp: {Lp : 1.4f}
+            length_pend_pole: {length_pend_pole : 1.4f}
             damping_rot_pole: {damping_rot_pole : 1.7f}
             Dp: {Dp : 1.7f}
             Rm: {Rm : 1.3f}

@@ -94,7 +94,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             length_rot_pole=0.085,  # rotary arm length [m]
             damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             mass_pend_pole=0.024,  # pendulum link mass [kg]
-            Lp=0.129,  # pendulum link length [m]
+            length_pend_pole=0.129,  # pendulum link length [m]
             Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
             V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
             V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
@@ -148,7 +148,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
-        xml_model = xml_model.replace("[0.13-Lp]", str(0.13 - domain_param["Lp"]))
+        xml_model = xml_model.replace("[0.13-length_pend_pole]", str(0.13 - domain_param["length_pend_pole"]))
         xml_model = xml_model.replace("[0.0055+length_rot_pole]", str(0.0055 + domain_param["length_rot_pole"]))
         return super()._adapt_model_file(xml_model, domain_param)
 

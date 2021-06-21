@@ -71,7 +71,7 @@ if __name__ == "__main__":
         NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
@@ -81,8 +81,8 @@ if __name__ == "__main__":
         3: ("mass_pend_pole", "std"),
         4: ("length_rot_pole", "mean"),
         5: ("length_rot_pole", "std"),
-        6: ("Lp", "mean"),
-        7: ("Lp", "std"),
+        6: ("length_pend_pole", "mean"),
+        7: ("length_pend_pole", "std"),
     }
     # trafo_mask = [False, True, False, True, False, True, False, True]
     trafo_mask = [True] * 8
@@ -140,7 +140,7 @@ if __name__ == "__main__":
         NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / 10),
         NormalDomainParam(name="mass_pend_pole", mean=0.024, std=0.024 / 10),
         NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / 10),
-        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
+        NormalDomainParam(name="length_pend_pole", mean=0.129, std=0.129 / 10),
     )
     ddp_policy_hparam = dict(mapping=dp_map, trafo_mask=trafo_mask, scale_params=True)
     ddp_policy = DomainDistrParamPolicy(prior=prior, **ddp_policy_hparam)
