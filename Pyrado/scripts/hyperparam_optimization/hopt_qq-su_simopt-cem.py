@@ -77,7 +77,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     env_real = QQubeSwingUpSim(**env_hparams)
     env_real.domain_param = dict(
         mass_rot_pole=0.095 * 0.9,  # 0.095*0.9 = 0.0855
-        Mp=0.024 * 1.1,  # 0.024*1.1 = 0.0264
+        mass_pend_pole=0.024 * 1.1,  # 0.024*1.1 = 0.0264
         length_rot_pole=0.085 * 0.9,  # 0.085*0.9 = 0.0765
         Lp=0.129 * 1.1,  # 0.129*1.1 = 0.1419
     )
@@ -85,7 +85,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
     )
@@ -93,8 +93,8 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     dp_map = {
         0: ("mass_rot_pole", "mean"),
         1: ("mass_rot_pole", "std"),
-        2: ("Mp", "mean"),
-        3: ("Mp", "std"),
+        2: ("mass_pend_pole", "mean"),
+        3: ("mass_pend_pole", "std"),
         4: ("length_rot_pole", "mean"),
         5: ("length_rot_pole", "std"),
         6: ("Lp", "mean"),
@@ -135,7 +135,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     prior_std_denom = trial.suggest_uniform("prior_std_denom", 5, 20)
     prior = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / prior_std_denom),
-        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / prior_std_denom),
+        NormalDomainParam(name="mass_pend_pole", mean=0.024, std=0.024 / prior_std_denom),
         NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / prior_std_denom),
         NormalDomainParam(name="Lp", mean=0.129, std=0.129 / prior_std_denom),
     )

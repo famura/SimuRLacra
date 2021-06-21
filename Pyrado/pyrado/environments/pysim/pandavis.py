@@ -768,7 +768,7 @@ class QQubeVis(PandaVis):
         # Accessing the current parameter values
         g = self._env.domain_param["g"]
         mass_rot_pole = self._env.domain_param["mass_rot_pole"]
-        Mp = self._env.domain_param["Mp"]
+        mass_pend_pole = self._env.domain_param["mass_pend_pole"]
         length_rot_pole = float(self._env.domain_param["length_rot_pole"])
         Lp = float(self._env.domain_param["Lp"])
         km = self._env.domain_param["km"]
@@ -804,7 +804,7 @@ class QQubeVis(PandaVis):
             dt: {self._env.dt :1.4f}
             g: {g : 1.3f}
             mass_rot_pole: {mass_rot_pole : 1.4f}
-            Mp: {Mp : 1.4f}
+            mass_pend_pole: {mass_pend_pole : 1.4f}
             length_rot_pole: {length_rot_pole : 1.4f}
             Lp: {Lp : 1.4f}
             damping_rot_pole: {damping_rot_pole : 1.7f}

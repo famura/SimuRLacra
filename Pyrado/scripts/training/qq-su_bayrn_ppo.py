@@ -61,7 +61,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{BayRn.name}-{PPO.name}_{FNNPolicy.name}",
-        "rand-Mp-mass_rot_pole-Lp-length_rot_pole_lower-std",
+        "rand-mass_pend_pole-mass_rot_pole-Lp-length_rot_pole_lower-std",
     )
 
     # Set seed if desired
@@ -120,8 +120,8 @@ if __name__ == "__main__":
     ddp_space = BoxSpace(
         bound_lo=np.array(
             [
-                0.8 * dp_nom["Mp"],
-                dp_nom["Mp"] / 5000,
+                0.8 * dp_nom["mass_pend_pole"],
+                dp_nom["mass_pend_pole"] / 5000,
                 0.8 * dp_nom["mass_rot_pole"],
                 dp_nom["mass_rot_pole"] / 5000,
                 0.8 * dp_nom["Lp"],
@@ -132,8 +132,8 @@ if __name__ == "__main__":
         ),
         bound_up=np.array(
             [
-                1.2 * dp_nom["Mp"],
-                dp_nom["Mp"] / 20,
+                1.2 * dp_nom["mass_pend_pole"],
+                dp_nom["mass_pend_pole"] / 20,
                 1.2 * dp_nom["mass_rot_pole"],
                 dp_nom["mass_rot_pole"] / 20,
                 1.2 * dp_nom["Lp"],

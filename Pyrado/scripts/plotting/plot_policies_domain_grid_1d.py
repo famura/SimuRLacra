@@ -253,7 +253,9 @@ if __name__ == "__main__":
         df, "damping_rot_pole", r"$l_r~[\mathrm{Nms/rad}]$", nom_dp_value=5e-6, save_figure=args.save, save_dir=eval_dir
     )
 
-    _plot_and_save(df, "Mp", r"$m_p~[\mathrm{kg}]$", nom_dp_value=0.024, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "mass_pend_pole", r"$m_p~[\mathrm{kg}]$", nom_dp_value=0.024, save_figure=args.save, save_dir=eval_dir
+    )
 
     _plot_and_save(df, "Lp", r"$l_p~[\mathrm{m}]$", nom_dp_value=0.129, save_figure=args.save, save_dir=eval_dir)
 

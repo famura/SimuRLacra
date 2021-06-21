@@ -231,7 +231,7 @@ def _plot(dataframes, save_dirs, save_figure):
             # _plot_and_save(
             #     df,
             #     "mass_rot_pole",
-            #     "Mp",
+            #     "mass_pend_pole",
             #     r"$M_r$",
             #     r"$M_p$",
             #     add_sep_colorbar=True,

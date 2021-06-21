@@ -55,7 +55,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}",
-        f"sim2sim_rand-Mp-mass_rot_pole_seed-{args.seed}",
+        f"sim2sim_rand-mass_pend_pole-mass_rot_pole_seed-{args.seed}",
     )
 
     # Set seed if desired
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     env_real = QQubeSwingUpSim(**env_sim_hparams)
     env_real.domain_param = dict(
-        Mp=0.024 * 1.1,
+        mass_pend_pole=0.024 * 1.1,
         mass_rot_pole=0.095 * 1.1,
     )
     env_real_hparams = env_sim_hparams
@@ -113,8 +113,8 @@ if __name__ == "__main__":
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
-        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
+        bound_lo=np.array([0.8 * dp_nom["mass_pend_pole"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["mass_pend_pole"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
     )
 
     # Algorithm

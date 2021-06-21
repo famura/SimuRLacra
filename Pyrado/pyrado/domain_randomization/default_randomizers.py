@@ -308,7 +308,9 @@ def create_default_randomizer_qq() -> DomainRandomizer:
         NormalDomainParam(
             name="damping_rot_pole", mean=dp_nom["damping_rot_pole"], std=dp_nom["damping_rot_pole"] / 4, clip_lo=1e-9
         ),
-        NormalDomainParam(name="Mp", mean=dp_nom["Mp"], std=dp_nom["Mp"] / 5, clip_lo=1e-4),
+        NormalDomainParam(
+            name="mass_pend_pole", mean=dp_nom["mass_pend_pole"], std=dp_nom["mass_pend_pole"] / 5, clip_lo=1e-4
+        ),
         NormalDomainParam(name="Lp", mean=dp_nom["Lp"], std=dp_nom["Lp"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="Dp", mean=dp_nom["Dp"], std=dp_nom["Dp"] / 4, clip_lo=1e-9),
     )
@@ -326,7 +328,12 @@ def create_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
 
     dp_nom = QQubeSim.get_nominal_domain_param()
     return DomainRandomizer(
-        UniformDomainParam(name="Mp", mean=dp_nom["Mp"], halfspan=dp_nom["Mp"] / frac_halfspan, clip_lo=1e-3),
+        UniformDomainParam(
+            name="mass_pend_pole",
+            mean=dp_nom["mass_pend_pole"],
+            halfspan=dp_nom["mass_pend_pole"] / frac_halfspan,
+            clip_lo=1e-3,
+        ),
         UniformDomainParam(
             name="mass_rot_pole",
             mean=dp_nom["mass_rot_pole"],
@@ -675,8 +682,8 @@ def create_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
              distribution parameter
     """
     return {
-        0: ("Mp", "mean"),
-        1: ("Mp", "std"),
+        0: ("mass_pend_pole", "mean"),
+        1: ("mass_pend_pole", "std"),
         2: ("mass_rot_pole", "mean"),
         3: ("mass_rot_pole", "std"),
         4: ("Lp", "mean"),

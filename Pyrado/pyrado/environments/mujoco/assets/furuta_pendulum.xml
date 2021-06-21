@@ -68,7 +68,7 @@
             <geom name="sensor" type="cylinder" fromto="-0.013 0 0.13 0.013 0 0.13" size="0.0065" material="link" mass="0"/>
             <body>
                 <joint name="alpha" type="hinge" pos="[length_rot_pole] 0 0.13" axis="1 0 0" damping="[Dp]" frictionloss="0"/>
-                <geom name="pole" type="capsule" fromto="[length_rot_pole] 0 0.13 [length_rot_pole] 0 [0.13-Lp]" size="0.004" material="pole" mass="[Mp]"/>
+                <geom name="pole" type="capsule" fromto="[length_rot_pole] 0 0.13 [length_rot_pole] 0 [0.13-Lp]" size="0.004" material="pole" mass="[mass_pend_pole]"/>
                 <geom name="poleExtension" type="cylinder" fromto="[length_rot_pole] 0 0.13 [length_rot_pole] 0 0.135" size="0.004" material="pole" mass="0"/>
             </body>
         </body>

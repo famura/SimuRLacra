@@ -76,7 +76,7 @@ if __name__ == "__main__":
         Dp=dp_nom["Dp"] * 0.4,
         Rm=dp_nom["Rm"] * 1.0,
         km=dp_nom["km"] * 1.0,
-        Mp=dp_nom["Mp"] * 1.1,
+        mass_pend_pole=dp_nom["mass_pend_pole"] * 1.1,
         mass_rot_pole=dp_nom["mass_rot_pole"] * 1.2,
         Lp=dp_nom["Lp"] * 0.8,
         length_rot_pole=dp_nom["length_rot_pole"] * 0.9,
@@ -97,14 +97,14 @@ if __name__ == "__main__":
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {0: "act_delay"}
-    # dp_mapping = {0: "mass_rot_pole", 1: "Mp", 2: "length_rot_pole", 3: "Lp"}
+    # dp_mapping = {0: "mass_rot_pole", 1: "mass_pend_pole", 2: "length_rot_pole", 3: "Lp"}
     dp_mapping = {
         0: "damping_rot_pole",
         1: "Dp",
         2: "Rm",
         3: "km",
         4: "mass_rot_pole",
-        5: "Mp",
+        5: "mass_pend_pole",
         6: "length_rot_pole",
         7: "Lp",
         8: "g",
@@ -121,7 +121,7 @@ if __name__ == "__main__":
                 dp_nom["Rm"] * 0.8,
                 dp_nom["km"] * 0.8,
                 dp_nom["mass_rot_pole"] * 0.8,
-                dp_nom["Mp"] * 0.8,
+                dp_nom["mass_pend_pole"] * 0.8,
                 dp_nom["length_rot_pole"] * 0.8,
                 dp_nom["Lp"] * 0.8,
                 dp_nom["g"] * 0.9,
@@ -134,7 +134,7 @@ if __name__ == "__main__":
                 dp_nom["Rm"] * 1.2,
                 dp_nom["km"] * 1.2,
                 dp_nom["mass_rot_pole"] * 1.2,
-                dp_nom["Mp"] * 1.2,
+                dp_nom["mass_pend_pole"] * 1.2,
                 dp_nom["length_rot_pole"] * 1.2,
                 dp_nom["Lp"] * 1.2,
                 dp_nom["g"] * 1.1,

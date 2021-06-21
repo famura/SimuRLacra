@@ -69,7 +69,7 @@ if __name__ == "__main__":
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
     )
@@ -77,8 +77,8 @@ if __name__ == "__main__":
     dp_map = {
         0: ("mass_rot_pole", "mean"),
         1: ("mass_rot_pole", "std"),
-        2: ("Mp", "mean"),
-        3: ("Mp", "std"),
+        2: ("mass_pend_pole", "mean"),
+        3: ("mass_pend_pole", "std"),
         4: ("length_rot_pole", "mean"),
         5: ("length_rot_pole", "std"),
         6: ("Lp", "mean"),
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # Subroutine for system identification
     prior = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / 10),
-        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
+        NormalDomainParam(name="mass_pend_pole", mean=0.024, std=0.024 / 10),
         NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / 10),
         NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
     )
