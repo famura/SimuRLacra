@@ -709,7 +709,7 @@ class QQubeVis(PandaVis):
 
         # Accessing variables of the environment
         self._env = env
-        Lr = self._env.domain_param["Lr"]
+        length_rot_pole = self._env.domain_param["length_rot_pole"]
         Lp = self._env.domain_param["Lp"]
 
         # Only for animation
@@ -747,7 +747,7 @@ class QQubeVis(PandaVis):
 
         # Arm
         self.arm = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
-        self.arm.setScale(arm_radius * self._scale, arm_radius * self._scale, Lr * self._scale)
+        self.arm.setScale(arm_radius * self._scale, arm_radius * self._scale, length_rot_pole * self._scale)
         self.arm.setP(90)
         self.arm.setPos(0, 0.07 * self._scale, 0.15 * self._scale)
         self.arm.reparentTo(self.render)
@@ -755,13 +755,13 @@ class QQubeVis(PandaVis):
         # Joint 2
         self.joint2 = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
         self.joint2.setScale(pole_radius * self._scale)
-        self.joint2.setPos(0.0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
+        self.joint2.setPos(0.0, (0.07 + 2 * length_rot_pole) * self._scale, 0.15 * self._scale)
         self.joint2.wrtReparentTo(self.arm)
 
         # Pole
         self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_bottom_red.egg"))
         self.pole.setScale(pole_radius * self._scale, pole_radius * self._scale, Lp * self._scale)
-        self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
+        self.pole.setPos(0, (0.07 + 2 * length_rot_pole) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
     def update(self, task: Task):
@@ -769,7 +769,7 @@ class QQubeVis(PandaVis):
         g = self._env.domain_param["g"]
         mass_rot_pole = self._env.domain_param["mass_rot_pole"]
         Mp = self._env.domain_param["Mp"]
-        Lr = float(self._env.domain_param["Lr"])
+        length_rot_pole = float(self._env.domain_param["length_rot_pole"])
         Lp = float(self._env.domain_param["Lp"])
         km = self._env.domain_param["km"]
         Rm = self._env.domain_param["Rm"]
@@ -805,7 +805,7 @@ class QQubeVis(PandaVis):
             g: {g : 1.3f}
             mass_rot_pole: {mass_rot_pole : 1.4f}
             Mp: {Mp : 1.4f}
-            Lr: {Lr : 1.4f}
+            length_rot_pole: {length_rot_pole : 1.4f}
             Lp: {Lp : 1.4f}
             Dr: {Dr : 1.7f}
             Dp: {Dp : 1.7f}

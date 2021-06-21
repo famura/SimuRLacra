@@ -302,7 +302,9 @@ def create_default_randomizer_qq() -> DomainRandomizer:
         NormalDomainParam(
             name="mass_rot_pole", mean=dp_nom["mass_rot_pole"], std=dp_nom["mass_rot_pole"] / 5, clip_lo=1e-4
         ),
-        NormalDomainParam(name="Lr", mean=dp_nom["Lr"], std=dp_nom["Lr"] / 5, clip_lo=1e-4),
+        NormalDomainParam(
+            name="length_rot_pole", mean=dp_nom["length_rot_pole"], std=dp_nom["length_rot_pole"] / 5, clip_lo=1e-4
+        ),
         NormalDomainParam(name="Dr", mean=dp_nom["Dr"], std=dp_nom["Dr"] / 4, clip_lo=1e-9),
         NormalDomainParam(name="Mp", mean=dp_nom["Mp"], std=dp_nom["Mp"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="Lp", mean=dp_nom["Lp"], std=dp_nom["Lp"] / 5, clip_lo=1e-4),
@@ -329,7 +331,12 @@ def create_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
             halfspan=dp_nom["mass_rot_pole"] / frac_halfspan,
             clip_lo=1e-3,
         ),
-        UniformDomainParam(name="Lr", mean=dp_nom["Lr"], halfspan=dp_nom["Lr"] / frac_halfspan, clip_lo=1e-2),
+        UniformDomainParam(
+            name="length_rot_pole",
+            mean=dp_nom["length_rot_pole"],
+            halfspan=dp_nom["length_rot_pole"] / frac_halfspan,
+            clip_lo=1e-2,
+        ),
         UniformDomainParam(name="Lp", mean=dp_nom["Lp"], halfspan=dp_nom["Lp"] / frac_halfspan, clip_lo=1e-2),
     )
 
@@ -672,8 +679,8 @@ def create_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
         3: ("mass_rot_pole", "std"),
         4: ("Lp", "mean"),
         5: ("Lp", "std"),
-        6: ("Lr", "mean"),
-        7: ("Lr", "std"),
+        6: ("length_rot_pole", "mean"),
+        7: ("length_rot_pole", "std"),
         8: ("Dp", "mean"),
         9: ("Dp", "std"),
         10: ("Dr", "mean"),

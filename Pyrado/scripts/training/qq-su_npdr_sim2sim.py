@@ -79,7 +79,7 @@ if __name__ == "__main__":
         Mp=dp_nom["Mp"] * 1.1,
         mass_rot_pole=dp_nom["mass_rot_pole"] * 1.2,
         Lp=dp_nom["Lp"] * 0.8,
-        Lr=dp_nom["Lr"] * 0.9,
+        length_rot_pole=dp_nom["length_rot_pole"] * 0.9,
         g=dp_nom["g"] * 1.0,
     )
     # randomizer = DomainRandomizer(
@@ -97,8 +97,18 @@ if __name__ == "__main__":
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {0: "act_delay"}
-    # dp_mapping = {0: "mass_rot_pole", 1: "Mp", 2: "Lr", 3: "Lp"}
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "mass_rot_pole", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    # dp_mapping = {0: "mass_rot_pole", 1: "Mp", 2: "length_rot_pole", 3: "Lp"}
+    dp_mapping = {
+        0: "Dr",
+        1: "Dp",
+        2: "Rm",
+        3: "km",
+        4: "mass_rot_pole",
+        5: "Mp",
+        6: "length_rot_pole",
+        7: "Lp",
+        8: "g",
+    }
 
     # Prior and Posterior (normalizing flow)
     prior_hparam = dict(
@@ -112,7 +122,7 @@ if __name__ == "__main__":
                 dp_nom["km"] * 0.8,
                 dp_nom["mass_rot_pole"] * 0.8,
                 dp_nom["Mp"] * 0.8,
-                dp_nom["Lr"] * 0.8,
+                dp_nom["length_rot_pole"] * 0.8,
                 dp_nom["Lp"] * 0.8,
                 dp_nom["g"] * 0.9,
             ]
@@ -125,7 +135,7 @@ if __name__ == "__main__":
                 dp_nom["km"] * 1.2,
                 dp_nom["mass_rot_pole"] * 1.2,
                 dp_nom["Mp"] * 1.2,
-                dp_nom["Lr"] * 1.2,
+                dp_nom["length_rot_pole"] * 1.2,
                 dp_nom["Lp"] * 1.2,
                 dp_nom["g"] * 1.1,
             ]

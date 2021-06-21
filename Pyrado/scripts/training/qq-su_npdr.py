@@ -104,7 +104,7 @@ if __name__ == "__main__":
     # dp_mapping = {0: "Dr", 1: "Dp"}
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
     # dp_mapping = {0: "Rm", 1: "km", 2: "mass_rot_pole", 3: "Mp"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "mass_rot_pole", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "mass_rot_pole", 5: "Mp", 6: "length_rot_pole", 7: "Lp", 8: "g"}
     dp_mapping = {
         0: "Dr",
         1: "Dp",
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         3: "km",
         4: "mass_rot_pole",
         5: "Mp",
-        6: "Lr",
+        6: "length_rot_pole",
         7: "Lp",
         8: "g",
         9: "act_delay",
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     #     3: "km",
     #     4: "mass_rot_pole",
     #     5: "Mp",
-    #     6: "Lr",
+    #     6: "length_rot_pole",
     #     7: "Lp",
     #     8: "g",
     #     # 9: "V_thold_neg",
@@ -151,7 +151,7 @@ if __name__ == "__main__":
                 dp_nom["km"] * 0.2,
                 dp_nom["mass_rot_pole"] * 0.3,
                 dp_nom["Mp"] * 0.3,
-                dp_nom["Lr"] * 0.5,
+                dp_nom["length_rot_pole"] * 0.5,
                 dp_nom["Lp"] * 0.5,
                 dp_nom["g"] * 0.85,
                 # -0.1,
@@ -167,7 +167,7 @@ if __name__ == "__main__":
                 dp_nom["km"] * 1.8,
                 dp_nom["mass_rot_pole"] * 1.7,
                 dp_nom["Mp"] * 1.7,
-                dp_nom["Lr"] * 1.5,
+                dp_nom["length_rot_pole"] * 1.5,
                 dp_nom["Lp"] * 1.5,
                 dp_nom["g"] * 1.15,
                 # 0,

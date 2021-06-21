@@ -78,7 +78,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     env_real.domain_param = dict(
         mass_rot_pole=0.095 * 0.9,  # 0.095*0.9 = 0.0855
         Mp=0.024 * 1.1,  # 0.024*1.1 = 0.0264
-        Lr=0.085 * 0.9,  # 0.085*0.9 = 0.0765
+        length_rot_pole=0.085 * 0.9,  # 0.085*0.9 = 0.0765
         Lp=0.129 * 1.1,  # 0.129*1.1 = 0.1419
     )
 
@@ -86,7 +86,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     randomizer = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lr", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
@@ -95,8 +95,8 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         1: ("mass_rot_pole", "std"),
         2: ("Mp", "mean"),
         3: ("Mp", "std"),
-        4: ("Lr", "mean"),
-        5: ("Lr", "std"),
+        4: ("length_rot_pole", "mean"),
+        5: ("length_rot_pole", "std"),
         6: ("Lp", "mean"),
         7: ("Lp", "std"),
     }
@@ -136,7 +136,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     prior = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / prior_std_denom),
         NormalDomainParam(name="Mp", mean=0.024, std=0.024 / prior_std_denom),
-        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / prior_std_denom),
+        NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / prior_std_denom),
         NormalDomainParam(name="Lp", mean=0.129, std=0.129 / prior_std_denom),
     )
     ddp_policy = DomainDistrParamPolicy(

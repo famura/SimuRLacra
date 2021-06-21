@@ -91,7 +91,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             Rm=8.4,  # motor resistance [Ohm]
             km=0.042,  # motor back-emf constant [V*s/rad]
             mass_rot_pole=0.095,  # rotary arm mass [kg]
-            Lr=0.085,  # rotary arm length [m]
+            length_rot_pole=0.085,  # rotary arm length [m]
             Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             Mp=0.024,  # pendulum link mass [kg]
             Lp=0.129,  # pendulum link length [m]
@@ -149,7 +149,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
 
     def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
         xml_model = xml_model.replace("[0.13-Lp]", str(0.13 - domain_param["Lp"]))
-        xml_model = xml_model.replace("[0.0055+Lr]", str(0.0055 + domain_param["Lr"]))
+        xml_model = xml_model.replace("[0.0055+length_rot_pole]", str(0.0055 + domain_param["length_rot_pole"]))
         return super()._adapt_model_file(xml_model, domain_param)
 
 
