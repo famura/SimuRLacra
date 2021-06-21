@@ -774,7 +774,7 @@ class QQubeVis(PandaVis):
         km = self._env.domain_param["km"]
         Rm = self._env.domain_param["Rm"]
         damping_rot_pole = self._env.domain_param["damping_rot_pole"]
-        Dp = self._env.domain_param["Dp"]
+        damping_pend_pole = self._env.domain_param["damping_pend_pole"]
         th, al, _, _ = self._env.state
 
         # Update rotation of arm
@@ -808,7 +808,7 @@ class QQubeVis(PandaVis):
             length_rot_pole: {length_rot_pole : 1.4f}
             length_pend_pole: {length_pend_pole : 1.4f}
             damping_rot_pole: {damping_rot_pole : 1.7f}
-            Dp: {Dp : 1.7f}
+            damping_pend_pole: {damping_pend_pole : 1.7f}
             Rm: {Rm : 1.3f}
             km: {km : 1.4f}
             """

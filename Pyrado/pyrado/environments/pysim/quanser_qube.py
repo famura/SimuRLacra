@@ -62,7 +62,7 @@ class QQubeSim(SimPyEnv, Serializable):
             damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             mass_pend_pole=0.024,  # pendulum link mass [kg]
             length_pend_pole=0.129,  # pendulum link length [m]
-            Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
+            damping_pend_pole=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
             V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
             V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
@@ -98,7 +98,7 @@ class QQubeSim(SimPyEnv, Serializable):
         km = self.domain_param["km"]
         Rm = self.domain_param["Rm"]
         damping_rot_pole = self.domain_param["damping_rot_pole"]
-        Dp = self.domain_param["Dp"]
+        damping_pend_pole = self.domain_param["damping_pend_pole"]
 
         # Decompose state
         th, al, thd, ald = x
@@ -116,7 +116,7 @@ class QQubeSim(SimPyEnv, Serializable):
         c0 = self._c[1] * sin_2al * thd * ald - self._c[2] * sin_al * ald * ald
         c1 = -0.5 * self._c[1] * sin_2al * thd * thd + self._c[4] * sin_al
         x = trq - damping_rot_pole * thd - c0
-        y = -Dp * ald - c1
+        y = -damping_pend_pole * ald - c1
 
         # Compute qdd = M^{-1} @ [x, y]
         thdd = (c * x - b * y) / det

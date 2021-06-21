@@ -86,7 +86,7 @@ if __name__ == "__main__":
     # Define a mapping: index - domain parameter
     dp_mapping = {
         0: "damping_rot_pole",
-        1: "Dp",
+        1: "damping_pend_pole",
         2: "Rm",
         3: "km",
         4: "mass_rot_pole",
@@ -103,7 +103,7 @@ if __name__ == "__main__":
         low=to.tensor(
             [
                 dp_nom["damping_rot_pole"] * 0,
-                dp_nom["Dp"] * 0,
+                dp_nom["damping_pend_pole"] * 0,
                 dp_nom["Rm"] * 0.1,
                 dp_nom["km"] * 0.2,
                 dp_nom["mass_rot_pole"] * 0.3,
@@ -117,7 +117,7 @@ if __name__ == "__main__":
         high=to.tensor(
             [
                 dp_nom["damping_rot_pole"] * 5,
-                dp_nom["Dp"] * 50,
+                dp_nom["damping_pend_pole"] * 50,
                 dp_nom["Rm"] * 1.9,
                 dp_nom["km"] * 1.8,
                 dp_nom["mass_rot_pole"] * 1.7,

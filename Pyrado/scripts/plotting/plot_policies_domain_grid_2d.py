@@ -217,7 +217,7 @@ def _plot(dataframes, save_dirs, save_figure):
             """ QQubeSwingUpSim """
             _plot_and_save(
                 df,
-                "Dp",
+                "damping_pend_pole",
                 "damping_rot_pole",
                 r"$D_p$",
                 r"$D_r$",

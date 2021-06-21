@@ -95,7 +95,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
             mass_pend_pole=0.024,  # pendulum link mass [kg]
             length_pend_pole=0.129,  # pendulum link length [m]
-            Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
+            damping_pend_pole=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
             V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
             V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )

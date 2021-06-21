@@ -228,7 +228,7 @@ if __name__ == "__main__":
         """ QQubeSwingUpSim """
         _plot_and_save(
             df,
-            "Dp",
+            "damping_pend_pole",
             "damping_rot_pole",
             r"$D_p$",
             r"$D_r$",

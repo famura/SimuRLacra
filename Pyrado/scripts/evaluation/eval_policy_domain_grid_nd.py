@@ -74,7 +74,7 @@ def evaluate_policy(args, ex_dir):
         for param, nominal_value in env.get_nominal_domain_param().items():
             param_spec[param] = nominal_value
         # param_spec["g"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
-        param_spec["Dp"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
+        param_spec["damping_pend_pole"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
         param_spec["damping_rot_pole"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
         param_spec_dim = 2
 

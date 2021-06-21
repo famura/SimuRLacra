@@ -261,7 +261,14 @@ if __name__ == "__main__":
         df, "length_pend_pole", r"$l_p~[\mathrm{m}]$", nom_dp_value=0.129, save_figure=args.save, save_dir=eval_dir
     )
 
-    _plot_and_save(df, "Dp", r"$l_p~[\mathrm{Nms/rad}]$", nom_dp_value=1e-6, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df,
+        "damping_pend_pole",
+        r"$l_p~[\mathrm{Nms/rad}]$",
+        nom_dp_value=1e-6,
+        save_figure=args.save,
+        save_dir=eval_dir,
+    )
 
     """ QCartPoleSim """
 
