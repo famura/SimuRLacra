@@ -1,19 +1,21 @@
 """
-Simple script which runs SNPE-A with one fixed observation.
+Script to identify the domain parameters of the Pendulum environment using BayesSim
 """
 
 from copy import deepcopy
 
 import numpy as np
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 
 import pyrado
 from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import IdlePolicy
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.sbi import create_embedding
 
 
 if __name__ == "__main__":
@@ -67,7 +69,15 @@ if __name__ == "__main__":
         low=to.tensor([dp_nom["m"] * 0.5, dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
         high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
+
+    # Time series embedding
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
+
+    # Time series embedding
+    embedding_hparam = dict(downsampling_factor=1)
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (mixture of Gaussians)
     posterior_hparam = dict(model="mdn", num_components=5)
@@ -79,8 +89,8 @@ if __name__ == "__main__":
         num_segments=args.num_segments,
         len_segments=args.len_segments,
         num_sbi_rounds=4,
-        downsampling_factor=1,
         num_eval_samples=100,
+        stop_on_done=False,
         subrtn_sbi_training_hparam=dict(
             training_batch_size=50,  # default: 50
             learning_rate=5e-4,  # default: 5e-4
@@ -100,6 +110,7 @@ if __name__ == "__main__":
         policy=policy,
         dp_mapping=dp_mapping,
         prior=prior,
+        embedding=embedding,
         **algo_hparam,
     )
 
@@ -108,6 +119,7 @@ if __name__ == "__main__":
         dict(env=env_hparams, seed=args.seed),
         dict(policy_name=policy.name),
         dict(prior=prior_hparam),
+        dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(posterior_nn=posterior_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

@@ -30,3 +30,9 @@ add_subdirectory(core)
 add_subdirectory(pyEnv)
 add_subdirectory(hardware)
 add_subdirectory(tests)
+
+IF (DEFINED $ENV{SIT})
+  # When working at the HRI
+  add_subdirectory(RoboLabComponents)
+  MESSAGE("-- Added RoboLabComponents")
+ENDIF ()

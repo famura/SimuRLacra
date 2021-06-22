@@ -1,0 +1,24 @@
+<Experiment envType="BallOnPlate"
+            extraConfigDir="config/BallOnPlate"
+            graphFileName="BallOnPlate/gBotKuka.xml"
+            physicsConfigFile="BallOnPlate/pBallOnPlate.xml"
+            actionModelType="plate_acc5d"
+            dt="0.02"
+            normalizeActions="true"
+            physicsEngine="Bullet"
+>
+
+  <initDomainParam ball_mass="0.2"
+                   ball_radius="0.05"
+                   ball_friction="0.4"
+                   ball_rollingfriction="0.003"
+                   ball_slip="50.0"
+                   ball_angularvelocitydamping="0"
+                   ball_linearvelocitydamping="0"
+                   ball_com_x="0"
+                   ball_com_y="0"
+                   ball_com_z="0"
+                   action_delay="0"
+  />
+
+</Experiment>

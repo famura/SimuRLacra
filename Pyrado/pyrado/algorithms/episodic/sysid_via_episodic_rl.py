@@ -179,7 +179,6 @@ class SysIdViaEpisodicRL(Algorithm):
             sampled_domain_params = self._subrtn.env.randomizer.get_params()
 
             # Sample the rollouts
-            self.behavior_sampler.set_seed(self.base_seed)
             rollouts_sim = self.behavior_sampler.sample(init_states_real, sampled_domain_params, eval=True)
 
             # Iterate over simulated rollout with the same initial state

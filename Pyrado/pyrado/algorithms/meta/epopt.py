@@ -102,7 +102,7 @@ class EPOpt(Algorithm):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Activate the CVaR mechanism after skip_iter iterations
-        if self.curr_iter == self.skip_iter:
+        if self._curr_iter == self.skip_iter:
             self._subrtn.sampler.epsilon = self.epsilon
 
         # Call subroutine
@@ -118,7 +118,7 @@ class EPOpt(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            if self.curr_iter == self.skip_iter - 1:
+            if self._curr_iter == self.skip_iter - 1:
                 # Save the last snapshot before applying the CVaR
                 self._subrtn.save_snapshot(meta_info=dict(prefix=f"iter_{self.skip_iter - 1}"))
             else:

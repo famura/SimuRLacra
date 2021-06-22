@@ -121,7 +121,7 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         self._cnt = 0
 
         # Call the reset function of the super class and forwards the arguments
-        init_obs = super().reset(init_state, domain_param)
+        init_obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         # Init the observation buffer
         self._obs_buffer = deque([init_obs.copy()], maxlen=self._factor)

@@ -3,6 +3,7 @@
 /RcsPySim/build/
 /RcsPySim/config/iiwa_description/meshes/iiwa14/*/*.stl
 /RcsPySim/config/schunk_description/meshes/sdh/*.stl
+/RcsPySim/src/cpp/RoboLabComponents/
 
 ### Third Party Libraries and Modules
 /thirdParty/*

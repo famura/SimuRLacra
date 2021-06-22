@@ -26,12 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import functools
 import math
 import operator
 import random
-from collections.abc import Iterable
-from copy import deepcopy
+from collections.abc import Iterable, Mapping
 from typing import Callable, List, Optional, Sequence, Tuple, Type, Union
 
 import numpy as np
@@ -278,14 +278,13 @@ class StepSequence(Sequence[Step]):
         :param actions: sequence of action values, the length must be `len(rewards)`
         :param data: additional data lists, their length must be `len(rewards)` or `len(rewards) + 1`
         """
-        # Obtain rollout length from reward list
-        self.length = len(rewards)
-        if self.length == 0:
-            raise pyrado.ShapeErr(msg="StepSequence cannot be empty!")
+        if len(rewards) == 0 or len(observations) == 0 or len(actions) == 0:
+            raise pyrado.ShapeErr(msg="StepSequence must not be empty!")
 
         # Set singular attributes
         self.rollout_info = rollout_info
         self.continuous = continuous
+        self._data_names = []
 
         # Infer if this instance is using numpy arrays or PyTorch tensors
         if data_format is None:
@@ -299,14 +298,23 @@ class StepSequence(Sequence[Step]):
                 data_format = "numpy"
         self._data_format = data_format
 
+        # Add the rewards directly since the length of the StepSequence is derived from it
+        if not isinstance(rewards, (np.ndarray, to.Tensor)):
+            # Stack into one array/tensor
+            value = stack_to_format(rewards, self._data_format)
+        else:
+            # Ensure right array format
+            value = to_format(rewards, self._data_format)
+        # Store in dict
+        self._data_names.append("rewards")
+        self.__dict__["rewards"] = value
+
         # Check for missing extra fields
         missing_fields = StepSequence.required_fields - data.keys()
         if missing_fields:
             raise ValueError(f"Missing required data fields: {missing_fields}")
 
-        # Set mandatory data fields
-        self._data_names = []
-        self.add_data("rewards", rewards)
+        # Set mandatory data fields (rewards are already added)
         self.add_data("observations", observations)
         self.add_data("actions", actions)
 
@@ -326,7 +334,7 @@ class StepSequence(Sequence[Step]):
 
         # Compute rollout bounds from done list (yes this is not exactly safe...)
         # The bounds list has one extra entry 0, this simplifies queries greatly.
-        # bounds[i] = start of rollout i; bounds[i+1]=end of rollout i
+        # bounds[i] = start of rollout i; bounds[i+1] = end of rollout i
         if self.continuous:
             if rollout_bounds is None:
                 rollout_bounds = [0]
@@ -336,12 +344,31 @@ class StepSequence(Sequence[Step]):
             else:
                 # Validate externally passed bounds.
                 for i in range(len(rollout_bounds) - 1):
-                    assert rollout_bounds[i] < rollout_bounds[i + 1]
-                assert rollout_bounds[0] == 0
-                assert rollout_bounds[-1] == self.length
+                    if not rollout_bounds[i] < rollout_bounds[i + 1]:
+                        raise pyrado.ValueErr(
+                            msg=f"The lower rollout bound must be smaller than the upper for every rollout in the "
+                            f"StepSequence, but it is {rollout_bounds[i]} >= {rollout_bounds[i + 1]} for bound {i}!"
+                        )
+                if rollout_bounds[0] != 0:
+                    raise pyrado.ValueErr(given=rollout_bounds[0], eq_constraint=self.length)
+                if rollout_bounds[-1] != self.length:
+                    raise pyrado.ValueErr(given=rollout_bounds[-1], eq_constraint=self.length)
             self._rollout_bounds = np.array(rollout_bounds)
+
         else:
+            # StepSequence of discontinuous rollouts
             self._rollout_bounds = None
+
+    def __repr__(self) -> str:
+        return f"StepSequence[\n rewards=\n {self.rewards}\n observations=\n {self.observations}\n actions=\n {self.actions}\n ]"
+
+    def __str__(self) -> str:
+        return str(self.observations)
+
+    @property
+    def length(self) -> int:
+        """Get the length of the rollout (does not include the final step)."""
+        return len(self.rewards)
 
     @property
     def data_format(self) -> str:
@@ -378,6 +405,7 @@ class StepSequence(Sequence[Step]):
         return self.length
 
     def __getitem__(self, index):
+        """Get a slice of steps."""
         if isinstance(index, slice) or isinstance(index, Iterable):
             # Return a StepSequence object with the subset. Build sliced data dict.
             sliced_data = {name: self._slice_entry(self.__dict__[name], index) for name in self._data_names}
@@ -407,15 +435,20 @@ class StepSequence(Sequence[Step]):
         # Should be a singular element index. Return step proxy.
         return Step(self, _index_to_int(index, self.length))
 
-    def __map_tensors(self, mapper, elem):
+    def _iter_state_dict(self):
+        """Iterate over the rollout's state dict."""
+        for attr, val in self.__dict__.items():
+            yield attr, val
+
+    def _map_tensors(self, mapper, elem):
         if isinstance(elem, dict):
             # Modify dict in-place
             for k in elem.keys():
-                elem[k] = self.__map_tensors(mapper, elem[k])
+                elem[k] = self._map_tensors(mapper, elem[k])
             return elem
         if isinstance(elem, tuple):
             # Can't modify in place since it's a tuple
-            return new_tuple(type(elem), (self.__map_tensors(mapper, part) for part in elem))
+            return new_tuple(type(elem), (self._map_tensors(mapper, part) for part in elem))
 
         # Tensor element
         return mapper(elem)
@@ -571,7 +604,7 @@ class StepSequence(Sequence[Step]):
             return
         self._data_format = data_format
         for dn in self._data_names:
-            self.__dict__[dn] = self.__map_tensors(lambda t: to_format(t, data_format, data_type), self.__dict__[dn])
+            self.__dict__[dn] = self._map_tensors(lambda t: to_format(t, data_format, data_type), self.__dict__[dn])
 
     def get_rollout(self, index):
         """
@@ -633,8 +666,8 @@ class StepSequence(Sequence[Step]):
 
         shuffled_idcs = random.sample(range(self.length - 2), batch_size)  # - 2 to always have a next step
         shuffled_next_idcs = [i + 1 for i in shuffled_idcs]
-        steps = deepcopy(self[shuffled_idcs])
-        next_steps = deepcopy(self[shuffled_next_idcs])
+        steps = copy.deepcopy(self[shuffled_idcs])
+        next_steps = copy.deepcopy(self[shuffled_next_idcs])
 
         return steps, next_steps
 
@@ -889,19 +922,34 @@ class StepSequence(Sequence[Step]):
         states = df[env_spec.state_space.labels].to_numpy()
         observations = df[env_spec.obs_space.labels].to_numpy()
         actions = df[env_spec.act_space.labels].to_numpy()
+
+        # Remove NaNs which come from concatenating columns of different length in Pandas
+        actions = actions[~np.isnan(actions).any(axis=1), :]  # check if any in a column is none for multi-dim case
+
+        # If the recoding contains a valid but unwanted last action, remove it
+        actions = actions[: states.shape[0] - 1]
+
+        # Reconstruct the reward
         if task is not None:
             # Recompute the rewards from the recorded observations and actions
             rewards = np.array([task.step_rew(s, a, 0) for s, a in zip(states, actions)])
         elif "rewards" in df.columns:
             # Use recorded rewards
             rewards = df["rewards"].to_numpy()
+            # If the recoding contains a valid but unwanted last reward, remove it
+            rewards = rewards[: states.shape[0] - 1]
         else:
             # Set all rewards to zero s a last resort
             rewards = np.zeros(states.shape[0] - 1)
 
         # Remove NaNs which come from concatenating columns of different length in Pandas
         rewards = rewards[~np.isnan(rewards)]
-        actions = actions[~np.isnan(actions).any(axis=1), :]  # check if any in a column is none for multi-dim case
+
+        if rewards.shape[0] != actions.shape[0]:
+            raise pyrado.ShapeErr(
+                msg=f"The actions and rewards time series must be of equal length, but are "
+                f"{actions.shape[0]} and {rewards.shape[0]}!"
+            )
 
         # Other fields
         rew_label = ["rewards"] if "rewards" in df.columns else []
@@ -924,6 +972,76 @@ class StepSequence(Sequence[Step]):
             continuous=continuous,
             **other_dict,
         )
+
+    @classmethod
+    def pad(cls, rollout: "StepSequence", len_to_pad_to: int, pad_value: Union[int, float] = 0):
+        """
+        Add steps to the end of a given rollout. The entires of the steps are filled with `pad_value`.
+        So far, only numpy arrays and PyTorch tensors are padded (see `data_format`).
+
+        :param rollout: rollout to be padded, modified in-place
+        :param len_to_pad_to: length of the resulting rollout (without the final state)
+        :param pad_value: scalar value to pad with
+        """
+        if not isinstance(len_to_pad_to, int) or len_to_pad_to < 1:
+            raise pyrado.ValueErr(given=len_to_pad_to, ge_constraint=1)
+        if not isinstance(pad_value, (int, float)):
+            raise pyrado.TypeErr(given=pad_value, expected_type=(int, float))
+        if not rollout.continuous:
+            raise pyrado.ValueErr(msg="Padding is currently only supported for continuous rollouts!")
+
+        # Determine how many steps are missing
+        num_pad_steps = len_to_pad_to - len(rollout)
+        if num_pad_steps < 1:
+            return None  # nothing to do
+
+        # Add the new data
+        for attr, val in rollout._iter_state_dict():
+            # Extend the upper rollout bound (this would have to be reworked for non-continuous rollouts)
+            if attr == "_rollout_bounds":
+                rollout._rollout_bounds[1] = len_to_pad_to
+
+            # Search one level deep
+            elif isinstance(val, Mapping):  # e.g. info dicts
+                for k, v in val.items():
+                    if isinstance(v, np.ndarray):
+                        # The padding pattern is a tuple of (n_before, n_after) tuples for each dimension
+                        npad = [(0, num_pad_steps)] + [(0, 0)] * max(v.ndim - 1, 0)
+                        val[k] = np.pad(v, tuple(npad), mode="constant", constant_values=pad_value)
+
+                    elif isinstance(v, to.Tensor):
+                        # The padding pattern is a tuple of (begin last axis, end last axis, begin 2nd to last axis,
+                        # end 2nd to last axis, begin 3rd to last axis, ...)
+                        npad = [0, 0] * max(v.ndim - 1, 0) + [0, num_pad_steps]
+                        val[k] = to.nn.functional.pad(v, tuple(npad), mode="constant", value=pad_value)
+
+            elif isinstance(val, tuple):  # e.g. hidden states for lstm
+                new_items = []
+                for item in val:
+                    if isinstance(item, np.ndarray):
+                        # The padding pattern is a tuple of (n_before, n_after) tuples for each dimension
+                        npad = [(0, num_pad_steps)] + [(0, 0)] * max(item.ndim - 1, 0)
+                        new_items.append(
+                            np.pad(item, tuple(npad), mode="constant", constant_values=np.asarray(pad_value))
+                        )
+                    elif isinstance(item, to.Tensor):
+                        # The padding pattern is a tuple of (begin last axis, end last axis, begin 2nd to last axis,
+                        # end 2nd to last axis, begin 3rd to last axis, ...)
+                        npad = [0, 0] * max(item.ndim - 1, 0) + [0, num_pad_steps]
+                        new_items.append(to.nn.functional.pad(item, tuple(npad), mode="constant", value=pad_value))
+                rollout.__setattr__(attr, tuple(new_items))
+
+            else:
+                if isinstance(val, np.ndarray):
+                    # The padding pattern is a tuple of (n_before, n_after) tuples for each dimension
+                    npad = [(0, num_pad_steps)] + [(0, 0)] * max(val.ndim - 1, 0)
+                    rollout.__setattr__(attr, np.pad(val, tuple(npad), mode="constant", constant_values=pad_value))
+
+                elif isinstance(val, to.Tensor):
+                    # The padding pattern is a tuple of (begin last axis, end last axis, begin 2nd to last axis,
+                    # end 2nd to last axis, begin 3rd to last axis, ...)
+                    npad = [0, 0] * max(val.ndim - 1, 0) + [0, num_pad_steps]
+                    rollout.__setattr__(attr, to.nn.functional.pad(val, tuple(npad), mode="constant", value=pad_value))
 
 
 def discounted_reverse_cumsum(data, gamma: float):

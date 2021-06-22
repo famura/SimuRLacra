@@ -126,7 +126,7 @@ class QBallBalancerPDCtrl(Policy):
         if verbose:
             print(f"Set Kp to\n{self.Kp.numpy()}\nand Kd to\n{self.Kd.numpy()}")
 
-    def reset(self, *args, **kwargs):
+    def reset(self, **kwargs):
         """Set the domain parameters defining the controller's model using a dict called `domain_param`."""
         state_des = kwargs.get("state_des", None)  # do nothing if state_des not given
         if state_des is not None:
@@ -349,10 +349,10 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max)
         self.pd_ctrl = QQubePDCtrl(env_spec, pd_gains, al_des=math.pi)
 
-    def reset(self, *args, **kwargs):
+    def reset(self, **kwargs):
         # Forward to the two controllers
-        self.e_ctrl.reset(*args, **kwargs)
-        self.pd_ctrl.reset(*args, **kwargs)
+        self.e_ctrl.reset(**kwargs)
+        self.pd_ctrl.reset(**kwargs)
 
     def pd_enabled(self, cos_al: [float, to.Tensor]) -> bool:
         """
@@ -425,7 +425,7 @@ class QQubeEnergyCtrl(Policy):
         # Default initialization
         self.init_param(None)
 
-    def reset(self, *args, **kwargs):
+    def reset(self, **kwargs):
         """Set the domain parameters defining the controller's model using a dict called `domain_param`."""
         domain_param = kwargs.get("domain_param", dict())  # do nothing if domain_param not given
         if isinstance(domain_param, dict):

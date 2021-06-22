@@ -27,10 +27,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Quanser Qube environment using Neural Posterior Domain Randomization
+Train an agent to solve the Quanser Qube environment using Neural Posterior Domain Randomization
 """
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -118,7 +118,7 @@ if __name__ == "__main__":
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
@@ -160,6 +160,7 @@ if __name__ == "__main__":
         num_eval_samples=num_eval_samples,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
+        stop_on_done=False,
         use_rec_act=True,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
@@ -174,6 +175,7 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
+        train_initial_policy=True,
         subrtn_policy_snapshot_mode="best",
         num_workers=args.num_workers,
     )

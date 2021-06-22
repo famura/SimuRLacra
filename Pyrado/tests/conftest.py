@@ -52,6 +52,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeStabSim, QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
 from pyrado.policies.features import *
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
@@ -85,7 +86,6 @@ try:
     from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
     from pyrado.environments.rcspysim.planar_insert import PlanarInsertIKActivationSim, PlanarInsertTASim
     from pyrado.environments.rcspysim.quanser_qube import QQubeRcsSim
-    from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
     m_needs_vortex = pytest.mark.skipif(
         not rcsenv.supportsPhysicsEngine("Vortex"), reason="Vortex physics engine is not supported in this setup."
@@ -111,6 +111,7 @@ try:
 
     from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
     from pyrado.environments.mujoco.openai_hopper import HopperSim
+    from pyrado.environments.mujoco.quanser_qube import QQubeStabMjSim, QQubeSwingUpMjSim
     from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 
     m_needs_mujoco = pytest.mark.skipif(False, reason="mujoco-py can be imported.")
@@ -190,6 +191,16 @@ class DefaultEnvs:
     @staticmethod
     def default_qqsu():
         return QQubeSwingUpSim(dt=0.004, max_steps=4000)
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_qqst_mj():
+        return QQubeStabMjSim(dt=0.01, max_steps=500)
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_qqsu_mj():
+        return QQubeSwingUpMjSim(dt=0.004, max_steps=4000)
 
     @staticmethod
     @m_needs_bullet
@@ -612,6 +623,17 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
+    def default_mg_ik_bt():
+        return MiniGolfIKSim(
+            dt=1 / 100.0,
+            max_steps=1500,
+            checkJointLimits=True,
+            fixedInitState=True,
+            observeForceTorque=True,
+        )
+
+    @staticmethod
+    @m_needs_bullet
     def default_qqsurcs_bt():
         return QQubeRcsSim(physicsEngine="Bullet", dt=1 / 250.0, max_steps=3000)
 
@@ -717,7 +739,8 @@ class DefaultPolicies:
             dt=env.dt,
             t_end=int(env.max_steps / env.dt),
             cond_lvl="acc",
-            cond_final=to.zeros(3, env.spec.act_space.flat_dim),
+            cond_final=to.rand(3, env.spec.act_space.flat_dim),
+            cond_init=to.zeros(3, env.spec.act_space.flat_dim),
         )
 
     @staticmethod

@@ -34,13 +34,12 @@ Use `num_segments = 1` to plot the complete (unsegmented) rollouts.
 By default (args.iter = -1), the all iterations are evaluated.
 """
 import os.path as osp
-import sys
+from typing import Iterable, Optional
 
+import dtw
 import numpy as np
-from dtw import dtw, rabinerJuangStepPattern
 from matplotlib import pyplot as plt
 from tabulate import tabulate
-from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -57,15 +56,163 @@ from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence, check_act_equal
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.data_types import repeat_interleave
+from pyrado.utils.data_types import merge_dicts, repeat_interleave
 from pyrado.utils.experiments import load_experiment, load_rollouts_from_dir
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import rmse
 
 
+def mask_out(
+    segments_real_all: StepSequence,
+    segments_ml_all: StepSequence,
+    segments_nom: StepSequence,
+    data_field: str,
+    state_mask_labels: Iterable[str] = None,
+    act_mask_labels: Iterable[str] = None,
+):
+    """Helper function to mask out states/observations and actions."""
+    if data_field == "states" and state_mask_labels is not None:
+        state_mask = env_sim.state_space.create_mask(state_mask_labels)
+    elif data_field == "observations" and state_mask_labels is not None:
+        state_mask = env_sim.obs_space.create_mask(state_mask_labels)
+    else:
+        state_mask = None
+
+    if act_mask_labels is not None:
+        act_mask = env_sim.act_space.create_mask(act_mask_labels)
+    else:
+        act_mask = None
+
+    for i, segments_ml in enumerate(segments_ml_all):
+        for j, segment_ml in enumerate(segments_ml):
+            for l, seg_ml in enumerate(segment_ml):
+                if state_mask is not None and data_field == "states":
+                    segments_ml_all[i][j][l].states = seg_ml.states[:, state_mask]
+                elif state_mask is not None and data_field == "observations":
+                    segments_ml_all[i][j].observations = seg_ml.observations[:, state_mask]
+                if act_mask is not None:
+                    segments_ml_all[i][j][l].actions = seg_ml.actions[:, act_mask]
+
+    for i, segment_real in enumerate(segments_real_all):
+        for j, seg_real in enumerate(segment_real):
+            if state_mask is not None and data_field == "states":
+                segments_real_all[i][j].states = seg_real.states[:, state_mask]
+            elif state_mask is not None and data_field == "observations":
+                segments_real_all[i][j].observations = seg_real.observations[:, state_mask]
+            if act_mask is not None:
+                segments_real_all[i][j].actions = seg_real.actions[:, act_mask]
+
+    for i, segment_nom in enumerate(segments_nom):
+        for j, seg_nom in enumerate(segment_nom):
+            if state_mask is not None and data_field == "states":
+                segments_nom[i][j].states = seg_nom.states[:, state_mask]
+            elif state_mask is not None and data_field == "observations":
+                segments_nom[i][j].observations = seg_nom.observations[:, state_mask]
+            if act_mask is not None:
+                segments_nom[i][j].actions = seg_nom.actions[:, act_mask]
+
+
+def compute_traj_distance_metrics(
+    states_real: np.ndarray,
+    states_ml: np.ndarray,
+    states_nom: np.ndarray,
+    num_rollouts_real: int,
+    normalize: bool = True,
+    dtw_config: Optional[dict] = None,
+    save: bool = True,
+):
+    """
+    Compute the DTW distance and the RMSE for 2 trajectories w.r.t. a ground truth trajectory, and store it in a table.
+
+    :param states_real: numpy array of states from the real system of shape [num_rollouts, len_time_series, dim_state]
+    :param states_ml: numpy array of states from the most likely system [num_rollouts, len_time_series, dim_state]
+    :param states_nom: numpy array of states from the nominal system [num_rollouts, len_time_series, dim_state]
+    :param num_rollouts_real: number of rollouts
+    :param normalize: it `True`, normalize all trajectories by the max. abs. values of the ground truth trajectory for
+                      each dimension before computing the metrics
+    :param dtw_config: dictionary with options for the `dtw.dtw()` command, e.g.
+                       `dict(step_pattern=dtw.rabinerJuangStepPattern(6, "c"))`
+    :param save: it `True`, save table as tex-file
+    """
+    # Configure the metric computations
+    default_dtw_config = dict(open_end=True, step_pattern="symmetric2", distance_only=True)
+    dtw_config = merge_dicts([default_dtw_config, dtw_config or dict()])
+
+    # Iterate over all rollouts and compute the performance metrics
+    table = []
+    dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg = 0, 0, 0, 0
+    for idx_r in range(num_rollouts_real):
+        if normalize:
+            # Normalize all trajectories by the max. abs. values of the ground truth trajectory for each dimension
+            max_abs_state = np.max(np.abs(states_real[idx_r]), axis=0)
+            states_real[idx_r] /= max_abs_state
+            states_ml[idx_r] /= max_abs_state
+            states_nom[idx_r] /= max_abs_state
+
+        # DTW
+        dtw_dist_ml = dtw.dtw(states_real[idx_r], states_ml[idx_r], **dtw_config).distance
+        dtw_dist_nom = dtw.dtw(states_real[idx_r], states_nom[idx_r], **dtw_config).distance
+        dtw_dist_ml_avg += dtw_dist_ml / num_rollouts_real
+        dtw_dist_nom_avg += dtw_dist_nom / num_rollouts_real
+
+        # RMSE averaged over the states
+        rmse_ml = np.mean(rmse(states_real[idx_r], states_ml[idx_r], dim=0))
+        rmse_nom = np.mean(rmse(states_real[idx_r], states_nom[idx_r], dim=0))
+        rmse_ml_avg += rmse_ml / num_rollouts_real
+        rmse_nom_avg += rmse_nom / num_rollouts_real
+
+        table.append([idx_r, dtw_dist_ml, dtw_dist_nom, rmse_ml, rmse_nom])
+
+    # Add last row separately
+    table.append(["average", dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg])
+
+    # Print the tabulated data
+    headers = ("rollout", "DTW dist. ml", "DTW dist. nom", "mean RMSE ml", "mean RMSE nom")
+    print(tabulate(table, headers))
+
+    if save:
+        # Save the table for LaTeX
+        table_latex_str = tabulate(table, headers, tablefmt="latex")
+        str_iter = f"_iter_{args.iter}"
+        str_round = f"_round_{args.round}"
+        use_rec_str = "_use_rec" if args.use_rec else ""
+        with open(osp.join(ex_dir, f"distance_metrics{str_iter}{str_round}{use_rec_str}.tex"), "w") as tab_file:
+            print(table_latex_str, file=tab_file)
+
+
 if __name__ == "__main__":
+    parser = get_argparser()
+    parser.add_argument(
+        "--data_type",
+        type=str,
+        default="states",
+        help="select data type for plotting, e.g. 'observations' or 'states' (default: 'states')",
+    )
+
+    parser.add_argument(
+        "--save_format",
+        nargs="+",
+        type=str,
+        default=["pdf", "pgf", "png"],
+        help="select file format for plot saving, without commas (e.g., 'pdf png')",
+    )
+
+    parser.add_argument(
+        "--plot_act",
+        action="store_true",
+        default=False,
+        help="plot the actions (default: False)",
+    )
+
+    parser.add_argument(
+        "--console",
+        action="store_true",
+        default=False,
+        help="set flag to not run plt.show. Make sure that the --save flag is set",
+    )
+
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    args = parser.parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
     if not isinstance(args.num_rollouts_per_config, int) or args.num_rollouts_per_config < 1:
@@ -159,11 +306,15 @@ if __name__ == "__main__":
 
         # Append all segments for the current target domain rollout
         segments_ml_all = eval_domain_params_with_segmentwise_reset(
-            pool, env_sim, policy, segments_real_all, domain_params_ml_all, args.use_rec
+            pool, env_sim, policy, segments_real_all, domain_params_ml_all, algo.stop_on_done, args.use_rec
         )
 
     # Old solution without parallelization of the rollouts. Only use this when deeply mistrusting the one above.
     else:
+        import sys
+
+        from tqdm import tqdm
+
         # Sample rollouts with the most likely domain parameter sets associated to that observation
         segments_ml_all = []  # all top max likelihood segments for all target domain rollouts
         for idx_r, (segments_real, domain_params_ml) in tqdm(
@@ -194,13 +345,16 @@ if __name__ == "__main__":
                         eval=True,
                         reset_kwargs=dict(init_state=segment_real.states[0, :], domain_param=domain_param),
                         max_steps=segment_real.length,
-                        stop_on_done=False,
+                        stop_on_done=algo.stop_on_done,
                     )
                     segments_dp.append(sdp)
 
                     assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
                     if args.use_rec:
-                        check_act_equal(segment_real, sdp)
+                        check_act_equal(segment_real, sdp, check_applied=hasattr(sdp, "actions_applied"))
+
+                    # Pad if necessary
+                    StepSequence.pad(sdp, segment_real.length)
 
                 # Increase step counter for next segment, and append all domain parameter segments
                 cnt_step += segment_real.length
@@ -232,22 +386,27 @@ if __name__ == "__main__":
                 eval=True,
                 reset_kwargs=dict(init_state=segment_real.states[0]),
                 max_steps=segment_real.length,
-                stop_on_done=False,
+                stop_on_done=algo.stop_on_done,
             )
             segment_nom.append(sn)
             if args.use_rec:
-                check_act_equal(segment_real, sn)
+                check_act_equal(segment_real, sn, check_applied=hasattr(sn, "actions_applied"))
+
+            # Pad if necessary
+            StepSequence.pad(sn, segment_real.length)
 
         # Append individual segments
         segments_nom.append(segment_nom)
     assert len(segments_nom) == len(segments_ml_all)
 
     # Get the states for computing the performance metrics
-    states_real = np.stack([ro.get_data_values("states", truncate_last=True) for ro in rollouts_real], axis=0)
-    states_nom = np.stack([StepSequence.concat(segs_nom).states for segs_nom in segments_nom], axis=0)
-    states_ml = np.stack(
+    states_real = np.stack([ro.get_data_values(args.data_type, truncate_last=True) for ro in rollouts_real], axis=0)
+    states_nom = np.stack(
+        [StepSequence.concat(segs_nom).get_data_values(args.data_type) for segs_nom in segments_nom], axis=0
+    )
+    states_ml = np.stack(  # index 0 ist the most likely
         [
-            StepSequence.concat([s[0] for s in [segs_ml for segs_ml in segments_ml]]).states  # 0 ist the most likely
+            StepSequence.concat([s[0] for s in [segs_ml for segs_ml in segments_ml]]).get_data_values(args.data_type)
             for segments_ml in segments_ml_all
         ],
         axis=0,
@@ -255,35 +414,13 @@ if __name__ == "__main__":
     assert states_real.shape == states_nom.shape == states_ml.shape
     assert states_real.shape[0] == num_rollouts_real
 
-    # Iterate over all rollouts and compute the performance metrics
-    table = []
-    dtw_config = dict(open_end=True, step_pattern=rabinerJuangStepPattern(6, "c"))
-    dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg = 0, 0, 0, 0
-    for idx_r in range(num_rollouts_real):
-        # DTW
-        dtw_dist_ml = dtw(states_real[idx_r], states_ml[idx_r], **dtw_config).distance
-        dtw_dist_nom = dtw(states_real[idx_r], states_nom[idx_r], **dtw_config).distance
-        dtw_dist_ml_avg += dtw_dist_ml / num_rollouts_real
-        dtw_dist_nom_avg += dtw_dist_nom / num_rollouts_real
+    # Compute the DTW and RMSE distance and store it in a table
+    compute_traj_distance_metrics(states_real, states_ml, states_nom, num_rollouts_real)
 
-        # RMSE averaged over the states
-        rmse_ml = np.mean(rmse(states_real[idx_r], states_ml[idx_r], dim=0))
-        rmse_nom = np.mean(rmse(states_real[idx_r], states_nom[idx_r], dim=0))
-        rmse_ml_avg += rmse_ml / num_rollouts_real
-        rmse_nom_avg += rmse_nom / num_rollouts_real
-
-        table.append([idx_r, dtw_dist_ml, dtw_dist_nom, rmse_ml, rmse_nom])
-    table.append(["average", dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg])
-
-    # Print the tabulated data
-    headers = ("rollout", "DTW dist. ml", "DTW dist. nom", "mean RMSE ml", "mean RMSE nom")
-    print(tabulate(table, headers))
-    table_latex_str = tabulate(table, headers, tablefmt="latex")
-    str_iter = f"_iter_{args.iter}"
-    str_round = f"_round_{args.round}"
-    use_rec_str = "_use_rec" if args.use_rec else ""
-    with open(osp.join(ex_dir, f"distance_metrics{str_iter}{str_round}{use_rec_str}.tex"), "w") as tab_file:
-        print(table_latex_str, file=tab_file)
+    # Optionally masks out some states/observations and actions for plotting
+    state_mask_labels = None
+    act_mask_labels = None
+    mask_out(segments_real_all, segments_ml_all, segments_nom, args.data_type, state_mask_labels, act_mask_labels)
 
     # Plot
     plot_rollouts_segment_wise(
@@ -294,10 +431,14 @@ if __name__ == "__main__":
         use_rec_str=args.use_rec,
         idx_iter=args.iter,
         idx_round=args.round,
-        show_act=False,
+        state_labels=state_mask_labels or env_sim.state_space.labels,
+        act_labels=act_mask_labels or env_sim.act_space.labels,
+        plot_act=args.plot_act,
         save_dir=ex_dir if args.save else None,
         x_limits=args.cut_rollout,
-        data_field="states",
+        data_field=args.data_type,
+        file_format=args.save_format,
     )
 
-    plt.show()
+    if not args.console:
+        plt.show()

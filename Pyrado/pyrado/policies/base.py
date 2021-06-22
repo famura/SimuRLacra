@@ -156,7 +156,7 @@ class Policy(nn.Module, ABC):
         """
         raise NotImplementedError
 
-    def reset(self, *args, **kwargs):
+    def reset(self, **kwargs):
         """
         Reset the policy's internal state. This should be called at the start of a rollout.
         The default implementation does nothing.

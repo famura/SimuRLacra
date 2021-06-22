@@ -52,11 +52,9 @@ class DataLogger
 public:
     
     /**
-     * Constructor.
-     *
-     * @param fileBaseName base name for files, will append `filenum`.csv on start
+     * Constructor. Automatically names files like `TIME_FILENUM`.csv on start
      */
-    DataLogger(std::string fileBaseName = "rollout_data_");
+    DataLogger();
     
     virtual ~DataLogger();
     
@@ -66,11 +64,8 @@ public:
      * @param[in] observationSpace environment's observation space
      * @param[in] actionSpace environment's action space
      * @param[in] maxStepCount maximum number of time steps
-     * @param[in] filename filename to override default generated filename
      */
-    void start(
-        const BoxSpace* observationSpace, const BoxSpace* actionSpace, unsigned int maxStepCount,
-        const char* filename = NULL);
+    void start(const BoxSpace* observationSpace, const BoxSpace* actionSpace, unsigned int maxStepCount);
     
     /**
      * Stop logging and flush data to file.
@@ -94,7 +89,6 @@ private:
     std::recursive_mutex mutex;
     
     //! Automatic log file naming
-    std::string baseFileName;
     unsigned int fileCounter;
     
     //! Flag if the logger is currently recording
@@ -104,7 +98,7 @@ private:
     MatNd* buffer;
     
     //! Step counter in current logging run
-    unsigned int currentStep;
+    int currentStep;
     
     //! Current output stream
     std::ofstream output;

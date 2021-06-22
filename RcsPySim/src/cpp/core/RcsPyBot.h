@@ -72,6 +72,8 @@ public:
      */
     void setControlPolicy(ControlPolicy* controlPolicy, const MatNd* q_des = nullptr);
     
+    void syncGraphsToCurrent();
+    
     ControlPolicy* getControlPolicy() const
     {
         std::unique_lock<std::mutex> lock(controlPolicyMutex);
@@ -94,6 +96,9 @@ public:
      * WARNING: the contents may update asynchronously. The dimensions are constant.
      */
     MatNd* getAction() const;
+    
+    //! Filter for going to the home pose
+    Rcs::SecondOrderLPFND* homePoseFilt;
 
 protected:
     virtual void updateControl();
@@ -108,12 +113,8 @@ protected:
     //! Control policy
     ControlPolicy* controlPolicy;
     
-    //! Filter for going to the home pose
-    Rcs::SecondOrderLPFND* homePoseFilt;
-    
     //! Temporary matrices
     MatNd* q_ctrl;
-    MatNd* q_ctrl_filt_targ;
     MatNd* qd_ctrl;
     MatNd* T_ctrl;
     

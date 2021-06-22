@@ -72,6 +72,8 @@ def rollout(
     record_dts: bool = False,
     stop_on_done: bool = True,
     seed: Optional[int] = None,
+    sub_seed: Optional[int] = None,
+    sub_sub_seed: Optional[int] = None,
 ) -> StepSequence:
     """
     Perform a rollout (i.e. sample a trajectory) in the given environment using given policy.
@@ -132,7 +134,7 @@ def rollout(
 
     # Set all rngs' seeds (call before resetting)
     if seed is not None:
-        pyrado.set_seed(seed)
+        pyrado.set_seed(seed, sub_seed, sub_sub_seed)
 
     # Reset the environment and pass the kwargs
     if reset_kwargs is None:

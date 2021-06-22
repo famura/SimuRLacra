@@ -154,6 +154,7 @@ def eval_domain_params_with_segmentwise_reset(
     policy: Policy,
     segments_real_all: List[List[StepSequence]],
     domain_params_ml_all: List[List[dict]],
+    stop_on_done: bool,
     use_rec: bool,
 ) -> List[List[StepSequence]]:
     """
@@ -165,6 +166,9 @@ def eval_domain_params_with_segmentwise_reset(
     :param policy: policy to evaluate
     :param segments_real_all: all segments from the target domain rollout
     :param domain_params_ml_all: all domain parameters to evaluate over
+    :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space
+                             boundaries. This behavior is save, but can lead to short trajectories which are eventually
+                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).
     :param use_rec: `True` if pre-recorded actions have been used to generate the rollouts
     :return: list of segments of rollouts
     """
@@ -191,6 +195,7 @@ def eval_domain_params_with_segmentwise_reset(
                     _ps_run_one_reset_kwargs_segment,
                     init_state=segment_real.states[0, :],
                     len_segment=segment_real.length,
+                    stop_on_done=stop_on_done,
                     use_rec=use_rec,
                     idx_r=idx_r,
                     cnt_step=cnt_step,
@@ -201,7 +206,7 @@ def eval_domain_params_with_segmentwise_reset(
             for sdp in segments_dp:
                 assert np.allclose(sdp.states[0, :], segment_real.states[0, :])
                 if use_rec:
-                    check_act_equal(segment_real, sdp)
+                    check_act_equal(segment_real, sdp, check_applied=hasattr(sdp, "actions_applied"))
 
             # Increase step counter for next segment, and append all domain parameter segments
             cnt_step += segment_real.length

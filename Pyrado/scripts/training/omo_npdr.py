@@ -27,18 +27,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the One-Mass-Oscillator environment using Neural Posterior Domain Randomization
+Script to identify the domain parameters of the Pendulum environment using Neural Posterior Domain Randomization
 """
-from copy import deepcopy
+import copy
+import math
 
 import numpy as np
+import sbi.utils as sbiutils
 import torch as to
 import torch.nn as nn
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
+from pyrado.domain_randomization.transformations import LogDomainParamTransform
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import IdlePolicy
@@ -68,8 +70,8 @@ if __name__ == "__main__":
     env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake ground truth target domain
-    num_real_rollouts = 2
-    env_real = deepcopy(env_sim)
+    num_real_rollouts = 1
+    env_real = copy.deepcopy(env_sim)
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="m", mean=0.8, std=0.8 / 50),
     #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
@@ -77,21 +79,22 @@ if __name__ == "__main__":
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
     # env_real.fill_buffer(num_real_rollouts)
-    env_real.domain_param = dict(m=0.8, k=36, d=0.3)
+    env_real.domain_param = dict(m=0.8, k=40, d=0.3)
 
     # Behavioral policy
     policy = IdlePolicy(env_sim.spec)
 
     # Define a mapping: index - domain parameter
+    env_sim = LogDomainParamTransform(env_sim, ["m"])
     dp_mapping = {0: "m", 1: "k", 2: "d"}
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m"] * 0.5, dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
-        high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
+        low=to.tensor([math.log(dp_nom["m"] * 0.5), dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
+        high=to.tensor([math.log(dp_nom["m"] * 1.5), dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
@@ -103,22 +106,23 @@ if __name__ == "__main__":
         # num_recurrent_layers=1,
         # output_size=1,
     )
-    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
+    embedding = create_embedding(DynamicTimeWarpingEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=20, num_transforms=5)
+    posterior_hparam = dict(model="maf", hidden_features=30, num_transforms=4)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=500,
-        num_sbi_rounds=3,
-        simulation_batch_size=10,
+        num_sim_per_round=400,
+        num_sbi_rounds=2,
+        simulation_batch_size=4,
         normalize_posterior=False,
-        num_eval_samples=10,
-        num_segments=1,
+        num_eval_samples=2,
+        num_segments=2,
         # len_segments=50,
+        stop_on_done=False,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10
@@ -133,7 +137,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=1,
+        num_workers=20,
     )
     algo = NPDR(
         ex_dir,

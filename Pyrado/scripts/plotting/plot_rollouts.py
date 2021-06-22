@@ -49,5 +49,5 @@ if __name__ == "__main__":
     rollouts, _ = load_rollouts_from_dir(ex_dir)
 
     # Plot the observations and actions
-    plot_mean_std_across_rollouts(rollouts, idcs_obs=None, idcs_act=None)
+    plot_mean_std_across_rollouts(rollouts, idcs_obs=None, idcs_act=None, show_applied_actions=False)
     plt.show()

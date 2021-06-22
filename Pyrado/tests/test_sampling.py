@@ -28,17 +28,25 @@
 
 import random
 import time
+from typing import Optional
 
 import pytest
 from tests.conftest import m_needs_bullet, m_needs_cuda
 from torch.distributions.multivariate_normal import MultivariateNormal
 
-import pyrado
+from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.utils import RolloutSavingWrapper
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
+from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
+from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
+from pyrado.policies.feed_back.fnn import FNN
+from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.cvar_sampler import select_cvar
 from pyrado.sampling.data_format import to_format
@@ -73,7 +81,7 @@ def _cb_test_eachhandler(G, arg):
     return arg * 2
 
 
-def _cb_test_collecthandler(G):
+def _cb_test_collecthandler(G, num):
     nsample = random.randint(5, 15)
     return nsample, nsample
 
@@ -281,7 +289,9 @@ def test_boostrap_methods(sample, seed):
     m_bs, ci_bs_lo, ci_bs_up = bootstrap_ci(sample, np.mean, num_reps=20, alpha=0.1, ci_sides=2, seed=seed)
 
     # Percentile bootstrap
-    pyrado.set_seed(seed)
+    # Add one to the seed because with the MD5 seed calculation and so on, the lower quantiles are actually equal by
+    # chance. This seems to be the one-in-a-million case for this.
+    pyrado.set_seed(seed + 1)
     resampled = np.random.choice(sample, (sample.shape[0], 20), replace=True)
     means = np.apply_along_axis(np.mean, 0, resampled)
     ci_lo, ci_up = np.percentile(means, [5, 95])
@@ -426,6 +436,58 @@ def test_parameter_exploration_sampler(env: SimEnv, policy: Policy, num_workers:
     assert len(psr.rollouts) >= 1 * 1 * num_ps
 
 
+@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("num_params", [2])
+@pytest.mark.parametrize("num_init_states_per_domain", [2])
+@pytest.mark.parametrize("num_domains", [2])
+@pytest.mark.parametrize("set_init_states", [False, True], ids=["wo_init_states", "w_init_states"])
+def test_parameter_exploration_sampler_deterministic(
+    env: SimEnv,
+    policy: Policy,
+    num_params: int,
+    num_init_states_per_domain: int,
+    num_domains: int,
+    set_init_states: bool,
+):
+    param_sets = to.rand(num_params, policy.num_param)
+
+    if set_init_states:
+        init_states = [env.spec.state_space.sample_uniform() for _ in range(num_init_states_per_domain * num_domains)]
+    else:
+        init_states = None
+
+    nums_workers = (1, 2, 4)
+
+    all_results = []
+    for num_workers in nums_workers:
+        # Reset the seed every time because sample() uses the root sampler. This does not matter for regular runs, but
+        # for this tests it is very relevant.
+        pyrado.set_seed(0)
+        all_results.append(
+            ParameterExplorationSampler(
+                env,
+                policy,
+                num_init_states_per_domain=num_init_states_per_domain,
+                num_domains=num_domains,
+                num_workers=num_workers,
+                seed=0,
+            ).sample(param_sets=param_sets, init_states=init_states)
+        )
+
+    # Test that the rollouts for all number of workers are equal.
+    for psr_a, psr_b in [(a, b) for a in all_results for b in all_results]:
+        assert psr_a.parameters == pytest.approx(psr_b.parameters)
+        assert psr_a.mean_returns == pytest.approx(psr_b.mean_returns)
+        assert psr_a.num_rollouts == psr_b.num_rollouts
+        assert len(psr_a.rollouts) == len(psr_b.rollouts)
+        for ros_a, ros_b in zip(psr_a.rollouts, psr_b.rollouts):
+            for ro_a, ro_b in zip(ros_a, ros_b):
+                assert ro_a.rewards == pytest.approx(ro_b.rewards)
+                assert ro_a.observations == pytest.approx(ro_b.observations)
+                assert ro_a.actions == pytest.approx(ro_b.actions)
+
+
 @pytest.mark.parametrize("env", ["default_bob"], indirect=True, ids=["bob"])
 @pytest.mark.parametrize(
     "policy",
@@ -473,7 +535,7 @@ def test_parallel_rollout_sampler(env: SimEnv, policy: Policy, num_workers: int)
     ids=["fnn", "fnn_cuda", "lstm", "lstm_cuda"],
     indirect=True,
 )
-@pytest.mark.parametrize("num_workers", [1, 2], ids=["1worker", "4workers"])
+@pytest.mark.parametrize("num_workers", [1, 2], ids=["1worker", "2workers"])
 def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
     randomizer = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, randomizer)
@@ -486,31 +548,258 @@ def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy, num_workers: int):
 
 @pytest.mark.parametrize(
     "env",
-    [
-        "default_pend",
-        "default_qbb",
-        pytest.param("default_qqsurcs_bt", marks=m_needs_bullet),
-    ],
-    ids=["pend", "qbb", "qqsurcs_bt"],
+    ["default_pend", pytest.param("default_qqsurcs_bt", marks=m_needs_bullet)],
+    ids=["pend", "qqsurcs_bt"],
     indirect=True,
 )
-@pytest.mark.parametrize("policy", ["idle_policy"], ids=["idle"], indirect=True)  # ad deterministic policy
-@pytest.mark.parametrize(
-    "num_simulations", [1, 4], ids=["1sim", "4sims"]  # must be lower than the number of cores on the machine
-)
-def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_simulations: int):
-    # Do the rollouts explicitly sequentially without a sampler
-    # Do not set the init state to check if this was sampled correctly
+@pytest.mark.parametrize("policy", ["dummy_policy", "idle_policy"], ids=["dummy", "idle"], indirect=True)
+@pytest.mark.parametrize("num_rollouts", [1, 4, 6])
+@pytest.mark.parametrize("num_workers", [1, 4])
+def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_rollouts: int, num_workers: int):
+    # Do the rollouts explicitly sequentially without a sampler.
+    # Do not set the init state to check if this was sampled correctly.
     ros_sequential = []
-    for i in range(num_simulations):
-        ros_sequential.append(rollout(env, policy, eval=True, seed=i))
+    for i in range(num_rollouts):
+        ros_sequential.append(rollout(env, policy, eval=True, seed=0, sub_seed=0, sub_sub_seed=i))
 
-    # Do the rollouts in parallel with a sampler. Create one worker for every rollout
-    # Do not set the init state to check if this was sampled correctly
-    sampler = ParallelRolloutSampler(env, policy, num_workers=num_simulations, min_rollouts=num_simulations, seed=0)
+    # Do the rollouts in parallel with a sampler.
+    # Do not set the init state to check if this was sampled correctly.
+    sampler = ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=num_rollouts, seed=0)
     ros_parallel = sampler.sample()
-    assert len(ros_parallel) == num_simulations
+    assert len(ros_parallel) == num_rollouts
 
-    for ro_s in ros_sequential:
-        # The parallel rollouts are not necessarily in the same order as the sequential ones, thus compare to all
-        assert any([ro_s.observations == pytest.approx(ro_p.observations) for ro_p in ros_parallel])
+    for ro_s, ro_p in zip(ros_sequential, ros_parallel):
+        assert ro_s.rewards == pytest.approx(ro_p.rewards)
+        assert ro_s.observations == pytest.approx(ro_p.observations)
+        assert ro_s.actions == pytest.approx(ro_p.actions)
+
+
+@pytest.mark.parametrize("policy", ["dummy_policy"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("init_states", [None, 2])
+@pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
+def test_parallel_sampling_deterministic_wo_min_steps(
+    env: SimEnv,
+    policy: Policy,
+    min_rollouts: Optional[int],
+    init_states: Optional[int],
+    domain_params: Optional[List[dict]],
+):
+    env.max_steps = 20
+
+    if init_states is not None:
+        init_states = [env.spec.state_space.sample_uniform() for _ in range(init_states)]
+
+    nums_workers = (1, 2, 4)
+
+    all_rollouts = []
+    for num_workers in nums_workers:
+        # Act an exploration strategy to test if that works too (it should as the policy gets pickled and distributed
+        # anyway).
+        all_rollouts.append(
+            ParallelRolloutSampler(
+                env,
+                NormalActNoiseExplStrat(policy, std_init=1.0),
+                num_workers=num_workers,
+                min_rollouts=min_rollouts,
+                seed=0,
+            ).sample(init_states=init_states, domain_params=domain_params)
+        )
+
+    # Test that the rollouts are actually different, i.e., that not the same seed is used for all rollouts.
+    for ros in all_rollouts:
+        for ro_a, ro_b in [(a, b) for a in ros for b in ros if a is not b]:
+            # The idle policy iy deterministic and always outputs the zero action. Hence, do not check that the actions
+            # are different when using the idle policy.
+            if isinstance(policy, IdlePolicy):
+                # The Quanser Ball Balancer is a deterministic environment (conditioned on the initial state). As the
+                # idle policy is a deterministic policy, this will result in the rollouts being equivalent for each
+                # initial state, so do not check for difference if the initial states where set.
+                if init_states is None:
+                    assert ro_a.rewards != pytest.approx(ro_b.rewards)
+                    assert ro_a.observations != pytest.approx(ro_b.observations)
+            else:
+                assert ro_a.rewards != pytest.approx(ro_b.rewards)
+                assert ro_a.observations != pytest.approx(ro_b.observations)
+                assert ro_a.actions != pytest.approx(ro_b.actions)
+
+    # Test that the rollouts for all number of workers are equal.
+    for ros_a, ros_b in [(a, b) for a in all_rollouts for b in all_rollouts]:
+        assert len(ros_a) == len(ros_b)
+        for ro_a, ro_b in zip(ros_a, ros_b):
+            assert ro_a.rewards == pytest.approx(ro_b.rewards)
+            assert ro_a.observations == pytest.approx(ro_b.observations)
+            assert ro_a.actions == pytest.approx(ro_b.actions)
+
+
+@pytest.mark.parametrize("policy", ["dummy_policy"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("min_rollouts", [None, 2, 4, 6])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("min_steps", [2, 10])
+@pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
+def test_parallel_sampling_deterministic_w_min_steps(
+    env: SimEnv,
+    policy: Policy,
+    min_rollouts: Optional[int],
+    min_steps: int,
+    domain_params: Optional[List[dict]],
+):
+    env.max_steps = 20
+
+    nums_workers = (1, 2, 4)
+
+    all_rollouts = []
+    for num_workers in nums_workers:
+        # Act an exploration strategy to test if that works too (it should as the policy gets pickled and distributed
+        # anyway).
+        all_rollouts.append(
+            ParallelRolloutSampler(
+                env,
+                NormalActNoiseExplStrat(policy, std_init=1.0),
+                num_workers=num_workers,
+                min_rollouts=min_rollouts,
+                min_steps=min_steps * env.max_steps,
+                seed=0,
+            ).sample(domain_params=domain_params)
+        )
+
+    # Test that the rollouts are actually different, i.e., that not the same seed is used for all rollouts.
+    for ros in all_rollouts:
+        for ro_a, ro_b in [(a, b) for a in ros for b in ros if a is not b]:
+            # The idle policy iy deterministic and always outputs the zero action. Hence, do not check that the actions
+            # are different when using the idle policy.
+            if not isinstance(policy, IdlePolicy):
+                assert ro_a.rewards != pytest.approx(ro_b.rewards)
+                assert ro_a.observations != pytest.approx(ro_b.observations)
+                assert ro_a.actions != pytest.approx(ro_b.actions)
+
+    # Test that the rollouts for all number of workers are equal.
+    for ros_a, ros_b in [(a, b) for a in all_rollouts for b in all_rollouts]:
+        assert sum([len(ro) for ro in ros_a]) == sum([len(ro) for ro in ros_b])
+        assert sum([len(ro) for ro in ros_a]) >= min_steps * env.max_steps
+        assert sum([len(ro) for ro in ros_b]) >= min_steps * env.max_steps
+        assert len(ros_a) == len(ros_b)
+        if min_rollouts is not None:
+            assert len(ros_a) >= min_rollouts
+            assert len(ros_b) >= min_rollouts
+        for ro_a, ro_b in zip(ros_a, ros_b):
+            assert ro_a.rewards == pytest.approx(ro_b.rewards)
+            assert ro_a.observations == pytest.approx(ro_b.observations)
+            assert ro_a.actions == pytest.approx(ro_b.actions)
+
+
+@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
+@pytest.mark.parametrize("policy", ["fnn_policy"], indirect=True)
+@pytest.mark.parametrize("algo", [PPO])
+@pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
+def test_parallel_sampling_deterministic_smoke_test_wo_min_steps(
+    tmpdir_factory, env: SimEnv, policy: Policy, algo, min_rollouts: int
+):
+    env.max_steps = 20
+
+    seeds = (0, 1)
+    nums_workers = (1, 2, 4)
+
+    logging_results = []
+    rollout_results: List[List[List[List[StepSequence]]]] = []
+    for seed in seeds:
+        logging_results.append((seed, []))
+        rollout_results.append([])
+        for num_workers in nums_workers:
+            pyrado.set_seed(seed)
+            policy.init_param(None)
+            ex_dir = str(tmpdir_factory.mktemp(f"seed={seed}-num_workers={num_workers}"))
+            set_log_prefix_dir(ex_dir)
+            vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+            critic = GAE(vfcn, gamma=0.98, lamda=0.95, batch_size=32, lr=1e-3, standardize_adv=False)
+            alg = algo(ex_dir, env, policy, critic, max_iter=3, min_rollouts=min_rollouts, num_workers=num_workers)
+            alg.sampler = RolloutSavingWrapper(alg.sampler)
+            alg.train()
+            with open(f"{ex_dir}/progress.csv") as f:
+                logging_results[-1][1].append(str(f.read()))
+            rollout_results[-1].append(alg.sampler.rollouts)
+
+    # Test that the observations for all number of workers are equal.
+    for rollouts in rollout_results:
+        for ros_a, ros_b in [(a, b) for a in rollouts for b in rollouts]:
+            assert len(ros_a) == len(ros_b)
+            for ro_a, ro_b in zip(ros_a, ros_b):
+                assert len(ro_a) == len(ro_b)
+                for r_a, r_b in zip(ro_a, ro_b):
+                    assert r_a.observations == pytest.approx(r_b.observations)
+
+    # Test that different seeds actually produce different results.
+    for results_a, results_b in [
+        (a, b) for seed_a, a in logging_results for seed_b, b in logging_results if seed_a != seed_b
+    ]:
+        for result_a, result_b in [(a, b) for a in results_a for b in results_b if a is not b]:
+            assert result_a != result_b
+
+    # Test that same seeds produce same results.
+    for _, results in logging_results:
+        for result_a, result_b in [(a, b) for a in results for b in results]:
+            assert result_a == result_b
+
+
+@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
+@pytest.mark.parametrize("policy", ["fnn_policy"], indirect=True)
+@pytest.mark.parametrize("algo", [PPO])
+@pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
+@pytest.mark.parametrize("min_steps", [2, 10])
+def test_parallel_sampling_deterministic_smoke_test_w_min_steps(
+    tmpdir_factory, env: SimEnv, policy: Policy, algo, min_rollouts: int, min_steps: int
+):
+    env.max_steps = 20
+
+    seeds = (0, 1)
+    nums_workers = (1, 2, 4)
+
+    logging_results = []
+    rollout_results: List[List[List[List[StepSequence]]]] = []
+    for seed in seeds:
+        logging_results.append((seed, []))
+        rollout_results.append([])
+        for num_workers in nums_workers:
+            pyrado.set_seed(seed)
+            policy.init_param(None)
+            ex_dir = str(tmpdir_factory.mktemp(f"seed={seed}-num_workers={num_workers}"))
+            set_log_prefix_dir(ex_dir)
+            vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+            critic = GAE(vfcn, gamma=0.98, lamda=0.95, batch_size=32, lr=1e-3, standardize_adv=False)
+            alg = algo(
+                ex_dir,
+                env,
+                policy,
+                critic,
+                max_iter=3,
+                min_rollouts=min_rollouts,
+                min_steps=min_steps * env.max_steps,
+                num_workers=num_workers,
+            )
+            alg.sampler = RolloutSavingWrapper(alg.sampler)
+            alg.train()
+            with open(f"{ex_dir}/progress.csv") as f:
+                logging_results[-1][1].append(str(f.read()))
+            rollout_results[-1].append(alg.sampler.rollouts)
+
+    # Test that the observations for all number of workers are equal.
+    for rollouts in rollout_results:
+        for ros_a, ros_b in [(a, b) for a in rollouts for b in rollouts]:
+            assert len(ros_a) == len(ros_b)
+            for ro_a, ro_b in zip(ros_a, ros_b):
+                assert len(ro_a) == len(ro_b)
+                for r_a, r_b in zip(ro_a, ro_b):
+                    assert r_a.observations == pytest.approx(r_b.observations)
+
+    # Test that different seeds actually produce different results.
+    for results_a, results_b in [
+        (a, b) for seed_a, a in logging_results for seed_b, b in logging_results if seed_a != seed_b
+    ]:
+        for result_a, result_b in [(a, b) for a in results_a for b in results_b if a is not b]:
+            assert result_a != result_b
+
+    # Test that same seeds produce same results.
+    for _, results in logging_results:
+        for result_a, result_b in [(a, b) for a in results for b in results]:
+            assert result_a == result_b

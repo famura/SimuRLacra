@@ -187,7 +187,7 @@ class PolySplineTimePolicy(Policy):
         else:
             self.param_values = init_values  # ignore the IntelliJ warning
 
-    def reset(self, *args, **kwargs):
+    def reset(self, **kwargs):
         self._t_curr = self._t_init
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:

@@ -58,6 +58,22 @@ from pyrado.utils.ordering import remove_none_from_list
 if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
+
+    parser.add_argument(
+        "--save_format",
+        nargs="+",
+        type=str,
+        default=["pdf", "pgf", "png"],
+        help="select file format for plot saving, without commas (e.g., 'pdf png')",
+    )
+
+    parser.add_argument(
+        "--console",
+        action="store_true",
+        default=False,
+        help="set flag to not run plt.show. Make sure that the --save flag is set",
+    )
+
     args = parser.parse_args()
     plt.rc("text", usetex=args.use_tex)
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
@@ -168,8 +184,9 @@ if __name__ == "__main__":
             algo.dp_mapping,
             idcs_dp,
             prior,
-            env_real,
-            condition,
+            env_sim=env_sim,
+            env_real=env_real,
+            condition=condition,
             normalize_posterior=args.normalize,
             rescale_posterior=args.rescale,
             # x_label=None,
@@ -205,7 +222,6 @@ if __name__ == "__main__":
                     prior=prior,
                     env_sim=env_sim,
                     env_real=env_real,
-                    axis_limits=None,
                     marginal_layout=args.layout,
                     legend_labels=legend_labels,
                     color_palette=color_palette,
@@ -218,7 +234,8 @@ if __name__ == "__main__":
                     algo.dp_mapping,
                     condition,
                     prior,
-                    env_real,
+                    env_sim=env_sim,
+                    env_real=env_real,
                     marginal_layout=args.layout,
                     grid_res=100,
                     normalize_posterior=args.normalize,
@@ -246,8 +263,9 @@ if __name__ == "__main__":
                 algo.dp_mapping,
                 idcs_dp,
                 prior,
-                env_real,
-                condition,
+                env_sim=env_sim,
+                env_real=env_real,
+                condition=condition,
                 grid_res=200,
                 normalize_posterior=args.normalize,
                 rescale_posterior=args.rescale,
@@ -257,7 +275,7 @@ if __name__ == "__main__":
             )
 
     if args.save:
-        for fmt in ["pdf", "pgf", "png"]:
+        for fmt in args.save_format:
             os.makedirs(os.path.join(ex_dir, "plots"), exist_ok=True)
             rnd = f"_round_{args.round}" if args.round != -1 else ""
             fig.savefig(
@@ -265,4 +283,5 @@ if __name__ == "__main__":
                 dpi=500,
             )
 
-    plt.show()
+    if not args.console:
+        plt.show()

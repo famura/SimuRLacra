@@ -32,7 +32,7 @@ Testing the simulation-based inference (SBI) toolbox using a very basic example
 import functools
 
 import numpy as np
-import sbi.utils as utils
+import sbi.utils as sbiutils
 import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # Domain parameter mapping and prior, oly use 2 domain parameters here to simplify the plotting later
     dp_mapping = {0: "k", 1: "d"}
-    prior = utils.BoxUniform(low=to.tensor([20.0, 0.0]), high=to.tensor([40.0, 0.3]))
+    prior = sbiutils.BoxUniform(low=to.tensor([20.0, 0.0]), high=to.tensor([40.0, 0.3]))
 
     # Create time series embedding
     embedding = LastStepEmbedding(env.spec, dim_data=env.spec.obs_space.flat_dim)

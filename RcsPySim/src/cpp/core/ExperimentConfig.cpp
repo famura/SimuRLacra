@@ -345,26 +345,35 @@ void ExperimentConfig::populatePhysicsParameters(PhysicsParameterManager* manage
 }
 
 void ExperimentConfig::getHUDText(
-    std::vector<std::string>& linesOut, double currentTime,
-    const MatNd* currentObservation, const MatNd* currentAction,
-    PhysicsBase* simulator, PhysicsParameterManager* physicsManager,
+    std::vector<std::string>& linesOut,
+    double currentTime,
+    const MatNd* currentObservation,
+    const MatNd* currentAction,
+    PhysicsBase* simulator,
+    PhysicsParameterManager* physicsManager,
     ForceDisturber* forceDisturber)
 {
     // Obtain simulator name
-    const char* simname = "None";
+    const char* simName;
     if (simulator != nullptr) {
-        simname = simulator->getClassName();
+        simName = simulator->getClassName();
+    }
+    else{
+        simName = "Robot";
     }
     
     char hudText[2048];
-    sprintf(hudText, "physics engine: %s        simulation time:             %2.3f s", simname, currentTime);
+    sprintf(hudText, "physics engine: %s        simulation time:             %2.3f s", simName, currentTime);
     linesOut.emplace_back(hudText);
 }
 
 std::string ExperimentConfig::getHUDText(
-    double currentTime, const MatNd* currentObservation,
-    const MatNd* currentAction, PhysicsBase* simulator,
-    PhysicsParameterManager* physicsManager, ForceDisturber* forceDisturber)
+    double currentTime,
+    const MatNd* currentObservation,
+    const MatNd* currentAction,
+    PhysicsBase* simulator,
+    PhysicsParameterManager* physicsManager,
+    ForceDisturber* forceDisturber)
 {
     // Get lines using getHUDText function for the specific ExperimentConfig
     std::vector<std::string> lines;

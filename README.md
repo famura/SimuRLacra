@@ -24,6 +24,7 @@ __Pros__
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
 * __C++ export of policies based on PyTorch Modules.__ Since the `Policy` class is a subclass of PyTorch's `nn.Module`, you can port your neural-network policies, learned with Python, to you C++ applications. This also holds for stateful recurrent networks.
 * __CPU-based parallelization for sampling the environments.__ Similar to the OpenAI Gym, SimuRLacra offers parallelized environments for sampling. This is done by employing [Serializable](https://github.com/Xfel/init-args-serializer), making the simulation environments fully pickleable.
+* __Deterministic parallel sampling.__ The sampling is deterministic when conditioned on the seed.
 * __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
 * __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
 * __Tested integration of [BoTorch](https://botorch.org/), and [Optuna](https://optuna.org/)__.
@@ -301,6 +302,9 @@ function pretty_csv {
 into your sell's rc-file. Executing `pretty_csv progress.csv` in the experiments folder will yield a nicely formatted table.
 I found this neat little trick on [Stefaan Lippens blog](https://www.stefaanlippens.net/pretty-csv.html). You might need to install `column` depending on your OS.
 
+### PDB (The Python Debugger) and Multiprocessing
+Due to the multiprocessing, it is possible that PDB (the Python Debugger) hangs after executing an inspection command. You can set the environment variable `ENABLE_SINGLE_WORKER_OPTIMIZATION` to disable the sampling parallelization if the number of workers is set to one. **However, this will destroy the seed-determinism!** Thus only enable it for debugging purposes and not for evaluating an algorithm and similar.
+
 
 ## Troubleshooting
 
@@ -340,7 +344,7 @@ TARGET_LINK_LIBRARIES(ExampleKinetics RcsCore RcsGui RcsGraphics RcsPhysics z)
 ```
 
 ### Python debugger stuck at evaluating expression
-By default, the sampling (on CPU) in Pyrado is parallelized using PyTorch's multiprocessing module. Thus, your debuggner will not be connected to the right process. Rerun your script with `num_sampler_envs=1` passed as a parameter to the algorithm, that will then contruct a sampler wich only uses one process.
+By default, the sampling (on CPU) in Pyrado is parallelized using PyTorch's multiprocessing module. Thus, your debugger will not be connected to the right process. Rerun your script with `num_sampler_envs=1` passed as a parameter to the algorithm, that will then construct a sampler which only uses one process.
 
 ### Qt5 and Vortex (`libpng15.so`)
 If you are using Vortex, which itself has a Qt5-based GUI, RcsPySim may look for the wrong `libpng` version. Make sure that if finds the same one as Rcs (`libpng16.so`) and __not__ the one from Vortex (`libpng15.so`). You can investigate this using the `ldd` (or `lddtree` if installed) command on the generated RcsPySim executables.
@@ -371,7 +375,7 @@ Install it from
 When you export the anaconda environment, the yml-file will contain the line `init-args-serializer==1.0`. This will cause an error when creating a new anaconda environment from this yml-file. To fix this, replace the line with `git+https://github.com/Xfel/init-args-serializer.git@master`.
 
 ### PyTorch version
-You run a script and get `ImportError: cannot import name 'export'`? Check if your PyTorch version is >= 1.2. If not, update via
+You run a script and get `ImportError: cannot import name 'export'`? Check if your PyTorch version is >= 1.8. If not, update via
 ```
 cd PATH_TO/SimuRLacra
 python setup_deps.py pytorch -j12
@@ -411,7 +415,7 @@ ccmake .  # set the option, configure (2x), and generate
 ### PyTorch compilation is too slow or uses too many CPUs
 The Pytorch setup script (thirdParty/pytorch/setup.py) determines the number of cpus to compile automatically. It can be overridden by setting the environment variable MAX_JOBS:
 ```
-export MAX_JOBS=1
+export MAX_JOBS=1  # or another small number
 ```
 Please use your shell syntax accordingly (the above example is for bash).
 
@@ -448,6 +452,12 @@ conda activate pyrado
 conda remove scipy --force
 pip install scipy==1.5.2
 ```
+
+### Clion complains about a non-empty build directory
+Delete the `build` folder and reload the CMakeProject (right cklick on the CMakeLists.txt). Now build the project again with Clion.
+
+### Clion does not find the 
+Go to the settings and look for the `Buld, Execution, Deployment -> Toolchains` tab. Veryfy that your cmake version is supported. If now down/upgrade, and reload the CMakeProject.
 
 ### ImageMagick error from moviepy
 Check for the ImageMagick policy file. ImageMagick does not have the proper permission set. You can edit the policy file (requires sudo rights)

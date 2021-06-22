@@ -110,7 +110,7 @@ class PlaybackPolicy(Policy):
         """Reset the pointer to the current recording."""
         self._curr_rec = -1
 
-    def reset(self, *args, **kwargs):
+    def reset(self, **kwargs):
         if not self._no_reset:
             # Start at the beginning of the next recording
             self._curr_rec = (self._curr_rec + 1) % self._num_rec

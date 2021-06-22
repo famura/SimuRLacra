@@ -68,7 +68,7 @@ class TimePolicy(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         pass
 
-    def reset(self, *args, **kwargs):
+    def reset(self, **kwargs):
         self._t_curr = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:

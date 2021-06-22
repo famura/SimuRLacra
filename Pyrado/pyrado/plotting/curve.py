@@ -234,7 +234,7 @@ def draw_curve(
     :return: handle to the resulting figure
     """
     plot_type = plot_type.lower()
-    if plot_type not in ["mean_std", "min_mean_max", "ci_on_mean"]:
+    if plot_type not in ["mean_std", "std", "min_mean_max", "ci_on_mean"]:
         raise pyrado.ValueErr(given=plot_type, eq_constraint="mean_std, min_mean_max, or ci_on_mean")
     if not isinstance(data, pd.DataFrame):
         raise pyrado.TypeErr(given=data, expected_type=pd.DataFrame)
@@ -256,7 +256,7 @@ def draw_curve(
         x_grid = x_grid.detach().cpu().numpy()
 
     # Plot
-    if plot_type == "mean_std":
+    if plot_type in ["mean_std", "std"]:
         if not ("mean" in data.columns and "std" in data.columns):
             raise pyrado.KeyErr(keys="'mean' and 'std'", container=data)
         if area_label == "":
@@ -283,9 +283,10 @@ def draw_curve(
             area_label = r"conf. intvl."
         ax.fill_between(x_grid, data["ci_lo"], data["ci_up"], label=area_label, **plot_kwargs)
 
-    # plot mean last for proper z-ordering
-    plot_kwargs["alpha"] = 1
-    ax.plot(x_grid, data["mean"], label=curve_label, **plot_kwargs)
+    # Plot the mean last for proper z-ordering
+    if plot_type != "std":
+        plot_kwargs["alpha"] = 1
+        ax.plot(x_grid, data["mean"], label=curve_label, **plot_kwargs)
 
     # Postprocess
     if vline_level is not None:

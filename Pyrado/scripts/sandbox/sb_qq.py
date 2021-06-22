@@ -29,51 +29,48 @@
 """
 Test predefined energy-based swing-up controller on the Quanser Qube with observation noise.
 """
-from matplotlib import pyplot as plt
-from scipy.ndimage import gaussian_filter1d
 
-from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+import pyrado
+from pyrado.environments.mujoco.quanser_qube import QQubeStabMjSim, QQubeSwingUpMjSim
+from pyrado.environments.pysim.quanser_qube import QQubeStabSim, QQubeSwingUpSim
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.sampling.rollout import rollout
+from pyrado.sampling.rollout import after_rollout_query, rollout
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
+from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
-    plt.rc("text", usetex=True)
+    # Parse command line arguments
+    args = get_argparser().parse_args()
 
-    # Set up environment
-    env = QQubeSwingUpSim(dt=1 / 500.0, max_steps=3500)
-    env = GaussianObsNoiseWrapper(env, noise_std=[0.0, 0.0, 0.0, 0.0, 2.0, 0])  # only noise on theta_dot [rad/s]
-
-    # Set up policy
+    dt = 1 / 500.0
+    max_steps = 3500
+    if args.env_name == "qq-su":
+        env = QQubeSwingUpSim(dt=dt, max_steps=max_steps)
+    elif args.env_name == "qq-mj-su":
+        env = QQubeSwingUpMjSim(dt=dt, max_steps=max_steps)
+    elif args.env_name == "qq-st":
+        env = QQubeStabSim(dt=dt, max_steps=max_steps)
+    elif args.env_name == "qq-mj-st":
+        env = QQubeStabMjSim(dt=dt, max_steps=max_steps)
+    else:
+        raise pyrado.ValueErr(
+            given_name="--env_name",
+            given=args.env_name,
+            eq_constraint="'qq-su', 'qq-mj-su', 'qq-st', or 'qq-mj-st'",
+        )
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Simulate
-    ro = rollout(env, policy, render_mode=RenderMode(text=False, video=False, render=False), eval=True)
-
-    # Filter the observations of the last rollout
-    theta_dot = ro.observations[:, 4]
-    alpha_dot = ro.observations[:, 5]
-    theta_dot_filt_3 = gaussian_filter1d(theta_dot, 3)
-    theta_dot_filt_5 = gaussian_filter1d(theta_dot, 5)
-    alpha_dot_filt_3 = gaussian_filter1d(alpha_dot, 3)
-    alpha_dot_filt_5 = gaussian_filter1d(alpha_dot, 5)
-
-    # Plot the filtered signals versus the orignal observations
-    fix, axs = plt.subplots(2, figsize=(16, 8))
-    axs[0].plot(theta_dot, label=r"$\dot{\theta}$")
-    axs[0].plot(theta_dot_filt_3, label=r"$\dot{\theta}_{filt}, \sigma=3$")
-    axs[0].plot(theta_dot_filt_5, label=r"$\dot{\theta}_{filt}, \sigma=5$")
-    axs[1].plot(alpha_dot, label=r"$\dot{\alpha}$")
-    axs[1].plot(alpha_dot_filt_3, label=r"$\dot{\alpha}_{filt}, \sigma=3$")
-    axs[1].plot(alpha_dot_filt_5, label=r"$\dot{\alpha}_{filt}, \sigma=5$")
-
-    axs[0].set_title(r"Gaussian 1D filter on noisy $\theta$ signal")
-    axs[1].set_ylabel(r"$\dot{\theta}$ [rad/s]")
-    axs[0].legend()
-    axs[1].set_title(r"Gaussian 1D filter on clean $\alpha$ signal")
-    axs[1].set_xlabel("time steps")
-    axs[1].set_ylabel(r"$\dot{\alpha}$ [rad/s]")
-    axs[1].legend()
-    plt.show()
+    done, param, state = False, None, None
+    while not done:
+        ro = rollout(
+            env,
+            policy,
+            render_mode=RenderMode(text=False, video=args.render, render=args.render),
+            eval=True,
+            reset_kwargs=dict(domain_param=param, init_state=state),
+        )
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
+        done, state, param = after_rollout_query(env, policy, ro)

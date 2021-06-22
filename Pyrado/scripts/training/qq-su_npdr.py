@@ -27,12 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Quanser Qube environment using Neural Posterior Domain Randomization
+Script to identify the domain parameters of the Pendulum environment using Neural Posterior Domain Randomization
 """
 import os.path as osp
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
+import torch.nn as nn
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -43,7 +44,7 @@ from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, DeltaStepsEmbedding, RNNEmbedding
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.sbi import create_embedding
 
@@ -71,7 +72,7 @@ if __name__ == "__main__":
             f"{NPDR.name}_{QQubeSwingUpAndBalanceCtrl.name}",
             num_segs_str + len_seg_str + seed_str,
         )
-        t_end = 5.5  # s
+        t_end = 5  # s
     else:
         ex_dir = setup_experiment(
             QQubeSwingUpSim.name,
@@ -84,13 +85,13 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
+    env_sim_hparams = dict(dt=1 / 250.0, max_steps=int(t_end * 250))
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
-    env_sim = ActDelayWrapper(env_sim)
+    # env_sim = ActDelayWrapper(env_sim)
 
     # Create the ground truth target domain and the behavioral policy
     if ectl:
-        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")
+        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")  # 5s long
         policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
     else:
         env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
@@ -103,7 +104,7 @@ if __name__ == "__main__":
     # dp_mapping = {0: "Dr", 1: "Dp"}
     # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km"}
     # dp_mapping = {0: "Rm", 1: "km", 2: "Mr", 3: "Mp"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp"}
+    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
     dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
     # dp_mapping = {
     #     0: "Dr",
@@ -150,7 +151,7 @@ if __name__ == "__main__":
         high=to.tensor(
             [
                 dp_nom["Dr"] * 5,
-                dp_nom["Dp"] * 50,
+                dp_nom["Dp"] * 20,
                 dp_nom["Rm"] * 1.9,
                 dp_nom["km"] * 1.8,
                 dp_nom["Mr"] * 1.7,
@@ -164,35 +165,38 @@ if __name__ == "__main__":
             ]
         ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
+    lstm = pyrado.load("policy.pt", osp.join(pyrado.EXP_DIR, "qq-tspred", "lstm", "2021-05-31_19-48-32"))
+    # lstm = pyrado.load("policy.pt", osp.join(pyrado.EXP_DIR, "qq-tspred", "lstm", "2021-06-02_17-01-07"))
     embedding_hparam = dict(
         downsampling_factor=1,
-        idcs_data=(0, 1),
-        # len_rollouts=env_sim.max_steps,
-        # recurrent_network_type=nn.RNN,
-        # only_last_output=True,
-        # hidden_size=20,
-        # num_recurrent_layers=1,
-        # output_size=1,
+        # state_mask_labels=(0, 1, 4),
+        len_rollouts=env_sim.max_steps,
+        recurrent_network_type=nn.LSTM,
+        hidden_size=lstm.rnn_layers.hidden_size,
+        num_recurrent_layers=lstm.num_recurrent_layers,
+        output_size=lstm.output_layer.out_features,
     )
-    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
+    embedding = create_embedding(RNNEmbedding.name, env_sim.spec, **embedding_hparam)
+    embedding.init_param(init_values=lstm.param_values)  # only for RNNEmbedding
 
     # Posterior (normalizing flow)
-    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=10)
+    posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=1,
-        num_sim_per_round=3000,
-        num_sbi_rounds=5,
+        num_real_rollouts=3,
+        num_sim_per_round=500,
+        num_sbi_rounds=4,
         simulation_batch_size=10,
         normalize_posterior=False,
-        num_eval_samples=10,
+        num_eval_samples=2,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
+        stop_on_done=False,
         use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
@@ -208,7 +212,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True),
-        num_workers=12,
+        num_workers=20,
     )
     algo = NPDR(
         ex_dir,

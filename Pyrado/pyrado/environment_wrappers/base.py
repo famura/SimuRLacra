@@ -227,7 +227,7 @@ class EnvWrapper(Env, Serializable):
         """
         if domain_param is not None:
             self._get_wrapper_domain_param(domain_param)
-        return self._wrapped_env.reset(init_state, domain_param)
+        return self._wrapped_env.reset(init_state=init_state, domain_param=domain_param)
 
     def step(self, act: np.ndarray) -> tuple:
         """
@@ -287,8 +287,7 @@ class EnvWrapperAct(EnvWrapper):
         # Modify action
         mod_act = self._process_act(act)
 
-        # Delegate to base/wrapped
-        # By not using _wrapped_env directly, we can mix this class with EnvWrapperObs
+        # Forward to EnvWrapper, which delegates to self._wrapped_env, which delegates to self._wrapped_env.step()
         return super().step(mod_act)
 
     @property
@@ -331,9 +330,8 @@ class EnvWrapperObs(EnvWrapper):
         return self._process_obs_space(super().obs_space)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
-        # Reset inner environment
-        # By not using _wrapped_env directly, we can mix this class with EnvWrapperAct
-        init_obs = super().reset(init_state, domain_param)
+        # Forward to EnvWrapper, which delegates to self._wrapped_env
+        init_obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         # Return processed observation
         return self._process_obs(init_obs)

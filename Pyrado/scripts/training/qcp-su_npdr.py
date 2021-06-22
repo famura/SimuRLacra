@@ -32,8 +32,8 @@ using Neural Posterior Domain Randomization
 """
 import os.path as osp
 
+import sbi.utils as sbiutils
 import torch as to
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_sim_hparams = dict(dt=1 / 250.0, max_steps=t_end * 250)
+    env_sim_hparams = dict(dt=1 / 250.0, max_steps=int(t_end * 250))
     env_sim = QCartPoleSwingUpSim(**env_sim_hparams)
 
     # Create the ground truth target domain and the behavioral policy
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         #     ]
         # ),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(
@@ -174,6 +174,7 @@ if __name__ == "__main__":
         num_eval_samples=10,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
+        stop_on_done=False,
         use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(

@@ -49,7 +49,7 @@
   </Body>
 
   <Body name="Arm" prev="Table" transform="0.1975 0 0 0 0 0" >
-    <Joint name="ArmHeight" range="0 1.325 2" constraint="true" type="TransZ" torqueLimit="500" />
+    <Joint name="ArmHeight" range="0 1.2 2" constraint="true" type="TransZ" torqueLimit="500" />
     <Shape type="FRAME" scale="0.3" />
     <Shape type="BOX" extents="0.16 0.16 0.485" distance="true" physics="true" graphics="true" transform="0 0 -0.2725 0 0 0" />
     <Shape type="BOX" extents="0.36 0.28 0.03" distance="true" physics="true" graphics="true" transform="0.02 0 -0.015 0 0 0" />
@@ -103,6 +103,7 @@
     <Shape type="CYLINDER" length="0.016" radius="0.032" distance="false" physics="true" graphics="true" transform="0.095 0 0 0 90 0" />
     <Shape type="CYLINDER" length="0.02" radius="0.032" distance="false" physics="true" graphics="true" transform="0.123573 0 0 0 90 0" color="BLUE" />
     <Shape type="SSL" length="0.055" radius="0.08" distance="true" physics="false" graphics="false" transform="0 0 -0.03 0 0 0" />
+    <Shape type="FRAME" scale="0.2" />
   </Body>
 
   <!-- Custom bodies would be here -->

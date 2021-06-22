@@ -27,13 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Domain parameter identification experiment on the Pendulum environment using Neural Posterior Domain Randomization
+Script to identify the domain parameters of the Pendulum environment using Neural Posterior Domain Randomization
 """
 from copy import deepcopy
 
+import sbi.utils as sbiutils
 import torch as to
 import torch.nn as nn
-from sbi import utils
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
         high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
     )
-    prior = utils.BoxUniform(**prior_hparam)
+    prior = sbiutils.BoxUniform(**prior_hparam)
     # prior_hparam = dict(
     #     loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
     #     covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
@@ -117,6 +117,7 @@ if __name__ == "__main__":
         num_eval_samples=1000,
         num_segments=1,
         # len_segments=200,
+        stop_on_done=False,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(
             num_atoms=10,  # default: 10

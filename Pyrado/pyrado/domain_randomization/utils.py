@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from copy import deepcopy
+import copy
 from typing import Sequence, Union
 
 import numpy as np
@@ -83,7 +83,7 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
                 raise pyrado.TypeErr(given=domain_params, expected_type=dict)
 
         elif isinstance(domain_params, dict):
-            dp = deepcopy(domain_params)
+            dp = copy.deepcopy(domain_params)
             for k, v in dp.items():
                 if isinstance(v, list):
                     dp[k] = [float(i) for i in v]
@@ -98,11 +98,11 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
                                 msg="The domain param entries need to either be a float, a numpy array or a"
                                 "PyTorch tensor, such that they can be converted to a list!"
                             )
-            # Taubulate is iterating through the lists in the dp dict
+            # taubulate is iterating through the lists in the domain parameter dict
             print(tabulate(dp, headers="keys", tablefmt="simple"))
 
         else:
-            raise pyrado.TypeErr(given=domain_params, expected_type=[dict, list])
+            raise pyrado.TypeErr(given=domain_params, expected_type=(dict, list))
 
 
 def wrap_like_other_env(

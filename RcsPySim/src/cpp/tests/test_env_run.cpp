@@ -47,8 +47,7 @@ int simpleRollout(int64_t numSteps)
     // Make sure the resource path is set up
     Rcs_addResourcePath("../../config");
     
-    //std::vector<std::string> configs{"config/BallOnPlate/exBotKuka.xml", "config/TargetTracking/exTargetTracking.xml"};
-    std::vector<std::string> configs{"BallOnPlate/exBotKuka.xml", "TargetTracking/exTargetTracking.xml"};
+    std::vector<std::string> configs{"BallOnPlate/ex_config.xml", "MiniGolf/ex_config_export.xml"};
     
     for (auto& configFile : configs) {
         DYNAMIC_SECTION("Config " << configFile) {

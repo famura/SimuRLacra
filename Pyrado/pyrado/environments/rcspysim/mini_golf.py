@@ -90,7 +90,7 @@ def create_mini_golf_task(env_spec: EnvSpec, hole_pos: np.ndarray, succ_thold: f
 class MiniGolfSim(RcsSim, Serializable):
     """A 7-dof Schunk robot playing mini golf"""
 
-    def __init__(self, task_args: dict, **kwargs):
+    def __init__(self, task_args: dict, relativeZdTask: bool, **kwargs):
         """
         Constructor
 
@@ -98,14 +98,13 @@ class MiniGolfSim(RcsSim, Serializable):
             This constructor should only be called via the subclasses.
 
         :param task_args: arguments for the task construction
+        :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = True,
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = False,
                        observeVelocities: bool = False,
                        observeForceTorque: bool = False,
-                       observeCollisionCost: bool = False,
-                       observePredictedCollisionCost: bool = False,
         """
         Serializable._init(self, locals())
 
@@ -125,6 +124,7 @@ class MiniGolfSim(RcsSim, Serializable):
             self,
             envType="MiniGolf",
             task_args=task_args,
+            relativeZdTask=relativeZdTask,
             state_mask_labels=("Ball_X", "Ball_Y", "base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"),
             graphFileName="gMiniGolf_FTS.xml" if kwargs.get("observeForceTorque", False) else "gMiniGolf.xml",
             physicsConfigFile="pMiniGolf.xml",
@@ -148,18 +148,22 @@ class MiniGolfSim(RcsSim, Serializable):
     def get_nominal_domain_param(cls):
         return dict(
             ball_radius=0.02,  # [m]
-            ball_mass=0.05,  # [kg]
-            club_mass=0.05,  # [kg]
+            ball_mass=0.005,  # [kg]
+            ball_slip=5e-4,  # [rad/(Ns)]
             ball_friction_coefficient=0.6,  # [-]
             ball_rolling_friction_coefficient=1e-5,  # [m]
-            ball_slip=5e-4,  # [-]
-            ground_friction_coefficient=0.7,  # [-]
+            ball_restitution=0,  # [-], leave it at 0 for now
+            club_mass=0.9,  # [kg]
+            ground_slip=5e-4,  # [rad/(Ns)]
+            ground_friction_coefficient=0.4,  # [-]
             obstacleleft_pos_offset_x=0.0,  # [m]
             obstacleleft_pos_offset_y=0.0,  # [m]
             obstacleleft_rot_offset_c=0.0,  # [rad]
             obstacleright_pos_offset_x=0.0,  # [m]
             obstacleright_pos_offset_y=0.0,  # [m]
             obstacleright_rot_offset_c=0.0,  # [rad]
+            obstacleblocker_pos_offset_x=0.0,  # [m]
+            obstacleblocker_pos_offset_y=0.0,  # [m]
         )
 
 
@@ -168,19 +172,18 @@ class MiniGolfIKSim(MiniGolfSim, Serializable):
 
     name: str = "mg-ik"
 
-    def __init__(self, task_args: Optional[dict] = None, **kwargs):
+    def __init__(self, task_args: Optional[dict] = None, relativeZdTask: bool = True, **kwargs):
         """
         Constructor
 
         :param task_args: arguments for the task construction
+        :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion
         :param kwargs: keyword arguments forwarded to `RcsSim`
                        fixedInitState: bool = True,
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = False,
                        observeVelocities: bool = False,
                        observeForceTorque: bool = False,
-                       observeCollisionCost: bool = False,
-                       observePredictedCollisionCost: bool = False,
         """
         Serializable._init(self, locals())
 
@@ -189,5 +192,6 @@ class MiniGolfIKSim(MiniGolfSim, Serializable):
             task_args=dict() if task_args is None else task_args,
             actionModelType="ik",
             positionTasks=True,
+            relativeZdTask=relativeZdTask,
             **kwargs,
         )

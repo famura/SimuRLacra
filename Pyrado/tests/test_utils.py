@@ -26,8 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import copy
+import functools
 import os.path as osp
-from functools import partial
 from math import ceil
 
 import pytest
@@ -384,19 +385,16 @@ def test_running_normalizer(data_seq):
         assert (data_norm <= 1).all()
 
 
-@pytest.mark.parametrize(
-    "x",
-    [
-        to.rand(1000, 1),
-        to.rand(1, 1000),
-        to.rand(1000, 1000),
-        np.random.rand(1, 1000),
-        np.random.rand(1000, 1),
-        np.random.rand(1000, 1000),
-    ],
-    ids=["to_1x1000", "to_1000x1", "to_1000x1000", "np_1x1000", "np_1000x1", "np_1000x1000"],
-)
-def test_stateful_standardizer(x):
+@pytest.mark.parametrize("data_type", ["numpy", "torch"], ids=["numpy", "torch"])
+@pytest.mark.parametrize("shape", [(1000, 1), (1, 1000), (1000, 1000)], ids=["1x1000", "1000x1", "1000x1000"])
+def test_stateful_standardizer(data_type: str, shape: tuple):
+    pyrado.set_seed(0)
+
+    if data_type == "numpy":
+        x = 100 * np.random.rand(*shape)
+    elif data_type == "torch":
+        x = 100 * to.rand(shape)
+
     ss = Standardizer()
 
     if isinstance(x, to.Tensor):
@@ -514,7 +512,7 @@ def test_gss_optimizer_nlin_fcn():
     )  # [.25, .75]
     x = nn.Parameter(to.tensor([x_init]), requires_grad=False)
     optim = GSS([x], param_min=x_grid.min().unsqueeze(0), param_max=x_grid.max().unsqueeze(0))
-    obj_fcn = partial(noisy_nonlin_fcn, x=x, f=f, noise_std=noise_std)
+    obj_fcn = functools.partial(noisy_nonlin_fcn, x=x, f=f, noise_std=noise_std)
     num_epochs = 10
 
     # Init plotting
@@ -770,3 +768,21 @@ def test_iteration_tracker():
 def test_correct_atleast_2d(x):
     x_corrected = correct_atleast_2d(x)
     assert x_corrected.shape[0] == len(x)
+
+
+@pytest.mark.parametrize("base", [dict(a=1, b=np.ones(3), c=dict(c1=2.0, c2=4), y=None, z=26)])
+@pytest.mark.parametrize("updater", [dict(a=11, b=np.ones(33), c=dict(c1=22.0), x=13, y=None)])
+def test_update_matching_keys_recursively(base, updater):
+    base = copy.deepcopy(base)
+    update_matching_keys_recursively(base, updater)
+
+    # Check unchanged
+    assert base["y"] is None
+    assert base["z"] == 26
+    assert base["c"]["c2"] == 4
+    assert base.get("x", None) == 13
+
+    # Check shallow changed
+    assert base["a"] == updater["a"]
+    assert np.all(base["b"] == updater["b"])
+    assert base["c"]["c1"] == updater["c"]["c1"]
