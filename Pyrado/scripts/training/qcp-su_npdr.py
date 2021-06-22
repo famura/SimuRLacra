@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #     7: "m_pole",
     #     8: "l_pole",
     # }
-    # g=9.81,  # gravity constant [m/s**2]
+    # gravity_const=9.81,  # gravity constant [m/s**2]
     # m_cart=0.38,  # mass of the cart [kg]
     # l_rail=0.814,  # length of the rail the cart is running on [m]
     # eta_m=0.9,  # motor efficiency [-], default 1.

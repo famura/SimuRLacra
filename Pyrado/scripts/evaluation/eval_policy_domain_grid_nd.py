@@ -73,13 +73,13 @@ def evaluate_policy(args, ex_dir):
         # Use nominal values for all other parameters.
         for param, nominal_value in env.get_nominal_domain_param().items():
             param_spec[param] = nominal_value
-        # param_spec["g"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
+        # param_spec["gravity_const"] = np.linspace(5.0, 15.0, num=eval_num, endpoint=True)
         param_spec["damping_pend_pole"] = np.linspace(0.0, 0.0001, num=eval_num, endpoint=True)
         param_spec["damping_rot_pole"] = np.linspace(0.0, 0.0006, num=eval_num, endpoint=True)
         param_spec_dim = 2
 
     elif isinstance(inner_env(env), QBallBalancerSim):
-        # param_spec["g"] = np.linspace(7.91, 11.91, num=11, endpoint=True)
+        # param_spec["gravity_const"] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec["m_ball"] = np.linspace(0.003, 0.3, num=11, endpoint=True)
         # param_spec["r_ball"] = np.linspace(0.01, 0.1, num=11, endpoint=True)
         param_spec["l_plate"] = np.linspace(0.275, 0.275, num=11, endpoint=True)

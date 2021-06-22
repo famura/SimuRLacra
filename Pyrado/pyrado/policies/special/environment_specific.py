@@ -228,8 +228,8 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
 
         # Energy terms: E_pot(0) = 0; E_pot(pi) = E_pot(-pi) = 2 mgl
         E_kin = J_pole / 2.0 * theta_dot ** 2
-        E_pot = self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"] * (1 - cos_th)
-        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"]
+        E_pot = self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"] * (1 - cos_th)
+        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"]
 
         if to.abs(alpha) < 0.1745 or self.pd_control:
             # Stabilize at the top
@@ -469,7 +469,7 @@ class QQubeEnergyCtrl(Policy):
         E_pot = (
             0.5
             * self._domain_param["mass_pend_pole"]
-            * self._domain_param["g"]
+            * self._domain_param["gravity_const"]
             * self._domain_param["length_pend_pole"]
             * (1.0 - to.cos(al))
         )
@@ -754,9 +754,9 @@ def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) 
             A[: env.obs_space.flat_dim // 2, env.obs_space.flat_dim // 2 :] = np.eye(env.obs_space.flat_dim // 2)
             A[4, 4] = -env.B_eq_v / env.J_eq
             A[5, 5] = -env.B_eq_v / env.J_eq
-            A[6, 0] = env.c_kin * env.m_ball * env.g * env.r_ball ** 2 / env.zeta
+            A[6, 0] = env.c_kin * env.m_ball * env.gravity_const * env.r_ball ** 2 / env.zeta
             A[6, 6] = -env.c_kin * env.r_ball ** 2 / env.zeta
-            A[7, 1] = env.c_kin * env.m_ball * env.g * env.r_ball ** 2 / env.zeta
+            A[7, 1] = env.c_kin * env.m_ball * env.gravity_const * env.r_ball ** 2 / env.zeta
             A[7, 7] = -env.c_kin * env.r_ball ** 2 / env.zeta
             B = np.zeros((env.obs_space.flat_dim, env.act_space.flat_dim))
             B[4, 0] = env.A_m / env.J_eq

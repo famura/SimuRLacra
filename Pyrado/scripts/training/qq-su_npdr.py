@@ -104,7 +104,7 @@ if __name__ == "__main__":
     # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole"}
     # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "motor_resistance", 3: "motor_back_emf"}
     # dp_mapping = {0: "motor_resistance", 1: "motor_back_emf", 2: "mass_rot_pole", 3: "mass_pend_pole"}
-    # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "motor_resistance", 3: "motor_back_emf", 4: "mass_rot_pole", 5: "mass_pend_pole", 6: "length_rot_pole", 7: "length_pend_pole", 8: "g"}
+    # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "motor_resistance", 3: "motor_back_emf", 4: "mass_rot_pole", 5: "mass_pend_pole", 6: "length_rot_pole", 7: "length_pend_pole", 8: "gravity_const"}
     dp_mapping = {
         0: "damping_rot_pole",
         1: "damping_pend_pole",
@@ -114,7 +114,7 @@ if __name__ == "__main__":
         5: "mass_pend_pole",
         6: "length_rot_pole",
         7: "length_pend_pole",
-        8: "g",
+        8: "gravity_const",
         9: "act_delay",
     }
     # dp_mapping = {
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     #     5: "mass_pend_pole",
     #     6: "length_rot_pole",
     #     7: "length_pend_pole",
-    #     8: "g",
+    #     8: "gravity_const",
     #     # 9: "voltage_thold_neg",
     #     # 10: "voltage_thold_pos",
     #     11: "act_delay",
@@ -153,7 +153,7 @@ if __name__ == "__main__":
                 dp_nom["mass_pend_pole"] * 0.3,
                 dp_nom["length_rot_pole"] * 0.5,
                 dp_nom["length_pend_pole"] * 0.5,
-                dp_nom["g"] * 0.85,
+                dp_nom["gravity_const"] * 0.85,
                 # -0.1,
                 # 0.0,
                 0,
@@ -169,7 +169,7 @@ if __name__ == "__main__":
                 dp_nom["mass_pend_pole"] * 1.7,
                 dp_nom["length_rot_pole"] * 1.5,
                 dp_nom["length_pend_pole"] * 1.5,
-                dp_nom["g"] * 1.15,
+                dp_nom["gravity_const"] * 1.15,
                 # 0,
                 # 0.1,
                 5,

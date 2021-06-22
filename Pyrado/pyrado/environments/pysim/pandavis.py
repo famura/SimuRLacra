@@ -211,7 +211,7 @@ class BallOnBeamVis(PandaVis):
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        g = self._env.domain_param["g"]
+        gravity_const = self._env.domain_param["gravity_const"]
         m_ball = self._env.domain_param["m_ball"]
         r_ball = self._env.domain_param["r_ball"]
         m_beam = self._env.domain_param["m_beam"]
@@ -240,7 +240,7 @@ class BallOnBeamVis(PandaVis):
         self.text.setText(
             f"""
             dt: {self._env.dt : 1.4f}
-            g: {g : 1.3f}
+            gravity_const: {gravity_const : 1.3f}
             m_ball: {m_ball: 1.2f}
             r_ball: {r_ball : 1.3f}
             m_beam: {m_beam : 1.2f}
@@ -396,7 +396,7 @@ class PendulumVis(PandaVis):
     def update(self, task: Task):
         # Accessing the current parameter values
         th, _ = self._env.state
-        g = self._env.domain_param["g"]
+        gravity_const = self._env.domain_param["gravity_const"]
         m_pole = self._env.domain_param["m_pole"]
         l_pole = float(self._env.domain_param["l_pole"])
         d_pole = self._env.domain_param["d_pole"]
@@ -423,7 +423,7 @@ class PendulumVis(PandaVis):
             cos theta: {np.cos(self._env.state[0]) : 1.3f}
             theta_dot: {self._env.state[1] * 180 / np.pi : 2.3f}
             tau: {self._env._curr_act[0] : 1.3f}
-            g: {g : 1.3f}
+            gravity_const: {gravity_const : 1.3f}
             m_pole: {m_pole : 1.3f}
             l_pole: {l_pole : 1.3f}
             d_pole: {d_pole : 1.3f}
@@ -499,7 +499,7 @@ class QBallBalancerVis(PandaVis):
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        g = self._env.domain_param["g"]
+        gravity_const = self._env.domain_param["gravity_const"]
         l_plate = self._env.domain_param["l_plate"]
         m_ball = self._env.domain_param["m_ball"]
         r_ball = self._env.domain_param["r_ball"]
@@ -552,7 +552,7 @@ class QBallBalancerVis(PandaVis):
             plate angle around y axis: {self._env.plate_angs[0] * 180 / np.pi : 2.2f}
             shaft angles: {self._env.state[0] * 180 / np.pi : 2.2f}, {self._env.state[1] * 180 / np.pi : 2.2f}
             V_: {self._env._curr_act[0] : 1.2f}, V_y : {self._env._curr_act[1] : 1.2f}
-            g: {g : 1.3f}
+            gravity_const: {gravity_const : 1.3f}
             m_ball: {m_ball : 1.3f}
             r_ball: {r_ball : 1.3f}
             r_arm: {r_arm : 1.3f}
@@ -636,7 +636,7 @@ class QCartPoleVis(PandaVis):
     def update(self, task: Task):
         # Accessing the current parameter values
         x, th, _, _ = self._env.state
-        g = self._env.domain_param["g"]
+        gravity_const = self._env.domain_param["gravity_const"]
         m_cart = self._env.domain_param["m_cart"]
         m_pole = self._env.domain_param["m_pole"]
         l_pole = float(self._env.domain_param["l_pole"])
@@ -676,7 +676,7 @@ class QCartPoleVis(PandaVis):
             x: {x : 1.3f}
             theta: {th * 180 / np.pi : 3.3f}
             dt: {self._env.dt :1.4f}
-            g: {g : 1.3f}
+            gravity_const: {gravity_const : 1.3f}
             m_cart: {m_cart : 1.4f}
             l_rail: {l_rail : 1.3f}
             l_pole: {l_pole : 1.3f}
@@ -766,7 +766,7 @@ class QQubeVis(PandaVis):
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        g = self._env.domain_param["g"]
+        gravity_const = self._env.domain_param["gravity_const"]
         mass_rot_pole = self._env.domain_param["mass_rot_pole"]
         mass_pend_pole = self._env.domain_param["mass_pend_pole"]
         length_rot_pole = float(self._env.domain_param["length_rot_pole"])
@@ -802,7 +802,7 @@ class QQubeVis(PandaVis):
             theta: {self._env.state[0] * 180 / np.pi : 3.1f}
             alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
             dt: {self._env.dt :1.4f}
-            g: {g : 1.3f}
+            gravity_const: {gravity_const : 1.3f}
             mass_rot_pole: {mass_rot_pole : 1.4f}
             mass_pend_pole: {mass_pend_pole : 1.4f}
             length_rot_pole: {length_rot_pole : 1.4f}

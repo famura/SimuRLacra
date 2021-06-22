@@ -112,7 +112,7 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "g",
+                "gravity_const",
                 "r_ball",
                 "$g$",
                 r"$r_{\mathrm{ball}}$",

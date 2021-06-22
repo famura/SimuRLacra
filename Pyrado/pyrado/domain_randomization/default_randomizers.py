@@ -152,7 +152,9 @@ def create_default_randomizer_cata() -> DomainRandomizer:
 
     dp_nom = CatapultSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-3
+        ),
         NormalDomainParam(name="k", mean=dp_nom["k"], std=dp_nom["k"] / 5, clip_lo=1e-3),
         NormalDomainParam(name="x", mean=dp_nom["x"], std=dp_nom["x"] / 5, clip_lo=1e-3),
     )
@@ -169,7 +171,9 @@ def create_default_randomizer_bob() -> DomainRandomizer:
 
     dp_nom = BallOnBeamSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-4),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-4
+        ),
         NormalDomainParam(name="m_ball", mean=dp_nom["m_ball"], std=dp_nom["m_ball"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="r_ball", mean=dp_nom["r_ball"], std=dp_nom["r_ball"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="m_beam", mean=dp_nom["m_beam"], std=dp_nom["m_beam"] / 5, clip_lo=1e-3),
@@ -208,7 +212,9 @@ def create_default_randomizer_pend() -> DomainRandomizer:
 
     dp_nom = PendulumSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-3
+        ),
         NormalDomainParam(name="m_pole", mean=dp_nom["m_pole"], std=dp_nom["m_pole"] / 10, clip_lo=1e-3),
         NormalDomainParam(name="l_pole", mean=dp_nom["l_pole"], std=dp_nom["l_pole"] / 10, clip_lo=1e-3),
         NormalDomainParam(name="d_pole", mean=dp_nom["d_pole"], std=dp_nom["d_pole"] / 10, clip_lo=1e-3),
@@ -227,7 +233,9 @@ def create_default_randomizer_qbb() -> DomainRandomizer:
 
     dp_nom = QBallBalancerSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-4),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-4
+        ),
         NormalDomainParam(name="m_ball", mean=dp_nom["m_ball"], std=dp_nom["m_ball"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="r_ball", mean=dp_nom["r_ball"], std=dp_nom["r_ball"] / 5, clip_lo=1e-3),
         NormalDomainParam(name="l_plate", mean=dp_nom["l_plate"], std=dp_nom["l_plate"] / 5, clip_lo=5e-2),
@@ -266,7 +274,9 @@ def create_default_randomizer_qcp() -> DomainRandomizer:
 
     dp_nom = QCartPoleSim.get_nominal_domain_param(long=False)
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-4),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-4
+        ),
         NormalDomainParam(name="m_cart", mean=dp_nom["m_cart"], std=dp_nom["m_cart"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="m_pole", mean=dp_nom["m_pole"], std=dp_nom["m_pole"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="l_rail", mean=dp_nom["l_rail"], std=dp_nom["l_rail"] / 5, clip_lo=1e-2),
@@ -296,7 +306,9 @@ def create_default_randomizer_qq() -> DomainRandomizer:
 
     dp_nom = QQubeSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-3
+        ),
         NormalDomainParam(
             name="motor_resistance", mean=dp_nom["motor_resistance"], std=dp_nom["motor_resistance"] / 5, clip_lo=1e-3
         ),
@@ -642,8 +654,8 @@ def create_default_domain_param_map_bob() -> Dict[int, Tuple[str, str]]:
              distribution parameter
     """
     return {
-        0: ("g", "mean"),
-        1: ("g", "std"),
+        0: ("gravity_const", "mean"),
+        1: ("gravity_const", "std"),
         2: ("m_ball", "mean"),
         3: ("m_ball", "std"),
         4: ("r_ball", "mean"),

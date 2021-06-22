@@ -87,7 +87,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            g=9.81,  # gravity [m/s**2]
+            gravity_const=9.81,  # gravity [m/s**2]
             motor_resistance=8.4,  # motor resistance [Ohm]
             motor_back_emf=0.042,  # motor back-emf constant [V*s/rad]
             mass_rot_pole=0.095,  # rotary arm mass [kg]

@@ -141,7 +141,7 @@ def plot_policy(args, ex_dir):
 
         _plot_and_save(
             df,
-            "g",
+            "gravity_const",
             r"$g$",
             nom_dp_value=9.81,
             save_figure=args.save,

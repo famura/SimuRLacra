@@ -30,7 +30,7 @@
 
 <mujoco model="inverted pendulum">
     <compiler texturedir="[ASSETS_DIR]/textures"/>
-    <option gravity="0 0 -[g]" integrator="RK4" timestep="0.0005"/>
+    <option gravity="0 0 -[gravity_const]" integrator="RK4" timestep="0.0005"/>
     <size nstack="10000"/>
     <default>
         <geom contype="0"/>

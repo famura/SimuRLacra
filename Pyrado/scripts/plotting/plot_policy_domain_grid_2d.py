@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
         _plot_and_save(
             df,
-            "g",
+            "gravity_const",
             "r_ball",
             "$g$",
             r"$r_{\mathrm{ball}}$",

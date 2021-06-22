@@ -72,7 +72,7 @@ if __name__ == "__main__":
         # Create the environment for evaluating
         env = QBallBalancerSim(dt=dt, max_steps=args.max_steps, load_experimental_tholds=True)
 
-        # param_spec['g'] = np.linspace(8.91, 12.91, num=11, endpoint=True)
+        # param_spec['gravity_const'] = np.linspace(8.91, 12.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.001, 0.033, num=11, endpoint=True)
         # param_spec['r_ball'] = np.linspace(0.01, 0.1, num=11, endpoint=True)
         # param_spec['r_arm'] = np.linspace(0.0254*0.3, 0.0254*1.7, num=11, endpoint=True)
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         else:
             env = QCartPoleStabSim(dt=dt, max_steps=args.max_steps)
 
-        # param_spec['g'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
+        # param_spec['gravity_const'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
         param_spec["m_cart"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
         # param_spec['l_rail'] = np.linspace(0.841*0.7, 0.841*1.3, num=11, endpoint=True)
         # param_spec['eta_m'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     elif env_name == QQubeSwingUpSim.name:
         env = QQubeSwingUpSim(dt=dt, max_steps=args.max_steps)
 
-        # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
+        # param_spec['gravity_const'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
         # param_spec['motor_resistance'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
         # param_spec['motor_back_emf'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
         # param_spec['mass_rot_pole'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)

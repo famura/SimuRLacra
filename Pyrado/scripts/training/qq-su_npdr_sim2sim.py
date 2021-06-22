@@ -80,7 +80,7 @@ if __name__ == "__main__":
         mass_rot_pole=dp_nom["mass_rot_pole"] * 1.2,
         length_pend_pole=dp_nom["length_pend_pole"] * 0.8,
         length_rot_pole=dp_nom["length_rot_pole"] * 0.9,
-        g=dp_nom["g"] * 1.0,
+        gravity_const=dp_nom["gravity_const"] * 1.0,
     )
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="damping_rot_pole", mean=dp_nom["damping_rot_pole"] * 2.0, std=dp_nom["motor_back_emf"] / 10, clip_lo=0.0),
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         5: "mass_pend_pole",
         6: "length_rot_pole",
         7: "length_pend_pole",
-        8: "g",
+        8: "gravity_const",
     }
 
     # Prior and Posterior (normalizing flow)
@@ -124,7 +124,7 @@ if __name__ == "__main__":
                 dp_nom["mass_pend_pole"] * 0.8,
                 dp_nom["length_rot_pole"] * 0.8,
                 dp_nom["length_pend_pole"] * 0.8,
-                dp_nom["g"] * 0.9,
+                dp_nom["gravity_const"] * 0.9,
             ]
         ),
         high=to.tensor(
@@ -137,7 +137,7 @@ if __name__ == "__main__":
                 dp_nom["mass_pend_pole"] * 1.2,
                 dp_nom["length_rot_pole"] * 1.2,
                 dp_nom["length_pend_pole"] * 1.2,
-                dp_nom["g"] * 1.1,
+                dp_nom["gravity_const"] * 1.1,
             ]
         ),
     )

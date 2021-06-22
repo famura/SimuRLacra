@@ -170,7 +170,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
     def get_nominal_domain_param(cls) -> dict:
         V_tholds = cls.get_V_tholds()
         return dict(
-            g=9.81,  # gravity constant [m/s**2]
+            gravity_const=9.81,  # gravity constant [m/s**2]
             m_ball=0.003,  # mass of the ball [kg]
             r_ball=0.019625,  # radius of the ball [m]
             l_plate=0.275,  # length of the (square) plate [m]
@@ -236,7 +236,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         return obs
 
     def _step_dynamics(self, act: np.ndarray):
-        g = self.domain_param["g"]
+        gravity_const = self.domain_param["gravity_const"]
         m_ball = self.domain_param["m_ball"]
         r_ball = self.domain_param["r_ball"]
         c_frict = self.domain_param["c_frict"]
@@ -296,21 +296,21 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         # kinematics: sin(a) = self.c_kin * sin(th_x)
         if self._simple_dynamics:
             # Ball dynamic without friction and Coriolis forces
-            x_ddot = self.c_kin * m_ball * g * r_ball ** 2 * np.sin(th_x) / self.zeta  # symm inertia
-            y_ddot = self.c_kin * m_ball * g * r_ball ** 2 * np.sin(th_y) / self.zeta  # symm inertia
+            x_ddot = self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_x) / self.zeta  # symm inertia
+            y_ddot = self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_y) / self.zeta  # symm inertia
         else:
             # Ball dynamic with friction and Coriolis forces
             x_ddot = (
                 -c_frict * x_dot * r_ball ** 2  # friction
                 - self.J_ball * r_ball * a_ddot  # plate influence
                 + m_ball * x * a_dot ** 2 * r_ball ** 2  # centripetal
-                + self.c_kin * m_ball * g * r_ball ** 2 * np.sin(th_x)  # gravity
+                + self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_x)  # gravity
             ) / self.zeta
             y_ddot = (
                 -c_frict * y_dot * r_ball ** 2  # friction
                 - self.J_ball * r_ball * b_ddot  # plate influence
                 + m_ball * y * (-b_dot) ** 2 * r_ball ** 2  # centripetal
-                + self.c_kin * m_ball * g * r_ball ** 2 * np.sin(th_y)  # gravity
+                + self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_y)  # gravity
             ) / self.zeta
 
         # Integration step (symplectic Euler)
