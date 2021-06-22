@@ -142,6 +142,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa07799bf7ad62da516f9aa65cb8263b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac34d21d0b2d511bc06c6ad98a1787502"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#ac34d21d0b2d511bc06c6ad98a1787502">setControlPolicy</a> (<a class="el" href="classRcs_1_1ControlPolicy.html">ControlPolicy</a> *<a class="el" href="classRcs_1_1RcsPyBot.html#a64f111cf88f2c5be28d3aa51d251eb03">controlPolicy</a>, const MatNd *q_des=nullptr)</td></tr>
 <tr class="separator:ac34d21d0b2d511bc06c6ad98a1787502"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55bd9a073d86e3ae91e1f2cee5b92b6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a55bd9a073d86e3ae91e1f2cee5b92b6b">syncGraphsToCurrent</a> ()</td></tr>
+<tr class="separator:a55bd9a073d86e3ae91e1f2cee5b92b6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae50fd3ab7d9afd698013437789a5ed86"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRcs_1_1ControlPolicy.html">ControlPolicy</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#ae50fd3ab7d9afd698013437789a5ed86">getControlPolicy</a> () const</td></tr>
 <tr class="separator:ae50fd3ab7d9afd698013437789a5ed86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77dd6f6c1962263fef40efb90f659840"><td class="memItemLeft" align="right" valign="top">MatNd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a77dd6f6c1962263fef40efb90f659840">getObservation</a> () const</td></tr>
@@ -153,6 +155,8 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ac580eba671f6bbff674c09709b33466c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRcs_1_1DataLogger.html">DataLogger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#ac580eba671f6bbff674c09709b33466c">logger</a></td></tr>
 <tr class="separator:ac580eba671f6bbff674c09709b33466c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74c1b90bddcfb481dc934c48aac86648"><td class="memItemLeft" align="right" valign="top">Rcs::SecondOrderLPFND *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a74c1b90bddcfb481dc934c48aac86648">homePoseFilt</a></td></tr>
+<tr class="separator:a74c1b90bddcfb481dc934c48aac86648"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -169,12 +173,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:af6931f56f529e1c2b6fe9ed6c5c7fd04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64f111cf88f2c5be28d3aa51d251eb03"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRcs_1_1ControlPolicy.html">ControlPolicy</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a64f111cf88f2c5be28d3aa51d251eb03">controlPolicy</a></td></tr>
 <tr class="separator:a64f111cf88f2c5be28d3aa51d251eb03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74c1b90bddcfb481dc934c48aac86648"><td class="memItemLeft" align="right" valign="top">Rcs::SecondOrderLPFND *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a74c1b90bddcfb481dc934c48aac86648">homePoseFilt</a></td></tr>
-<tr class="separator:a74c1b90bddcfb481dc934c48aac86648"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a528aa45b7277ddc6cec6b2ef50336c09"><td class="memItemLeft" align="right" valign="top">MatNd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a528aa45b7277ddc6cec6b2ef50336c09">q_ctrl</a></td></tr>
 <tr class="separator:a528aa45b7277ddc6cec6b2ef50336c09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe048550b90d10c8ebf589bfc844d0d4"><td class="memItemLeft" align="right" valign="top">MatNd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#afe048550b90d10c8ebf589bfc844d0d4">q_ctrl_filt_targ</a></td></tr>
-<tr class="separator:afe048550b90d10c8ebf589bfc844d0d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65913aeb61b226cee18b24f2a99aaeac"><td class="memItemLeft" align="right" valign="top">MatNd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a65913aeb61b226cee18b24f2a99aaeac">qd_ctrl</a></td></tr>
 <tr class="separator:a65913aeb61b226cee18b24f2a99aaeac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47f6f82d631b28afb093bbe9130c6fdb"><td class="memItemLeft" align="right" valign="top">MatNd *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1RcsPyBot.html#a47f6f82d631b28afb093bbe9130c6fdb">T_ctrl</a></td></tr>
@@ -319,7 +319,7 @@ Protected Attributes</h2></td></tr>
 <p>Get storage matrix for current action.</p>
 <p>WARNING: the contents may update asynchronously. The dimensions are constant. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00198">198</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00201">201</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
 
 </div>
 </div>
@@ -373,7 +373,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00075">75</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00077">77</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -394,7 +394,7 @@ Protected Attributes</h2></td></tr>
 <p>Get storage matrix for current observation.</p>
 <p>WARNING: the contents may update asynchronously. The dimensions are constant. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00193">193</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00196">196</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
 
 </div>
 </div>
@@ -477,7 +477,26 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Replace the control policy. This method may be called while the bot is running. Setting <code>controlPolicy</code> to<code>nullptr</code> and <code>q_des</code> to a joint config causes the bot to go to this configuration. Does <b>not</b> take ownership. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00130">130</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00129">129</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a55bd9a073d86e3ae91e1f2cee5b92b6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55bd9a073d86e3ae91e1f2cee5b92b6b">&#9670;&nbsp;</a></span>syncGraphsToCurrent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Rcs::RcsPyBot::syncGraphsToCurrent </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00206">206</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
 
 </div>
 </div>
@@ -504,7 +523,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00153">153</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8cpp_source.html#l00156">156</a> of file <a class="el" href="RcsPyBot_8cpp_source.html">RcsPyBot.cpp</a>.</p>
 
 </div>
 </div>
@@ -529,7 +548,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00121">121</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00122">122</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -553,7 +572,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00106">106</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00111">111</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -579,7 +598,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Experiment configuration. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00105">105</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00110">110</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -605,7 +624,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Control policy. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00109">109</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00114">114</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -631,7 +650,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Control policy mutex (mutable to allow using it from const functions) </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00102">102</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00107">107</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -640,24 +659,16 @@ Protected Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Rcs::SecondOrderLPFND* Rcs::RcsPyBot::homePoseFilt</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Filter for going to the home pose. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00112">112</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00101">101</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -675,7 +686,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Data logger. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00082">82</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00084">84</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -699,7 +710,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00120">120</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00121">121</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -725,31 +736,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Temporary matrices. </p>
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00115">115</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
-
-</div>
-</div>
-<a id="afe048550b90d10c8ebf589bfc844d0d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe048550b90d10c8ebf589bfc844d0d4">&#9670;&nbsp;</a></span>q_ctrl_filt_targ</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MatNd* Rcs::RcsPyBot::q_ctrl_filt_targ</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00116">116</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00117">117</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -773,7 +760,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00117">117</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00118">118</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -797,7 +784,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00118">118</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RcsPyBot_8h_source.html#l00119">119</a> of file <a class="el" href="RcsPyBot_8h_source.html">RcsPyBot.h</a>.</p>
 
 </div>
 </div>
@@ -811,7 +798,7 @@ Protected Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1RcsPyBot.html">RcsPyBot</a></li>
-    <li class="footer">Generated on Tue Jun 22 2021 10:02:17 for RcsPySim by
+    <li class="footer">Generated on Tue Jun 22 2021 11:44:48 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

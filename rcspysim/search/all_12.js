@@ -30,7 +30,6 @@ var searchData=
   ['regplanar3link',['RegPlanar3Link',['../namespaceRcs.html#a0b5cbf8cfe23ef52feb2abfb28766bf0',1,'Rcs']]],
   ['regplanarinsert',['RegPlanarInsert',['../namespaceRcs.html#ad67b7b6aa523cbb7a43d281510ab3d7f',1,'Rcs']]],
   ['regquanserqube',['RegQuanserQube',['../namespaceRcs.html#ab7dd569a1635028360471586ded61b2e',1,'Rcs']]],
-  ['regtargettracking',['RegTargetTracking',['../namespaceRcs.html#afc9af49bcfc1838b02abe318e22c7f0f',1,'Rcs']]],
   ['regtorchpolicy',['RegTorchPolicy',['../namespaceRcs.html#ab8c5fb0a432b34b6209a48c0cb898c08',1,'Rcs']]],
   ['render',['render',['../classRcs_1_1RcsSimEnv.html#a9af017508720e5051cbe2de45dc43cea',1,'Rcs::RcsSimEnv']]],
   ['renderinginitialized',['renderingInitialized',['../classRcs_1_1PolicyComponent.html#abc835f019d32305f95c58f72930cea39',1,'Rcs::PolicyComponent']]],
@@ -40,7 +39,7 @@ var searchData=
   ['roddirection',['rodDirection',['../classRcs_1_1PPDRodLength.html#a5f9dfbb9cb6e2d13d8f05e050f7b62c5',1,'Rcs::PPDRodLength']]],
   ['rodoffset',['rodOffset',['../classRcs_1_1PPDRodLength.html#a0a57cc11a8912eae8d70439d4fa98ab3',1,'Rcs::PPDRodLength']]],
   ['rodshape',['rodShape',['../classRcs_1_1PPDRodLength.html#a439018427005c61bea484d582f5e26f7',1,'Rcs::PPDRodLength']]],
-  ['runloop',['runLoop',['../ECSRobo_8cpp.html#ab999bb81dbab991dc379c36a5a55e8dd',1,'runLoop():&#160;ECSRobo.cpp'],['../TestBotSim_8cpp.html#a58f02c4065b16faa81b8c91d65cdc66d',1,'runLoop():&#160;TestBotSim.cpp'],['../TestTargetTracking_8cpp.html#a58f02c4065b16faa81b8c91d65cdc66d',1,'runLoop():&#160;TestTargetTracking.cpp']]],
+  ['runloop',['runLoop',['../ECSRobo_8cpp.html#ab999bb81dbab991dc379c36a5a55e8dd',1,'runLoop():&#160;ECSRobo.cpp'],['../MiniGolfBot_8cpp.html#a58f02c4065b16faa81b8c91d65cdc66d',1,'runLoop():&#160;MiniGolfBot.cpp'],['../TestBot_8cpp.html#a58f02c4065b16faa81b8c91d65cdc66d',1,'runLoop():&#160;TestBot.cpp']]],
   ['running',['running',['../classRcs_1_1DataLogger.html#a488b204c22407445fc082ada5af9c445',1,'Rcs::DataLogger']]],
   ['runpolicy',['runPolicy',['../ECSRobo_8cpp.html#a94a330af08c7fa57249d1402a1de3b06',1,'ECSRobo.cpp']]]
 ];

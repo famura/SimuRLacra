@@ -1,4 +1,4 @@
-<map id="src/cpp/hardware/TestBotSim.cpp" name="src/cpp/hardware/TestBotSim.cpp">
+<map id="src/cpp/hardware/MiniGolfBot.cpp" name="src/cpp/hardware/MiniGolfBot.cpp">
 <area shape="rect" id="node2" href="$RcsPyBot_8h.html" title="RcsPyBot.h" alt="" coords="201,184,295,211"/>
 <area shape="rect" id="node16" href="$ActionModelIK_8h.html" title="action/ActionModelIK.h" alt="" coords="524,102,681,129"/>
 <area shape="rect" id="node22" href="$PropertySourceXml_8h.html" title="config/PropertySourceXml.h" alt="" coords="807,102,993,129"/>

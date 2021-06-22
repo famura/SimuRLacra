@@ -3,8 +3,9 @@
 <area shape="rect" id="node3" href="$TorchPolicy_8h.html" title="src/cpp/core/control\l/TorchPolicy.h" alt="" coords="167,95,304,136"/>
 <area shape="rect" id="node5" href="$RcsPyBot_8cpp.html" title="src/cpp/core/RcsPyBot.cpp" alt="" coords="328,102,511,129"/>
 <area shape="rect" id="node6" href="$PolicyComponent_8h.html" title="src/cpp/hardware/PolicyComponent.h" alt="" coords="535,102,775,129"/>
-<area shape="rect" id="node9" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="800,95,972,136"/>
-<area shape="rect" id="node10" href="$module_8cpp.html" title="src/cpp/pyEnv/module.cpp" alt="" coords="996,102,1173,129"/>
+<area shape="rect" id="node9" href="$MiniGolfBot_8cpp.html" title="src/cpp/hardware/MiniGolf\lBot.cpp" alt="" coords="800,95,975,136"/>
+<area shape="rect" id="node10" href="$TestBot_8cpp.html" title="src/cpp/hardware/TestBot.cpp" alt="" coords="999,102,1197,129"/>
+<area shape="rect" id="node11" href="$module_8cpp.html" title="src/cpp/pyEnv/module.cpp" alt="" coords="1221,102,1399,129"/>
 <area shape="rect" id="node4" href="$TorchPolicy_8cpp.html" title="src/cpp/core/control\l/TorchPolicy.cpp" alt="" coords="167,184,304,225"/>
 <area shape="rect" id="node7" href="$ECSRobo_8cpp.html" title="src/cpp/hardware/ECSRobo.cpp" alt="" coords="439,191,650,218"/>
 <area shape="rect" id="node8" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="675,191,929,218"/>

@@ -1,16 +1,15 @@
 <map id="src/cpp/core/action/AMDynamicalSystemActivation.h" name="src/cpp/core/action/AMDynamicalSystemActivation.h">
-<area shape="rect" id="node2" href="$AMDynamicalSystemActivation_8cpp.html" title="src/cpp/core/action\l/AMDynamicalSystemActivation.cpp" alt="" coords="333,95,569,136"/>
-<area shape="rect" id="node3" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="741,191,945,218"/>
-<area shape="rect" id="node4" href="$OMDynamicalSystemGoalDistance_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.h" alt="" coords="1059,95,1303,136"/>
+<area shape="rect" id="node2" href="$AMDynamicalSystemActivation_8cpp.html" title="src/cpp/core/action\l/AMDynamicalSystemActivation.cpp" alt="" coords="310,95,546,136"/>
+<area shape="rect" id="node3" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="241,191,445,218"/>
+<area shape="rect" id="node4" href="$OMDynamicalSystemGoalDistance_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.h" alt="" coords="1037,95,1281,136"/>
 <area shape="rect" id="node5" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="5,191,216,218"/>
-<area shape="rect" id="node6" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="240,191,440,218"/>
-<area shape="rect" id="node7" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="969,191,1183,218"/>
-<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1208,191,1419,218"/>
-<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1442,191,1654,218"/>
-<area shape="rect" id="node10" href="$ECTargetTracking_8cpp.html" title="src/cpp/core/ECTargetTracking.cpp" alt="" coords="1960,191,2189,218"/>
-<area shape="rect" id="node12" href="$OMDynamicalSystemDiscrepancy_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.h" alt="" coords="694,95,933,136"/>
-<area shape="rect" id="node14" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1479,102,1691,129"/>
-<area shape="rect" id="node15" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="1715,102,1970,129"/>
-<area shape="rect" id="node11" href="$OMDynamicalSystemGoalDistance_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.cpp" alt="" coords="1677,184,1936,225"/>
-<area shape="rect" id="node13" href="$OMDynamicalSystemDiscrepancy_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.cpp" alt="" coords="465,184,717,225"/>
+<area shape="rect" id="node6" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="745,191,945,218"/>
+<area shape="rect" id="node7" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="970,191,1185,218"/>
+<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1727,191,1937,218"/>
+<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1209,191,1421,218"/>
+<area shape="rect" id="node11" href="$OMDynamicalSystemDiscrepancy_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.h" alt="" coords="722,95,961,136"/>
+<area shape="rect" id="node13" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1406,102,1618,129"/>
+<area shape="rect" id="node14" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="1642,102,1897,129"/>
+<area shape="rect" id="node10" href="$OMDynamicalSystemGoalDistance_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.cpp" alt="" coords="1444,184,1703,225"/>
+<area shape="rect" id="node12" href="$OMDynamicalSystemDiscrepancy_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.cpp" alt="" coords="469,184,721,225"/>
 </map>

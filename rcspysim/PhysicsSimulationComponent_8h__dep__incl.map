@@ -1,4 +1,5 @@
 <map id="src/cpp/hardware/PhysicsComponent/PhysicsSimulationComponent.h" name="src/cpp/hardware/PhysicsComponent/PhysicsSimulationComponent.h">
-<area shape="rect" id="node2" href="$PhysicsSimulationComponent_8cpp.html" title="src/cpp/hardware/Physics\lComponent/PhysicsSimulationComponent.cpp" alt="" coords="5,95,299,136"/>
-<area shape="rect" id="node3" href="$TestBotSim_8cpp.html" title="src/cpp/hardware/TestBot\lSim.cpp" alt="" coords="323,95,495,136"/>
+<area shape="rect" id="node2" href="$MiniGolfBot_8cpp.html" title="src/cpp/hardware/MiniGolf\lBot.cpp" alt="" coords="5,95,180,136"/>
+<area shape="rect" id="node3" href="$PhysicsSimulationComponent_8cpp.html" title="src/cpp/hardware/Physics\lComponent/PhysicsSimulationComponent.cpp" alt="" coords="205,95,498,136"/>
+<area shape="rect" id="node4" href="$TestBot_8cpp.html" title="src/cpp/hardware/TestBot.cpp" alt="" coords="522,102,719,129"/>
 </map>

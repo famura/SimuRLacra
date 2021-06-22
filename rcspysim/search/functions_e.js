@@ -5,9 +5,11 @@ var searchData=
   ['setcollisioncheck',['setCollisionCheck',['../classRcs_1_1PolicyComponent.html#a0a17d8af617ab6fb135cd2121bb072f1',1,'Rcs::PolicyComponent']]],
   ['setcommand',['setCommand',['../classRcs_1_1PhysicsSimulationComponent.html#aecd3282c198bf08b9ec4149dcd123a45',1,'Rcs::PhysicsSimulationComponent']]],
   ['setcontrolpolicy',['setControlPolicy',['../classRcs_1_1RcsPyBot.html#ac34d21d0b2d511bc06c6ad98a1787502',1,'Rcs::RcsPyBot']]],
+  ['setdesiredgraph',['setDesiredGraph',['../classRcs_1_1ActionModelIK.html#a812730121231128936b12d6b67415d39',1,'Rcs::ActionModelIK']]],
   ['setenablepps',['setEnablePPS',['../classRcs_1_1PhysicsSimulationComponent.html#af072c69002e1358d3426e7aaa6b619a3',1,'Rcs::PhysicsSimulationComponent']]],
   ['setfeedforward',['setFeedForward',['../classRcs_1_1PhysicsSimulationComponent.html#a56365597c783474647d032c62f4f98be',1,'Rcs::PhysicsSimulationComponent']]],
   ['setgoal',['setGoal',['../classRcs_1_1DynamicalSystem.html#a543d8fade27fe3a39e29b18730ee63e4',1,'Rcs::DynamicalSystem::setGoal()'],['../classRcs_1_1DSConst.html#a2176d45e242f3f4c61b58f90650edada',1,'Rcs::DSConst::setGoal()'],['../classRcs_1_1DSLinear.html#ae7856947d1090460466446caba100b66',1,'Rcs::DSLinear::setGoal()'],['../classRcs_1_1DSMassSpringDamper.html#a982787cac40f32048581fbe3da32fe1c',1,'Rcs::DSMassSpringDamper::setGoal()'],['../classRcs_1_1DSSlice.html#ae535b13ef57c55bf7747a8b2e578aef4',1,'Rcs::DSSlice::setGoal()']]],
+  ['setgraph',['setGraph',['../classRcs_1_1ActionModel.html#a4fc0696c97d53d3d97cac945635b177d',1,'Rcs::ActionModel']]],
   ['setjointlimitcheck',['setJointLimitCheck',['../classRcs_1_1PolicyComponent.html#ac409ae95c8ff64f97a5b2186153e6479',1,'Rcs::PolicyComponent']]],
   ['setmaxstate',['setMaxState',['../classRcs_1_1OMTask.html#a3b6908afa0d9ded29c13a3ca26fd2e54',1,'Rcs::OMTask::setMaxState(double maxState)'],['../classRcs_1_1OMTask.html#aa568c47dfd72576d51faa6a5135b6dde',1,'Rcs::OMTask::setMaxState(std::vector&lt; double &gt; maxState)'],['../classRcs_1_1OMTaskPositions.html#a182606f7ada4cf3f2a115a58e6c89b11',1,'Rcs::OMTaskPositions::setMaxState(double maxState)'],['../classRcs_1_1OMTaskPositions.html#ad664a010dbd30a89d87c64548d866be3',1,'Rcs::OMTaskPositions::setMaxState(std::vector&lt; double &gt; maxState)']]],
   ['setmaxvelocity',['setMaxVelocity',['../classRcs_1_1OMTask.html#a53628bc41ada1507c5157491517ac229',1,'Rcs::OMTask::setMaxVelocity(double maxVelocity)'],['../classRcs_1_1OMTask.html#aba9c464238c400a992278d08b9589aa2',1,'Rcs::OMTask::setMaxVelocity(std::vector&lt; double &gt; maxVelocity)']]],
@@ -32,5 +34,6 @@ var searchData=
   ['stop',['stop',['../classRcs_1_1DataLogger.html#a36669576b064c97e1e386eadcc6cc581',1,'Rcs::DataLogger']]],
   ['stopthread',['stopThread',['../classRcs_1_1PhysicsSimulationComponent.html#a7d7b2847a3c0714f94554267ce040577',1,'Rcs::PhysicsSimulationComponent::stopThread()'],['../classRcs_1_1ViewerComponent.html#a0c67f2c563e65454e4b2ff2ebe297358',1,'Rcs::ViewerComponent::stopThread()']]],
   ['string_5fformat',['string_format',['../namespaceRcs.html#a2bf331911f62205d319128bb17204cf0',1,'Rcs']]],
-  ['subscribe',['subscribe',['../classRcs_1_1PolicyComponent.html#a0d68a7c82fbe31fe6c5f75047739729a',1,'Rcs::PolicyComponent']]]
+  ['subscribe',['subscribe',['../classRcs_1_1PolicyComponent.html#a0d68a7c82fbe31fe6c5f75047739729a',1,'Rcs::PolicyComponent']]],
+  ['syncgraphstocurrent',['syncGraphsToCurrent',['../classRcs_1_1RcsPyBot.html#a55bd9a073d86e3ae91e1f2cee5b92b6b',1,'Rcs::RcsPyBot']]]
 ];

@@ -88,8 +88,7 @@ var hierarchy =
       [ "Rcs::ECMPblending", "classRcs_1_1ECMPblending.html", null ],
       [ "Rcs::ECPlanar3Link", "classRcs_1_1ECPlanar3Link.html", null ],
       [ "Rcs::ECPlanarInsert", "classRcs_1_1ECPlanarInsert.html", null ],
-      [ "Rcs::ECQuanserQube", "classRcs_1_1ECQuanserQube.html", null ],
-      [ "Rcs::ECTargetTracking", "classRcs_1_1ECTargetTracking.html", null ]
+      [ "Rcs::ECQuanserQube", "classRcs_1_1ECQuanserQube.html", null ]
     ] ],
     [ "Rcs::ExperimentConfigRegistration< Config >", "classRcs_1_1ExperimentConfigRegistration.html", null ],
     [ "Rcs::ForceDisturber", "classRcs_1_1ForceDisturber.html", null ],

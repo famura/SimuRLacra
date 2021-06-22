@@ -104,15 +104,6 @@ quanser\_qube
    :show-inheritance:
 
 
-target\_tracking
-----------------
-
-.. automodule:: pyrado.environments.rcspysim.target_tracking
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 Module contents
 ---------------
 

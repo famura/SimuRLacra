@@ -12,6 +12,7 @@ var classRcs_1_1ActionModelIK =
     [ "getNumActiveTasks", "classRcs_1_1ActionModelIK.html#a894b0cfed20a52a1a42ec6b540644706", null ],
     [ "ikFromDX", "classRcs_1_1ActionModelIK.html#a15fbea881774f690a1ae48872b94047c", null ],
     [ "reset", "classRcs_1_1ActionModelIK.html#ad28a2d940f3171a6da8e013b5e7fe75a", null ],
+    [ "setDesiredGraph", "classRcs_1_1ActionModelIK.html#a812730121231128936b12d6b67415d39", null ],
     [ "setupCollisionModel", "classRcs_1_1ActionModelIK.html#a33e276f956d371bba1c9a936e5319243", null ],
     [ "AMIKGeneric", "classRcs_1_1ActionModelIK.html#adc14bd59abc49877d4b9a8e3c5cd4a86", null ],
     [ "alpha", "classRcs_1_1ActionModelIK.html#a32a3a872cbbc79bcc0e4c94b87a4650a", null ],

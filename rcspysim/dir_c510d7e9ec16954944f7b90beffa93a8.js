@@ -3,10 +3,10 @@ var dir_c510d7e9ec16954944f7b90beffa93a8 =
     [ "PhysicsComponent", "dir_0a09f4f129ff039575f161d2a55a4dbc.html", "dir_0a09f4f129ff039575f161d2a55a4dbc" ],
     [ "ViewerComponent", "dir_6d66590537e942a0855877fa86a13a40.html", "dir_6d66590537e942a0855877fa86a13a40" ],
     [ "ECSRobo.cpp", "ECSRobo_8cpp.html", "ECSRobo_8cpp" ],
+    [ "MiniGolfBot.cpp", "MiniGolfBot_8cpp.html", "MiniGolfBot_8cpp" ],
     [ "PolicyComponent.cpp", "PolicyComponent_8cpp.html", "PolicyComponent_8cpp" ],
     [ "PolicyComponent.h", "PolicyComponent_8h.html", [
       [ "PolicyComponent", "classRcs_1_1PolicyComponent.html", "classRcs_1_1PolicyComponent" ]
     ] ],
-    [ "TestBotSim.cpp", "TestBotSim_8cpp.html", "TestBotSim_8cpp" ],
-    [ "TestTargetTracking.cpp", "TestTargetTracking_8cpp.html", "TestTargetTracking_8cpp" ]
+    [ "TestBot.cpp", "TestBot_8cpp.html", "TestBot_8cpp" ]
 ];

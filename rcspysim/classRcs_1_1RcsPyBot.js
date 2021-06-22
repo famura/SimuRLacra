@@ -11,6 +11,7 @@ var classRcs_1_1RcsPyBot =
     [ "operator=", "classRcs_1_1RcsPyBot.html#aa596614e15ffb68ea0a5ddc0281eedee", null ],
     [ "operator=", "classRcs_1_1RcsPyBot.html#afe1f1524d8ecf12f2d073fd656e8fb2f", null ],
     [ "setControlPolicy", "classRcs_1_1RcsPyBot.html#ac34d21d0b2d511bc06c6ad98a1787502", null ],
+    [ "syncGraphsToCurrent", "classRcs_1_1RcsPyBot.html#a55bd9a073d86e3ae91e1f2cee5b92b6b", null ],
     [ "updateControl", "classRcs_1_1RcsPyBot.html#a150ab0e2d83db10471a352e5f0ac1201", null ],
     [ "action", "classRcs_1_1RcsPyBot.html#aaa44af9b7d4d61188b267f5fd47fb6b9", null ],
     [ "allJointsPosCtrl", "classRcs_1_1RcsPyBot.html#af6931f56f529e1c2b6fe9ed6c5c7fd04", null ],
@@ -21,7 +22,6 @@ var classRcs_1_1RcsPyBot =
     [ "logger", "classRcs_1_1RcsPyBot.html#ac580eba671f6bbff674c09709b33466c", null ],
     [ "observation", "classRcs_1_1RcsPyBot.html#aa5bba57c8faad390c2b7a334887a33ca", null ],
     [ "q_ctrl", "classRcs_1_1RcsPyBot.html#a528aa45b7277ddc6cec6b2ef50336c09", null ],
-    [ "q_ctrl_filt_targ", "classRcs_1_1RcsPyBot.html#afe048550b90d10c8ebf589bfc844d0d4", null ],
     [ "qd_ctrl", "classRcs_1_1RcsPyBot.html#a65913aeb61b226cee18b24f2a99aaeac", null ],
     [ "T_ctrl", "classRcs_1_1RcsPyBot.html#a47f6f82d631b28afb093bbe9130c6fdb", null ]
 ];

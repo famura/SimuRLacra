@@ -21,8 +21,6 @@ var searchData=
   ['ecquanserqube',['ECQuanserQube',['../classRcs_1_1ECQuanserQube.html',1,'Rcs']]],
   ['ecquanserqube_2ecpp',['ECQuanserQube.cpp',['../ECQuanserQube_8cpp.html',1,'']]],
   ['ecsrobo_2ecpp',['ECSRobo.cpp',['../ECSRobo_8cpp.html',1,'']]],
-  ['ectargettracking',['ECTargetTracking',['../classRcs_1_1ECTargetTracking.html',1,'Rcs']]],
-  ['ectargettracking_2ecpp',['ECTargetTracking.cpp',['../ECTargetTracking_8cpp.html',1,'']]],
   ['effector',['effector',['../classRcs_1_1ISSMPBlending.html#aca3c7429d889ed79734f6ef55a2827db',1,'Rcs::ISSMPBlending']]],
   ['eigen_5fmatnd_2eh',['eigen_matnd.h',['../eigen__matnd_8h.html',1,'']]],
   ['empty',['empty',['../classRcs_1_1PropertySource.html#a7b53299ed70d0fc8bbd21d959c2bd093',1,'Rcs::PropertySource']]],

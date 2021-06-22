@@ -9,6 +9,7 @@ var classRcs_1_1ActionModel =
     [ "getStableAction", "classRcs_1_1ActionModel.html#a9d33c38cf2daf930a15bee110540a09c", null ],
     [ "getWrappedActionModel", "classRcs_1_1ActionModel.html#aa922d4af59ea3c3a15c7feb96cb4fec6", null ],
     [ "reset", "classRcs_1_1ActionModel.html#ad5cdf46c7a8e579e77fab891cc0ebb3b", null ],
+    [ "setGraph", "classRcs_1_1ActionModel.html#a4fc0696c97d53d3d97cac945635b177d", null ],
     [ "unwrap", "classRcs_1_1ActionModel.html#a52268fb5ebd0b8787dd663ad01e0d685", null ],
     [ "unwrap", "classRcs_1_1ActionModel.html#ad4d1450d0618908b2249707d6e9af8f5", null ],
     [ "unwrapAll", "classRcs_1_1ActionModel.html#a069e27f79624f31001717a6ee3f6efe7", null ],

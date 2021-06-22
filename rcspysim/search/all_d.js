@@ -1,7 +1,7 @@
 var searchData=
 [
   ['m',['M',['../classRcs_1_1AMJointControlAcceleration.html#a6da2555875237f667f1b36e5dc3d39ac',1,'Rcs::AMJointControlAcceleration']]],
-  ['main',['main',['../ECSRobo_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;ECSRobo.cpp'],['../TestBotSim_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;TestBotSim.cpp'],['../TestTargetTracking_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;TestTargetTracking.cpp']]],
+  ['main',['main',['../ECSRobo_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;ECSRobo.cpp'],['../MiniGolfBot_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;MiniGolfBot.cpp'],['../TestBot_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;TestBot.cpp']]],
   ['mainpage_2edox',['Mainpage.dox',['../Mainpage_8dox.html',1,'']]],
   ['markchanged',['markChanged',['../structRcs_1_1BodyParamInfo.html#a405a0ece221428445e2ca90626f2b62d',1,'Rcs::BodyParamInfo']]],
   ['mass',['mass',['../classRcs_1_1DSMassSpringDamper.html#a1b309376a8f8517138599b3acc8f36ed',1,'Rcs::DSMassSpringDamper']]],
@@ -22,6 +22,7 @@ var searchData=
   ['maxvelocity',['maxVelocity',['../classRcs_1_1OMTask.html#ac47480fe86f106f9955631a68e02305c',1,'Rcs::OMTask']]],
   ['mean',['Mean',['../namespaceRcs.html#a6f5968044cff0353205d3efb999a4068a3d6c9ac08ada31c184094bbc67afe00d',1,'Rcs']]],
   ['min',['min',['../classRcs_1_1BoxSpace.html#aa86c380b9567b2a34b72c0ba5ea01291',1,'Rcs::BoxSpace']]],
+  ['minigolfbot_2ecpp',['MiniGolfBot.cpp',['../MiniGolfBot_8cpp.html',1,'']]],
   ['mod_5fcom',['MOD_COM',['../structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a6c719c3ec4ad1d7f511e343cca4a2cba',1,'Rcs::BodyParamInfo']]],
   ['mod_5finertia',['MOD_INERTIA',['../structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a1ecf2518799a905fdab48d3d22f392f5',1,'Rcs::BodyParamInfo']]],
   ['mod_5fmass',['MOD_MASS',['../structRcs_1_1BodyParamInfo.html#ae23486ffc04900ba351d409d337f72c0a00f6f4a14f74cde973cd30f4dc49df52',1,'Rcs::BodyParamInfo']]],

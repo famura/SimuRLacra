@@ -37,7 +37,6 @@ var namespaceRcs =
     [ "ECPlanar3Link", "classRcs_1_1ECPlanar3Link.html", "classRcs_1_1ECPlanar3Link" ],
     [ "ECPlanarInsert", "classRcs_1_1ECPlanarInsert.html", "classRcs_1_1ECPlanarInsert" ],
     [ "ECQuanserQube", "classRcs_1_1ECQuanserQube.html", "classRcs_1_1ECQuanserQube" ],
-    [ "ECTargetTracking", "classRcs_1_1ECTargetTracking.html", "classRcs_1_1ECTargetTracking" ],
     [ "EmptyPropertySource", "classRcs_1_1EmptyPropertySource.html", "classRcs_1_1EmptyPropertySource" ],
     [ "ExperimentConfig", "classRcs_1_1ExperimentConfig.html", "classRcs_1_1ExperimentConfig" ],
     [ "ExperimentConfigRegistration", "classRcs_1_1ExperimentConfigRegistration.html", "classRcs_1_1ExperimentConfigRegistration" ],
