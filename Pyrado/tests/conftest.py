@@ -112,8 +112,8 @@ try:
 
     from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
     from pyrado.environments.mujoco.openai_hopper import HopperSim
-    from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
     from pyrado.environments.mujoco.quanser_qube import QQubeStabMjSim, QQubeSwingUpMjSim
+    from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 
     m_needs_mujoco = pytest.mark.skipif(False, reason="mujoco-py can be imported.")
 

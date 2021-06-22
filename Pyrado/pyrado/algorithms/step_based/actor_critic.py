@@ -111,7 +111,7 @@ class ActorCritic(Algorithm, ABC):
         # Log metrics computed from the old policy (before the update)
         all_lengths = np.array([ro.length for ro in ros])
         self._cnt_samples += int(np.sum(all_lengths))
-        rets = [ro.undiscounted_return() for ro in ros]
+        rets = np.asarray([ro.undiscounted_return() for ro in ros])
         self.logger.add_value("max return", np.max(rets), 4)
         self.logger.add_value("median return", np.median(rets), 4)
         self.logger.add_value("avg return", np.mean(rets), 4)
