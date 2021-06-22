@@ -771,7 +771,7 @@ class QQubeVis(PandaVis):
         mass_pend_pole = self._env.domain_param["mass_pend_pole"]
         length_rot_pole = float(self._env.domain_param["length_rot_pole"])
         length_pend_pole = float(self._env.domain_param["length_pend_pole"])
-        km = self._env.domain_param["km"]
+        motor_back_emf = self._env.domain_param["motor_back_emf"]
         motor_resistance = self._env.domain_param["motor_resistance"]
         damping_rot_pole = self._env.domain_param["damping_rot_pole"]
         damping_pend_pole = self._env.domain_param["damping_pend_pole"]
@@ -810,7 +810,7 @@ class QQubeVis(PandaVis):
             damping_rot_pole: {damping_rot_pole : 1.7f}
             damping_pend_pole: {damping_pend_pole : 1.7f}
             motor_resistance: {motor_resistance : 1.3f}
-            km: {km : 1.4f}
+            motor_back_emf: {motor_back_emf : 1.4f}
             """
         )
 

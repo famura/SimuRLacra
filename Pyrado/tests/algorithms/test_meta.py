@@ -598,7 +598,9 @@ def test_npdr_no_policy_optimization(
     # Create a fake ground truth target domain
     env_real = deepcopy(env)
     dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = dict(motor_resistance=dp_nom["motor_resistance"] * 1.2, km=dp_nom["km"] * 0.8)
+    env_real.domain_param = dict(
+        motor_resistance=dp_nom["motor_resistance"] * 1.2, motor_back_emf=dp_nom["motor_back_emf"] * 0.8
+    )
 
     # Reduce the number of steps to make this test run faster
     env.max_steps = 40
@@ -608,12 +610,12 @@ def test_npdr_no_policy_optimization(
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {1: "motor_resistance", 2: "km"}
+    dp_mapping = {1: "motor_resistance", 2: "motor_back_emf"}
 
     # Prior
     prior_hparam = dict(
-        low=to.tensor([dp_nom["motor_resistance"] * 0.5, dp_nom["km"] * 0.5]),
-        high=to.tensor([dp_nom["motor_resistance"] * 1.5, dp_nom["km"] * 1.5]),
+        low=to.tensor([dp_nom["motor_resistance"] * 0.5, dp_nom["motor_back_emf"] * 0.5]),
+        high=to.tensor([dp_nom["motor_resistance"] * 1.5, dp_nom["motor_back_emf"] * 1.5]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
 

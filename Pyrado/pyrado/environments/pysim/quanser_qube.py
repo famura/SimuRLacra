@@ -56,7 +56,7 @@ class QQubeSim(SimPyEnv, Serializable):
         return dict(
             g=9.81,  # gravity [m/s**2]
             motor_resistance=8.4,  # motor resistance [Ohm]
-            km=0.042,  # motor back-emf constant [V*s/rad]
+            motor_back_emf=0.042,  # motor back-emf constant [V*s/rad]
             mass_rot_pole=0.095,  # rotary arm mass [kg]
             length_rot_pole=0.085,  # rotary arm length [m]
             damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
@@ -95,7 +95,7 @@ class QQubeSim(SimPyEnv, Serializable):
         :param u: control command
         :return: time derivative of the state
         """
-        km = self.domain_param["km"]
+        motor_back_emf = self.domain_param["motor_back_emf"]
         motor_resistance = self.domain_param["motor_resistance"]
         damping_rot_pole = self.domain_param["damping_rot_pole"]
         damping_pend_pole = self.domain_param["damping_pend_pole"]
@@ -113,7 +113,7 @@ class QQubeSim(SimPyEnv, Serializable):
 
         # Calculate vector [x, y] = tau - C(q, qd)
         trq = (
-            km * (float(u) - km * thd) / motor_resistance
+            motor_back_emf * (float(u) - motor_back_emf * thd) / motor_resistance
         )  # u is a scalar array, causing warning on later np.array construction
         c0 = self._c[1] * sin_2al * thd * ald - self._c[2] * sin_al * ald * ald
         c1 = -0.5 * self._c[1] * sin_2al * thd * thd + self._c[4] * sin_al

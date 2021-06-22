@@ -300,7 +300,9 @@ def create_default_randomizer_qq() -> DomainRandomizer:
         NormalDomainParam(
             name="motor_resistance", mean=dp_nom["motor_resistance"], std=dp_nom["motor_resistance"] / 5, clip_lo=1e-3
         ),
-        NormalDomainParam(name="km", mean=dp_nom["km"], std=dp_nom["km"] / 5, clip_lo=1e-4),
+        NormalDomainParam(
+            name="motor_back_emf", mean=dp_nom["motor_back_emf"], std=dp_nom["motor_back_emf"] / 5, clip_lo=1e-4
+        ),
         NormalDomainParam(
             name="mass_rot_pole", mean=dp_nom["mass_rot_pole"], std=dp_nom["mass_rot_pole"] / 5, clip_lo=1e-4
         ),

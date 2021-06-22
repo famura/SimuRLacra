@@ -241,7 +241,9 @@ if __name__ == "__main__":
         df, "motor_resistance", r"$R_m~[\Omega]$", nom_dp_value=8.4, save_figure=args.save, save_dir=eval_dir
     )
 
-    _plot_and_save(df, "km", r"$k_m~[\mathrm{Nm/A}]$", nom_dp_value=0.042, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "motor_back_emf", r"$k_m~[\mathrm{Nm/A}]$", nom_dp_value=0.042, save_figure=args.save, save_dir=eval_dir
+    )
 
     _plot_and_save(
         df, "mass_rot_pole", r"$m_r~[\mathrm{kg}]$", nom_dp_value=0.095, save_figure=args.save, save_dir=eval_dir
