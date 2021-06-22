@@ -88,7 +88,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
     def get_nominal_domain_param(cls) -> dict:
         return dict(
             g=9.81,  # gravity [m/s**2]
-            Rm=8.4,  # motor resistance [Ohm]
+            motor_resistance=8.4,  # motor resistance [Ohm]
             km=0.042,  # motor back-emf constant [V*s/rad]
             mass_rot_pole=0.095,  # rotary arm mass [kg]
             length_rot_pole=0.085,  # rotary arm length [m]
@@ -109,14 +109,14 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             act = 0
 
         km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
+        motor_resistance = self.domain_param["motor_resistance"]
 
         # Decompose state
         _, _, theta_dot, _ = self.state
 
         # Compute the torques for the PD controller and clip them to their max values
         torque = (
-            km * (float(act) - km * theta_dot) / Rm
+            km * (float(act) - km * theta_dot) / motor_resistance
         )  # act is a scalar array, causing warning on later np.array construction
 
         # Apply the torques to the robot

@@ -55,7 +55,7 @@ class QQubeSim(SimPyEnv, Serializable):
     def get_nominal_domain_param(cls) -> dict:
         return dict(
             g=9.81,  # gravity [m/s**2]
-            Rm=8.4,  # motor resistance [Ohm]
+            motor_resistance=8.4,  # motor resistance [Ohm]
             km=0.042,  # motor back-emf constant [V*s/rad]
             mass_rot_pole=0.095,  # rotary arm mass [kg]
             length_rot_pole=0.085,  # rotary arm length [m]
@@ -96,7 +96,7 @@ class QQubeSim(SimPyEnv, Serializable):
         :return: time derivative of the state
         """
         km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
+        motor_resistance = self.domain_param["motor_resistance"]
         damping_rot_pole = self.domain_param["damping_rot_pole"]
         damping_pend_pole = self.domain_param["damping_pend_pole"]
 
@@ -112,7 +112,9 @@ class QQubeSim(SimPyEnv, Serializable):
         det = a * c - b * b
 
         # Calculate vector [x, y] = tau - C(q, qd)
-        trq = km * (float(u) - km * thd) / Rm  # u is a scalar array, causing warning on later np.array construction
+        trq = (
+            km * (float(u) - km * thd) / motor_resistance
+        )  # u is a scalar array, causing warning on later np.array construction
         c0 = self._c[1] * sin_2al * thd * ald - self._c[2] * sin_al * ald * ald
         c1 = -0.5 * self._c[1] * sin_2al * thd * thd + self._c[4] * sin_al
         x = trq - damping_rot_pole * thd - c0

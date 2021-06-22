@@ -479,7 +479,7 @@ class QQubeEnergyCtrl(Policy):
         u = self.E_gain * (E - self.E_ref) * to.sign(ald * to.cos(al)) - self._th_gain * th
         acc = clamp_symm(u, self.acc_max)
         trq = self._domain_param["mass_rot_pole"] * self._domain_param["length_rot_pole"] * acc
-        volt = self._domain_param["Rm"] / self._domain_param["km"] * trq
+        volt = self._domain_param["motor_resistance"] / self._domain_param["km"] * trq
         return volt.view(1)
 
 

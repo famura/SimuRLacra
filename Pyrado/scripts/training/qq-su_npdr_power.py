@@ -87,7 +87,7 @@ if __name__ == "__main__":
     dp_mapping = {
         0: "damping_rot_pole",
         1: "damping_pend_pole",
-        2: "Rm",
+        2: "motor_resistance",
         3: "km",
         4: "mass_rot_pole",
         5: "mass_pend_pole",
@@ -104,7 +104,7 @@ if __name__ == "__main__":
             [
                 dp_nom["damping_rot_pole"] * 0,
                 dp_nom["damping_pend_pole"] * 0,
-                dp_nom["Rm"] * 0.1,
+                dp_nom["motor_resistance"] * 0.1,
                 dp_nom["km"] * 0.2,
                 dp_nom["mass_rot_pole"] * 0.3,
                 dp_nom["mass_pend_pole"] * 0.3,
@@ -118,7 +118,7 @@ if __name__ == "__main__":
             [
                 dp_nom["damping_rot_pole"] * 5,
                 dp_nom["damping_pend_pole"] * 50,
-                dp_nom["Rm"] * 1.9,
+                dp_nom["motor_resistance"] * 1.9,
                 dp_nom["km"] * 1.8,
                 dp_nom["mass_rot_pole"] * 1.7,
                 dp_nom["mass_pend_pole"] * 1.7,

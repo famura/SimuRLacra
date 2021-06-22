@@ -102,13 +102,13 @@ if __name__ == "__main__":
     # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
     # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos", 2: "act_delay"}
     # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole"}
-    # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "Rm", 3: "km"}
-    # dp_mapping = {0: "Rm", 1: "km", 2: "mass_rot_pole", 3: "mass_pend_pole"}
-    # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "Rm", 3: "km", 4: "mass_rot_pole", 5: "mass_pend_pole", 6: "length_rot_pole", 7: "length_pend_pole", 8: "g"}
+    # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "motor_resistance", 3: "km"}
+    # dp_mapping = {0: "motor_resistance", 1: "km", 2: "mass_rot_pole", 3: "mass_pend_pole"}
+    # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "motor_resistance", 3: "km", 4: "mass_rot_pole", 5: "mass_pend_pole", 6: "length_rot_pole", 7: "length_pend_pole", 8: "g"}
     dp_mapping = {
         0: "damping_rot_pole",
         1: "damping_pend_pole",
-        2: "Rm",
+        2: "motor_resistance",
         3: "km",
         4: "mass_rot_pole",
         5: "mass_pend_pole",
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     # dp_mapping = {
     #     0: "damping_rot_pole",
     #     1: "damping_pend_pole",
-    #     2: "Rm",
+    #     2: "motor_resistance",
     #     3: "km",
     #     4: "mass_rot_pole",
     #     5: "mass_pend_pole",
@@ -139,15 +139,15 @@ if __name__ == "__main__":
         # high=to.tensor([0.0, 0.1, 10])
         # low=to.tensor([0.0, 0.0]),
         # high=to.tensor([2 * 0.0015, 2 * 0.0005]),
-        # low=to.tensor([dp_nom["damping_rot_pole"] * 0, dp_nom["damping_pend_pole"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        # high=to.tensor([dp_nom["damping_rot_pole"] * 10, dp_nom["damping_pend_pole"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
-        # low=to.tensor([dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5, dp_nom["mass_rot_pole"] * 0.5, dp_nom["mass_pend_pole"] * 0.5]),
-        # high=to.tensor([dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5, dp_nom["mass_rot_pole"] * 1.5, dp_nom["mass_pend_pole"] * 1.5]),
+        # low=to.tensor([dp_nom["damping_rot_pole"] * 0, dp_nom["damping_pend_pole"] * 0, dp_nom["motor_resistance"] * 0.5, dp_nom["km"] * 0.5]),
+        # high=to.tensor([dp_nom["damping_rot_pole"] * 10, dp_nom["damping_pend_pole"] * 10, dp_nom["motor_resistance"] * 2.0, dp_nom["km"] * 2.0]),
+        # low=to.tensor([dp_nom["motor_resistance"] * 0.5, dp_nom["km"] * 0.5, dp_nom["mass_rot_pole"] * 0.5, dp_nom["mass_pend_pole"] * 0.5]),
+        # high=to.tensor([dp_nom["motor_resistance"] * 1.5, dp_nom["km"] * 1.5, dp_nom["mass_rot_pole"] * 1.5, dp_nom["mass_pend_pole"] * 1.5]),
         low=to.tensor(
             [
                 dp_nom["damping_rot_pole"] * 0,
                 dp_nom["damping_pend_pole"] * 0,
-                dp_nom["Rm"] * 0.1,
+                dp_nom["motor_resistance"] * 0.1,
                 dp_nom["km"] * 0.2,
                 dp_nom["mass_rot_pole"] * 0.3,
                 dp_nom["mass_pend_pole"] * 0.3,
@@ -163,7 +163,7 @@ if __name__ == "__main__":
             [
                 dp_nom["damping_rot_pole"] * 5,
                 dp_nom["damping_pend_pole"] * 20,
-                dp_nom["Rm"] * 1.9,
+                dp_nom["motor_resistance"] * 1.9,
                 dp_nom["km"] * 1.8,
                 dp_nom["mass_rot_pole"] * 1.7,
                 dp_nom["mass_pend_pole"] * 1.7,

@@ -297,7 +297,9 @@ def create_default_randomizer_qq() -> DomainRandomizer:
     dp_nom = QQubeSim.get_nominal_domain_param()
     return DomainRandomizer(
         NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
-        NormalDomainParam(name="Rm", mean=dp_nom["Rm"], std=dp_nom["Rm"] / 5, clip_lo=1e-3),
+        NormalDomainParam(
+            name="motor_resistance", mean=dp_nom["motor_resistance"], std=dp_nom["motor_resistance"] / 5, clip_lo=1e-3
+        ),
         NormalDomainParam(name="km", mean=dp_nom["km"], std=dp_nom["km"] / 5, clip_lo=1e-4),
         NormalDomainParam(
             name="mass_rot_pole", mean=dp_nom["mass_rot_pole"], std=dp_nom["mass_rot_pole"] / 5, clip_lo=1e-4

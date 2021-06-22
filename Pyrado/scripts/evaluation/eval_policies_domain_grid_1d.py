@@ -142,7 +142,7 @@ if __name__ == "__main__":
         env = QQubeSwingUpSim(dt=dt, max_steps=args.max_steps)
 
         # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
-        # param_spec['Rm'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
+        # param_spec['motor_resistance'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
         # param_spec['km'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
         # param_spec['mass_rot_pole'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
         # param_spec['length_rot_pole'] = np.linspace(0.085*0.7, 0.085*1.3, num=11, endpoint=True)

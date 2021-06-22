@@ -74,7 +74,7 @@ if __name__ == "__main__":
     env_real.domain_param = dict(
         damping_rot_pole=dp_nom["damping_rot_pole"] * 1.9,
         damping_pend_pole=dp_nom["damping_pend_pole"] * 0.4,
-        Rm=dp_nom["Rm"] * 1.0,
+        motor_resistance=dp_nom["motor_resistance"] * 1.0,
         km=dp_nom["km"] * 1.0,
         mass_pend_pole=dp_nom["mass_pend_pole"] * 1.1,
         mass_rot_pole=dp_nom["mass_rot_pole"] * 1.2,
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="damping_rot_pole", mean=dp_nom["damping_rot_pole"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
     #     NormalDomainParam(name="damping_pend_pole", mean=dp_nom["damping_pend_pole"] * 2.0, std=dp_nom["km"] / 10, clip_lo=0.0),
-    #     NormalDomainParam(name="Rm", mean=dp_nom["Rm"] * 1.1, std=dp_nom["km"] / 50, clip_lo=0.0),
+    #     NormalDomainParam(name="motor_resistance", mean=dp_nom["motor_resistance"] * 1.1, std=dp_nom["km"] / 50, clip_lo=0.0),
     #     NormalDomainParam(name="Km", mean=dp_nom["km"] * 0.9, std=dp_nom["km"] / 50, clip_lo=0.0),
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     dp_mapping = {
         0: "damping_rot_pole",
         1: "damping_pend_pole",
-        2: "Rm",
+        2: "motor_resistance",
         3: "km",
         4: "mass_rot_pole",
         5: "mass_pend_pole",
@@ -118,7 +118,7 @@ if __name__ == "__main__":
             [
                 dp_nom["damping_rot_pole"] * 0,
                 dp_nom["damping_pend_pole"] * 0,
-                dp_nom["Rm"] * 0.8,
+                dp_nom["motor_resistance"] * 0.8,
                 dp_nom["km"] * 0.8,
                 dp_nom["mass_rot_pole"] * 0.8,
                 dp_nom["mass_pend_pole"] * 0.8,
@@ -131,7 +131,7 @@ if __name__ == "__main__":
             [
                 2 * 0.0015,
                 2 * 0.0005,
-                dp_nom["Rm"] * 1.2,
+                dp_nom["motor_resistance"] * 1.2,
                 dp_nom["km"] * 1.2,
                 dp_nom["mass_rot_pole"] * 1.2,
                 dp_nom["mass_pend_pole"] * 1.2,
