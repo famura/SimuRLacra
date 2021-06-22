@@ -36,10 +36,12 @@ from sbi.inference import SNPE_C
 
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
 from pyrado.algorithms.meta.arpl import ARPL
+from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
 from pyrado.algorithms.meta.npdr import NPDR
@@ -86,7 +88,7 @@ from pyrado.sampling.sbi_embeddings import (
     LastStepEmbedding,
     RNNEmbedding,
 )
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI, SimRolloutSamplerForSBI
 from pyrado.sampling.sequences import *
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
@@ -534,7 +536,7 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
 
     subrtn_hparam = dict(
         max_iter=3,
-        min_steps=env.max_steps,
+        min_rollouts=5,
         num_workers=1,
         num_epoch=2,
         eps_clip=0.1,
@@ -550,7 +552,6 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "embedding_name",
@@ -564,60 +565,33 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     ],
     ids=["laststep", "allsteps", "deltasteps", "bayessim", "dtw", "rnn"],
 )
+@pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
+@pytest.mark.parametrize("stop_on_done", [True, False], ids=["stop", "dontstop"])
 @pytest.mark.parametrize(
     "state_mask_labels, act_mask_labels",
-    [
-        (None, None),
-        (
-            ["alpha", "theta"],
-            [
-                "V",
-            ],
-        ),
-    ],
+    [(None, None), (["alpha", "theta"], ["V"])],
     ids=["alldims", "seldims"],
 )
-@pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
-@pytest.mark.parametrize("num_real_rollouts", [2], ids=["2ros"])
-@pytest.mark.parametrize("num_sbi_rounds", [1, 2], ids=["1round", "2rounds"])
-@pytest.mark.parametrize("use_rec_act", [True, False], ids=["userecact", "dontuserecact"])
-def test_npdr_no_policy_optimization(
+def test_sbi_embedding(
     ex_dir,
     env: SimEnv,
     embedding_name: str,
-    state_mask_labels: Union[None, List[str]],
-    act_mask_labels: Union[None, List[str]],
     num_segments: int,
     len_segments: int,
-    num_real_rollouts: int,
-    num_sbi_rounds: int,
-    use_rec_act: bool,
+    stop_on_done: bool,
+    state_mask_labels: Union[None, List[str]],
+    act_mask_labels: Union[None, List[str]],
 ):
     pyrado.set_seed(0)
 
-    # Create a fake ground truth target domain
-    env_real = deepcopy(env)
-    dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = dict(
-        motor_resistance=dp_nom["motor_resistance"] * 1.2, motor_back_emf=dp_nom["motor_back_emf"] * 0.8
-    )
-
     # Reduce the number of steps to make this test run faster
-    env.max_steps = 40
-    env_real.max_steps = 40
+    env.max_steps = 80
 
     # Policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {1: "motor_resistance", 2: "motor_back_emf"}
-
-    # Prior
-    prior_hparam = dict(
-        low=to.tensor([dp_nom["motor_resistance"] * 0.5, dp_nom["motor_back_emf"] * 0.5]),
-        high=to.tensor([dp_nom["motor_resistance"] * 1.5, dp_nom["motor_back_emf"] * 1.5]),
-    )
-    prior = sbiutils.BoxUniform(**prior_hparam)
+    dp_mapping = {1: "mass_pend_pole", 2: "length_pend_pole"}
 
     # Time series embedding
     if embedding_name == LastStepEmbedding.name:
@@ -676,8 +650,85 @@ def test_npdr_no_policy_optimization(
     else:
         raise NotImplementedError
 
+    sampler = SimRolloutSamplerForSBI(
+        env,
+        policy,
+        dp_mapping,
+        embedding,
+        num_segments,
+        len_segments,
+        stop_on_done,
+        rollouts_real=None,
+        use_rec_act=False,
+    )
+
+    # Test with 7 domain parameter sets
+    data_sim = sampler(to.abs(to.randn(7, 2)))
+    assert data_sim.shape == (7, embedding.dim_output)
+
+
+@pytest.mark.longtime
+@pytest.mark.parametrize("algo_name", [NPDR.name, BayesSim.name], ids=["NPDR", "Bayessim"])
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
+@pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
+@pytest.mark.parametrize("num_real_rollouts", [1, 2], ids=["1ro", "2ros"])
+@pytest.mark.parametrize("num_sbi_rounds", [1, 2], ids=["1round", "2rounds"])
+@pytest.mark.parametrize("use_rec_act", [True, False], ids=["userecact", "dontuserecact"])
+def test_npdr_and_bayessim(
+    ex_dir,
+    algo_name: str,
+    env: SimEnv,
+    num_segments: int,
+    len_segments: int,
+    num_real_rollouts: int,
+    num_sbi_rounds: int,
+    use_rec_act: bool,
+):
+    pyrado.set_seed(0)
+
+    # Create a fake ground truth target domain
+    env_real = deepcopy(env)
+    dp_nom = env.get_nominal_domain_param()
+    env_real.domain_param = dict(Mp=dp_nom["Mp"] * 1.2, Lp=dp_nom["Lp"] * 0.8)
+
+    # Reduce the number of steps to make this test run faster
+    env.max_steps = 40
+    env_real.max_steps = 40
+
+    # Policy
+    policy = QQubeSwingUpAndBalanceCtrl(env.spec)
+
+    # Define a mapping: index - domain parameter
+    dp_mapping = {1: "Mp", 2: "Lp"}
+
+    # Prior
+    prior_hparam = dict(
+        low=to.tensor([dp_nom["Mp"] * 0.5, dp_nom["Lp"] * 0.5]),
+        high=to.tensor([dp_nom["Mp"] * 1.5, dp_nom["Lp"] * 1.5]),
+    )
+    prior = sbiutils.BoxUniform(**prior_hparam)
+
+    # Time series embedding
+    embedding = BayesSimEmbedding(
+        env.spec,
+        RolloutSamplerForSBI.get_dim_data(env.spec),
+        downsampling_factor=3,
+    )
+
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=3)
+
+    # Policy optimization subroutine
+    subrtn_policy_hparam = dict(
+        max_iter=1,
+        pop_size=2,
+        num_init_states_per_domain=1,
+        num_domains=2,
+        expl_std_init=0.1,
+        expl_factor=1.1,
+        num_workers=1,
+    )
+    subrtn_policy = HCNormal(ex_dir, env, policy, **subrtn_policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -692,25 +743,47 @@ def test_npdr_no_policy_optimization(
         len_segments=len_segments,
         use_rec_act=use_rec_act,
         stop_on_done=True,
-        posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(max_num_epochs=1),  # only train for 1 iteration
         # subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),
         num_workers=1,
     )
-    algo = NPDR(
-        ex_dir,
-        env,
-        env_real,
-        policy,
-        dp_mapping,
-        prior,
-        embedding,
-        subrtn_sbi_class=SNPE_C,
-        **algo_hparam,
-    )
+    skip = False
+    if algo_name == NPDR.name:
+        algo = NPDR(
+            save_dir=ex_dir,
+            env_sim=env,
+            env_real=env_real,
+            policy=policy,
+            dp_mapping=dp_mapping,
+            prior=prior,
+            embedding=embedding,
+            subrtn_sbi_class=SNPE_C,
+            posterior_hparam=posterior_hparam,
+            subrtn_policy=subrtn_policy,
+            **algo_hparam,
+        )
+    elif algo_name == BayesSim.name:
+        # We are not checking multi-round SNPE-A since it has known issues
+        if algo_hparam["num_sbi_rounds"] > 1:
+            skip = True
+        algo = BayesSim(
+            save_dir=ex_dir,
+            env_sim=env,
+            env_real=env_real,
+            policy=policy,
+            dp_mapping=dp_mapping,
+            embedding=embedding,
+            prior=prior,
+            subrtn_policy=subrtn_policy,
+            **algo_hparam,
+        )
+    else:
+        raise NotImplementedError
 
-    algo.train()
-    assert algo.curr_iter == algo.max_iter
+    if not skip:
+        algo.train()
+        # Just checking the interface here
+        assert algo.curr_iter == algo.max_iter
 
 
 @pytest.mark.longtime

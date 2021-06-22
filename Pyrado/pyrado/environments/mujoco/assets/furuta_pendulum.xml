@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<mujoco model="inverted pendulum">
+<mujoco model="furuta pendulum">
     <compiler texturedir="[ASSETS_DIR]/textures"/>
     <option gravity="0 0 -[gravity_const]" integrator="RK4" timestep="0.0005"/>
     <size nstack="10000"/>

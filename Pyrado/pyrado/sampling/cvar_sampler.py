@@ -30,6 +30,7 @@ from typing import List, Optional
 
 import numpy as np
 
+import pyrado
 from pyrado.environments.base import Env
 from pyrado.logger.step import LoggerAware
 from pyrado.policies.base import Policy
@@ -49,14 +50,16 @@ def select_cvar(rollouts, epsilon: float, gamma: float = 1.0):
     # Select epsilon-quantile of returns
     # Do this first since it is easier here, even though we have to compute the returns again
     # To do so, we first sort the paths by their returns
-    rollouts.sort(key=lambda r: r.discounted_return(gamma))
+    rollouts.sort(key=lambda ro: ro.discounted_return(gamma))
 
-    # Now, computing the quantile on a sorted list is easy
-    k = len(rollouts) * epsilon
-    n = int(np.floor(k))
+    # Compute the quantile on a sorted list is easy
+    num_sel_ros = round(len(rollouts) * epsilon)
 
-    # Only use the selected paths
-    return rollouts[0:n]
+    if num_sel_ros == 0:
+        raise pyrado.ValueErr(given=num_sel_ros, g_constraint=0)
+
+    # Only use the selected rollouts
+    return rollouts[0:num_sel_ros]
 
 
 class CVaRSampler(SamplerBase, LoggerAware):
@@ -107,7 +110,7 @@ class CVaRSampler(SamplerBase, LoggerAware):
         fullset = self._wrapped_sampler.sample()
 
         # Log return-based metrics using the full data set
-        rets = [ro.undiscounted_return() for ro in fullset]
+        rets = np.asarray([ro.undiscounted_return() for ro in fullset])
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)
         ret_std = np.std(rets)

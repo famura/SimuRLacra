@@ -103,13 +103,15 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
     def _mujoco_step(self, act: np.ndarray) -> dict:
         assert self.act_space.contains(act, verbose=True)
 
-        # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
-        # This is a very simple model of static friction.
-        if self.domain_param["voltage_thold_neg"] <= act <= self.domain_param["voltage_thold_pos"]:
-            act = 0
-
+        voltage_thold_neg = self.domain_param["voltage_thold_neg"]
+        voltage_thold_pos = self.domain_param["voltage_thold_pos"]
         motor_back_emf = self.domain_param["motor_back_emf"]
         motor_resistance = self.domain_param["motor_resistance"]
+
+        # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
+        # This is a very simple model of static friction.
+        if voltage_thold_neg <= act <= voltage_thold_pos:
+            act = 0
 
         # Decompose state
         _, _, theta_dot, _ = self.state
@@ -148,8 +150,10 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
-        xml_model = xml_model.replace("[0.13-length_pend_pole]", str(0.13 - domain_param["length_pend_pole"]))
-        xml_model = xml_model.replace("[0.0055+length_rot_pole]", str(0.0055 + domain_param["length_rot_pole"]))
+        length_pend_pole = domain_param["length_pend_pole"]
+        length_rot_pole = domain_param["length_rot_pole"]
+        xml_model = xml_model.replace("[0.13-length_pend_pole]", str(0.13 - length_pend_pole))
+        xml_model = xml_model.replace("[0.0055+length_rot_pole]", str(0.0055 + length_rot_pole))
         return super()._adapt_model_file(xml_model, domain_param)
 
 

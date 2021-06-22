@@ -78,6 +78,8 @@ public:
     //! The graph holding the desired state of the IK solver.
     RcsGraph* getDesiredGraph() const;
     
+    void setDesiredGraph(RcsGraph* newGraph);
+    
     /*!
      * Setup collision avoidance in the IK.
      *

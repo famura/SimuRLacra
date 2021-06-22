@@ -27,39 +27,70 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to load the data from a real-world rollouts, written to a file by the RcsPySim DAtaLogger class.
+Train an agent to solve the Mini-Golf environment using Cross Entropy Method
 """
-import os.path as osp
-
-import pandas as pd
 
 import pyrado
+from pyrado.algorithms.episodic.cem import CEM
 from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
-from pyrado.sampling.step_sequence import StepSequence
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
+from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
 from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    if not osp.isfile(args.file):
-        raise pyrado.PathErr(given=args.file)
-    if args.dir is None:
-        # Use the file's directory by default
-        args.dir = osp.dirname(args.file)
-    elif not osp.isdir(args.dir):
-        raise pyrado.PathErr(given=args.dir)
 
-    df = pd.read_csv(args.file)
+    # Experiment (set seed before creating the modules)
+    ex_dir = setup_experiment(MiniGolfIKSim.name, f"{CEM.name}", PolySplineTimePolicy.name)
 
-    if args.env_name is None or args.env_name == MiniGolfIKSim.name:
-        env = MiniGolfIKSim()
-    else:
-        raise NotImplementedError
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
-    # Cast the rollout from a DataFrame to a StepSequence
-    reconstructed = StepSequence.from_pandas(df, env.spec, task=env.task)
+    # Environments
+    dt = 0.01
+    env_hparams = dict(
+        physicsEngine="Bullet",
+        dt=dt,
+        max_steps=int(15 / dt),
+        checkJointLimits=True,
+        fixedInitState=True,
+        observeForceTorque=False,
+    )
+    env = MiniGolfIKSim(**env_hparams)
 
-    if args.dir is not None:
-        suffix = args.file[args.file.rfind("/") + 1 : -4]
-        pyrado.save(reconstructed, f"rollout_{suffix}.pkl", args.dir, verbose=True)
+    # Policy
+    policy_hparam = dict(
+        t_end=2.0,
+        cond_lvl="vel",
+        overtime_behavior="hold",
+    )
+    policy = PolySplineTimePolicy(env.spec, dt, **policy_hparam)
+
+    # Algorithm
+    algo_hparam = dict(
+        max_iter=100,
+        pop_size=500,
+        num_init_states_per_domain=1 if env_hparams["fixedInitState"] else 5,
+        num_is_samples=50,
+        expl_std_init=0.5,
+        expl_std_min=0.02,
+        extra_expl_std_init=0.2,
+        extra_expl_decay_iter=10,
+        full_cov=True,
+        symm_sampling=False,
+        num_workers=20,
+    )
+    algo = CEM(ex_dir, env, policy, **algo_hparam)
+
+    # Save the hyper-parameters
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
+    )
+
+    # Jeeeha
+    algo.train(seed=args.seed)

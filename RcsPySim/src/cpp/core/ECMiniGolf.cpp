@@ -99,7 +99,7 @@ class ECMiniGolf : public ExperimentConfig
                 if (properties->getPropertyBool("relativeZdTask", true)) {
                     // Driving
                     auto tmpTask = new TaskVelocity1D("Zd", graph, ball, clubTip, nullptr);
-                    tmpTask->resetParameter(Task::Parameters(-7.0, 7.0, 1.0, "Z Velocity [m/s]"));
+                    tmpTask->resetParameter(Task::Parameters(-10.0, 10.0, 1.0, "Z Velocity [m/s]"));
                     amIK->addTask(tmpTask);
                     // Centering
                     amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, nullptr));
@@ -214,23 +214,6 @@ class ECMiniGolf : public ExperimentConfig
             }
         }
         
-        // Add current collision cost
-        if (properties->getPropertyBool("observeCollisionCost", false) & (collisionMdl != nullptr)) {
-            // Add the collision cost observation model
-            auto omColl = new OMCollisionCost(collisionMdl);
-            fullState->addPart(omColl);
-        }
-        
-        // Add predicted collision cost
-        if (properties->getPropertyBool("observePredictedCollisionCost", false) && collisionMdl != nullptr) {
-            // Get horizon from config
-            int horizon = 20;
-            properties->getChild("collisionConfig")->getProperty(horizon, "predCollHorizon");
-            // Add collision model
-            auto omCollisionCost = new OMCollisionCostPrediction(graph, collisionMdl, actionModel, 50);
-            fullState->addPart(omCollisionCost);
-        }
-        
         return fullState;
     }
     
@@ -288,7 +271,7 @@ class ECMiniGolf : public ExperimentConfig
         if (simulator != nullptr) {
             simName = simulator->getClassName();
         }
-        else{
+        else {
             simName = "Robot";
         }
         
@@ -357,7 +340,7 @@ class ECMiniGolf : public ExperimentConfig
             BodyParamInfo* ball_bpi = physicsManager->getBodyInfo("Ball");
             BodyParamInfo* club_bpi = physicsManager->getBodyInfo("Club");
             BodyParamInfo* ground_bpi = physicsManager->getBodyInfo("Ground");
-    
+            
             double ballSlip = 0;
             ball_bpi->material.getDouble("slip", ballSlip);
             double groundSlip = 0;
@@ -372,8 +355,8 @@ class ECMiniGolf : public ExperimentConfig
             linesOut.emplace_back(string_format("ball rolling friction: %1.6f         ball slip: %1.5f rad/(Ns)",
                                                 ball_bpi->material.getRollingFrictionCoefficient(),
                                                 ballSlip));
-            linesOut.emplace_back(string_format("                                      ground slip: %1.5f rad/(Ns)",
-                                                groundSlip));
+            linesOut.emplace_back(string_format("ball restitution: %1.3f               ground slip: %1.5f rad/(Ns)",
+                                                ball_bpi->material.getRestitution(), groundSlip));
         }
     }
 };

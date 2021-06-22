@@ -43,7 +43,6 @@ set(CORE_SRCS
     ECPlanar3Link.cpp
     ECPlanarInsert.cpp
     ECQuanserQube.cpp
-    ECTargetTracking.cpp
     
     DataLogger.cpp
     

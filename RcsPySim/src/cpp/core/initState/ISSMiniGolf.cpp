@@ -55,27 +55,28 @@ unsigned int ISSMiniGolf::getDim() const
 
 void ISSMiniGolf::getMinMax(double* min, double* max) const
 {
-    double ballPosHalfSpan = 1e-6; // [m]
+    double ballPosHalfSpanX = 1e-6; // [m]
+    double ballPosHalfSpanY = 1e-2; // [m]
     double jointAngHalfSpan = 1e-6; // [rad]
     
-    min[0] = 0.3 - ballPosHalfSpan;  // ball_x [m]
-    max[0] = 0.3 + ballPosHalfSpan;
-    min[1] = 1.3 - 2*ballPosHalfSpan;  // ball_y [m]
-    max[1] = 1.3 + 2*ballPosHalfSpan;
-    min[2] = RCS_DEG2RAD(24.990777 - jointAngHalfSpan);  // base-m3 [rad]
-    max[2] = RCS_DEG2RAD(24.990777 + jointAngHalfSpan);
-    min[3] = RCS_DEG2RAD(-87.187492 - jointAngHalfSpan);  // m3-m4 [rad]
-    max[3] = RCS_DEG2RAD(-87.187492 + jointAngHalfSpan);
-    min[4] = RCS_DEG2RAD(77.310272 - jointAngHalfSpan);  // m4-m5 [rad]
-    max[4] = RCS_DEG2RAD(77.310272 + jointAngHalfSpan);
-    min[5] = RCS_DEG2RAD(-71.862892 - jointAngHalfSpan);  // m5-m6 [rad]
-    max[5] = RCS_DEG2RAD(-71.862892 + jointAngHalfSpan);
-    min[6] = RCS_DEG2RAD(61.423359 - jointAngHalfSpan);  // m6-m7 [rad]
-    max[6] = RCS_DEG2RAD(61.423359 + jointAngHalfSpan);
-    min[7] = RCS_DEG2RAD(-170.341776 - jointAngHalfSpan);  // m7-m8 [rad]
-    max[7] = RCS_DEG2RAD(-170.341776 + jointAngHalfSpan);
-    min[8] = RCS_DEG2RAD(-36.836043 - jointAngHalfSpan);  // m8-m9 [rad]
-    max[8] = RCS_DEG2RAD(-36.836043 + jointAngHalfSpan);
+    min[0] = 0.3 - ballPosHalfSpanX;  // ball_x [m]
+    max[0] = 0.3 + ballPosHalfSpanX;
+    min[1] = 1.3 - ballPosHalfSpanY;  // ball_y [m]
+    max[1] = 1.3 + ballPosHalfSpanY;
+    min[2] = RCS_DEG2RAD(18.996253 - jointAngHalfSpan);  // base-m3 [rad]
+    max[2] = RCS_DEG2RAD(18.996253 + jointAngHalfSpan);
+    min[3] = RCS_DEG2RAD(-87.227101 - jointAngHalfSpan);  // m3-m4 [rad]
+    max[3] = RCS_DEG2RAD(-87.227101 + jointAngHalfSpan);
+    min[4] = RCS_DEG2RAD(74.149568 - jointAngHalfSpan);  // m4-m5 [rad]
+    max[4] = RCS_DEG2RAD(74.149568 + jointAngHalfSpan);
+    min[5] = RCS_DEG2RAD(-75.577025 - jointAngHalfSpan);  // m5-m6 [rad]
+    max[5] = RCS_DEG2RAD(-75.577025 + jointAngHalfSpan);
+    min[6] = RCS_DEG2RAD(56.207369 - jointAngHalfSpan);  // m6-m7 [rad]
+    max[6] = RCS_DEG2RAD(56.207369 + jointAngHalfSpan);
+    min[7] = RCS_DEG2RAD(-175.162794 - jointAngHalfSpan);  // m7-m8 [rad]
+    max[7] = RCS_DEG2RAD(-175.162794 + jointAngHalfSpan);
+    min[8] = RCS_DEG2RAD(-41.543793 - jointAngHalfSpan);  // m8-m9 [rad]
+    max[8] = RCS_DEG2RAD(-41.543793 + jointAngHalfSpan);
 }
 
 std::vector<std::string> ISSMiniGolf::getNames() const
@@ -90,13 +91,13 @@ void ISSMiniGolf::applyInitialState(const MatNd* initialState)
     if (fixedInitState) {
         ballRBJ[0] = 0.3; // ball_x [m]
         ballRBJ[1] = 1.3; // ball_y [m]
-        RcsGraph_setJoint(graph, "base-m3", RCS_DEG2RAD(24.990777));
-        RcsGraph_setJoint(graph, "m3-m4", RCS_DEG2RAD(-87.187492));
-        RcsGraph_setJoint(graph, "m4-m5", RCS_DEG2RAD(77.310272));
-        RcsGraph_setJoint(graph, "m5-m6", RCS_DEG2RAD(-71.862892));
-        RcsGraph_setJoint(graph, "m6-m7", RCS_DEG2RAD(61.423359));
-        RcsGraph_setJoint(graph, "m7-m8", RCS_DEG2RAD(-170.341776));
-        RcsGraph_setJoint(graph, "m8-m9", RCS_DEG2RAD(-36.836043));
+        RcsGraph_setJoint(graph, "base-m3", RCS_DEG2RAD(18.996253));
+        RcsGraph_setJoint(graph, "m3-m4", RCS_DEG2RAD(-87.227101));
+        RcsGraph_setJoint(graph, "m4-m5", RCS_DEG2RAD(74.149568));
+        RcsGraph_setJoint(graph, "m5-m6", RCS_DEG2RAD(-75.577025));
+        RcsGraph_setJoint(graph, "m6-m7", RCS_DEG2RAD(56.207369));
+        RcsGraph_setJoint(graph, "m7-m8", RCS_DEG2RAD(-175.162794));
+        RcsGraph_setJoint(graph, "m8-m9", RCS_DEG2RAD(-41.543793));
     }
     else {
         ballRBJ[0] = initialState->ele[0];

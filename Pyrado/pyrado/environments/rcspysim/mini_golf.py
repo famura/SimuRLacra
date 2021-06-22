@@ -105,8 +105,6 @@ class MiniGolfSim(RcsSim, Serializable):
                        collisionAvoidanceIK: bool = False,
                        observeVelocities: bool = False,
                        observeForceTorque: bool = False,
-                       observeCollisionCost: bool = False,
-                       observePredictedCollisionCost: bool = False,
         """
         Serializable._init(self, locals())
 
@@ -150,19 +148,22 @@ class MiniGolfSim(RcsSim, Serializable):
     def get_nominal_domain_param(cls):
         return dict(
             ball_radius=0.02,  # [m]
-            ball_mass=0.05,  # [kg]
-            club_mass=0.9,  # [kg]
+            ball_mass=0.005,  # [kg]
+            ball_slip=5e-4,  # [rad/(Ns)]
             ball_friction_coefficient=0.6,  # [-]
             ball_rolling_friction_coefficient=1e-5,  # [m]
-            ball_slip=3e-4,  # [rad/(Ns)]
-            ground_slip=1e-4,  # [rad/(Ns)]
-            ground_friction_coefficient=0.7,  # [-]
+            ball_restitution=0,  # [-], leave it at 0 for now
+            club_mass=0.9,  # [kg]
+            ground_slip=5e-4,  # [rad/(Ns)]
+            ground_friction_coefficient=0.4,  # [-]
             obstacleleft_pos_offset_x=0.0,  # [m]
             obstacleleft_pos_offset_y=0.0,  # [m]
             obstacleleft_rot_offset_c=0.0,  # [rad]
             obstacleright_pos_offset_x=0.0,  # [m]
             obstacleright_pos_offset_y=0.0,  # [m]
             obstacleright_rot_offset_c=0.0,  # [rad]
+            obstacleblocker_pos_offset_x=0.0,  # [m]
+            obstacleblocker_pos_offset_y=0.0,  # [m]
         )
 
 
@@ -183,8 +184,6 @@ class MiniGolfIKSim(MiniGolfSim, Serializable):
                        collisionAvoidanceIK: bool = False,
                        observeVelocities: bool = False,
                        observeForceTorque: bool = False,
-                       observeCollisionCost: bool = False,
-                       observePredictedCollisionCost: bool = False,
         """
         Serializable._init(self, locals())
 

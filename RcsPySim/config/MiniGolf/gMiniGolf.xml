@@ -32,11 +32,29 @@
 
   <xi:include href="gMiniGolf_common_part1.xml"/>
 
-  <Body name="Club" prev="m9" transform="0.164 -0.05 0 0 90 -165" physics="fixed" mass="0.9" > <!-- 0.164 is arbitrary-->
-    <Shape type="SSL" length="0.95" radius="0.01" distance="true" physics="true" graphics="true" transform="0 0 0 90 0 0" />
-    <Shape type="SSR" extents="0.04 0.12 0.02" distance="true" physics="true" graphics="true" transform="0.01 -0.98 0 0 0 57" />
+  <!-- NORMAL racket -->
+  <Body name="Club" prev="m9" transform="0.164 -0.02 -0.01 0 90 -165" physics="fixed" mass="0.9">
+    <Shape type="SSL" length="0.93" radius="0.005" distance="true" physics="true" graphics="true" transform="0 0 0 90 0 0" />
+    <Shape type="SSL" length="0.27" radius="0.009" distance="false" physics="false" graphics="true" transform="0 0 0 90 0 0" color="DARKGREEN"/>
+    <Shape type="SSR" extents="0.017 0.07 0.01" distance="true" physics="true" graphics="true" transform="0.01 -0.945 0 0 0 57" />
     <Shape type="FRAME" scale="0.2" />
   </Body>
+
+  <Body name="ClubTip" prev="Club" transform="0.01 -0.945 0 0 0 0">
+    <Shape type="FRAME" scale="0.3" />
+  </Body>
+
+  <!-- SMALL racket -->
+
+  <xxBody name="Club" prev="m9" transform="0.164 -0.02 -0.01 0 90 -165" physics="fixed" mass="0.3">
+    <Shape type="SSL" length="0.51" radius="0.005" distance="true" physics="true" graphics="true" transform="0 0 0 90 0 0" />
+    <Shape type="SSL" length="0.27" radius="0.009" distance="false" physics="false" graphics="true" transform="0 0 0 90 0 0" color="DARKGREEN"/>
+    <Shape type="SSR" extents="0.018 0.07 0.01" distance="true" physics="true" graphics="true" transform="0.01 -0.53 0 0 0 57" />
+    <Shape type="FRAME" scale="0.2" />
+  </xxBody>
+  <xxBody name="ClubTip" prev="Club" transform="0.01 -0.53 0 0 0 0" >
+    <Shape type="FRAME" scale="0.3" />
+  </xxBody>
 
   <xi:include href="gMiniGolf_common_part2.xml"/>
 
@@ -55,13 +73,14 @@
 <!-- closer to ball (see 'n' in TestBotSim) -->
   <model_state model="MiniGolf" time_stamp="0">
     <joint_state joint="ArmHeight" position="1.2" />
-    <joint_state joint="base-m3" position="24.990777" />
-    <joint_state joint="m3-m4" position="-87.187492" />
-    <joint_state joint="m4-m5" position="77.310272" />
-    <joint_state joint="m5-m6" position="-71.862892" />
-    <joint_state joint="m6-m7" position="61.423359" />
-    <joint_state joint="m7-m8" position="-170.341776" />
-    <joint_state joint="m8-m9" position="-36.836043" />
+<!--    <joint_state joint="ArmHeight" position="0.9" />-->
+    <joint_state joint="base-m3" position="18.996253" />
+    <joint_state joint="m3-m4" position="-87.227101" />
+    <joint_state joint="m4-m5" position="74.149568" />
+    <joint_state joint="m5-m6" position="-75.577025" />
+    <joint_state joint="m6-m7" position="56.207369" />
+    <joint_state joint="m7-m8" position="-175.162794" />
+    <joint_state joint="m8-m9" position="-41.543793" />
   </model_state>
 
 </Graph>
