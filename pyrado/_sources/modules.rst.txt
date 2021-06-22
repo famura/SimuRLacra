@@ -1,0 +1,9 @@
+Pyrado
+======
+
+.. toctree::
+   :maxdepth: 4
+
+   pyrado
+   setup
+   tests
