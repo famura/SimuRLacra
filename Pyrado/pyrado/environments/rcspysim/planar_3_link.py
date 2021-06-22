@@ -189,7 +189,7 @@ class Planar3LinkSim(RcsSim, Serializable):
 class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
     """Planar 3-link robot controlled by directly setting the joint angles"""
 
-    name: str = "p3l-jt"
+    name: str = "p3l-jnt"
 
     def __init__(self, task_args: dict = None, **kwargs):
         """

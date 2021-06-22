@@ -79,7 +79,7 @@
             friction_coefficient="0.6"
             rolling_friction_coefficient="0.00001"
             static_friction_scale="1.0"
-            slip="0.0003"
+            slip="0.0001"
             integrated_slip_displacement="true"
             compliance="0.0001"
             restitution="0"

@@ -110,6 +110,8 @@ public:
      */
     RcsGraph* getGraph() { return graph; }
     
+    void setGraph(RcsGraph* newGraph) { graph = newGraph; }
+    
     /*!
      * If this ActionModel is a wrapper for another action model, return the wrapped action model.
      * Otherwise, return NULL.

@@ -30,12 +30,12 @@
 
 #include "RcsPyBot.h"
 #include "action/ActionModel.h"
+#include "action/ActionModelIK.h"
 #include "observation/ObservationModel.h"
 #include "control/ControlPolicy.h"
 
 #include <Rcs_typedef.h>
 #include <Rcs_macros.h>
-#include <Rcs_timer.h>
 #include <ControllerBase.h>
 
 #include <cmath>
@@ -85,13 +85,13 @@ RcsPyBot::RcsPyBot(PropertySource* propertySource)
     
     // Initialize the temporary matrices, making sure the initial command is identical to the initial state
     q_ctrl = MatNd_clone(desiredGraph->q);
-    q_ctrl_filt_targ = MatNd_clone(desiredGraph->q);
     qd_ctrl = MatNd_clone(desiredGraph->q_dot);
     T_ctrl = MatNd_create(desiredGraph->dof, 1);
     
     // Filter for going to the home pose, initialized with the current state
-    homePoseFilt = new Rcs::SecondOrderLPFND(currentGraph->q->ele, 0.25, config->dt, q_ctrl_filt_targ->m);
-    homePoseFilt->setTarget(q_ctrl_filt_targ->ele);
+    double tmc = 0.10;
+    homePoseFilt = new Rcs::SecondOrderLPFND(currentGraph->q->ele, tmc, config->dt, desiredGraph->q->m);
+    homePoseFilt->setTarget(currentGraph->q->ele);
     
     // Control policy is set later
     controlPolicy = nullptr;
@@ -108,7 +108,6 @@ RcsPyBot::~RcsPyBot()
 {
     // Delete temporary matrices
     MatNd_destroy(q_ctrl);
-    MatNd_destroy(q_ctrl_filt_targ);
     MatNd_destroy(qd_ctrl);
     MatNd_destroy(T_ctrl);
     
@@ -129,7 +128,7 @@ RcsPyBot::~RcsPyBot()
 
 void RcsPyBot::setControlPolicy(ControlPolicy* controlPolicy, const MatNd* q_des)
 {
-    if ((controlPolicy == nullptr && q_des == nullptr) || (controlPolicy != nullptr && q_des != nullptr)){
+    if ((controlPolicy == nullptr && q_des == nullptr) || (controlPolicy != nullptr && q_des != nullptr)) {
         throw std::invalid_argument("Either controlPolicy or q_des need to be != nullptr, not none or both!");
     }
     std::unique_lock<std::mutex> lock(controlPolicyMutex);
@@ -137,10 +136,7 @@ void RcsPyBot::setControlPolicy(ControlPolicy* controlPolicy, const MatNd* q_des
     
     if (controlPolicy == nullptr) {
         // Command a fixed pose
-        q_ctrl_filt_targ = MatNd_clone(q_des);
-        homePoseFilt->init(currentGraph->q->ele);
-        homePoseFilt->setTarget(q_ctrl_filt_targ->ele);
-        MatNd_copy(q_ctrl, q_ctrl_filt_targ);
+        homePoseFilt->setTarget(q_des->ele);
         MatNd_setZero(qd_ctrl);
         MatNd_setZero(T_ctrl);
     }
@@ -148,6 +144,13 @@ void RcsPyBot::setControlPolicy(ControlPolicy* controlPolicy, const MatNd* q_des
     // Reset model states
     config->observationModel->reset();
     config->actionModel->reset();
+    
+    // Freeze
+    getConfig()->actionModel->setGraph(RcsGraph_clone(getCurrentGraph()));
+    Rcs::ActionModelIK* amIK = dynamic_cast<Rcs::ActionModelIK*>(getConfig()->actionModel);
+    if (amIK) {
+        amIK->setGraph(RcsGraph_clone(getCurrentGraph()));
+    }
 }
 
 void RcsPyBot::updateControl()
@@ -198,6 +201,23 @@ MatNd* RcsPyBot::getObservation() const
 MatNd* RcsPyBot::getAction() const
 {
     return action;
+}
+
+void RcsPyBot::syncGraphsToCurrent()
+{
+    RcsGraph_setState(desiredGraph, currentGraph->q, currentGraph->q_dot);
+    
+    RcsGraph_setState(getConfig()->graph, currentGraph->q, currentGraph->q_dot);
+    
+    RcsGraph_setState(getConfig()->actionModel->getGraph(), currentGraph->q, currentGraph->q_dot);
+    
+    Rcs::ActionModelIK* amIK = dynamic_cast<Rcs::ActionModelIK*>(getConfig()->actionModel);
+    if (amIK) {
+        RcsGraph_setState(amIK->getDesiredGraph(), currentGraph->q, currentGraph->q_dot);
+    }
+    
+    // Init filter for joint commands after syncing the graphs
+    homePoseFilt->init(currentGraph->q->ele);
 }
 
 

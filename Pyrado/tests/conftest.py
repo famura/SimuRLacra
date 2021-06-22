@@ -86,7 +86,6 @@ try:
     from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
     from pyrado.environments.rcspysim.planar_insert import PlanarInsertIKActivationSim, PlanarInsertTASim
     from pyrado.environments.rcspysim.quanser_qube import QQubeRcsSim
-    from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
     m_needs_vortex = pytest.mark.skipif(
         not rcsenv.supportsPhysicsEngine("Vortex"), reason="Vortex physics engine is not supported in this setup."

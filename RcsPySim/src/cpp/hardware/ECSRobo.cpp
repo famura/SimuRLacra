@@ -79,7 +79,7 @@ static void runPolicy()
     double ttc = 8.0, alpha = 0.02;
     unsigned int speedUp = 1, loopCount = 0;
     size_t queueSize = 0;
-    char cfgFile[64] = "exTargetTracking.xml";
+    char cfgFile[64] = "ex_UNSPECIFIED.xml";
     char physicsEngine[32] = "Vortex";
     char physicsCfg[128] = "config/physics/physics.xml";
     argP.getArgument("-f", cfgFile, "Experiment configuration file name");
@@ -322,7 +322,7 @@ static void runPolicy()
  ******************************************************************************/
 int main(int argc, char** argv)
 {
-    char directory[128] = "config/TargetTracking";
+    char directory[128] = "config/UNSPECIFIED";
     int mode = 1;
     CmdLineParser argP(argc, argv);
     argP.getArgument("-dl", &RcsLogLevel, "Debug level (default is %d)",

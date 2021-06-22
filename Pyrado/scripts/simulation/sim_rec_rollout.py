@@ -32,8 +32,8 @@ Replay a pre-recorded rollout using the simulations' renderer.
 import time
 
 import pyrado
+from pyrado.environments.pysim.base import SimPyEnv
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         )
 
     # Extract the domain parameters if possible
-    if getattr(rollout, "rollout_info", None) and "domain_param" in rollout.rollout_info:
+    if getattr(rollout, "rollout_info", None) is not None and "domain_param" in rollout.rollout_info:
         domain_param = rollout.rollout_info["domain_param"]
     else:
         domain_param = None
@@ -99,6 +99,11 @@ if __name__ == "__main__":
 
         env = MiniGolfIKSim(dt=dt)
 
+    elif env_name == "mg-jnt":  # avoid loading _rcsenv
+        from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+
+        env = MiniGolfJointPosSim(dt=dt)
+
     else:
         raise pyrado.ValueErr(given=env_name, eq_constraint=f"wam-jsc, {QQubeSwingUpSim.name}, or mg-ik")
 
@@ -111,12 +116,13 @@ if __name__ == "__main__":
             t_start = time.time()
             env.state = step.state
 
+            if not isinstance(env, SimPyEnv):
+                # Use reset() to hammer the current state into MuJoCo / Rcs at evey step
+                env.reset(init_state=step.state)
+
             do_sleep = True
             if pyrado.mujoco_loaded:
                 from pyrado.environments.mujoco.base import MujocoSimEnv
-
-                # Use reset() to hammer the current state into MuJoCo at evey step
-                env.reset(init_state=step.state)
 
                 if isinstance(env, MujocoSimEnv):
                     # MuJoCo environments seem to crash on time.sleep()
