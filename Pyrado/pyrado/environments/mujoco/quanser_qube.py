@@ -96,8 +96,8 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
             mass_pend_pole=0.024,  # pendulum link mass [kg]
             length_pend_pole=0.129,  # pendulum link length [m]
             damping_pend_pole=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
-            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
-            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
+            voltage_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            voltage_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
@@ -105,7 +105,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
 
         # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
         # This is a very simple model of static friction.
-        if self.domain_param["V_thold_neg"] <= act <= self.domain_param["V_thold_pos"]:
+        if self.domain_param["voltage_thold_neg"] <= act <= self.domain_param["voltage_thold_pos"]:
             act = 0
 
         motor_back_emf = self.domain_param["motor_back_emf"]

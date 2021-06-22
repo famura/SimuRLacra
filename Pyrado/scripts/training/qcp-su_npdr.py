@@ -86,7 +86,7 @@ if __name__ == "__main__":
     policy = QCartPoleSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
+    dp_mapping = {0: "voltage_thold_neg", 1: "voltage_thold_pos"}
     # dp_mapping = {
     #     0: "eta_m",
     #     1: "eta_g",

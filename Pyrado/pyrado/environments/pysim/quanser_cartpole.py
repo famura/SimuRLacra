@@ -130,8 +130,8 @@ class QCartPoleSim(SimPyEnv, Serializable):
             m_pole=m_pole,  # mass of the pole [kg]
             l_pole=l_pole,  # half pole length [m]
             mu_cart=0.02,  # Coulomb friction coefficient cart-rail [-]
-            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
-            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
+            voltage_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            voltage_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _calc_constants(self):
@@ -168,7 +168,10 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
         # This is a very simple model of static friction.
-        if not self._simple_dynamics and self.domain_param["V_thold_neg"] <= u <= self.domain_param["V_thold_pos"]:
+        if (
+            not self._simple_dynamics
+            and self.domain_param["voltage_thold_neg"] <= u <= self.domain_param["voltage_thold_pos"]
+        ):
             u = 0.0
 
         # Actuation force coming from the carts motor torque

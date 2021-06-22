@@ -63,8 +63,8 @@ class QQubeSim(SimPyEnv, Serializable):
             mass_pend_pole=0.024,  # pendulum link mass [kg]
             length_pend_pole=0.129,  # pendulum link length [m]
             damping_pend_pole=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
-            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
-            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
+            voltage_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            voltage_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _calc_constants(self):
@@ -129,7 +129,7 @@ class QQubeSim(SimPyEnv, Serializable):
     def _step_dynamics(self, act: np.ndarray):
         # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
         # This is a very simple model of static friction.
-        if self.domain_param["V_thold_neg"] <= act <= self.domain_param["V_thold_pos"]:
+        if self.domain_param["voltage_thold_neg"] <= act <= self.domain_param["voltage_thold_pos"]:
             act = 0
 
         # Compute the derivative
