@@ -403,7 +403,6 @@
             <span class="n">sampled_domain_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
 
             <span class="c1"># Sample the rollouts</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">behavior_sampler</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_seed</span><span class="p">)</span>
             <span class="n">rollouts_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">behavior_sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">init_states_real</span><span class="p">,</span> <span class="n">sampled_domain_params</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="c1"># Iterate over simulated rollout with the same initial state</span>
