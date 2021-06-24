@@ -188,24 +188,22 @@ if __name__ == "__main__":
         default="states",
         help="select data type for plotting, e.g. 'observations' or 'states' (default: 'states')",
     )
-
     parser.add_argument(
-        "--save_format",
+        "--cut_rollout",
         nargs="+",
-        type=str,
-        default=["pdf", "pgf", "png"],
-        help="select file format for plot saving, without commas (e.g., 'pdf png')",
+        type=int,
+        default=None,
+        help="tuple of indices defining start and end index of the rollout",
     )
-
     parser.add_argument(
         "--plot_act",
         action="store_true",
         default=False,
         help="plot the actions (default: False)",
     )
-
     parser.add_argument(
         "--console",
+        dest="verbose",
         action="store_true",
         default=False,
         help="set flag to not run plt.show. Make sure that the --save flag is set",
@@ -440,5 +438,5 @@ if __name__ == "__main__":
         file_format=args.save_format,
     )
 
-    if not args.console:
+    if args.verbose:
         plt.show()

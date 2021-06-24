@@ -51,17 +51,9 @@ from pyrado.utils.argparser import get_argparser
 if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-
-    parser.add_argument(
-        "--save_format",
-        nargs="+",
-        type=str,
-        default=["pdf", "pgf", "png"],
-        help="select file format for plot saving, without commas (e.g., 'pdf png')",
-    )
-
     parser.add_argument(
         "--console",
+        dest="verbose",
         action="store_true",
         default=False,
         help="set flag to not run plt.show. Make sure that the --save flag is set",
@@ -174,5 +166,5 @@ if __name__ == "__main__":
                 dpi=300,
             )
 
-    if not args.console:
+    if args.verbose:
         plt.show()
