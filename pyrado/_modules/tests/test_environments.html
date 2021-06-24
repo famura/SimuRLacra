@@ -525,7 +525,7 @@
     <span class="k">assert</span> <span class="n">obs2</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">obs1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_panda3d_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_panda3d_animations">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<div class="viewcode-block" id="test_panda3d_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_panda3d_animations">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visual</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;env&quot;</span><span class="p">,</span>
     <span class="p">[</span>
@@ -554,11 +554,11 @@
             <span class="k">break</span>
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># only calls _reset_anim if window is already existing</span>
     <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">&lt;=</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">_visualization</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
-    <span class="k">del</span> <span class="n">env</span><span class="o">.</span><span class="n">_visualization</span></div>
+    <span class="n">env</span><span class="o">.</span><span class="n">_visual</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">env</span><span class="o">.</span><span class="n">_visual</span></div>
 
 
-<div class="viewcode-block" id="test_rcspysim_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_rcspysim_animations">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<div class="viewcode-block" id="test_rcspysim_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_rcspysim_animations">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visual</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;env&quot;</span><span class="p">,</span>
     <span class="p">[</span>
@@ -610,7 +610,7 @@
 
 
 <div class="viewcode-block" id="test_mujoco_animations"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_mujoco_animations">[docs]</a><span class="nd">@m_needs_mujoco</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visual</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_cth&quot;</span><span class="p">,</span> <span class="s2">&quot;default_hop&quot;</span><span class="p">,</span> <span class="s2">&quot;default_wambic&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cth&quot;</span><span class="p">,</span> <span class="s2">&quot;hop&quot;</span><span class="p">,</span> <span class="s2">&quot;wam-bic&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
@@ -650,7 +650,7 @@
     <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="test_gym_env"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_gym_env">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<div class="viewcode-block" id="test_gym_env"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_gym_env">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visual</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;env_name&quot;</span><span class="p">,</span>
     <span class="p">[</span><span class="s2">&quot;MountainCar-v0&quot;</span><span class="p">,</span> <span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="s2">&quot;Acrobot-v1&quot;</span><span class="p">,</span> <span class="s2">&quot;MountainCarContinuous-v0&quot;</span><span class="p">,</span> <span class="s2">&quot;Pendulum-v0&quot;</span><span class="p">,</span> <span class="s2">&quot;LunarLander-v2&quot;</span><span class="p">],</span>

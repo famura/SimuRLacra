@@ -474,8 +474,8 @@
         <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">smpl_distr_reparam</span><span class="p">,</span> <span class="n">smpl_reparam</span><span class="p">)</span></div>
 
 
-<span class="c1"># @pytest.mark.visualization</span>
-<div class="viewcode-block" id="test_sequences"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sequences">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_sequences"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sequences">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;plot&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visual</span><span class="p">)])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;sequence, x_init&quot;</span><span class="p">,</span>
     <span class="p">[</span>
         <span class="p">(</span><span class="n">sequence_const</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])),</span>
@@ -492,16 +492,19 @@
         <span class="p">(</span><span class="n">sequence_nlog2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
     <span class="p">],</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_sequences</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">x_init</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_sequences</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">x_init</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
     <span class="c1"># Get the full sequence</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">x_full</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">x_full</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+    <span class="k">assert</span> <span class="n">x_full</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="c1"># Plot the sequences</span>
-    <span class="c1"># for i in range(x_full.shape[1]):</span>
-    <span class="c1">#     plt.stem(x_full[:, i], label=str(x_init[i]))</span>
-    <span class="c1"># plt.legend()</span>
-    <span class="c1"># plt.show()</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+        <span class="c1"># Plot the sequences</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">x_full</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">x_init</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="test_boostrap_methods"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_boostrap_methods">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">])])</span>
