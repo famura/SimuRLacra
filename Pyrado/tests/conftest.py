@@ -79,7 +79,6 @@ try:
 
     from pyrado.environments.rcspysim.ball_in_tube import BallInTubePosIKActivationSim, BallInTubeVelDSSim
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
-    from pyrado.environments.rcspysim.box_flipping import BoxFlippingIKActivationSim, BoxFlippingVelDSSim
     from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim, BoxLiftingVelDSSim
     from pyrado.environments.rcspysim.box_shelving import BoxShelvingPosDSSim, BoxShelvingVelDSSim
     from pyrado.environments.rcspysim.mp_blending import MPBlendingSim
@@ -569,56 +568,6 @@ class DefaultEnvs:
             observeTaskSpaceDiscrepancy=True,
             observeDynamicalSystemDiscrepancy=True,
             observeDynamicalSystemGoalDistance=True,
-        )
-
-    @staticmethod
-    @m_needs_bullet
-    def default_bf_ds_vel_bt():
-        return BoxFlippingVelDSSim(
-            physicsEngine="Bullet",
-            graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
-            dt=1 / 100.0,
-            max_steps=2000,
-            fixed_init_state=True,
-            ref_frame="table",
-            tasks_left=None,
-            tasks_right=None,
-            collisionConfig={"file": "collisionModel.xml"},
-            taskCombinationMethod="sum",
-            checkJointLimits=True,
-            collisionAvoidanceIK=True,
-            observeVelocities=True,
-            observeForceTorque=True,
-            observeCollisionCost=True,
-            observePredictedCollisionCost=False,  # True causes a crash
-            observeManipulabilityIndex=True,
-            observeTaskSpaceDiscrepancy=True,
-            observeDynamicalSystemDiscrepancy=True,
-            observeDynamicalSystemGoalDistance=True,
-        )
-
-    @staticmethod
-    @m_needs_vortex
-    def default_bf_ika_bt():
-        return BoxFlippingIKActivationSim(
-            physicsEngine="Bullet",
-            graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
-            dt=1 / 100.0,
-            max_steps=2000,
-            fixed_init_state=True,
-            ref_frame="table",
-            tasks_left=None,
-            tasks_right=None,
-            collisionConfig={"file": "collisionModel.xml"},
-            taskCombinationMethod="sum",
-            checkJointLimits=True,
-            collisionAvoidanceIK=True,
-            observeVelocities=True,
-            observeForceTorque=True,
-            observeCollisionCost=True,
-            observePredictedCollisionCost=False,  # True causes a crash
-            observeManipulabilityIndex=True,
-            observeTaskSpaceDiscrepancy=True,
         )
 
     @staticmethod
