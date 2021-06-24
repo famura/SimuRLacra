@@ -1,0 +1,614 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.environments.rcspysim.base &mdash; Pyrado 0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.environments.rcspysim.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.environments.rcspysim.base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+<span class="kn">from</span> <span class="nn">rcsenv</span> <span class="kn">import</span> <span class="n">JointLimitException</span><span class="p">,</span> <span class="n">RcsSimEnv</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.base</span> <span class="kn">import</span> <span class="n">Space</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.empty</span> <span class="kn">import</span> <span class="n">EmptySpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
+
+
+<div class="viewcode-block" id="to_pyrado_space"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.to_pyrado_space">[docs]</a><span class="k">def</span> <span class="nf">to_pyrado_space</span><span class="p">(</span><span class="n">space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">BoxSpace</span><span class="p">,</span> <span class="n">EmptySpace</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the box space implementation from RcsPySim to the one of Pyrado.</span>
+
+<span class="sd">    :param space: a space from RcsPySim</span>
+<span class="sd">    :return: a Pyrado `BoxSpace` or an Pyrado`EmptySpace` if `None` was given</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">EmptySpace</span>
+    <span class="k">return</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RcsSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim">[docs]</a><span class="k">class</span> <span class="nc">RcsSim</span><span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for RcsPySim environments. Uses Serializable to facilitate proper serialization.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">envType</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">init_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">checkJointLimits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">joint_limit_penalty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e3</span><span class="p">,</span>
+        <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            The joint type (i.e. position or torque control) is set in the associated xml files in `RcsPySim/config`.</span>
+
+<span class="sd">        :param envType: environment type name as defined on the C++ side</span>
+<span class="sd">        :param task_args: arguments for the task construction</span>
+<span class="sd">        :param dt: integration step size in seconds</span>
+<span class="sd">        :param max_steps: max number of simulation time steps</span>
+<span class="sd">        :param domain_param: initial domain param values</span>
+<span class="sd">        :param init_state: initial state sampler can be a callable or one fixed state</span>
+<span class="sd">        :param checkJointLimits: flags if the joint limits should be ignored or not passed to the C++ constructor</span>
+<span class="sd">        :param joint_limit_penalty: cost returned on termination due to joint limits. This is a different from the</span>
+<span class="sd">                                    state bounds since `RcsPySim` return an error when the joint limits are violated.</span>
+<span class="sd">        :param state_mask_labels: if `None`, the complete observation space (defined on the C++ side) will be used as</span>
+<span class="sd">                                  state space. Pass an iterable of stings to select dimensions from the observation</span>
+<span class="sd">                                  space as the state space. This is also affects the tasks.</span>
+<span class="sd">        :param kwargs: keyword arguments which are available for `RcsSim` on the C++ side. These arguments will not</span>
+<span class="sd">                       be stored in the environment object, thus are saved e.g. when pickled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">envType</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">envType</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">task_args</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dt</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s2">&quot;0.0 (float)&quot;</span><span class="p">)</span>
+
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="c1"># Initialize basic variables</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_joint_limits</span> <span class="o">=</span> <span class="n">checkJointLimits</span>
+
+        <span class="c1"># Create Rcs-based implementation (RcsSimEnv comes from the pybind11 module)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span> <span class="o">=</span> <span class="n">RcsSimEnv</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">envType</span><span class="o">=</span><span class="n">envType</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_joint_limits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Setup the initial domain parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unadapt_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">domainParam</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">joint_limit_penalty</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">joint_limit_penalty</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_joint_limit_penalty</span> <span class="o">=</span> <span class="n">joint_limit_penalty</span>
+
+        <span class="c1"># Initial init state space is taken from C++ which can be overwritten by setting a new init_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">to_pyrado_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">initStateSpace</span><span class="p">)</span>
+
+        <span class="c1"># By default, the state space is a subset of the observation space. Set this to customize in subclass.</span>
+        <span class="k">if</span> <span class="n">state_mask_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_mask</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Mask / redefine the state space, e.g. to match the init state space. This is affects the tasks.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">state_mask_labels</span><span class="p">)</span>
+
+        <span class="c1"># Dummy initialization, must be set by the derived classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_args</span> <span class="o">=</span> <span class="n">task_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_args</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Derives the state space from the observation space using _state_from_obs or state_mask.&quot;&quot;&quot;</span>
+        <span class="n">obs_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span>
+        <span class="c1"># Check if _state_from_obs was overridden</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_from_obs</span><span class="o">.</span><span class="vm">__func__</span> <span class="o">!=</span> <span class="n">RcsSim</span><span class="o">.</span><span class="n">_state_from_obs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_from_obs</span><span class="p">(</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_from_obs</span><span class="p">(</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Check if there is a state mask</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obs_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_mask</span><span class="p">)</span>
+        <span class="c1"># Identical to obs space</span>
+        <span class="k">return</span> <span class="n">obs_space</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obs_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">to_pyrado_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">observationSpace</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">act_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">to_pyrado_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">actionSpace</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">init_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span>
+
+    <span class="nd">@init_space</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">init_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">Space</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">space</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Space</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">space</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="c1"># Needs to implemented by subclasses</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unadapt_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">domainParam</span><span class="p">)</span>
+
+    <span class="nd">@domain_param</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain_param</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_param</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="c1"># Update the internal parameters. The New domain parameters will be applied on reset().</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_domain_param</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
+
+        <span class="c1"># Update task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RcsSim.get_nominal_domain_param"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.get_nominal_domain_param">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the nominal a.k.a. default domain parameters.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            It is highly recommended to have the same values as in the associated physics config file (p&lt;NAME&gt;.xml),</span>
+<span class="sd">            since the nominal domain parameters are not set explicitly from Pyrado (only when randomizing).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_state_from_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the system state from the observation. In most cases, the system state is a part of the observation.</span>
+<span class="sd">        This function is to be used when the observations include additional information.</span>
+<span class="sd">        The default implementation is based off `self.state_mask` which is set in sub-classes of `RcsSim`.</span>
+
+<span class="sd">        :param obs: observation from the environment</span>
+<span class="sd">        :return: state of the environment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obs_</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">obs_</span> <span class="o">=</span> <span class="n">obs_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">state_mask</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">obs_</span>
+
+    <span class="k">def</span> <span class="nf">_adapt_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the domain parameters before passing them to the Rcs simulation.</span>
+<span class="sd">        One use case is for example the rolling friction coefficient which is usually given unit-less but the Vortex</span>
+<span class="sd">        physics engine expects it to be multiplied with the body&#39;s curvature radius.</span>
+
+<span class="sd">        :param params: domain parameters to adapt</span>
+<span class="sd">        :return: adapted parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">params</span>
+
+    <span class="k">def</span> <span class="nf">_unadapt_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the domain parameters coming from to the Rcs simulation.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This function is called from the constructor.</span>
+
+<span class="sd">        :param params: domain parameters to revert the previously done adaptation</span>
+<span class="sd">        :return: unadapted parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">params</span>
+
+    <span class="k">def</span> <span class="nf">_get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span>
+        <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;init_state&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span>
+
+    <span class="k">def</span> <span class="nf">_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">copying</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;init_state&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_disturbance_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provide an artificial disturbance. For example a force on a body in the physics simulation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="RcsSim.reset"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="c1"># Reset time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Reset the state</span>
+        <span class="k">if</span> <span class="n">init_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Sample from the init state space</span>
+            <span class="n">init_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">init_state</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">init_state</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span><span class="p">)</span>
+
+        <span class="c1"># Reset the task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+
+        <span class="c1"># Use stored domain parameters if not overwritten</span>
+        <span class="k">if</span> <span class="n">domain_param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_domain_param</span>
+
+        <span class="c1"># Forward to C++ implementation</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">domainParam</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_adapt_domain_param</span><span class="p">(</span><span class="n">domain_param</span><span class="p">),</span> <span class="n">initState</span><span class="o">=</span><span class="n">init_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_from_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obs</span></div>
+
+<div class="viewcode-block" id="RcsSim.step"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="c1"># Current reward depending on the state (before step) and the (unlimited) action</span>
+        <span class="n">remaining_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
+
+        <span class="c1"># Apply actuator limits</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit_act</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+
+        <span class="c1"># Get the disturbance to be applied on the Rcs side</span>
+        <span class="n">disturbance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disturbance_generator</span><span class="p">()</span>
+
+        <span class="c1"># Dynamics are calculated in the Rcs simulation</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">disturbance</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">JointLimitException</span><span class="p">:</span>
+            <span class="c1"># Joint limits exceeded! Return (obs, rew, done, info) directly after this failure.</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">lastObservation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_joint_limit_penalty</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_from_obs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>  <span class="c1"># only for the Python side</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Check if the task or the environment is done</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">is_done</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+            <span class="c1"># Add final reward if done</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">final_rew</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_rew</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RcsSim.render"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.render">[docs]</a>    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RenderMode</span> <span class="o">=</span> <span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">render_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_step</span> <span class="o">%</span> <span class="n">render_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Call base class</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+            <span class="c1"># Forward to Rcs GUI</span>
+            <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">video</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RcsSim.save_config_xml"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.save_config_xml">[docs]</a>    <span class="k">def</span> <span class="nf">save_config_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save environment configuration as xml file for use on the C++ side.</span>
+
+<span class="sd">        :param fileName: output file name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">saveConfigXML</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RcsSim.get_body_position"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.get_body_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_body_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bodyName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">refFrameName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">refBodyName</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the position of a body in the simulators config graph.</span>
+<span class="sd">        This function uses code coped from `Rcs` to transform the position depending on a reference frame and/or body.</span>
+
+<span class="sd">        :param bodyName: name of the body in the graph</span>
+<span class="sd">        :param refFrameName: name of the reference frame, pass &#39;&#39; to use world coordinates</span>
+<span class="sd">        :param refBodyName: name of the reference body, pass &#39;&#39; to use world coordinates</span>
+<span class="sd">        :return: x,y,z positions in a reference frame coordinates relative to a reference bodies</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">getBodyPosition</span><span class="p">(</span><span class="n">bodyName</span><span class="p">,</span> <span class="n">refFrameName</span><span class="p">,</span> <span class="n">refBodyName</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RcsSim.get_body_extents"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.get_body_extents">[docs]</a>    <span class="k">def</span> <span class="nf">get_body_extents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bodyName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">shapeIdx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the dimensions of a body in the simulators config graph.</span>
+<span class="sd">        This function uses code coped from `Rcs` to transform the position depending on a reference frame and/or body.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Depending on the kind of shape (e.g. box, sphere, torus, ect.) the extends mean different things.</span>
+
+<span class="sd">        :param bodyName: name of the body in the graph</span>
+<span class="sd">        :param shapeIdx: index of the shape in the `Body` node, defaults to the first shape of the body</span>
+<span class="sd">        :return: x,y,z positions in a reference frame coordinates relative to a reference bodies</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sim</span><span class="o">.</span><span class="n">getBodyExtents</span><span class="p">(</span><span class="n">bodyName</span><span class="p">,</span> <span class="n">shapeIdx</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

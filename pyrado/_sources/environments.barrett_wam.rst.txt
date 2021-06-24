@@ -1,0 +1,59 @@
+
+
+barrett\_wam
+============
+
+
+
+natnet\_client
+--------------
+
+.. automodule:: pyrado.environments.barrett_wam.natnet_client
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+trackers
+--------
+
+.. automodule:: pyrado.environments.barrett_wam.trackers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+wam\_base
+---------
+
+.. automodule:: pyrado.environments.barrett_wam.wam_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+wam\_bic
+--------
+
+.. automodule:: pyrado.environments.barrett_wam.wam_bic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+wam\_jsc
+--------
+
+.. automodule:: pyrado.environments.barrett_wam.wam_jsc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.environments.barrett_wam
+   :members:
+   :undoc-members:
+   :show-inheritance:
