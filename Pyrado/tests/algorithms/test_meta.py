@@ -194,7 +194,6 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
             mc_estimator=True,
             num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
-            num_workers=1,
         ),
         dict(
             max_iter=2,
@@ -208,7 +207,6 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
             thold_succ_subrtn=50.0,
             num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
-            num_workers=1,
         ),
     ],
     ids=["config1", "config2"],
@@ -233,7 +231,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
         num_init_states_per_domain=1,
         num_is_samples=4,
         expl_std_init=0.1,
-        num_workers=bayrn_hparam["num_workers"],  # dual use
+        num_workers=1,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -245,7 +243,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     )
 
     # Create algorithm and train
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam, num_workers=1)
     algo.train()
 
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
@@ -359,7 +357,6 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     algo_hparam = dict(
         metric=None, obs_dim_weight=np.ones(env_sim.obs_space.shape), num_rollouts_per_distr=5, num_workers=1
     )
-
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
 
     rollouts_real_tst = []
@@ -537,12 +534,12 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     subrtn_hparam = dict(
         max_iter=3,
         min_rollouts=5,
-        num_workers=1,
         num_epoch=2,
         eps_clip=0.1,
         batch_size=64,
         std_init=0.8,
         lr=2e-4,
+        num_workers=1,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
     algo = algo(env, subrtn, **algo_hparam)

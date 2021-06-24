@@ -358,8 +358,6 @@ class SPRL(Algorithm):
             self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
 
-        dim = context_mean.shape[0]
-
         # If we are in the first iteration and have a bad performance,
         # we want to completely reset the policy if training is unsuccessful
         reset_policy = False
