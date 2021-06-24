@@ -78,7 +78,7 @@ if __name__ == "__main__":
     #     graphFileName="gMiniGolf_gt.xml",
     #     physicsConfigFile="pMiniGolf_gt.xml",
     # )
-    env_real = osp.join(pyrado.EVAL_DIR, "mg-jnt_100Hz")
+    env_real = osp.join(pyrado.EVAL_DIR, "mg-jnt_100Hz_8s")
     num_real_rollouts = 1
 
     # Behavioral policy
