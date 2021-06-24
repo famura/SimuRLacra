@@ -660,7 +660,7 @@ def plot_rollouts_segment_wise(
                         c=cmap_samples[idx_dp],
                         ls="--",
                         lw=1.5 if plot_type == "confidence" or idx_dp == 0 else 0.5,
-                        alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.4,
+                        alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.2,
                         label=label_samples if cnt_step[idx_seg] == idx_seg == idx_dp == 0 else "",  # print once
                     )
                     if plot_type != "samples":
@@ -818,7 +818,7 @@ def plot_rollouts_segment_wise(
                         f"posterior_iter_{idx_iter}{round_str}_rollout_{idx_r}_{len_seg_str}{use_rec_str}.{fmt}",
                     ),
                     bbox_extra_artists=(lg,),
-                    dpi=500,
+                    dpi=150,
                 )
 
         # Append current figure

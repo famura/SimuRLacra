@@ -89,12 +89,12 @@ if __name__ == "__main__":
     ex_congfigs = [
         dict(
             algo_name=NPDR.name,
-            dir=os.path.join(pyrado.EXP_DIR, "pend", "npdr_pb", "2021-05-19_09-47-49--sin"),
+            dir=os.path.join(pyrado.EXP_DIR, "pend", "npdr_pb", ""),
             sel_rounds=[0, 2, 7],
         ),
         dict(
             algo_name=BayesSim.name,
-            dir=os.path.join(pyrado.EXP_DIR, "pend", "bayessim_pb", "2021-05-19_11-41-59--sin"),
+            dir=os.path.join(pyrado.EXP_DIR, "pend", "bayessim_pb", ""),
             sel_rounds=[0, 1, 2],
         ),
     ]
@@ -195,7 +195,7 @@ if __name__ == "__main__":
                         f"{algo._env_real.name}_nofrict_{config['algo_name']}_prob_iter_{args.iter}"
                         f"_rounds_{'_'.join(str(item) for item in config['sel_rounds'])}_{args.mode}_title.{fmt}",
                     ),
-                    dpi=200,
+                    dpi=150,
                 )
 
     # plt.show()

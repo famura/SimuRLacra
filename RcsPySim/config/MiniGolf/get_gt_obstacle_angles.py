@@ -26,42 +26,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-Script to load the data from a real-world rollouts, written to a file by the RcsPySim DAtaLogger class.
-"""
-import os.path as osp
-
-import pandas as pd
-
-import pyrado
-from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim, MiniGolfJointCtrlSim
-from pyrado.sampling.step_sequence import StepSequence
-from pyrado.utils.argparser import get_argparser
+import numpy as np
 
 
 if __name__ == "__main__":
-    # Parse command line arguments
-    args = get_argparser().parse_args()
-    if not osp.isfile(args.file):
-        raise pyrado.PathErr(given=args.file)
-    if args.dir is None:
-        # Use the file's directory by default
-        args.dir = osp.dirname(args.file)
-    elif not osp.isdir(args.dir):
-        raise pyrado.PathErr(given=args.dir)
+    # Right Obstacle
+    o_right_upper = np.array([0.707756, 1.13835])
+    o_right_lower = np.array([0.451301, 0.994159])
+    o_right_deltas = o_right_upper - o_right_lower
+    o_right_ang = np.arctan2(o_right_deltas[0], o_right_deltas[1])
 
-    df = pd.read_csv(args.file)
+    # Left Obstacle
+    o_left_upper = np.array([0.999897, 1.31085])
+    o_left_lower = np.array([0.699786, 1.35152])
+    o_left_deltas = o_left_upper - o_left_lower
+    o_left_ang = np.arctan2(o_left_deltas[0], o_left_deltas[1])
 
-    if args.env_name == MiniGolfIKSim.name:
-        env = MiniGolfIKSim()
-    elif args.env_name == MiniGolfJointCtrlSim.name:
-        env = MiniGolfJointCtrlSim()
-    else:
-        raise NotImplementedError
-
-    # Cast the rollout from a DataFrame to a StepSequence
-    reconstructed = StepSequence.from_pandas(df, env.spec, task=env.task)
-
-    if args.dir is not None:
-        suffix = args.file[args.file.rfind("/") + 1 : -4]
-        pyrado.save(reconstructed, f"rollout_{suffix}.pkl", args.dir, verbose=True)
+    print(f"gamma_1 [deg]: {90 - o_right_ang*180/np.pi}\ngamma_2 [deg]: {90 - o_left_ang*180/np.pi}")

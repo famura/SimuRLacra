@@ -25,10 +25,9 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+import functools
 import math
 import time
-from typing import Optional, Union
 
 import numpy as np
 import torch as to
@@ -45,6 +44,7 @@ from pyrado.policies.base import Policy
 from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.math import clamp_symm
 from pyrado.utils.tensor import insert_tensor_col
@@ -589,7 +589,8 @@ class QQubeGoToLimCtrl:
 
 def create_pend_excitation_policy(env: PendulumSim, num_rollouts: int, f_sin: float = 1.0) -> PlaybackPolicy:
     """
-    Create a policy that returns a previously recorded action time series. Used in the experiments for [1].
+    Create a policy that returns a previously recorded action time series.
+    Used in the experiments of [1].
 
     .. seealso::
         [1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, "TITLE", VENUE, YEAR
@@ -608,6 +609,51 @@ def create_pend_excitation_policy(env: PendulumSim, num_rollouts: int, f_sin: fl
         [fcn_of_time(t) for t in np.arange(0, env.max_steps * env.dt, env.dt)] for _ in range(num_rollouts)
     ]
     return PlaybackPolicy(env.spec, act_recordings)
+
+
+def _fcn_mg_joint_pos(t, q_init, q_end, t_strike_end):
+    """Helper function for `create_mg_joint_pos_policy()` to fit the `TimePolicy` scheme"""
+    return ((q_end - q_init) * min(t / t_strike_end, 1) + q_init) / 180 * math.pi
+
+
+def create_mg_joint_pos_policy(env: SimEnv, t_strike_end: float = 0.5) -> TimePolicy:
+    """
+    Create a policy that executes the strike for mini golf by setting joint position commands.
+    Used in the experiments of [1].
+
+    .. seealso::
+        [1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, "TITLE", VENUE, YEAR
+
+    :param env: mini golf simulation environment
+    :param t_strike_end:time when to finish the movement [s]
+    :return: policy which executes the strike solely dependent on the time
+    """
+    q_init = to.tensor(
+        [
+            18.996253,
+            -87.227101,
+            74.149568,
+            -75.577025,
+            56.207369,
+            -175.162794,
+            -41.543793,
+        ]
+    )
+    q_end = to.tensor(
+        [
+            8.628977,
+            -93.443498,
+            72.302435,
+            -82.31844,
+            52.146531,
+            -183.896354,
+            -51.560886,
+        ]
+    )
+
+    return TimePolicy(
+        env.spec, functools.partial(_fcn_mg_joint_pos, q_init=q_init, q_end=q_end, t_strike_end=t_strike_end), env.dt
+    )
 
 
 def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) -> LinearPolicy:

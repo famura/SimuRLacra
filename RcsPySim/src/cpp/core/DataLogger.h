@@ -98,7 +98,7 @@ private:
     MatNd* buffer;
     
     //! Step counter in current logging run
-    int currentStep;
+    unsigned int currentStep;
     
     //! Current output stream
     std::ofstream output;

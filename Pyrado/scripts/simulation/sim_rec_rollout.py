@@ -100,9 +100,9 @@ if __name__ == "__main__":
         env = MiniGolfIKSim(dt=dt)
 
     elif env_name == "mg-jnt":  # avoid loading _rcsenv
-        from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+        from pyrado.environments.rcspysim.mini_golf import MiniGolfJointCtrlSim
 
-        env = MiniGolfJointPosSim(dt=dt)
+        env = MiniGolfJointCtrlSim(dt=dt)
 
     else:
         raise pyrado.ValueErr(given=env_name, eq_constraint=f"wam-jsc, {QQubeSwingUpSim.name}, or mg-ik")
@@ -128,10 +128,6 @@ if __name__ == "__main__":
                     # MuJoCo environments seem to crash on time.sleep()
                     do_sleep = False
 
-            if isinstance(env, RcsSim):
-                # Use reset() to hammer the current state into MuJoCo at evey step
-                env.reset(init_state=step.state)
-
             env.render(RenderMode(video=True))
 
             if do_sleep:
@@ -145,5 +141,5 @@ if __name__ == "__main__":
             if step.done:
                 break
 
-        if input("Stop replaying? [y / any other] ").lower() == "y":
+        if input("Stop replaying [y]? Or play next [any other]? ").lower() == "y":
             break

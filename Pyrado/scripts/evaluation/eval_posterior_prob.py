@@ -280,7 +280,7 @@ if __name__ == "__main__":
             rnd = f"_round_{args.round}" if args.round != -1 else ""
             fig.savefig(
                 os.path.join(ex_dir, "plots", f"posterior_prob_iter_{args.iter}{rnd}_{args.mode}.{fmt}"),
-                dpi=500,
+                dpi=150,
             )
 
     if not args.console:

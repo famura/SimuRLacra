@@ -103,9 +103,7 @@ int main(int argc, char** argv)
     argP.getArgument("-dl", &RcsLogLevel, "Debug level (default is 0)");
     argP.getArgument("-f", xmlFileName, "Configuration file name");
     argP.getArgument("-dir", directory, "Configuration file directory");
-    bool runningOnRobot = argP.hasArgument("-real", "Run the program in the physical robot");
     bool valgrind = argP.hasArgument("-valgrind", "Start without GUIs and graphics");
-//    bool simpleGraphics = argP.hasArgument("-simpleGraphics", "OpenGL without fancy stuff (shadows, anti-aliasing)");
     
     const char* hgr = getenv("SIT");
     if (hgr != nullptr) {
@@ -135,28 +133,20 @@ int main(int argc, char** argv)
     bot.getConfig()->actionModel->reset();
     bot.getConfig()->observationModel->reset();
     
-    if (!runningOnRobot) {
-        Rcs::PhysicsSimulationComponent* sim = new Rcs::PhysicsSimulationComponent(simImpl);
-        sim->setUpdateFrequency(1.0/bot.getConfig()->dt);
-        //    sim->setSchedulingPolicy(SCHED_FIFO);
-        bot.addHardwareComponent(sim);
-        bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
-    }
-    else{
-        // TODO @Michael: which components to add
-        throw std::logic_error("Real robot is not implemented yet");
-//        bot.addHardwareComponent(new Rcs::BallTrackingComponent(bot.getCurrentGraph(), trackBallZPos));
-    }
-    
-    
+    Rcs::PhysicsSimulationComponent* sim = new Rcs::PhysicsSimulationComponent(simImpl);
+    sim->setUpdateFrequency(1.0/bot.getConfig()->dt);
+    //    sim->setSchedulingPolicy(SCHED_FIFO);
+    bot.addHardwareComponent(sim);
+    bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
+
 
 #ifdef GRAPHICS_AVAILABLE
     Rcs::ViewerComponent* vc = nullptr;
     if (!valgrind) {
-        if (!runningOnRobot) {
-            vc = new Rcs::ViewerComponent(nullptr, nullptr, true);
-            vc->getViewer()->add(new Rcs::PhysicsNode(simImpl));
-        }
+        vc = new Rcs::ViewerComponent(nullptr, nullptr, true);
+        
+        vc->getViewer()->add(new Rcs::PhysicsNode(simImpl));
+        
         
         // Add the desired graph node of the action model
         auto nodeAMGraph = new Rcs::GraphNode(bot.getConfig()->actionModel->getGraph());
@@ -194,16 +184,6 @@ int main(int argc, char** argv)
         }
     }
     
-    // Load additional (optional) policies
-    Rcs::ControlPolicy* preStrikePolicy = nullptr;
-    auto preStrikePolicyConfig = bot.getConfig()->properties->getChild("preStrikePolicy");
-    if (preStrikePolicyConfig->exists()) {
-        preStrikePolicy = Rcs::ControlPolicy::create(preStrikePolicyConfig);
-        REXEC(1) {
-            std::cout << "Loaded pre-strike policy specified in the config file." << std::endl;
-        }
-    }
-    
     // Start
     bot.startThreads();
     std::cout << "Started robot." << std::endl;
@@ -230,68 +210,15 @@ int main(int argc, char** argv)
             }
             else {
                 bot.logger.start(bot.getConfig()->observationModel->getSpace(),
-                                 bot.getConfig()->actionModel->getSpace(), 1000);
+                                 bot.getConfig()->actionModel->getSpace(), 800);
             }
         }
-        if (!runningOnRobot && vc && vc->getKeyCatcher()->getAndResetKey('b')) {
-            RcsBody* ball = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ball");
-            if (ball) {
-                // Set the ball to a random position
-                std::random_device rd;  // used to obtain a seed for the random number engine
-                std::mt19937 gen(rd()); // standard mersenne_twister_engine seeded with rd()
-                std::uniform_real_distribution<> distrX(0.27, 0.33);
-                std::uniform_real_distribution<> distrY(1.35, 1.45);
-                
-                const double ballRBJAngles[6] = {distrX(gen), distrY(gen), ball->shape[0]->extents[0], 0, 0, 0};
-                RcsGraph_setRigidBodyDoFs(bot.getCurrentGraph(), ball, ballRBJAngles);
-                
-                // Reset the physics simulation
-                simImpl->reset(bot.getCurrentGraph()->q);
-                
-                REXEC(1) {
-                    std::cout << "Set ball to new x, y position: " <<
-                              ball->A_BI->org[0] << " " << ball->A_BI->org[1] << " [m]" << std::endl;
-                }
-            }
-        }
-        if (vc && vc->getKeyCatcher()->getAndResetKey('N')) {
-            // Check if we are in the MiniGolfSim
-            RcsBody* ball = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ball");
-            RcsBody* clubTip = RcsGraph_getBodyByName(bot.getCurrentGraph(), "ClubTip");
-            RcsBody* ground = RcsGraph_getBodyByName(bot.getCurrentGraph(), "Ground");
-            auto amIK = dynamic_cast<Rcs::AMIKGeneric*>(bot.getConfig()->actionModel);
-            
-            if (ball != nullptr && clubTip != nullptr && ground != nullptr && amIK != nullptr) {
-                // Set the control policy active
-                preStrikePolicy->reset();
-                bot.setControlPolicy(preStrikePolicy);
-                REXEC(1) { std::cout << "Going to a position in front of the ball ..." << std::endl; }
-            }
-            
-            else {
-                REXEC(2) { std::cout << "Ignoring the 'n' key stroke" << std::endl; }
-            }
-        }
-        if (vc && vc->getKeyCatcher()->getAndResetKey('n')) {
-            // Command the pre-strike pose (specified by overwriting some joint values of the desired graph)
-            MatNd* q_des_prestrike = MatNd_clone(bot.getGraph()->q);
-            q_des_prestrike->ele[0] = 1.2;
-            q_des_prestrike->ele[1] = RCS_DEG2RAD(24.990777);
-            q_des_prestrike->ele[2] = RCS_DEG2RAD(-87.187492);
-            q_des_prestrike->ele[3] = RCS_DEG2RAD(77.310272);
-            q_des_prestrike->ele[4] = RCS_DEG2RAD(-71.862892);
-            q_des_prestrike->ele[5] = RCS_DEG2RAD(61.423359);
-            q_des_prestrike->ele[6] = RCS_DEG2RAD(-170.341776);
-            q_des_prestrike->ele[7] = RCS_DEG2RAD(-36.836043);
-            bot.setControlPolicy(nullptr, q_des_prestrike);
-            MatNd_destroy(q_des_prestrike);
-            REXEC(1) { std::cout << "Moving to pre-initial state and holding it ..." << std::endl; }
-        }
+        
         if (vc && vc->getKeyCatcher()->getAndResetKey('p')) {
             // Start the logger now if desired
             if (startLoggerNextPolicyStart) {
                 bot.logger.start(bot.getConfig()->observationModel->getSpace(),
-                                 bot.getConfig()->actionModel->getSpace(), 1000);
+                                 bot.getConfig()->actionModel->getSpace(), 800);
             }
             
             // Overwrite the current action model by re-creating the one form the experiment config
@@ -302,53 +229,16 @@ int main(int argc, char** argv)
             bot.setControlPolicy(controlPolicy);
             REXEC(1) { std::cout << "Control policy was reset and is active ..." << std::endl; }
         }
-        if (vc && vc->getKeyCatcher()->getAndResetKey('u')) {
-            // Command an initial pose above and in front of the ball (specified by overwriting some joint values of
-            // the desired graph)
-            MatNd* q_des_upfront = MatNd_clone(bot.getGraph()->q);
-            q_des_upfront->ele[0] = 1.2;
-            q_des_upfront->ele[1] = RCS_DEG2RAD(-17.024125);
-            q_des_upfront->ele[2] = RCS_DEG2RAD(-107.651808);
-            q_des_upfront->ele[3] = RCS_DEG2RAD(65.137897);
-            q_des_upfront->ele[4] = RCS_DEG2RAD(-93.876418);
-            q_des_upfront->ele[5] = RCS_DEG2RAD(41.902234);
-            q_des_upfront->ele[6] = RCS_DEG2RAD(-186.725503);
-            q_des_upfront->ele[7] = RCS_DEG2RAD(-29.29585);
-            bot.setControlPolicy(nullptr, q_des_upfront);
-            MatNd_destroy(q_des_upfront);
-            REXEC(1) { std::cout << "Moving to pre-initial state and holding it ..." << std::endl; }
-        }
-        if (vc && vc->getKeyCatcher()->getAndResetKey('o')) {
-            // Command the initial pose (specified by overwriting some joint values of the desired graph)
-            MatNd* q_des_home = MatNd_clone(bot.getGraph()->q);
-            q_des_home->ele[0] = 1.2;
-            q_des_home->ele[1] = RCS_DEG2RAD(29.821247);
-            q_des_home->ele[2] = RCS_DEG2RAD(-86.89066);
-            q_des_home->ele[3] = RCS_DEG2RAD(88.293785);
-            q_des_home->ele[4] = RCS_DEG2RAD(-66.323556);
-            q_des_home->ele[5] = RCS_DEG2RAD(63.39102);
-            q_des_home->ele[6] = RCS_DEG2RAD(-148.848292);
-            q_des_home->ele[7] = RCS_DEG2RAD(-11.296764);
-            bot.setControlPolicy(nullptr, q_des_home);
-            MatNd_destroy(q_des_home);
-            REXEC(1) { std::cout << "Moving to initial state and holding it ..." << std::endl; }
-        }
-    
+        
         std::string hudText = "a";
-        if (!runningOnRobot){
-            hudText = bot.getConfig()->getHUDText(
-                simImpl->time(), bot.getObservation(), bot.getAction(), simImpl, ppmanager, nullptr);
-        }
-        else{
-            hudText = bot.getConfig()->getHUDText(
-                // TODO how to get the time form the real robot?
-                0, bot.getObservation(), bot.getAction(), nullptr, ppmanager, nullptr);
-        }
+        hudText = bot.getConfig()->getHUDText(
+            simImpl->time(), bot.getObservation(), bot.getAction(), simImpl, ppmanager, nullptr);
+        
         vc->setText(hudText);
 #endif
         
         // Wait a bit till next update
-        Timer_waitDT(0.01);  // TODO @Michael: is this dangerous here?
+        Timer_waitDT(0.01);
     }
     
     // Terminate

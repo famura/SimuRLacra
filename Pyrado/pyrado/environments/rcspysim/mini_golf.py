@@ -90,7 +90,7 @@ def create_mini_golf_task(env_spec: EnvSpec, hole_pos: np.ndarray, succ_thold: f
 class MiniGolfSim(RcsSim, Serializable):
     """A 7-dof Schunk robot playing mini golf"""
 
-    def __init__(self, task_args: dict, relativeZdTask: bool, **kwargs):
+    def __init__(self, task_args: dict, **kwargs):
         """
         Constructor
 
@@ -124,10 +124,11 @@ class MiniGolfSim(RcsSim, Serializable):
             self,
             envType="MiniGolf",
             task_args=task_args,
-            relativeZdTask=relativeZdTask,
             state_mask_labels=("Ball_X", "Ball_Y", "base-m3", "m3-m4", "m4-m5", "m5-m6", "m6-m7", "m7-m8", "m8-m9"),
-            graphFileName="gMiniGolf_FTS.xml" if kwargs.get("observeForceTorque", False) else "gMiniGolf.xml",
-            physicsConfigFile="pMiniGolf.xml",
+            graphFileName="gMiniGolf_FTS.xml"
+            if kwargs.get("observeForceTorque", False)
+            else kwargs.pop("graphFileName", "gMiniGolf.xml"),
+            physicsConfigFile=kwargs.pop("physicsConfigFile", "pMiniGolf.xml"),
             collisionConfig=collision_config,
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "MiniGolf"),
             **kwargs,
@@ -149,12 +150,12 @@ class MiniGolfSim(RcsSim, Serializable):
         return dict(
             ball_radius=0.02,  # [m]
             ball_mass=0.005,  # [kg]
-            ball_slip=5e-4,  # [rad/(Ns)]
+            ball_slip=1e-3,  # [rad/(Ns)]
             ball_friction_coefficient=0.6,  # [-]
-            ball_rolling_friction_coefficient=1e-5,  # [m]
-            ball_restitution=0,  # [-], leave it at 0 for now
+            ball_rolling_friction_coefficient=1e-5,  # [-]
+            ball_restitution=0.5,  # [-], acts combined with the restitution coeff of the default material which is 1
             club_mass=0.9,  # [kg]
-            ground_slip=5e-4,  # [rad/(Ns)]
+            ground_slip=1e-4,  # [rad/(Ns)]
             ground_friction_coefficient=0.4,  # [-]
             obstacleleft_pos_offset_x=0.0,  # [m]
             obstacleleft_pos_offset_y=0.0,  # [m]
@@ -162,8 +163,6 @@ class MiniGolfSim(RcsSim, Serializable):
             obstacleright_pos_offset_x=0.0,  # [m]
             obstacleright_pos_offset_y=0.0,  # [m]
             obstacleright_rot_offset_c=0.0,  # [rad]
-            obstacleblocker_pos_offset_x=0.0,  # [m]
-            obstacleblocker_pos_offset_y=0.0,  # [m]
         )
 
 
@@ -193,5 +192,27 @@ class MiniGolfIKSim(MiniGolfSim, Serializable):
             actionModelType="ik",
             positionTasks=True,
             relativeZdTask=relativeZdTask,
+            **kwargs,
+        )
+
+
+class MiniGolfJointCtrlSim(MiniGolfSim, Serializable):
+    """A 7-dof Schunk robot playing mini golf, controlled by directly setting the joint angles"""
+
+    name: str = "mg-jnt"
+
+    def __init__(self, task_args: dict = None, **kwargs):
+        """
+        Constructor
+
+        :param task_args: arguments for the task construction
+        :param kwargs: keyword arguments forwarded to `RcsSim`
+        """
+        Serializable._init(self, locals())
+
+        # Forward to the MiniGolfSim's constructor, specifying the characteristic action model
+        super().__init__(
+            task_args=dict() if task_args is None else task_args,
+            actionModelType="joint_pos",
             **kwargs,
         )

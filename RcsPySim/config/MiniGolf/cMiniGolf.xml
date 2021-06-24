@@ -30,6 +30,7 @@
 
 <Controller graph="gMiniGolf.xml">
 
+  <Task name="ClubTip_Z" controlVariable="Z" effector="ClubTip" active="false" />
   <Task name="ClubTip_A" controlVariable="A" effector="ClubTip" active="false" />
   <Task name="ClubTip_B" controlVariable="B" effector="ClubTip"  active="false" />
   <Task name="ClubTip_C" controlVariable="C" effector="ClubTip" active="false" />
