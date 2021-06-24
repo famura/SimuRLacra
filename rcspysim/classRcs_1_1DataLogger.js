@@ -7,7 +7,7 @@ var classRcs_1_1DataLogger =
     [ "start", "classRcs_1_1DataLogger.html#ab8578bedf53c6cb649050f6316c3526e", null ],
     [ "stop", "classRcs_1_1DataLogger.html#a36669576b064c97e1e386eadcc6cc581", null ],
     [ "buffer", "classRcs_1_1DataLogger.html#a2ea35eb37ec336a643ea913b4ad08c27", null ],
-    [ "currentStep", "classRcs_1_1DataLogger.html#a9bfd8817c6a6f9411044ceedfa024dce", null ],
+    [ "currentStep", "classRcs_1_1DataLogger.html#a2721265b6bd64515faf4eec4ab35ce0e", null ],
     [ "fileCounter", "classRcs_1_1DataLogger.html#a1f313afef1b36d8fcfd3af63aa443702", null ],
     [ "mutex", "classRcs_1_1DataLogger.html#ae80e4ed3e5a61f803028c00922588b5f", null ],
     [ "output", "classRcs_1_1DataLogger.html#a2bf31bd7c9ede32ea226bea41a6d2105", null ],

@@ -4,6 +4,8 @@ var searchData=
   ['gdes',['gDes',['../classRcs_1_1ComponentViewer.html#a799a57dd0b96b4c928fea09ccafd205b',1,'Rcs::ComponentViewer']]],
   ['get',['get',['../pybind__dict__utils_8h.html#a6b445c7b5a560607443142ff856a5c25',1,'pybind_dict_utils.h']]],
   ['get_5fcast',['get_cast',['../pybind__dict__utils_8h.html#a2d5dcc488a7a08fc526b4cc7549d4896',1,'get_cast(const py::dict &amp;dict, const char *key, T default_, bool noneIsEmpty=true):&#160;pybind_dict_utils.h'],['../pybind__dict__utils_8h.html#ab3a641104beac99c0764364d2818aa60',1,'get_cast(const py::dict &amp;dict, const char *key, T &amp;&amp;default_=NULL):&#160;pybind_dict_utils.h']]],
+  ['get_5fgt_5fobstacle_5fangles',['get_gt_obstacle_angles',['../namespaceget__gt__obstacle__angles.html',1,'']]],
+  ['get_5fgt_5fobstacle_5fangles_2epy',['get_gt_obstacle_angles.py',['../get__gt__obstacle__angles_8py.html',1,'']]],
   ['getaction',['getAction',['../classRcs_1_1RcsPyBot.html#a3f6db57b92981961620afa30da783799',1,'Rcs::RcsPyBot::getAction()'],['../classRcs_1_1PolicyComponent.html#ac6065d546ff667757384ee7b9c98798d',1,'Rcs::PolicyComponent::getAction()']]],
   ['getactivation',['getActivation',['../classRcs_1_1AMDynamicalSystemActivation.html#a4dff131a6fa8e6a94f5dc542f09c1312',1,'Rcs::AMDynamicalSystemActivation::getActivation()'],['../classRcs_1_1AMIKControllerActivation.html#acd1a8f8b48e0b44d1dda9073e08fc3f2',1,'Rcs::AMIKControllerActivation::getActivation()']]],
   ['getbodyinfo',['getBodyInfo',['../classRcs_1_1PhysicsParameterManager.html#ae763a107f1af9479f4898bb90b88c6e6',1,'Rcs::PhysicsParameterManager']]],

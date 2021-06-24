@@ -1,7 +1,8 @@
 <map id="src/cpp/core/action/AMJointControlPosition.h" name="src/cpp/core/action/AMJointControlPosition.h">
 <area shape="rect" id="node2" href="$AMJointControlPosition_8cpp.html" title="src/cpp/core/action\l/AMJointControlPosition.cpp" alt="" coords="5,95,193,136"/>
 <area shape="rect" id="node3" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="218,102,429,129"/>
-<area shape="rect" id="node4" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="453,102,663,129"/>
-<area shape="rect" id="node5" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="687,102,909,129"/>
-<area shape="rect" id="node6" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="933,102,1188,129"/>
+<area shape="rect" id="node4" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="453,102,644,129"/>
+<area shape="rect" id="node5" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="669,102,879,129"/>
+<area shape="rect" id="node6" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="903,102,1125,129"/>
+<area shape="rect" id="node7" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="1149,102,1404,129"/>
 </map>

@@ -1,16 +1,16 @@
 <map id="src/cpp/core/observation/OMComputedVelocity.h" name="src/cpp/core/observation/OMComputedVelocity.h">
-<area shape="rect" id="node2" href="$OMForceTorque_8h.html" title="src/cpp/core/observation\l/OMForceTorque.h" alt="" coords="900,95,1065,136"/>
-<area shape="rect" id="node11" href="$OMCollisionCost_8h.html" title="src/cpp/core/observation\l/OMCollisionCost.h" alt="" coords="1132,95,1297,136"/>
-<area shape="rect" id="node15" href="$OMComputedVelocity_8cpp.html" title="src/cpp/core/observation\l/OMComputedVelocity.cpp" alt="" coords="1321,95,1500,136"/>
-<area shape="rect" id="node3" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="881,191,1085,218"/>
-<area shape="rect" id="node4" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="1109,191,1320,218"/>
-<area shape="rect" id="node5" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="1344,191,1544,218"/>
-<area shape="rect" id="node6" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="1569,191,1783,218"/>
+<area shape="rect" id="node2" href="$OMForceTorque_8h.html" title="src/cpp/core/observation\l/OMForceTorque.h" alt="" coords="907,95,1072,136"/>
+<area shape="rect" id="node11" href="$OMCollisionCost_8h.html" title="src/cpp/core/observation\l/OMCollisionCost.h" alt="" coords="1255,95,1420,136"/>
+<area shape="rect" id="node15" href="$OMComputedVelocity_8cpp.html" title="src/cpp/core/observation\l/OMComputedVelocity.cpp" alt="" coords="1444,95,1623,136"/>
+<area shape="rect" id="node3" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="1119,191,1323,218"/>
+<area shape="rect" id="node4" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="1348,191,1559,218"/>
+<area shape="rect" id="node5" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="1583,191,1783,218"/>
+<area shape="rect" id="node6" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="410,191,625,218"/>
 <area shape="rect" id="node7" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="195,191,386,218"/>
-<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="411,191,621,218"/>
-<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="645,191,857,218"/>
+<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="649,191,860,218"/>
+<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="883,191,1095,218"/>
 <area shape="rect" id="node10" href="$OMForceTorque_8cpp.html" title="src/cpp/core/observation\l/OMForceTorque.cpp" alt="" coords="5,184,171,225"/>
-<area shape="rect" id="node12" href="$OMCollisionCost_8cpp.html" title="src/cpp/core/observation\l/OMCollisionCost.cpp" alt="" coords="1808,184,1973,225"/>
-<area shape="rect" id="node13" href="$OMCollisionCostPrediction_8cpp.html" title="src/cpp/core/observation\l/OMCollisionCostPrediction.cpp" alt="" coords="1997,184,2205,225"/>
-<area shape="rect" id="node14" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="2230,191,2485,218"/>
+<area shape="rect" id="node12" href="$OMCollisionCost_8cpp.html" title="src/cpp/core/observation\l/OMCollisionCost.cpp" alt="" coords="1807,184,1972,225"/>
+<area shape="rect" id="node13" href="$OMCollisionCostPrediction_8cpp.html" title="src/cpp/core/observation\l/OMCollisionCostPrediction.cpp" alt="" coords="1996,184,2204,225"/>
+<area shape="rect" id="node14" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="2229,191,2483,218"/>
 </map>
