@@ -69,7 +69,7 @@ class PDDR(InterruptableAlgorithm):
         teacher_algo: Optional[callable] = None,
         teacher_algo_hparam: Optional[dict] = None,
         randomizer: Optional[DomainRandomizer] = None,
-        logger: StepLogger = Optional[None],
+        logger: Optional[StepLogger] = None,
         num_workers: int = 4,
     ):
         """
