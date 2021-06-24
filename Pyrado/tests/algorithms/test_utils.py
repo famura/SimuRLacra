@@ -110,7 +110,7 @@ def test_action_statistics(env: SimEnv, policy: Policy):
     to.testing.assert_allclose(actstats.entropy, gt_entropy, rtol=1e-4, atol=1e-5)
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_omo"], indirect=True)
 def test_adr_reward_generator(env):
     reference_env = env

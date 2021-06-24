@@ -252,7 +252,7 @@ def test_reparametrization_trick(mean, cov):
         to.testing.assert_allclose(smpl_distr_reparam, smpl_reparam)
 
 
-# @pytest.mark.visualization
+@pytest.mark.parametrize("plot", [False, pytest.param(True, marks=pytest.mark.visual)])
 @pytest.mark.parametrize(
     "sequence, x_init",
     [
@@ -270,16 +270,19 @@ def test_reparametrization_trick(mean, cov):
         (sequence_nlog2, np.array([1, 2, 3])),
     ],
 )
-def test_sequences(sequence: Callable, x_init: np.ndarray):
+def test_sequences(sequence: Callable, x_init: np.ndarray, plot: bool):
     # Get the full sequence
     _, x_full = sequence(x_init, 5, float)
     assert x_full is not None
 
-    # Plot the sequences
-    # for i in range(x_full.shape[1]):
-    #     plt.stem(x_full[:, i], label=str(x_init[i]))
-    # plt.legend()
-    # plt.show()
+    if plot:
+        import matplotlib.pyplot as plt
+
+        # Plot the sequences
+        for i in range(x_full.shape[1]):
+            plt.stem(x_full[:, i], label=str(x_init[i]))
+        plt.legend()
+        plt.show()
 
 
 @pytest.mark.parametrize("sample", [np.array([30, 37, 36, 43, 42, 43, 43, 46, 41, 42])])

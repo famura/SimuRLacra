@@ -291,7 +291,7 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
@@ -416,7 +416,7 @@ def test_soft_update(env, policy: Policy):
     assert to.allclose(target.param_values, 0.36 * to.ones_like(target.param_values))
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 @pytest.mark.parametrize("num_feat_per_dim", [1000], ids=[1000])
 @pytest.mark.parametrize("loss_fcn", [to.nn.MSELoss()], ids=["mse"])
 @pytest.mark.parametrize("algo_hparam", [dict(max_iter=50, max_iter_no_improvement=5)], ids=["casual"])

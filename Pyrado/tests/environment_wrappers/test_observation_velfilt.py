@@ -38,7 +38,7 @@ from pyrado.utils.math import rmse
 
 
 @pytest.mark.wrapper
-@pytest.mark.parametrize("plot", [False, pytest.param(True, marks=pytest.mark.visualization)])
+@pytest.mark.parametrize("plot", [False, pytest.param(True, marks=pytest.mark.visual)])
 def test_velocity_filter(plot: bool):
     # Set up environment
     env_gt = QQubeSwingUpSim(dt=1 / 500.0, max_steps=350)

@@ -102,7 +102,7 @@ def ex_dir(tmpdir):
     return tmpdir
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize(
     "spota_hparam",
@@ -178,7 +178,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "bayrn_hparam",
@@ -299,7 +299,7 @@ def test_arpl(ex_dir, env: SimEnv):
     algo.train(snapshot_mode="best")
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env, num_eval_rollouts", [("default_bob", 5)], ids=["bob"], indirect=["env"])
 def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     pyrado.set_seed(0)
@@ -382,7 +382,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     assert loss_post <= loss_pre  # don't have to be better every step
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     pyrado.set_seed(0)
@@ -664,7 +664,7 @@ def test_sbi_embedding(
     assert data_sim.shape == (7, embedding.dim_output)
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("algo_name", [NPDR.name, BayesSim.name], ids=["NPDR", "Bayessim"])
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
@@ -783,7 +783,7 @@ def test_npdr_and_bayessim(
         assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
 @pytest.mark.parametrize("optimize_mean", [False, True])
 def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
@@ -842,7 +842,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq-su"], indirect=True)
 @pytest.mark.parametrize("policy", ["fnn_policy"], ids=["fnn"], indirect=True)
 @pytest.mark.parametrize(

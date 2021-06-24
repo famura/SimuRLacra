@@ -497,7 +497,7 @@ def test_gss_optimizer_functional():
     assert to.norm(dummy.x + 4) < 1e-4
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 def test_gss_optimizer_nlin_fcn():
     from matplotlib import pyplot as plt
 

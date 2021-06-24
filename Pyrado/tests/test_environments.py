@@ -303,7 +303,7 @@ def test_reset(env):
     assert obs2 == pytest.approx(obs1)
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 @pytest.mark.parametrize(
     "env",
     [
@@ -332,11 +332,11 @@ def test_panda3d_animations(env, use_render):
             break
     env.reset()  # only calls _reset_anim if window is already existing
     assert env.curr_step <= env.max_steps
-    env._visualization.destroy()
-    del env._visualization
+    env._visual.destroy()
+    del env._visual
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 @pytest.mark.parametrize(
     "env",
     [
@@ -388,7 +388,7 @@ def test_rcspysim_animations(env):
 
 
 @m_needs_mujoco
-@pytest.mark.visualization
+@pytest.mark.visual
 @pytest.mark.parametrize(
     "env", ["default_cth", "default_hop", "default_wambic"], ids=["cth", "hop", "wam-bic"], indirect=True
 )
@@ -428,7 +428,7 @@ def test_quanser_real_wo_connecting(env: RealEnv):
     env.render(RenderMode(text=True))
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 @pytest.mark.parametrize(
     "env_name",
     ["MountainCar-v0", "CartPole-v1", "Acrobot-v1", "MountainCarContinuous-v0", "Pendulum-v0", "LunarLander-v2"],
