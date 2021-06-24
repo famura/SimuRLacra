@@ -1257,7 +1257,8 @@
 
     <span class="c1"># Get the nominal domain parameters</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)):</span>
-        <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">env_sim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+        <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">env_sim</span><span class="o">.</span><span class="n">domain_param</span>  <span class="c1"># also gets the wrapper&#39;s domain parameters</span>
+        <span class="n">dp_nom</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">())</span>
         <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">dp_nom</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dp_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
         <span class="n">dp_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">dp_nom</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">legend_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

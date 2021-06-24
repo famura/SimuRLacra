@@ -546,6 +546,7 @@
         <span class="n">acc_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 6</span>
         <span class="n">alpha_max_pd_enable</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 20</span>
         <span class="n">pd_gains</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>  <span class="c1"># Quanser&#39;s value: [-2, 35, -1.5, 3]</span>
+        <span class="n">reset_domain_param</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -570,7 +571,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha_max_pd_enable</span> <span class="o">=</span> <span class="n">alpha_max_pd_enable</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
 
         <span class="c1"># Set up the energy and PD controller</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">e_ctrl</span> <span class="o">=</span> <span class="n">QQubeEnergyCtrl</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">ref_energy</span><span class="p">,</span> <span class="n">energy_gain</span><span class="p">,</span> <span class="n">energy_th_gain</span><span class="p">,</span> <span class="n">acc_max</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e_ctrl</span> <span class="o">=</span> <span class="n">QQubeEnergyCtrl</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">ref_energy</span><span class="p">,</span> <span class="n">energy_gain</span><span class="p">,</span> <span class="n">energy_th_gain</span><span class="p">,</span> <span class="n">acc_max</span><span class="p">,</span> <span class="n">reset_domain_param</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pd_ctrl</span> <span class="o">=</span> <span class="n">QQubePDCtrl</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">pd_gains</span><span class="p">,</span> <span class="n">al_des</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QQubeSwingUpAndBalanceCtrl.reset"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -601,9 +602,9 @@
         <span class="c1"># Reconstruct the sate for the error-based controller</span>
         <span class="n">sin_th</span><span class="p">,</span> <span class="n">cos_th</span><span class="p">,</span> <span class="n">sin_al</span><span class="p">,</span> <span class="n">cos_al</span><span class="p">,</span> <span class="n">th_d</span><span class="p">,</span> <span class="n">al_d</span> <span class="o">=</span> <span class="n">obs</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_th</span><span class="p">,</span> <span class="n">cos_th</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">sin_al</span><span class="p">,</span> <span class="n">cos_al</span><span class="p">),</span> <span class="n">th_d</span><span class="p">,</span> <span class="n">al_d</span><span class="p">])</span>
+        <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>  <span class="c1"># alpha can have multiple revolutions</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pd_enabled</span><span class="p">(</span><span class="n">cos_al</span><span class="p">):</span>
-            <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>  <span class="c1"># alpha can have multiple revolutions</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pd_ctrl</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_ctrl</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div></div>
@@ -619,6 +620,7 @@
         <span class="n">energy_gain</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">th_gain</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">acc_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">reset_domain_param</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -629,6 +631,8 @@
 <span class="sd">        :param energy_gain: P-gain on the energy [m/s/J]</span>
 <span class="sd">        :param th_gain: P-gain on angle theta</span>
 <span class="sd">        :param acc_max: maximum linear acceleration of the pendulum pivot [m/s**2]</span>
+<span class="sd">        :param reset_domain_param: if `True` the domain parameters are reset if the they are present as a entry in the</span>
+<span class="sd">                                   kwargs passed to `reset()`. If `False` they are ignored.</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
@@ -645,17 +649,19 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">acc_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">acc_max</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_domain_param</span> <span class="o">=</span> <span class="n">QQubeSwingUpSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_domain_param</span> <span class="o">=</span> <span class="n">reset_domain_param</span>
 
         <span class="c1"># Default initialization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="QQubeEnergyCtrl.reset"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.environment_specific.QQubeEnergyCtrl.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set the domain parameters defining the controller&#39;s model using a dict called `domain_param`.&quot;&quot;&quot;</span>
-        <span class="n">domain_param</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;domain_param&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>  <span class="c1"># do nothing if domain_param not given</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain_param</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_domain_param</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_param</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+        <span class="sd">&quot;&quot;&quot;If desired, set the domain parameters defining the controller&#39;s model using a dict called `domain_param`.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reset_domain_param</span><span class="p">:</span>
+            <span class="n">domain_param</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;domain_param&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>  <span class="c1"># do nothing if domain_param not given</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain_param</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_domain_param</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">domain_param</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_param</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">E_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

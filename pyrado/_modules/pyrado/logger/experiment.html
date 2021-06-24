@@ -268,8 +268,9 @@
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils</span> <span class="kn">import</span> <span class="n">get_class_name</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">dict_path_access</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">dict_path_access</span><span class="p">,</span> <span class="n">update_matching_keys_recursively</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span><span class="p">,</span> <span class="n">select_query</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.ordering</span> <span class="kn">import</span> <span class="n">natural_sort</span>
 
 
 <div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">:</span>
@@ -747,27 +748,39 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="load_hyperparameters"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.load_hyperparameters">[docs]</a><span class="k">def</span> <span class="nf">load_hyperparameters</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">raise_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+<div class="viewcode-block" id="load_hyperparameters"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.load_hyperparameters">[docs]</a><span class="k">def</span> <span class="nf">load_hyperparameters</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loads the hyper-parameters-dict from the given experiment directory. The hyper-parameters file is assumed to be</span>
 <span class="sd">    named `hyperparams.yaml`.</span>
 
 <span class="sd">    :param ex_dir: experiment&#39;s directory to load from</span>
-<span class="sd">    :param raise_error: whether to raise an error if one occurs; if false, `None` is returned and an error</span>
-<span class="sd">                        message is printed</span>
+<span class="sd">    :param verbose: if `True`, print message if no hyper-parameter file was found</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">hparams_file_name</span> <span class="o">=</span> <span class="s2">&quot;hyperparams.yaml&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">hparams_file_name</span><span class="p">))</span>
-    <span class="k">except</span> <span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">):</span>
+        <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># prevents walk() from going into subdirectories</span>
+        <span class="n">natural_sort</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">hparams_file_name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1"># Default case</span>
+            <span class="k">return</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">hparams_file_name</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1"># Recursively merge the hyper-parameter configurations</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;hparam&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
+                <span class="n">hparam_args</span> <span class="o">=</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
+                <span class="n">setting_args</span> <span class="o">=</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;settings.yaml&quot;</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">update_matching_keys_recursively</span><span class="p">(</span><span class="n">setting_args</span><span class="p">,</span> <span class="n">hparam_args</span><span class="p">)</span>
+
+    <span class="c1"># No hyper-parameter file was found</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="n">print_cbt</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Did not find </span><span class="si">{</span><span class="n">hparams_file_name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">ex_dir</span><span class="si">}</span><span class="s2"> or could not crawl the loaded hyper-parameters.&quot;</span><span class="p">,</span>
             <span class="s2">&quot;y&quot;</span><span class="p">,</span>
             <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="n">raise_error</span><span class="p">:</span>
-            <span class="k">raise</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="k">return</span> <span class="kc">None</span></div>
 </pre></div>
 
            </div>

@@ -287,6 +287,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.argparser</span> <span class="kn">import</span> <span class="n">get_argparser</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_types_equal</span><span class="p">,</span> <span class="n">is_iterable</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.ordering</span> <span class="kn">import</span> <span class="n">natural_sort</span>
 
 
 <div class="viewcode-block" id="load_experiment"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.experiments.load_experiment">[docs]</a><span class="k">def</span> <span class="nf">load_experiment</span><span class="p">(</span>
@@ -394,7 +395,7 @@
             <span class="c1"># Load the complete data or the data of the given iteration</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">iter</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">iter</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;data_real&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data_real.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">pass</span>
 
     <span class="k">elif</span> <span class="n">algo</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a2c&quot;</span><span class="p">,</span> <span class="s2">&quot;ppo&quot;</span><span class="p">,</span> <span class="s2">&quot;ppo2&quot;</span><span class="p">]:</span>
@@ -528,7 +529,7 @@
     <span class="n">ex_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;rollout&quot;</span><span class="p">,</span> <span class="n">file_exts</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="s2">&quot;pkl&quot;</span><span class="p">)</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Crawl through the given directory and load all rollouts, i.e. all files that include the key.</span>
+<span class="sd">    Crawl through the given directory, sort the files, and load all rollouts, i.e. all files that include the key.</span>
 
 <span class="sd">    :param ex_dir: directory, e.g. and experiment folder</span>
 <span class="sd">    :param key: word or part of a word that needs to the in the name of a file for it to be loaded</span>
@@ -546,6 +547,7 @@
     <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">):</span>
         <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># prevents walk() from going into subdirectories</span>
+        <span class="n">natural_sort</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
             <span class="n">f_ext</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">and</span> <span class="n">f_ext</span> <span class="ow">in</span> <span class="n">file_exts</span><span class="p">:</span>

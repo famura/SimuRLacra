@@ -339,15 +339,14 @@ Uses <cite>pyrado.TEMP_DIR</cite> and <cite>pyrado.EXP_DIR</cite> if not specifi
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrado.logger.experiment.load_hyperparameters">
-<span class="sig-name descname"><span class="pre">load_hyperparameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#load_hyperparameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.experiment.load_hyperparameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_hyperparameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#load_hyperparameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.logger.experiment.load_hyperparameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the hyper-parameters-dict from the given experiment directory. The hyper-parameters file is assumed to be
 named <cite>hyperparams.yaml</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ex_dir</strong> – experiment’s directory to load from</p></li>
-<li><p><strong>raise_error</strong> – whether to raise an error if one occurs; if false, <cite>None</cite> is returned and an error
-message is printed</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, print message if no hyper-parameter file was found</p></li>
 </ul>
 </dd>
 </dl>

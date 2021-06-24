@@ -262,6 +262,7 @@
 <span class="kn">from</span> <span class="nn">colorama</span> <span class="kn">import</span> <span class="n">Fore</span><span class="p">,</span> <span class="n">Style</span>
 <span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">NeuralInference</span>
 <span class="kn">from</span> <span class="nn">sbi.inference.posteriors.direct_posterior</span> <span class="kn">import</span> <span class="n">DirectPosterior</span>
+<span class="kn">from</span> <span class="nn">sbi.inference.snpe</span> <span class="kn">import</span> <span class="n">PosteriorEstimator</span>
 <span class="kn">from</span> <span class="nn">sbi.utils.user_input_checks</span> <span class="kn">import</span> <span class="n">prepare_for_sbi</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span><span class="p">,</span> <span class="n">Normal</span>
@@ -322,6 +323,8 @@
         <span class="n">stop_on_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">use_rec_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">reset_sbi_routine_each_iter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">reset_proposal_each_iter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">num_eval_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">posterior_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subrtn_sbi_training_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -367,6 +370,8 @@
 <span class="sd">        :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout</span>
 <span class="sd">                            during simulation (feed-forward). If `False` there policy is used to generate (potentially)</span>
 <span class="sd">                            state-dependent actions (feed-back).</span>
+<span class="sd">        :param reset_sbi_routine_each_iter: if `True` the sbi subroutine instance is recreated every iteration.</span>
+<span class="sd">                                            Use this flag to train the posterior each iteration from scratch.</span>
 <span class="sd">        :param num_sbi_rounds: set to an integer &gt; 1 to use multi-round sbi. This way the posteriors (saved as</span>
 <span class="sd">                               `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`</span>
 <span class="sd">                               counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior</span>
@@ -432,10 +437,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">len_segments</span> <span class="o">=</span> <span class="n">len_segments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_on_done</span> <span class="o">=</span> <span class="n">stop_on_done</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_rec_act</span> <span class="o">=</span> <span class="n">use_rec_act</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_sbi_routine_each_iter</span> <span class="o">=</span> <span class="n">reset_sbi_routine_each_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_proposal_each_iter</span> <span class="o">=</span> <span class="n">reset_proposal_each_iter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">=</span> <span class="n">num_sbi_rounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_eval_samples</span> <span class="o">=</span> <span class="n">num_eval_samples</span> <span class="ow">or</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">**</span> <span class="nb">len</span><span class="p">(</span><span class="n">dp_mapping</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulation_batch_size</span> <span class="o">=</span> <span class="n">simulation_batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">normalize_posterior</span> <span class="o">=</span> <span class="n">normalize_posterior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subrtn_sbi_training_hparam</span> <span class="o">=</span> <span class="n">subrtn_sbi_training_hparam</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span> <span class="o">=</span> <span class="n">posterior_hparam</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thold_succ_subrtn</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">thold_succ_subrtn</span><span class="p">)</span>
@@ -470,7 +478,7 @@
         <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span> <span class="s2">&quot;env_real.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
         <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="s2">&quot;embedding.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
         <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">prior</span><span class="p">,</span> <span class="s2">&quot;prior.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
-        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s2">&quot;policy_init.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s2">&quot;init_policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subroutine_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Algorithm</span><span class="p">:</span>
@@ -515,13 +523,39 @@
         <span class="c1"># Call sbi&#39;s preparation function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_simulator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span> <span class="o">=</span> <span class="n">prepare_for_sbi</span><span class="p">(</span><span class="n">rollout_sampler</span><span class="p">,</span> <span class="n">prior</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_initialize_subrtn_sbi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subrtn_sbi_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">NeuralInference</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the SBI subroutine instance. This method is called in the constructor of NPDR or if you wish to</span>
+<span class="sd">        retrain the posterior from scratch each iteration.</span>
+
+<span class="sd">        :param subrtn_sbi_class: get the SBI class which you want to train with. If `None`, the class is inferred from</span>
+<span class="sd">                                 `self._subrtn_sbi`.</span>
+<span class="sd">        :param kwargs: e.g. `num_components` for BayesSim</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">subrtn_sbi_class</span><span class="p">,</span> <span class="n">NeuralInference</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The given subrtn_sbi_class must be a subclass of NeuralInference, but is </span><span class="si">{</span><span class="n">subrtn_sbi_class</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE (untested)</span>
+        <span class="n">density_estimator</span> <span class="o">=</span> <span class="n">sbiutils</span><span class="o">.</span><span class="n">posterior_nn</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_hparam</span><span class="p">)</span>  <span class="c1"># embedding for nflows is always nn.Identity</span>
+        <span class="n">summary_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">writer</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">summary_writer</span><span class="p">,</span> <span class="n">SummaryWriter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_sbi</span> <span class="o">=</span> <span class="n">subrtn_sbi_class</span><span class="p">(</span>
+            <span class="n">prior</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span><span class="p">,</span>
+            <span class="n">density_estimator</span><span class="o">=</span><span class="n">density_estimator</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">summary_writer</span><span class="o">=</span><span class="n">summary_writer</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
 <div class="viewcode-block" id="SBIBase.get_latest_proposal_prev_iter"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.get_latest_proposal_prev_iter">[docs]</a>    <span class="k">def</span> <span class="nf">get_latest_proposal_prev_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">sbiutils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">,</span> <span class="n">DirectPosterior</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get either the prior or the conditioned posterior from the (last round of) previous iteration.</span>
 
 <span class="sd">        :return: proposal for simulating with sbi</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;reset_proposal_each_iter&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_proposal_each_iter</span><span class="p">):</span>
             <span class="n">proposal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sbi_prior</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sbi_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -733,7 +767,14 @@
             <span class="n">mcmc_method</span><span class="o">=</span><span class="s2">&quot;slice_np_vectorized&quot;</span><span class="p">,</span>
             <span class="n">mcmc_parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">warmup_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_chains</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">init_strategy</span><span class="o">=</span><span class="s2">&quot;sir&quot;</span><span class="p">),</span>  <span class="c1"># default: slice_np, 20</span>
         <span class="p">)</span>
-        <span class="n">subrtn_sbi_sampling_hparam</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="n">default_sampling_hparam</span><span class="p">,</span> <span class="n">subrtn_sbi_sampling_hparam</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()])</span>
+        <span class="k">if</span> <span class="n">subrtn_sbi_sampling_hparam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">subrtn_sbi_sampling_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">subrtn_sbi_sampling_hparam</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="n">default_sampling_hparam</span><span class="p">,</span> <span class="n">subrtn_sbi_sampling_hparam</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="c1"># Sample domain parameters from the posterior</span>
         <span class="n">domain_params</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
             <span class="p">[</span><span class="n">posterior</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,),</span> <span class="n">x</span><span class="o">=</span><span class="n">x_o</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_sbi_sampling_hparam</span><span class="p">)</span> <span class="k">for</span> <span class="n">x_o</span> <span class="ow">in</span> <span class="n">data_real</span><span class="p">],</span>
             <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -800,6 +841,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">num_ml_samples</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s2">&quot;0 (int)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_eval_samples</span> <span class="o">&lt;</span> <span class="n">num_ml_samples</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_ml_samples</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="n">num_eval_samples</span><span class="p">)</span>
 
         <span class="c1"># Evaluate the posterior</span>
         <span class="n">domain_params</span><span class="p">,</span> <span class="n">log_probs</span> <span class="o">=</span> <span class="n">SBIBase</span><span class="o">.</span><span class="n">eval_posterior</span><span class="p">(</span>
