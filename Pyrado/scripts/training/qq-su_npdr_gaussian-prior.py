@@ -31,14 +31,13 @@ Script to identify the domain parameters of the Pendulum environment using Neura
 """
 import os.path as osp
 
-import sbi.utils as sbiutils
 import torch as to
-import torch.nn as nn
 from sbi.inference import SNPE_C
+from torch.distributions import MultivariateNormal, Normal
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.environment_wrappers.action_delay import ActDelayWrapper
+from pyrado.domain_randomization.transformations import SqrtDomainParamTransform
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import DummyPolicy
@@ -87,7 +86,7 @@ if __name__ == "__main__":
     # Environments
     env_sim_hparams = dict(dt=1 / 250.0, max_steps=int(t_end * 250))
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
-    env_sim = ActDelayWrapper(env_sim)
+    # env_sim = ActDelayWrapper(env_sim)
 
     # Create the ground truth target domain and the behavioral policy
     if ectl:
@@ -99,87 +98,57 @@ if __name__ == "__main__":
         policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 
     # Define a mapping: index - domain parameter
-    # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
-    # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos", 2: "act_delay"}
-    # dp_mapping = {0: "Dr", 1: "Dp"}
-    # dp_mapping = {0: "Rm", 1: "km", 2: "Mr", 3: "Mp"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
-    # dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
-    dp_mapping = {
-        0: "Dr",
-        1: "Dp",
-        2: "Rm",
-        3: "km",
-        4: "Mr",
-        5: "Mp",
-        6: "Lr",
-        7: "Lp",
-        8: "g",
-        9: "V_thold_neg",
-        10: "V_thold_pos",
-        11: "act_delay",
-    }
+    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+
+    # Transform the domain parameter space
+    env_sim = SqrtDomainParamTransform(env_sim, [dp_name for dp_name in dp_mapping.values()])
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        # low=to.tensor([-0.1, 0.0, 0]),
-        # high=to.tensor([0.0, 0.1, 10])
-        # low=to.tensor([0.0, 0.0]),
-        # high=to.tensor([2 * 0.0015, 2 * 0.0005]),
-        # low=to.tensor([dp_nom["Dr"] * 0, dp_nom["Dp"] * 0, dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        # high=to.tensor([dp_nom["Dr"] * 10, dp_nom["Dp"] * 10, dp_nom["Rm"] * 2.0, dp_nom["km"] * 2.0]),
-        # low=to.tensor([dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5, dp_nom["Mr"] * 0.5, dp_nom["Mp"] * 0.5]),
-        # high=to.tensor([dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5, dp_nom["Mr"] * 1.5, dp_nom["Mp"] * 1.5]),
-        low=to.tensor(
-            [
-                dp_nom["Dr"] * 0,
-                dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.1,
-                dp_nom["km"] * 0.2,
-                dp_nom["Mr"] * 0.3,
-                dp_nom["Mp"] * 0.3,
-                dp_nom["Lr"] * 0.5,
-                dp_nom["Lp"] * 0.5,
-                dp_nom["g"] * 0.85,
-                -0.1,
-                0.0,
-                0,
-            ]
+        loc=env_sim.forward(
+            to.tensor(
+                [
+                    dp_nom["Dr"],
+                    dp_nom["Dp"],
+                    dp_nom["Rm"],
+                    dp_nom["km"],
+                    dp_nom["Mr"],
+                    dp_nom["Mp"],
+                    dp_nom["Lr"],
+                    dp_nom["Lp"],
+                    dp_nom["g"],
+                ]
+            )
         ),
-        high=to.tensor(
-            [
-                dp_nom["Dr"] * 5,
-                dp_nom["Dp"] * 20,
-                dp_nom["Rm"] * 1.9,
-                dp_nom["km"] * 1.8,
-                dp_nom["Mr"] * 1.7,
-                dp_nom["Mp"] * 1.7,
-                dp_nom["Lr"] * 1.5,
-                dp_nom["Lp"] * 1.5,
-                dp_nom["g"] * 1.15,
-                0,
-                0.1,
-                5,
-            ]
+        covariance_matrix=to.diagflat(
+            env_sim.forward(
+                env_sim.forward(
+                    to.tensor(
+                        [
+                            dp_nom["Dr"] / 10,
+                            dp_nom["Dp"] / 5,
+                            dp_nom["Rm"] / 5,
+                            dp_nom["km"] / 10,
+                            dp_nom["Mr"] / 10,
+                            dp_nom["Mp"] / 10,
+                            dp_nom["Lr"] / 20,
+                            dp_nom["Lp"] / 20,
+                            dp_nom["g"] / 20,
+                        ]
+                    ),
+                )
+            )
         ),
     )
-    prior = sbiutils.BoxUniform(**prior_hparam)
+    prior = MultivariateNormal(**prior_hparam)
 
     # Time series embedding
-    lstm = pyrado.load("policy.pt", osp.join(pyrado.EXP_DIR, "qq-tspred", "lstm", "2021-05-31_19-48-32"))
-    # lstm = pyrado.load("policy.pt", osp.join(pyrado.EXP_DIR, "qq-tspred", "lstm", "2021-06-02_17-01-07"))
     embedding_hparam = dict(
         downsampling_factor=1,
-        # state_mask_labels=(0, 1, 4),
-        len_rollouts=env_sim.max_steps,
-        recurrent_network_type=nn.LSTM,
-        hidden_size=lstm.rnn_layers.hidden_size,
-        num_recurrent_layers=lstm.num_recurrent_layers,
-        output_size=lstm.output_layer.out_features,
+        # len_rollouts=env_sim.max_steps,
     )
-    embedding = create_embedding(RNNEmbedding.name, env_sim.spec, **embedding_hparam)
-    embedding.init_param(init_values=lstm.param_values)  # only for RNNEmbedding
+    embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", hidden_features=50, num_transforms=5)
@@ -187,15 +156,15 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=1,
-        num_real_rollouts=3,
-        num_sim_per_round=500,
+        num_real_rollouts=2,
+        num_sim_per_round=1000,
         num_sbi_rounds=4,
-        simulation_batch_size=10,
+        simulation_batch_size=1,
         normalize_posterior=False,
         num_eval_samples=2,
         num_segments=args.num_segments,
         len_segments=args.len_segments,
-        stop_on_done=False,
+        stop_on_done=True,
         use_rec_act=use_rec_act,
         posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(

@@ -163,6 +163,8 @@ def compute_traj_distance_metrics(
 
         table.append([idx_r, dtw_dist_ml, dtw_dist_nom, rmse_ml, rmse_nom])
 
+    raw_data = np.array(table)
+
     # Add last row separately
     table.append(["average", dtw_dist_ml_avg, dtw_dist_nom_avg, rmse_ml_avg, rmse_nom_avg])
 
@@ -176,8 +178,12 @@ def compute_traj_distance_metrics(
         str_iter = f"_iter_{args.iter}"
         str_round = f"_round_{args.round}"
         use_rec_str = "_use_rec" if args.use_rec else ""
-        with open(osp.join(ex_dir, f"distance_metrics{str_iter}{str_round}{use_rec_str}.tex"), "w") as tab_file:
+        file_name = f"distance_metrics{str_iter}{str_round}{use_rec_str}"
+        with open(osp.join(ex_dir, f"{file_name}.tex"), "w") as tab_file:
             print(table_latex_str, file=tab_file)
+
+        with open(osp.join(ex_dir, f"{file_name}.npy"), "wb") as np_file:
+            np.save(np_file, raw_data)
 
 
 if __name__ == "__main__":
@@ -200,13 +206,6 @@ if __name__ == "__main__":
         action="store_true",
         default=False,
         help="plot the actions (default: False)",
-    )
-    parser.add_argument(
-        "--console",
-        dest="verbose",
-        action="store_true",
-        default=False,
-        help="set flag to not run plt.show. Make sure that the --save flag is set",
     )
 
     # Parse command line arguments
@@ -250,7 +249,6 @@ if __name__ == "__main__":
         rollouts_real = rollouts_real[args.iter * algo.num_real_rollouts : (args.iter + 1) * algo.num_real_rollouts]
     num_rollouts_real = len(rollouts_real)
     [ro.numpy() for ro in rollouts_real]
-    dim_state = rollouts_real[0].states.shape[1]  # same for all rollouts
 
     # Decide on the policy: either use the exact actions or use the same policy which is however observation-dependent
     if args.use_rec:

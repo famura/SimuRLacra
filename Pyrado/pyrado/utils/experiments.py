@@ -61,6 +61,7 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_types_equal, is_iterable
 from pyrado.utils.input_output import print_cbt
+from pyrado.utils.ordering import natural_sort
 
 
 def load_experiment(
@@ -168,7 +169,7 @@ def load_experiment(
             # Load the complete data or the data of the given iteration
             prefix = "" if args.iter == -1 else f"iter_{args.iter}"
             extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
-        except:
+        except FileNotFoundError:
             pass
 
     elif algo.name in ["a2c", "ppo", "ppo2"]:
@@ -302,7 +303,7 @@ def load_rollouts_from_dir(
     ex_dir: str, key: Optional[str] = "rollout", file_exts: Tuple[str] = ("pt", "pkl")
 ) -> Tuple[List[StepSequence], List[str]]:
     """
-    Crawl through the given directory and load all rollouts, i.e. all files that include the key.
+    Crawl through the given directory, sort the files, and load all rollouts, i.e. all files that include the key.
 
     :param ex_dir: directory, e.g. and experiment folder
     :param key: word or part of a word that needs to the in the name of a file for it to be loaded
@@ -320,6 +321,7 @@ def load_rollouts_from_dir(
     names = []
     for root, dirs, files in os.walk(ex_dir):
         dirs.clear()  # prevents walk() from going into subdirectories
+        natural_sort(files)
         for f in files:
             f_ext = f[f.rfind(".") + 1 :]
             if key in f and f_ext in file_exts:

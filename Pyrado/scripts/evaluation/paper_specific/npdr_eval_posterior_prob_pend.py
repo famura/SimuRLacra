@@ -104,15 +104,7 @@ if __name__ == "__main__":
         algo, prior, data_real, posteriors = _load_experiment(config["dir"])
 
         # Set the color map
-        # cmap = sns.color_palette("CMRmap", as_cmap=True)
-        # cmap = sns.color_palette("RdGy_r", as_cmap=True)
-        # cmap = sns.color_palette("afmhot", as_cmap=True)
-        # cmap = sns.color_palette("hot", as_cmap=True)
-        # cmap = sns.color_palette("rocket", as_cmap=True)
-        # cmap = sns.color_palette("vlag", as_cmap=True)
-        # cmap = plt.get_cmap("Reds")
         cmap = plt.get_cmap("turbo")
-        # cmap = plt.get_cmap("YlGnBu_r")
 
         # Round-wise processing
         ax_cnt = 0  # for selection
@@ -198,4 +190,5 @@ if __name__ == "__main__":
                     dpi=150,
                 )
 
-    # plt.show()
+    if args.verbose:
+        plt.show()

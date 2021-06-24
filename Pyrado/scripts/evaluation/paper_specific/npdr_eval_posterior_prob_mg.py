@@ -50,16 +50,7 @@ from pyrado.utils.argparser import get_argparser
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = get_argparser()
-    parser.add_argument(
-        "--console",
-        dest="verbose",
-        action="store_true",
-        default=False,
-        help="set flag to not run plt.show. Make sure that the --save flag is set",
-    )
-
-    args = parser.parse_args()
+    args = get_argparser().parse_args()
     plt.rc("text", usetex=args.use_tex)
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
@@ -147,7 +138,6 @@ if __name__ == "__main__":
             axs[i, j].set_yticklabels([])
             axs[i, j].xaxis.labelpad = -3
             axs[i, j].yaxis.labelpad = -4
-
             axs[i, j].tick_params(axis="both", which="both", bottom=False, top=False, left=False, right=False)
 
     # Tune the gaps between the subplots by hand

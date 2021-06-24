@@ -42,8 +42,9 @@ import yaml
 import pyrado
 from pyrado.logger import set_log_prefix_dir
 from pyrado.utils import get_class_name
-from pyrado.utils.data_types import dict_path_access
+from pyrado.utils.data_types import dict_path_access, update_matching_keys_recursively
 from pyrado.utils.input_output import print_cbt, select_query
+from pyrado.utils.ordering import natural_sort
 
 
 class Experiment:
@@ -521,24 +522,36 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
     return data
 
 
-def load_hyperparameters(ex_dir: pyrado.PathLike, raise_error: bool = False) -> Union[dict, Optional[dict]]:
+def load_hyperparameters(ex_dir: pyrado.PathLike, verbose: bool = True) -> Union[dict, Optional[dict]]:
     """
     Loads the hyper-parameters-dict from the given experiment directory. The hyper-parameters file is assumed to be
     named `hyperparams.yaml`.
 
     :param ex_dir: experiment's directory to load from
-    :param raise_error: whether to raise an error if one occurs; if false, `None` is returned and an error
-                        message is printed
+    :param verbose: if `True`, print message if no hyper-parameter file was found
     """
     hparams_file_name = "hyperparams.yaml"
-    try:
-        return load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
-    except (pyrado.PathErr, FileNotFoundError, KeyError):
+
+    for root, dirs, files in os.walk(ex_dir):
+        dirs.clear()  # prevents walk() from going into subdirectories
+        natural_sort(files)
+
+        if hparams_file_name in files:
+            # Default case
+            return load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
+
+        for file in files:
+            # Recursively merge the hyper-parameter configurations
+            if file.startswith("hparam") and file.endswith(".yaml"):
+                hparam_args = load_dict_from_yaml(osp.join(ex_dir, file))
+                setting_args = load_dict_from_yaml(osp.join(ex_dir, "settings.yaml"))
+                return update_matching_keys_recursively(setting_args, hparam_args)
+
+    # No hyper-parameter file was found
+    if verbose:
         print_cbt(
             f"Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.",
             "y",
             bright=True,
         )
-        if raise_error:
-            raise
-        return None
+    return None

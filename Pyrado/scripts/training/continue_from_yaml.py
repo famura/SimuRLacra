@@ -27,19 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to plot the observations from rollouts as well as their mean and standard deviation
+Continue a training run in the same folder
 """
 import os
 import os.path as osp
 
-import numpy as np
-import torch as to
-from tabulate import tabulate
-
-import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import load_rollouts_from_dir
+from pyrado.utils.data_types import update_matching_keys_recursively
 
 
 if __name__ == "__main__":
@@ -49,52 +45,19 @@ if __name__ == "__main__":
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
-    # Load the rollouts
-    rollouts, names = load_rollouts_from_dir(ex_dir)
-
-    # load rollouts from the
-    hparam, settings = None, None
+    # Load the hyper-parameters
+    hparam_args, setting_args = None, None
     for file_name in os.listdir(ex_dir):
         if file_name.startswith("hparam") and file_name.endswith(".yaml"):
-            hparam = load_dict_from_yaml(osp.join(ex_dir, file_name))
+            hparam_args = load_dict_from_yaml(osp.join(ex_dir, file_name))
         elif file_name == "settings.yaml":
-            settings = load_dict_from_yaml(osp.join(ex_dir, file_name))
+            setting_args = load_dict_from_yaml(osp.join(ex_dir, file_name))
 
-    if not hparam:
-        raise pyrado.PathErr(msg="No hyperparam file could be found.")
+    # Update matching
+    update_matching_keys_recursively(setting_args, hparam_args)
 
-    # get the number of real rollouts from the hyperparams dict
-    if hparam.get("algo_hparam", None) and hparam.get("algo_hparam").get("num_real_rollouts", None):
-        num_real_rollouts = hparam.get("algo_hparam").get("num_real_rollouts", None)
-    elif settings and settings.get("algo_hparam", None):
-        num_real_rollouts = settings.get("algo_hparam").get("num_real_rollouts", None)
-    else:
-        raise pyrado.ValueErr(msg="No `num_real_rollouts` argument was found.")
+    # Load the complete algorithm
+    algo = Algorithm.load_snapshot(ex_dir)
 
-    # get list of iteration numbers and sort them in ascending order
-    prefix = "iter_"
-    iter_idcs = [int(name[name.find(prefix) + len(prefix)]) for name in names]
-    sorted_idcs = np.argsort(iter_idcs)
-
-    # collect the rewards
-    rewards = to.stack([r.undiscounted_return() for r in rollouts])
-    table = []
-    mean_reward = []
-    std_reward = []
-    for i in sorted_idcs:
-        mean_reward = to.mean(rewards[i * num_real_rollouts : (i + 1) * num_real_rollouts])
-        std_reward = to.std(rewards[i * num_real_rollouts : (i + 1) * num_real_rollouts])
-        max_reward = to.max(rewards[i * num_real_rollouts : (i + 1) * num_real_rollouts])
-        table.append([iter_idcs[i], num_real_rollouts, mean_reward, std_reward, max_reward])
-
-    headers = ("iteration", "num real rollouts", "mean reward", "std reward", "max reward")
-
-    # Yehaa
-    print(tabulate(table, headers))
-
-    # Save the table in a latex file if requested
-    if args.save:
-        # Save the table for LaTeX
-        table_latex_str = tabulate(table, headers, tablefmt="latex")
-        with open(osp.join(ex_dir, f"real_rollouts_rewards.tex"), "w") as tab_file:
-            print(table_latex_str, file=tab_file)
+    # Jeeeha
+    algo.train(seed=setting_args.get("seed", None))

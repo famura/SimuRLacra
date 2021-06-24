@@ -322,6 +322,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         acc_max: float = 5.0,  # Quanser's value: 6
         alpha_max_pd_enable: float = 20.0,  # Quanser's value: 20
         pd_gains: to.Tensor = to.tensor([-2, 35, -1.5, 3]),  # Quanser's value: [-2, 35, -1.5, 3]
+        reset_domain_param: bool = True,
         use_cuda: bool = False,
     ):
         """
@@ -346,7 +347,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         self.alpha_max_pd_enable = alpha_max_pd_enable / 180.0 * math.pi
 
         # Set up the energy and PD controller
-        self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max)
+        self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max, reset_domain_param)
         self.pd_ctrl = QQubePDCtrl(env_spec, pd_gains, al_des=math.pi)
 
     def reset(self, **kwargs):
@@ -377,9 +378,9 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         # Reconstruct the sate for the error-based controller
         sin_th, cos_th, sin_al, cos_al, th_d, al_d = obs
         s = to.stack([to.atan2(sin_th, cos_th), to.atan2(sin_al, cos_al), th_d, al_d])
+        s[1] = s[1] % (2 * math.pi)  # alpha can have multiple revolutions
 
         if self.pd_enabled(cos_al):
-            s[1] = s[1] % (2 * math.pi)  # alpha can have multiple revolutions
             return self.pd_ctrl(s)
         else:
             return self.e_ctrl(s)
@@ -395,6 +396,7 @@ class QQubeEnergyCtrl(Policy):
         energy_gain: float,
         th_gain: float,
         acc_max: float,
+        reset_domain_param: bool = True,
         use_cuda: bool = False,
     ):
         """
@@ -405,6 +407,8 @@ class QQubeEnergyCtrl(Policy):
         :param energy_gain: P-gain on the energy [m/s/J]
         :param th_gain: P-gain on angle theta
         :param acc_max: maximum linear acceleration of the pendulum pivot [m/s**2]
+        :param reset_domain_param: if `True` the domain parameters are reset if the they are present as a entry in the
+                                   kwargs passed to `reset()`. If `False` they are ignored.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         super().__init__(env_spec, use_cuda)
@@ -421,17 +425,19 @@ class QQubeEnergyCtrl(Policy):
 
         self.acc_max = to.tensor(acc_max)
         self._domain_param = QQubeSwingUpSim.get_nominal_domain_param()
+        self._reset_domain_param = reset_domain_param
 
         # Default initialization
         self.init_param(None)
 
     def reset(self, **kwargs):
-        """Set the domain parameters defining the controller's model using a dict called `domain_param`."""
-        domain_param = kwargs.get("domain_param", dict())  # do nothing if domain_param not given
-        if isinstance(domain_param, dict):
-            self._domain_param.update(domain_param)
-        else:
-            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
+        """If desired, set the domain parameters defining the controller's model using a dict called `domain_param`."""
+        if self._reset_domain_param:
+            domain_param = kwargs.get("domain_param", dict())  # do nothing if domain_param not given
+            if isinstance(domain_param, dict):
+                self._domain_param.update(domain_param)
+            else:
+                raise pyrado.TypeErr(given=domain_param, expected_type=dict)
 
     @property
     def E_ref(self):

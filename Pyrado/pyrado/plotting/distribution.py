@@ -1031,7 +1031,8 @@ def draw_posterior_pairwise_scatter(
 
     # Get the nominal domain parameters
     if isinstance(env_sim, (SimEnv, EnvWrapper)):
-        dp_nom = env_sim.get_nominal_domain_param()
+        dp_nom = env_sim.domain_param  # also gets the wrapper's domain parameters
+        dp_nom.update(env_sim.get_nominal_domain_param())
         dp_nom = to.tensor([dp_nom[v] for v in dp_mapping.values()])
         dp_samples.append(to.atleast_2d(dp_nom))
         if legend_labels is not None:

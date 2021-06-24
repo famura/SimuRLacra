@@ -401,7 +401,7 @@ class WAMBallInCupSim(WAMSim, Serializable):
         """
         Check if an undesired collision with the ball occurs.
 
-        :param verbose: print messages on collision
+        :param verbose: if `True`, print messages on collision
         :return: `True` if the ball collides with something else than the central parts of the cup
         """
         for i in range(self.sim.data.ncon):
