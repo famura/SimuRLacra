@@ -872,13 +872,13 @@ def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
     algo_hparam = dict(
         max_iter=2,
         min_steps=env.max_steps,
-        num_cpu=2,
         std_init=0.15,
         num_epochs=10,
         num_teachers=2,
         teacher_policy=teacher_policy,
         teacher_algo=teacher_algo,
         teacher_algo_hparam=teacher_algo_hparam,
+        num_workers=1,
     )
 
     algo = PDDR(ex_dir, env, policy, **algo_hparam)
