@@ -361,7 +361,7 @@ def test_param_expl_sampler(
     num_domains: int,
     num_workers: int,
 ):
-    num_rollouts_per_param = num_init_states_per_domain * num_domains
+    pyrado.set_seed(0)
 
     # Add randomizer
     pert = create_default_randomizer(env)
@@ -386,6 +386,7 @@ def test_param_expl_sampler(
 
     # Check if the correct number of rollouts has been sampled
     assert num_ps == len(samples)
+    num_rollouts_per_param = num_init_states_per_domain * num_domains
     assert num_ps * num_rollouts_per_param == samples.num_rollouts
     for ps in samples:
         assert len(ps.rollouts) == num_rollouts_per_param

@@ -229,20 +229,12 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
 @pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
-    [
-        (A2C, dict()),
-        (PPO, dict()),
-        (PPO2, dict()),
-    ],
+    [(A2C, dict()), (PPO, dict()), (PPO2, dict())],
     ids=["a2c", "ppo", "ppo2"],
 )
 @pytest.mark.parametrize(
     "vfcn_type",
-    [
-        "fnn-plain",
-        "fnn",
-        "rnn",
-    ],
+    ["fnn-plain", FNNPolicy.name, RNNPolicy.name],
     ids=["vf_fnn_plain", "vf_fnn", "vf_rnn"],
 )
 @pytest.mark.parametrize(
@@ -254,6 +246,8 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
     # ids=['cpu', 'cuda']
 )
 def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vfcn_type, use_cuda):
+    pyrado.set_seed(0)
+
     if use_cuda:
         policy._device = "cuda"
         policy = policy.to(device="cuda")
@@ -267,12 +261,14 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             hidden_nonlin=to.tanh,
             use_cuda=use_cuda,
         )
-    else:
+    elif vfcn_type == FNNPolicy.name:
         vf_spec = EnvSpec(env.obs_space, ValueFunctionSpace)
-        if vfcn_type == "fnn":
-            vfcn = FNNPolicy(vf_spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=use_cuda)
-        else:
-            vfcn = RNNPolicy(vf_spec, hidden_size=16, num_recurrent_layers=1, use_cuda=use_cuda)
+        vfcn = FNNPolicy(vf_spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=use_cuda)
+    elif vfcn_type == RNNPolicy.name:
+        vf_spec = EnvSpec(env.obs_space, ValueFunctionSpace)
+        vfcn = RNNPolicy(vf_spec, hidden_size=16, num_recurrent_layers=1, use_cuda=use_cuda)
+    else:
+        raise NotImplementedError
 
     # Create critic
     critic_hparam = dict(
