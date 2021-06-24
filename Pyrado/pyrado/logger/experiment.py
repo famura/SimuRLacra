@@ -74,15 +74,14 @@ class Experiment:
         :param exp_id: combined timestamp and extra_info, usually the final folder name
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
-        :param include_slurm_id: if a SLURM ID is present in the environment variables,
-                                 include them in the experiment ID
+        :param include_slurm_id: if a SLURM ID is present in the environment variables, include it in the experiment ID
         """
 
         slurm_id = None
         if include_slurm_id and "SLURM_ARRAY_JOB_ID" in os.environ:
             slurm_id = str(os.environ["SLURM_ARRAY_JOB_ID"])
             if "SLURM_ARRAY_TASK_ID" in os.environ:
-                slurm_id += "_" + str(os.environ["SLURM_ARRAY_TASK_ID"])
+                slurm_id += "-" + str(os.environ["SLURM_ARRAY_TASK_ID"])
         if exp_id is None:
             # Create exp id from timestamp and info
             if timestamp is None:
@@ -92,19 +91,19 @@ class Experiment:
             if extra_info is not None:
                 exp_id = exp_id + "--" + extra_info
             if slurm_id is not None:
-                exp_id += "--SLURM:" + slurm_id
+                exp_id += "_slurm-" + slurm_id
         else:
             # Try to parse extra_info from exp id
             sd = exp_id.split("--", 1)
             if len(sd) == 1:
-                timestr = sd[0]
+                time_str = sd[0]
             else:
-                timestr, extra_info = sd
+                time_str, extra_info = sd
             # Parse time string
-            if "_" in timestr:
-                timestamp = datetime.strptime(timestr, pyrado.timestamp_format)
+            if "_" in time_str:
+                timestamp = datetime.strptime(time_str, pyrado.timestamp_format)
             else:
-                timestamp = datetime.strptime(timestr, pyrado.timestamp_date_format)
+                timestamp = datetime.strptime(time_str, pyrado.timestamp_date_format)
 
         # Store values
         self.env_name = env_name
