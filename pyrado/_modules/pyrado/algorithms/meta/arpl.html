@@ -298,7 +298,6 @@
         <span class="n">obs_eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="n">obs_phi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
         <span class="n">torch_observation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -323,7 +322,6 @@
 <span class="sd">        :param obs_eps: the intensity of generated observation noise</span>
 <span class="sd">        :param obs_phi: the probability of applying observation noise</span>
 <span class="sd">        :param torch_observation: a function to provide a differentiable observation</span>
-<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
 <span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span>
@@ -339,10 +337,14 @@
             <span class="n">env</span> <span class="o">=</span> <span class="n">AdversarialStateWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">proc_eps</span><span class="p">,</span> <span class="n">proc_phi</span><span class="p">,</span> <span class="n">torch_observation</span><span class="o">=</span><span class="n">torch_observation</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">apply_observation_noise</span><span class="p">:</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">AdversarialObservationWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">obs_eps</span><span class="p">,</span> <span class="n">obs_phi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="c1"># TODO @Robin: how do you make sure that the newly wrapped env is used by the subroutine?</span>
 
         <span class="c1"># Subroutine</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span> <span class="o">=</span> <span class="n">subrtn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s2">&quot;subrtn&quot;</span>
+
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="s2">&quot;env.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>

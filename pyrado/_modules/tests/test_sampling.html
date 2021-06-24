@@ -583,7 +583,7 @@
     <span class="n">num_domains</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="n">num_rollouts_per_param</span> <span class="o">=</span> <span class="n">num_init_states_per_domain</span> <span class="o">*</span> <span class="n">num_domains</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="c1"># Add randomizer</span>
     <span class="n">pert</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -608,6 +608,7 @@
 
     <span class="c1"># Check if the correct number of rollouts has been sampled</span>
     <span class="k">assert</span> <span class="n">num_ps</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+    <span class="n">num_rollouts_per_param</span> <span class="o">=</span> <span class="n">num_init_states_per_domain</span> <span class="o">*</span> <span class="n">num_domains</span>
     <span class="k">assert</span> <span class="n">num_ps</span> <span class="o">*</span> <span class="n">num_rollouts_per_param</span> <span class="o">==</span> <span class="n">samples</span><span class="o">.</span><span class="n">num_rollouts</span>
     <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_rollouts_per_param</span>

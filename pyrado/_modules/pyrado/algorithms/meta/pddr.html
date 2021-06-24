@@ -252,7 +252,7 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -282,20 +282,19 @@
         <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
-        <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
         <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-4</span><span class="p">,</span>
         <span class="n">std_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">,</span>
         <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1500</span><span class="p">,</span>
         <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
         <span class="n">num_teachers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
-        <span class="n">num_cpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="n">teacher_extra</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">teacher_policy</span><span class="p">:</span> <span class="n">Policy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">teacher_algo</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">teacher_algo_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">randomizer</span><span class="p">:</span> <span class="n">DomainRandomizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">teacher_extra</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">teacher_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">teacher_algo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">teacher_algo_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">randomizer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DomainRandomizer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -303,8 +302,6 @@
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
 <span class="sd">        :param env: the environment which the policy operates</span>
 <span class="sd">        :param policy: policy to be updated</span>
-<span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
-<span class="sd">        :param device: device to use for updating the policy (cpu or gpu)</span>
 <span class="sd">        :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.</span>
 <span class="sd">                    By default, the learning rate is constant.</span>
 <span class="sd">        :param std_init: initial standard deviation on the actions for the exploration noise</span>
@@ -312,12 +309,14 @@
 <span class="sd">        :param num_epochs: number of epochs (how often we iterate over the same batch)</span>
 <span class="sd">        :param max_iter: number of iterations (policy updates)</span>
 <span class="sd">        :param num_teachers: number of teachers that are used for distillation</span>
-<span class="sd">        :param num_cpu: number of cpu cores to use</span>
 <span class="sd">        :param teacher_extra: extra dict from PDDRTeachers algo. If provided, teachers are loaded from there</span>
 <span class="sd">        :param teacher_policy: policy to be updated (is duplicated for each teacher)</span>
 <span class="sd">        :param teacher_algo: algorithm class to be used for training the teachers</span>
-<span class="sd">        :param teacher_algo_hparam: hyperparams to be used for teacher_algo</span>
-<span class="sd">        :param randomizer: randomizer for sampling the teacher domain parameters. If None, the default one for env is used</span>
+<span class="sd">        :param teacher_algo_hparam: hyper-params to be used for teacher_algo</span>
+<span class="sd">        :param randomizer: randomizer for sampling the teacher domain parameters; if `None`, the environment&#39;s default</span>
+<span class="sd">                           one is used</span>
+<span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Env</span><span class="p">)</span>
@@ -330,12 +329,11 @@
         <span class="p">)</span>
 
         <span class="c1"># Store the inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_real</span> <span class="o">=</span> <span class="n">env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_steps</span> <span class="o">=</span> <span class="n">min_steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_epochs</span> <span class="o">=</span> <span class="n">num_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span> <span class="o">=</span> <span class="n">num_teachers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_cpu</span> <span class="o">=</span> <span class="n">num_cpu</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">env_real</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher_envs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -390,7 +388,6 @@
 
         <span class="c1"># Student</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
 
         <span class="c1"># Environments</span>
@@ -398,7 +395,7 @@
             <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">teacher_envs</span><span class="p">[</span><span class="n">t</span><span class="p">],</span>
                 <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">),</span>
-                <span class="n">num_workers</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_cpu</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">),</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
                 <span class="n">min_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_steps</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_teachers</span><span class="p">)</span>
