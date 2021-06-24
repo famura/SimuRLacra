@@ -2,7 +2,6 @@ var searchData=
 [
   ['ecballintube_2ecpp',['ECBallInTube.cpp',['../ECBallInTube_8cpp.html',1,'']]],
   ['ecballonplate_2ecpp',['ECBallOnPlate.cpp',['../ECBallOnPlate_8cpp.html',1,'']]],
-  ['ecboxflipping_2ecpp',['ECBoxFlipping.cpp',['../ECBoxFlipping_8cpp.html',1,'']]],
   ['ecboxlifting_2ecpp',['ECBoxLifting.cpp',['../ECBoxLifting_8cpp.html',1,'']]],
   ['ecboxshelving_2ecpp',['ECBoxShelving.cpp',['../ECBoxShelving_8cpp.html',1,'']]],
   ['ecminigolf_2ecpp',['ECMiniGolf.cpp',['../ECMiniGolf_8cpp.html',1,'']]],

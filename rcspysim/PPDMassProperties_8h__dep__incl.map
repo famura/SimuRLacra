@@ -1,13 +1,12 @@
 <map id="src/cpp/core/physics/PPDMassProperties.h" name="src/cpp/core/physics/PPDMassProperties.h">
 <area shape="rect" id="node2" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,102,209,129"/>
 <area shape="rect" id="node3" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="234,102,445,129"/>
-<area shape="rect" id="node4" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="469,102,679,129"/>
-<area shape="rect" id="node5" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="703,102,903,129"/>
-<area shape="rect" id="node6" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="928,102,1143,129"/>
-<area shape="rect" id="node7" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="1167,102,1357,129"/>
-<area shape="rect" id="node8" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1381,102,1593,129"/>
-<area shape="rect" id="node9" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1617,102,1827,129"/>
-<area shape="rect" id="node10" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1851,102,2063,129"/>
-<area shape="rect" id="node11" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="2087,102,2309,129"/>
-<area shape="rect" id="node12" href="$PPDMassProperties_8cpp.html" title="src/cpp/core/physics\l/PPDMassProperties.cpp" alt="" coords="2334,95,2505,136"/>
+<area shape="rect" id="node4" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="469,102,669,129"/>
+<area shape="rect" id="node5" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="693,102,908,129"/>
+<area shape="rect" id="node6" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="932,102,1123,129"/>
+<area shape="rect" id="node7" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1147,102,1359,129"/>
+<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1382,102,1593,129"/>
+<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1616,102,1828,129"/>
+<area shape="rect" id="node10" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1852,102,2075,129"/>
+<area shape="rect" id="node11" href="$PPDMassProperties_8cpp.html" title="src/cpp/core/physics\l/PPDMassProperties.cpp" alt="" coords="2099,95,2270,136"/>
 </map>

@@ -3,7 +3,6 @@ var searchData=
   ['initstatesetter',['InitStateSetter',['../classRcs_1_1InitStateSetter.html',1,'Rcs']]],
   ['issballintube',['ISSBallInTube',['../classRcs_1_1ISSBallInTube.html',1,'Rcs']]],
   ['issballonplate',['ISSBallOnPlate',['../classRcs_1_1ISSBallOnPlate.html',1,'Rcs']]],
-  ['issboxflipping',['ISSBoxFlipping',['../classRcs_1_1ISSBoxFlipping.html',1,'Rcs']]],
   ['issboxlifting',['ISSBoxLifting',['../classRcs_1_1ISSBoxLifting.html',1,'Rcs']]],
   ['issboxshelving',['ISSBoxShelving',['../classRcs_1_1ISSBoxShelving.html',1,'Rcs']]],
   ['issminigolf',['ISSMiniGolf',['../classRcs_1_1ISSMiniGolf.html',1,'Rcs']]],

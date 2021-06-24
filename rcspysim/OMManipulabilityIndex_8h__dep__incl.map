@@ -1,9 +1,8 @@
 <map id="src/cpp/core/observation/OMManipulabilityIndex.h" name="src/cpp/core/observation/OMManipulabilityIndex.h">
 <area shape="rect" id="node2" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,102,209,129"/>
-<area shape="rect" id="node3" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="234,102,445,129"/>
-<area shape="rect" id="node4" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="469,102,669,129"/>
-<area shape="rect" id="node5" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="693,102,908,129"/>
-<area shape="rect" id="node6" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="933,102,1143,129"/>
-<area shape="rect" id="node7" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1167,102,1379,129"/>
-<area shape="rect" id="node8" href="$OMManipulabilityIndex_8cpp.html" title="src/cpp/core/observation\l/OMManipulabilityIndex.cpp" alt="" coords="1403,95,1585,136"/>
+<area shape="rect" id="node3" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="234,102,434,129"/>
+<area shape="rect" id="node4" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="459,102,673,129"/>
+<area shape="rect" id="node5" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="698,102,909,129"/>
+<area shape="rect" id="node6" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="932,102,1144,129"/>
+<area shape="rect" id="node7" href="$OMManipulabilityIndex_8cpp.html" title="src/cpp/core/observation\l/OMManipulabilityIndex.cpp" alt="" coords="1168,95,1351,136"/>
 </map>

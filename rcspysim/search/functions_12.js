@@ -24,7 +24,6 @@ var searchData=
   ['_7einitstatesetter',['~InitStateSetter',['../classRcs_1_1InitStateSetter.html#a00a2a01f87b6eb921e3cf40484d74bd5',1,'Rcs::InitStateSetter']]],
   ['_7eissballintube',['~ISSBallInTube',['../classRcs_1_1ISSBallInTube.html#a8d99b2a6b7b4fffd2e3c049a37551d49',1,'Rcs::ISSBallInTube']]],
   ['_7eissballonplate',['~ISSBallOnPlate',['../classRcs_1_1ISSBallOnPlate.html#a47d13f2a9a45a52868f0cdf7d48fc02a',1,'Rcs::ISSBallOnPlate']]],
-  ['_7eissboxflipping',['~ISSBoxFlipping',['../classRcs_1_1ISSBoxFlipping.html#ab04da4523951699ad3911e5ede1ddb79',1,'Rcs::ISSBoxFlipping']]],
   ['_7eissboxlifting',['~ISSBoxLifting',['../classRcs_1_1ISSBoxLifting.html#a0cc79dfb103e3baf3b379dcbd7541120',1,'Rcs::ISSBoxLifting']]],
   ['_7eissboxshelving',['~ISSBoxShelving',['../classRcs_1_1ISSBoxShelving.html#a790b87bbac22d5224da6e3bb55e21794',1,'Rcs::ISSBoxShelving']]],
   ['_7eissminigolf',['~ISSMiniGolf',['../classRcs_1_1ISSMiniGolf.html#a1348bd15365cca5b03c5fd640eecc22c',1,'Rcs::ISSMiniGolf']]],

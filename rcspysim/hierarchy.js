@@ -23,7 +23,6 @@ var hierarchy =
       [ "Rcs::InitStateSetter", "classRcs_1_1InitStateSetter.html", [
         [ "Rcs::ISSBallInTube", "classRcs_1_1ISSBallInTube.html", null ],
         [ "Rcs::ISSBallOnPlate", "classRcs_1_1ISSBallOnPlate.html", null ],
-        [ "Rcs::ISSBoxFlipping", "classRcs_1_1ISSBoxFlipping.html", null ],
         [ "Rcs::ISSBoxLifting", "classRcs_1_1ISSBoxLifting.html", null ],
         [ "Rcs::ISSBoxShelving", "classRcs_1_1ISSBoxShelving.html", null ],
         [ "Rcs::ISSMiniGolf", "classRcs_1_1ISSMiniGolf.html", null ],
@@ -81,7 +80,6 @@ var hierarchy =
     [ "Rcs::ExperimentConfig", "classRcs_1_1ExperimentConfig.html", [
       [ "Rcs::ECBallInTube", "classRcs_1_1ECBallInTube.html", null ],
       [ "Rcs::ECBallOnPlate", "classRcs_1_1ECBallOnPlate.html", null ],
-      [ "Rcs::ECBoxFlipping", "classRcs_1_1ECBoxFlipping.html", null ],
       [ "Rcs::ECBoxLifting", "classRcs_1_1ECBoxLifting.html", null ],
       [ "Rcs::ECBoxShelving", "classRcs_1_1ECBoxShelving.html", null ],
       [ "Rcs::ECMiniGolf", "classRcs_1_1ECMiniGolf.html", null ],

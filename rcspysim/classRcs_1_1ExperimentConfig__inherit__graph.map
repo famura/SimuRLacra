@@ -1,12 +1,11 @@
 <map id="Rcs::ExperimentConfig" name="Rcs::ExperimentConfig">
 <area shape="rect" id="node2" href="$classRcs_1_1ECBallInTube.html" title="Rcs::ECBallInTube" alt="" coords="221,5,356,32"/>
 <area shape="rect" id="node3" href="$classRcs_1_1ECBallOnPlate.html" title="Rcs::ECBallOnPlate" alt="" coords="217,56,360,83"/>
-<area shape="rect" id="node4" href="$classRcs_1_1ECBoxFlipping.html" title="Rcs::ECBoxFlipping" alt="" coords="218,107,359,133"/>
-<area shape="rect" id="node5" href="$classRcs_1_1ECBoxLifting.html" title="Rcs::ECBoxLifting" alt="" coords="223,157,354,184"/>
-<area shape="rect" id="node6" href="$classRcs_1_1ECBoxShelving.html" title="Rcs::ECBoxShelving" alt="" coords="215,208,362,235"/>
-<area shape="rect" id="node7" href="$classRcs_1_1ECMiniGolf.html" title="Rcs::ECMiniGolf" alt="" coords="228,259,349,285"/>
-<area shape="rect" id="node8" href="$classRcs_1_1ECMPblending.html" title="Rcs::ECMPblending" alt="" coords="218,309,359,336"/>
-<area shape="rect" id="node9" href="$classRcs_1_1ECPlanar3Link.html" title="Rcs::ECPlanar3Link" alt="" coords="218,360,359,387"/>
-<area shape="rect" id="node10" href="$classRcs_1_1ECPlanarInsert.html" title="Rcs::ECPlanarInsert" alt="" coords="217,411,360,437"/>
-<area shape="rect" id="node11" href="$classRcs_1_1ECQuanserQube.html" title="Rcs::ECQuanserQube" alt="" coords="212,461,365,488"/>
+<area shape="rect" id="node4" href="$classRcs_1_1ECBoxLifting.html" title="Rcs::ECBoxLifting" alt="" coords="223,107,354,133"/>
+<area shape="rect" id="node5" href="$classRcs_1_1ECBoxShelving.html" title="Rcs::ECBoxShelving" alt="" coords="215,157,362,184"/>
+<area shape="rect" id="node6" href="$classRcs_1_1ECMiniGolf.html" title="Rcs::ECMiniGolf" alt="" coords="228,208,349,235"/>
+<area shape="rect" id="node7" href="$classRcs_1_1ECMPblending.html" title="Rcs::ECMPblending" alt="" coords="218,259,359,285"/>
+<area shape="rect" id="node8" href="$classRcs_1_1ECPlanar3Link.html" title="Rcs::ECPlanar3Link" alt="" coords="218,309,359,336"/>
+<area shape="rect" id="node9" href="$classRcs_1_1ECPlanarInsert.html" title="Rcs::ECPlanarInsert" alt="" coords="217,360,360,387"/>
+<area shape="rect" id="node10" href="$classRcs_1_1ECQuanserQube.html" title="Rcs::ECQuanserQube" alt="" coords="212,411,365,437"/>
 </map>

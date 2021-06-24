@@ -1,6 +1,5 @@
 <map id="src/cpp/core/physics/PPDBoxExtents.h" name="src/cpp/core/physics/PPDBoxExtents.h">
-<area shape="rect" id="node2" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="5,102,216,129"/>
-<area shape="rect" id="node3" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="240,102,440,129"/>
-<area shape="rect" id="node4" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="465,102,679,129"/>
-<area shape="rect" id="node5" href="$PPDBoxExtents_8cpp.html" title="src/cpp/core/physics\l/PPDBoxExtents.cpp" alt="" coords="704,95,851,136"/>
+<area shape="rect" id="node2" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="5,102,205,129"/>
+<area shape="rect" id="node3" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="230,102,445,129"/>
+<area shape="rect" id="node4" href="$PPDBoxExtents_8cpp.html" title="src/cpp/core/physics\l/PPDBoxExtents.cpp" alt="" coords="469,95,616,136"/>
 </map>

@@ -7,7 +7,7 @@ var searchData=
   ['bodyconfig',['bodyConfig',['../classRcs_1_1OMTaskSpaceDiscrepancy.html#af7ebfdedf2623ac42884a21e03be2431',1,'Rcs::OMTaskSpaceDiscrepancy']]],
   ['bodycontroller',['bodyController',['../classRcs_1_1OMTaskSpaceDiscrepancy.html#a7db8c5f1e9c7afeb097fd0c1bab1a1b3',1,'Rcs::OMTaskSpaceDiscrepancy']]],
   ['bodyinfos',['bodyInfos',['../classRcs_1_1PhysicsParameterManager.html#a799eb46b3ba00069f61102e73ff6d8f2',1,'Rcs::PhysicsParameterManager']]],
-  ['bodyparaminfo',['BodyParamInfo',['../structRcs_1_1BodyParamInfo.html',1,'Rcs::BodyParamInfo'],['../classRcs_1_1PhysicsParameterDescriptor.html#a45950afb4ffb36f67838e84b225ddfc6',1,'Rcs::PhysicsParameterDescriptor::bodyParamInfo()'],['../structRcs_1_1BodyParamInfo.html#ab4ed09a0504d8db2cc3b67afd7fee5e0',1,'Rcs::BodyParamInfo::BodyParamInfo()']]],
+  ['bodyparaminfo',['BodyParamInfo',['../structRcs_1_1BodyParamInfo.html',1,'Rcs::BodyParamInfo'],['../structRcs_1_1BodyParamInfo.html#ab4ed09a0504d8db2cc3b67afd7fee5e0',1,'Rcs::BodyParamInfo::BodyParamInfo()'],['../classRcs_1_1PhysicsParameterDescriptor.html#a45950afb4ffb36f67838e84b225ddfc6',1,'Rcs::PhysicsParameterDescriptor::bodyParamInfo()']]],
   ['bodyparaminfo_2ecpp',['BodyParamInfo.cpp',['../BodyParamInfo_8cpp.html',1,'']]],
   ['bodyparaminfo_2eh',['BodyParamInfo.h',['../BodyParamInfo_8h.html',1,'']]],
   ['box',['box',['../classRcs_1_1ISSBoxLifting.html#a972b1096940c71afd182ed850444a6bf',1,'Rcs::ISSBoxLifting']]],

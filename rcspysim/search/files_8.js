@@ -8,8 +8,6 @@ var searchData=
   ['issballintube_2eh',['ISSBallInTube.h',['../ISSBallInTube_8h.html',1,'']]],
   ['issballonplate_2ecpp',['ISSBallOnPlate.cpp',['../ISSBallOnPlate_8cpp.html',1,'']]],
   ['issballonplate_2eh',['ISSBallOnPlate.h',['../ISSBallOnPlate_8h.html',1,'']]],
-  ['issboxflipping_2ecpp',['ISSBoxFlipping.cpp',['../ISSBoxFlipping_8cpp.html',1,'']]],
-  ['issboxflipping_2eh',['ISSBoxFlipping.h',['../ISSBoxFlipping_8h.html',1,'']]],
   ['issboxlifting_2ecpp',['ISSBoxLifting.cpp',['../ISSBoxLifting_8cpp.html',1,'']]],
   ['issboxlifting_2eh',['ISSBoxLifting.h',['../ISSBoxLifting_8h.html',1,'']]],
   ['issboxshelving_2ecpp',['ISSBoxShelving.cpp',['../ISSBoxShelving_8cpp.html',1,'']]],

@@ -1,10 +1,9 @@
 <map id="src/cpp/core/observation/OMForceTorque.h" name="src/cpp/core/observation/OMForceTorque.h">
 <area shape="rect" id="node2" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,102,209,129"/>
-<area shape="rect" id="node3" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="234,102,445,129"/>
-<area shape="rect" id="node4" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="469,102,669,129"/>
-<area shape="rect" id="node5" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="693,102,908,129"/>
-<area shape="rect" id="node6" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="932,102,1123,129"/>
-<area shape="rect" id="node7" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1147,102,1358,129"/>
-<area shape="rect" id="node8" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1381,102,1593,129"/>
-<area shape="rect" id="node9" href="$OMForceTorque_8cpp.html" title="src/cpp/core/observation\l/OMForceTorque.cpp" alt="" coords="1617,95,1782,136"/>
+<area shape="rect" id="node3" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="234,102,434,129"/>
+<area shape="rect" id="node4" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="459,102,673,129"/>
+<area shape="rect" id="node5" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="697,102,888,129"/>
+<area shape="rect" id="node6" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="913,102,1123,129"/>
+<area shape="rect" id="node7" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1147,102,1359,129"/>
+<area shape="rect" id="node8" href="$OMForceTorque_8cpp.html" title="src/cpp/core/observation\l/OMForceTorque.cpp" alt="" coords="1382,95,1547,136"/>
 </map>

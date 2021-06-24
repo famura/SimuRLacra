@@ -20,7 +20,6 @@ var searchData=
   ['refframe',['refFrame',['../classRcs_1_1ForceDisturber.html#a463571f7560552d20b86c7a5c7aeb639',1,'Rcs::ForceDisturber']]],
   ['regballintube',['RegBallInTube',['../namespaceRcs.html#aa81e8a24263a7764a15661187e83e0ba',1,'Rcs']]],
   ['regballonplate',['RegBallOnPlate',['../namespaceRcs.html#ac50ae92d4d56ee2a978d97f2bef78b34',1,'Rcs']]],
-  ['regboxflipping',['RegBoxFlipping',['../namespaceRcs.html#add5e3085059ed2e9d7612c935d01b6a1',1,'Rcs']]],
   ['regboxlifting',['RegBoxLifting',['../namespaceRcs.html#a1bbcf97343212d670518e82fcacfc1f9',1,'Rcs']]],
   ['regboxshelving',['RegBoxShelving',['../namespaceRcs.html#a6cbb6168cfa50aac8358cee7394fbdbd',1,'Rcs']]],
   ['registertype',['registerType',['../classRcs_1_1ControlPolicy.html#aa3308b7f7ce4bfc15aa5c9c3670d2180',1,'Rcs::ControlPolicy::registerType()'],['../classRcs_1_1ExperimentConfig.html#a5c06fb5ac0bd53abd3f9940a53925209',1,'Rcs::ExperimentConfig::registerType()']]],

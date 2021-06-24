@@ -1,13 +1,12 @@
 <map id="src/cpp/core/physics/ForceDisturber.h" name="src/cpp/core/physics/ForceDisturber.h">
 <area shape="rect" id="node2" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,102,209,129"/>
 <area shape="rect" id="node3" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="234,102,445,129"/>
-<area shape="rect" id="node4" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="469,102,679,129"/>
-<area shape="rect" id="node5" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="703,102,903,129"/>
-<area shape="rect" id="node6" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="928,102,1143,129"/>
-<area shape="rect" id="node7" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1167,102,1379,129"/>
-<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1402,102,1613,129"/>
-<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1636,102,1848,129"/>
-<area shape="rect" id="node10" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1872,102,2095,129"/>
-<area shape="rect" id="node11" href="$ForceDisturber_8cpp.html" title="src/cpp/core/physics\l/ForceDisturber.cpp" alt="" coords="2119,95,2261,136"/>
-<area shape="rect" id="node12" href="$RcsSimEnv_8cpp.html" title="src/cpp/core/RcsSimEnv.cpp" alt="" coords="2285,102,2479,129"/>
+<area shape="rect" id="node4" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="469,102,669,129"/>
+<area shape="rect" id="node5" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="693,102,908,129"/>
+<area shape="rect" id="node6" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="932,102,1144,129"/>
+<area shape="rect" id="node7" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1167,102,1378,129"/>
+<area shape="rect" id="node8" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1401,102,1613,129"/>
+<area shape="rect" id="node9" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1637,102,1860,129"/>
+<area shape="rect" id="node10" href="$ForceDisturber_8cpp.html" title="src/cpp/core/physics\l/ForceDisturber.cpp" alt="" coords="1884,95,2027,136"/>
+<area shape="rect" id="node11" href="$RcsSimEnv_8cpp.html" title="src/cpp/core/RcsSimEnv.cpp" alt="" coords="2051,102,2244,129"/>
 </map>

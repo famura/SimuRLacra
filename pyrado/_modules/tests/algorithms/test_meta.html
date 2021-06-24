@@ -1,0 +1,1171 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tests.algorithms.test_meta &mdash; Pyrado 0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tests.algorithms.test_meta</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tests.algorithms.test_meta</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">sbi.utils</span> <span class="k">as</span> <span class="nn">sbiutils</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">sbi.inference</span> <span class="kn">import</span> <span class="n">SNPE_C</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.hc</span> <span class="kn">import</span> <span class="n">HCNormal</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.sysid_via_episodic_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span><span class="p">,</span> <span class="n">SysIdViaEpisodicRL</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.arpl</span> <span class="kn">import</span> <span class="n">ARPL</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.bayessim</span> <span class="kn">import</span> <span class="n">BayesSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.bayrn</span> <span class="kn">import</span> <span class="n">BayRn</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.epopt</span> <span class="kn">import</span> <span class="n">EPOpt</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.npdr</span> <span class="kn">import</span> <span class="n">NPDR</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.pddr</span> <span class="kn">import</span> <span class="n">PDDR</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.simopt</span> <span class="kn">import</span> <span class="n">SimOpt</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.sprl</span> <span class="kn">import</span> <span class="n">SPRL</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.udr</span> <span class="kn">import</span> <span class="n">UDR</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.ppo</span> <span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_default_domain_param_map_qq</span><span class="p">,</span>
+    <span class="n">create_default_randomizer</span><span class="p">,</span>
+    <span class="n">create_default_randomizer_qbb</span><span class="p">,</span>
+    <span class="n">create_zero_var_randomizer</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">NormalDomainParam</span><span class="p">,</span> <span class="n">SelfPacedDomainParam</span><span class="p">,</span> <span class="n">UniformDomainParam</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">wrap_like_other_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_delay</span> <span class="kn">import</span> <span class="n">ActDelayWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DomainRandWrapperBuffer</span><span class="p">,</span>
+    <span class="n">DomainRandWrapperLive</span><span class="p">,</span>
+    <span class="n">MetaDomainRandWrapper</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_noise</span> <span class="kn">import</span> <span class="n">GaussianObsNoiseWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.state_augmentation</span> <span class="kn">import</span> <span class="n">StateAugmentationWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.fnn</span> <span class="kn">import</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">FNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.environment_specific</span> <span class="kn">import</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_embeddings</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AllStepsEmbedding</span><span class="p">,</span>
+    <span class="n">BayesSimEmbedding</span><span class="p">,</span>
+    <span class="n">DeltaStepsEmbedding</span><span class="p">,</span>
+    <span class="n">DynamicTimeWarpingEmbedding</span><span class="p">,</span>
+    <span class="n">LastStepEmbedding</span><span class="p">,</span>
+    <span class="n">RNNEmbedding</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_rollout_sampler</span> <span class="kn">import</span> <span class="n">RolloutSamplerForSBI</span><span class="p">,</span> <span class="n">SimRolloutSamplerForSBI</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.experiments</span> <span class="kn">import</span> <span class="n">load_experiment</span>
+
+
+<div class="viewcode-block" id="ex_dir"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.ex_dir">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">ex_dir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
+    <span class="c1"># Fixture providing an experiment directory</span>
+    <span class="n">set_log_prefix_dir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmpdir</span></div>
+
+
+<div class="viewcode-block" id="test_spota_ppo"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_spota_ppo">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;spota_hparam&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+            <span class="n">beta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+            <span class="n">nG</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">nJ</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">ntau</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">nc_init</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">nr_init</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">sequence_cand</span><span class="o">=</span><span class="n">sequence_add_init</span><span class="p">,</span>
+            <span class="n">sequence_refs</span><span class="o">=</span><span class="n">sequence_const</span><span class="p">,</span>
+            <span class="n">warmstart_cand</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">warmstart_refs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">num_bs_reps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">studentized_ci</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+            <span class="n">beta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+            <span class="n">nG</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">nJ</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">ntau</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">nc_init</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">nr_init</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">sequence_cand</span><span class="o">=</span><span class="n">sequence_rec_double</span><span class="p">,</span>
+            <span class="n">sequence_refs</span><span class="o">=</span><span class="n">sequence_rec_sqrt</span><span class="p">,</span>
+            <span class="n">warmstart_cand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">warmstart_refs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">num_bs_reps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">studentized_ci</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;config1&quot;</span><span class="p">,</span> <span class="s2">&quot;config2&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_spota_ppo</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">spota_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Environment and domain randomization</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+
+    <span class="c1"># Policy and subroutines</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNN</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="n">critic_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.998</span><span class="p">,</span> <span class="n">lamda</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">num_epoch</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+    <span class="n">critic_cand</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+    <span class="n">critic_refs</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">vfcn</span><span class="p">),</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+
+    <span class="n">subrtn_hparam_common</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="c1"># min_rollouts=0,  # will be overwritten by SPOTA</span>
+        <span class="n">min_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># will be overwritten by SPOTA</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">sr_cand</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic_cand</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam_common</span><span class="p">)</span>
+    <span class="n">sr_refs</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">policy</span><span class="p">),</span> <span class="n">critic_refs</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam_common</span><span class="p">)</span>
+
+    <span class="c1"># Create algorithm and train</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">SPOTA</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sr_cand</span><span class="p">,</span> <span class="n">sr_refs</span><span class="p">,</span> <span class="o">**</span><span class="n">spota_hparam</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="test_bayrn_power"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_bayrn_power">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;bayrn_hparam&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">acq_fc</span><span class="o">=</span><span class="s2">&quot;UCB&quot;</span><span class="p">,</span>
+            <span class="n">acq_param</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span>
+            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">num_init_cand</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">warmstart</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">mc_estimator</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_sim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">acq_fc</span><span class="o">=</span><span class="s2">&quot;EI&quot;</span><span class="p">,</span>
+            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">num_init_cand</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">mc_estimator</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">thold_succ</span><span class="o">=</span><span class="mf">40.0</span><span class="p">,</span>
+            <span class="n">thold_succ_subrtn</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_sim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;config1&quot;</span><span class="p">,</span> <span class="s2">&quot;config2&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_bayrn_power</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">bayrn_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Environments and domain randomization</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">create_zero_var_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
+    <span class="n">dp_map</span> <span class="o">=</span> <span class="n">create_default_domain_param_map_qq</span><span class="p">()</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">MetaDomainRandWrapper</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">dp_map</span><span class="p">)</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Mp</span><span class="o">=</span><span class="mf">0.024</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span> <span class="n">Mr</span><span class="o">=</span><span class="mf">0.095</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">)</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">wrap_like_other_env</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">)</span>
+
+    <span class="c1"># Policy and subroutine</span>
+    <span class="n">policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">energy_gain</span><span class="o">=</span><span class="mf">0.587</span><span class="p">,</span> <span class="n">ref_energy</span><span class="o">=</span><span class="mf">0.827</span><span class="p">)</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">policy_hparam</span><span class="p">)</span>
+    <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="n">bayrn_hparam</span><span class="p">[</span><span class="s2">&quot;num_workers&quot;</span><span class="p">],</span>  <span class="c1"># dual use</span>
+    <span class="p">)</span>
+    <span class="n">subrtn</span> <span class="o">=</span> <span class="n">PoWER</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">)</span>
+
+    <span class="c1"># Set the boundaries for the GP</span>
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">inner_env</span><span class="p">(</span><span class="n">env_sim</span><span class="p">)</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="n">ddp_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span>
+        <span class="n">bound_lo</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">],</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mr&quot;</span><span class="p">],</span> <span class="mf">1e-8</span><span class="p">]),</span>
+        <span class="n">bound_up</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">],</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1.2</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mr&quot;</span><span class="p">],</span> <span class="mf">1e-7</span><span class="p">]),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create algorithm and train</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">BayRn</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">env_real</span><span class="p">,</span> <span class="n">subrtn</span><span class="p">,</span> <span class="n">ddp_space</span><span class="p">,</span> <span class="o">**</span><span class="n">bayrn_hparam</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="test_arpl"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_arpl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_omo&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omo&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_arpl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">StateAugmentationWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">domain_param</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+
+    <span class="n">vfcn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">vfcn_hparam</span><span class="p">)</span>
+    <span class="n">critic_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9844534412010116</span><span class="p">,</span>
+        <span class="n">lamda</span><span class="o">=</span><span class="mf">0.9710614403461155</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">standardize_adv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">0.00016985313083236645</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">min_steps</span><span class="o">=</span><span class="mi">23</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+        <span class="n">min_rollouts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.085</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.995</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">arpl_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">steps_num</span><span class="o">=</span><span class="mi">23</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+        <span class="n">halfspan</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">dyn_eps</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span>
+        <span class="n">dyn_phi</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">obs_phi</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">obs_eps</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">proc_phi</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">proc_eps</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span>
+        <span class="n">torch_observation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ppo</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">ARPL</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">ppo</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">ppo</span><span class="o">.</span><span class="n">expl_strat</span><span class="p">,</span> <span class="o">**</span><span class="n">arpl_hparam</span><span class="p">)</span>
+
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_sysidasrl_reps"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_sysidasrl_reps">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env, num_eval_rollouts&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_sysidasrl_reps</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">num_eval_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">eval_ddp_policy</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">):</span>
+        <span class="n">init_states_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts_real</span><span class="p">])</span>
+        <span class="n">rollouts_sim</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_eval_rollouts</span><span class="p">)):</span>
+            <span class="n">rollouts_sim</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">rollout</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">behavior_policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">init_state</span><span class="o">=</span><span class="n">init_states_real</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]))</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts</span>
+        <span class="n">ros_real_tr</span><span class="p">,</span> <span class="n">ros_sim_tr</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">truncate_rollouts</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">,</span> <span class="n">rollouts_sim</span><span class="p">,</span> <span class="n">replicate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_real_tr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_sim_tr</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">s</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_real_tr</span><span class="p">,</span> <span class="n">ros_sim_tr</span><span class="p">)])</span>
+
+        <span class="c1"># Return the average the loss</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[</span><span class="n">algo</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">ro_r</span><span class="p">,</span> <span class="n">ro_s</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro_r</span><span class="p">,</span> <span class="n">ro_s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_real_tr</span><span class="p">,</span> <span class="n">ros_sim_tr</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">losses</span><span class="p">)))</span>
+
+    <span class="c1"># Environments</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ang_offset</span><span class="o">=-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+    <span class="n">dp_map</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">)}</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">MetaDomainRandWrapper</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">dp_map</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">env_real</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">env_sim</span>
+
+    <span class="c1"># Policies (the behavioral policy needs to be deterministic)</span>
+    <span class="n">behavior_policy</span> <span class="o">=</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="n">FeatureStack</span><span class="p">(</span><span class="n">identity_feat</span><span class="p">))</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">ddp_policy</span> <span class="o">=</span> <span class="n">DomainDistrParamPolicy</span><span class="p">(</span><span class="n">mapping</span><span class="o">=</span><span class="n">dp_map</span><span class="p">,</span> <span class="n">trafo_mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
+
+    <span class="c1"># Subroutine</span>
+    <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">eps</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">5e-2</span><span class="p">,</span>
+        <span class="n">expl_std_min</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subrtn</span> <span class="o">=</span> <span class="n">REPS</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">ddp_policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">)</span>
+
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">num_rollouts_per_distr</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">SysIdViaEpisodicRL</span><span class="p">(</span><span class="n">subrtn</span><span class="p">,</span> <span class="n">behavior_policy</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+
+    <span class="n">rollouts_real_tst</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_eval_rollouts</span><span class="p">):</span>
+        <span class="n">rollouts_real_tst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rollout</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">behavior_policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">loss_pre</span> <span class="o">=</span> <span class="n">eval_ddp_policy</span><span class="p">(</span><span class="n">rollouts_real_tst</span><span class="p">)</span>
+
+    <span class="c1"># Mimic training</span>
+    <span class="k">while</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">&lt;</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">():</span>
+        <span class="n">algo</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">iteration_key</span><span class="p">,</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span><span class="p">)</span>
+
+        <span class="c1"># Creat fake real-world data</span>
+        <span class="n">rollouts_real</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_eval_rollouts</span><span class="p">):</span>
+            <span class="n">rollouts_real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rollout</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">behavior_policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="n">algo</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">rollouts_real</span><span class="o">=</span><span class="n">rollouts_real</span><span class="p">))</span>
+
+        <span class="n">algo</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
+        <span class="n">algo</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">loss_post</span> <span class="o">=</span> <span class="n">eval_ddp_policy</span><span class="p">(</span><span class="n">rollouts_real_tst</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">loss_post</span> <span class="o">&lt;=</span> <span class="n">loss_pre</span>  <span class="c1"># don&#39;t have to be better every step</span></div>
+
+
+<div class="viewcode-block" id="test_simopt_cem_ppo"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_simopt_cem_ppo">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_simopt_cem_ppo</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Environments</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env_real</span><span class="p">)</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Mr&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Mp&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Lr&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Lp&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+    <span class="n">dp_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Mr&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Mr&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Mp&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Mp&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Lr&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Lr&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Lp&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Lp&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">trafo_mask</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">MetaDomainRandWrapper</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">dp_map</span><span class="p">)</span>
+
+    <span class="c1"># Subroutine for policy improvement</span>
+    <span class="n">behav_policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="n">behav_policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">behav_policy_hparam</span><span class="p">)</span>
+    <span class="n">vfcn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">relu</span><span class="p">)</span>
+    <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">vfcn_hparam</span><span class="p">)</span>
+    <span class="n">critic_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span>
+        <span class="n">lamda</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">standardize_adv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">8e-4</span><span class="p">,</span>
+        <span class="n">max_grad_norm</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+    <span class="n">subrtn_policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.13</span><span class="p">,</span>
+        <span class="n">min_steps</span><span class="o">=</span><span class="mi">4</span> <span class="o">*</span> <span class="n">env_sim</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">3e-04</span><span class="p">,</span>
+        <span class="n">max_grad_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subrtn_policy</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">behav_policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_policy_hparam</span><span class="p">)</span>
+
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Mr&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.095</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.095</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Mp&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.024</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.024</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Lr&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.085</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.085</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Lp&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.129</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.129</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">ddp_policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mapping</span><span class="o">=</span><span class="n">dp_map</span><span class="p">,</span> <span class="n">trafo_mask</span><span class="o">=</span><span class="n">trafo_mask</span><span class="p">,</span> <span class="n">scale_params</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ddp_policy</span> <span class="o">=</span> <span class="n">DomainDistrParamPolicy</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="o">**</span><span class="n">ddp_policy_hparam</span><span class="p">)</span>
+    <span class="n">subsubrtn_distr_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+        <span class="n">expl_std_min</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+        <span class="n">extra_expl_std_init</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+        <span class="n">extra_expl_decay_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subsubrtn_distr</span> <span class="o">=</span> <span class="n">CEM</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">ddp_policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subsubrtn_distr_hparam</span><span class="p">)</span>
+    <span class="n">subrtn_distr_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">obs_dim_weight</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+        <span class="n">num_rollouts_per_distr</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subrtn_distr</span> <span class="o">=</span> <span class="n">SysIdViaEpisodicRL</span><span class="p">(</span><span class="n">subsubrtn_distr</span><span class="p">,</span> <span class="n">behavior_policy</span><span class="o">=</span><span class="n">behav_policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_distr_hparam</span><span class="p">)</span>
+
+    <span class="c1"># Algorithm</span>
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_eval_rollouts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">SimOpt</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">env_real</span><span class="p">,</span> <span class="n">subrtn_policy</span><span class="p">,</span> <span class="n">subrtn_distr</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+
+
+<div class="viewcode-block" id="test_basic_meta"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_basic_meta">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">&quot;linear_policy&quot;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;algo, algo_hparam&quot;</span><span class="p">,</span>
+    <span class="p">[(</span><span class="n">UDR</span><span class="p">,</span> <span class="p">{}),</span> <span class="p">(</span><span class="n">EPOpt</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">skip_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9995</span><span class="p">))],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;udr&quot;</span><span class="p">,</span> <span class="s2">&quot;EPOpt&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_basic_meta</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Policy and subroutine</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">GaussianObsNoiseWrapper</span><span class="p">(</span>
+        <span class="n">env</span><span class="p">,</span>
+        <span class="n">noise_std</span><span class="o">=</span><span class="p">[</span>
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+            <span class="mf">0.0025</span><span class="p">,</span>
+            <span class="mf">0.0025</span><span class="p">,</span>
+            <span class="mi">2</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+            <span class="mi">2</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
+            <span class="mf">0.05</span><span class="p">,</span>
+            <span class="mf">0.05</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">ActDelayWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer_qbb</span><span class="p">()</span>
+    <span class="n">randomizer</span><span class="o">.</span><span class="n">add_domain_params</span><span class="p">(</span><span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;act_delay&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">roundint</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+
+    <span class="c1"># Policy</span>
+    <span class="n">policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>  <span class="c1"># FNN</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">policy_hparam</span><span class="p">)</span>
+
+    <span class="c1"># Critic</span>
+    <span class="n">vfcn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>  <span class="c1"># FNN</span>
+    <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">vfcn_hparam</span><span class="p">)</span>
+    <span class="n">critic_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9995</span><span class="p">,</span>
+        <span class="n">lamda</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>
+        <span class="n">standardize_adv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+
+    <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">2e-4</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subrtn</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">)</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">subrtn</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+
+
+<div class="viewcode-block" id="test_sbi_embedding"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_sbi_embedding">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;embedding_name&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">LastStepEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">AllStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">DeltaStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">BayesSimEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">DynamicTimeWarpingEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">RNNEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;laststep&quot;</span><span class="p">,</span> <span class="s2">&quot;allsteps&quot;</span><span class="p">,</span> <span class="s2">&quot;deltasteps&quot;</span><span class="p">,</span> <span class="s2">&quot;bayessim&quot;</span><span class="p">,</span> <span class="s2">&quot;dtw&quot;</span><span class="p">,</span> <span class="s2">&quot;rnn&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_segments, len_segments&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">13</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;numsegs4&quot;</span><span class="p">,</span> <span class="s2">&quot;lensegs13&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;stop_on_done&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;stop&quot;</span><span class="p">,</span> <span class="s2">&quot;dontstop&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;state_mask_labels, act_mask_labels&quot;</span><span class="p">,</span>
+    <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">([</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;alldims&quot;</span><span class="p">,</span> <span class="s2">&quot;seldims&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_sbi_embedding</span><span class="p">(</span>
+    <span class="n">ex_dir</span><span class="p">,</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+    <span class="n">embedding_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">stop_on_done</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">state_mask_labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">act_mask_labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+<span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Reduce the number of steps to make this test run faster</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">80</span>
+
+    <span class="c1"># Policy</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+
+    <span class="c1"># Define a mapping: index - domain parameter</span>
+    <span class="n">dp_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Mp&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Lp&quot;</span><span class="p">}</span>
+
+    <span class="c1"># Time series embedding</span>
+    <span class="k">if</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">LastStepEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">LastStepEmbedding</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">state_mask_labels</span><span class="o">=</span><span class="n">state_mask_labels</span><span class="p">,</span>
+            <span class="n">act_mask_labels</span><span class="o">=</span><span class="n">act_mask_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">AllStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">AllStepsEmbedding</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+            <span class="n">downsampling_factor</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">state_mask_labels</span><span class="o">=</span><span class="n">state_mask_labels</span><span class="p">,</span>
+            <span class="n">act_mask_labels</span><span class="o">=</span><span class="n">act_mask_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">DeltaStepsEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">DeltaStepsEmbedding</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+            <span class="n">downsampling_factor</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">state_mask_labels</span><span class="o">=</span><span class="n">state_mask_labels</span><span class="p">,</span>
+            <span class="n">act_mask_labels</span><span class="o">=</span><span class="n">act_mask_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">BayesSimEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">BayesSimEmbedding</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">downsampling_factor</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">state_mask_labels</span><span class="o">=</span><span class="n">state_mask_labels</span><span class="p">,</span>
+            <span class="n">act_mask_labels</span><span class="o">=</span><span class="n">act_mask_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">DynamicTimeWarpingEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">DynamicTimeWarpingEmbedding</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">downsampling_factor</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">state_mask_labels</span><span class="o">=</span><span class="n">state_mask_labels</span><span class="p">,</span>
+            <span class="n">act_mask_labels</span><span class="o">=</span><span class="n">act_mask_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">embedding_name</span> <span class="o">==</span> <span class="n">RNNEmbedding</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">RNNEmbedding</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">hidden_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">output_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">len_rollouts</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+            <span class="n">downsampling_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">state_mask_labels</span><span class="o">=</span><span class="n">state_mask_labels</span><span class="p">,</span>
+            <span class="n">act_mask_labels</span><span class="o">=</span><span class="n">act_mask_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">SimRolloutSamplerForSBI</span><span class="p">(</span>
+        <span class="n">env</span><span class="p">,</span>
+        <span class="n">policy</span><span class="p">,</span>
+        <span class="n">dp_mapping</span><span class="p">,</span>
+        <span class="n">embedding</span><span class="p">,</span>
+        <span class="n">num_segments</span><span class="p">,</span>
+        <span class="n">len_segments</span><span class="p">,</span>
+        <span class="n">stop_on_done</span><span class="p">,</span>
+        <span class="n">rollouts_real</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_rec_act</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Test with 7 domain parameter sets</span>
+    <span class="n">data_sim</span> <span class="o">=</span> <span class="n">sampler</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+    <span class="k">assert</span> <span class="n">data_sim</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">embedding</span><span class="o">.</span><span class="n">dim_output</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_npdr_and_bayessim"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_npdr_and_bayessim">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;algo_name&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">NPDR</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">BayesSim</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NPDR&quot;</span><span class="p">,</span> <span class="s2">&quot;Bayessim&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_segments, len_segments&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">13</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;numsegs4&quot;</span><span class="p">,</span> <span class="s2">&quot;lensegs13&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_real_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1ro&quot;</span><span class="p">,</span> <span class="s2">&quot;2ros&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_sbi_rounds&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1round&quot;</span><span class="p">,</span> <span class="s2">&quot;2rounds&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;use_rec_act&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;userecact&quot;</span><span class="p">,</span> <span class="s2">&quot;dontuserecact&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_npdr_and_bayessim</span><span class="p">(</span>
+    <span class="n">ex_dir</span><span class="p">,</span>
+    <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+    <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">len_segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_real_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_sbi_rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">use_rec_act</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Create a fake ground truth target domain</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Mp</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">,</span> <span class="n">Lp</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">)</span>
+
+    <span class="c1"># Reduce the number of steps to make this test run faster</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">40</span>
+
+    <span class="c1"># Policy</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+
+    <span class="c1"># Define a mapping: index - domain parameter</span>
+    <span class="n">dp_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Mp&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Lp&quot;</span><span class="p">}</span>
+
+    <span class="c1"># Prior</span>
+    <span class="n">prior_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">low</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">]),</span>
+        <span class="n">high</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Mp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;Lp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">]),</span>
+    <span class="p">)</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="n">sbiutils</span><span class="o">.</span><span class="n">BoxUniform</span><span class="p">(</span><span class="o">**</span><span class="n">prior_hparam</span><span class="p">)</span>
+
+    <span class="c1"># Time series embedding</span>
+    <span class="n">embedding</span> <span class="o">=</span> <span class="n">BayesSimEmbedding</span><span class="p">(</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+        <span class="n">RolloutSamplerForSBI</span><span class="o">.</span><span class="n">get_dim_data</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+        <span class="n">downsampling_factor</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Posterior (normalizing flow)</span>
+    <span class="n">posterior_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;maf&quot;</span><span class="p">,</span> <span class="n">embedding_net</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">(),</span> <span class="n">hidden_features</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">num_transforms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># Policy optimization subroutine</span>
+    <span class="n">subrtn_policy_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_domains</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">expl_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subrtn_policy</span> <span class="o">=</span> <span class="n">HCNormal</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_policy_hparam</span><span class="p">)</span>
+
+    <span class="c1"># Algorithm</span>
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_sim_per_round</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">num_real_rollouts</span><span class="o">=</span><span class="n">num_real_rollouts</span><span class="p">,</span>
+        <span class="n">num_sbi_rounds</span><span class="o">=</span><span class="n">num_sbi_rounds</span><span class="p">,</span>
+        <span class="n">simulation_batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">normalize_posterior</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">num_eval_samples</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">num_segments</span><span class="o">=</span><span class="n">num_segments</span><span class="p">,</span>
+        <span class="n">len_segments</span><span class="o">=</span><span class="n">len_segments</span><span class="p">,</span>
+        <span class="n">use_rec_act</span><span class="o">=</span><span class="n">use_rec_act</span><span class="p">,</span>
+        <span class="n">stop_on_done</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">subrtn_sbi_training_hparam</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">max_num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># only train for 1 iteration</span>
+        <span class="c1"># subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">skip</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">algo_name</span> <span class="o">==</span> <span class="n">NPDR</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">algo</span> <span class="o">=</span> <span class="n">NPDR</span><span class="p">(</span>
+            <span class="n">save_dir</span><span class="o">=</span><span class="n">ex_dir</span><span class="p">,</span>
+            <span class="n">env_sim</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">env_real</span><span class="o">=</span><span class="n">env_real</span><span class="p">,</span>
+            <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+            <span class="n">dp_mapping</span><span class="o">=</span><span class="n">dp_mapping</span><span class="p">,</span>
+            <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="n">embedding</span><span class="p">,</span>
+            <span class="n">subrtn_sbi_class</span><span class="o">=</span><span class="n">SNPE_C</span><span class="p">,</span>
+            <span class="n">posterior_hparam</span><span class="o">=</span><span class="n">posterior_hparam</span><span class="p">,</span>
+            <span class="n">subrtn_policy</span><span class="o">=</span><span class="n">subrtn_policy</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">algo_hparam</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">algo_name</span> <span class="o">==</span> <span class="n">BayesSim</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="c1"># We are not checking multi-round SNPE-A since it has known issues</span>
+        <span class="k">if</span> <span class="n">algo_hparam</span><span class="p">[</span><span class="s2">&quot;num_sbi_rounds&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">skip</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">algo</span> <span class="o">=</span> <span class="n">BayesSim</span><span class="p">(</span>
+            <span class="n">save_dir</span><span class="o">=</span><span class="n">ex_dir</span><span class="p">,</span>
+            <span class="n">env_sim</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">env_real</span><span class="o">=</span><span class="n">env_real</span><span class="p">,</span>
+            <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+            <span class="n">dp_mapping</span><span class="o">=</span><span class="n">dp_mapping</span><span class="p">,</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="n">embedding</span><span class="p">,</span>
+            <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span>
+            <span class="n">subrtn_policy</span><span class="o">=</span><span class="n">subrtn_policy</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">algo_hparam</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">skip</span><span class="p">:</span>
+        <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="c1"># Just checking the interface here</span>
+        <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+
+
+<div class="viewcode-block" id="test_sprl"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_sprl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;optimize_mean&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_sprl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">optimize_mean</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env_sprl_params</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
+            <span class="n">target_mean</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">9.81</span><span class="p">]),</span>
+            <span class="n">target_cov_chol_flat</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]),</span>
+            <span class="n">init_mean</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">9.81</span><span class="p">]),</span>
+            <span class="n">init_cov_chol_flat</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.05</span><span class="p">]),</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">radnomizer</span> <span class="o">=</span> <span class="n">DomainRandomizer</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">SelfPacedDomainParam</span><span class="p">(</span><span class="o">**</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">env_sprl_params</span><span class="p">])</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="o">=</span><span class="n">radnomizer</span><span class="p">)</span>
+
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+
+    <span class="n">vfcn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">relu</span><span class="p">)</span>
+    <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">vfcn_hparam</span><span class="p">)</span>
+    <span class="n">critic_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9844534412010116</span><span class="p">,</span>
+        <span class="n">lamda</span><span class="o">=</span><span class="mf">0.9710614403461155</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">standardize_adv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">0.00016985313083236645</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+
+    <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.12648736789309026</span><span class="p">,</span>
+        <span class="n">min_steps</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.7573286998997557</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">6.999956625305722e-04</span><span class="p">,</span>
+        <span class="n">max_grad_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">kl_constraints_ub</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+        <span class="n">performance_lower_bound</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+        <span class="n">std_lower_bound</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">kl_threshold</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">optimize_mean</span><span class="o">=</span><span class="n">optimize_mean</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">SPRL</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">),</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+
+
+<div class="viewcode-block" id="test_pddr"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_pddr">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qq-su&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fnn_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fnn&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;algo_hparam&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_teachers</span><span class="o">=</span><span class="mi">2</span><span class="p">)],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;casual&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_pddr</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Create algorithm and train</span>
+    <span class="n">teacher_policy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span>
+        <span class="n">vfcn</span><span class="o">=</span><span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">teacher_algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">critic</span><span class="o">=</span><span class="n">critic</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">teacher_algo</span> <span class="o">=</span> <span class="n">PPO</span>
+
+    <span class="c1"># Wrapper</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+
+    <span class="c1"># Subroutine</span>
+    <span class="n">algo_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">min_steps</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+        <span class="n">num_cpu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+        <span class="n">num_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">num_teachers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">teacher_policy</span><span class="o">=</span><span class="n">teacher_policy</span><span class="p">,</span>
+        <span class="n">teacher_algo</span><span class="o">=</span><span class="n">teacher_algo</span><span class="p">,</span>
+        <span class="n">teacher_algo_hparam</span><span class="o">=</span><span class="n">teacher_algo_hparam</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">PDDR</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
+
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span>
+
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">Algorithm</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">load_dir</span><span class="o">=</span><span class="n">ex_dir</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span>
+    <span class="n">policy_loaded</span> <span class="o">=</span> <span class="n">algo_loaded</span><span class="o">.</span><span class="n">policy</span>
+
+    <span class="c1"># Check</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="n">policy_loaded</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
+
+    <span class="c1"># Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="n">load_experiment</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

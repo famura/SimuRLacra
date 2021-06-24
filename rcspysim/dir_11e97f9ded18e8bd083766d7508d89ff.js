@@ -12,10 +12,6 @@ var dir_11e97f9ded18e8bd083766d7508d89ff =
     [ "ISSBallOnPlate.h", "ISSBallOnPlate_8h.html", [
       [ "ISSBallOnPlate", "classRcs_1_1ISSBallOnPlate.html", "classRcs_1_1ISSBallOnPlate" ]
     ] ],
-    [ "ISSBoxFlipping.cpp", "ISSBoxFlipping_8cpp.html", null ],
-    [ "ISSBoxFlipping.h", "ISSBoxFlipping_8h.html", [
-      [ "ISSBoxFlipping", "classRcs_1_1ISSBoxFlipping.html", "classRcs_1_1ISSBoxFlipping" ]
-    ] ],
     [ "ISSBoxLifting.cpp", "ISSBoxLifting_8cpp.html", null ],
     [ "ISSBoxLifting.h", "ISSBoxLifting_8h.html", [
       [ "ISSBoxLifting", "classRcs_1_1ISSBoxLifting.html", "classRcs_1_1ISSBoxLifting" ]

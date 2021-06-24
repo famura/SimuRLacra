@@ -2,7 +2,6 @@ var searchData=
 [
   ['ecballintube',['ECBallInTube',['../classRcs_1_1ECBallInTube.html',1,'Rcs']]],
   ['ecballonplate',['ECBallOnPlate',['../classRcs_1_1ECBallOnPlate.html',1,'Rcs']]],
-  ['ecboxflipping',['ECBoxFlipping',['../classRcs_1_1ECBoxFlipping.html',1,'Rcs']]],
   ['ecboxlifting',['ECBoxLifting',['../classRcs_1_1ECBoxLifting.html',1,'Rcs']]],
   ['ecboxshelving',['ECBoxShelving',['../classRcs_1_1ECBoxShelving.html',1,'Rcs']]],
   ['ecminigolf',['ECMiniGolf',['../classRcs_1_1ECMiniGolf.html',1,'Rcs']]],

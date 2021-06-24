@@ -1,10 +1,9 @@
 <map id="src/cpp/core/observation/OMBodyStateAngular.h" name="src/cpp/core/observation/OMBodyStateAngular.h">
 <area shape="rect" id="node2" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="5,102,216,129"/>
-<area shape="rect" id="node3" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="240,102,451,129"/>
-<area shape="rect" id="node4" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="475,102,675,129"/>
-<area shape="rect" id="node5" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="699,102,914,129"/>
-<area shape="rect" id="node6" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="938,102,1129,129"/>
-<area shape="rect" id="node7" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1153,102,1365,129"/>
-<area shape="rect" id="node8" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1389,102,1611,129"/>
-<area shape="rect" id="node9" href="$OMBodyStateAngular_8cpp.html" title="src/cpp/core/observation\l/OMBodyStateAngular.cpp" alt="" coords="1635,95,1813,136"/>
+<area shape="rect" id="node3" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="240,102,440,129"/>
+<area shape="rect" id="node4" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="465,102,679,129"/>
+<area shape="rect" id="node5" href="$ECMiniGolf_8cpp.html" title="src/cpp/core/ECMiniGolf.cpp" alt="" coords="703,102,894,129"/>
+<area shape="rect" id="node6" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="918,102,1130,129"/>
+<area shape="rect" id="node7" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1154,102,1377,129"/>
+<area shape="rect" id="node8" href="$OMBodyStateAngular_8cpp.html" title="src/cpp/core/observation\l/OMBodyStateAngular.cpp" alt="" coords="1401,95,1578,136"/>
 </map>

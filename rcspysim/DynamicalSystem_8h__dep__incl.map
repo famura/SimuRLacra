@@ -1,17 +1,16 @@
 <map id="src/cpp/core/action/DynamicalSystem.h" name="src/cpp/core/action/DynamicalSystem.h">
-<area shape="rect" id="node2" href="$AMDynamicalSystemActivation_8h.html" title="src/cpp/core/action\l/AMDynamicalSystemActivation.h" alt="" coords="887,95,1110,136"/>
-<area shape="rect" id="node16" href="$DynamicalSystem_8cpp.html" title="src/cpp/core/action\l/DynamicalSystem.cpp" alt="" coords="1134,95,1293,136"/>
-<area shape="rect" id="node3" href="$AMDynamicalSystemActivation_8cpp.html" title="src/cpp/core/action\l/AMDynamicalSystemActivation.cpp" alt="" coords="310,184,546,225"/>
-<area shape="rect" id="node4" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="241,281,445,307"/>
-<area shape="rect" id="node5" href="$OMDynamicalSystemGoalDistance_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.h" alt="" coords="1037,184,1281,225"/>
-<area shape="rect" id="node6" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="5,281,216,307"/>
-<area shape="rect" id="node7" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="745,281,945,307"/>
-<area shape="rect" id="node8" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="970,281,1185,307"/>
-<area shape="rect" id="node9" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1727,281,1937,307"/>
-<area shape="rect" id="node10" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1209,281,1421,307"/>
-<area shape="rect" id="node12" href="$OMDynamicalSystemDiscrepancy_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.h" alt="" coords="722,184,961,225"/>
-<area shape="rect" id="node14" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1406,191,1618,218"/>
-<area shape="rect" id="node15" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="1642,191,1897,218"/>
-<area shape="rect" id="node11" href="$OMDynamicalSystemGoalDistance_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.cpp" alt="" coords="1444,273,1703,315"/>
-<area shape="rect" id="node13" href="$OMDynamicalSystemDiscrepancy_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.cpp" alt="" coords="469,273,721,315"/>
+<area shape="rect" id="node2" href="$AMDynamicalSystemActivation_8h.html" title="src/cpp/core/action\l/AMDynamicalSystemActivation.h" alt="" coords="811,95,1033,136"/>
+<area shape="rect" id="node15" href="$DynamicalSystem_8cpp.html" title="src/cpp/core/action\l/DynamicalSystem.cpp" alt="" coords="1057,95,1216,136"/>
+<area shape="rect" id="node3" href="$AMDynamicalSystemActivation_8cpp.html" title="src/cpp/core/action\l/AMDynamicalSystemActivation.cpp" alt="" coords="204,184,440,225"/>
+<area shape="rect" id="node4" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,281,209,307"/>
+<area shape="rect" id="node5" href="$OMDynamicalSystemGoalDistance_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.h" alt="" coords="880,184,1124,225"/>
+<area shape="rect" id="node6" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="510,281,710,307"/>
+<area shape="rect" id="node7" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="735,281,949,307"/>
+<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1209,281,1419,307"/>
+<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="973,281,1185,307"/>
+<area shape="rect" id="node11" href="$OMDynamicalSystemDiscrepancy_8h.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.h" alt="" coords="565,184,804,225"/>
+<area shape="rect" id="node13" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1249,191,1461,218"/>
+<area shape="rect" id="node14" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="1485,191,1740,218"/>
+<area shape="rect" id="node10" href="$OMDynamicalSystemGoalDistance_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemGoalDistance.cpp" alt="" coords="1443,273,1702,315"/>
+<area shape="rect" id="node12" href="$OMDynamicalSystemDiscrepancy_8cpp.html" title="src/cpp/core/observation\l/OMDynamicalSystemDiscrepancy.cpp" alt="" coords="233,273,485,315"/>
 </map>

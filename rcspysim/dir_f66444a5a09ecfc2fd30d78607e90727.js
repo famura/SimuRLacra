@@ -13,7 +13,6 @@ var dir_f66444a5a09ecfc2fd30d78607e90727 =
     ] ],
     [ "ECBallInTube.cpp", "ECBallInTube_8cpp.html", "ECBallInTube_8cpp" ],
     [ "ECBallOnPlate.cpp", "ECBallOnPlate_8cpp.html", "ECBallOnPlate_8cpp" ],
-    [ "ECBoxFlipping.cpp", "ECBoxFlipping_8cpp.html", "ECBoxFlipping_8cpp" ],
     [ "ECBoxLifting.cpp", "ECBoxLifting_8cpp.html", "ECBoxLifting_8cpp" ],
     [ "ECBoxShelving.cpp", "ECBoxShelving_8cpp.html", "ECBoxShelving_8cpp" ],
     [ "ECMiniGolf.cpp", "ECMiniGolf_8cpp.html", "ECMiniGolf_8cpp" ],
