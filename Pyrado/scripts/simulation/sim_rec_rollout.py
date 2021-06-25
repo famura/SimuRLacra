@@ -33,6 +33,8 @@ import time
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.spaces import BoxSpace
@@ -85,14 +87,26 @@ if __name__ == "__main__":
             "it been specified explicitly! Please provide the time step size using --dt."
         )
 
-    if env_name == "wam-jsc":  # avoid loading mujoco
+    if env_name == QBallBalancerSim.name:
+        env = QBallBalancerSim(dt=dt)
+
+    elif env_name == QCartPoleSwingUpSim.name:
+        env = QCartPoleSwingUpSim(dt=dt)
+
+    elif env_name == QQubeSwingUpSim.name:
+        env = QQubeSwingUpSim(dt=dt)
+
+    elif env_name == "wam-bic":  # avoid loading mujoco
+        from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
+
+        env = WAMBallInCupSim(num_dof=4)
+        env.init_space = BoxSpace(-pyrado.inf, pyrado.inf, shape=env.init_space.shape)
+
+    elif env_name == "wam-jsc":  # avoid loading mujoco
         from pyrado.environments.mujoco.wam_jsc import WAMJointSpaceCtrlSim
 
         env = WAMJointSpaceCtrlSim(num_dof=7)
         env.init_space = BoxSpace(-pyrado.inf, pyrado.inf, shape=env.init_space.shape)
-
-    elif env_name == QQubeSwingUpSim.name:
-        env = QQubeSwingUpSim(dt=dt)
 
     elif env_name == "mg-ik":  # avoid loading _rcsenv
         from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
@@ -105,7 +119,11 @@ if __name__ == "__main__":
         env = MiniGolfJointCtrlSim(dt=dt)
 
     else:
-        raise pyrado.ValueErr(given=env_name, eq_constraint=f"wam-jsc, {QQubeSwingUpSim.name}, or mg-ik")
+        raise pyrado.ValueErr(
+            given=env_name,
+            eq_constraint=f"{QBallBalancerSim.name},{QCartPoleSwingUpSim.name},{QQubeSwingUpSim.name}, "
+            f"wam-bic, wam-jsc, mg-ik, or mg-jnt",
+        )
 
     done = False
     env.reset(domain_param=domain_param)

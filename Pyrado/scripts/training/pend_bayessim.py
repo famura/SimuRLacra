@@ -75,11 +75,6 @@ if __name__ == "__main__":
         high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
-    # prior_hparam = dict(
-    #     loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
-    #     covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
-    # )
-    # prior = to.distributions.MultivariateNormal(**prior_hparam)
 
     # Time series embedding
     embedding_hparam = dict(downsampling_factor=1)
@@ -107,10 +102,9 @@ if __name__ == "__main__":
             stop_after_epochs=20,  # default: 20
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
-            # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_policy=None,
-        num_workers=20,
+        num_workers=12,
     )
     algo = BayesSim(
         save_dir=ex_dir,

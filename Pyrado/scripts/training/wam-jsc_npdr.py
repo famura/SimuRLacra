@@ -60,7 +60,7 @@ if __name__ == "__main__":
     env_sim_hparams = dict(num_dof=7, dt=1 / 250.0, max_steps=20 * 250)
     env_sim = WAMJointSpaceCtrlSim(**env_sim_hparams)
     num_real_rollouts = 1
-    env_real = osp.join(pyrado.EVAL_DIR, "wam-jsc-7_neg-wam-sin_250Hz_filt")
+    env_real = osp.join(pyrado.EVAL_DIR, "wam-jsc-7_neg-wam-sin_250Hz_20s_filt")
 
     # Define a mapping: index - domain parameter
     # dp_mapping = {

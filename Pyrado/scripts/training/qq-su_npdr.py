@@ -91,10 +91,10 @@ if __name__ == "__main__":
 
     # Create the ground truth target domain and the behavioral policy
     if ectl:
-        env_real = osp.join(pyrado.EVAL_DIR, "qq-su_ectrl_250Hz")  # 5s long
+        env_real = osp.join(pyrado.EVAL_DIR, f"qq-su_ectrl_250Hz_{t_end}s")
         policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
     else:
-        env_real = osp.join(pyrado.EVAL_DIR, "qq_sin_2Hz_1V_250Hz")
+        env_real = osp.join(pyrado.EVAL_DIR, f"qq_chrip_10to0Hz_+1.5V_250Hz_{t_end}s")
         assert use_rec_act
         policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 

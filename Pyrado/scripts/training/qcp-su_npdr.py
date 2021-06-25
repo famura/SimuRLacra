@@ -82,7 +82,7 @@ if __name__ == "__main__":
     env_sim = QCartPoleSwingUpSim(**env_sim_hparams)
 
     # Create the ground truth target domain and the behavioral policy
-    env_real = osp.join(pyrado.EVAL_DIR, "qcp-su_ectrl_250Hz_filt")
+    env_real = osp.join(pyrado.EVAL_DIR, f"qcp-su_ectrl_250Hz_{t_end}s_filt")
     policy = QCartPoleSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
 
     # Define a mapping: index - domain parameter

@@ -115,7 +115,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=5,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=300,
+        num_sim_per_round=200,
         num_sbi_rounds=3,
         simulation_batch_size=10,
         normalize_posterior=False,

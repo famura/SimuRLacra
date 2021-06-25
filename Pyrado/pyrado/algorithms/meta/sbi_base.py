@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import os
 import sys
 from abc import ABC, abstractmethod
-from copy import deepcopy
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Union
 
 import numpy as np
@@ -38,7 +38,6 @@ import torch as to
 from colorama import Fore, Style
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
-from sbi.inference.snpe import PosteriorEstimator
 from sbi.utils.user_input_checks import prepare_for_sbi
 from tabulate import tabulate
 from torch.distributions import Distribution, Normal
@@ -203,7 +202,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         )
 
         self._env_sim_sbi = env_sim  # will be randomized explicitly by sbi
-        self._env_sim_trn = DomainRandWrapperBuffer(deepcopy(env_sim), randomizer=None, selection="cyclic")
+        self._env_sim_trn = DomainRandWrapperBuffer(copy.deepcopy(env_sim), randomizer=None, selection="cyclic")
         self._env_real = env_real
         self.dp_mapping = dp_mapping
         self._embedding = embedding
@@ -829,7 +828,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Call Algorithm's __getstate__() without the unpickleable sbi-related members.
         # Make a deepcopy of the state dict such that we can return the pickleable version and insert the sbi variables.
-        state_dict_copy = deepcopy(super().__getstate__())
+        state_dict_copy = copy.deepcopy(super().__getstate__())
 
         # Inset them back to the current state dict
         self.__dict__["_sbi_simulator"] = tmp_sbi_simulator
