@@ -445,7 +445,7 @@
 <span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
 <span class="sd">                       positionTasks: bool = True,</span>
-<span class="sd">                       checkJointLimits: bool = False,</span>
+<span class="sd">                       checkJointLimits: bool = True,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
 <span class="sd">                       observeVelocities: bool = True,</span>
 <span class="sd">                       observeForceTorque: bool = True,</span>
@@ -486,7 +486,7 @@
 <span class="sd">        :param position_mps: if `True` use movement primitives specified on position-level, if `False` velocity-level</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
-<span class="sd">                       checkJointLimits: bool = False,</span>
+<span class="sd">                       checkJointLimits: bool = True,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
 <span class="sd">                       observeVelocities: bool = True,</span>
 <span class="sd">                       observeForceTorque: bool = True,</span>

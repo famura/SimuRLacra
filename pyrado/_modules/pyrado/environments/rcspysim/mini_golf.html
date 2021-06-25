@@ -324,8 +324,8 @@
 <span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
-<span class="sd">                       fixedInitState: bool = True,</span>
-<span class="sd">                       checkJointLimits: bool = False,</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
+<span class="sd">                       checkJointLimits: bool = True,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = False,</span>
 <span class="sd">                       observeVelocities: bool = False,</span>
 <span class="sd">                       observeForceTorque: bool = False,</span>
@@ -402,8 +402,8 @@
 <span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion</span>
 <span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
-<span class="sd">                       fixedInitState: bool = True,</span>
-<span class="sd">                       checkJointLimits: bool = False,</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
+<span class="sd">                       checkJointLimits: bool = True,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = False,</span>
 <span class="sd">                       observeVelocities: bool = False,</span>
 <span class="sd">                       observeForceTorque: bool = False,</span>
@@ -431,6 +431,11 @@
 
 <span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
+<span class="sd">                       checkJointLimits: bool = True,</span>
+<span class="sd">                       collisionAvoidanceIK: bool = False,</span>
+<span class="sd">                       observeVelocities: bool = False,</span>
+<span class="sd">                       observeForceTorque: bool = False,</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
 
