@@ -37,7 +37,7 @@ from init_args_serializer.serializable import Serializable
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.quanser import max_act_qbb
+from pyrado.environments.quanser import MAX_ACT_QBB
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.polar import Polar2DPosVelSpace
 from pyrado.tasks.base import Task
@@ -116,9 +116,9 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         )
         self._obs_space = self._state_space.copy()
         self._init_space = Polar2DPosVelSpace(min_init_state, max_init_state, labels=["r", "phi", "x_dot", "y_dot"])
-        self._act_space = BoxSpace(-max_act_qbb, max_act_qbb, labels=["V_x", "V_y"])
+        self._act_space = BoxSpace(-MAX_ACT_QBB, MAX_ACT_QBB, labels=["V_x", "V_y"])
 
-        self._curr_act = np.zeros_like(max_act_qbb)  # just for usage in render function
+        self._curr_act = np.zeros_like(MAX_ACT_QBB)  # just for usage in render function
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

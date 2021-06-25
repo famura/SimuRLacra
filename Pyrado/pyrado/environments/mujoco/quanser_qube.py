@@ -37,7 +37,7 @@ from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
-from pyrado.environments.quanser import max_act_qq
+from pyrado.environments.quanser import MAX_ACT_QQ
 from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
@@ -82,7 +82,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
 
     @property
     def act_space(self) -> Space:
-        return BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
+        return BoxSpace(-MAX_ACT_QQ, MAX_ACT_QQ, labels=["V"])
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:

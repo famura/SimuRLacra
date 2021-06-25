@@ -35,12 +35,12 @@ import robcom_python as robcom
 
 import pyrado
 from pyrado.environments.barrett_wam import (
-    init_qpos_des_4dof,
-    init_qpos_des_7dof,
-    wam_dgains_4dof,
-    wam_dgains_7dof,
-    wam_pgains_4dof,
-    wam_pgains_7dof,
+    INIT_QPOS_DES_4DOF,
+    INIT_QPOS_DES_7DOF,
+    WAM_DGAINS_4DOF,
+    WAM_DGAINS_7DOF,
+    WAM_PGAINS_4DOF,
+    WAM_PGAINS_7DOF,
 )
 from pyrado.environments.real_base import RealEnv
 from pyrado.spaces.base import Space
@@ -100,10 +100,10 @@ class WAMReal(RealEnv, ABC):
         # Desired joint position for the initial state and indices of the joints the policy operates on
         self._num_dof = num_dof
         if self._num_dof == 4:
-            self._qpos_des_init = init_qpos_des_4dof
+            self._qpos_des_init = INIT_QPOS_DES_4DOF
             self._idcs_act = [0, 1, 2, 3]  # use all joints by default
         elif self._num_dof == 7:
-            self._qpos_des_init = init_qpos_des_7dof
+            self._qpos_des_init = INIT_QPOS_DES_7DOF
             self._idcs_act = [0, 1, 2, 3, 4, 5, 6]  # use all joints by default
         else:
             raise pyrado.ValueErr(given=self._num_dof, eq_constraint="4 or 7")
@@ -154,11 +154,11 @@ class WAMReal(RealEnv, ABC):
         dc = self._client.create(robcom.DirectControl, self._robot_group_name, "")
         dc.start()
         if self.num_dof == 4:
-            dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_4dof.tolist())
-            dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_4dof.tolist())
+            dc.groups.set(robcom.JointDesState.P_GAIN, WAM_PGAINS_4DOF.tolist())
+            dc.groups.set(robcom.JointDesState.D_GAIN, WAM_DGAINS_4DOF.tolist())
         else:
-            dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains_7dof.tolist())
-            dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains_7dof.tolist())
+            dc.groups.set(robcom.JointDesState.P_GAIN, WAM_PGAINS_7DOF.tolist())
+            dc.groups.set(robcom.JointDesState.D_GAIN, WAM_DGAINS_7DOF.tolist())
         dc.send_updates()
         dc.stop()
 
