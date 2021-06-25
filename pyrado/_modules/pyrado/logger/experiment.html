@@ -1,0 +1,829 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.logger.experiment &mdash; Pyrado 0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+        
+          <li><a href="../logger.html">pyrado.logger</a> &raquo;</li>
+        
+      <li>pyrado.logger.experiment</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.logger.experiment</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils</span> <span class="kn">import</span> <span class="n">get_class_name</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">dict_path_access</span><span class="p">,</span> <span class="n">update_matching_keys_recursively</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span><span class="p">,</span> <span class="n">select_query</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.ordering</span> <span class="kn">import</span> <span class="n">natural_sort</span>
+
+
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for defining experiments</span>
+<span class="sd">    This is a path-like object, and as such it can be used everywhere a normal path would be used.</span>
+
+<span class="sd">    Experiment folder path:</span>
+<span class="sd">    &lt;base_dir&gt;/&lt;env_name&gt;/&lt;algo_name&gt;/&lt;timestamp&gt;--&lt;extra_info&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">extra_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exp_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">,</span>
+        <span class="n">include_slurm_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param env_name: environment trained on</span>
+<span class="sd">        :param algo_name: algorithm trained with, usually also includes the policy type, e.g. &#39;a2c_fnn&#39;</span>
+<span class="sd">        :param extra_info: additional information on the experiment (free form)</span>
+<span class="sd">        :param exp_id: combined timestamp and extra_info, usually the final folder name</span>
+<span class="sd">        :param timestamp: experiment creation timestamp</span>
+<span class="sd">        :param base_dir: base storage directory</span>
+<span class="sd">        :param include_slurm_id: if a SLURM ID is present in the environment variables, include it in the experiment ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">slurm_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">include_slurm_id</span> <span class="ow">and</span> <span class="s2">&quot;SLURM_ARRAY_JOB_ID&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="n">slurm_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_ARRAY_JOB_ID&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;SLURM_ARRAY_TASK_ID&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+                <span class="n">slurm_id</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_ARRAY_TASK_ID&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">exp_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Create exp id from timestamp and info</span>
+            <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">exp_id</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">timestamp_format</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">extra_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">exp_id</span> <span class="o">=</span> <span class="n">exp_id</span> <span class="o">+</span> <span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">extra_info</span>
+            <span class="k">if</span> <span class="n">slurm_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">exp_id</span> <span class="o">+=</span> <span class="s2">&quot;_slurm-&quot;</span> <span class="o">+</span> <span class="n">slurm_id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Try to parse extra_info from exp id</span>
+            <span class="n">sd</span> <span class="o">=</span> <span class="n">exp_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">time_str</span> <span class="o">=</span> <span class="n">sd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">time_str</span><span class="p">,</span> <span class="n">extra_info</span> <span class="o">=</span> <span class="n">sd</span>
+            <span class="c1"># Parse time string</span>
+            <span class="k">if</span> <span class="s2">&quot;_&quot;</span> <span class="ow">in</span> <span class="n">time_str</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">time_str</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">timestamp_format</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">time_str</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">timestamp_date_format</span><span class="p">)</span>
+
+        <span class="c1"># Store values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">=</span> <span class="n">env_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">=</span> <span class="n">algo_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_info</span> <span class="o">=</span> <span class="n">extra_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span> <span class="o">=</span> <span class="n">exp_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">base_dir</span>
+
+    <span class="k">def</span> <span class="nf">__fspath__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Allows to use the experiment object where the experiment path is needed.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an information string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Combination of experiment and algorithm&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Experiment.matches"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.Experiment.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check if this experiment matches the given hint.&quot;&quot;&quot;</span>
+        <span class="c1"># Split hint into &lt;env&gt;/&lt;algo&gt;/&lt;id&gt;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">parts</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Filter by exp name only</span>
+            <span class="p">(</span><span class="n">env_name</span><span class="p">,)</span> <span class="o">=</span> <span class="n">parts</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">==</span> <span class="n">env_name</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Filter by exp name only</span>
+            <span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span> <span class="o">=</span> <span class="n">parts</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">==</span> <span class="n">env_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">==</span> <span class="n">algo_name</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># Filter by exp name only</span>
+            <span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">eid</span> <span class="o">=</span> <span class="n">parts</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">==</span> <span class="n">env_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">==</span> <span class="n">algo_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span> <span class="o">==</span> <span class="n">eid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;fThe hint int contains </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> parts, but should be &lt;= 3!&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="setup_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.setup_experiment">[docs]</a><span class="k">def</span> <span class="nf">setup_experiment</span><span class="p">(</span>
+    <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">extra_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">,</span>
+    <span class="n">include_slurm_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setup a new experiment for recording.</span>
+
+<span class="sd">    :param env_name: environment trained on</span>
+<span class="sd">    :param algo_name: algorithm trained with, usually also includes the policy type, e.g. &#39;a2c_fnn&#39;</span>
+<span class="sd">    :param extra_info: additional information on the experiment (free form)</span>
+<span class="sd">    :param base_dir: base storage directory</span>
+<span class="sd">    :param include_slurm_id: if a SLURM ID is present in the environment variables, include them in the experiment ID</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create experiment object</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">extra_info</span><span class="p">,</span> <span class="n">base_dir</span><span class="o">=</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">include_slurm_id</span><span class="o">=</span><span class="n">include_slurm_id</span><span class="p">)</span>
+
+    <span class="c1"># Create the folder</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Set the global logger variable</span>
+    <span class="n">set_log_prefix_dir</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">exp</span></div>
+
+
+<span class="k">def</span> <span class="nf">_childdirs</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Yield only direct child directories.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
+        <span class="n">cp</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">cn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cp</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">cn</span>
+
+
+<span class="k">def</span> <span class="nf">_le_env_algo</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">exp_id</span> <span class="ow">in</span> <span class="n">_childdirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">)):</span>
+        <span class="k">yield</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">exp_id</span><span class="o">=</span><span class="n">exp_id</span><span class="p">,</span> <span class="n">base_dir</span><span class="o">=</span><span class="n">base_dir</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_le_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">algo_name</span> <span class="ow">in</span> <span class="n">_childdirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">env_name</span><span class="p">)):</span>
+        <span class="k">yield from</span> <span class="n">_le_env_algo</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_le_base</span><span class="p">(</span><span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">env_name</span> <span class="ow">in</span> <span class="n">_childdirs</span><span class="p">(</span><span class="n">base_dir</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="n">_le_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_le_select_filter</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">env_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_le_base</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">algo_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_le_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_le_env_algo</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="list_experiments"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.list_experiments">[docs]</a><span class="k">def</span> <span class="nf">list_experiments</span><span class="p">(</span>
+    <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">temp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">perma</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all stored experiments.</span>
+
+<span class="sd">    :param env_name: filter by env name</span>
+<span class="sd">    :param algo_name: filter by algorithm name. Requires env_name to be used too</span>
+<span class="sd">    :param base_dir: explicit base dir if desired. May also be a list of bases.</span>
+<span class="sd">                     Uses `pyrado.TEMP_DIR` and `pyrado.EXP_DIR` if not specified.</span>
+<span class="sd">    :param temp: set to `False` to not look in the `pyrado.TEMP` directory</span>
+<span class="sd">    :param perma: set to `False` to not look in the `pyrado.PERMA` directory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Parse bases</span>
+    <span class="k">if</span> <span class="n">base_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use temp/perm if requested</span>
+        <span class="k">if</span> <span class="n">temp</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="n">_le_select_filter</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">perma</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="n">_le_select_filter</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">EXP_DIR</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
+        <span class="c1"># Multiple base dirs</span>
+        <span class="k">for</span> <span class="n">bd</span> <span class="ow">in</span> <span class="n">base_dir</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="n">_le_select_filter</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">bd</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Single base dir</span>
+        <span class="k">yield from</span> <span class="n">_le_select_filter</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_select_latest</span><span class="p">(</span><span class="n">exps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Experiment</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select the most recent experiment from an iterable of experiments. Return `None` if there are no experiments.</span>
+
+<span class="sd">    :param exps: iterable of experiments</span>
+<span class="sd">    :return: latest experiment ot `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># sort from latest to oldest</span>
+    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">se</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_select_all</span><span class="p">(</span><span class="n">exps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Experiment</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select all experiments from an iterable of experiments and sort them from from latest to oldest.</span>
+<span class="sd">    Return `None` if there are no experiments.</span>
+
+<span class="sd">    :param exps: iterable of experiments</span>
+<span class="sd">    :return: temporally sorted experiment ot `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># sort from latest to oldest</span>
+    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">se</span>
+
+
+<div class="viewcode-block" id="select_by_hint"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.select_by_hint">[docs]</a><span class="k">def</span> <span class="nf">select_by_hint</span><span class="p">(</span><span class="n">exps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Experiment</span><span class="p">],</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Select experiment by hint.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">hint</span><span class="p">):</span>
+        <span class="c1"># Hint is a full experiment path</span>
+        <span class="k">return</span> <span class="n">hint</span>
+
+    <span class="c1"># Select matching exps</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">hint</span><span class="p">),</span> <span class="n">exps</span><span class="p">)</span>
+    <span class="n">sl</span> <span class="o">=</span> <span class="n">_select_latest</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No experiment matching hint </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sl</span></div>
+
+
+<div class="viewcode-block" id="create_experiment_formatter"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.create_experiment_formatter">[docs]</a><span class="k">def</span> <span class="nf">create_experiment_formatter</span><span class="p">(</span>
+    <span class="n">show_hparams</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_extra_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Experiment</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an experiment formatter (i.e. a function that takes an experiment and produces a string) to be used in the</span>
+<span class="sd">    ask-for-experiments dialog. It produces useful information like the timestamp based on the experiments&#39; data.</span>
+
+<span class="sd">    :param show_hparams: list of &quot;paths&quot; to hyper-parameters that to be shown in the selection dialog; sub-dicts can be</span>
+<span class="sd">                         references with a dot, e.g. `env.dt`</span>
+<span class="sd">    :param show_extra_info: whether to show the information stored in the `extra_info` field of the experiment</span>
+<span class="sd">    :return: a function that serves as the formatter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">formatter</span><span class="p">(</span><span class="n">exp</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">show_hparams</span><span class="p">:</span>
+            <span class="n">hyper_parameters</span> <span class="o">=</span> <span class="n">load_hyperparameters</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot; {&quot;</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">show_hparams</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">dict_path_access</span><span class="p">(</span><span class="n">hyper_parameters</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">first</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;,&quot;</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;env.dt&quot;</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; env.dt=1/</span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot; }&quot;</span>
+        <span class="k">if</span> <span class="n">show_extra_info</span> <span class="ow">and</span> <span class="n">exp</span><span class="o">.</span><span class="n">extra_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">extra_info</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">formatter</span></div>
+
+
+<div class="viewcode-block" id="split_path_custom_common"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.split_path_custom_common">[docs]</a><span class="k">def</span> <span class="nf">split_path_custom_common</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split a path at the point where the machine-dependent and the machine-independent part can be separated.</span>
+
+<span class="sd">    :param path: (complete) experiment path to be split</span>
+<span class="sd">    :return: name of the base directory (&#39;experiments&#39; for `pyrado.EXP_DIR` or &#39;temp&#39; for `pyrado.TEMP_DIR`) where the</span>
+<span class="sd">             experiment was located, and machine-independent part of the path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split a path at the point where the machine-dependent and the machine-independent part can be separated.</span>
+<span class="sd">        In general, the paths look like this</span>
+<span class="sd">        `/CUSTOM_FOR_EVERY_MACHINE/SimuRLacra/Pyrado/pyrado/../data/CUSTOM_FOR_EVERY_EXPERIMENT&#39;`</span>
+<span class="sd">        Thus, we look for the first occurrence of the word &#39;data&#39;.</span>
+
+<span class="sd">        :param path: (complete) experiment path to be split</span>
+<span class="sd">        :param keyword: keyword to split the path after</span>
+<span class="sd">        :return: part of the path until &#39;data/, and machine-independent part of the path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">(</span><span class="n">Experiment</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># convert Experiment to PathLike a.k.a. string</span>
+        <span class="c1"># Convert the PathLike a.k.a. string into a pathlib Path object</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="c1"># Search for the keyword in the individual parts of the path</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">keyword</span><span class="p">)</span> <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># The keyword was not found in the path</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="o">+</span><span class="mi">1</span>  <span class="c1"># +1 for the actual keyword</span>
+            <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[:</span><span class="n">idx</span><span class="p">]),</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">idx</span><span class="p">:])</span>
+
+    <span class="c1"># First try to split at pyrado.EXP_DIR</span>
+    <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;experiments&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If that did not work, try to split at pyrado.TEMP_DIR</span>
+        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;temp&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If that did not work, try to split at the pytest&#39;s temporary path</span>
+        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;tmp&quot;</span><span class="p">)</span>  <span class="c1"># actually they are reversed, but we don&#39;t care for tests</span>
+    <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If that also did not work, there is sth wrong</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Failed to split the path between the machine-dependent and machine-independent part.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">custom</span><span class="p">,</span> <span class="n">common</span></div>
+
+
+<div class="viewcode-block" id="ask_for_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.ask_for_experiment">[docs]</a><span class="k">def</span> <span class="nf">ask_for_experiment</span><span class="p">(</span>
+    <span class="n">latest_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">max_display</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">temp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">perma</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">hparam_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Experiment</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.</span>
+
+<span class="sd">    :param latest_only: only select the latest experiment of each type (environment-algorithm combination)</span>
+<span class="sd">    :param max_display: maximum number of items</span>
+<span class="sd">    :param env_name: filter by env name</span>
+<span class="sd">    :param temp: set to `False` to not look in the `pyrado.TEMP` directory</span>
+<span class="sd">    :param perma: set to `False` to not look in the `pyrado.PERMA` directory</span>
+<span class="sd">    :param hparam_list: load the hyper-parameter file and show the parameters in this list,</span>
+<span class="sd">                        sub-dicts can be separated with a dot</span>
+<span class="sd">    :return: query asking the user for an experiment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Scan for experiment list</span>
+    <span class="n">all_exps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_experiments</span><span class="p">(</span><span class="n">env_name</span><span class="o">=</span><span class="n">env_name</span><span class="p">,</span> <span class="n">perma</span><span class="o">=</span><span class="n">perma</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_exps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;No experiments found!&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Obtain experiment prefixes and timestamps</span>
+    <span class="n">all_exps</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>  <span class="c1"># sorting experiments from early to late</span>
+    <span class="n">exps_by_prefix</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">all_exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>  <span class="c1"># grouping by env-algo combination</span>
+    <span class="k">if</span> <span class="n">latest_only</span><span class="p">:</span>
+        <span class="n">sel_exp_by_prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">_select_latest</span><span class="p">(</span><span class="n">exps</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">exps</span> <span class="ow">in</span> <span class="n">exps_by_prefix</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sel_exp_by_prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">_select_all</span><span class="p">(</span><span class="n">exps</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">exps</span> <span class="ow">in</span> <span class="n">exps_by_prefix</span><span class="p">]</span>
+        <span class="n">sel_exp_by_prefix</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">sel_exp_by_prefix</span><span class="p">))</span>  <span class="c1"># flatten list of lists</span>
+    <span class="n">sel_exp_by_prefix</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Ask nicely</span>
+    <span class="k">return</span> <span class="n">select_query</span><span class="p">(</span>
+        <span class="n">sel_exp_by_prefix</span><span class="p">,</span>
+        <span class="n">fallback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">hint</span><span class="p">:</span> <span class="n">select_by_hint</span><span class="p">(</span><span class="n">all_exps</span><span class="p">,</span> <span class="n">hint</span><span class="p">),</span>
+        <span class="n">item_formatter</span><span class="o">=</span><span class="n">create_experiment_formatter</span><span class="p">(</span><span class="n">show_hparams</span><span class="o">=</span><span class="n">hparam_list</span><span class="p">),</span>
+        <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Available experiments:&quot;</span><span class="p">,</span>
+        <span class="n">footer</span><span class="o">=</span><span class="s2">&quot;Enter experiment number or a partial path to an experiment.&quot;</span><span class="p">,</span>
+        <span class="n">max_display</span><span class="o">=</span><span class="n">max_display</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_process_list_for_saving</span><span class="p">(</span><span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The yaml.dump function can&#39;t save PyTorch tensors, numpy arrays, or callables, so we cast them to types it can save.</span>
+
+<span class="sd">    :param l: list or tuple containing parameters to save</span>
+<span class="sd">    :return: list or tuple with values processable by yaml.dump</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Do not mutate the input. Convert tuple to list to make elements mutable</span>
+    <span class="n">copy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">copy</span><span class="p">):</span>
+        <span class="c1"># Check the values of the list</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="c1"># Save Tensors as lists</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+            <span class="c1"># PyYAML can not save numpy floats</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+            <span class="c1"># Only save the class name as a sting</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_class_name</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+            <span class="c1"># Only save function name as a sting</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="c1"># If the value is another dict, recursively go through this one</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_dict_for_saving</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="c1"># If the value is a list or tuple, recursively go through this one</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_list_for_saving</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+    <span class="c1"># The returned object should be of the same type as the input</span>
+    <span class="k">return</span> <span class="n">copy</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">copy</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_process_dict_for_saving</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The yaml.dump function can&#39;t save Tensors, ndarrays, or callables, so we cast them to types it can save.</span>
+
+<span class="sd">    :param d: dict containing parameters to save</span>
+<span class="sd">    :return: dict with values processable by yaml.dump</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>  <span class="c1"># do not mutate the input</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Check the values of the dict</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="c1"># Save Tensors as lists</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+            <span class="c1"># PyYAML can not save numpy floats</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+            <span class="c1"># Only save the class name as a sting</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_class_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="c1"># Only save function name as a sting</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_class_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="c1"># If the value is another dict, recursively go through this one</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_dict_for_saving</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="c1"># If the value is a list, recursively go through this one</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_list_for_saving</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+    <span class="k">return</span> <span class="n">copy</span>
+
+
+<div class="viewcode-block" id="AugmentedSafeLoader"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.AugmentedSafeLoader">[docs]</a><span class="k">class</span> <span class="nc">AugmentedSafeLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
+<div class="viewcode-block" id="AugmentedSafeLoader.construct_python_tuple"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">[docs]</a>    <span class="k">def</span> <span class="nf">construct_python_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use PyYAML method for constructing a sequence to construct a tuple.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">construct_sequence</span><span class="p">(</span><span class="n">node</span><span class="p">))</span></div></div>
+
+
+<span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="s2">&quot;tag:yaml.org,2002:python/tuple&quot;</span><span class="p">,</span> <span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">construct_python_tuple</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="save_dicts_to_yaml"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.save_dicts_to_yaml">[docs]</a><span class="k">def</span> <span class="nf">save_dicts_to_yaml</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hyperparams&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.</span>
+
+<span class="sd">    :param dicts: dicts each containing a key (name) and a value (hyper-parameter)</span>
+<span class="sd">    :param save_dir: directory to save the results in</span>
+<span class="sd">    :param file_name: name of the YAML-file without suffix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+        <span class="c1"># Iterate over tuple generated from *dicts</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">_process_dict_for_saving</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_dict_from_yaml"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.load_dict_from_yaml">[docs]</a><span class="k">def</span> <span class="nf">load_dict_from_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a list of dicts (e.g. hyper-parameters) of an experiment from a YAML-file.</span>
+
+<span class="sd">    :param yaml_file: path to the YAML-file that</span>
+<span class="sd">    :return: a dict containing names as keys and a dict of parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">yaml_file</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">AugmentedSafeLoader</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="load_hyperparameters"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.load_hyperparameters">[docs]</a><span class="k">def</span> <span class="nf">load_hyperparameters</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads the hyper-parameters-dict from the given experiment directory. The hyper-parameters file is assumed to be</span>
+<span class="sd">    named `hyperparams.yaml`.</span>
+
+<span class="sd">    :param ex_dir: experiment&#39;s directory to load from</span>
+<span class="sd">    :param verbose: if `True`, print message if no hyper-parameter file was found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hparams_file_name</span> <span class="o">=</span> <span class="s2">&quot;hyperparams.yaml&quot;</span>
+
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">):</span>
+        <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># prevents walk() from going into subdirectories</span>
+        <span class="n">natural_sort</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">hparams_file_name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1"># Default case</span>
+            <span class="k">return</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">hparams_file_name</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1"># Recursively merge the hyper-parameter configurations</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;hparam&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
+                <span class="n">hparam_args</span> <span class="o">=</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
+                <span class="n">setting_args</span> <span class="o">=</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;settings.yaml&quot;</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">update_matching_keys_recursively</span><span class="p">(</span><span class="n">setting_args</span><span class="p">,</span> <span class="n">hparam_args</span><span class="p">)</span>
+
+    <span class="c1"># No hyper-parameter file was found</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">print_cbt</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Did not find </span><span class="si">{</span><span class="n">hparams_file_name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">ex_dir</span><span class="si">}</span><span class="s2"> or could not crawl the loaded hyper-parameters.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+            <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
