@@ -100,8 +100,8 @@ class MiniGolfSim(RcsSim, Serializable):
         :param task_args: arguments for the task construction
         :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
-                       fixedInitState: bool = True,
-                       checkJointLimits: bool = False,
+                       fixedInitState: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = False,
                        observeVelocities: bool = False,
                        observeForceTorque: bool = False,
@@ -178,8 +178,8 @@ class MiniGolfIKSim(MiniGolfSim, Serializable):
         :param task_args: arguments for the task construction
         :param relativeZdTask: if `True`, the action model uses a relative velocity task for the striking motion
         :param kwargs: keyword arguments forwarded to `RcsSim`
-                       fixedInitState: bool = True,
-                       checkJointLimits: bool = False,
+                       fixedInitState: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = False,
                        observeVelocities: bool = False,
                        observeForceTorque: bool = False,
@@ -207,6 +207,11 @@ class MiniGolfJointCtrlSim(MiniGolfSim, Serializable):
 
         :param task_args: arguments for the task construction
         :param kwargs: keyword arguments forwarded to `RcsSim`
+                       fixedInitState: bool = False,
+                       checkJointLimits: bool = True,
+                       collisionAvoidanceIK: bool = False,
+                       observeVelocities: bool = False,
+                       observeForceTorque: bool = False,
         """
         Serializable._init(self, locals())
 

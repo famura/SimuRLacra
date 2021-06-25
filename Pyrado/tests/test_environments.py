@@ -71,43 +71,10 @@ from pyrado.utils.data_types import RenderMode
         pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
         pytest.param("default_bit_ds_vel_bt", marks=m_needs_bullet),
         pytest.param("default_mg_ik_bt", marks=m_needs_bullet),
+        pytest.param("default_mg_jnt_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
-    ],
-    ids=[
-        "cata",
-        "rosen",
-        "bobd",
-        "bob",
-        "omo",
-        "pend",
-        "qbb",
-        "qq-st",
-        "qq-su",
-        "qcp-st",
-        "qcp-su",
-        "qq-mj-st",
-        "qq-mj-su",
-        "qqsurcs",
-        "p3l_ika_bt",
-        "p3l_ta_bt",
-        "p3l_ta_vx",
-        "pi_ika_5l_bt",
-        "pi_ika_6l_vx",
-        "pi_ta_6l_bt",
-        "bop2d_bt",
-        "bop2d_vx",
-        "bop5d_bt",
-        "bop5d_vx",
-        "bs_ds_pos_bt",
-        "bs_ds_pos_vx",
-        "bit_ika_bt",
-        "bit_vel_bt",
-        "mg_ik",
-        "cth",
-        "hop",
-        "wam-bic",
     ],
     indirect=True,
 )
@@ -158,42 +125,11 @@ def test_rollout(env):
         pytest.param("default_bs_ds_pos_vx", marks=m_needs_vortex),
         pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
         pytest.param("default_bit_ds_vel_bt", marks=m_needs_bullet),
+        pytest.param("default_mg_ik_bt", marks=m_needs_bullet),
+        pytest.param("default_mg_jnt_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
-    ],
-    ids=[
-        "cata",
-        "rosen",
-        "bobd",
-        "bob",
-        "omo",
-        "pend",
-        "qbb",
-        "qq-st",
-        "qq-su",
-        "qcp-st",
-        "qcp-su",
-        "qq-mj-st",
-        "qq-mj-su",
-        "qqsurcs",
-        "p3l_ika_bt",
-        "p3l_ta_bt",
-        "p3l_ta_vx",
-        "pi_ika_5l_bt",
-        "pi_ika_6l_vx",
-        "pi_ta_6l_bt",
-        "bop2d_bt",
-        "bop2d_vx",
-        "bop5d_bt",
-        "bop5d_vx",
-        "bs_ds_pos_bt",
-        "bs_ds_pos_vx",
-        "bit_ika_bt",
-        "bit_vel_bt",
-        "cth",
-        "hop",
-        "wam-bic",
     ],
     indirect=True,
 )
@@ -239,42 +175,11 @@ def test_init_spaces(env):
         pytest.param("default_bs_ds_pos_vx", marks=m_needs_vortex),
         pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
         pytest.param("default_bit_ds_vel_bt", marks=m_needs_bullet),
+        pytest.param("default_mg_ik_bt", marks=m_needs_bullet),
+        pytest.param("default_mg_jnt_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
-    ],
-    ids=[
-        "cata",
-        "rosen",
-        "bobd",
-        "bob",
-        "omo",
-        "pend",
-        "qbb",
-        "qq-st",
-        "qq-su",
-        "qcp-st",
-        "qcp-su",
-        "qq-mj-st",
-        "qq-mj-su",
-        "qqsurcs",
-        "p3l_ika_bt",
-        "p3l_ta_bt",
-        "p3l_ta_vx",
-        "pi_ika_5l_bt",
-        "pi_ika_6l_vx",
-        "pi_ta_6l_bt",
-        "bop2d_bt",
-        "bop2d_vx",
-        "bop5d_bt",
-        "bop5d_vx",
-        "bs_ds_pos_bt",
-        "bs_ds_pos_vx",
-        "bit_ika_bt",
-        "bit_vel_bt",
-        "cth",
-        "hop",
-        "wam-bic",
     ],
     indirect=True,
 )
@@ -317,7 +222,6 @@ def test_reset(env):
         "default_qcpsu",
         "default_qcpst",
     ],
-    ids=["bobd", "bob", "omo", "pend", "qbb", "qq-su", "qq-st", "qcp-su", "qcp-st"],
     indirect=True,
 )
 @pytest.mark.parametrize("use_render", [False], ids=["render_off"])
@@ -355,23 +259,8 @@ def test_panda3d_animations(env, use_render):
         pytest.param("default_bs_ds_pos_vx", marks=m_needs_vortex),
         pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
         pytest.param("default_bit_ds_vel_bt", marks=m_needs_bullet),
-    ],
-    ids=[
-        "qqsurcs_bt",
-        "p3l_ika_bt",
-        "p3l_ta_bt",
-        "p3l_ta_vx",
-        "pi_ika_5l_bt",
-        "pi_ika_6l_vx",
-        "pi_ta_6l_bt",
-        "bop2d_bt",
-        "bop2d_vx",
-        "bop5d_bt",
-        "bop5d_vx",
-        "bs_ds_pos_bt",
-        "bs_ds_pos_vx",
-        "bit_ika_bt",
-        "bit_vel_bt",
+        pytest.param("default_mg_ik_bt", marks=m_needs_bullet),
+        pytest.param("default_mg_jnt_bt", marks=m_needs_bullet),
     ],
     indirect=True,
 )
@@ -389,9 +278,7 @@ def test_rcspysim_animations(env):
 
 @m_needs_mujoco
 @pytest.mark.visual
-@pytest.mark.parametrize(
-    "env", ["default_cth", "default_hop", "default_wambic"], ids=["cth", "hop", "wam-bic"], indirect=True
-)
+@pytest.mark.parametrize("env", ["default_cth", "default_hop", "default_wambic"], indirect=True)
 def test_mujoco_animations(env):
     assert isinstance(env, SimEnv)
     env.reset()
@@ -405,7 +292,7 @@ def test_mujoco_animations(env):
 
 
 @pytest.mark.parametrize(
-    "servo_ang", [np.r_[np.linspace(-np.pi / 2.1, np.pi / 2.1), np.linspace(np.pi / 2.1, -np.pi / 2.1)]], ids=["range"]
+    "servo_ang", [np.r_[np.linspace(-np.pi / 2.1, np.pi / 2.1), np.linspace(np.pi / 2.1, -np.pi / 2.1)]]
 )
 def test_qbb_kin(servo_ang):
     env = QBallBalancerSim(dt=0.02, max_steps=100)
@@ -418,10 +305,7 @@ def test_qbb_kin(servo_ang):
 
 
 @pytest.mark.parametrize(
-    "env",
-    ["default_qqbb_real", "default_qcpst_real", "default_qcpsu_real", "default_qq_real"],
-    ids=["qqbb_real", "qcpst_real", "qcpsu_real", "qq_real"],
-    indirect=True,
+    "env", ["default_qqbb_real", "default_qcpst_real", "default_qcpsu_real", "default_qq_real"], indirect=True
 )
 def test_quanser_real_wo_connecting(env: RealEnv):
     assert env is not None
@@ -432,7 +316,6 @@ def test_quanser_real_wo_connecting(env: RealEnv):
 @pytest.mark.parametrize(
     "env_name",
     ["MountainCar-v0", "CartPole-v1", "Acrobot-v1", "MountainCarContinuous-v0", "Pendulum-v0", "LunarLander-v2"],
-    ids=["MountainCar-v0", "CartPole-v1", "Acrobot-v1", "MountainCarContinuous-v0", "Pendulum-v0", "LunarLander-v2"],
 )
 def test_gym_env(env_name):
     # Checking the classic control problems

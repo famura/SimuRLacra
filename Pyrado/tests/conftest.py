@@ -52,7 +52,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeStabSim, QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
-from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim, MiniGolfJointCtrlSim
 from pyrado.policies.features import *
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
@@ -575,10 +575,21 @@ class DefaultEnvs:
     def default_mg_ik_bt():
         return MiniGolfIKSim(
             dt=1 / 100.0,
-            max_steps=1500,
+            max_steps=800,
             checkJointLimits=True,
             fixedInitState=True,
-            observeForceTorque=True,
+            observeForceTorque=False,
+        )
+
+    @staticmethod
+    @m_needs_bullet
+    def default_mg_jnt_bt():
+        return MiniGolfJointCtrlSim(
+            dt=1 / 100.0,
+            max_steps=800,
+            checkJointLimits=True,
+            fixedInitState=True,
+            observeForceTorque=False,
         )
 
     @staticmethod
