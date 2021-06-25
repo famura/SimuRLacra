@@ -257,7 +257,7 @@
 <span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.quanser</span> <span class="kn">import</span> <span class="n">max_act_qq</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.quanser</span> <span class="kn">import</span> <span class="n">MAX_ACT_QQ</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.base</span> <span class="kn">import</span> <span class="n">QuanserReal</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.environment_specific</span> <span class="kn">import</span> <span class="n">QQubeGoToLimCtrl</span><span class="p">,</span> <span class="n">QQubePDCtrl</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
@@ -310,7 +310,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_obs_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span>
             <span class="o">-</span><span class="n">max_obs</span><span class="p">,</span> <span class="n">max_obs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sin_theta&quot;</span><span class="p">,</span> <span class="s2">&quot;cos_theta&quot;</span><span class="p">,</span> <span class="s2">&quot;sin_alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;cos_alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta_dot&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">max_act_qq</span><span class="p">,</span> <span class="n">max_act_qq</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">MAX_ACT_QQ</span><span class="p">,</span> <span class="n">MAX_ACT_QQ</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
