@@ -26,11 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os.path
+from csv import DictWriter
 from typing import Callable, Generator, List, Optional, Tuple, Union
 
 import numpy as np
 import torch as to
 from scipy.optimize import Bounds, NonlinearConstraint, minimize
+from scipy.optimize.optimize import OptimizeResult
 from torch.distributions import MultivariateNormal
 
 import pyrado
@@ -331,6 +334,13 @@ class SPRL(Algorithm):
             param for param in env.randomizer.domain_params if isinstance(param, SelfPacedDomainParam)
         ]
 
+        # evaluation multidim
+        header = ["iteration", "objective_output", "status", "cg_stop_cond", "mean", "cov"]
+        f = open(os.path.join(subroutine.save_dir, "optimizer.csv"), "w")
+        global optimize_logger
+        optimize_logger = DictWriter(f, fieldnames=header)
+        optimize_logger.writeheader()
+
     @property
     def sub_algorithm(self) -> Algorithm:
         """Get the policy optimization subroutine."""
@@ -510,6 +520,7 @@ class SPRL(Algorithm):
                 constraints=constraints,
                 options={"gtol": 1e-4, "xtol": 1e-6},
                 bounds=bounds,
+                callback=_optimizer_callback,
             )
         if result and result.success:
             self._adapt_parameters(result.x)
@@ -576,3 +587,17 @@ class SPRL(Algorithm):
         rollouts_all = self._subroutine.sampler.rollouts
         x = np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]])
         return x
+
+
+def _optimizer_callback(xk, state: OptimizeResult):
+    row = {
+        "iteration": state.nit,
+        "objective_output": state.fun,
+        "status": state.status,
+        "cg_stop_cond": state.cg_stop_cond,
+    }
+    dist = MultivariateNormalWrapper.from_stacked(2, xk)
+    row["mean"] = dist.mean.tolist()
+    row["cov"] = dist.cov.tolist()
+    optimize_logger.writerow(row)
+    return False
