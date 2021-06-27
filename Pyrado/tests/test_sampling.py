@@ -31,6 +31,7 @@ import time
 from typing import Optional
 
 import pytest
+import torch
 from tests.conftest import m_needs_bullet, m_needs_cuda
 from torch.distributions.multivariate_normal import MultivariateNormal
 
@@ -58,6 +59,9 @@ from pyrado.sampling.sampler_pool import *
 from pyrado.sampling.sequences import *
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
+
+
+torch.set_default_dtype(to.float32)
 
 
 @pytest.mark.parametrize(

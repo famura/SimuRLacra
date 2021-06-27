@@ -29,6 +29,7 @@
 from copy import deepcopy
 
 import pytest
+from tests.conftest import m_needs_cuda
 from tests.environment_wrappers.mock_env import MockEnv
 
 from pyrado.algorithms.base import Algorithm
@@ -226,7 +227,7 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
 
 
 @pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
-@pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
+@pytest.mark.parametrize("policy", ["dummy_policy"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [(A2C, dict()), (PPO, dict()), (PPO2, dict())],
@@ -237,14 +238,7 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
     ["fnn-plain", FNNPolicy.name, RNNPolicy.name],
     ids=["vf_fnn_plain", "vf_fnn", "vf_rnn"],
 )
-@pytest.mark.parametrize(
-    "use_cuda",
-    [
-        False,
-        # pytest.param(True, marks=m_needs_cuda)  # TODO @Robin CUDA error when using RNN. Looks like not set back to tranining mode at one point, but I didn't find if it is so
-    ],
-    # ids=['cpu', 'cuda']
-)
+@pytest.mark.parametrize("use_cuda", [False, pytest.param(True, marks=m_needs_cuda)], ids=["cpu", "cuda"])
 def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vfcn_type, use_cuda):
     pyrado.set_seed(0)
 

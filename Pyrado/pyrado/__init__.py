@@ -25,13 +25,13 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
 import hashlib
 import os
 import os.path as osp
 import platform
 import random
-import warnings
-from typing import Optional, TypeVar, Union
+from typing import Optional, TypeVar
 
 import numpy as np
 import torch as to
@@ -129,7 +129,7 @@ __all__ = [
     "timestamp_date_format",
 ]
 
-pyrado_base_seed = None
+PYRADO_BASE_SEED = None
 
 
 def set_seed(
@@ -150,7 +150,7 @@ def set_seed(
     :return: the seed that was set
     """
 
-    global pyrado_base_seed
+    global PYRADO_BASE_SEED
 
     # The better parameter name would be 'base_seed', but keep 'seed' for backward compatibility.
     base_seed = seed
@@ -172,11 +172,12 @@ def set_seed(
     to.manual_seed(seed)
     if to.cuda.is_available():
         to.cuda.manual_seed_all(seed)
-    pyrado_base_seed = base_seed
+    PYRADO_BASE_SEED = base_seed
 
     if verbose:
         print(
-            f"Set the random number generators' seed to {seed} (computed from base seed {base_seed}, sub-seed {sub_seed}, and sub-sub-seed {sub_sub_seed})."
+            f"Set the random number generators' seed to {seed} (computed from base seed {base_seed}, "
+            f"sub-seed {sub_seed}, and sub-sub-seed {sub_sub_seed})."
         )
 
     return seed
@@ -184,5 +185,5 @@ def set_seed(
 
 def get_base_seed() -> Optional[int]:
     """Gets the last seed that was set with `pyrado.set_seed`. If no seed was every set, `None`."""
-    global pyrado_base_seed
-    return pyrado_base_seed
+    global PYRADO_BASE_SEED
+    return PYRADO_BASE_SEED
