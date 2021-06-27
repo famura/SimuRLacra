@@ -110,6 +110,7 @@ class _WorkerInfo:
             name=f"Sampler-Worker-{num}",
         )
         self._process.daemon = True
+
         # Start it
         self._process.start()
 
@@ -211,7 +212,7 @@ def _run_set_seed(G, seed):
 def _run_collect(
     G, counter, run_counter, lock, n, min_runs, func, args, kwargs
 ) -> List[Tuple[int, List[StepSequence], int]]:
-    """Worker function for run_collect"""
+    """Worker function for `SamplerPool.run_collect()`"""
     result = []
     while True:
         with lock:
@@ -234,6 +235,7 @@ def _run_collect(
 
 
 def _run_map(G, func, argqueue):
+    """Worker function for `SamplerPool.run_map()`"""
     result = []
     while True:
         try:
@@ -264,16 +266,16 @@ class SamplerPool:
         if num_threads < 1:
             raise pyrado.ValueErr(given=num_threads, ge_constraint="1")
 
-        self._n_threads = num_threads
+        self._num_threads = num_threads
         if not ENABLE_SINGLE_WORKER_OPTIMIZATION or num_threads > 1:
             # Create workers
-            self._workers = [_WorkerInfo(i + 1) for i in range(num_threads)]
+            self._workers = [_WorkerInfo(i + 1) for i in range(self._num_threads)]
             self._manager = mp.Manager()
         self._G = GlobalNamespace()
 
     def stop(self):
         """Terminate all workers."""
-        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or self._n_threads > 1:
+        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or self._num_threads > 1:
             for w in self._workers:
                 w.stop()
 
@@ -301,14 +303,16 @@ class SamplerPool:
 
         :param func: the first argument of func will be a worker-local namespace
         """
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             return [func(self._G, *args, **kwargs)]
 
-        # Start invocation
-        for w in self._workers:
-            w.invoke_start(func, *args, **kwargs)
-        # Await results
-        return self._await_result()
+        else:
+            # Start invocation
+            for w in self._workers:
+                w.invoke_start(func, *args, **kwargs)
+
+            # Await results
+            return self._await_result()
 
     def invoke_all_map(self, func, arglist):
         """
@@ -317,9 +321,9 @@ class SamplerPool:
         The first argument of func will be a worker-local namespace.
         The return values are collected into a list.
         """
-        assert self._n_threads == len(arglist)
+        assert self._num_threads == len(arglist)
 
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             return [func(self._G, arglist[0])]
 
         # Start invocation
@@ -343,7 +347,7 @@ class SamplerPool:
             progressbar.total = len(arglist)
 
         # Single thread optimization
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             res = []
             for arg in arglist:
                 res.append(func(self._G, deepcopy(arg)))  # numpy arrays and others are passed by reference
@@ -378,6 +382,7 @@ class SamplerPool:
         # Collect results in one list
         allres = self._await_result()
         result = [item for res in allres for item in res]
+
         # Sort results by index to ensure consistent order with args
         result.sort(key=lambda t: t[0])
         return [item for _, item in result]
@@ -406,12 +411,11 @@ class SamplerPool:
         :return: list of results
         :return: total number of samples
         """
-
         # Set total on progress bar
         if collect_progressbar is not None:
             collect_progressbar.total = n
 
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             # Do locally
             result = []
             counter = 0
@@ -435,7 +439,7 @@ class SamplerPool:
         # Start async computation
         self._start(_run_collect, counter, run_counter, lock, n, min_runs, func, args, kwargs)
 
-        # show progress bar
+        # Show progress bar
         if collect_progressbar is not None:
             while self._operation_in_progress():
                 # Retrieve current counter value
@@ -450,6 +454,7 @@ class SamplerPool:
         # Collect results in one list
         allres = self._await_result()
         result = [item for res in allres for item in res]
+
         # Sort results by index to ensure consistent order
         result.sort(key=lambda t: t[0])
         result_filtered = []
@@ -471,7 +476,7 @@ class SamplerPool:
 
         :param seed: seed value for the random number generators
         """
-        self.invoke_all_map(_run_set_seed, [seed + i for i in range(self._n_threads)])
+        self.invoke_all_map(_run_set_seed, [seed + i for i in range(self._num_threads)])
 
     def __reduce__(self):
         # We cannot really pickle this object since it has a lot of hidden state in the worker processes
