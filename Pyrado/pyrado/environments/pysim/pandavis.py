@@ -84,6 +84,8 @@ class PandaVis(ShowBase):
             self.render_pipeline.settings["pipeline.display_debugger"] = False
             self.render_pipeline.create(self)
             self.render_pipeline.daytime_mgr.time = "17:00"
+        else:
+            self.render_pipeline = None
 
         # Activate antialiasing
         self.render.setAntialias(AntialiasAttrib.MAuto)
@@ -378,8 +380,11 @@ class PendulumVis(PandaVis):
         self.windowProperties.setTitle("Pendulum")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setY(-18 * self._scale)
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-1 * self._scale, -22 * self._scale, 0)
+        else:
+            self.cam.setPos(-1 * self._scale, -18 * self._scale, 0)
 
         # Joint
         self.joint = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
@@ -462,8 +467,11 @@ class QBallBalancerVis(PandaVis):
         self.windowProperties.setTitle("Quanser Ball Balancer")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setPos(-0.1 * self._scale, -0.8 * self._scale, 0.4 * self._scale)
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-0.1 * self._scale, -1.0 * self._scale, 0.55 * self._scale)
+        else:
+            self.cam.setPos(-0.1 * self._scale, -0.8 * self._scale, 0.4 * self._scale)
         self.cam.setHpr(0, -30, 0)  # roll, pitch, yaw [deg]
 
         # Ball
@@ -606,8 +614,11 @@ class QCartPoleVis(PandaVis):
         self.windowProperties.setTitle("Quanser Cartpole")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setPos(-0.2 * self._scale, -2 * self._scale, 0)
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-0.2 * self._scale, -3 * self._scale, 0)
+        else:
+            self.cam.setPos(-0.2 * self._scale, -2 * self._scale, 0)
 
         # Rail
         self.rail = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_grey.egg"))
@@ -717,15 +728,19 @@ class QQubeVis(PandaVis):
         pole_radius = 0.005
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 10 / Lp
+        self._scale = 2 / Lp
 
         # Set window title
         self.windowProperties.setTitle("Quanser Qube")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setPos(-0.5 * self._scale, -1.5 * self._scale, 0.4 * self._scale)
-        self.cam.setHpr(-20, -10, 0)  # roll, pitch, yaw [deg]
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-0.7 * self._scale, -1.6 * self._scale, 0.3 * self._scale)
+            self.cam.setHpr(-20, -5, 0)  # roll, pitch, yaw [deg]
+        else:
+            self.cam.setPos(-0.6 * self._scale, -1.3 * self._scale, 0.4 * self._scale)
+            self.cam.setHpr(-20, -10, 0)  # roll, pitch, yaw [deg]
 
         # Box
         self.box = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
