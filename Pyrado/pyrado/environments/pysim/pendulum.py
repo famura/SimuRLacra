@@ -98,7 +98,7 @@ class PendulumSim(SimPyEnv, Serializable):
             l_pole=1.0,  # half pole length [m]
             d_pole=0.05,  # rotational damping of the pole [kg*m**2/s]
             tau_max=3.5,
-        )  # maximum applicable torque [N*m] (under-actuated if < m*l*g/2)
+        )  # maximum applicable torque [N*m] (under-actuated if < m*l*gravity_const/2)
 
     def _step_dynamics(self, act: np.ndarray):
         gravity_const = self.domain_param["gravity_const"]

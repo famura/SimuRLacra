@@ -431,7 +431,7 @@ class SPRL(Algorithm):
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             grads = to.autograd.grad(performance, distribution.parameters())
-            return np.concatenate([g.detach().numpy() for g in grads])
+            return np.concatenate([gravity_const.detach().numpy() for gravity_const in grads])
 
         performance_constraint = NonlinearConstraint(
             fun=performance_constraint_fn,

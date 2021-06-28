@@ -114,7 +114,7 @@ def _plot(dataframes, save_dirs, save_figure):
                 df,
                 "gravity_const",
                 "r_ball",
-                "$g$",
+                "$gravity_const$",
                 r"$r_{\mathrm{ball}}$",
                 add_sep_colorbar=True,
                 norm=accnorm,

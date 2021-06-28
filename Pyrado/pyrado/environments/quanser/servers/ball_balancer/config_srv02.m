@@ -13,9 +13,9 @@
 %
 % ************************************************************************
 % Output parameters:
-% Rm        Motor armaturce resistance                          (ohm)
+% motor_resistance        Motor armaturce resistance                          (ohm)
 % kt        Motor torque constant                               (N.m/A)
-% km        Motor back-EMF constant                             (V.s/rad)
+% motor_back_emf        Motor back-EMF constant                             (V.s/rad)
 % Kg        Total gear ratio
 % eta_g     Gearbox efficiency
 % eta_m     Motor efficiency
@@ -32,9 +32,9 @@
 % Quanser Consulting Inc.
 %%
 % 
-function [ Rm, kt, km, Kg, eta_g, Beq, Jm, Jeq, eta_m, K_POT, K_TACH, K_ENC, VMAX_AMP, IMAX_AMP ] = config_srv02( EXT_GEAR_CONFIG, ENCODER_TYPE, TACH_OPTION, AMP_TYPE, LOAD_TYPE )
+function [ motor_resistance, kt, motor_back_emf, Kg, eta_g, Beq, Jm, Jeq, eta_m, K_POT, K_TACH, K_ENC, VMAX_AMP, IMAX_AMP ] = config_srv02( EXT_GEAR_CONFIG, ENCODER_TYPE, TACH_OPTION, AMP_TYPE, LOAD_TYPE )
     % Set constant SRV02 parameters
-    [ Rm, kt, km, Kgi, eta_g, eta_m ] = set_srv02_constants();
+    [ motor_resistance, kt, motor_back_emf, Kgi, eta_g, eta_m ] = set_srv02_constants();
     % Calculate motor and gear inertias
     [ Jm, J24, J72, J120 ] = calc_motor_and_gear_inertias( TACH_OPTION );
     % Calculate SRV02 Model Parameters
@@ -46,18 +46,18 @@ end
 %
 %
 %% Sets constant SRV02 model parameters.
-function [ Rm, kt, km, Kgi, eta_g, eta_m ] = set_srv02_constants( )
+function [ motor_resistance, kt, motor_back_emf, Kgi, eta_g, eta_m ] = set_srv02_constants( )
     % Calculate Useful Conversion Factors
     [ K_R2D, K_D2R, K_IN2M, K_M2IN, K_RDPS2RPM, K_RPM2RDPS, K_OZ2N, K_N2OZ, K_LBS2N, K_N2LBS, K_G2MS, K_MS2G ] = calc_conversion_constants ();
     %
     % Armature Resistance (Ohm)
-    Rm = 2.6;
+    motor_resistance = 2.6;
     % Motor Torque Constant (N.m/A)
     kt = 1.088 * K_OZ2N * K_IN2M; % = .00767
     % Continuous torque (N.m/A)
     M_e_max = 0.566 * K_OZ2N * K_IN2M; % = 0.566 oz.in (parameter not used)
     % Motor Back-EMF Constant (V.s/rd)
-    km = 0.804 / 1000 * K_RDPS2RPM; % = .00767
+    motor_back_emf = 0.804 / 1000 * K_RDPS2RPM; % = .00767
     % Internal Gear Ratio (of the Planetary Gearbox)
     Kgi = 14;
     % Gearbox Efficiency

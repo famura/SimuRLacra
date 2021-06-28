@@ -6,7 +6,7 @@
 % and finally returns the calculated model parameters of the IP02 Quanser plant.
 %
 % IP02 system nomenclature:
-% Rm        Motor Armature Resistance                                   (Ohm)
+% motor_resistance        Motor Armature Resistance                                   (Ohm)
 % Kt        Motor Torque Constant                                       (N.m/A)
 % eta_m     Motor efficiency
 % Km        Motor Back-EMF Constant                                     (V.s/rad)
@@ -27,21 +27,21 @@
 
 
 %% returns the model parameters accordingly to the USER-DEFINED IP01 or IP02 system configuration
-function [ Rm, Jm, Kt, eta_m, Km, Kg, eta_g, M, r_mp, Beq ] = config_ip02( IP02_LOAD_TYPE, AMP_TYPE )
+function [ motor_resistance, Jm, Kt, eta_m, Km, Kg, eta_g, M, r_mp, Beq ] = config_ip02( IP02_LOAD_TYPE, AMP_TYPE )
 % Calculate useful conversion factors
 calc_conversion_constants();
 % Calculate IP01 or IP02 model parameters
-[ Rm, Jm, Kt, eta_m, Km, Kg, eta_g, M, r_mp, Beq ] = calc_IP02_parameters( IP02_LOAD_TYPE, AMP_TYPE );
+[ motor_resistance, Jm, Kt, eta_m, Km, Kg, eta_g, M, r_mp, Beq ] = calc_IP02_parameters( IP02_LOAD_TYPE, AMP_TYPE );
 % end of 'setup_ip01_2_configuration( )'
 
 
 %% Calculate the IP01 or IP02 model parameters 
-function [ Rm, Jm, Kt, eta_m, Km, Kg, eta_g, M, r_mp, Beq ] = calc_IP02_parameters( IP02_LOAD_TYPE, AMP_TYPE )
+function [ motor_resistance, Jm, Kt, eta_m, Km, Kg, eta_g, M, r_mp, Beq ] = calc_IP02_parameters( IP02_LOAD_TYPE, AMP_TYPE )
 global K_IN2M K_D2R K_RDPS2RPM K_OZ2N
 % Set these variables (used in Simulink Diagrams)
 global VMAX_AMP IMAX_AMP ALPHA_MAX ALPHA_MIN
 % Motor Armature Resistance (Ohm)
-Rm = 2.6;
+motor_resistance = 2.6;
 % Motor Armature Inductance (H)
 Lm = 180e-6;
 % Motor Torque Constant (N.m/A)

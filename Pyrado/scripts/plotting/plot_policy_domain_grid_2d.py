@@ -133,7 +133,7 @@ if __name__ == "__main__":
             df,
             "gravity_const",
             "r_ball",
-            "$g$",
+            "$gravity_const$",
             r"$r_{\mathrm{ball}}$",
             add_sep_colorbar=True,
             norm=accnorm,

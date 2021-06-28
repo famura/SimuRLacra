@@ -686,7 +686,9 @@ def test_npdr_and_bayessim(
     # Create a fake ground truth target domain
     env_real = deepcopy(env)
     dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = dict(Mp=dp_nom["Mp"] * 1.2, Lp=dp_nom["Lp"] * 0.8)
+    env_real.domain_param = dict(
+        mass_pend_pole=dp_nom["mass_pend_pole"] * 1.2, length_pend_pole=dp_nom["length_pend_pole"] * 0.8
+    )
 
     # Reduce the number of steps to make this test run faster
     env.max_steps = 40
@@ -696,12 +698,12 @@ def test_npdr_and_bayessim(
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {1: "Mp", 2: "Lp"}
+    dp_mapping = {1: "mass_pend_pole", 2: "length_pend_pole"}
 
     # Prior
     prior_hparam = dict(
-        low=to.tensor([dp_nom["Mp"] * 0.5, dp_nom["Lp"] * 0.5]),
-        high=to.tensor([dp_nom["Mp"] * 1.5, dp_nom["Lp"] * 1.5]),
+        low=to.tensor([dp_nom["mass_pend_pole"] * 0.5, dp_nom["length_pend_pole"] * 0.5]),
+        high=to.tensor([dp_nom["mass_pend_pole"] * 1.5, dp_nom["length_pend_pole"] * 1.5]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
 

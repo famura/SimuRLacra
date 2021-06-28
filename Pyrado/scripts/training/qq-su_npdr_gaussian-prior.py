@@ -98,7 +98,17 @@ if __name__ == "__main__":
         policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g"}
+    dp_mapping = {
+        0: "damping_rot_pole",
+        1: "damping_pend_pole",
+        2: "motor_resistance",
+        3: "motor_back_emf",
+        4: "mass_rot_pole",
+        5: "mass_pend_pole",
+        6: "length_rot_pole",
+        7: "length_pend_pole",
+        8: "gravity_const",
+    }
 
     # Transform the domain parameter space
     env_sim = SqrtDomainParamTransform(env_sim, [dp_name for dp_name in dp_mapping.values()])
@@ -109,15 +119,15 @@ if __name__ == "__main__":
         loc=env_sim.forward(
             to.tensor(
                 [
-                    dp_nom["Dr"],
-                    dp_nom["Dp"],
-                    dp_nom["Rm"],
-                    dp_nom["km"],
-                    dp_nom["Mr"],
-                    dp_nom["Mp"],
-                    dp_nom["Lr"],
-                    dp_nom["Lp"],
-                    dp_nom["g"],
+                    dp_nom["damping_rot_pole"],
+                    dp_nom["damping_pend_pole"],
+                    dp_nom["motor_resistance"],
+                    dp_nom["motor_back_emf"],
+                    dp_nom["mass_rot_pole"],
+                    dp_nom["mass_pend_pole"],
+                    dp_nom["length_rot_pole"],
+                    dp_nom["length_pend_pole"],
+                    dp_nom["gravity_const"],
                 ]
             )
         ),
@@ -126,15 +136,15 @@ if __name__ == "__main__":
                 env_sim.forward(
                     to.tensor(
                         [
-                            dp_nom["Dr"] / 10,
-                            dp_nom["Dp"] / 5,
-                            dp_nom["Rm"] / 5,
-                            dp_nom["km"] / 10,
-                            dp_nom["Mr"] / 10,
-                            dp_nom["Mp"] / 10,
-                            dp_nom["Lr"] / 20,
-                            dp_nom["Lp"] / 20,
-                            dp_nom["g"] / 20,
+                            dp_nom["damping_rot_pole"] / 10,
+                            dp_nom["damping_pend_pole"] / 5,
+                            dp_nom["motor_resistance"] / 5,
+                            dp_nom["motor_back_emf"] / 10,
+                            dp_nom["mass_rot_pole"] / 10,
+                            dp_nom["mass_pend_pole"] / 10,
+                            dp_nom["length_rot_pole"] / 20,
+                            dp_nom["length_pend_pole"] / 20,
+                            dp_nom["gravity_const"] / 20,
                         ]
                     ),
                 )

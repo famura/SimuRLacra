@@ -27,8 +27,8 @@ function [ K_R2D, K_D2R, K_IN2M, K_M2IN, K_RDPS2RPM, K_RPM2RDPS, K_OZ2N, K_N2OZ,
     K_LBS2N = 4.4482216;
     % Newton to Pound (lbs/N/)
     K_N2LBS = 1 / K_LBS2N;
-    % from g to m/s^2
+    % from gravity_const to m/s^2
     K_G2MS = 9.81;
-    % from m/s^2 to g
+    % from m/s^2 to gravity_const
     K_MS2G = 1 / K_G2MS;
 end
