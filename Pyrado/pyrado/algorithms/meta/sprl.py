@@ -336,7 +336,7 @@ class SPRL(Algorithm):
 
         # evaluation multidim
         header = ["iteration", "objective_output", "status", "cg_stop_cond", "mean", "cov"]
-        f = open(os.path.join(subroutine.save_dir, "optimizer.csv"), "w")
+        f = open(os.path.join(subroutine.save_dir, "optimizer.csv"), "w", buffering=1)
         global optimize_logger
         optimize_logger = DictWriter(f, fieldnames=header)
         optimize_logger.writeheader()
