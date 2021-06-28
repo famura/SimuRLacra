@@ -11,7 +11,7 @@
 % r_b       Radius of ball                                      (m)
 % m_b       Mass of ball                                        (kg)
 % J_b       Moment of inertia of ball.                          (kg.m^2)
-% gravity_const         Gravitational constant                              (m/s^2)
+% g         Gravitational constant                              (m/s^2)
 %
 % ************************************************************************
 % Output paramters:
@@ -21,8 +21,8 @@
 % Quanser Consulting Inc.
 %%
 %
-function [ K_bb ] = d_2dbb_model_param(r_arm, L_tbl, r_b, m_b, J_b, gravity_const)
+function [ K_bb ] = d_2dbb_model_param(r_arm, L_tbl, r_b, m_b, J_b, g)
     % Model gain (m/s^2/rad)
-%     K_bb = 2 * m_b * gravity_const * r_arm * r_b^2 / L_tbl / ( m_b * r_b^2 + J_b );
-    K_bb = 6/5*gravity_const*r_arm/L_tbl;
+%     K_bb = 2 * m_b * g * r_arm * r_b^2 / L_tbl / ( m_b * r_b^2 + J_b );
+    K_bb = 6/5*g*r_arm/L_tbl;
 end

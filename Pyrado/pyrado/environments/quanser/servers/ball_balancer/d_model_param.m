@@ -5,9 +5,9 @@
 %
 % ************************************************************************
 % Input parameters:
-% motor_resistance        Motor armaturce resistance                          (ohm)
+% Rm        Motor armaturce resistance                          (ohm)
 % kt        Motor torque constant                               (N.m/A)
-% motor_back_emf        Motor back-EMF constant                             (V.s/rad)
+% km        Motor back-EMF constant                             (V.s/rad)
 % Kg        Total gear ratio
 % eta_g     Gearbox efficiency
 % eta_m     Motor efficiency
@@ -23,7 +23,7 @@
 % Quanser Consulting Inc.
 %%
 %
-function [K,tau] = d_model_param(motor_resistance, kt, motor_back_emf, Kg, eta_g, Beq, Jeq, eta_m, daqb)
+function [K,tau] = d_model_param(Rm, kt, km, Kg, eta_g, Beq, Jeq, eta_m, daqb)        
     if strcmp(upper(daqb),'Q3')        
         % Actuator gain (N.m/A)
         Am = eta_g*eta_m*kt*Kg;
@@ -33,9 +33,9 @@ function [K,tau] = d_model_param(motor_resistance, kt, motor_back_emf, Kg, eta_g
         tau = 1; % Jeq / Beq;
     else
         % Viscous damping relative to motor
-        Beq_v = ( Beq*motor_resistance + eta_g*eta_m*motor_back_emf*kt*Kg^2 ) / motor_resistance;
+        Beq_v = ( Beq*Rm + eta_g*eta_m*km*kt*Kg^2 ) / Rm;
         % Actuator gain (N.m/V)
-        Am = eta_g*eta_m*kt*Kg / motor_resistance;
+        Am = eta_g*eta_m*kt*Kg / Rm;
         % Steady-state gain (rad/s/V)
         K = Am / Beq_v;
         % Time constant (s)

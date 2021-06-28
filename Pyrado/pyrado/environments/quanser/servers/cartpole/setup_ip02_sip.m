@@ -69,23 +69,23 @@ global VMAX_AMP IMAX_AMP
 
 % Set the model parameters accordingly to the user-defined IP02 system configuration.
 % These parameters are used for model representation and controller design.
-[ motor_resistance, Jm, Kt, eta_m, Km, Kg, eta_g, Mc, r_mp, Beq ] = config_ip02( IP02_LOAD_TYPE, AMP_TYPE );
+[ Rm, Jm, Kt, eta_m, Km, Kg, eta_g, Mc, r_mp, Beq ] = config_ip02( IP02_LOAD_TYPE, AMP_TYPE );
 
 % Set the model parameters for the single pendulum accordingly to the user-defined system configuration.
-% [ gravity_const, mass_pend_pole, length_pend_pole, lp, Jp, Bp ] = config_sp( PEND_TYPE );
+% [ g, Mp, Lp, lp, Jp, Bp ] = config_sp( PEND_TYPE );
 
 % Lumped Mass of the Cart System (accounting for the rotor inertia)
 % Jeq = Mc + eta_g * Kg^2 * Jm / r_mp^2;
 
 % Self-erecting SIP
-% [Er, a_max] = d_swing_up(eta_m, eta_g, Kg, Kt, motor_resistance, r_mp, Jeq, mass_pend_pole, lp);
+% [Er, a_max] = d_swing_up(eta_m, eta_g, Kg, Kt, Rm, r_mp, Jeq, Mp, lp);
 % epsilon = 10.0 * pi / 180;
 
 % For the following state vector: X = [ xc; alpha; xc_dot; alpha_dot ]
 % Initialization of the State-Space Representation of the Open-Loop System
 % Call the following Maple-generated file to initialize the State-Space Matrices: A, B, C, and D
 % ABCD Eqns relative to Fc
-% [ A, B, C, D ] = SIP_ABCD_eqns(motor_resistance, Kt, eta_m, Km, Kg, eta_g, Jeq, mass_pend_pole, Bp, lp, gravity_const, Jp, r_mp, Beq);
+% [ A, B, C, D ] = SIP_ABCD_eqns(Rm, Kt, eta_m, Km, Kg, eta_g, Jeq, Mp, Bp, lp, g, Jp, r_mp, Beq);
 %
 
 % ############### LQR CONTROL ###############

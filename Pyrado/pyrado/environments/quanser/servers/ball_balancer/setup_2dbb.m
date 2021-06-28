@@ -40,11 +40,11 @@ PO = 10;
 %
 %% System Parameters
 % Sets model variables according to the user-defined system configuration
-[ motor_resistance, kt, motor_back_emf, Kg, eta_g, Beq, Jm, Jeq, eta_m, K_POT, K_TACH, K_ENC, VMAX_AMP, IMAX_AMP ] = config_srv02( EXT_GEAR_CONFIG, ENCODER_TYPE, TACH_OPTION, AMP_TYPE, LOAD_TYPE );
+[ Rm, kt, km, Kg, eta_g, Beq, Jm, Jeq, eta_m, K_POT, K_TACH, K_ENC, VMAX_AMP, IMAX_AMP ] = config_srv02( EXT_GEAR_CONFIG, ENCODER_TYPE, TACH_OPTION, AMP_TYPE, LOAD_TYPE );
 % Load 2DBB model parameters.
-[ L_tbl, r_arm, r_b, m_b, J_b, gravity_const, THETA_MIN, THETA_MAX ] = config_2dbb( );
+[ L_tbl, r_arm, r_b, m_b, J_b, g, THETA_MIN, THETA_MAX ] = config_2dbb( );
 % Load model parameters based on SRV02 configuration.
-[ K, tau ] = d_model_param(motor_resistance, kt, motor_back_emf, Kg, eta_g, Beq, Jeq, eta_m, AMP_TYPE);
+[ K, tau ] = d_model_param(Rm, kt, km, Kg, eta_g, Beq, Jeq, eta_m, AMP_TYPE);
 %
 %% Filter Parameters
 % 2DBB High-pass filter in PD control used to compute velocity
@@ -61,7 +61,7 @@ if strcmp ( CONTROL_TYPE , 'MANUAL' )
     %
 elseif strcmp ( CONTROL_TYPE , 'AUTO' )
     % Calculate Balance Table model gain.
-    [ K_bb ] = d_2dbb_model_param(r_arm, L_tbl, r_b, m_b, J_b, gravity_const);
+    [ K_bb ] = d_2dbb_model_param(r_arm, L_tbl, r_b, m_b, J_b, g);
     % Design Balance Table PD Gains
     [ kp, kd ] = d_2dbb_pd( K_bb, PO, ts, c_ts );
 end
