@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.algorithms.episodic.pepg &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.algorithms.episodic.pepg</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.algorithms.episodic.pepg</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_params</span> <span class="kn">import</span> <span class="n">NormalParamNoise</span><span class="p">,</span> <span class="n">SymmParamExplStrat</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterSamplingResult</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">clamp_symm</span>
+
+
+<div class="viewcode-block" id="rank_transform"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.pepg.rank_transform">[docs]</a><span class="k">def</span> <span class="nf">rank_transform</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform a 1-dim ndarray with arbitrary scalar values to an array with equally spaced rank values.</span>
+<span class="sd">    This is a nonlinear transform.</span>
+
+<span class="sd">    :param arr: input array</span>
+<span class="sd">    :param centered: if the transform should by centered around zero</span>
+<span class="sd">    :return: transformed array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="c1"># Create array to sort in</span>
+    <span class="n">ranks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="c1"># Ascending sort</span>
+    <span class="n">idcs_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="c1"># Rearrange to an equal-step array from -0.5 (or 0) to 0.5 (or 1)</span>
+    <span class="k">if</span> <span class="n">centered</span><span class="p">:</span>
+        <span class="n">ranks</span><span class="p">[</span><span class="n">idcs_sort</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">idcs_sort</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ranks</span><span class="p">[</span><span class="n">idcs_sort</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">idcs_sort</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ranks</span></div>
+
+
+<div class="viewcode-block" id="PEPG"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.pepg.PEPG">[docs]</a><span class="k">class</span> <span class="nc">PEPG</span><span class="p">(</span><span class="n">ParameterExploring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameter-Exploring Policy Gradients (PEPG)</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        [1] F. Sehnke, C. Osendorfer, T. Rueckstiess, A. Graves, J. Peters, J. Schmidhuber, &quot;Parameter-exploring</span>
+<span class="sd">        Policy Gradients&quot;, Neural Networks, 2010</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pepg&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+        <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_init_states_per_domain</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">expl_std_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">num_domains</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">clip_ratio_std</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">normalize_update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">transform_returns</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-4</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
+<span class="sd">        :param env: the environment which the policy operates</span>
+<span class="sd">        :param policy: policy to be updated</span>
+<span class="sd">        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs</span>
+<span class="sd">        :param pop_size: number of solutions in the population</span>
+<span class="sd">        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states</span>
+<span class="sd">        :param num_domains: number of rollouts due to the variance over domain parameters</span>
+<span class="sd">        :param expl_std_init: initial standard deviation for the exploration strategy</span>
+<span class="sd">        :param expl_std_min: minimal standard deviation for the exploration strategy</span>
+<span class="sd">        :param clip_ratio_std: maximal ratio for the change of the exploration strategy&#39;s standard deviation</span>
+<span class="sd">        :param transform_returns: use a rank-transformation of the returns to update the policy</span>
+<span class="sd">        :param lr: learning rate</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Call ParameterExploring&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">,</span>
+            <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="n">num_init_states_per_domain</span><span class="p">,</span>
+            <span class="n">num_domains</span><span class="o">=</span><span class="n">num_domains</span><span class="p">,</span>
+            <span class="n">pop_size</span><span class="o">=</span><span class="n">pop_size</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Store the inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_ratio_std</span> <span class="o">=</span> <span class="n">clip_ratio_std</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize_update</span> <span class="o">=</span> <span class="n">normalize_update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform_returns</span> <span class="o">=</span> <span class="n">transform_returns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+
+        <span class="c1"># Exploration strategy based on symmetrical normally distributed noise</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Symmetric buffer needs to have an even number of samples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">SymmParamExplStrat</span><span class="p">(</span>
+            <span class="n">NormalParamNoise</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">,</span>
+                <span class="n">std_init</span><span class="o">=</span><span class="n">expl_std_init</span><span class="p">,</span>
+                <span class="n">std_min</span><span class="o">=</span><span class="n">expl_std_min</span><span class="p">,</span>
+                <span class="n">use_cuda</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">device</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">([{</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">dampening</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PEPG.update"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.pepg.PEPG.update">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_results</span><span class="p">:</span> <span class="n">ParameterSamplingResult</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Average the return values over the rollouts</span>
+        <span class="n">rets_avg_ros</span> <span class="o">=</span> <span class="n">param_results</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">mean_returns</span>
+
+        <span class="c1"># Rank policy parameters by return (a.k.a. fitness)</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="n">rank_transform</span><span class="p">(</span><span class="n">rets_avg_ros</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_returns</span> <span class="k">else</span> <span class="n">rets_avg_ros</span>
+
+        <span class="c1"># Move to PyTorch</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+        <span class="n">rets_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="n">rets_avg_symm</span> <span class="o">=</span> <span class="p">(</span><span class="n">rets</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_results</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">rets</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">param_results</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="p">:])</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">baseline</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>  <span class="c1"># zero if centered</span>
+
+        <span class="c1"># Compute finite differences for the average return of each solution</span>
+        <span class="n">rets_fds</span> <span class="o">=</span> <span class="n">rets</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_results</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">rets</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">param_results</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="p">:]</span>
+
+        <span class="c1"># Get the perturbations (select the first half since they are symmetric)</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="n">param_results</span><span class="o">.</span><span class="n">parameters</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_results</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_update</span><span class="p">:</span>
+            <span class="c1"># See equation (15, top) in [1]</span>
+            <span class="n">delta_mean</span> <span class="o">=</span> <span class="p">(</span><span class="n">rets_fds</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">rets_max</span> <span class="o">-</span> <span class="n">rets_fds</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">))</span> <span class="o">@</span> <span class="n">epsilon</span>  <span class="c1"># epsilon = T from [1]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># See equation (13) in [1]</span>
+            <span class="n">delta_mean</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rets_fds</span> <span class="o">@</span> <span class="n">epsilon</span>  <span class="c1"># epsilon = T from [1]</span>
+
+        <span class="c1"># Update the mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_grad</span> <span class="o">=</span> <span class="o">-</span><span class="n">delta_mean</span>  <span class="c1"># PyTorch optimizers are minimizers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="c1"># Old version without PyTorch optimizer: self._expl_strat.policy.param_values += delta_mean * self.lr</span>
+
+        <span class="c1"># Update the std</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">epsilon</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_update</span><span class="p">:</span>
+            <span class="c1"># See equation (15, bottom) in [1]</span>
+            <span class="n">delta_std</span> <span class="o">=</span> <span class="p">(</span><span class="n">rets_avg_symm</span> <span class="o">-</span> <span class="n">baseline</span><span class="p">)</span> <span class="o">@</span> <span class="n">S</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># See equation (14) in [1]</span>
+            <span class="n">delta_std</span> <span class="o">=</span> <span class="p">((</span><span class="n">rets_avg_symm</span> <span class="o">-</span> <span class="n">baseline</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rets_max</span> <span class="o">-</span> <span class="n">baseline</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">))</span> <span class="o">@</span> <span class="n">S</span>
+
+        <span class="c1"># Bound the change on the exploration standard deviation (i.e. the entropy)</span>
+        <span class="n">delta_std</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span>
+        <span class="n">delta_std</span> <span class="o">=</span> <span class="n">clamp_symm</span><span class="p">(</span><span class="n">delta_std</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_ratio_std</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="p">)</span>
+        <span class="n">new_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span> <span class="o">+</span> <span class="n">delta_std</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">std</span><span class="o">=</span><span class="n">new_std</span><span class="p">)</span>
+
+        <span class="c1"># Logging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;policy param&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;delta policy param&quot;</span><span class="p">,</span> <span class="n">delta_mean</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;expl strat std&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;expl strat entropy&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(),</span> <span class="mi">4</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
