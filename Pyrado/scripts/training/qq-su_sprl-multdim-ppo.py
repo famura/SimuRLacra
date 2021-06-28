@@ -29,6 +29,7 @@
 """
 Train an agent to solve the Quanser Qube swing-up task using Proximal Policy Optimization.
 """
+import numpy as np
 import torch as to
 from torch.optim import lr_scheduler
 
@@ -131,8 +132,8 @@ if __name__ == "__main__":
 
     sprl_hparam = dict(
         kl_constraints_ub=8000,
-        performance_lower_bound=500,
-        kl_threshold=0.4,
+        performance_lower_bound=400,
+        kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
         optimize_mean=not args.cov_only,
         max_subrtn_retries=1,
