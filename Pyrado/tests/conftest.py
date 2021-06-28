@@ -41,6 +41,7 @@ from pyrado.domain_randomization.domain_parameter import (
 )
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environments.base import Env
+from pyrado.environments.mujoco.quanser_qube import QQubeStabMjSim, QQubeSwingUpMjSim
 from pyrado.environments.one_step.catapult import CatapultSim
 from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim, BallOnBeamSim

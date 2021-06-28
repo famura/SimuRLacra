@@ -93,22 +93,24 @@ class PendulumSim(SimPyEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            g=9.81,  # gravity constant [m/s**2]
+            gravity_const=9.81,  # gravity constant [m/s**2]
             m_pole=1.0,  # mass of the pole [kg]
             l_pole=1.0,  # half pole length [m]
             d_pole=0.05,  # rotational damping of the pole [kg*m**2/s]
             tau_max=3.5,
-        )  # maximum applicable torque [N*m] (under-actuated if < m*l*g/2)
+        )  # maximum applicable torque [N*m] (under-actuated if < m*l*gravity_const/2)
 
     def _step_dynamics(self, act: np.ndarray):
-        g = self.domain_param["g"]
+        gravity_const = self.domain_param["gravity_const"]
         m_pole = self.domain_param["m_pole"]
         l_pole = self.domain_param["l_pole"]
         d_pole = self.domain_param["d_pole"]
 
         # Dynamics (pendulum modeled as a rod)
         th, th_dot = self.state
-        th_ddot = (act - m_pole * g * l_pole / 2.0 * np.sin(th) - d_pole * th_dot) / (m_pole * l_pole ** 2 / 3.0)
+        th_ddot = (act - m_pole * gravity_const * l_pole / 2.0 * np.sin(th) - d_pole * th_dot) / (
+            m_pole * l_pole ** 2 / 3.0
+        )
 
         # Integration step (symplectic Euler)
         self.state[1] += th_ddot * self._dt  # next velocity

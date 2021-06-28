@@ -87,30 +87,30 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            g=9.81,  # gravity [m/s**2]
-            Rm=8.4,  # motor resistance [Ohm]
-            km=0.042,  # motor back-emf constant [V*s/rad]
-            Mr=0.095,  # rotary arm mass [kg]
-            Lr=0.085,  # rotary arm length [m]
-            Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
-            Mp=0.024,  # pendulum link mass [kg]
-            Lp=0.129,  # pendulum link length [m]
-            Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
-            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
-            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
+            gravity_const=9.81,  # gravity [m/s**2]
+            motor_resistance=8.4,  # motor resistance [Ohm]
+            motor_back_emf=0.042,  # motor back-emf constant [V*s/rad]
+            mass_rot_pole=0.095,  # rotary arm mass [kg]
+            length_rot_pole=0.085,  # rotary arm length [m]
+            damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
+            mass_pend_pole=0.024,  # pendulum link mass [kg]
+            length_pend_pole=0.129,  # pendulum link length [m]
+            damping_pend_pole=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
+            voltage_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            voltage_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
         assert self.act_space.contains(act, verbose=True)
 
-        V_thold_neg = self.domain_param["V_thold_neg"]
-        V_thold_pos = self.domain_param["V_thold_pos"]
-        km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
+        voltage_thold_neg = self.domain_param["voltage_thold_neg"]
+        voltage_thold_pos = self.domain_param["voltage_thold_pos"]
+        motor_back_emf = self.domain_param["motor_back_emf"]
+        motor_resistance = self.domain_param["motor_resistance"]
 
         # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
         # This is a very simple model of static friction.
-        if V_thold_neg <= act <= V_thold_pos:
+        if voltage_thold_neg <= act <= voltage_thold_pos:
             act = 0
 
         # Decompose state
@@ -118,7 +118,7 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
 
         # Compute the torques for the PD controller and clip them to their max values
         torque = (
-            km * (float(act) - km * theta_dot) / Rm
+            motor_back_emf * (float(act) - motor_back_emf * theta_dot) / motor_resistance
         )  # act is a scalar array, causing warning on later np.array construction
 
         # Apply the torques to the robot
@@ -150,10 +150,10 @@ class QQubeMjSim(MujocoSimEnv, Serializable):
         return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
-        Lp = domain_param["Lp"]
-        Lr = domain_param["Lr"]
-        xml_model = xml_model.replace("[0.13-Lp]", str(0.13 - Lp))
-        xml_model = xml_model.replace("[0.0055+Lr]", str(0.0055 + Lr))
+        length_pend_pole = domain_param["length_pend_pole"]
+        length_rot_pole = domain_param["length_rot_pole"]
+        xml_model = xml_model.replace("[0.13-length_pend_pole]", str(0.13 - length_pend_pole))
+        xml_model = xml_model.replace("[0.0055+length_rot_pole]", str(0.0055 + length_rot_pole))
         return super()._adapt_model_file(xml_model, domain_param)
 
 

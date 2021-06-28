@@ -131,9 +131,9 @@ if __name__ == "__main__":
 
         _plot_and_save(
             df,
-            "g",
+            "gravity_const",
             "r_ball",
-            "$g$",
+            "$gravity_const$",
             r"$r_{\mathrm{ball}}$",
             add_sep_colorbar=True,
             norm=accnorm,
@@ -228,8 +228,8 @@ if __name__ == "__main__":
         """ QQubeSwingUpSim """
         _plot_and_save(
             df,
-            "Dp",
-            "Dr",
+            "damping_pend_pole",
+            "damping_rot_pole",
             r"$D_p$",
             r"$D_r$",
             add_sep_colorbar=True,

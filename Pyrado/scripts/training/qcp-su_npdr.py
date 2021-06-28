@@ -86,7 +86,7 @@ if __name__ == "__main__":
     policy = QCartPoleSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
+    dp_mapping = {0: "voltage_thold_neg", 1: "voltage_thold_pos"}
     # dp_mapping = {
     #     0: "eta_m",
     #     1: "eta_g",
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #     7: "m_pole",
     #     8: "l_pole",
     # }
-    # g=9.81,  # gravity constant [m/s**2]
+    # gravity_const=9.81,  # gravity constant [m/s**2]
     # m_cart=0.38,  # mass of the cart [kg]
     # l_rail=0.814,  # length of the rail the cart is running on [m]
     # eta_m=0.9,  # motor efficiency [-], default 1.

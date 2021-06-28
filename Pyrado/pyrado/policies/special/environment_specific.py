@@ -228,8 +228,8 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
 
         # Energy terms: E_pot(0) = 0; E_pot(pi) = E_pot(-pi) = 2 mgl
         E_kin = J_pole / 2.0 * theta_dot ** 2
-        E_pot = self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"] * (1 - cos_th)
-        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"]
+        E_pot = self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"] * (1 - cos_th)
+        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"]
 
         if to.abs(alpha) < 0.1745 or self.pd_control:
             # Stabilize at the top
@@ -470,16 +470,22 @@ class QQubeEnergyCtrl(Policy):
         th, al, thd, ald = obs
 
         # Compute energies
-        J_pole = self._domain_param["Mp"] * self._domain_param["Lp"] ** 2 / 12.0
+        J_pole = self._domain_param["mass_pend_pole"] * self._domain_param["length_pend_pole"] ** 2 / 12.0
         E_kin = 0.5 * J_pole * ald ** 2
-        E_pot = 0.5 * self._domain_param["Mp"] * self._domain_param["g"] * self._domain_param["Lp"] * (1.0 - to.cos(al))
+        E_pot = (
+            0.5
+            * self._domain_param["mass_pend_pole"]
+            * self._domain_param["gravity_const"]
+            * self._domain_param["length_pend_pole"]
+            * (1.0 - to.cos(al))
+        )
         E = E_kin + E_pot
 
         # Compute clipped action
         u = self.E_gain * (E - self.E_ref) * to.sign(ald * to.cos(al)) - self._th_gain * th
         acc = clamp_symm(u, self.acc_max)
-        trq = self._domain_param["Mr"] * self._domain_param["Lr"] * acc
-        volt = self._domain_param["Rm"] / self._domain_param["km"] * trq
+        trq = self._domain_param["mass_rot_pole"] * self._domain_param["length_rot_pole"] * acc
+        volt = self._domain_param["motor_resistance"] / self._domain_param["motor_back_emf"] * trq
         return volt.view(1)
 
 

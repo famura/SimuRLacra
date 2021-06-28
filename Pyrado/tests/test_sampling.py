@@ -586,7 +586,7 @@ def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_rollouts: i
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize("min_rollouts", [2, 4, 6])  # Once less, equal, and more rollouts than workers.
 @pytest.mark.parametrize("init_states", [None, 2])
-@pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
+@pytest.mark.parametrize("domain_params", [None, [{"gravity_const": 10}]])
 def test_parallel_sampling_deterministic_wo_min_steps(
     env: SimEnv,
     policy: Policy,
@@ -645,7 +645,7 @@ def test_parallel_sampling_deterministic_wo_min_steps(
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize("min_rollouts", [None, 2, 4, 6])  # Once less, equal, and more rollouts than workers.
 @pytest.mark.parametrize("min_steps", [2, 10])
-@pytest.mark.parametrize("domain_params", [None, [{"g": 10}]])
+@pytest.mark.parametrize("domain_params", [None, [{"gravity_const": 10}]])
 def test_parallel_sampling_deterministic_w_min_steps(
     env: SimEnv,
     policy: Policy,

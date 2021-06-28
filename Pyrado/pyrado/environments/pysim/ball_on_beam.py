@@ -48,11 +48,11 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
     def _create_spaces(self):
         l_beam = self.domain_param["l_beam"]
-        g = self.domain_param["g"]
+        gravity_const = self.domain_param["gravity_const"]
 
         # Set the bounds for the system's states and actions
         max_state = np.array([l_beam / 2.0, np.pi / 4.0, 10.0, np.pi])
-        max_act = np.array([l_beam / 2.0 * g * 3.0])  # max torque [Nm]; the factor 3.0 is arbitrary
+        max_act = np.array([l_beam / 2.0 * gravity_const * 3.0])  # max torque [Nm]; the factor 3.0 is arbitrary
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
         self._state_space = BoxSpace(-max_state, max_state, labels=["x", "alpha", "x_dot", "alpha_dot"])
@@ -76,7 +76,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            g=9.81,  # gravity constant [m/s**2]
+            gravity_const=9.81,  # gravity constant [m/s**2]
             m_ball=0.5,  # ball mass [kg]
             r_ball=0.1,  # ball radius [m]
             m_beam=3.0,  # beam mass [kg]
@@ -108,7 +108,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         )
 
     def _step_dynamics(self, act: np.ndarray):
-        g = self.domain_param["g"]
+        gravity_const = self.domain_param["gravity_const"]
         m_ball = self.domain_param["m_ball"]
         c_frict = self.domain_param["c_frict"]
         ang_offset = self.domain_param["ang_offset"]
@@ -121,8 +121,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         zeta_beam = m_ball * x ** 2 + self.J_beam  # depends on the bal position
 
         # EoM solved for the accelerations
-        x_ddot = (-c_frict * x_dot + m_ball * x * a_dot ** 2 - m_ball * g * np.sin(a)) / self.zeta_ball
-        a_ddot = (float(act) - 2.0 * m_ball * x * x_dot * a_dot - m_ball * g * np.cos(a) * x) / zeta_beam
+        x_ddot = (-c_frict * x_dot + m_ball * x * a_dot ** 2 - m_ball * gravity_const * np.sin(a)) / self.zeta_ball
+        a_ddot = (float(act) - 2.0 * m_ball * x * x_dot * a_dot - m_ball * gravity_const * np.cos(a) * x) / zeta_beam
 
         # Integration step (symplectic Euler)
         self.state[2:] += np.array([x_ddot, a_ddot]) * self._dt  # next velocity

@@ -219,7 +219,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
     dp_map = create_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
-    env_real.domain_param = dict(Mp=0.024 * 1.1, Mr=0.095 * 1.1)
+    env_real.domain_param = dict(mass_pend_pole=0.024 * 1.1, mass_rot_pole=0.095 * 1.1)
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy and subroutine
@@ -238,8 +238,8 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     # Set the boundaries for the GP
     dp_nom = inner_env(env_sim).get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-8, 0.8 * dp_nom["Mr"], 1e-8]),
-        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-7, 1.2 * dp_nom["Mr"], 1e-7]),
+        bound_lo=np.array([0.8 * dp_nom["mass_pend_pole"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["mass_pend_pole"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
     )
 
     # Create algorithm and train
@@ -392,21 +392,21 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     env_real = ActNormWrapper(env_real)
     env_sim = ActNormWrapper(env)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lr", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        0: ("Mr", "mean"),
-        1: ("Mr", "std"),
-        2: ("Mp", "mean"),
-        3: ("Mp", "std"),
-        4: ("Lr", "mean"),
-        5: ("Lr", "std"),
-        6: ("Lp", "mean"),
-        7: ("Lp", "std"),
+        0: ("mass_rot_pole", "mean"),
+        1: ("mass_rot_pole", "std"),
+        2: ("mass_pend_pole", "mean"),
+        3: ("mass_pend_pole", "std"),
+        4: ("length_rot_pole", "mean"),
+        5: ("length_rot_pole", "std"),
+        6: ("length_pend_pole", "mean"),
+        7: ("length_pend_pole", "std"),
     }
     trafo_mask = [True] * 8
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
@@ -440,10 +440,10 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     subrtn_policy = PPO(ex_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
 
     prior = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / 10),
-        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
-        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / 10),
-        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
+        NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / 10),
+        NormalDomainParam(name="mass_pend_pole", mean=0.024, std=0.024 / 10),
+        NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / 10),
+        NormalDomainParam(name="length_pend_pole", mean=0.129, std=0.129 / 10),
     )
     ddp_policy_hparam = dict(mapping=dp_map, trafo_mask=trafo_mask, scale_params=True)
     ddp_policy = DomainDistrParamPolicy(prior=prior, **ddp_policy_hparam)
@@ -588,7 +588,7 @@ def test_sbi_embedding(
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {1: "Mp", 2: "Lp"}
+    dp_mapping = {1: "mass_pend_pole", 2: "length_pend_pole"}
 
     # Time series embedding
     if embedding_name == LastStepEmbedding.name:
@@ -686,7 +686,9 @@ def test_npdr_and_bayessim(
     # Create a fake ground truth target domain
     env_real = deepcopy(env)
     dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = dict(Mp=dp_nom["Mp"] * 1.2, Lp=dp_nom["Lp"] * 0.8)
+    env_real.domain_param = dict(
+        mass_pend_pole=dp_nom["mass_pend_pole"] * 1.2, length_pend_pole=dp_nom["length_pend_pole"] * 0.8
+    )
 
     # Reduce the number of steps to make this test run faster
     env.max_steps = 40
@@ -696,12 +698,12 @@ def test_npdr_and_bayessim(
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {1: "Mp", 2: "Lp"}
+    dp_mapping = {1: "mass_pend_pole", 2: "length_pend_pole"}
 
     # Prior
     prior_hparam = dict(
-        low=to.tensor([dp_nom["Mp"] * 0.5, dp_nom["Lp"] * 0.5]),
-        high=to.tensor([dp_nom["Mp"] * 1.5, dp_nom["Lp"] * 1.5]),
+        low=to.tensor([dp_nom["mass_pend_pole"] * 0.5, dp_nom["length_pend_pole"] * 0.5]),
+        high=to.tensor([dp_nom["mass_pend_pole"] * 1.5, dp_nom["length_pend_pole"] * 1.5]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
 
@@ -792,7 +794,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     env = ActNormWrapper(env)
     env_sprl_params = [
         dict(
-            name="g",
+            name="gravity_const",
             target_mean=to.tensor([9.81]),
             target_cov_chol_flat=to.tensor([1.0]),
             init_mean=to.tensor([9.81]),

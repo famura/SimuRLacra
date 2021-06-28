@@ -113,7 +113,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
             l_pole = 0.3365 / 2
 
         return dict(
-            g=9.81,  # gravity constant [m/s**2]
+            gravity_const=9.81,  # gravity constant [m/s**2]
             m_cart=0.38,  # mass of the cart [kg]
             l_rail=0.814,  # length of the rail the cart is running on [m]
             eta_m=0.9,  # motor efficiency [-], default 1.
@@ -130,8 +130,8 @@ class QCartPoleSim(SimPyEnv, Serializable):
             m_pole=m_pole,  # mass of the pole [kg]
             l_pole=l_pole,  # half pole length [m]
             mu_cart=0.02,  # Coulomb friction coefficient cart-rail [-]
-            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
-            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
+            voltage_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            voltage_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _calc_constants(self):
@@ -147,7 +147,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self.J_eq = m_cart + (eta_g * K_g ** 2 * J_m) / r_mp ** 2  # equiv. inertia [kg]
 
     def _step_dynamics(self, u: np.ndarray):
-        g = self.domain_param["g"]
+        gravity_const = self.domain_param["gravity_const"]
         l_p = self.domain_param["l_pole"]
         m_p = self.domain_param["m_pole"]
         m_c = self.domain_param["m_cart"]
@@ -168,7 +168,10 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
         # This is a very simple model of static friction.
-        if not self._simple_dynamics and self.domain_param["V_thold_neg"] <= u <= self.domain_param["V_thold_pos"]:
+        if (
+            not self._simple_dynamics
+            and self.domain_param["voltage_thold_neg"] <= u <= self.domain_param["voltage_thold_pos"]
+        ):
             u = 0.0
 
         # Actuation force coming from the carts motor torque
@@ -179,7 +182,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         else:
             # Force normal to the rail causing the Coulomb friction
-            f_normal = m_tot * g - m_p * l_p / 2 * (sin_th * self._th_ddot + cos_th * th_dot ** 2)
+            f_normal = m_tot * gravity_const - m_p * l_p / 2 * (sin_th * self._th_ddot + cos_th * th_dot ** 2)
             if f_normal < 0:
                 # The normal force on the cart is negative, i.e. it is lifted up. This can be cause by a very high
                 # angular momentum of the pole. Here we neglect this effect.
@@ -197,7 +200,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         rhs = np.array(
             [
                 f_tot - B_eq * x_dot - m_p * l_p * sin_th * th_dot ** 2,
-                -B_p * th_dot - m_p * l_p * g * sin_th,
+                -B_p * th_dot - m_p * l_p * gravity_const * sin_th,
             ]
         )
         # Compute acceleration from linear system of equations: M * x_ddot = rhs

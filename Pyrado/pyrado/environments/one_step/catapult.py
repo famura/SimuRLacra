@@ -61,7 +61,7 @@ class CatapultSim(SimEnv, Serializable):
         self._planet = -1
 
         # Initialize the domain parameters (Earth)
-        self._g = CatapultSim.get_nominal_domain_param()["g"]  # gravity constant [m/s**2]
+        self._g = CatapultSim.get_nominal_domain_param()["gravity_const"]  # gravity constant [m/s**2]
         self._k = CatapultSim.get_nominal_domain_param()["k"]  # catapult spring's stiffness constant [N/m]
         self._x = CatapultSim.get_nominal_domain_param()["x"]  # catapult spring's pre-elongation [m]
 
@@ -110,7 +110,7 @@ class CatapultSim(SimEnv, Serializable):
         if self.example_config:
             return dict(planet=self._planet)
         else:
-            return dict(g=self._g, k=self._k, x=self._x)
+            return dict(gravity_const=self._g, k=self._k, x=self._x)
 
     @domain_param.setter
     def domain_param(self, domain_param: dict):
@@ -137,13 +137,13 @@ class CatapultSim(SimEnv, Serializable):
 
         else:
             assert self._g > 0 and self._k > 0 and self._x > 0
-            self._g = domain_param.get("g", self._g)
+            self._g = domain_param.get("gravity_const", self._g)
             self._k = domain_param.get("k", self._k)
             self._x = domain_param.get("x", self._x)
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
-        return dict(g=9.81, k=2000.0, x=1.0)
+        return dict(gravity_const=9.81, k=2000.0, x=1.0)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Reset time

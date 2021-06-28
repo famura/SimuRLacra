@@ -112,9 +112,9 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "g",
+                "gravity_const",
                 "r_ball",
-                "$g$",
+                "$gravity_const$",
                 r"$r_{\mathrm{ball}}$",
                 add_sep_colorbar=True,
                 norm=accnorm,
@@ -217,8 +217,8 @@ def _plot(dataframes, save_dirs, save_figure):
             """ QQubeSwingUpSim """
             _plot_and_save(
                 df,
-                "Dp",
-                "Dr",
+                "damping_pend_pole",
+                "damping_rot_pole",
                 r"$D_p$",
                 r"$D_r$",
                 add_sep_colorbar=True,
@@ -230,8 +230,8 @@ def _plot(dataframes, save_dirs, save_figure):
             )
             # _plot_and_save(
             #     df,
-            #     "Mr",
-            #     "Mp",
+            #     "mass_rot_pole",
+            #     "mass_pend_pole",
             #     r"$M_r$",
             #     r"$M_p$",
             #     add_sep_colorbar=True,

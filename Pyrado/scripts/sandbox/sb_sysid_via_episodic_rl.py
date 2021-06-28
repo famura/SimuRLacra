@@ -58,21 +58,21 @@ def create_bob_setup():
     env_real.domain_param = dict(
         # l_beam=1.95,
         # ang_offset=-0.03,
-        g=10.81
+        gravity_const=10.81
     )
 
     env_sim = BallOnBeamSim(**env_hparams)
     randomizer = DomainRandomizer(
         # NormalDomainParam(name="l_beam", mean=0, std=1e-6, clip_lo=1.5, clip_up=3.5),
         # UniformDomainParam(name="ang_offset", mean=0, halfspan=1e-6),
-        NormalDomainParam(name="g", mean=0, std=1e-6),
+        NormalDomainParam(name="gravity_const", mean=0, std=1e-6),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
         # 0: ("l_beam", "mean"), 1: ("l_beam", "std"),
         # 2: ("ang_offset", "mean"), 3: ("ang_offset", "halfspan")
-        0: ("g", "mean"),
-        1: ("g", "std"),
+        0: ("gravity_const", "mean"),
+        1: ("gravity_const", "std"),
     }
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
@@ -82,7 +82,7 @@ def create_bob_setup():
     prior = DomainRandomizer(
         # NormalDomainParam(name="l_beam", mean=2.05, std=2.05/10),
         # UniformDomainParam(name="ang_offset", mean=0.03, halfspan=0.03/10),
-        NormalDomainParam(name="g", mean=8.81, std=8.81 / 10),
+        NormalDomainParam(name="gravity_const", mean=8.81, std=8.81 / 10),
     )
     # trafo_mask = [False, True, False, True]
     trafo_mask = [True, True]
@@ -96,29 +96,29 @@ def create_qqsu_setup():
     env_hparams = dict(dt=1 / 100.0, max_steps=600)
     env_real = QQubeSwingUpSim(**env_hparams)
     env_real.domain_param = dict(
-        Mr=0.095 * 0.9,  # 0.095*0.9 = 0.0855
-        Mp=0.024 * 1.1,  # 0.024*1.1 = 0.0264
-        Lr=0.085 * 0.9,  # 0.085*0.9 = 0.0765
-        Lp=0.129 * 1.1,  # 0.129*1.1 = 0.1419
+        mass_rot_pole=0.095 * 0.9,  # 0.095*0.9 = 0.0855
+        mass_pend_pole=0.024 * 1.1,  # 0.024*1.1 = 0.0264
+        length_rot_pole=0.085 * 0.9,  # 0.085*0.9 = 0.0765
+        length_pend_pole=0.129 * 1.1,  # 0.129*1.1 = 0.1419
     )
 
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.0, std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name="Mp", mean=0.0, std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name="Lr", mean=0.0, std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name="Lp", mean=0.0, std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="length_pend_pole", mean=0.0, std=1e-9, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        0: ("Mr", "mean"),
-        1: ("Mr", "std"),
-        2: ("Mp", "mean"),
-        3: ("Mp", "std"),
-        4: ("Lr", "mean"),
-        5: ("Lr", "std"),
-        6: ("Lp", "mean"),
-        7: ("Lp", "std"),
+        0: ("mass_rot_pole", "mean"),
+        1: ("mass_rot_pole", "std"),
+        2: ("mass_pend_pole", "mean"),
+        3: ("mass_pend_pole", "std"),
+        4: ("length_rot_pole", "mean"),
+        5: ("length_rot_pole", "std"),
+        6: ("length_pend_pole", "mean"),
+        7: ("length_pend_pole", "std"),
     }
     # trafo_mask = [False, True, False, True, False, True, False, True]
     trafo_mask = [True] * 8
@@ -127,10 +127,10 @@ def create_qqsu_setup():
     # Policies (the behavioral policy needs to be deterministic)
     behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
     prior = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / 10),
-        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
-        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / 10),
-        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
+        NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / 10),
+        NormalDomainParam(name="mass_pend_pole", mean=0.024, std=0.024 / 10),
+        NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / 10),
+        NormalDomainParam(name="length_pend_pole", mean=0.129, std=0.129 / 10),
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior, scale_params=False)
 
@@ -249,7 +249,7 @@ if __name__ == "__main__":
         print_cbt(
             f"{SysIdViaEpisodicRL.name} finished training a {ddp_policy.name} "
             f"with {ddp_policy.num_param} parameters. {stopping_reason}",
-            "g",
+            "gravity_const",
         )
     else:
-        print_cbt(f"{subrtn.name} finished training. {stopping_reason}", "g")
+        print_cbt(f"{subrtn.name} finished training. {stopping_reason}", "gravity_const")

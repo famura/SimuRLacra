@@ -152,7 +152,9 @@ def create_default_randomizer_cata() -> DomainRandomizer:
 
     dp_nom = CatapultSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-3
+        ),
         NormalDomainParam(name="k", mean=dp_nom["k"], std=dp_nom["k"] / 5, clip_lo=1e-3),
         NormalDomainParam(name="x", mean=dp_nom["x"], std=dp_nom["x"] / 5, clip_lo=1e-3),
     )
@@ -169,7 +171,9 @@ def create_default_randomizer_bob() -> DomainRandomizer:
 
     dp_nom = BallOnBeamSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-4),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-4
+        ),
         NormalDomainParam(name="m_ball", mean=dp_nom["m_ball"], std=dp_nom["m_ball"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="r_ball", mean=dp_nom["r_ball"], std=dp_nom["r_ball"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="m_beam", mean=dp_nom["m_beam"], std=dp_nom["m_beam"] / 5, clip_lo=1e-3),
@@ -208,7 +212,9 @@ def create_default_randomizer_pend() -> DomainRandomizer:
 
     dp_nom = PendulumSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-3
+        ),
         NormalDomainParam(name="m_pole", mean=dp_nom["m_pole"], std=dp_nom["m_pole"] / 10, clip_lo=1e-3),
         NormalDomainParam(name="l_pole", mean=dp_nom["l_pole"], std=dp_nom["l_pole"] / 10, clip_lo=1e-3),
         NormalDomainParam(name="d_pole", mean=dp_nom["d_pole"], std=dp_nom["d_pole"] / 10, clip_lo=1e-3),
@@ -227,7 +233,9 @@ def create_default_randomizer_qbb() -> DomainRandomizer:
 
     dp_nom = QBallBalancerSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-4),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-4
+        ),
         NormalDomainParam(name="m_ball", mean=dp_nom["m_ball"], std=dp_nom["m_ball"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="r_ball", mean=dp_nom["r_ball"], std=dp_nom["r_ball"] / 5, clip_lo=1e-3),
         NormalDomainParam(name="l_plate", mean=dp_nom["l_plate"], std=dp_nom["l_plate"] / 5, clip_lo=5e-2),
@@ -266,7 +274,9 @@ def create_default_randomizer_qcp() -> DomainRandomizer:
 
     dp_nom = QCartPoleSim.get_nominal_domain_param(long=False)
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-4),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-4
+        ),
         NormalDomainParam(name="m_cart", mean=dp_nom["m_cart"], std=dp_nom["m_cart"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="m_pole", mean=dp_nom["m_pole"], std=dp_nom["m_pole"] / 5, clip_lo=1e-4),
         NormalDomainParam(name="l_rail", mean=dp_nom["l_rail"], std=dp_nom["l_rail"] / 5, clip_lo=1e-2),
@@ -296,15 +306,36 @@ def create_default_randomizer_qq() -> DomainRandomizer:
 
     dp_nom = QQubeSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name="g", mean=dp_nom["g"], std=dp_nom["g"] / 10, clip_lo=1e-3),
-        NormalDomainParam(name="Rm", mean=dp_nom["Rm"], std=dp_nom["Rm"] / 5, clip_lo=1e-3),
-        NormalDomainParam(name="km", mean=dp_nom["km"], std=dp_nom["km"] / 5, clip_lo=1e-4),
-        NormalDomainParam(name="Mr", mean=dp_nom["Mr"], std=dp_nom["Mr"] / 5, clip_lo=1e-4),
-        NormalDomainParam(name="Lr", mean=dp_nom["Lr"], std=dp_nom["Lr"] / 5, clip_lo=1e-4),
-        NormalDomainParam(name="Dr", mean=dp_nom["Dr"], std=dp_nom["Dr"] / 4, clip_lo=1e-9),
-        NormalDomainParam(name="Mp", mean=dp_nom["Mp"], std=dp_nom["Mp"] / 5, clip_lo=1e-4),
-        NormalDomainParam(name="Lp", mean=dp_nom["Lp"], std=dp_nom["Lp"] / 5, clip_lo=1e-4),
-        NormalDomainParam(name="Dp", mean=dp_nom["Dp"], std=dp_nom["Dp"] / 4, clip_lo=1e-9),
+        NormalDomainParam(
+            name="gravity_const", mean=dp_nom["gravity_const"], std=dp_nom["gravity_const"] / 10, clip_lo=1e-3
+        ),
+        NormalDomainParam(
+            name="motor_resistance", mean=dp_nom["motor_resistance"], std=dp_nom["motor_resistance"] / 5, clip_lo=1e-3
+        ),
+        NormalDomainParam(
+            name="motor_back_emf", mean=dp_nom["motor_back_emf"], std=dp_nom["motor_back_emf"] / 5, clip_lo=1e-4
+        ),
+        NormalDomainParam(
+            name="mass_rot_pole", mean=dp_nom["mass_rot_pole"], std=dp_nom["mass_rot_pole"] / 5, clip_lo=1e-4
+        ),
+        NormalDomainParam(
+            name="length_rot_pole", mean=dp_nom["length_rot_pole"], std=dp_nom["length_rot_pole"] / 5, clip_lo=1e-4
+        ),
+        NormalDomainParam(
+            name="damping_rot_pole", mean=dp_nom["damping_rot_pole"], std=dp_nom["damping_rot_pole"] / 4, clip_lo=1e-9
+        ),
+        NormalDomainParam(
+            name="mass_pend_pole", mean=dp_nom["mass_pend_pole"], std=dp_nom["mass_pend_pole"] / 5, clip_lo=1e-4
+        ),
+        NormalDomainParam(
+            name="length_pend_pole", mean=dp_nom["length_pend_pole"], std=dp_nom["length_pend_pole"] / 5, clip_lo=1e-4
+        ),
+        NormalDomainParam(
+            name="damping_pend_pole",
+            mean=dp_nom["damping_pend_pole"],
+            std=dp_nom["damping_pend_pole"] / 4,
+            clip_lo=1e-9,
+        ),
     )
 
 
@@ -320,10 +351,30 @@ def create_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
 
     dp_nom = QQubeSim.get_nominal_domain_param()
     return DomainRandomizer(
-        UniformDomainParam(name="Mp", mean=dp_nom["Mp"], halfspan=dp_nom["Mp"] / frac_halfspan, clip_lo=1e-3),
-        UniformDomainParam(name="Mr", mean=dp_nom["Mr"], halfspan=dp_nom["Mr"] / frac_halfspan, clip_lo=1e-3),
-        UniformDomainParam(name="Lr", mean=dp_nom["Lr"], halfspan=dp_nom["Lr"] / frac_halfspan, clip_lo=1e-2),
-        UniformDomainParam(name="Lp", mean=dp_nom["Lp"], halfspan=dp_nom["Lp"] / frac_halfspan, clip_lo=1e-2),
+        UniformDomainParam(
+            name="mass_pend_pole",
+            mean=dp_nom["mass_pend_pole"],
+            halfspan=dp_nom["mass_pend_pole"] / frac_halfspan,
+            clip_lo=1e-3,
+        ),
+        UniformDomainParam(
+            name="mass_rot_pole",
+            mean=dp_nom["mass_rot_pole"],
+            halfspan=dp_nom["mass_rot_pole"] / frac_halfspan,
+            clip_lo=1e-3,
+        ),
+        UniformDomainParam(
+            name="length_rot_pole",
+            mean=dp_nom["length_rot_pole"],
+            halfspan=dp_nom["length_rot_pole"] / frac_halfspan,
+            clip_lo=1e-2,
+        ),
+        UniformDomainParam(
+            name="length_pend_pole",
+            mean=dp_nom["length_pend_pole"],
+            halfspan=dp_nom["length_pend_pole"] / frac_halfspan,
+            clip_lo=1e-2,
+        ),
     )
 
 
@@ -603,8 +654,8 @@ def create_default_domain_param_map_bob() -> Dict[int, Tuple[str, str]]:
              distribution parameter
     """
     return {
-        0: ("g", "mean"),
-        1: ("g", "std"),
+        0: ("gravity_const", "mean"),
+        1: ("gravity_const", "std"),
         2: ("m_ball", "mean"),
         3: ("m_ball", "std"),
         4: ("r_ball", "mean"),
@@ -659,18 +710,18 @@ def create_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
              distribution parameter
     """
     return {
-        0: ("Mp", "mean"),
-        1: ("Mp", "std"),
-        2: ("Mr", "mean"),
-        3: ("Mr", "std"),
-        4: ("Lp", "mean"),
-        5: ("Lp", "std"),
-        6: ("Lr", "mean"),
-        7: ("Lr", "std"),
-        8: ("Dp", "mean"),
-        9: ("Dp", "std"),
-        10: ("Dr", "mean"),
-        11: ("Dr", "std"),
+        0: ("mass_pend_pole", "mean"),
+        1: ("mass_pend_pole", "std"),
+        2: ("mass_rot_pole", "mean"),
+        3: ("mass_rot_pole", "std"),
+        4: ("length_pend_pole", "mean"),
+        5: ("length_pend_pole", "std"),
+        6: ("length_rot_pole", "mean"),
+        7: ("length_rot_pole", "std"),
+        8: ("damping_pend_pole", "mean"),
+        9: ("damping_pend_pole", "std"),
+        10: ("damping_rot_pole", "mean"),
+        11: ("damping_rot_pole", "std"),
     }
 
 

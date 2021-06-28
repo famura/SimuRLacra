@@ -237,21 +237,42 @@ if __name__ == "__main__":
 
     """ QQubeSim """
 
-    _plot_and_save(df, "Rm", r"$R_m~[\Omega]$", nom_dp_value=8.4, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "motor_resistance", r"$R_m~[\Omega]$", nom_dp_value=8.4, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "km", r"$k_m~[\mathrm{Nm/A}]$", nom_dp_value=0.042, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "motor_back_emf", r"$k_m~[\mathrm{Nm/A}]$", nom_dp_value=0.042, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Mr", r"$m_r~[\mathrm{kg}]$", nom_dp_value=0.095, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "mass_rot_pole", r"$m_r~[\mathrm{kg}]$", nom_dp_value=0.095, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Lr", r"$l_r~[\mathrm{m}]$", nom_dp_value=0.085, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "length_rot_pole", r"$l_r~[\mathrm{m}]$", nom_dp_value=0.085, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Dr", r"$l_r~[\mathrm{Nms/rad}]$", nom_dp_value=5e-6, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "damping_rot_pole", r"$l_r~[\mathrm{Nms/rad}]$", nom_dp_value=5e-6, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Mp", r"$m_p~[\mathrm{kg}]$", nom_dp_value=0.024, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "mass_pend_pole", r"$m_p~[\mathrm{kg}]$", nom_dp_value=0.024, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Lp", r"$l_p~[\mathrm{m}]$", nom_dp_value=0.129, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "length_pend_pole", r"$l_p~[\mathrm{m}]$", nom_dp_value=0.129, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Dp", r"$l_p~[\mathrm{Nms/rad}]$", nom_dp_value=1e-6, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df,
+        "damping_pend_pole",
+        r"$l_p~[\mathrm{Nms/rad}]$",
+        nom_dp_value=1e-6,
+        save_figure=args.save,
+        save_dir=eval_dir,
+    )
 
     """ QCartPoleSim """
 

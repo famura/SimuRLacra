@@ -113,7 +113,7 @@ if __name__ == "__main__":
     )
     env_sprl_params = [
         dict(
-            name="g",
+            name="gravity_const",
             target_mean=to.tensor([9.81]),
             target_cov_chol_flat=to.tensor([1.0]),
             init_mean=to.tensor([9.81]),
