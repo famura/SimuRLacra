@@ -473,6 +473,7 @@ class SPRL(Algorithm):
         if performance_constraint_fn(x0) >= self._performance_lower_bound:
             self._performance_lower_bound_reached = True
             constraints = [kl_constraint, performance_constraint]
+            print(f"Performance lower bound was reached ({performance_constraint_fn(x0)}), optimizing KL.")
 
             # We now optimize based on the kl-divergence between target and context distribution by minimizing it
             def objective(x):
@@ -494,6 +495,7 @@ class SPRL(Algorithm):
 
         # If we have never reached the performance threshold we optimize just based on the kl constraint
         elif not self._performance_lower_bound_reached:
+            print(f"Performance lower bound was not reached ({performance_constraint_fn(x0)}), optimizing performance.")
             constraints = [kl_constraint]
 
             # Now we optimize on the expected performance, meaning maximizing it
