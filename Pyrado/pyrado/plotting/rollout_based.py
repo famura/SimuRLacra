@@ -646,6 +646,7 @@ def plot_rollouts_segment_wise(
                     segment_gt.get_data_values(data_field, truncate_last=True)[:, idx_state],
                     zorder=0,
                     c="black",
+                    lw=1.0,
                     label="target" if cnt_step[-1] == 0 else "",  # print once
                 )
                 cnt_step.append(cnt_step[-1] + segment_gt.length)
@@ -658,9 +659,9 @@ def plot_rollouts_segment_wise(
                         sdp.get_data_values(data_field, truncate_last=True)[:, idx_state],
                         zorder=2 if idx_dp == 0 else 0,  # most likely on top
                         c=cmap_samples[idx_dp],
-                        ls="--",
+                        ls="-",
                         lw=1.5 if plot_type == "confidence" or idx_dp == 0 else 0.5,
-                        alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.4,
+                        alpha=1.0 if plot_type == "confidence" or idx_dp == 0 else 0.1,
                         label=label_samples if cnt_step[idx_seg] == idx_seg == idx_dp == 0 else "",  # print once
                     )
                     if plot_type != "samples":
@@ -702,8 +703,9 @@ def plot_rollouts_segment_wise(
                     np.arange(cnt_step[idx_seg], cnt_step[idx_seg] + sn.length),
                     sn.get_data_values(data_field, truncate_last=True)[:, idx_state],
                     zorder=2,
-                    c="steelblue",
-                    ls="-.",
+                    c="green",  # former: steelblue"
+                    ls="--",
+                    lw=1.0,
                     label="nom sim" if cnt_step[idx_seg] == 0 else "",  # print once
                 )
 
@@ -818,7 +820,7 @@ def plot_rollouts_segment_wise(
                         f"posterior_iter_{idx_iter}{round_str}_rollout_{idx_r}_{len_seg_str}{use_rec_str}.{fmt}",
                     ),
                     bbox_extra_artists=(lg,),
-                    dpi=500,
+                    dpi=150,
                 )
 
         # Append current figure

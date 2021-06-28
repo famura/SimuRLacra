@@ -35,14 +35,14 @@ from scipy.spatial.transform import Rotation
 
 import pyrado
 from pyrado.environments.barrett_wam import (
-    act_space_bic_4dof,
-    act_space_bic_7dof,
-    cup_pos_init_sim_4dof,
-    cup_pos_init_sim_7dof,
-    wam_q_limits_lo_7dof,
-    wam_q_limits_up_7dof,
-    wam_qd_limits_lo_7dof,
-    wam_qd_limits_up_7dof,
+    ACT_SPACE_BIC_4DOF,
+    ACT_SPACE_BIC_7DOF,
+    CUP_POS_INIT_SIM_4DOF,
+    CUP_POS_INIT_SIM_7DOF,
+    WAM_Q_LIMITS_LO_7DOF,
+    WAM_Q_LIMITS_UP_7DOF,
+    WAM_QD_LIMITS_LO_7DOF,
+    WAM_QD_LIMITS_UP_7DOF,
 )
 from pyrado.environments.barrett_wam.natnet_client import NatNetClient
 from pyrado.environments.barrett_wam.trackers import RigidBodyTracker
@@ -103,7 +103,7 @@ class WAMBallInCupRealEpisodic(WAMReal):
     @property
     def act_space(self) -> Space:
         # Running a PD controller on joint positions and velocities
-        return act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
+        return ACT_SPACE_BIC_7DOF if self._num_dof == 7 else ACT_SPACE_BIC_4DOF
 
     def _create_task(self, task_args: dict) -> Task:
         # The wrapped task acts as a dummy and carries the FinalRewTask
@@ -257,8 +257,8 @@ class WAMBallInCupRealStepBased(WAMReal):
     @property
     def state_space(self) -> Space:
         # State space (joint positions and velocities)
-        state_lo = np.concatenate([wam_q_limits_lo_7dof[: self._num_dof], wam_qd_limits_lo_7dof[: self._num_dof]])
-        state_up = np.concatenate([wam_q_limits_up_7dof[: self._num_dof], wam_qd_limits_up_7dof[: self._num_dof]])
+        state_lo = np.concatenate([WAM_Q_LIMITS_LO_7DOF[: self._num_dof], WAM_QD_LIMITS_LO_7DOF[: self._num_dof]])
+        state_up = np.concatenate([WAM_Q_LIMITS_UP_7DOF[: self._num_dof], WAM_QD_LIMITS_UP_7DOF[: self._num_dof]])
 
         # Ball and cup (x,y,z)-space
         if self.observe_ball:
@@ -289,7 +289,7 @@ class WAMBallInCupRealStepBased(WAMReal):
     @property
     def act_space(self) -> Space:
         # Running a PD controller on joint positions and velocities
-        return act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
+        return ACT_SPACE_BIC_7DOF if self._num_dof == 7 else ACT_SPACE_BIC_4DOF
 
     def _create_task(self, task_args: dict) -> Task:
         # The wrapped task acts as a dummy and carries the FinalRewTask
@@ -322,7 +322,7 @@ class WAMBallInCupRealStepBased(WAMReal):
                     time.sleep(0.05)
 
         # Determine offset for the rigid body tracker (from OptiTrack to MuJoCo)
-        cup_pos_init_sim = cup_pos_init_sim_4dof if self._num_dof == 4 else cup_pos_init_sim_7dof
+        cup_pos_init_sim = CUP_POS_INIT_SIM_4DOF if self._num_dof == 4 else CUP_POS_INIT_SIM_7DOF
         self.rigid_body_tracker.reset_offset()
         offset = self.rigid_body_tracker.get_current_estimate(["Cup"])[0] - cup_pos_init_sim
         self.rigid_body_tracker.offset = offset

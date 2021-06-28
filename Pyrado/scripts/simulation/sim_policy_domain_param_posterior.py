@@ -111,30 +111,33 @@ if __name__ == "__main__":
 
     if isinstance(env_real, SimEnv):
         # Replay the ground truth environment
-        ro = rollout(env_real, policy, render_mode=RenderMode(video=args.animation, render=args.render), eval=True)
-        print_cbt(f"Return: {ro.undiscounted_return()} in the ground truth environment", "g", bright=True)
-        # Get one fixed initial state to make them comparable
-        init_state = env_real.init_space.sample_uniform()
-
-    else:
-        # Get one fixed initial state to make them comparable
-        init_state = env.init_space.sample_uniform()
+        done = False
+        while not done:
+            ro = rollout(env_real, policy, render_mode=RenderMode(video=args.animation, render=args.render), eval=True)
+            print_cbt(f"Return: {ro.undiscounted_return()} in the ground truth environment", "g", bright=True)
+            done = input("Repeat rollout? [y / any other] ").lower() != "y"
 
     # Simulate
     normalized_str = "(normalized)" if args.normalize else "(rescaled)"
     for domain_param, prob in zip(domain_params, probs):
-        ro = rollout(
-            env,
-            policy,
-            render_mode=RenderMode(video=args.animation, render=args.render),
-            eval=True,
-            reset_kwargs=dict(domain_param=domain_param, init_state=init_state),
-        )
-        print_cbt(
-            f"Return: {ro.undiscounted_return()} with domain parameters sampled with "
-            f"{normalized_str} probability {prob.numpy()}",
-            "g",
-            bright=True,
-        )
-        prettyprinter.pprint(domain_param)
-        print_cbt(f"", "g", bright=True)
+        done = False
+        while not done:
+            # Get one fixed initial state to make them comparable
+            init_state = env.init_space.sample_uniform()
+
+            ro = rollout(
+                env,
+                policy,
+                render_mode=RenderMode(video=args.animation, render=args.render),
+                eval=True,
+                reset_kwargs=dict(domain_param=domain_param, init_state=init_state),
+            )
+            print_cbt(
+                f"Return: {ro.undiscounted_return()} with domain parameters sampled with "
+                f"{normalized_str} probability {prob.numpy()}",
+                "g",
+                bright=True,
+            )
+            prettyprinter.pprint(domain_param)
+
+            done = input("Repeat rollout? [y / any other] ").lower() != "y"

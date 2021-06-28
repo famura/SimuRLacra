@@ -29,6 +29,7 @@
 from copy import deepcopy
 
 import pytest
+from tests.conftest import m_needs_cuda
 from tests.environment_wrappers.mock_env import MockEnv
 
 from pyrado.algorithms.base import Algorithm
@@ -226,34 +227,21 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
 
 
 @pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
-@pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
+@pytest.mark.parametrize("policy", ["dummy_policy"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
-    [
-        (A2C, dict()),
-        (PPO, dict()),
-        (PPO2, dict()),
-    ],
+    [(A2C, dict()), (PPO, dict()), (PPO2, dict())],
     ids=["a2c", "ppo", "ppo2"],
 )
 @pytest.mark.parametrize(
     "vfcn_type",
-    [
-        "fnn-plain",
-        "fnn",
-        "rnn",
-    ],
+    ["fnn-plain", FNNPolicy.name, RNNPolicy.name],
     ids=["vf_fnn_plain", "vf_fnn", "vf_rnn"],
 )
-@pytest.mark.parametrize(
-    "use_cuda",
-    [
-        False,
-        # pytest.param(True, marks=m_needs_cuda)  # TODO @Robin CUDA error when using RNN. Looks like not set back to tranining mode at one point, but I didn't find if it is so
-    ],
-    # ids=['cpu', 'cuda']
-)
+@pytest.mark.parametrize("use_cuda", [False, pytest.param(True, marks=m_needs_cuda)], ids=["cpu", "cuda"])
 def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vfcn_type, use_cuda):
+    pyrado.set_seed(0)
+
     if use_cuda:
         policy._device = "cuda"
         policy = policy.to(device="cuda")
@@ -267,12 +255,14 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             hidden_nonlin=to.tanh,
             use_cuda=use_cuda,
         )
-    else:
+    elif vfcn_type == FNNPolicy.name:
         vf_spec = EnvSpec(env.obs_space, ValueFunctionSpace)
-        if vfcn_type == "fnn":
-            vfcn = FNNPolicy(vf_spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=use_cuda)
-        else:
-            vfcn = RNNPolicy(vf_spec, hidden_size=16, num_recurrent_layers=1, use_cuda=use_cuda)
+        vfcn = FNNPolicy(vf_spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=use_cuda)
+    elif vfcn_type == RNNPolicy.name:
+        vf_spec = EnvSpec(env.obs_space, ValueFunctionSpace)
+        vfcn = RNNPolicy(vf_spec, hidden_size=16, num_recurrent_layers=1, use_cuda=use_cuda)
+    else:
+        raise NotImplementedError
 
     # Create critic
     critic_hparam = dict(
@@ -295,7 +285,7 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
@@ -420,7 +410,7 @@ def test_soft_update(env, policy: Policy):
     assert to.allclose(target.param_values, 0.36 * to.ones_like(target.param_values))
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 @pytest.mark.parametrize("num_feat_per_dim", [1000], ids=[1000])
 @pytest.mark.parametrize("loss_fcn", [to.nn.MSELoss()], ids=["mse"])
 @pytest.mark.parametrize("algo_hparam", [dict(max_iter=50, max_iter_no_improvement=5)], ids=["casual"])

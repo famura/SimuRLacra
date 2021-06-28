@@ -33,7 +33,6 @@ from copy import deepcopy
 
 import sbi.utils as sbiutils
 import torch as to
-import torch.nn as nn
 from sbi.inference import SNPE_C
 
 import pyrado
@@ -42,12 +41,7 @@ from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
 from pyrado.policies.special.environment_specific import create_pend_excitation_policy
-from pyrado.sampling.sbi_embeddings import (
-    BayesSimEmbedding,
-    DeltaStepsEmbedding,
-    DynamicTimeWarpingEmbedding,
-    RNNEmbedding,
-)
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.sbi import create_embedding
 
@@ -82,22 +76,9 @@ if __name__ == "__main__":
         high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
-    # prior_hparam = dict(
-    #     loc=to.tensor([dp_nom["m_pole"], dp_nom["l_pole"]]),
-    #     covariance_matrix=to.tensor([[dp_nom["m_pole"] / 20, 0], [0, dp_nom["l_pole"] / 20]]),
-    # )
-    # prior = to.distributions.MultivariateNormal(**prior_hparam)
 
     # Time series embedding
-    embedding_hparam = dict(
-        # downsampling_factor=10,
-        # len_rollouts=env_sim.max_steps,
-        # recurrent_network_type=nn.RNN,
-        # only_last_output=False,
-        # hidden_size=5,
-        # num_recurrent_layers=1,
-        # output_size=1,
-    )
+    embedding_hparam = dict(downsampling_factor=1)
     embedding = create_embedding(BayesSimEmbedding.name, env_sim.spec, **embedding_hparam)
 
     # Posterior (normalizing flow)
@@ -129,10 +110,9 @@ if __name__ == "__main__":
             use_combined_loss=True,  # default: False
             retrain_from_scratch_each_round=False,  # default: False
             show_train_summary=False,  # default: False
-            # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=20,
+        num_workers=12,
     )
     algo = NPDR(
         ex_dir,

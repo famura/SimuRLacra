@@ -26,9 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-A small collection of well-known functions for testing or benchmarking
-"""
 from typing import Tuple, Union
 
 import numpy as np

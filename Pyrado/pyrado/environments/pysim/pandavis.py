@@ -84,6 +84,8 @@ class PandaVis(ShowBase):
             self.render_pipeline.settings["pipeline.display_debugger"] = False
             self.render_pipeline.create(self)
             self.render_pipeline.daytime_mgr.time = "17:00"
+        else:
+            self.render_pipeline = None
 
         # Activate antialiasing
         self.render.setAntialias(AntialiasAttrib.MAuto)
@@ -211,7 +213,7 @@ class BallOnBeamVis(PandaVis):
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        gravity_const = self._env.domain_param["gravity_const"]
+        g = self._env.domain_param["g"]
         m_ball = self._env.domain_param["m_ball"]
         r_ball = self._env.domain_param["r_ball"]
         m_beam = self._env.domain_param["m_beam"]
@@ -240,7 +242,7 @@ class BallOnBeamVis(PandaVis):
         self.text.setText(
             f"""
             dt: {self._env.dt : 1.4f}
-            gravity_const: {gravity_const : 1.3f}
+            g: {g : 1.3f}
             m_ball: {m_ball: 1.2f}
             r_ball: {r_ball : 1.3f}
             m_beam: {m_beam : 1.2f}
@@ -378,8 +380,11 @@ class PendulumVis(PandaVis):
         self.windowProperties.setTitle("Pendulum")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setY(-18 * self._scale)
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-1 * self._scale, -22 * self._scale, 0)
+        else:
+            self.cam.setPos(-1 * self._scale, -18 * self._scale, 0)
 
         # Joint
         self.joint = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
@@ -396,7 +401,7 @@ class PendulumVis(PandaVis):
     def update(self, task: Task):
         # Accessing the current parameter values
         th, _ = self._env.state
-        gravity_const = self._env.domain_param["gravity_const"]
+        g = self._env.domain_param["g"]
         m_pole = self._env.domain_param["m_pole"]
         l_pole = float(self._env.domain_param["l_pole"])
         d_pole = self._env.domain_param["d_pole"]
@@ -423,7 +428,7 @@ class PendulumVis(PandaVis):
             cos theta: {np.cos(self._env.state[0]) : 1.3f}
             theta_dot: {self._env.state[1] * 180 / np.pi : 2.3f}
             tau: {self._env._curr_act[0] : 1.3f}
-            gravity_const: {gravity_const : 1.3f}
+            g: {g : 1.3f}
             m_pole: {m_pole : 1.3f}
             l_pole: {l_pole : 1.3f}
             d_pole: {d_pole : 1.3f}
@@ -462,8 +467,11 @@ class QBallBalancerVis(PandaVis):
         self.windowProperties.setTitle("Quanser Ball Balancer")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setPos(-0.1 * self._scale, -0.8 * self._scale, 0.4 * self._scale)
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-0.1 * self._scale, -1.0 * self._scale, 0.55 * self._scale)
+        else:
+            self.cam.setPos(-0.1 * self._scale, -0.8 * self._scale, 0.4 * self._scale)
         self.cam.setHpr(0, -30, 0)  # roll, pitch, yaw [deg]
 
         # Ball
@@ -499,7 +507,7 @@ class QBallBalancerVis(PandaVis):
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        gravity_const = self._env.domain_param["gravity_const"]
+        g = self._env.domain_param["g"]
         l_plate = self._env.domain_param["l_plate"]
         m_ball = self._env.domain_param["m_ball"]
         r_ball = self._env.domain_param["r_ball"]
@@ -552,7 +560,7 @@ class QBallBalancerVis(PandaVis):
             plate angle around y axis: {self._env.plate_angs[0] * 180 / np.pi : 2.2f}
             shaft angles: {self._env.state[0] * 180 / np.pi : 2.2f}, {self._env.state[1] * 180 / np.pi : 2.2f}
             V_: {self._env._curr_act[0] : 1.2f}, V_y : {self._env._curr_act[1] : 1.2f}
-            gravity_const: {gravity_const : 1.3f}
+            g: {g : 1.3f}
             m_ball: {m_ball : 1.3f}
             r_ball: {r_ball : 1.3f}
             r_arm: {r_arm : 1.3f}
@@ -606,8 +614,11 @@ class QCartPoleVis(PandaVis):
         self.windowProperties.setTitle("Quanser Cartpole")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setPos(-0.2 * self._scale, -2 * self._scale, 0)
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-0.2 * self._scale, -3 * self._scale, 0)
+        else:
+            self.cam.setPos(-0.2 * self._scale, -2 * self._scale, 0)
 
         # Rail
         self.rail = self.loader.loadModel(osp.join(self.dir, "cylinder_middle_grey.egg"))
@@ -636,7 +647,7 @@ class QCartPoleVis(PandaVis):
     def update(self, task: Task):
         # Accessing the current parameter values
         x, th, _, _ = self._env.state
-        gravity_const = self._env.domain_param["gravity_const"]
+        g = self._env.domain_param["g"]
         m_cart = self._env.domain_param["m_cart"]
         m_pole = self._env.domain_param["m_pole"]
         l_pole = float(self._env.domain_param["l_pole"])
@@ -676,7 +687,7 @@ class QCartPoleVis(PandaVis):
             x: {x : 1.3f}
             theta: {th * 180 / np.pi : 3.3f}
             dt: {self._env.dt :1.4f}
-            gravity_const: {gravity_const : 1.3f}
+            g: {g : 1.3f}
             m_cart: {m_cart : 1.4f}
             l_rail: {l_rail : 1.3f}
             l_pole: {l_pole : 1.3f}
@@ -709,23 +720,27 @@ class QQubeVis(PandaVis):
 
         # Accessing variables of the environment
         self._env = env
-        length_rot_pole = self._env.domain_param["length_rot_pole"]
-        length_pend_pole = self._env.domain_param["length_pend_pole"]
+        Lr = self._env.domain_param["Lr"]
+        Lp = self._env.domain_param["Lp"]
 
         # Only for animation
         arm_radius = 0.0035
         pole_radius = 0.005
 
         # Scaling of the animation so the camera can move smoothly
-        self._scale = 10 / length_pend_pole
+        self._scale = 2 / Lp
 
         # Set window title
         self.windowProperties.setTitle("Quanser Qube")
         self.win.requestProperties(self.windowProperties)
 
-        # Set pov
-        self.cam.setPos(-0.5 * self._scale, -1.5 * self._scale, 0.4 * self._scale)
-        self.cam.setHpr(-20, -10, 0)  # roll, pitch, yaw [deg]
+        # Set pov depending on the render mode
+        if self.render_pipeline is not None:
+            self.cam.setPos(-0.7 * self._scale, -1.6 * self._scale, 0.3 * self._scale)
+            self.cam.setHpr(-20, -5, 0)  # roll, pitch, yaw [deg]
+        else:
+            self.cam.setPos(-0.6 * self._scale, -1.3 * self._scale, 0.4 * self._scale)
+            self.cam.setHpr(-20, -10, 0)  # roll, pitch, yaw [deg]
 
         # Box
         self.box = self.loader.loadModel(osp.join(self.dir, "cube_green.egg"))
@@ -747,7 +762,7 @@ class QQubeVis(PandaVis):
 
         # Arm
         self.arm = self.loader.loadModel(osp.join(self.dir, "cylinder_top_blue.egg"))
-        self.arm.setScale(arm_radius * self._scale, arm_radius * self._scale, length_rot_pole * self._scale)
+        self.arm.setScale(arm_radius * self._scale, arm_radius * self._scale, Lr * self._scale)
         self.arm.setP(90)
         self.arm.setPos(0, 0.07 * self._scale, 0.15 * self._scale)
         self.arm.reparentTo(self.render)
@@ -755,26 +770,26 @@ class QQubeVis(PandaVis):
         # Joint 2
         self.joint2 = self.loader.loadModel(osp.join(self.dir, "ball_grey.egg"))
         self.joint2.setScale(pole_radius * self._scale)
-        self.joint2.setPos(0.0, (0.07 + 2 * length_rot_pole) * self._scale, 0.15 * self._scale)
+        self.joint2.setPos(0.0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
         self.joint2.wrtReparentTo(self.arm)
 
         # Pole
         self.pole = self.loader.loadModel(osp.join(self.dir, "cylinder_bottom_red.egg"))
-        self.pole.setScale(pole_radius * self._scale, pole_radius * self._scale, length_pend_pole * self._scale)
-        self.pole.setPos(0, (0.07 + 2 * length_rot_pole) * self._scale, 0.15 * self._scale)
+        self.pole.setScale(pole_radius * self._scale, pole_radius * self._scale, Lp * self._scale)
+        self.pole.setPos(0, (0.07 + 2 * Lr) * self._scale, 0.15 * self._scale)
         self.pole.wrtReparentTo(self.arm)
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        gravity_const = self._env.domain_param["gravity_const"]
-        mass_rot_pole = self._env.domain_param["mass_rot_pole"]
-        mass_pend_pole = self._env.domain_param["mass_pend_pole"]
-        length_rot_pole = float(self._env.domain_param["length_rot_pole"])
-        length_pend_pole = float(self._env.domain_param["length_pend_pole"])
-        motor_back_emf = self._env.domain_param["motor_back_emf"]
-        motor_resistance = self._env.domain_param["motor_resistance"]
-        damping_rot_pole = self._env.domain_param["damping_rot_pole"]
-        damping_pend_pole = self._env.domain_param["damping_pend_pole"]
+        g = self._env.domain_param["g"]
+        Mr = self._env.domain_param["Mr"]
+        Mp = self._env.domain_param["Mp"]
+        Lr = float(self._env.domain_param["Lr"])
+        Lp = float(self._env.domain_param["Lp"])
+        km = self._env.domain_param["km"]
+        Rm = self._env.domain_param["Rm"]
+        Dr = self._env.domain_param["Dr"]
+        Dp = self._env.domain_param["Dp"]
         th, al, _, _ = self._env.state
 
         # Update rotation of arm
@@ -788,9 +803,9 @@ class QQubeVis(PandaVis):
 
         # Calculate position of new point
         current_pos = (
-            pole_pos[0] + 2 * length_pend_pole * np.sin(al) * np.cos(th) * self._scale,
-            pole_pos[1] + 2 * length_pend_pole * np.sin(al) * np.sin(th) * self._scale,
-            pole_pos[2] - 2 * length_pend_pole * np.cos(al) * self._scale,
+            pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
+            pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
+            pole_pos[2] - 2 * Lp * np.cos(al) * self._scale,
         )
 
         # Draw line to that point
@@ -802,15 +817,15 @@ class QQubeVis(PandaVis):
             theta: {self._env.state[0] * 180 / np.pi : 3.1f}
             alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
             dt: {self._env.dt :1.4f}
-            gravity_const: {gravity_const : 1.3f}
-            mass_rot_pole: {mass_rot_pole : 1.4f}
-            mass_pend_pole: {mass_pend_pole : 1.4f}
-            length_rot_pole: {length_rot_pole : 1.4f}
-            length_pend_pole: {length_pend_pole : 1.4f}
-            damping_rot_pole: {damping_rot_pole : 1.7f}
-            damping_pend_pole: {damping_pend_pole : 1.7f}
-            motor_resistance: {motor_resistance : 1.3f}
-            motor_back_emf: {motor_back_emf : 1.4f}
+            g: {g : 1.3f}
+            Mr: {Mr : 1.4f}
+            Mp: {Mp : 1.4f}
+            Lr: {Lr : 1.4f}
+            Lp: {Lp : 1.4f}
+            Dr: {Dr : 1.7f}
+            Dp: {Dp : 1.7f}
+            Rm: {Rm : 1.3f}
+            km: {km : 1.4f}
             """
         )
 

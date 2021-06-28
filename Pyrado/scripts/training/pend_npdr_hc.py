@@ -53,7 +53,6 @@ if __name__ == "__main__":
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}-{HCNormal.name}_{LinearPolicy.name}")
-    num_workers = 8
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -108,7 +107,7 @@ if __name__ == "__main__":
         num_init_states_per_domain=1,
         expl_factor=1.05,
         expl_std_init=1.0,
-        num_workers=num_workers,
+        num_workers=args.num_workers,
     )
     subrtn_policy = HCNormal(ex_dir, env_sim, policy, **subrtn_policy_hparam)
 
@@ -116,7 +115,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=5,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=300,
+        num_sim_per_round=200,
         num_sbi_rounds=3,
         simulation_batch_size=10,
         normalize_posterior=False,
@@ -138,7 +137,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=num_workers,
+        num_workers=args.num_workers,
     )
     algo = NPDR(
         ex_dir,

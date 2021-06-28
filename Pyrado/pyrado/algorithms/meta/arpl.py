@@ -74,7 +74,6 @@ class ARPL(Algorithm):
         obs_eps: float = 0.01,
         obs_phi: float = 0.05,
         torch_observation: bool = True,
-        num_workers: int = 4,
         logger: StepLogger = None,
     ):
         """
@@ -99,7 +98,6 @@ class ARPL(Algorithm):
         :param obs_eps: the intensity of generated observation noise
         :param obs_phi: the probability of applying observation noise
         :param torch_observation: a function to provide a differentiable observation
-        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         assert isinstance(subrtn, Algorithm)
@@ -115,10 +113,14 @@ class ARPL(Algorithm):
             env = AdversarialStateWrapper(env, self.policy, proc_eps, proc_phi, torch_observation=torch_observation)
         if apply_observation_noise:
             env = AdversarialObservationWrapper(env, self.policy, obs_eps, obs_phi)
+        self._env = env
+        # TODO @Robin: how do you make sure that the newly wrapped env is used by the subroutine?
 
         # Subroutine
         self._subrtn = subrtn
         self._subrtn.save_name = "subrtn"
+
+        pyrado.save(self._env, "env.pkl", self.save_dir)
 
     @property
     def sample_count(self) -> int:

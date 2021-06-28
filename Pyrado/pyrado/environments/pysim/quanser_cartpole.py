@@ -34,7 +34,7 @@ from init_args_serializer.serializable import Serializable
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.quanser import max_act_qcp
+from pyrado.environments.quanser import MAX_ACT_QCP
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
@@ -88,7 +88,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self._state_space = None
         self._obs_space = BoxSpace(-max_obs, max_obs, labels=["x", "sin_theta", "cos_theta", "x_dot", "theta_dot"])
         self._init_space = None
-        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=["V"])
+        self._act_space = BoxSpace(-MAX_ACT_QCP, MAX_ACT_QCP, labels=["V"])
 
     @abstractmethod
     def _create_task(self, task_args: dict) -> Task:

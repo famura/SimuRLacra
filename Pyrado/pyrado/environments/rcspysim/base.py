@@ -64,7 +64,7 @@ class RcsSim(SimEnv, Serializable):
         dt: float = 0.01,
         max_steps: int = pyrado.inf,
         init_state: Optional[np.ndarray] = None,
-        checkJointLimits: bool = False,
+        checkJointLimits: bool = True,
         joint_limit_penalty: float = -1e3,
         state_mask_labels: Optional[Iterable[str]] = None,
         **kwargs,

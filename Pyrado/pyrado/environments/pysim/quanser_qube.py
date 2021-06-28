@@ -33,7 +33,7 @@ import torch as to
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.quanser import max_act_qq
+from pyrado.environments.quanser import MAX_ACT_QQ
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
@@ -193,7 +193,7 @@ class QQubeSwingUpSim(QQubeSim):
         self._init_space = BoxSpace(
             -max_init_state, max_init_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"]
         )
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
+        self._act_space = BoxSpace(-MAX_ACT_QQ, MAX_ACT_QQ, labels=["V"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
@@ -227,7 +227,7 @@ class QQubeStabSim(QQubeSim):
             -max_obs, max_obs, labels=["sin_theta", "cos_theta", "sin_alpha", "cos_alpha", "theta_dot", "alpha_dot"]
         )
         self._init_space = BoxSpace(min_init_state, max_init_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"])
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
+        self._act_space = BoxSpace(-MAX_ACT_QQ, MAX_ACT_QQ, labels=["V"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

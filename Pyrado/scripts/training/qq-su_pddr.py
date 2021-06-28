@@ -137,13 +137,13 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=args.max_iter,
         min_steps=args.max_steps,
-        num_cpu=12,
         std_init=0.15,
         num_epochs=args.num_epochs,
         num_teachers=args.num_teachers,
         teacher_policy=teacher_policy,
         teacher_algo=teacher_algo,
         teacher_algo_hparam=teacher_algo_hparam,
+        num_workers=12,
     )
 
     algo = PDDR(ex_dir, env_real, policy, **algo_hparam)

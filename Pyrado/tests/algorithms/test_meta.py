@@ -102,7 +102,7 @@ def ex_dir(tmpdir):
     return tmpdir
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize(
     "spota_hparam",
@@ -178,7 +178,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "bayrn_hparam",
@@ -194,7 +194,6 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
             mc_estimator=True,
             num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
-            num_workers=1,
         ),
         dict(
             max_iter=2,
@@ -208,7 +207,6 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
             thold_succ_subrtn=50.0,
             num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
-            num_workers=1,
         ),
     ],
     ids=["config1", "config2"],
@@ -233,7 +231,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
         num_init_states_per_domain=1,
         num_is_samples=4,
         expl_std_init=0.1,
-        num_workers=bayrn_hparam["num_workers"],  # dual use
+        num_workers=1,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -245,7 +243,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     )
 
     # Create algorithm and train
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam, num_workers=1)
     algo.train()
 
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
@@ -301,7 +299,7 @@ def test_arpl(ex_dir, env: SimEnv):
     algo.train(snapshot_mode="best")
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env, num_eval_rollouts", [("default_bob", 5)], ids=["bob"], indirect=["env"])
 def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     pyrado.set_seed(0)
@@ -359,7 +357,6 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     algo_hparam = dict(
         metric=None, obs_dim_weight=np.ones(env_sim.obs_space.shape), num_rollouts_per_distr=5, num_workers=1
     )
-
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
 
     rollouts_real_tst = []
@@ -385,7 +382,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     assert loss_post <= loss_pre  # don't have to be better every step
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     pyrado.set_seed(0)
@@ -537,12 +534,12 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     subrtn_hparam = dict(
         max_iter=3,
         min_rollouts=5,
-        num_workers=1,
         num_epoch=2,
         eps_clip=0.1,
         batch_size=64,
         std_init=0.8,
         lr=2e-4,
+        num_workers=1,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
     algo = algo(env, subrtn, **algo_hparam)
@@ -667,7 +664,7 @@ def test_sbi_embedding(
     assert data_sim.shape == (7, embedding.dim_output)
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("algo_name", [NPDR.name, BayesSim.name], ids=["NPDR", "Bayessim"])
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
@@ -786,7 +783,7 @@ def test_npdr_and_bayessim(
         assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
 @pytest.mark.parametrize("optimize_mean", [False, True])
 def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
@@ -845,7 +842,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq-su"], indirect=True)
 @pytest.mark.parametrize("policy", ["fnn_policy"], ids=["fnn"], indirect=True)
 @pytest.mark.parametrize(
@@ -872,13 +869,13 @@ def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
     algo_hparam = dict(
         max_iter=2,
         min_steps=env.max_steps,
-        num_cpu=2,
         std_init=0.15,
         num_epochs=10,
         num_teachers=2,
         teacher_policy=teacher_policy,
         teacher_algo=teacher_algo,
         teacher_algo_hparam=teacher_algo_hparam,
+        num_workers=1,
     )
 
     algo = PDDR(ex_dir, env, policy, **algo_hparam)

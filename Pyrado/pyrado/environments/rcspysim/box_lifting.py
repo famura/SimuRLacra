@@ -65,7 +65,7 @@ class BoxLiftingSim(RcsSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -233,7 +233,7 @@ class BoxLiftingPosDSSim(BoxLiftingSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeCollisionCost: bool = True,
@@ -365,7 +365,7 @@ class BoxLiftingVelDSSim(BoxLiftingSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeCollisionCost: bool = True,
                        observeVelocities: bool = True,

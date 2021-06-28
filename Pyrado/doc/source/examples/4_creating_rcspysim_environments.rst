@@ -254,4 +254,4 @@ folder and run
 .. code-block:: bash
 
     cd PATH_TO/SimuRLacra/RcsPySim/build
-    bin/TestBotSim -dl 2 -dir ../config/HelloMichael -f ex_<CUSTOM>_export.xml`
+    bin/TestBot -dl 2 -dir ../config/HelloMichael -f ex_<CUSTOM>_export.xml`

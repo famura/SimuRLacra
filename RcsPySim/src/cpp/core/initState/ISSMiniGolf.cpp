@@ -59,10 +59,10 @@ void ISSMiniGolf::getMinMax(double* min, double* max) const
     double ballPosHalfSpanY = 1e-2; // [m]
     double jointAngHalfSpan = 1e-6; // [rad]
     
-    min[0] = 0.3 - ballPosHalfSpanX;  // ball_x [m]
-    max[0] = 0.3 + ballPosHalfSpanX;
-    min[1] = 1.3 - ballPosHalfSpanY;  // ball_y [m]
-    max[1] = 1.3 + ballPosHalfSpanY;
+    min[0] = 0.304096 - ballPosHalfSpanX;  // ball_x [m]
+    max[0] = 0.304096 + ballPosHalfSpanX;
+    min[1] = 1.29785 - ballPosHalfSpanY;  // ball_y [m]
+    max[1] = 1.29785 + ballPosHalfSpanY;
     min[2] = RCS_DEG2RAD(18.996253 - jointAngHalfSpan);  // base-m3 [rad]
     max[2] = RCS_DEG2RAD(18.996253 + jointAngHalfSpan);
     min[3] = RCS_DEG2RAD(-87.227101 - jointAngHalfSpan);  // m3-m4 [rad]
@@ -89,8 +89,8 @@ void ISSMiniGolf::applyInitialState(const MatNd* initialState)
     // Set the position to the box' rigid body joints directly in global world coordinates
     double* ballRBJ = &graph->q->ele[ball->jnt->jointIndex];
     if (fixedInitState) {
-        ballRBJ[0] = 0.3; // ball_x [m]
-        ballRBJ[1] = 1.3; // ball_y [m]
+        ballRBJ[0] = 0.304096; // ball_x [m]
+        ballRBJ[1] = 1.29785; // ball_y [m]
         RcsGraph_setJoint(graph, "base-m3", RCS_DEG2RAD(18.996253));
         RcsGraph_setJoint(graph, "m3-m4", RCS_DEG2RAD(-87.227101));
         RcsGraph_setJoint(graph, "m4-m5", RCS_DEG2RAD(74.149568));

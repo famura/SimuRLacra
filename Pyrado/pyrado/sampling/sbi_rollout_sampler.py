@@ -28,7 +28,8 @@
 
 import os
 from abc import ABC, abstractmethod
-from typing import List, Mapping, Optional, Tuple, Union
+from operator import itemgetter
+from typing import List, Mapping, Optional, Tuple, Union, ValuesView
 
 import numpy as np
 import torch as to
@@ -250,10 +251,10 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                             reset_kwargs=dict(
                                 init_state=seg_real.states[0, :], domain_param=dict(zip(self.dp_names, dp_value))
                             ),
-                            stop_on_done=True,
+                            stop_on_done=self.stop_on_done,
                             max_steps=seg_real.length,
                         )
-                        # check_domain_params(seg_sim, dp_value, self.dp_names)
+                        check_domain_params(seg_sim, dp_value, self.dp_names)
                         if self.use_rec_act:
                             check_act_equal(seg_real, seg_sim, check_applied=self._action_field == "actions_applied")
 
@@ -311,9 +312,9 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI, Serializable):
                     policy,
                     eval=True,
                     reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_value))),
-                    stop_on_done=True,
+                    stop_on_done=self.stop_on_done,
                 )
-                # check_domain_params(ro_sim, dp_value, self.dp_names)
+                check_domain_params(ro_sim, dp_value, self.dp_names)
 
                 # Pad if necessary
                 StepSequence.pad(ro_sim, self._env.max_steps)
@@ -513,3 +514,31 @@ class RecRolloutSamplerForSBI(RealRolloutSamplerForSBI, Serializable):
             raise pyrado.ShapeErr(given=data_real, expected_match=(1, -1))
 
         return data_real, ro
+
+
+def check_domain_params(
+    rollouts: Union[List[StepSequence], StepSequence],
+    domain_param_value: np.ndarray,
+    domain_param_names: Union[List[str], ValuesView],
+):
+    """
+    Verify if the domain parameters in the rollout are actually the ones commanded.
+
+    :param rollouts: simulated rollouts or rollout segments
+    :param domain_param_value: one set of domain parameters as commanded
+    :param domain_param_names: names of the domain parameters to set, i.e. values of the domain parameter mapping
+    """
+    if isinstance(rollouts, StepSequence):
+        rollouts = [rollouts]
+
+    if not all(
+        [
+            np.allclose(
+                np.asarray(itemgetter(*domain_param_names)(ro.rollout_info["domain_param"])), domain_param_value
+            )
+            for ro in rollouts
+        ]
+    ):
+        raise pyrado.ValueErr(
+            msg="The domain parameters after the rollouts are not identical to the ones commanded by the sbi!"
+        )

@@ -33,7 +33,7 @@ import torch as to
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.quanser import max_act_qq
+from pyrado.environments.quanser import MAX_ACT_QQ
 from pyrado.environments.quanser.base import QuanserReal
 from pyrado.policies.special.environment_specific import QQubeGoToLimCtrl, QQubePDCtrl
 from pyrado.spaces.box import BoxSpace
@@ -86,7 +86,7 @@ class QQubeSwingUpReal(QuanserReal, Serializable):
         self._obs_space = BoxSpace(
             -max_obs, max_obs, labels=["sin_theta", "cos_theta", "sin_alpha", "cos_alpha", "theta_dot", "alpha_dot"]
         )
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
+        self._act_space = BoxSpace(-MAX_ACT_QQ, MAX_ACT_QQ, labels=["V"])
 
     @property
     def task(self) -> Task:

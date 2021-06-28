@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from copy import deepcopy
-from math import ceil, sqrt
+import copy
+import math
 from typing import Callable, Sequence
 
 import torch as to
@@ -109,7 +109,7 @@ class IndiNonlinLayer(nn.Module):
 
         super().__init__()
 
-        self.nonlin = deepcopy(nonlin) if is_iterable(nonlin) else nonlin
+        self.nonlin = copy.deepcopy(nonlin) if is_iterable(nonlin) else nonlin
         if weight:
             self.weight = nn.Parameter(to.randn(in_features, dtype=to.get_default_dtype()), requires_grad=True)
         else:
@@ -180,11 +180,11 @@ class MirrConv1d(_ConvNd):
         self.orig_weight_shape = self.weight.shape
 
         # Get number of kernel elements we later want to use for mirroring
-        self.half_kernel_size = ceil(self.weight.shape[2] / 2)  # kernel_size = 4 --> 2, kernel_size = 5 --> 3
+        self.half_kernel_size = math.ceil(self.weight.shape[2] / 2)  # kernel_size = 4 --> 2, kernel_size = 5 --> 3
 
         # Initialize the weights values the same way PyTorch does
         new_weight_init = to.zeros(self.orig_weight_shape[0], self.orig_weight_shape[1], self.half_kernel_size)
-        nn.init.kaiming_uniform_(new_weight_init, a=sqrt(5))
+        nn.init.kaiming_uniform_(new_weight_init, a=math.sqrt(5))
 
         # Overwrite the weight attribute (transposed is False by default for the Conv1d module and we don't use it here)
         self.weight = nn.Parameter(new_weight_init, requires_grad=True)

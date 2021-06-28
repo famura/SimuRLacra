@@ -1,0 +1,44 @@
+----------------------
+Ground Truth Positions
+----------------------
+
+-------------------------------------
+There is a y-offset of approx. +0.15m
+-------------------------------------
+
+Measured using the Vicon system and the ball.
+There is for sure an offset in the x/y dir wrt to the robots base
+
+-----------------
+obstacle inner / right
+center
+0.576446, 1.06897
+
+center upper half
+0.707756, 1.13835
+
+center lower half
+0.451301, 0.994159
+
+-----------------
+obstacle outer / left
+center
+0.852088, 1.33181
+
+center upper half
+0.999897, 1.31085
+
+center lower half
+0.699786, 1.35152
+
+-----------------
+goal
+1.18977, 1.22017
+
+-----------------
+start
+0.304096, 1.14785
+
+-----------------------------------------
+First two rollouts are slightly different
+-----------------------------------------

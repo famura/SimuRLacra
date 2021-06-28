@@ -41,7 +41,7 @@ from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
 
 
-default_randomizer_registry = {}
+DEFAULT_RANDOMIZER_REGISTRY = {}
 
 
 def default_randomizer(env_module, env_class):
@@ -62,7 +62,7 @@ def default_randomizer(env_module, env_class):
     """
 
     def register(func):
-        default_randomizer_registry[(env_module, env_class)] = func
+        DEFAULT_RANDOMIZER_REGISTRY[(env_module, env_class)] = func
         return func
 
     return register
@@ -82,7 +82,7 @@ def create_default_randomizer(env: Union[SimEnv, EnvWrapper]) -> DomainRandomize
         env_module = cand_type.__module__
         env_class = cand_type.__name__
         # Try to get it
-        dp = default_randomizer_registry.get((env_module, env_class))
+        dp = DEFAULT_RANDOMIZER_REGISTRY.get((env_module, env_class))
         if dp:
             return dp()
     else:

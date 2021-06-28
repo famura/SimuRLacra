@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # Set up the policies
     if relativeZdTask:
         policy_hparam = dict(
-            t_end=1.0,
+            t_end=0.6,
             cond_lvl="vel",
             # Zd (rel), Y (rel), Zdist (abs), PHI (abs), THETA (abs)
             cond_final=[
@@ -83,7 +83,7 @@ if __name__ == "__main__":
                 [0.0, 0.0, 0.0, 0.0, 0.0],
             ],
             cond_init=[
-                [-7.0, 0.0, 0.01, math.pi / 2, 0.0],
+                [-100.0, 0.0, 0.01, math.pi / 2, 0.0],
                 [0.0, 0.0, 0.0, 0.0, 0.0],
             ],
             overtime_behavior="hold",

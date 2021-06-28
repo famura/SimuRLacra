@@ -39,21 +39,14 @@ def get_argparser() -> argparse.ArgumentParser:
         "--animation",
         dest="animation",
         action="store_true",
-        help="show a rendered animation (default: True)",
+        help="show an animation (default: False)",
     )
     parser.add_argument(
         "--no_animation",
         dest="animation",
         action="store_false",
     )
-    parser.set_defaults(animation=True)
-    parser.add_argument(
-        "--cut_rollout",
-        nargs="+",
-        type=int,
-        default=None,
-        help="tuple of indices defining start and end index of the rollout",
-    )
+    parser.set_defaults(animation=False)
     parser.add_argument(
         "--dt",
         type=float,
@@ -125,12 +118,6 @@ def get_argparser() -> argparse.ArgumentParser:
         help="general argument to specify different modes of various scripts (e.g. '2D')",
     )
     parser.add_argument(
-        "--use_mcmc",
-        action="store_true",
-        default=False,
-        help="Use Markov Chain Monte-Carlo for sampling from the posterior (default: False)",
-    )
-    parser.add_argument(
         "--no_dr",
         action="store_true",
         default=False,
@@ -188,7 +175,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "--render",
         dest="render",
         action="store_true",
-        help="show a rendered animation (default: True)",
+        help="show a rendered animation; only valid for PySim environments (default: True)",
     )
     parser.add_argument(
         "--no_render",
@@ -229,6 +216,19 @@ def get_argparser() -> argparse.ArgumentParser:
         help="seed for the random number generators (default: None for no seeding)",
     )
     parser.add_argument(
+        "-p",
+        "--show_hparams",
+        action="append",
+        help="hyper-parameters to show in the ask-for-experiment dialog; use this parameter multiple times to show "
+        "multiple hyper-parameters, e.g. to differentiate between experiments",
+    )
+    parser.add_argument(
+        "--use_mcmc",
+        action="store_true",
+        default=False,
+        help="use Markov Chain Monte-Carlo for sampling from the posterior (default: False)",
+    )
+    parser.add_argument(
         "--use_rec",
         action="store_true",
         default=False,
@@ -266,12 +266,6 @@ def get_argparser() -> argparse.ArgumentParser:
         dest="warmstart",
         action="store_false",
         help="the opposite of 'warmstart'",
-    )
-    parser.add_argument(
-        "-p",
-        "--show_hparams",
-        action="append",
-        help="hyperparameters to show in the ask-for-experiment dialog; use this parameter multiple times to show multiple hyperparameters; e.g. to differentiate between experiments",
     )
     parser.add_argument(
         "--device", type=str, default="cpu", help="device (either 'cpu' or 'cuda') to use for PyTorch (default: 'cpu')"

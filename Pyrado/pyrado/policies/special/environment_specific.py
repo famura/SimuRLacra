@@ -25,10 +25,9 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+import functools
 import math
 import time
-from typing import Optional, Union
 
 import numpy as np
 import torch as to
@@ -45,6 +44,7 @@ from pyrado.policies.base import Policy
 from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.playback import PlaybackPolicy
+from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.math import clamp_symm
 from pyrado.utils.tensor import insert_tensor_col
@@ -228,8 +228,8 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
 
         # Energy terms: E_pot(0) = 0; E_pot(pi) = E_pot(-pi) = 2 mgl
         E_kin = J_pole / 2.0 * theta_dot ** 2
-        E_pot = self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"] * (1 - cos_th)
-        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"]
+        E_pot = self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"] * (1 - cos_th)
+        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"]
 
         if to.abs(alpha) < 0.1745 or self.pd_control:
             # Stabilize at the top
@@ -322,6 +322,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         acc_max: float = 5.0,  # Quanser's value: 6
         alpha_max_pd_enable: float = 20.0,  # Quanser's value: 20
         pd_gains: to.Tensor = to.tensor([-2, 35, -1.5, 3]),  # Quanser's value: [-2, 35, -1.5, 3]
+        reset_domain_param: bool = True,
         use_cuda: bool = False,
     ):
         """
@@ -346,7 +347,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         self.alpha_max_pd_enable = alpha_max_pd_enable / 180.0 * math.pi
 
         # Set up the energy and PD controller
-        self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max)
+        self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max, reset_domain_param)
         self.pd_ctrl = QQubePDCtrl(env_spec, pd_gains, al_des=math.pi)
 
     def reset(self, **kwargs):
@@ -377,9 +378,9 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         # Reconstruct the sate for the error-based controller
         sin_th, cos_th, sin_al, cos_al, th_d, al_d = obs
         s = to.stack([to.atan2(sin_th, cos_th), to.atan2(sin_al, cos_al), th_d, al_d])
+        s[1] = s[1] % (2 * math.pi)  # alpha can have multiple revolutions
 
         if self.pd_enabled(cos_al):
-            s[1] = s[1] % (2 * math.pi)  # alpha can have multiple revolutions
             return self.pd_ctrl(s)
         else:
             return self.e_ctrl(s)
@@ -395,6 +396,7 @@ class QQubeEnergyCtrl(Policy):
         energy_gain: float,
         th_gain: float,
         acc_max: float,
+        reset_domain_param: bool = True,
         use_cuda: bool = False,
     ):
         """
@@ -405,6 +407,8 @@ class QQubeEnergyCtrl(Policy):
         :param energy_gain: P-gain on the energy [m/s/J]
         :param th_gain: P-gain on angle theta
         :param acc_max: maximum linear acceleration of the pendulum pivot [m/s**2]
+        :param reset_domain_param: if `True` the domain parameters are reset if the they are present as a entry in the
+                                   kwargs passed to `reset()`. If `False` they are ignored.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         super().__init__(env_spec, use_cuda)
@@ -421,17 +425,19 @@ class QQubeEnergyCtrl(Policy):
 
         self.acc_max = to.tensor(acc_max)
         self._domain_param = QQubeSwingUpSim.get_nominal_domain_param()
+        self._reset_domain_param = reset_domain_param
 
         # Default initialization
         self.init_param(None)
 
     def reset(self, **kwargs):
-        """Set the domain parameters defining the controller's model using a dict called `domain_param`."""
-        domain_param = kwargs.get("domain_param", dict())  # do nothing if domain_param not given
-        if isinstance(domain_param, dict):
-            self._domain_param.update(domain_param)
-        else:
-            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
+        """If desired, set the domain parameters defining the controller's model using a dict called `domain_param`."""
+        if self._reset_domain_param:
+            domain_param = kwargs.get("domain_param", dict())  # do nothing if domain_param not given
+            if isinstance(domain_param, dict):
+                self._domain_param.update(domain_param)
+            else:
+                raise pyrado.TypeErr(given=domain_param, expected_type=dict)
 
     @property
     def E_ref(self):
@@ -464,22 +470,16 @@ class QQubeEnergyCtrl(Policy):
         th, al, thd, ald = obs
 
         # Compute energies
-        J_pole = self._domain_param["mass_pend_pole"] * self._domain_param["length_pend_pole"] ** 2 / 12.0
+        J_pole = self._domain_param["Mp"] * self._domain_param["Lp"] ** 2 / 12.0
         E_kin = 0.5 * J_pole * ald ** 2
-        E_pot = (
-            0.5
-            * self._domain_param["mass_pend_pole"]
-            * self._domain_param["gravity_const"]
-            * self._domain_param["length_pend_pole"]
-            * (1.0 - to.cos(al))
-        )
+        E_pot = 0.5 * self._domain_param["Mp"] * self._domain_param["g"] * self._domain_param["Lp"] * (1.0 - to.cos(al))
         E = E_kin + E_pot
 
         # Compute clipped action
         u = self.E_gain * (E - self.E_ref) * to.sign(ald * to.cos(al)) - self._th_gain * th
         acc = clamp_symm(u, self.acc_max)
-        trq = self._domain_param["mass_rot_pole"] * self._domain_param["length_rot_pole"] * acc
-        volt = self._domain_param["motor_resistance"] / self._domain_param["motor_back_emf"] * trq
+        trq = self._domain_param["Mr"] * self._domain_param["Lr"] * acc
+        volt = self._domain_param["Rm"] / self._domain_param["km"] * trq
         return volt.view(1)
 
 
@@ -595,7 +595,8 @@ class QQubeGoToLimCtrl:
 
 def create_pend_excitation_policy(env: PendulumSim, num_rollouts: int, f_sin: float = 1.0) -> PlaybackPolicy:
     """
-    Create a policy that returns a previously recorded action time series. Used in the experiments for [1].
+    Create a policy that returns a previously recorded action time series.
+    Used in the experiments of [1].
 
     .. seealso::
         [1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, "TITLE", VENUE, YEAR
@@ -616,174 +617,49 @@ def create_pend_excitation_policy(env: PendulumSim, num_rollouts: int, f_sin: fl
     return PlaybackPolicy(env.spec, act_recordings)
 
 
-def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) -> LinearPolicy:
+def _fcn_mg_joint_pos(t, q_init, q_end, t_strike_end):
+    """Helper function for `create_mg_joint_pos_policy()` to fit the `TimePolicy` scheme"""
+    return ((q_end - q_init) * min(t / t_strike_end, 1) + q_init) / 180 * math.pi
+
+
+def create_mg_joint_pos_policy(env: SimEnv, t_strike_end: float = 0.5) -> TimePolicy:
     """
-    Construct a linear controller specified by its controller gains.
-    Parameters for BallOnPlate5DSim by Markus Lamprecht (clipped gains < 1e-5 to 0).
+    Create a policy that executes the strike for mini golf by setting joint position commands.
+    Used in the experiments of [1].
 
-    :param env: environment
-    :param ctrl_type: type of the controller: 'lqr', or 'h2'
-    :param ball_z_dim_mismatch: only useful for BallOnPlate5DSim
-                                set to True if the given controller dos not have the z component (relative position)
-                                of the ball in the state vector, i.e. state is 14-dim instead of 16-dim
-    :return: controller compatible with Pyrado Policy
+    .. seealso::
+        [1] F. Muratore, T. Gruner, F. Wiese, B. Belousov, M. Gienger, J. Peters, "TITLE", VENUE, YEAR
+
+    :param env: mini golf simulation environment
+    :param t_strike_end:time when to finish the movement [s]
+    :return: policy which executes the strike solely dependent on the time
     """
-    from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
+    q_init = to.tensor(
+        [
+            18.996253,
+            -87.227101,
+            74.149568,
+            -75.577025,
+            56.207369,
+            -175.162794,
+            -41.543793,
+        ]
+    )
+    q_end = to.tensor(
+        [
+            8.628977,
+            -93.443498,
+            72.302435,
+            -82.31844,
+            52.146531,
+            -183.896354,
+            -51.560886,
+        ]
+    )
 
-    if isinstance(inner_env(env), BallOnPlate5DSim):
-        # Get the controller gains (K-matrix)
-        if ctrl_type.lower() == "lqr":
-            ctrl_gains = to.tensor(
-                [
-                    [0.1401, 0, 0, 0, -0.09819, -0.1359, 0, 0.545, 0, 0, 0, -0.01417, -0.04427, 0],
-                    [0, 0.1381, 0, 0.2518, 0, 0, -0.2142, 0, 0.5371, 0, 0.03336, 0, 0, -0.1262],
-                    [0, 0, 0.1414, 0.0002534, 0, 0, -0.0002152, 0, 0, 0.5318, 0, 0, 0, -0.0001269],
-                    [0, -0.479, -0.0004812, 39.24, 0, 0, -15.44, 0, -1.988, -0.001934, 9.466, 0, 0, -13.14],
-                    [0.3039, 0, 0, 0, 25.13, 15.66, 0, 1.284, 0, 0, 0, 7.609, 6.296, 0],
-                ]
-            )
-
-        elif ctrl_type.lower() == "h2":
-            ctrl_gains = to.tensor(
-                [
-                    [
-                        -73.88,
-                        -2.318,
-                        39.49,
-                        -4.270,
-                        12.25,
-                        0.9779,
-                        0.2564,
-                        35.11,
-                        5.756,
-                        0.8661,
-                        -0.9898,
-                        1.421,
-                        3.132,
-                        -0.01899,
-                    ],
-                    [
-                        -24.45,
-                        0.7202,
-                        -10.58,
-                        2.445,
-                        -0.6957,
-                        2.1619,
-                        -0.3966,
-                        -61.66,
-                        -3.254,
-                        5.356,
-                        0.1908,
-                        12.88,
-                        6.142,
-                        -0.3812,
-                    ],
-                    [
-                        -101.8,
-                        -9.011,
-                        64.345,
-                        -5.091,
-                        17.83,
-                        -2.636,
-                        0.9506,
-                        -44.28,
-                        3.206,
-                        37.59,
-                        2.965,
-                        -32.65,
-                        -21.68,
-                        -0.1133,
-                    ],
-                    [
-                        -59.56,
-                        1.56,
-                        -0.5794,
-                        26.54,
-                        -2.503,
-                        3.827,
-                        -7.534,
-                        9.999,
-                        1.143,
-                        -16.96,
-                        8.450,
-                        -5.302,
-                        4.620,
-                        -10.32,
-                    ],
-                    [
-                        -107.1,
-                        0.4359,
-                        19.03,
-                        -9.601,
-                        20.33,
-                        10.36,
-                        0.2285,
-                        -74.98,
-                        -2.136,
-                        7.084,
-                        -1.240,
-                        62.62,
-                        33.66,
-                        1.790,
-                    ],
-                ]
-            )
-
-        else:
-            raise pyrado.ValueErr(given=ctrl_type, eq_constraint="'lqr' or 'h2'")
-
-        # Compensate for the mismatching different state definition
-        if ball_z_dim_mismatch:
-            ctrl_gains = insert_tensor_col(ctrl_gains, 7, to.zeros((5, 1)))  # ball z position
-            ctrl_gains = insert_tensor_col(ctrl_gains, -1, to.zeros((5, 1)))  # ball z velocity
-
-    elif isinstance(inner_env(env), QBallBalancerSim):
-        # Get the controller gains (K-matrix)
-        if ctrl_type.lower() == "pd":
-            # Quanser gains (the original Quanser controller includes action clipping)
-            ctrl_gains = -to.tensor(
-                [[-14.0, 0, -14 * 3.45, 0, 0, 0, -14 * 2.11, 0], [0, -14.0, 0, -14 * 3.45, 0, 0, 0, -14 * 2.11]]
-            )
-
-        elif ctrl_type.lower() == "lqr":
-            # Since the control module can by tricky to install (recommended using anaconda), we only load it if needed
-            import control
-
-            # System modeling
-            A = np.zeros((env.obs_space.flat_dim, env.obs_space.flat_dim))
-            A[: env.obs_space.flat_dim // 2, env.obs_space.flat_dim // 2 :] = np.eye(env.obs_space.flat_dim // 2)
-            A[4, 4] = -env.B_eq_v / env.J_eq
-            A[5, 5] = -env.B_eq_v / env.J_eq
-            A[6, 0] = env.c_kin * env.m_ball * env.gravity_const * env.r_ball ** 2 / env.zeta
-            A[6, 6] = -env.c_kin * env.r_ball ** 2 / env.zeta
-            A[7, 1] = env.c_kin * env.m_ball * env.gravity_const * env.r_ball ** 2 / env.zeta
-            A[7, 7] = -env.c_kin * env.r_ball ** 2 / env.zeta
-            B = np.zeros((env.obs_space.flat_dim, env.act_space.flat_dim))
-            B[4, 0] = env.A_m / env.J_eq
-            B[5, 1] = env.A_m / env.J_eq
-            # C = np.zeros((env.obs_space.flat_dim // 2, env.obs_space.flat_dim))
-            # C[:env.obs_space.flat_dim // 2, :env.obs_space.flat_dim // 2] = np.eye(env.obs_space.flat_dim // 2)
-            # D = np.zeros((env.obs_space.flat_dim // 2, env.act_space.flat_dim))
-
-            # Get the weighting matrices from the environment
-            Q = env.task.rew_fcn.Q
-            R = env.task.rew_fcn.R
-            # Q = np.diag([1e2, 1e2, 5e2, 5e2, 1e-2, 1e-2, 1e+1, 1e+1])
-
-            # Solve the continuous time Riccati eq
-            K, _, _ = control.lqr(A, B, Q, R)  # for discrete system pass dt
-            ctrl_gains = to.from_numpy(K).to(to.get_default_dtype())
-        else:
-            raise pyrado.ValueErr(given=ctrl_type, eq_constraint="'pd', 'lqr'")
-
-    else:
-        raise pyrado.TypeErr(given=inner_env(env), expected_type=BallOnPlate5DSim)
-
-    # Reconstruct the controller
-    feats = FeatureStack(identity_feat)
-    ctrl = LinearPolicy(env.spec, feats)
-    ctrl.init_param(-1 * ctrl_gains)  # in classical control it is u = -K*x; here a = psi(s)*s
-    return ctrl
+    return TimePolicy(
+        env.spec, functools.partial(_fcn_mg_joint_pos, q_init=q_init, q_end=q_end, t_strike_end=t_strike_end), env.dt
+    )
 
 
 def wam_jsp_7dof_sin(t: float, flip_sign: bool = False):

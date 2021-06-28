@@ -202,6 +202,7 @@ class FNNPolicy(Policy):
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
         self.init_param(None, **init_param_kwargs)
+        self.to(self.device)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
