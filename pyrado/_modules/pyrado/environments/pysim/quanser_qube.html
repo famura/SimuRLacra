@@ -1,0 +1,508 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.environments.pysim.quanser_qube &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.environments.pysim.quanser_qube</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.environments.pysim.quanser_qube</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer.serializable</span> <span class="kn">import</span> <span class="n">Serializable</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.base</span> <span class="kn">import</span> <span class="n">SimPyEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.quanser</span> <span class="kn">import</span> <span class="n">MAX_ACT_QQ</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">RadiallySymmDesStateTask</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span>
+
+
+<div class="viewcode-block" id="QQubeSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSim">[docs]</a><span class="k">class</span> <span class="nc">QQubeSim</span><span class="p">(</span><span class="n">SimPyEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base Environment for the Quanser Qube swing-up and stabilization task&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_create_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="QQubeSim.get_nominal_domain_param"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSim.get_nominal_domain_param">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">gravity_const</span><span class="o">=</span><span class="mf">9.81</span><span class="p">,</span>  <span class="c1"># gravity [m/s**2]</span>
+            <span class="n">motor_resistance</span><span class="o">=</span><span class="mf">8.4</span><span class="p">,</span>  <span class="c1"># motor resistance [Ohm]</span>
+            <span class="n">motor_back_emf</span><span class="o">=</span><span class="mf">0.042</span><span class="p">,</span>  <span class="c1"># motor back-emf constant [V*s/rad]</span>
+            <span class="n">mass_rot_pole</span><span class="o">=</span><span class="mf">0.095</span><span class="p">,</span>  <span class="c1"># rotary arm mass [kg]</span>
+            <span class="n">length_rot_pole</span><span class="o">=</span><span class="mf">0.085</span><span class="p">,</span>  <span class="c1"># rotary arm length [m]</span>
+            <span class="n">damping_rot_pole</span><span class="o">=</span><span class="mf">5e-6</span><span class="p">,</span>  <span class="c1"># rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6</span>
+            <span class="n">mass_pend_pole</span><span class="o">=</span><span class="mf">0.024</span><span class="p">,</span>  <span class="c1"># pendulum link mass [kg]</span>
+            <span class="n">length_pend_pole</span><span class="o">=</span><span class="mf">0.129</span><span class="p">,</span>  <span class="c1"># pendulum link length [m]</span>
+            <span class="n">damping_pend_pole</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>  <span class="c1"># pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6</span>
+            <span class="n">voltage_thold_neg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># min. voltage required to move the servo in negative the direction [V]</span>
+            <span class="n">voltage_thold_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># min. voltage required to move the servo in positive the direction [V]</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_calc_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mass_rot_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">]</span>
+        <span class="n">mass_pend_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">]</span>
+        <span class="n">length_rot_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">]</span>
+        <span class="n">length_pend_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">]</span>
+        <span class="n">gravity_const</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Moments of inertia</span>
+        <span class="n">Jr</span> <span class="o">=</span> <span class="n">mass_rot_pole</span> <span class="o">*</span> <span class="n">length_rot_pole</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">12</span>  <span class="c1"># inertia about COM of the rotary pole [kg*m^2]</span>
+        <span class="n">Jp</span> <span class="o">=</span> <span class="n">mass_pend_pole</span> <span class="o">*</span> <span class="n">length_pend_pole</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">12</span>  <span class="c1"># inertia about COM of the pendulum pole [kg*m^2]</span>
+
+        <span class="c1"># Constants for equations of motion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Jr</span> <span class="o">+</span> <span class="n">mass_pend_pole</span> <span class="o">*</span> <span class="n">length_rot_pole</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">mass_pend_pole</span> <span class="o">*</span> <span class="n">length_pend_pole</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">mass_pend_pole</span> <span class="o">*</span> <span class="n">length_pend_pole</span> <span class="o">*</span> <span class="n">length_rot_pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">Jp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">mass_pend_pole</span> <span class="o">*</span> <span class="n">length_pend_pole</span> <span class="o">*</span> <span class="n">gravity_const</span>
+
+    <span class="k">def</span> <span class="nf">_dyn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute $\dot{x} = f(x, u, t)$.</span>
+
+<span class="sd">        :param t: time (if the dynamics explicitly depend on the time)</span>
+<span class="sd">        :param x: state</span>
+<span class="sd">        :param u: control command</span>
+<span class="sd">        :return: time derivative of the state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">km</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">]</span>
+        <span class="n">Rm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">]</span>
+        <span class="n">Dr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;damping_rot_pole&quot;</span><span class="p">]</span>
+        <span class="n">Dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;damping_pend_pole&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Decompose state</span>
+        <span class="n">th</span><span class="p">,</span> <span class="n">al</span><span class="p">,</span> <span class="n">thd</span><span class="p">,</span> <span class="n">ald</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">sin_al</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">al</span><span class="p">)</span>
+        <span class="n">sin_2al</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">al</span><span class="p">)</span>
+
+        <span class="c1"># Define mass matrix M = [[a, b], [b, c]]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin_al</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">al</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">det</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span>
+
+        <span class="c1"># Calculate vector [x, y] = tau - C(q, qd)</span>
+        <span class="n">trq</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">km</span> <span class="o">*</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="n">km</span> <span class="o">*</span> <span class="n">thd</span><span class="p">)</span> <span class="o">/</span> <span class="n">Rm</span>
+        <span class="p">)</span>  <span class="c1"># u is a scalar array, causing warning on later np.array construction</span>
+        <span class="n">c0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin_2al</span> <span class="o">*</span> <span class="n">thd</span> <span class="o">*</span> <span class="n">ald</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin_al</span> <span class="o">*</span> <span class="n">ald</span> <span class="o">*</span> <span class="n">ald</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin_2al</span> <span class="o">*</span> <span class="n">thd</span> <span class="o">*</span> <span class="n">thd</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin_al</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">trq</span> <span class="o">-</span> <span class="n">Dr</span> <span class="o">*</span> <span class="n">thd</span> <span class="o">-</span> <span class="n">c0</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">Dp</span> <span class="o">*</span> <span class="n">ald</span> <span class="o">-</span> <span class="n">c1</span>
+
+        <span class="c1"># Compute qdd = M^{-1} @ [x, y]</span>
+        <span class="n">thdd</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">x</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">det</span>
+        <span class="n">aldd</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">y</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">det</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">thd</span><span class="p">,</span> <span class="n">ald</span><span class="p">,</span> <span class="n">thdd</span><span class="p">,</span> <span class="n">aldd</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_step_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="c1"># Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.</span>
+        <span class="c1"># This is a very simple model of static friction.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;voltage_thold_neg&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">act</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;voltage_thold_pos&quot;</span><span class="p">]:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Compute the derivative</span>
+        <span class="n">thd</span><span class="p">,</span> <span class="n">ald</span><span class="p">,</span> <span class="n">thdd</span><span class="p">,</span> <span class="n">aldd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dyn</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span>
+
+        <span class="c1"># Integration step (Runge-Kutta 4)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>  <span class="c1"># derivatives</span>
+        <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">thd</span><span class="p">,</span> <span class="n">ald</span><span class="p">,</span> <span class="n">thdd</span><span class="p">,</span> <span class="n">aldd</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">k</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">*</span> <span class="n">k</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">thd</span><span class="p">,</span> <span class="n">ald</span><span class="p">,</span> <span class="n">thdd</span><span class="p">,</span> <span class="n">aldd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dyn</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span>
+            <span class="n">k</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">thdd</span><span class="p">,</span> <span class="n">aldd</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+<div class="viewcode-block" id="QQubeSim.observe"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSim.observe">[docs]</a>    <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">state</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="n">state</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Import PandaVis Class</span>
+        <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pandavis</span> <span class="kn">import</span> <span class="n">QQubeVis</span>
+
+        <span class="c1"># Create instance of PandaVis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span> <span class="o">=</span> <span class="n">QQubeVis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rendering</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QQubeSwingUpSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeSwingUpSim">[docs]</a><span class="k">class</span> <span class="nc">QQubeSwingUpSim</span><span class="p">(</span><span class="n">QQubeSim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Environment which models Quanser&#39;s Furuta pendulum called Quanser Qube.</span>
+<span class="sd">    The goal is to swing up the pendulum and stabilize at the upright position (alpha = +-pi).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;qq-su&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_create_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Define the spaces</span>
+        <span class="n">max_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">115.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>  <span class="c1"># [rad, rad, rad/s, rad/s]</span>
+        <span class="n">max_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad, rad, rad/s, rad/s]</span>
+        <span class="n">max_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>  <span class="c1"># [-, -, -, -, rad/s, rad/s]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">max_state</span><span class="p">,</span> <span class="n">max_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta_dot&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obs_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span>
+            <span class="o">-</span><span class="n">max_obs</span><span class="p">,</span> <span class="n">max_obs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sin_theta&quot;</span><span class="p">,</span> <span class="s2">&quot;cos_theta&quot;</span><span class="p">,</span> <span class="s2">&quot;sin_alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;cos_alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta_dot&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span>
+            <span class="o">-</span><span class="n">max_init_state</span><span class="p">,</span> <span class="n">max_init_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta_dot&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">MAX_ACT_QQ</span><span class="p">,</span> <span class="n">MAX_ACT_QQ</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="c1"># Define the task including the reward function</span>
+        <span class="n">state_des</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_des&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2e-2</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">]))</span>  <span class="c1"># former: [3e-1, 1.0, 2e-2, 5e-3]</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">4e-3</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">RadiallySymmDesStateTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">idcs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="QQubeStabSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_qube.QQubeStabSim">[docs]</a><span class="k">class</span> <span class="nc">QQubeStabSim</span><span class="p">(</span><span class="n">QQubeSim</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Environment which models Quanser&#39;s Furuta pendulum called Quanser Qube.</span>
+<span class="sd">    The goal is to stabilize the pendulum at the upright position (alpha = +-pi).</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This environment is only for testing purposes, or to find the PD gains for stabilizing the pendulum at the top.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;qq-st&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_create_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Define the spaces</span>
+        <span class="n">max_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">115.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>  <span class="c1"># [rad, rad, rad/s, rad/s]</span>
+        <span class="n">min_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">175.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># [rad, rad, rad/s, rad/s]</span>
+        <span class="n">max_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">185.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># [rad, rad, rad/s, rad/s]</span>
+        <span class="n">max_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>  <span class="c1"># [-, -, -, -, rad/s, rad/s]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">max_state</span><span class="p">,</span> <span class="n">max_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta_dot&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obs_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span>
+            <span class="o">-</span><span class="n">max_obs</span><span class="p">,</span> <span class="n">max_obs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sin_theta&quot;</span><span class="p">,</span> <span class="s2">&quot;cos_theta&quot;</span><span class="p">,</span> <span class="s2">&quot;sin_alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;cos_alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta_dot&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="n">min_init_state</span><span class="p">,</span> <span class="n">max_init_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;theta_dot&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">MAX_ACT_QQ</span><span class="p">,</span> <span class="n">MAX_ACT_QQ</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="c1"># Define the task including the reward function</span>
+        <span class="n">state_des</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_des&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]))</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]))</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">5e-2</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">RadiallySymmDesStateTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">idcs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
