@@ -116,16 +116,16 @@ if __name__ == "__main__":
         dict(
             name="Dr",
             target_mean=to.tensor([5e-6]),
-            target_cov_chol_flat=to.tensor([2.5e-7]),
+            target_cov_chol_flat=to.sqrt(to.tensor([2.5e-5])),
             init_mean=to.tensor([5e-6]),
-            init_cov_chol_flat=to.tensor([2.5e-8]),
+            init_cov_chol_flat=to.sqrt(to.tensor([2.5e-8])),
         ),
         dict(
             name="Dp",
             target_mean=to.tensor([1e-6]),
-            target_cov_chol_flat=to.tensor([5e-8]),
+            target_cov_chol_flat=to.sqrt(to.tensor([5e-6])),
             init_mean=to.tensor([1e-6]),
-            init_cov_chol_flat=to.tensor([5e-9]),
+            init_cov_chol_flat=to.sqrt(to.tensor([5e-9])),
         ),
     ]
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
