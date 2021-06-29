@@ -103,7 +103,7 @@ def test_concat_rollouts(env, expl_strat):
     "x, y",
     [
         (to.tensor([1.0, 2.0, 3.0]), to.tensor([1.0, 2.0, 3.0])),
-        (to.tensor([1.0, 0.0, 1.0]), to.tensor([1.0, 1e12, 1.0])),
+        (to.tensor([1.0, 0.0, 1.0]), to.tensor([1.0, 1000.0, 1.0])),
         (to.tensor([0.0, 0.0, 0.0]), to.tensor([1.0, 2, 3.0])),
         (to.tensor([1.0, 2.0, 3.0]), to.tensor([2.0, 4.0, 6.0])),
         (to.tensor([1.0, 2.0, 3.0]), to.tensor([-1.0, -2.0, -3.0])),

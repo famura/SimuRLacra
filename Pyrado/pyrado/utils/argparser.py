@@ -210,6 +210,13 @@ def get_argparser() -> argparse.ArgumentParser:
         help="save all generated figures (default: False)",
     )
     parser.add_argument(
+        "--save_format",
+        nargs="+",
+        type=str,
+        default=["pdf", "pgf", "png"],
+        help="select file formats for saving without commas (default: 'pdf pfg png')",
+    )
+    parser.add_argument(
         "--seed",
         type=int,
         default=None,
