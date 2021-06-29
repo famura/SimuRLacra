@@ -220,16 +220,17 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         theta = to.atan2(sin_th, cos_th)
         alpha = (theta - math.pi) if theta > 0 else (theta + math.pi)
 
-        J_pole = self.dp_nom["l_pole"] ** 2 * self.dp_nom["m_pole"] / 3.0
+        J_pole = self.dp_nom["pole_length"] ** 2 * self.dp_nom["pole_mass"] / 3.0
         J_eq = (
-            self.dp_nom["m_cart"]
-            + (self.dp_nom["eta_g"] * self.dp_nom["K_g"] ** 2 * self.dp_nom["J_m"]) / self.dp_nom["r_mp"] ** 2
+            self.dp_nom["cart_mass"]
+            + (self.dp_nom["gear_efficiency"] * self.dp_nom["gear_ratio"] ** 2 * self.dp_nom["motor_inertia"])
+            / self.dp_nom["pinion_radius"] ** 2
         )
 
         # Energy terms: E_pot(0) = 0; E_pot(pi) = E_pot(-pi) = 2 mgl
         E_kin = J_pole / 2.0 * theta_dot ** 2
-        E_pot = self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"] * (1 - cos_th)
-        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["gravity_const"] * self.dp_nom["l_pole"]
+        E_pot = self.dp_nom["pole_mass"] * self.dp_nom["gravity_const"] * self.dp_nom["pole_length"] * (1 - cos_th)
+        E_ref = 2.0 * self.dp_nom["pole_mass"] * self.dp_nom["gravity_const"] * self.dp_nom["pole_length"]
 
         if to.abs(alpha) < 0.1745 or self.pd_control:
             # Stabilize at the top
@@ -243,9 +244,12 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
             if self.pd_activated:
                 self.pd_activated = False
 
-        act = (J_eq * self.dp_nom["R_m"] * self.dp_nom["r_mp"] * u) / (
-            self.dp_nom["eta_g"] * self.dp_nom["K_g"] * self.dp_nom["eta_m"] * self.dp_nom["k_m"]
-        ) + self.dp_nom["K_g"] * self.dp_nom["k_m"] * x_dot / self.dp_nom["r_mp"]
+        act = (J_eq * self.dp_nom["motor_resistance"] * self.dp_nom["pinion_radius"] * u) / (
+            self.dp_nom["gear_efficiency"]
+            * self.dp_nom["gear_ratio"]
+            * self.dp_nom["motor_efficiency"]
+            * self.dp_nom["motor_back_emf"]
+        ) + self.dp_nom["gear_ratio"] * self.dp_nom["motor_back_emf"] * x_dot / self.dp_nom["pinion_radius"]
 
         # Return the clipped action
         return act.view(1)  # such that when act is later converted to numpy it does not become a float
@@ -614,7 +618,7 @@ def create_pend_excitation_policy(env: PendulumSim, num_rollouts: int, f_sin: fl
     """
 
     def fcn_of_time(t: float):
-        act = env.domain_param["tau_max"] * np.sin(2 * np.pi * t * f_sin)
+        act = env.domain_param["torque_thold"] * np.sin(2 * np.pi * t * f_sin)
         return act.repeat(env.act_space.flat_dim)
 
     act_recordings = [

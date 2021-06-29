@@ -31,11 +31,9 @@ import time
 from typing import Optional
 
 import pytest
-import torch
 from tests.conftest import m_needs_bullet, m_needs_cuda
 from torch.distributions.multivariate_normal import MultivariateNormal
 
-from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.utils import RolloutSavingWrapper
@@ -59,9 +57,6 @@ from pyrado.sampling.sampler_pool import *
 from pyrado.sampling.sequences import *
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
-
-
-torch.set_default_dtype(to.float32)
 
 
 @pytest.mark.parametrize(

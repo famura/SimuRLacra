@@ -78,7 +78,7 @@ if __name__ == "__main__":
     #     graphFileName="gMiniGolf_gt.xml",
     #     physicsConfigFile="pMiniGolf_gt.xml",
     # )
-    env_real = osp.join(pyrado.EVAL_DIR, "mg-jnt_100Hz_8s")
+    env_real = osp.join(pyrado.EVAL_DIR, "mg-jnt_100Hz_8s_filt")
     num_real_rollouts = 1
 
     # Behavioral policy
@@ -200,7 +200,7 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        num_workers=12,
+        num_workers=1,
     )
     algo = BayesSim(
         save_dir=ex_dir,

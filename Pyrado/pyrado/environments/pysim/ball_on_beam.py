@@ -47,7 +47,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     name: str = "bob"
 
     def _create_spaces(self):
-        l_beam = self.domain_param["l_beam"]
+        l_beam = self.domain_param["beam_length"]
         gravity_const = self.domain_param["gravity_const"]
 
         # Set the bounds for the system's states and actions
@@ -77,21 +77,21 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     def get_nominal_domain_param(cls) -> dict:
         return dict(
             gravity_const=9.81,  # gravity constant [m/s**2]
-            m_ball=0.5,  # ball mass [kg]
-            r_ball=0.1,  # ball radius [m]
-            m_beam=3.0,  # beam mass [kg]
-            l_beam=2.0,  # beam length [m]
-            d_beam=0.1,  # beam thickness [m]
-            c_frict=0.05,  # viscous friction coefficient [Ns/m]
+            ball_mass=0.5,  # ball mass [kg]
+            ball_radius=0.1,  # ball radius [m]
+            beam_mass=3.0,  # beam mass [kg]
+            beam_length=2.0,  # beam length [m]
+            beam_thickness=0.1,  # beam thickness [m]
+            friction_coeff=0.05,  # viscous friction coefficient [Ns/m]
             ang_offset=0.0,
         )  # constant beam angle offset [rad]
 
     def _calc_constants(self):
-        m_ball = self.domain_param["m_ball"]
-        r_ball = self.domain_param["r_ball"]
-        m_beam = self.domain_param["m_beam"]
-        l_beam = self.domain_param["l_beam"]
-        d_beam = self.domain_param["d_beam"]
+        m_ball = self.domain_param["ball_mass"]
+        r_ball = self.domain_param["ball_radius"]
+        m_beam = self.domain_param["beam_mass"]
+        l_beam = self.domain_param["beam_length"]
+        d_beam = self.domain_param["beam_thickness"]
 
         self.J_ball = 2.0 / 5 * m_ball * r_ball ** 2
         self.J_beam = 1.0 / 12 * m_beam * (l_beam ** 2 + d_beam ** 2)
@@ -109,8 +109,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
     def _step_dynamics(self, act: np.ndarray):
         gravity_const = self.domain_param["gravity_const"]
-        m_ball = self.domain_param["m_ball"]
-        c_frict = self.domain_param["c_frict"]
+        m_ball = self.domain_param["ball_mass"]
+        c_frict = self.domain_param["friction_coeff"]
         ang_offset = self.domain_param["ang_offset"]
 
         # Nonlinear dynamics

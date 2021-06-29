@@ -99,8 +99,8 @@ if __name__ == "__main__":
         policy = DummyPolicy(env_sim.spec)  # replaced by recorded real actions
 
     # Define a mapping: index - domain parameter
-    # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
-    # dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos", 2: "act_delay"}
+    # dp_mapping = {0: "voltage_thold_neg", 1: "voltage_thold_pos"}
+    # dp_mapping = {0: "voltage_thold_neg", 1: "voltage_thold_pos", 2: "act_delay"}
     # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole"}
     # dp_mapping = {0: "motor_resistance", 1: "motor_back_emf", 2: "mass_rot_pole", 3: "mass_pend_pole"}
     # dp_mapping = {0: "damping_rot_pole", 1: "damping_pend_pole", 2: "motor_resistance", 3: "motor_back_emf", 4: "mass_rot_pole", 5: "mass_pend_pole", 6: "length_rot_pole", 7: "length_pend_pole", 8: "gravity_const"}
@@ -115,8 +115,8 @@ if __name__ == "__main__":
         6: "length_rot_pole",
         7: "length_pend_pole",
         8: "gravity_const",
-        9: "V_thold_neg",
-        10: "V_thold_pos",
+        9: "voltage_thold_neg",
+        10: "voltage_thold_pos",
         11: "act_delay",
     }
 

@@ -534,7 +534,9 @@ def check_domain_params(
     if not all(
         [
             np.allclose(
-                np.asarray(itemgetter(*domain_param_names)(ro.rollout_info["domain_param"])), domain_param_value
+                np.asarray(itemgetter(*domain_param_names)(ro.rollout_info["domain_param"])),
+                domain_param_value,
+                atol=1e-6,
             )
             for ro in rollouts
         ]

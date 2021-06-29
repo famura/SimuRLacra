@@ -82,7 +82,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self.domain_param = self.get_nominal_domain_param(long=long)
 
     def _create_spaces(self):
-        l_rail = self.domain_param["l_rail"]
+        l_rail = self.domain_param["rail_length"]
         max_obs = np.array([l_rail / 2.0, 1.0, 1.0, np.inf, np.inf])
 
         self._state_space = None
@@ -114,52 +114,52 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         return dict(
             gravity_const=9.81,  # gravity constant [m/s**2]
-            m_cart=0.38,  # mass of the cart [kg]
-            l_rail=0.814,  # length of the rail the cart is running on [m]
-            eta_m=0.9,  # motor efficiency [-], default 1.
-            eta_g=0.9,  # planetary gearbox efficiency [-], default 1.
-            K_g=3.71,  # planetary gearbox gear ratio [-]
-            J_m=3.9e-7,  # rotor inertia [kg*m**2]
-            r_mp=6.35e-3,  # motor pinion radius [m]
-            R_m=2.6,  # motor armature resistance [Ohm]
-            k_m=7.67e-3,  # motor torque constant [N*m/A] = back-EMF constant [V*s/rad]
-            B_pole=0.0024,  # viscous coefficient at the pole bearing [N*s]
-            B_eq=5.4,  # equivalent Viscous damping coefficient between cart and track [N*s/m]
+            cart_mass=0.38,  # mass of the cart [kg]
+            rail_length=0.814,  # length of the rail the cart is running on [m]
+            motor_efficiency=0.9,  # motor efficiency [-], default 1.
+            gear_efficiency=0.9,  # planetary gearbox efficiency [-], default 1.
+            gear_ratio=3.71,  # planetary gearbox gear ratio [-]
+            motor_inertia=3.9e-7,  # rotor inertia [kg*m**2]
+            pinion_radius=6.35e-3,  # motor pinion radius [m]
+            motor_resistance=2.6,  # motor armature resistance [Ohm]
+            motor_back_emf=7.67e-3,  # motor torque constant [N*m/A] = back-EMF constant [V*s/rad]
+            pole_damping=0.0024,  # viscous coefficient at the pole bearing [N*s]
+            combined_damping=5.4,  # equivalent Viscous damping coefficient between cart and track [N*s/m]
             # B_p is an approximation, since the friction torque should actually depend on the normal force between
             # the cart and the pole. However, one could use one approx. equivalent mass for that force.
-            m_pole=m_pole,  # mass of the pole [kg]
-            l_pole=l_pole,  # half pole length [m]
-            mu_cart=0.02,  # Coulomb friction coefficient cart-rail [-]
+            pole_mass=m_pole,  # mass of the pole [kg]
+            pole_length=l_pole,  # half pole length [m]
+            cart_friction_coeff=0.02,  # Coulomb friction coefficient cart-rail [-]
             voltage_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
             voltage_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _calc_constants(self):
-        l_pole = self.domain_param["l_pole"]
-        m_pole = self.domain_param["m_pole"]
-        m_cart = self.domain_param["m_cart"]
-        eta_g = self.domain_param["eta_g"]
-        K_g = self.domain_param["K_g"]
-        J_m = self.domain_param["J_m"]
-        r_mp = self.domain_param["r_mp"]
+        l_pole = self.domain_param["pole_length"]
+        m_pole = self.domain_param["pole_mass"]
+        m_cart = self.domain_param["cart_mass"]
+        eta_g = self.domain_param["gear_efficiency"]
+        K_g = self.domain_param["gear_ratio"]
+        J_m = self.domain_param["motor_inertia"]
+        r_mp = self.domain_param["pinion_radius"]
 
         self.J_pole = l_pole ** 2 * m_pole / 3.0  # pole inertia [kg*m**2]
         self.J_eq = m_cart + (eta_g * K_g ** 2 * J_m) / r_mp ** 2  # equiv. inertia [kg]
 
     def _step_dynamics(self, u: np.ndarray):
         gravity_const = self.domain_param["gravity_const"]
-        l_p = self.domain_param["l_pole"]
-        m_p = self.domain_param["m_pole"]
-        m_c = self.domain_param["m_cart"]
-        eta_m = self.domain_param["eta_m"]
-        eta_g = self.domain_param["eta_g"]
-        K_g = self.domain_param["K_g"]
-        R_m = self.domain_param["R_m"]
-        k_m = self.domain_param["k_m"]
-        r_mp = self.domain_param["r_mp"]
-        B_eq = self.domain_param["B_eq"]
-        B_p = self.domain_param["B_pole"]
-        mu_c = self.domain_param["mu_cart"]
+        l_p = self.domain_param["pole_length"]
+        m_p = self.domain_param["pole_mass"]
+        m_c = self.domain_param["cart_mass"]
+        eta_m = self.domain_param["motor_efficiency"]
+        eta_g = self.domain_param["gear_efficiency"]
+        K_g = self.domain_param["gear_ratio"]
+        R_m = self.domain_param["motor_resistance"]
+        k_m = self.domain_param["motor_back_emf"]
+        r_mp = self.domain_param["pinion_radius"]
+        B_eq = self.domain_param["combined_damping"]
+        B_p = self.domain_param["pole_damping"]
+        mu_c = self.domain_param["cart_friction_coeff"]
 
         x, th, x_dot, th_dot = self.state
         sin_th = np.sin(th)
@@ -253,7 +253,7 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
 
     def _create_spaces(self):
         super()._create_spaces()
-        l_rail = self.domain_param["l_rail"]
+        l_rail = self.domain_param["rail_length"]
 
         min_state = np.array(
             [-l_rail / 2.0 + self._x_buffer, np.pi - self.stab_thold, -l_rail, -2 * np.pi]
@@ -321,7 +321,7 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         super()._create_spaces()
 
         # Define the spaces
-        l_rail = self.domain_param["l_rail"]
+        l_rail = self.domain_param["rail_length"]
         max_state = np.array(
             [+l_rail / 2.0 - self._x_buffer, +4 * np.pi, 2 * l_rail, 20 * np.pi]
         )  # [m, rad, m/s, rad/s]

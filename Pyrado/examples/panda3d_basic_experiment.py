@@ -41,7 +41,7 @@ class YourEnvironmentVis(PandaVis):
         """
         self._env = env
         x, th, _, _ = self._env.state
-        l_pole = float(self._env.domain_param["l_pole"])
+        l_pole = float(self._env.domain_param["pole_length"])
 
         """
         Occasionally there is a need for some uncalculated values describing properties irrelevant to the calculations, such as the thickness of a bar, or the radius of a ball
@@ -114,7 +114,7 @@ class YourEnvironmentVis(PandaVis):
         Similar to the init method, start of by accessing the environments domain parameters and states, being calculated in your environment class
         """
         x, th, _, _ = self._env.state
-        l_pole = float(self._env.domain_param["l_pole"])
+        l_pole = float(self._env.domain_param["pole_length"])
 
         """
         Property-updates use the same set of methods as mentioned in the placing-paragraph of the init-method

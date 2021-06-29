@@ -49,9 +49,9 @@ if __name__ == "__main__":
     num_real_rollouts = 2
     env_real = deepcopy(env_sim)
     # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name="m", mean=0.8, std=0.8 / 50),
-    #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
-    #     NormalDomainParam(name="d", mean=0.3, std=0.3 / 50),
+    #     NormalDomainParam(name="mass", mean=0.8, std=0.8 / 50),
+    #     NormalDomainParam(name="stiffness", mean=33.0, std=33 / 50),
+    #     NormalDomainParam(name="damping", mean=0.3, std=0.3 / 50),
     # )
     # env_real = DomainRandWrapperBuffer(env_real, randomizer)
     # env_real.fill_buffer(num_real_rollouts)
@@ -61,13 +61,13 @@ if __name__ == "__main__":
     policy = IdlePolicy(env_sim.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "m", 1: "k", 2: "d"}
+    dp_mapping = {0: "mass", 1: "stiffness", 2: "damping"}
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()  # m=1.0, k=30.0, d=0.5
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m"] * 0.5, dp_nom["k"] * 0.5, dp_nom["d"] * 0.5]),
-        high=to.tensor([dp_nom["m"] * 1.5, dp_nom["k"] * 1.5, dp_nom["d"] * 1.5]),
+        low=to.tensor([dp_nom["mass"] * 0.5, dp_nom["stiffness"] * 0.5, dp_nom["damping"] * 0.5]),
+        high=to.tensor([dp_nom["mass"] * 1.5, dp_nom["stiffness"] * 1.5, dp_nom["damping"] * 1.5]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
 

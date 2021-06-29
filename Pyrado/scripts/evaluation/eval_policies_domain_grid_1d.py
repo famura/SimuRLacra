@@ -113,7 +113,7 @@ if __name__ == "__main__":
             env = QCartPoleStabSim(dt=dt, max_steps=args.max_steps)
 
         # param_spec['gravity_const'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
-        param_spec["m_cart"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
+        param_spec["cart_mass"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
         # param_spec['l_rail'] = np.linspace(0.841*0.7, 0.841*1.3, num=11, endpoint=True)
         # param_spec['eta_m'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
         # param_spec['eta_g'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)

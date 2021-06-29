@@ -227,7 +227,7 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
 
 
 @pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
-@pytest.mark.parametrize("policy", ["dummy_policy"], indirect=True)
+@pytest.mark.parametrize("policy", ["idle_policy"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [(A2C, dict()), (PPO, dict()), (PPO2, dict())],

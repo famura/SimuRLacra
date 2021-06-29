@@ -183,9 +183,9 @@ class BallOnBeamVis(PandaVis):
 
         # Accessing variables of the environment
         self._env = env
-        r_ball = self._env.domain_param["r_ball"]
-        l_beam = self._env.domain_param["l_beam"]
-        d_beam = self._env.domain_param["d_beam"]
+        r_ball = self._env.domain_param["ball_radius"]
+        l_beam = self._env.domain_param["beam_length"]
+        d_beam = self._env.domain_param["beam_thickness"]
         x = float(self._env.state[0])  # ball position along the beam axis [m]
         a = float(self._env.state[1])  # angle [rad]
 
@@ -214,13 +214,13 @@ class BallOnBeamVis(PandaVis):
     def update(self, task: Task):
         # Accessing the current parameter values
         gravity_const = self._env.domain_param["gravity_const"]
-        m_ball = self._env.domain_param["m_ball"]
-        r_ball = self._env.domain_param["r_ball"]
-        m_beam = self._env.domain_param["m_beam"]
-        l_beam = self._env.domain_param["l_beam"]
-        d_beam = self._env.domain_param["d_beam"]
+        m_ball = self._env.domain_param["ball_mass"]
+        r_ball = self._env.domain_param["ball_radius"]
+        m_beam = self._env.domain_param["beam_mass"]
+        l_beam = self._env.domain_param["beam_length"]
+        d_beam = self._env.domain_param["beam_thickness"]
         ang_offset = self._env.domain_param["ang_offset"]
-        c_frict = self._env.domain_param["c_frict"]
+        c_frict = self._env.domain_param["friction_coeff"]
         x = float(self._env.state[0])  # ball position along the beam axis [m]
         a = float(self._env.state[1])  # angle [rad]
 
@@ -319,9 +319,9 @@ class OneMassOscillatorVis(PandaVis):
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        m = self._env.domain_param["m"]
-        k = self._env.domain_param["k"]
-        d = self._env.domain_param["d"]
+        m = self._env.domain_param["mass"]
+        k = self._env.domain_param["stiffness"]
+        d = self._env.domain_param["damping"]
         c = 0.1 * self._env.obs_space.bound_up[0]
 
         # Update position of mass
@@ -370,7 +370,7 @@ class PendulumVis(PandaVis):
         # Accessing variables of the environment
         self._env = env
         th, _ = self._env.state
-        l_pole = float(self._env.domain_param["l_pole"])
+        l_pole = float(self._env.domain_param["pole_length"])
         r_pole = 0.05
 
         # Scaling of the animation so the camera can move smoothly
@@ -402,10 +402,10 @@ class PendulumVis(PandaVis):
         # Accessing the current parameter values
         th, _ = self._env.state
         gravity_const = self._env.domain_param["gravity_const"]
-        m_pole = self._env.domain_param["m_pole"]
-        l_pole = float(self._env.domain_param["l_pole"])
-        d_pole = self._env.domain_param["d_pole"]
-        tau_max = self._env.domain_param["tau_max"]
+        m_pole = self._env.domain_param["pole_mass"]
+        l_pole = float(self._env.domain_param["pole_length"])
+        d_pole = self._env.domain_param["pole_damping"]
+        tau_max = self._env.domain_param["torque_thold"]
 
         # Update position and rotation of pole
         self.pole.setR(-th * 180 / np.pi)
@@ -452,8 +452,8 @@ class QBallBalancerVis(PandaVis):
 
         # Accessing variables of the environment
         self._env = env
-        l_plate = self._env.domain_param["l_plate"]
-        r_ball = self._env.domain_param["r_ball"]
+        l_plate = self._env.domain_param["plate_length"]
+        r_ball = self._env.domain_param["ball_radius"]
 
         # Only for animation
         d_plate = 0.01
@@ -508,23 +508,23 @@ class QBallBalancerVis(PandaVis):
     def update(self, task: Task):
         # Accessing the current parameter values
         gravity_const = self._env.domain_param["gravity_const"]
-        l_plate = self._env.domain_param["l_plate"]
-        m_ball = self._env.domain_param["m_ball"]
-        r_ball = self._env.domain_param["r_ball"]
-        eta_g = self._env.domain_param["eta_g"]
-        eta_m = self._env.domain_param["eta_m"]
-        K_g = self._env.domain_param["K_g"]
-        J_m = self._env.domain_param["J_m"]
-        J_l = self._env.domain_param["J_l"]
-        r_arm = self._env.domain_param["r_arm"]
-        k_m = self._env.domain_param["k_m"]
-        R_m = self._env.domain_param["R_m"]
-        B_eq = self._env.domain_param["B_eq"]
-        c_frict = self._env.domain_param["c_frict"]
-        V_thold_x_neg = self._env.domain_param["V_thold_x_neg"]
-        V_thold_x_pos = self._env.domain_param["V_thold_x_pos"]
-        V_thold_y_neg = self._env.domain_param["V_thold_y_neg"]
-        V_thold_y_pos = self._env.domain_param["V_thold_y_pos"]
+        l_plate = self._env.domain_param["plate_length"]
+        m_ball = self._env.domain_param["ball_mass"]
+        r_ball = self._env.domain_param["ball_radius"]
+        eta_g = self._env.domain_param["gear_efficiency"]
+        eta_m = self._env.domain_param["motor_efficiency"]
+        K_g = self._env.domain_param["gear_ratio"]
+        J_m = self._env.domain_param["motor_inertia"]
+        J_l = self._env.domain_param["load_inertia"]
+        r_arm = self._env.domain_param["arm_radius"]
+        k_m = self._env.domain_param["motor_back_emf"]
+        R_m = self._env.domain_param["motor_resistance"]
+        B_eq = self._env.domain_param["combined_damping"]
+        c_frict = self._env.domain_param["friction_coeff"]
+        V_thold_x_neg = self._env.domain_param["voltage_thold_x_neg"]
+        V_thold_x_pos = self._env.domain_param["voltage_thold_x_pos"]
+        V_thold_y_neg = self._env.domain_param["voltage_thold_y_neg"]
+        V_thold_y_pos = self._env.domain_param["voltage_thold_y_pos"]
         offset_th_x = self._env.domain_param["offset_th_x"]
         offset_th_y = self._env.domain_param["offset_th_y"]
         d_plate = 0.01  # only for animation
@@ -600,8 +600,8 @@ class QCartPoleVis(PandaVis):
         # Accessing variables of the environment
         self._env = env
         x, th, _, _ = self._env.state
-        l_pole = float(self._env.domain_param["l_pole"])
-        l_rail = float(self._env.domain_param["l_rail"])
+        l_pole = float(self._env.domain_param["pole_length"])
+        l_rail = float(self._env.domain_param["rail_length"])
 
         # Only for animation
         l_cart, h_cart = 0.05, 0.045
@@ -648,19 +648,19 @@ class QCartPoleVis(PandaVis):
         # Accessing the current parameter values
         x, th, _, _ = self._env.state
         gravity_const = self._env.domain_param["gravity_const"]
-        m_cart = self._env.domain_param["m_cart"]
-        m_pole = self._env.domain_param["m_pole"]
-        l_pole = float(self._env.domain_param["l_pole"])
-        l_rail = float(self._env.domain_param["l_rail"])
-        eta_m = self._env.domain_param["eta_m"]
-        eta_g = self._env.domain_param["eta_g"]
-        K_g = self._env.domain_param["K_g"]
-        J_m = self._env.domain_param["J_m"]
-        R_m = self._env.domain_param["R_m"]
-        k_m = self._env.domain_param["k_m"]
-        r_mp = self._env.domain_param["r_mp"]
-        B_eq = self._env.domain_param["B_eq"]
-        B_pole = self._env.domain_param["B_pole"]
+        m_cart = self._env.domain_param["cart_mass"]
+        m_pole = self._env.domain_param["pole_mass"]
+        l_pole = float(self._env.domain_param["pole_length"])
+        l_rail = float(self._env.domain_param["rail_length"])
+        eta_m = self._env.domain_param["motor_efficiency"]
+        eta_g = self._env.domain_param["gear_efficiency"]
+        K_g = self._env.domain_param["gear_ratio"]
+        J_m = self._env.domain_param["motor_inertia"]
+        R_m = self._env.domain_param["motor_resistance"]
+        k_m = self._env.domain_param["motor_back_emf"]
+        r_mp = self._env.domain_param["pinion_radius"]
+        B_eq = self._env.domain_param["combined_damping"]
+        B_pole = self._env.domain_param["pole_damping"]
 
         # Update position of Cart, Joint and Pole
         self.cart.setX(x * self._scale)
@@ -781,15 +781,15 @@ class QQubeVis(PandaVis):
 
     def update(self, task: Task):
         # Accessing the current parameter values
-        gravity_const = self._env.domain_param["gravity_const"]
-        mass_rot_pole = self._env.domain_param["mass_rot_pole"]
-        mass_pend_pole = self._env.domain_param["mass_pend_pole"]
-        length_rot_pole = float(self._env.domain_param["length_rot_pole"])
-        length_pend_pole = float(self._env.domain_param["length_pend_pole"])
-        motor_back_emf = self._env.domain_param["motor_back_emf"]
-        motor_resistance = self._env.domain_param["motor_resistance"]
-        damping_rot_pole = self._env.domain_param["damping_rot_pole"]
-        damping_pend_pole = self._env.domain_param["damping_pend_pole"]
+        g = self._env.domain_param["gravity_const"]
+        Mr = self._env.domain_param["mass_rot_pole"]
+        Mp = self._env.domain_param["mass_pend_pole"]
+        Lr = float(self._env.domain_param["length_rot_pole"])
+        Lp = float(self._env.domain_param["length_pend_pole"])
+        km = self._env.domain_param["motor_back_emf"]
+        Rm = self._env.domain_param["motor_resistance"]
+        Dr = self._env.domain_param["damping_rot_pole"]
+        Dp = self._env.domain_param["damping_pend_pole"]
         th, al, _, _ = self._env.state
 
         # Update rotation of arm
@@ -803,9 +803,9 @@ class QQubeVis(PandaVis):
 
         # Calculate position of new point
         current_pos = (
-            pole_pos[0] + 2 * length_pend_pole * np.sin(al) * np.cos(th) * self._scale,
-            pole_pos[1] + 2 * length_pend_pole * np.sin(al) * np.sin(th) * self._scale,
-            pole_pos[2] - 2 * length_pend_pole * np.cos(al) * self._scale,
+            pole_pos[0] + 2 * Lp * np.sin(al) * np.cos(th) * self._scale,
+            pole_pos[1] + 2 * Lp * np.sin(al) * np.sin(th) * self._scale,
+            pole_pos[2] - 2 * Lp * np.cos(al) * self._scale,
         )
 
         # Draw line to that point
@@ -817,15 +817,15 @@ class QQubeVis(PandaVis):
             theta: {self._env.state[0] * 180 / np.pi : 3.1f}
             alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
             dt: {self._env.dt :1.4f}
-            gravity_const: {gravity_const : 1.3f}
-            mass_rot_pole: {mass_rot_pole : 1.4f}
-            mass_pend_pole: {mass_pend_pole : 1.4f}
-            length_rot_pole: {length_rot_pole : 1.4f}
-            length_pend_pole: {length_pend_pole : 1.4f}
-            damping_rot_pole: {damping_rot_pole : 1.7f}
-            damping_pend_pole: {damping_pend_pole : 1.7f}
-            motor_resistance: {motor_resistance : 1.3f}
-            motor_back_emf: {motor_back_emf : 1.4f}
+            gravity_const: {g : 1.3f}
+            mass_rot_pole: {Mr : 1.4f}
+            mass_pend_pole: {Mp : 1.4f}
+            length_rot_pole: {Lr : 1.4f}
+            length_pend_pole: {Lp : 1.4f}
+            damping_rot_pole: {Dr : 1.7f}
+            damping_pend_pole: {Dp : 1.7f}
+            motor_resistance: {Rm : 1.3f}
+            motor_back_emf: {km : 1.4f}
             """
         )
 

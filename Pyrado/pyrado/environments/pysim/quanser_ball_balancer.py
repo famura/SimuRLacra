@@ -28,7 +28,6 @@
 
 import os
 import os.path as osp
-from posix import listdir
 from typing import Optional
 
 import numpy as np
@@ -91,7 +90,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
             self._kin = QBallBalancerKin(self)
 
     def _create_spaces(self):
-        l_plate = self.domain_param["l_plate"]
+        l_plate = self.domain_param["plate_length"]
 
         # Define the spaces
         max_state = np.array(
@@ -136,10 +135,12 @@ class QBallBalancerSim(SimPyEnv, Serializable):
     measured_tholds = None
 
     @classmethod
-    def get_V_tholds(cls, load_experiments: bool = True) -> dict:
+    def get_voltage_tholds(cls, load_experiments: bool = True) -> dict:
         """If available, the voltage thresholds computed from measurements, else use default values."""
         # Hard-coded default thresholds
-        tholds = dict(V_thold_x_pos=0.28, V_thold_x_neg=-0.10, V_thold_y_pos=0.28, V_thold_y_neg=-0.074)
+        tholds = dict(
+            voltage_thold_x_pos=0.28, voltage_thold_x_neg=-0.10, voltage_thold_y_pos=0.28, voltage_thold_y_neg=-0.074
+        )
 
         if load_experiments:
             if cls.measured_tholds is None:
@@ -152,10 +153,10 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                     for f in filter(lambda f: f.endswith(".npy"), os.listdir(".npy")):
                         i += 1.0
                         cma = cma + (np.load(osp.join(ex_dir, f)) - cma) / i
-                    tholds["V_thold_x_pos"] = cma[0, 1]
-                    tholds["V_thold_x_neg"] = cma[0, 0]
-                    tholds["V_thold_y_pos"] = cma[1, 1]
-                    tholds["V_thold_y_neg"] = cma[1, 0]
+                    tholds["voltage_thold_x_pos"] = cma[0, 1]
+                    tholds["voltage_thold_x_neg"] = cma[0, 0]
+                    tholds["voltage_thold_y_pos"] = cma[1, 1]
+                    tholds["voltage_thold_y_neg"] = cma[1, 0]
                 else:
                     print_cbt_once("No measured thresholds found, falling back to default values.", "y")
 
@@ -168,43 +169,51 @@ class QBallBalancerSim(SimPyEnv, Serializable):
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
-        V_tholds = cls.get_V_tholds()
+        voltage_tholds = cls.get_voltage_tholds()
         return dict(
             gravity_const=9.81,  # gravity constant [m/s**2]
-            m_ball=0.003,  # mass of the ball [kg]
-            r_ball=0.019625,  # radius of the ball [m]
-            l_plate=0.275,  # length of the (square) plate [m]
-            r_arm=0.0254,  # distance between the servo output gear shaft and the coupled joint [m]
-            K_g=70.0,  # gear ratio [-]
-            eta_g=0.9,  # gearbox efficiency [-]
-            J_l=5.2822e-5,  # load moment of inertia [kg*m**2]
-            J_m=4.6063e-7,  # motor moment of inertia [kg*m**2]
-            k_m=0.0077,  # motor torque constant [N*m/A] = back-EMF constant [V*s/rad]
-            R_m=2.6,  # motor armature resistance
-            eta_m=0.69,  # motor efficiency [-]
-            B_eq=0.015,  # equivalent viscous damping coefficient w.r.t. load [N*m*s/rad]
-            c_frict=0.05,  # viscous friction coefficient [N*s/m]
-            V_thold_x_pos=V_tholds["V_thold_x_pos"],  # min. voltage required to move the x servo in the pos. dir. [V]
-            V_thold_x_neg=V_tholds["V_thold_x_neg"],  # min. voltage required to move the x servo in the neg. dir. [V]
-            V_thold_y_pos=V_tholds["V_thold_y_pos"],  # min. voltage required to move the y servo in the pos. dir. [V]
-            V_thold_y_neg=V_tholds["V_thold_y_neg"],  # min. voltage required to move the y servo in the neg. dir. [V]
+            ball_mass=0.003,  # mass of the ball [kg]
+            ball_radius=0.019625,  # radius of the ball [m]
+            plate_length=0.275,  # length of the (square) plate [m]
+            arm_radius=0.0254,  # distance between the servo output gear shaft and the coupled joint [m]
+            gear_ratio=70.0,  # gear ratio [-]
+            gear_efficiency=0.9,  # gearbox efficiency [-]
+            load_inertia=5.2822e-5,  # load moment of inertia [kg*m**2]
+            motor_inertia=4.6063e-7,  # motor moment of inertia [kg*m**2]
+            motor_back_emf=0.0077,  # motor torque constant [N*m/A] = back-EMF constant [V*s/rad]
+            motor_resistance=2.6,  # motor armature resistance
+            motor_efficiency=0.69,  # motor efficiency [-]
+            combined_damping=0.015,  # equivalent viscous damping coefficient w.r.t. load [N*m*s/rad]
+            ball_damping=0.05,  # viscous damping coefficient for the ball velocity [N*s/m]
+            voltage_thold_x_pos=voltage_tholds[
+                "voltage_thold_x_pos"
+            ],  # min. voltage required to move the x servo in pos. dir. [V]
+            voltage_thold_x_neg=voltage_tholds[
+                "voltage_thold_x_neg"
+            ],  # min. voltage required to move the x servo in neg. dir. [V]
+            voltage_thold_y_pos=voltage_tholds[
+                "voltage_thold_y_pos"
+            ],  # min. voltage required to move the y servo in pos. dir. [V]
+            voltage_thold_y_neg=voltage_tholds[
+                "voltage_thold_y_neg"
+            ],  # min. voltage required to move the y servo in neg. dir. [V]
             offset_th_x=0.0,  # angular offset of the x axis motor shaft [rad]
-            offset_th_y=0.0,
-        )  # angular offset of the y axis motor shaft [rad]
+            offset_th_y=0.0,  # angular offset of the y axis motor shaft [rad]
+        )
 
     def _calc_constants(self):
-        l_plate = self.domain_param["l_plate"]
-        m_ball = self.domain_param["m_ball"]
-        r_ball = self.domain_param["r_ball"]
-        eta_g = self.domain_param["eta_g"]
-        eta_m = self.domain_param["eta_m"]
-        K_g = self.domain_param["K_g"]
-        J_m = self.domain_param["J_m"]
-        J_l = self.domain_param["J_l"]
-        r_arm = self.domain_param["r_arm"]
-        k_m = self.domain_param["k_m"]
-        R_m = self.domain_param["R_m"]
-        B_eq = self.domain_param["B_eq"]
+        l_plate = self.domain_param["plate_length"]
+        m_ball = self.domain_param["ball_mass"]
+        r_ball = self.domain_param["ball_radius"]
+        eta_g = self.domain_param["gear_efficiency"]
+        eta_m = self.domain_param["motor_efficiency"]
+        K_g = self.domain_param["gear_ratio"]
+        J_m = self.domain_param["motor_inertia"]
+        J_l = self.domain_param["load_inertia"]
+        r_arm = self.domain_param["arm_radius"]
+        k_m = self.domain_param["motor_back_emf"]
+        R_m = self.domain_param["motor_resistance"]
+        B_eq = self.domain_param["combined_damping"]
 
         self.J_ball = 2.0 / 5 * m_ball * r_ball ** 2  # inertia of the ball [kg*m**2]
         self.J_eq = eta_g * K_g ** 2 * J_m + J_l  # equivalent moment of inertia [kg*m**2]
@@ -237,13 +246,13 @@ class QBallBalancerSim(SimPyEnv, Serializable):
 
     def _step_dynamics(self, act: np.ndarray):
         gravity_const = self.domain_param["gravity_const"]
-        m_ball = self.domain_param["m_ball"]
-        r_ball = self.domain_param["r_ball"]
-        c_frict = self.domain_param["c_frict"]
-        V_thold_x_neg = self.domain_param["V_thold_x_neg"]
-        V_thold_x_pos = self.domain_param["V_thold_x_pos"]
-        V_thold_y_neg = self.domain_param["V_thold_y_neg"]
-        V_thold_y_pos = self.domain_param["V_thold_y_pos"]
+        m_ball = self.domain_param["ball_mass"]
+        r_ball = self.domain_param["ball_radius"]
+        ball_damping = self.domain_param["ball_damping"]
+        V_thold_x_neg = self.domain_param["voltage_thold_x_neg"]
+        V_thold_x_pos = self.domain_param["voltage_thold_x_pos"]
+        V_thold_y_neg = self.domain_param["voltage_thold_y_neg"]
+        V_thold_y_pos = self.domain_param["voltage_thold_y_pos"]
         offset_th_x = self.domain_param["offset_th_x"]
         offset_th_y = self.domain_param["offset_th_y"]
 
@@ -301,13 +310,13 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         else:
             # Ball dynamic with friction and Coriolis forces
             x_ddot = (
-                -c_frict * x_dot * r_ball ** 2  # friction
+                -ball_damping * x_dot * r_ball ** 2  # friction
                 - self.J_ball * r_ball * a_ddot  # plate influence
                 + m_ball * x * a_dot ** 2 * r_ball ** 2  # centripetal
                 + self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_x)  # gravity
             ) / self.zeta
             y_ddot = (
-                -c_frict * y_dot * r_ball ** 2  # friction
+                -ball_damping * y_dot * r_ball ** 2  # friction
                 - self.J_ball * r_ball * b_ddot  # plate influence
                 + m_ball * y * (-b_dot) ** 2 * r_ball ** 2  # centripetal
                 + self.c_kin * m_ball * gravity_const * r_ball ** 2 * np.sin(th_y)  # gravity
@@ -349,8 +358,8 @@ class QBallBalancerKin(Serializable):
         self.num_opt_iter = num_opt_iter
         self.render_mode = render_mode
 
-        self.r = float(self._qbb.domain_param["r_arm"])
-        self.l = float(self._qbb.domain_param["l_plate"] / 2.0)
+        self.r = float(self._qbb.domain_param["arm_radius"])
+        self.l = float(self._qbb.domain_param["plate_length"] / 2.0)
         self.d = 0.10  # [m] roughly measured
 
         # Visualization
@@ -377,8 +386,8 @@ class QBallBalancerKin(Serializable):
 
         # Update the lengths, e.g. if the domain has been randomized
         # Need to use float() since the parameters might be 0d-arrays
-        self.r = float(self._qbb.domain_param["r_arm"])
-        self.l = float(self._qbb.domain_param["l_plate"] / 2.0)
+        self.r = float(self._qbb.domain_param["arm_radius"])
+        self.l = float(self._qbb.domain_param["plate_length"] / 2.0)
         self.d = 0.10  # roughly measured
 
         tip = self.rod_tip(th)

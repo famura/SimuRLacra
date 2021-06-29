@@ -72,7 +72,7 @@ class PendulumSim(SimPyEnv, Serializable):
         # Define the spaces
         max_state = np.array([4 * np.pi, 4 * np.pi])  # [rad, rad/s]
         max_obs = np.array([1.0, 1.0, np.inf])  # [-, -, rad/s]
-        tau_max = self.domain_param["tau_max"]
+        tau_max = self.domain_param["torque_thold"]
 
         self._state_space = BoxSpace(-max_state, max_state, labels=["theta", "theta_dot"])
         self._obs_space = BoxSpace(-max_obs, max_obs, labels=["sin_theta", "cos_theta", "theta_dot"])
@@ -94,17 +94,17 @@ class PendulumSim(SimPyEnv, Serializable):
     def get_nominal_domain_param(cls) -> dict:
         return dict(
             gravity_const=9.81,  # gravity constant [m/s**2]
-            m_pole=1.0,  # mass of the pole [kg]
-            l_pole=1.0,  # half pole length [m]
-            d_pole=0.05,  # rotational damping of the pole [kg*m**2/s]
-            tau_max=3.5,
-        )  # maximum applicable torque [N*m] (under-actuated if < m*l*gravity_const/2)
+            pole_mass=1.0,  # mass of the pole [kg]
+            pole_length=1.0,  # half pole length [m]
+            pole_damping=0.05,  # rotational damping of the pole [kg*m**2/s]
+            torque_thold=3.5,  # maximum applicable torque [N*m] (under-actuated if < m*l*gravity_const/2)
+        )
 
     def _step_dynamics(self, act: np.ndarray):
         gravity_const = self.domain_param["gravity_const"]
-        m_pole = self.domain_param["m_pole"]
-        l_pole = self.domain_param["l_pole"]
-        d_pole = self.domain_param["d_pole"]
+        m_pole = self.domain_param["pole_mass"]
+        l_pole = self.domain_param["pole_length"]
+        d_pole = self.domain_param["pole_damping"]
 
         # Dynamics (pendulum modeled as a rod)
         th, th_dot = self.state

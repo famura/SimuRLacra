@@ -65,16 +65,16 @@ if __name__ == "__main__":
     # Create a fake ground truth target domain
     num_real_rollouts = 1
     env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(m_pole=1 / 1.2 ** 2, l_pole=1.2)
+    env_real.domain_param = dict(pole_mass=1 / 1.2 ** 2, pole_length=1.2)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "m_pole", 1: "l_pole"}
+    dp_mapping = {0: "pole_mass", 1: "pole_length"}
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
-        high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
+        low=to.tensor([dp_nom["pole_mass"] * 0.3, dp_nom["pole_length"] * 0.3]),
+        high=to.tensor([dp_nom["pole_mass"] * 1.7, dp_nom["pole_length"] * 1.7]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
 
