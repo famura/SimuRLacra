@@ -51,7 +51,9 @@ from pyrado.utils.input_output import print_cbt
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.set_defaults(animation=True)  # different default value for this script
+    args = parser.parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 

@@ -41,27 +41,24 @@ from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.experiments import load_rollouts_from_dir
+from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.set_defaults(animation=True)  # different default value for this script
+    args = parser.parse_args()
 
     # Get the experiment's directory to load from
     args.dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the rollouts and select one
     rollouts, file_names = load_rollouts_from_dir(args.dir)
-    if len(rollouts) == 1:
-        rollout = rollouts[0]
-    else:
-        if not isinstance(args.iter, int):
-            raise pyrado.TypeErr(given=args, expected_type=int)
-        rollout = rollouts[args.iter]
 
     # Extract the environment's name if possible
-    if getattr(rollout, "rollout_info", None) and "env_name" in rollout.rollout_info:
-        env_name = rollout.rollout_info["env_name"]
+    if getattr(rollouts[0], "rollout_info", None) and "env_name" in rollouts[0].rollout_info:
+        env_name = rollouts[0].rollout_info["env_name"]
     elif args.env_name is not None:
         env_name = args.env_name.lower()
     else:
@@ -71,14 +68,14 @@ if __name__ == "__main__":
         )
 
     # Extract the domain parameters if possible
-    if getattr(rollout, "rollout_info", None) is not None and "domain_param" in rollout.rollout_info:
-        domain_param = rollout.rollout_info["domain_param"]
+    if getattr(rollouts[0], "rollout_info", None) is not None and "domain_param" in rollouts[0].rollout_info:
+        domain_param = rollouts[0].rollout_info["domain_param"]
     else:
         domain_param = None
 
     # Extract the time if possible
-    if hasattr(rollout, "time"):
-        dt = rollout.time[1] - rollout.time[0]  # dt is constant
+    if hasattr(rollouts[0], "time"):
+        dt = rollouts[0].time[1] - rollouts[0].time[0]  # dt is constant
     elif args.dt is not None:
         dt = args.dt
     else:
@@ -125,39 +122,43 @@ if __name__ == "__main__":
             f"wam-bic, wam-jsc, mg-ik, or mg-jnt",
         )
 
-    done = False
-    env.reset(domain_param=domain_param)
-    while not done:
-        # Simulate like in rollout()
-        for step in rollout:
-            # Display step by step like rollout()
-            t_start = time.time()
-            env.state = step.state
+    for idx_r, rollout in enumerate(rollouts):
+        print_cbt(f"Replaying rollout {idx_r + 1} of {len(rollouts)}", "c")
 
-            if not isinstance(env, SimPyEnv):
-                # Use reset() to hammer the current state into MuJoCo / Rcs at evey step
-                env.reset(init_state=step.state)
+        done = False
+        env.reset(domain_param=domain_param)
 
-            do_sleep = True
-            if pyrado.mujoco_loaded:
-                from pyrado.environments.mujoco.base import MujocoSimEnv
+        while not done:
+            # Simulate like in rollout()
+            for step in rollout:
+                # Display step by step like rollout()
+                t_start = time.time()
+                env.state = step.state
 
-                if isinstance(env, MujocoSimEnv):
-                    # MuJoCo environments seem to crash on time.sleep()
-                    do_sleep = False
+                if not isinstance(env, SimPyEnv):
+                    # Use reset() to hammer the current state into MuJoCo / Rcs at evey step
+                    env.reset(init_state=step.state)
 
-            env.render(RenderMode(video=True))
+                do_sleep = True
+                if pyrado.mujoco_loaded:
+                    from pyrado.environments.mujoco.base import MujocoSimEnv
 
-            if do_sleep:
-                # Measure time spent and sleep if needed
-                t_end = time.time()
-                t_sleep = env.dt + t_start - t_end
-                if t_sleep > 0:
-                    time.sleep(t_sleep)
+                    if isinstance(env, MujocoSimEnv):
+                        # MuJoCo environments seem to crash on time.sleep()
+                        do_sleep = False
 
-            # Stop when recorded rollout stopped
-            if step.done:
-                break
+                env.render(RenderMode(text=args.verbose, video=args.animation, render=args.render))
 
-        if input("Stop replaying [y]? Or play next [any other]? ").lower() == "y":
-            break
+                if do_sleep:
+                    # Measure time spent and sleep if needed
+                    t_end = time.time()
+                    t_sleep = env.dt + t_start - t_end
+                    if t_sleep > 0:
+                        time.sleep(t_sleep)
+
+                # Stop when recorded rollout stopped
+                if step.done:
+                    break
+
+            if not input("Replay [y]? Or play next [any other]? ").lower() == "y":
+                done = True

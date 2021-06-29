@@ -69,17 +69,16 @@ if __name__ == "__main__":
     env_sim = MiniGolfJointCtrlSim(**env_sim_hparams)
 
     # Set up environment
-    # env_real = MiniGolfJointCtrlSim(
-    #     physicsEngine="Bullet",
-    #     dt=0.01,
-    #     max_steps=int(8 / 0.01),
-    #     checkJointLimits=True,
-    #     fixedInitState=True,
-    #     graphFileName="gMiniGolf_gt.xml",
-    #     physicsConfigFile="pMiniGolf_gt.xml",
-    # )
-    env_real = osp.join(pyrado.EVAL_DIR, "mg-jnt_100Hz_8s_filt")
-    num_real_rollouts = 1
+    env_real = MiniGolfJointCtrlSim(
+        physicsEngine="Bullet",
+        dt=0.01,
+        max_steps=int(8 / 0.01),
+        checkJointLimits=True,
+        fixedInitState=True,
+        graphFileName="gMiniGolf_gt.xml",
+        physicsConfigFile="pMiniGolf_gt.xml",
+    )
+    # env_real = osp.join(pyrado.EVAL_DIR, "mg-jnt_100Hz_8s_filt")
 
     # Behavioral policy
     policy_hparam = dict(t_strike_end=0.5)
@@ -182,7 +181,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=1,
         num_components=20,
-        num_real_rollouts=num_real_rollouts,
+        num_real_rollouts=2,
         num_sim_per_round=50000,
         num_sbi_rounds=1,
         simulation_batch_size=10,
@@ -200,7 +199,7 @@ if __name__ == "__main__":
             show_train_summary=False,  # default: False
             # max_num_epochs=5,  # only use for debugging
         ),
-        num_workers=1,
+        num_workers=20,
     )
     algo = BayesSim(
         save_dir=ex_dir,
