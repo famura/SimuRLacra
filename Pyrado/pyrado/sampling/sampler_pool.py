@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 import os
 import traceback
+import warnings
 from copy import deepcopy
 from enum import Enum, auto
 from queue import Empty
@@ -122,7 +123,7 @@ class _WorkerInfo:
 
     def invoke_start(self, func, *args, **kwargs):
         if not self._process.is_alive():
-            raise RuntimeError("Worker has terminated")
+            raise RuntimeError("Worker has terminated!")
         if self._pending:
             raise RuntimeError("There is still a pending call waiting for completion.")
         # Send to slave
@@ -182,7 +183,8 @@ class _WorkerInfo:
 
     def stop(self):
         if self._pending:
-            raise RuntimeError("There is still a pending call waiting for completion.")
+            warnings.warn("There is still a pending call waiting for completion.", UserWarning)
+
         # Send stop signal
         self._to_slave.put(_CMD_STOP)
 
@@ -403,9 +405,9 @@ class SamplerPool:
         determinism across different number of workers.
 
         :param n: minimum number of samples to collect
-        :param func: sampler function. Must be pickleable.
+        :param func: sampler function, must be pickleable
         :param args: remaining positional args are passed to the function
-        :param collect_progressbar: tdqm progress bar to use; default None
+        :param collect_progressbar: `tdqm` progress bar to use; default None
         :param min_runs: optionally specify a minimum amount of runs to be executed before returning
         :param kwargs: remaining keyword args are passed to the function
         :return: list of results
