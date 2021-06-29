@@ -1,0 +1,324 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Pyrado &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Pyrado</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pyrado">
+<h1>Pyrado<a class="headerlink" href="#pyrado" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyrado.html">pyrado</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyrado.html#module-pyrado">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.algorithms.html">algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms.test_algorithms">test_algorithms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms.test_meta">test_meta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms.test_stopping_criteria">test_stopping_criteria</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms.test_utils">test_utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.environment_wrappers.html">environment_wrappers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.mock_env">mock_env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_action_delay">test_action_delay</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_action_discrete">test_action_discrete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_action_downsampling">test_action_downsampling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_action_noise">test_action_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_action_normalization">test_action_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_combination">test_combination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_domain_param_transformation">test_domain_param_transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_domain_randomization">test_domain_randomization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_observation_normalization">test_observation_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_observation_partial">test_observation_partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_observation_velfilt">test_observation_velfilt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.conftest">conftest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_domain_randomization">test_domain_randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_environments">test_environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_exploration">test_exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_logger">test_logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_plotting">test_plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_policies">test_policies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_rollout_result">test_rollout_result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_sampling">test_sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_set_seed">test_set_seed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_spaces">test_spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_step_logger">test_step_logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_tasks">test_tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_tensor_utils">test_tensor_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests.test_utils">test_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html#module-tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
