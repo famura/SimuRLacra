@@ -27,14 +27,14 @@ __Pros__
 * __Deterministic parallel sampling.__ The sampling is deterministic when conditioned on the seed.
 * __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
 * __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
-* __Tested integration of [BoTorch](https://botorch.org/), and [Optuna](https://optuna.org/)__.
+* __Tested integration of [BoTorch](https://botorch.org/), [Optuna](https://optuna.org/)__, and [sbi](https://github.com/mackelab/sbi).
 * __Detailed [documentation](https://famura.github.io/SimuRLacra/)__.
 
 __Cons__  
 * __No vision-based environments/tasks.__ In principle there is nothing stopping you from integrating computer vision into SimuRLacra. However, I assume there are better suited frameworks out there.
 * __Without bells and whistles.__ The implementations (especially the algorithms) do not focus on performance. After all, this framework was created to understand and prototype things. However, improvement suggestions are always welcome.
 * __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
-* __Unfinished GPU-support.__ At the moment the porting of the policies is implemented but not fully tested. The GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
+* __Moderate GPU-support.__ All policies can run on a GPU. However, the GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
 
 SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4, 1.7 (deprecated) and 1.8 (recommended).
 The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
@@ -333,33 +333,21 @@ Depending on the libraries install on your machine, you might receive the linker
 In otder to solve this error, link the z library to the necessary targets by editing the `PATH_TO/SimuRLacra/Rcs/bin/CMakeLists.txt` replacing
 ```
 TARGET_LINK_LIBRARIES(Rcs RcsCore RcsGui RcsGraphics RcsPhysics)
-```
-by
-```
-TARGET_LINK_LIBRARIES(Rcs RcsCore RcsGui RcsGraphics RcsPhysics z)
-```
-and
-```
 TARGET_LINK_LIBRARIES(TestGeometry RcsCore RcsGui RcsGraphics RcsPhysics)
 ```
 by
 ```
+TARGET_LINK_LIBRARIES(Rcs RcsCore RcsGui RcsGraphics RcsPhysics z)
 TARGET_LINK_LIBRARIES(TestGeometry RcsCore RcsGui RcsGraphics RcsPhysics z)
 ```
 The same goes for `PATH_TO/SimuRLacra/Rcs/examples/CMakeLists.txt` where you replace
 ```
 TARGET_LINK_LIBRARIES(ExampleForwardKinematics RcsCore RcsGui RcsGraphics)
-```
-by
-```
-TARGET_LINK_LIBRARIES(ExampleForwardKinematics RcsCore RcsGui RcsGraphics z)
-```
-and 
-```
 TARGET_LINK_LIBRARIES(ExampleKinetics RcsCore RcsGui RcsGraphics RcsPhysics)
 ```
 by
 ```
+TARGET_LINK_LIBRARIES(ExampleForwardKinematics RcsCore RcsGui RcsGraphics z)
 TARGET_LINK_LIBRARIES(ExampleKinetics RcsCore RcsGui RcsGraphics RcsPhysics z)
 ```
 
