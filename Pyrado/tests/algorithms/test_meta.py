@@ -27,13 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
-from typing import List
+from typing import List, Optional
 
 import pytest
 import sbi.utils as sbiutils
+import torch as to
 import torch.nn as nn
 from sbi.inference import SNPE_C
 
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.hc import HCNormal
@@ -75,7 +77,7 @@ from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
-from pyrado.policies.features import *
+from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.feed_back.fnn import FNN, FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
@@ -576,8 +578,8 @@ def test_sbi_embedding(
     num_segments: int,
     len_segments: int,
     stop_on_done: bool,
-    state_mask_labels: Union[None, List[str]],
-    act_mask_labels: Union[None, List[str]],
+    state_mask_labels: Optional[List[str]],
+    act_mask_labels: Optional[List[str]],
 ):
     pyrado.set_seed(0)
 

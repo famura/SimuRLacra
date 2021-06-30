@@ -33,6 +33,7 @@ import pytest
 import torch as to
 from torch.distributions.normal import Normal
 
+import pyrado
 from pyrado.algorithms.meta.adr import RewardGenerator
 from pyrado.algorithms.utils import compute_action_statistics, get_grad_via_torch, until_thold_exceeded
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer_omo
@@ -46,13 +47,7 @@ from pyrado.sampling.step_sequence import StepSequence
 
 
 @to.no_grad()
-@pytest.mark.parametrize(
-    "env",
-    [
-        "default_pend",
-    ],
-    indirect=True,
-)
+@pytest.mark.parametrize("env", ["default_pend"], indirect=True)
 @pytest.mark.parametrize(
     "policy",
     [
@@ -113,6 +108,8 @@ def test_action_statistics(env: SimEnv, policy: Policy):
 @pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_omo"], indirect=True)
 def test_adr_reward_generator(env):
+    pyrado.set_seed(0)
+
     reference_env = env
     random_env = deepcopy(env)
     reward_generator = RewardGenerator(

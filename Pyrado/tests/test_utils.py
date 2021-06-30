@@ -30,11 +30,15 @@ import copy
 import functools
 import os.path as osp
 from math import ceil
+from typing import Union
 
+import numpy as np
 import pytest
+import torch as to
 import torch.nn as nn
 from tqdm import tqdm
 
+import pyrado
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.iteration import IterationTracker
 from pyrado.policies.feed_forward.dummy import DummyPolicy
@@ -49,6 +53,7 @@ from pyrado.utils.checks import (
     check_all_shapes_equal,
     check_all_types_equal,
     is_iterator,
+    is_sequence,
 )
 from pyrado.utils.data_processing import (
     MinMaxScaler,
@@ -59,7 +64,14 @@ from pyrado.utils.data_processing import (
     normalize,
     scale_min_max,
 )
-from pyrado.utils.data_types import *
+from pyrado.utils.data_types import (
+    DSSpec,
+    LinDSSpec,
+    MSDDSSpec,
+    merge_dicts,
+    repeat_interleave,
+    update_matching_keys_recursively,
+)
 from pyrado.utils.functions import noisy_nonlin_fcn, skyline
 from pyrado.utils.input_output import completion_context, print_cbt_once
 from pyrado.utils.math import cosine_similarity, cov, logmeanexp, numerical_differentiation_coeffs, rmse

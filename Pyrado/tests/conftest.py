@@ -64,14 +64,10 @@ from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.policies.recurrent.rnn import GRUPolicy, LSTMPolicy, RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHeadedLSTMPolicy, TwoHeadedRNNPolicy
-
-# Set default torch dtype globally to avoid inconsistent errors depending on the test run order
 from pyrado.spaces import BoxSpace
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.functions import skyline
 
-
-torch.set_default_dtype(to.float32)
 
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
@@ -123,6 +119,9 @@ m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason="CUDA is no
 
 # Set multiprocessing start method to spawn for tests
 mp.set_start_method("spawn", force=True)
+
+# Set default torch dtype globally to avoid inconsistent errors depending on the test run order
+torch.set_default_dtype(to.float32)
 
 
 # --------------------

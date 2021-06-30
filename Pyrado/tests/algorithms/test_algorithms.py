@@ -27,11 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
+from typing import Callable
 
+import numpy as np
 import pytest
+import torch as to
 from tests.conftest import m_needs_cuda
 from tests.environment_wrappers.mock_env import MockEnv
 
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.hc import HCHyper, HCNormal
@@ -55,13 +59,12 @@ from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
-from pyrado.policies.features import *
+from pyrado.policies.features import FeatureStack, RFFeat, const_feat, identity_feat
 from pyrado.policies.feed_back.fnn import FNN, DiscreteActQValPolicy, FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.recurrent.rnn import RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
-from pyrado.sampling.sequences import *
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.data_types import EnvSpec

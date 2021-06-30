@@ -28,12 +28,15 @@
 
 import random
 import time
-from typing import Optional
+from typing import Callable, List, Optional
 
+import numpy as np
 import pytest
+import torch as to
 from tests.conftest import m_needs_bullet, m_needs_cuda
 from torch.distributions.multivariate_normal import MultivariateNormal
 
+import pyrado
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.utils import RolloutSavingWrapper
@@ -43,7 +46,6 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
-from pyrado.policies.features import *
 from pyrado.policies.feed_back.fnn import FNN
 from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.sampling.bootstrapping import bootstrap_ci
@@ -53,8 +55,15 @@ from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler, ParameterSamplingResult
 from pyrado.sampling.rollout import rollout
-from pyrado.sampling.sampler_pool import *
-from pyrado.sampling.sequences import *
+from pyrado.sampling.sampler_pool import SamplerPool
+from pyrado.sampling.sequences import (
+    sequence_add_init,
+    sequence_const,
+    sequence_nlog2,
+    sequence_plus_one,
+    sequence_rec_double,
+    sequence_rec_sqrt,
+)
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
 
