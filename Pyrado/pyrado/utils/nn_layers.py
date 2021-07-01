@@ -218,4 +218,5 @@ class MirrConv1d(_ConvNd):
                 self.dilation,
                 self.groups,
             )
-        return F.conv1d(inp, mirr_weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
+        else:
+            return F.conv1d(inp, mirr_weight, self.bias, self.stride, self.padding, self.dilation, self.groups)

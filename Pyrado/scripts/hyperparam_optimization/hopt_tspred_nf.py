@@ -94,7 +94,6 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
 
     # Policy
     policy_hparam = dict(
-        dt=0.02 if "oscillation" in data_set_name else 1.0,
         hidden_size=trial.suggest_int("policy_hidden_size", 2, 51),
         obs_layer=None,
         activation_nonlin=fcn_from_str(

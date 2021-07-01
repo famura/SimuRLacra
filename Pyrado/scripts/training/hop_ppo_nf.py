@@ -38,6 +38,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.mujoco.openai_hopper import HopperSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(HopperSim.name, f"{PPO.name}_{FNNPolicy.name}")
+    ex_dir = setup_experiment(HopperSim.name, f"{PPO.name}_{NFPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -59,8 +60,23 @@ if __name__ == "__main__":
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    policy = FNNPolicy(spec=env.spec, **policy_hparam)
+    policy_hparam = dict(
+        hidden_size=21,
+        obs_layer=None,
+        activation_nonlin=to.tanh,
+        mirrored_conv_weights=True,
+        conv_out_channels=1,
+        conv_kernel_size=None,
+        conv_padding_mode="circular",
+        tau_init=10.0,
+        tau_learnable=True,
+        kappa_init=1e-3,
+        kappa_learnable=True,
+        potential_init_learnable=True,
+        use_cuda=False,
+    )
+    policy = NFPolicy(env.spec, **policy_hparam)
+
     # Critic
     vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)

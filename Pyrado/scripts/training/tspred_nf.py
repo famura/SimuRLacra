@@ -94,7 +94,6 @@ if __name__ == "__main__":
 
     # Policy
     policy_hparam = dict(
-        dt=dt,
         hidden_size=21,
         obs_layer=None,
         activation_nonlin=to.sigmoid,
