@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrado</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">colorama</span> <span class="kn">import</span> <span class="n">init</span>
+
+
+<span class="c1"># Pyrado version number</span>
+<span class="n">VERSION</span> <span class="o">=</span> <span class="s2">&quot;0.7&quot;</span>
+
+<span class="c1"># Provide global data directories</span>
+<span class="n">PERMA_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;perma&quot;</span><span class="p">)</span>
+<span class="n">EVAL_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;perma&quot;</span><span class="p">,</span> <span class="s2">&quot;evaluation&quot;</span><span class="p">)</span>
+<span class="n">EXP_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;perma&quot;</span><span class="p">,</span> <span class="s2">&quot;experiments&quot;</span><span class="p">)</span>
+<span class="n">HPARAM_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;perma&quot;</span><span class="p">,</span> <span class="s2">&quot;hyperparams&quot;</span><span class="p">)</span>
+<span class="n">TEMP_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">)</span>
+<span class="n">MUJOCO_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;environments&quot;</span><span class="p">,</span> <span class="s2">&quot;mujoco&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
+<span class="n">PANDA_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;environments&quot;</span><span class="p">,</span> <span class="s2">&quot;pysim&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Linux&quot;</span><span class="p">:</span>
+    <span class="n">RENDER_PIPELINE_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thirdParty&quot;</span><span class="p">,</span> <span class="s2">&quot;RenderPipeline&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">RENDER_PIPELINE_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thirdParty&quot;</span><span class="p">,</span> <span class="s2">&quot;RenderPipeline&quot;</span><span class="p">)</span>
+
+<span class="c1"># Set the availability of the physics-engine based simulations to False. These are set to True in the respective</span>
+<span class="c1"># top-level __init__.py files, if they can be imported successfully</span>
+<span class="n">rcsenv_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">mujoco_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># Set default data type for PyTorch to float32. Sadly this is not possible for numpy.</span>
+<span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># Reset the colorama style after each print</span>
+<span class="n">init</span><span class="p">(</span><span class="n">autoreset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Set a uniform printing style</span>
+<span class="n">to</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1"># Public API variables</span>
+<span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+<span class="n">nan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+<span class="n">sym_success</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u2714</span><span class="s2">&quot;</span>
+<span class="n">sym_failure</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u2716</span><span class="s2">&quot;</span>
+<span class="n">PathLike</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;PathLike&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)</span>  <span class="c1"># PEP 519</span>
+
+<span class="c1"># Include error classes</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.exceptions</span> <span class="kn">import</span> <span class="n">BaseErr</span><span class="p">,</span> <span class="n">KeyErr</span><span class="p">,</span> <span class="n">PathErr</span><span class="p">,</span> <span class="n">ShapeErr</span><span class="p">,</span> <span class="n">TypeErr</span><span class="p">,</span> <span class="n">ValueErr</span>
+
+<span class="c1"># Include saving and loading functions</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">load</span><span class="p">,</span> <span class="n">save</span>
+
+
+<span class="c1"># Set style for printing and plotting</span>
+<span class="n">use_pgf</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="kn">from</span> <span class="nn">pyrado</span> <span class="kn">import</span> <span class="n">plotting</span>
+
+
+<span class="c1"># Figure sizes (width, height) [inch]; measures are taken w.r.t. the document&#39;s line length</span>
+<span class="n">figsize_thesis_1percol_18to10</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">5.8</span> <span class="o">/</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">figsize_thesis_1percol_16to10</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">5.8</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">figsize_thesis_2percol_18to10</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.9</span><span class="p">,</span> <span class="mf">2.9</span> <span class="o">/</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">figsize_thesis_2percol_16to10</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.9</span><span class="p">,</span> <span class="mf">2.9</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">figsize_thesis_2percol_square</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.9</span><span class="p">,</span> <span class="mf">2.9</span><span class="p">)</span>
+<span class="n">figsize_IEEE_1col_18to10</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3.5</span> <span class="o">/</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">figsize_IEEE_2col_18to10</span> <span class="o">=</span> <span class="p">(</span><span class="mf">7.16</span><span class="p">,</span> <span class="mf">7.16</span> <span class="o">/</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">figsize_IEEE_1col_square</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">)</span>
+<span class="n">figsize_IEEE_2col_square</span> <span class="o">=</span> <span class="p">(</span><span class="mf">7.16</span><span class="p">,</span> <span class="mf">7.16</span><span class="p">)</span>
+<span class="n">figsize_JMLR_warpfig</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">)</span>
+<span class="n">figsize_CoRL_6perrow_square</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+
+<span class="c1"># Time and date formats</span>
+<span class="n">timestamp_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S&quot;</span>
+<span class="n">timestamp_date_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span>
+
+<span class="c1"># Set the public API</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;VERSION&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TEMP_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PERMA_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EVAL_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EXP_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HPARAM_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MUJOCO_ASSETS_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PANDA_ASSETS_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RENDER_PIPELINE_DIR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rcsenv_loaded&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mujoco_loaded&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;use_pgf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;inf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;nan&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PathLike&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sym_success&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sym_failure&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;set_seed&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;timestamp_format&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;timestamp_date_format&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">PYRADO_BASE_SEED</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="set_seed"><a class="viewcode-back" href="../pyrado.html#pyrado.set_seed">[docs]</a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">sub_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sub_sub_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the seed for the random number generators. The actual seed is computed from the base seed `seed´, and the first-</span>
+<span class="sd">    and second-order sub-seeds (`sub_seed` and `sub_sub_seed`, respectively). All of these seeds get concatenated in a</span>
+<span class="sd">    string which is then MD5-hashed and crushed into a 32-bit integer.</span>
+
+<span class="sd">    :param seed: base seed, pass `None` to skip seeding; must be an unsigned 10-bit integer</span>
+<span class="sd">    :param sub_seed: sub-seed, defaults to zero; must be an unsigned 14-bit integer; overflows will be cast back into</span>
+<span class="sd">                     the interval by masking, i.e., only the last 14 bits will be kept; underflows are first made</span>
+<span class="sd">                     positive by taking the absolute value</span>
+<span class="sd">    :param sub_sub_seed: sub-sub-seed, defaults to zero; must be an unsigned 8-bit integer; underflows will be cast back</span>
+<span class="sd">                         into the interval by taking the absolute value</span>
+<span class="sd">    :param verbose: if `True` the seed is printed</span>
+<span class="sd">    :return: the seed that was set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">global</span> <span class="n">PYRADO_BASE_SEED</span>
+
+    <span class="c1"># The better parameter name would be &#39;base_seed&#39;, but keep &#39;seed&#39; for backward compatibility.</span>
+    <span class="n">base_seed</span> <span class="o">=</span> <span class="n">seed</span>
+    <span class="k">del</span> <span class="n">seed</span>
+    <span class="k">if</span> <span class="n">sub_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sub_seed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">sub_sub_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sub_sub_seed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Base seed </span><span class="si">{</span><span class="n">base_seed</span><span class="si">}</span><span class="s2"> is not an integer -- the random number generators&#39; seeds were not set.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_seed</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">sub_seed</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">sub_sub_seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">32</span><span class="p">)</span>
+
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">to</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">PYRADO_BASE_SEED</span> <span class="o">=</span> <span class="n">base_seed</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Set the random number generators&#39; seed to </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2"> (computed from base seed </span><span class="si">{</span><span class="n">base_seed</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;sub-seed </span><span class="si">{</span><span class="n">sub_seed</span><span class="si">}</span><span class="s2">, and sub-sub-seed </span><span class="si">{</span><span class="n">sub_sub_seed</span><span class="si">}</span><span class="s2">).&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">seed</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_base_seed</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Gets the last seed that was set with `pyrado.set_seed`. If no seed was every set, `None`.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">PYRADO_BASE_SEED</span>
+    <span class="k">return</span> <span class="n">PYRADO_BASE_SEED</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,1085 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tests.test_sampling &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.regression.html">regression</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tests.test_sampling</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tests.test_sampling</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_cuda</span>
+<span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.ppo</span> <span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">RolloutSavingWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">NormalActNoiseExplStrat</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_back.fnn</span> <span class="kn">import</span> <span class="n">FNN</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.dummy</span> <span class="kn">import</span> <span class="n">IdlePolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.cvar_sampler</span> <span class="kn">import</span> <span class="n">select_cvar</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">to_format</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.hyper_sphere</span> <span class="kn">import</span> <span class="n">sample_from_hyper_sphere_surface</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterExplorationSampler</span><span class="p">,</span> <span class="n">ParameterSamplingResult</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="n">SamplerPool</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">sequence_add_init</span><span class="p">,</span>
+    <span class="n">sequence_const</span><span class="p">,</span>
+    <span class="n">sequence_nlog2</span><span class="p">,</span>
+    <span class="n">sequence_plus_one</span><span class="p">,</span>
+    <span class="n">sequence_rec_double</span><span class="p">,</span>
+    <span class="n">sequence_rec_sqrt</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
+
+
+<div class="viewcode-block" id="test_sampler_pool"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_pool">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;arg&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">89</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_sampler_pool</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">invoke_all_map</span><span class="p">(</span><span class="n">_cb_test_eachhandler</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">arg</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">_cb_test_eachhandler</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">arg</span> <span class="o">*</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">_cb_test_collecthandler</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+    <span class="n">nsample</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nsample</span><span class="p">,</span> <span class="n">nsample</span>
+
+
+<div class="viewcode-block" id="test_sampler_collect"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_collect">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_threads&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_samples&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_sampler_collect</span><span class="p">(</span><span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">min_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
+
+    <span class="c1"># Run the collector</span>
+    <span class="n">cr</span><span class="p">,</span> <span class="n">cn</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_collect</span><span class="p">(</span><span class="n">min_samples</span><span class="p">,</span> <span class="n">_cb_test_collecthandler</span><span class="p">)</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">min_samples</span> <span class="o">&lt;=</span> <span class="n">cn</span>
+    <span class="k">assert</span> <span class="n">min_samples</span> <span class="o">&lt;=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_sampler_collect_minrun"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_collect_minrun">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_threads&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_samples&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_runs&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_sampler_collect_minrun</span><span class="p">(</span><span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">min_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">min_runs</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
+
+    <span class="c1"># Run the collector</span>
+    <span class="n">cr</span><span class="p">,</span> <span class="n">cn</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_collect</span><span class="p">(</span><span class="n">min_samples</span><span class="p">,</span> <span class="n">_cb_test_collecthandler</span><span class="p">,</span> <span class="n">min_runs</span><span class="o">=</span><span class="n">min_runs</span><span class="p">)</span>
+
+    <span class="n">pool</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">min_samples</span> <span class="o">&lt;=</span> <span class="n">cn</span>
+    <span class="k">assert</span> <span class="n">min_samples</span> <span class="o">&lt;=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">min_runs</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_to_format"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_to_format">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;data_type&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)])</span>
+<span class="k">def</span> <span class="nf">test_to_format</span><span class="p">(</span><span class="n">data_type</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+    <span class="c1"># Create some tensors to convert</span>
+    <span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="c1"># Test the conversion and typing from numpy to PyTorch</span>
+    <span class="n">converted_ndarray</span> <span class="o">=</span> <span class="n">to_format</span><span class="p">(</span><span class="n">ndarray</span><span class="p">,</span> <span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">data_type</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">converted_ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="n">new_type</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">float64</span> <span class="k">if</span> <span class="n">data_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">data_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># passing None must not change the type</span>
+    <span class="k">assert</span> <span class="n">converted_ndarray</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">new_type</span>
+
+    <span class="c1"># Test the conversion and typing from PyTorch to numpy</span>
+    <span class="n">converted_tensor</span> <span class="o">=</span> <span class="n">to_format</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="n">data_type</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">converted_tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">new_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="k">if</span> <span class="n">data_type</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">data_type</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># passing None must not change the type</span>
+    <span class="k">assert</span> <span class="n">converted_tensor</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">new_type</span></div>
+
+
+<div class="viewcode-block" id="test_select_cvar"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_select_cvar">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;epsilon&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_ro&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_select_cvar</span><span class="p">(</span><span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">num_ro</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="c1"># Create rollouts with known discounted rewards</span>
+    <span class="n">rollouts</span> <span class="o">=</span> <span class="p">[</span><span class="n">StepSequence</span><span class="p">(</span><span class="n">rewards</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">observations</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_ro</span><span class="p">)]</span>
+    <span class="c1"># Shuffle data to put in</span>
+    <span class="n">ro_shuf</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rollouts</span><span class="p">)</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">ro_shuf</span><span class="p">)</span>
+
+    <span class="c1"># Select cvar quantile</span>
+    <span class="n">ro_cv</span> <span class="o">=</span> <span class="n">select_cvar</span><span class="p">(</span><span class="n">ro_shuf</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Compute expected return of subselection</span>
+    <span class="n">cv</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">ro</span><span class="p">:</span> <span class="n">ro</span><span class="o">.</span><span class="n">discounted_return</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">ro_cv</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro_cv</span><span class="p">)</span>
+
+    <span class="c1"># This should be equal to the epsilon-quantile of the integer sequence</span>
+    <span class="n">nq</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_ro</span> <span class="o">*</span> <span class="n">epsilon</span><span class="p">)</span>
+    <span class="n">cv_expected</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nq</span><span class="p">))</span> <span class="o">/</span> <span class="n">nq</span>
+
+    <span class="k">assert</span> <span class="n">cv</span> <span class="o">==</span> <span class="n">cv_expected</span></div>
+
+
+<div class="viewcode-block" id="test_sample_from_unit_sphere_surface"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;num_dim, method&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Marsaglia&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Marsaglia&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_sample_from_unit_sphere_surface</span><span class="p">(</span><span class="n">num_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">sample_from_hyper_sphere_surface</span><span class="p">(</span><span class="n">num_dim</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="mf">0.95</span> <span class="o">&lt;=</span> <span class="n">to</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.05</span></div>
+
+
+<div class="viewcode-block" id="test_rollout_wo_exploration"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_rollout_wo_exploration">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">],</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;idle_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;dummy_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;time_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;pst_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;linear_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;rnn_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;lstm_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;gru_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;adn_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;nf_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;thfnn_policy&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;thgru_policy&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;bob_idle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_dummy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_time&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_pst&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_lin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_fnn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_rnn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_lstm&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_gru&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_adn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_nf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_thfnn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bob_thgru&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_rollout_wo_exploration</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">):</span>
+    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span></div>
+
+
+<div class="viewcode-block" id="test_rollout_wo_policy"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_rollout_wo_policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">,</span> <span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_rollout_wo_policy</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">):</span>
+        <span class="c1"># Callable must receive and return tensors</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">())</span>
+
+    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span></div>
+
+
+<div class="viewcode-block" id="test_reparametrization_trick"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_reparametrization_trick">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;mean, cov&quot;</span><span class="p">,</span>
+    <span class="p">[(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]))],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;2dim&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_reparametrization_trick</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
+        <span class="c1"># Sampling the the PyTorch distribution class</span>
+        <span class="n">distr_mvn</span> <span class="o">=</span> <span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">smpl_distr</span> <span class="o">=</span> <span class="n">distr_mvn</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+        <span class="c1"># The reparametrization trick done by PyTorch</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">smpl_distr_reparam</span> <span class="o">=</span> <span class="n">distr_mvn</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+        <span class="c1"># The reparametrization trick done by hand</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">smpl_reparam</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">to</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">mean</span><span class="p">))</span>
+
+        <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">smpl_distr</span><span class="p">,</span> <span class="n">smpl_distr_reparam</span><span class="p">)</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">smpl_distr</span><span class="p">,</span> <span class="n">smpl_reparam</span><span class="p">)</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">smpl_distr_reparam</span><span class="p">,</span> <span class="n">smpl_reparam</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_sequences"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sequences">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;plot&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visual</span><span class="p">)])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;sequence, x_init&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="n">sequence_const</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_plus_one</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_add_init</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_rec_double</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_rec_sqrt</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_nlog2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_const</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_plus_one</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_add_init</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_rec_double</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_rec_sqrt</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">sequence_nlog2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_sequences</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">x_init</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="c1"># Get the full sequence</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">x_full</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">x_full</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+        <span class="c1"># Plot the sequences</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">x_full</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">x_init</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="test_boostrap_methods"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_boostrap_methods">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">])])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">123</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;seed1&quot;</span><span class="p">,</span> <span class="s2">&quot;seed1&quot;</span><span class="p">,</span> <span class="s2">&quot;seed123&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_boostrap_methods</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+    <span class="c1"># Emperical bootstrap</span>
+    <span class="n">m_bs</span><span class="p">,</span> <span class="n">ci_bs_lo</span><span class="p">,</span> <span class="n">ci_bs_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># Percentile bootstrap</span>
+    <span class="c1"># Add one to the seed because with the MD5 seed calculation and so on, the lower quantiles are actually equal by</span>
+    <span class="c1"># chance. This seems to be the one-in-a-million case for this.</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">resampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">20</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">resampled</span><span class="p">)</span>
+    <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">95</span><span class="p">])</span>
+
+    <span class="c1"># You should operate on the deltas (emperical bootsrap) and not directly on the statistic from the resampled data</span>
+    <span class="c1"># (percentile bootsrap)</span>
+    <span class="k">assert</span> <span class="n">ci_lo</span> <span class="o">!=</span> <span class="n">ci_bs_lo</span>
+    <span class="k">assert</span> <span class="n">ci_up</span> <span class="o">!=</span> <span class="n">ci_bs_up</span></div>
+
+
+<div class="viewcode-block" id="test_bootsrapping"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_bootsrapping">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">40</span><span class="p">,)),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">3</span><span class="p">))],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1dim-data&quot;</span><span class="p">,</span> <span class="s2">&quot;3dim-data&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_reps&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;100reps&quot;</span><span class="p">,</span> <span class="s2">&quot;1000reps&quot;</span><span class="p">,</span> <span class="s2">&quot;10000reps&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">123</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;seed1&quot;</span><span class="p">,</span> <span class="s2">&quot;seed12&quot;</span><span class="p">,</span> <span class="s2">&quot;seed123&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_bootsrapping</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+    <span class="c1"># Fully-fledged example</span>
+    <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span> <span class="o">&gt;=</span> <span class="n">ci_lo</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span> <span class="o">&lt;=</span> <span class="n">ci_up</span><span class="p">)</span>
+
+    <span class="n">m_bc</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m_bc</span> <span class="o">!=</span> <span class="n">m</span><span class="p">)</span>
+
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">m_t</span><span class="p">,</span> <span class="n">ci_lo_t</span><span class="p">,</span> <span class="n">ci_up_t</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">m</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">m_t</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m_t</span> <span class="o">&gt;=</span> <span class="n">ci_lo_t</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m_t</span> <span class="o">&lt;=</span> <span class="n">ci_up_t</span><span class="p">)</span>
+    <span class="c1"># Bounds are different (not generally wider) when assuming a t-distribution</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ci_lo</span> <span class="o">!=</span> <span class="n">ci_lo_t</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ci_up</span> <span class="o">!=</span> <span class="n">ci_up_t</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_param_expl_sampler"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_param_expl_sampler">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">],</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;default_bob&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn_policy&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob_fnnpol&quot;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;num_init_states_per_domain&quot;</span><span class="p">,</span> <span class="s2">&quot;fixed_init_state&quot;</span><span class="p">,</span> <span class="s2">&quot;num_domains&quot;</span><span class="p">],</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1rops-randinit&quot;</span><span class="p">,</span> <span class="s2">&quot;1rops-fixedinit&quot;</span><span class="p">,</span> <span class="s2">&quot;9rops-randinit&quot;</span><span class="p">,</span> <span class="s2">&quot;9rops-fixedinit&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1worker&quot;</span><span class="p">,</span> <span class="s2">&quot;4workers&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_param_expl_sampler</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+    <span class="n">num_init_states_per_domain</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">fixed_init_state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">num_domains</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Add randomizer</span>
+    <span class="n">pert</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pert</span><span class="p">)</span>
+
+    <span class="c1"># Create the sampler</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_init_states_per_domain</span><span class="p">,</span> <span class="n">num_domains</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">)</span>
+
+    <span class="c1"># Use some random parameters</span>
+    <span class="n">num_ps</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_ps</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fixed_init_state</span><span class="p">:</span>
+        <span class="c1"># Sample a custom init state</span>
+        <span class="n">init_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()]</span> <span class="o">*</span> <span class="n">num_init_states_per_domain</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Let the sampler forward to the env to randomly sample an init state</span>
+        <span class="n">init_states</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Do the sampling</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">param_sets</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">init_states</span><span class="o">=</span><span class="n">init_states</span><span class="p">)</span>
+
+    <span class="c1"># Check if the correct number of rollouts has been sampled</span>
+    <span class="k">assert</span> <span class="n">num_ps</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+    <span class="n">num_rollouts_per_param</span> <span class="o">=</span> <span class="n">num_init_states_per_domain</span> <span class="o">*</span> <span class="n">num_domains</span>
+    <span class="k">assert</span> <span class="n">num_ps</span> <span class="o">*</span> <span class="n">num_rollouts_per_param</span> <span class="o">==</span> <span class="n">samples</span><span class="o">.</span><span class="n">num_rollouts</span>
+    <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_rollouts_per_param</span>
+
+    <span class="c1"># Compare rollouts that should be matching</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts_per_param</span><span class="p">):</span>
+        <span class="c1"># Use the first parameter set as pivot</span>
+        <span class="n">piter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">pivot</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">piter</span><span class="p">)</span><span class="o">.</span><span class="n">rollouts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="c1"># Iterate through others</span>
+        <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">piter</span><span class="p">:</span>
+            <span class="n">other_ro</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">rollouts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="c1"># Compare domain params</span>
+            <span class="k">assert</span> <span class="n">pivot</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">other_ro</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span>
+            <span class="c1"># Compare first observation a.k.a. init state</span>
+            <span class="k">assert</span> <span class="n">pivot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">other_ro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_parameter_exploration_sampler"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_parameter_exploration_sampler">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_bob&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;linear_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lstm_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gru_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;adn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nf_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;thfnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;thgru_policy&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn&quot;</span><span class="p">,</span> <span class="s2">&quot;rnn&quot;</span><span class="p">,</span> <span class="s2">&quot;lstm&quot;</span><span class="p">,</span> <span class="s2">&quot;gru&quot;</span><span class="p">,</span> <span class="s2">&quot;adn&quot;</span><span class="p">,</span> <span class="s2">&quot;nf&quot;</span><span class="p">,</span> <span class="s2">&quot;thfnn&quot;</span><span class="p">,</span> <span class="s2">&quot;thgru&quot;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1worker&quot;</span><span class="p">,</span> <span class="s2">&quot;4workers&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_parameter_exploration_sampler</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="c1"># Use some random parameters</span>
+    <span class="n">num_ps</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_ps</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">)</span>
+
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span>
+        <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_domains</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span>
+    <span class="p">)</span>
+    <span class="n">psr</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">param_sets</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">psr</span><span class="p">,</span> <span class="n">ParameterSamplingResult</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">psr</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">num_ps</span></div>
+
+
+<div class="viewcode-block" id="test_parameter_exploration_sampler_deterministic"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_parameter_exploration_sampler_deterministic">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dummy_policy&quot;</span><span class="p">,</span> <span class="s2">&quot;idle_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="s2">&quot;idle&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_params&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_init_states_per_domain&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_domains&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;set_init_states&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;wo_init_states&quot;</span><span class="p">,</span> <span class="s2">&quot;w_init_states&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_parameter_exploration_sampler_deterministic</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+    <span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_init_states_per_domain</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_domains</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">set_init_states</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">param_sets</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_params</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">set_init_states</span><span class="p">:</span>
+        <span class="n">init_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_init_states_per_domain</span> <span class="o">*</span> <span class="n">num_domains</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">init_states</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">nums_workers</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">num_workers</span> <span class="ow">in</span> <span class="n">nums_workers</span><span class="p">:</span>
+        <span class="c1"># Reset the seed every time because sample() uses the root sampler. This does not matter for regular runs, but</span>
+        <span class="c1"># for this tests it is very relevant.</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">ParameterExplorationSampler</span><span class="p">(</span>
+                <span class="n">env</span><span class="p">,</span>
+                <span class="n">policy</span><span class="p">,</span>
+                <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="n">num_init_states_per_domain</span><span class="p">,</span>
+                <span class="n">num_domains</span><span class="o">=</span><span class="n">num_domains</span><span class="p">,</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+                <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">param_sets</span><span class="o">=</span><span class="n">param_sets</span><span class="p">,</span> <span class="n">init_states</span><span class="o">=</span><span class="n">init_states</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Test that the rollouts for all number of workers are equal.</span>
+    <span class="k">for</span> <span class="n">psr_a</span><span class="p">,</span> <span class="n">psr_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_results</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="n">psr_a</span><span class="o">.</span><span class="n">parameters</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">psr_b</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">psr_a</span><span class="o">.</span><span class="n">mean_returns</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">psr_b</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">psr_a</span><span class="o">.</span><span class="n">num_rollouts</span> <span class="o">==</span> <span class="n">psr_b</span><span class="o">.</span><span class="n">num_rollouts</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">psr_a</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">psr_b</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">psr_a</span><span class="o">.</span><span class="n">rollouts</span><span class="p">,</span> <span class="n">psr_b</span><span class="o">.</span><span class="n">rollouts</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">rewards</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">actions</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_parallel_rollout_sampler"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_parallel_rollout_sampler">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_bob&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;linear_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lstm_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gru_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;adn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nf_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;thfnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;thgru_policy&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn&quot;</span><span class="p">,</span> <span class="s2">&quot;rnn&quot;</span><span class="p">,</span> <span class="s2">&quot;lstm&quot;</span><span class="p">,</span> <span class="s2">&quot;gru&quot;</span><span class="p">,</span> <span class="s2">&quot;adn&quot;</span><span class="p">,</span> <span class="s2">&quot;nf&quot;</span><span class="p">,</span> <span class="s2">&quot;thfnn&quot;</span><span class="p">,</span> <span class="s2">&quot;thgru&quot;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1worker&quot;</span><span class="p">,</span> <span class="s2">&quot;4workers&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_parallel_rollout_sampler</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">min_rollouts</span> <span class="o">=</span> <span class="n">num_workers</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># make sure every worker samples at least once</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">)</span>
+    <span class="n">ros</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ros</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_rollouts</span></div>
+
+
+<div class="viewcode-block" id="test_cuda_sampling_w_dr"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_cuda_sampling_w_dr">[docs]</a><span class="nd">@m_needs_cuda</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;default_bob&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;default_qbb&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;fnn_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fnn_policy_cuda&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lstm_policy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lstm_policy_cuda&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fnn&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn_cuda&quot;</span><span class="p">,</span> <span class="s2">&quot;lstm&quot;</span><span class="p">,</span> <span class="s2">&quot;lstm_cuda&quot;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1worker&quot;</span><span class="p">,</span> <span class="s2">&quot;2workers&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_cuda_sampling_w_dr</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="test_sequential_equals_parallel"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sequential_equals_parallel">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">&quot;default_pend&quot;</span><span class="p">,</span> <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_qqsurcs_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">)],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pend&quot;</span><span class="p">,</span> <span class="s2">&quot;qqsurcs_bt&quot;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dummy_policy&quot;</span><span class="p">,</span> <span class="s2">&quot;idle_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="s2">&quot;idle&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_sequential_equals_parallel</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="c1"># Do the rollouts explicitly sequentially without a sampler.</span>
+    <span class="c1"># Do not set the init state to check if this was sampled correctly.</span>
+    <span class="n">ros_sequential</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">):</span>
+        <span class="n">ros_sequential</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sub_seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sub_sub_seed</span><span class="o">=</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="c1"># Do the rollouts in parallel with a sampler.</span>
+    <span class="c1"># Do not set the init state to check if this was sampled correctly.</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ros_parallel</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_parallel</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_rollouts</span>
+
+    <span class="k">for</span> <span class="n">ro_s</span><span class="p">,</span> <span class="n">ro_p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_sequential</span><span class="p">,</span> <span class="n">ros_parallel</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">ro_s</span><span class="o">.</span><span class="n">rewards</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_p</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ro_s</span><span class="o">.</span><span class="n">observations</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_p</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ro_s</span><span class="o">.</span><span class="n">actions</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_p</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_parallel_sampling_deterministic_wo_min_steps"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_parallel_sampling_deterministic_wo_min_steps">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dummy_policy&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>  <span class="c1"># Once less, equal, and more rollouts than workers.</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;init_states&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;domain_params&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">[{</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]])</span>
+<span class="k">def</span> <span class="nf">test_parallel_sampling_deterministic_wo_min_steps</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+    <span class="n">min_rollouts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">init_states</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">domain_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span>
+<span class="p">):</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="k">if</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">init_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">init_states</span><span class="p">)]</span>
+
+    <span class="n">nums_workers</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">all_rollouts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">num_workers</span> <span class="ow">in</span> <span class="n">nums_workers</span><span class="p">:</span>
+        <span class="c1"># Act an exploration strategy to test if that works too (it should as the policy gets pickled and distributed</span>
+        <span class="c1"># anyway).</span>
+        <span class="n">all_rollouts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
+                <span class="n">env</span><span class="p">,</span>
+                <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+                <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span>
+                <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">init_states</span><span class="o">=</span><span class="n">init_states</span><span class="p">,</span> <span class="n">domain_params</span><span class="o">=</span><span class="n">domain_params</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Test that the rollouts are actually different, i.e., that not the same seed is used for all rollouts.</span>
+    <span class="k">for</span> <span class="n">ros</span> <span class="ow">in</span> <span class="n">all_rollouts</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ros</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">ros</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">b</span><span class="p">]:</span>
+            <span class="c1"># The idle policy iy deterministic and always outputs the zero action. Hence, do not check that the actions</span>
+            <span class="c1"># are different when using the idle policy.</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">IdlePolicy</span><span class="p">):</span>
+                <span class="c1"># The Quanser Ball Balancer is a deterministic environment (conditioned on the initial state). As the</span>
+                <span class="c1"># idle policy is a deterministic policy, this will result in the rollouts being equivalent for each</span>
+                <span class="c1"># initial state, so do not check for difference if the initial states where set.</span>
+                <span class="k">if</span> <span class="n">init_states</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">rewards</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">rewards</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">actions</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span>
+
+    <span class="c1"># Test that the rollouts for all number of workers are equal.</span>
+    <span class="k">for</span> <span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_rollouts</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">all_rollouts</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_b</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">rewards</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">actions</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_parallel_sampling_deterministic_w_min_steps"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_parallel_sampling_deterministic_w_min_steps">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;dummy_policy&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>  <span class="c1"># Once less, equal, and more rollouts than workers.</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_steps&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;domain_params&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">[{</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]])</span>
+<span class="k">def</span> <span class="nf">test_parallel_sampling_deterministic_w_min_steps</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+    <span class="n">min_rollouts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">domain_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span>
+<span class="p">):</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="n">nums_workers</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">all_rollouts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">num_workers</span> <span class="ow">in</span> <span class="n">nums_workers</span><span class="p">:</span>
+        <span class="c1"># Act an exploration strategy to test if that works too (it should as the policy gets pickled and distributed</span>
+        <span class="c1"># anyway).</span>
+        <span class="n">all_rollouts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
+                <span class="n">env</span><span class="p">,</span>
+                <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+                <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span>
+                <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+                <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">domain_params</span><span class="o">=</span><span class="n">domain_params</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Test that the rollouts are actually different, i.e., that not the same seed is used for all rollouts.</span>
+    <span class="k">for</span> <span class="n">ros</span> <span class="ow">in</span> <span class="n">all_rollouts</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ros</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">ros</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">b</span><span class="p">]:</span>
+            <span class="c1"># The idle policy iy deterministic and always outputs the zero action. Hence, do not check that the actions</span>
+            <span class="c1"># are different when using the idle policy.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">IdlePolicy</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">rewards</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">actions</span> <span class="o">!=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span>
+
+    <span class="c1"># Test that the rollouts for all number of workers are equal.</span>
+    <span class="k">for</span> <span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_rollouts</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">all_rollouts</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros_a</span><span class="p">])</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros_b</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros_a</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">min_steps</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span>
+        <span class="k">assert</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros_b</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">min_steps</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">min_rollouts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_a</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_rollouts</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_b</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_rollouts</span>
+        <span class="k">for</span> <span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">rewards</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">ro_a</span><span class="o">.</span><span class="n">actions</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro_b</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_parallel_sampling_deterministic_smoke_test_wo_min_steps"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_parallel_sampling_deterministic_smoke_test_wo_min_steps">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_bob&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fnn_policy&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;algo&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">PPO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>  <span class="c1"># Once less, equal, and more rollouts than workers.</span>
+<span class="k">def</span> <span class="nf">test_parallel_sampling_deterministic_smoke_test_wo_min_steps</span><span class="p">(</span>
+    <span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">):</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="n">seeds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">nums_workers</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">logging_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rollout_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">seeds</span><span class="p">:</span>
+        <span class="n">logging_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seed</span><span class="p">,</span> <span class="p">[]))</span>
+        <span class="n">rollout_results</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">num_workers</span> <span class="ow">in</span> <span class="n">nums_workers</span><span class="p">:</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">policy</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">ex_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;seed=</span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">-num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="n">set_log_prefix_dir</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span>
+            <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNN</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+            <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">lamda</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">standardize_adv</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">alg</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">)</span>
+            <span class="n">alg</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">alg</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+            <span class="n">alg</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ex_dir</span><span class="si">}</span><span class="s2">/progress.csv&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">logging_results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+            <span class="n">rollout_results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alg</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span>
+
+    <span class="c1"># Test that the observations for all number of workers are equal.</span>
+    <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollout_results</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">rollouts</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_b</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro_a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro_b</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">r_a</span><span class="p">,</span> <span class="n">r_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span><span class="p">):</span>
+                    <span class="k">assert</span> <span class="n">r_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">r_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+
+    <span class="c1"># Test that different seeds actually produce different results.</span>
+    <span class="k">for</span> <span class="n">results_a</span><span class="p">,</span> <span class="n">results_b</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">seed_a</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">logging_results</span> <span class="k">for</span> <span class="n">seed_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">logging_results</span> <span class="k">if</span> <span class="n">seed_a</span> <span class="o">!=</span> <span class="n">seed_b</span>
+    <span class="p">]:</span>
+        <span class="k">for</span> <span class="n">result_a</span><span class="p">,</span> <span class="n">result_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">results_a</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">results_b</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">b</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">result_a</span> <span class="o">!=</span> <span class="n">result_b</span>
+
+    <span class="c1"># Test that same seeds produce same results.</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">results</span> <span class="ow">in</span> <span class="n">logging_results</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">result_a</span><span class="p">,</span> <span class="n">result_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">result_a</span> <span class="o">==</span> <span class="n">result_b</span></div>
+
+
+<div class="viewcode-block" id="test_parallel_sampling_deterministic_smoke_test_w_min_steps"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_parallel_sampling_deterministic_smoke_test_w_min_steps">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_bob&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fnn_policy&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;algo&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">PPO</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_rollouts&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>  <span class="c1"># Once less, equal, and more rollouts than workers.</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;min_steps&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_parallel_sampling_deterministic_smoke_test_w_min_steps</span><span class="p">(</span>
+    <span class="n">tmpdir_factory</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">):</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="n">seeds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">nums_workers</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="n">logging_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">rollout_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">seeds</span><span class="p">:</span>
+        <span class="n">logging_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seed</span><span class="p">,</span> <span class="p">[]))</span>
+        <span class="n">rollout_results</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="k">for</span> <span class="n">num_workers</span> <span class="ow">in</span> <span class="n">nums_workers</span><span class="p">:</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">policy</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">ex_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmpdir_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;seed=</span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">-num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="n">set_log_prefix_dir</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span>
+            <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNN</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+            <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">lamda</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">standardize_adv</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">alg</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span>
+                <span class="n">ex_dir</span><span class="p">,</span>
+                <span class="n">env</span><span class="p">,</span>
+                <span class="n">policy</span><span class="p">,</span>
+                <span class="n">critic</span><span class="p">,</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span>
+                <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+                <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">alg</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">RolloutSavingWrapper</span><span class="p">(</span><span class="n">alg</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+            <span class="n">alg</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ex_dir</span><span class="si">}</span><span class="s2">/progress.csv&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">logging_results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()))</span>
+            <span class="n">rollout_results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alg</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span>
+
+    <span class="c1"># Test that the observations for all number of workers are equal.</span>
+    <span class="k">for</span> <span class="n">rollouts</span> <span class="ow">in</span> <span class="n">rollout_results</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">rollouts</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_b</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_a</span><span class="p">,</span> <span class="n">ros_b</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro_a</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro_b</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">r_a</span><span class="p">,</span> <span class="n">r_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ro_a</span><span class="p">,</span> <span class="n">ro_b</span><span class="p">):</span>
+                    <span class="k">assert</span> <span class="n">r_a</span><span class="o">.</span><span class="n">observations</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">r_b</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+
+    <span class="c1"># Test that different seeds actually produce different results.</span>
+    <span class="k">for</span> <span class="n">results_a</span><span class="p">,</span> <span class="n">results_b</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">seed_a</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">logging_results</span> <span class="k">for</span> <span class="n">seed_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">logging_results</span> <span class="k">if</span> <span class="n">seed_a</span> <span class="o">!=</span> <span class="n">seed_b</span>
+    <span class="p">]:</span>
+        <span class="k">for</span> <span class="n">result_a</span><span class="p">,</span> <span class="n">result_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">results_a</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">results_b</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">b</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">result_a</span> <span class="o">!=</span> <span class="n">result_b</span>
+
+    <span class="c1"># Test that same seeds produce same results.</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">results</span> <span class="ow">in</span> <span class="n">logging_results</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">result_a</span><span class="p">,</span> <span class="n">result_b</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="n">result_a</span> <span class="o">==</span> <span class="n">result_b</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
