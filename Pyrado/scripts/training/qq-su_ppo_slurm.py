@@ -74,8 +74,8 @@ if __name__ == "__main__":
     hparams = load_dict_from_yaml(osp.join(ref_ex_dir, "hyperparams.yaml"))
 
     # Environment
-    env_hparams = hparams["env_sim"]
-    env = QQubeSwingUpSim(**env_hparams)
+    env_hparam = hparams["env_sim"]
+    env = QQubeSwingUpSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Randomizer
@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=hparams["policy"]),
         dict(critic=hparams["critic"]),
         dict(algo=algo_hparam, algo_name=algo.name),

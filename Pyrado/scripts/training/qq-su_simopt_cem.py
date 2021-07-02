@@ -64,11 +64,11 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=600)
-    env_real = QQubeSwingUpReal(**env_hparams)
+    env_hparam = dict(dt=1 / 100.0, max_steps=600)
+    env_real = QQubeSwingUpReal(**env_hparam)
     env_real = ActNormWrapper(env_real)
 
-    env_sim = QQubeSwingUpSim(**env_hparams)
+    env_sim = QQubeSwingUpSim(**env_hparam)
     env_sim = ActNormWrapper(env_sim)
     randomizer = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     # Save the environments and the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(behav_policy=behav_policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(ddp_policy=ddp_policy_hparam, ddp_policy_name=ddp_policy.name),

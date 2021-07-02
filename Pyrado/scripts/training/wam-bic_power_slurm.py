@@ -65,8 +65,8 @@ if __name__ == "__main__":
     hparams = load_dict_from_yaml(osp.join(ref_ex_dir, "hyperparams.yaml"))
 
     # Environment
-    env_hparams = hparams["env"]
-    env = WAMBallInCupSim(**env_hparams)
+    env_hparam = hparams["env"]
+    env = WAMBallInCupSim(**env_hparam)
 
     # Randomizer
     dp_nom = WAMBallInCupSim.get_nominal_domain_param()
@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparam, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

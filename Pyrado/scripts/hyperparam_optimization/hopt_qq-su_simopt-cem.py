@@ -73,8 +73,8 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     pyrado.set_seed(seed)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=600)
-    env_real = QQubeSwingUpSim(**env_hparams)
+    env_hparam = dict(dt=1 / 100.0, max_steps=600)
+    env_real = QQubeSwingUpSim(**env_hparam)
     env_real.domain_param = dict(
         mass_rot_pole=0.095 * 0.9,  # 0.095*0.9 = 0.0855
         mass_pend_pole=0.024 * 1.1,  # 0.024*1.1 = 0.0264
@@ -82,7 +82,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         length_pend_pole=0.129 * 1.1,  # 0.129*1.1 = 0.1419
     )
 
-    env_sim = QQubeSwingUpSim(**env_hparams)
+    env_sim = QQubeSwingUpSim(**env_hparam)
     randomizer = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
         NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),

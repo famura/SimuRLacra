@@ -53,7 +53,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(
+    env_hparam = dict(
         physicsEngine="Bullet",
         graphFileName="gBoxLifting_trqCtrl.xml",
         dt=0.01,
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         observeForceTorque=True,
         observeDynamicalSystemGoalDistance=False,
     )
-    env = BoxLiftingVelIKActivationSim(**env_hparams)
+    env = BoxLiftingVelIKActivationSim(**env_hparam)
 
     env = ObsPartialWrapper(env, idcs=["Box_Y", "Box_Z", "Box_A"])
 
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

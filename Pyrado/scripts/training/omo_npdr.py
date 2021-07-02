@@ -66,8 +66,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=400)
-    env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    env_hparam = dict(dt=1 / 100.0, max_steps=400)
+    env_sim = OneMassOscillatorSim(**env_hparam, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake ground truth target domain
     num_real_rollouts = 1
@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(prior=prior_hparam),
         dict(embedding=embedding_hparam, embedding_name=embedding.name),
         dict(posterior_nn=posterior_hparam),

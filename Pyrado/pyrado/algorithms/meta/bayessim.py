@@ -29,11 +29,9 @@
 import os.path as osp
 from typing import Optional
 
-import sbi.utils as sbiutils
 import torch as to
 from sbi.inference import SNPE_A
 from sbi.inference.base import simulate_for_sbi
-from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.algorithms.meta.sbi_base import SBIBase
@@ -60,8 +58,8 @@ class BayesSim(SBIBase):
             density estimation.", NIPS, 2016
     """
 
-    name = "bayessim"
-    iteration_key = "bayessim_iteration"
+    name: str = "bayessim"
+    iteration_key: str = "bayessim_iteration"
 
     def __init__(
         self,

@@ -73,12 +73,12 @@ def load_experiment(
 
     :param ex_dir: experiment's parent directory
     :param args: arguments from the argument parser, pass `None` to fall back to the values from the default argparser
-    :return: environment, policy, and optional output (e.g. valuefcn)
+    :return: environment, policy, and algorithm-specific (optional) output, e.g. value function
     """
     env, policy, extra = None, None, dict()
 
     if args is None:
-        # Fall back to default arguments. By passing [], we ignore the command line arguments
+        # Fall back to default arguments. By passing [], we ignore the command line arguments.
         args = get_argparser().parse_args([])
 
     # Hyper-parameters

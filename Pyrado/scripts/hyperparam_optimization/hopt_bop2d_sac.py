@@ -66,8 +66,8 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     pyrado.set_seed(seed)
 
     # Environment
-    env_hparams = dict(physicsEngine="Bullet", dt=1 / 100.0, max_steps=500)
-    env = BallOnPlate2DSim(**env_hparams)
+    env_hparam = dict(physicsEngine="Bullet", dt=1 / 100.0, max_steps=500)
+    env = BallOnPlate2DSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Policy

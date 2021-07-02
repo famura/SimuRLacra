@@ -29,8 +29,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 250.0, max_steps=1500)
-    env = QQubeSim(**env_hparams)
+    env_hparam = dict(dt=1 / 250.0, max_steps=1500)
+    env = QQubeSim(**env_hparam)
     env = ActNormWrapper(env)
     env = StateAugmentationWrapper(env, domain_param=None)
 
@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn_hparam=subrtn_hparam, subrtn_name=subrtn.name),

@@ -29,11 +29,9 @@
 import os.path as osp
 from typing import Optional, Type
 
-import sbi.utils as sbiutils
 import torch as to
 from sbi.inference.base import simulate_for_sbi
 from sbi.inference.snpe import PosteriorEstimator
-from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.algorithms.meta.sbi_base import SBIBase

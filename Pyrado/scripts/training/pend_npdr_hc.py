@@ -58,8 +58,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=400)
-    env_sim = PendulumSim(**env_hparams)
+    env_hparam = dict(dt=1 / 50.0, max_steps=400)
+    env_sim = PendulumSim(**env_hparam)
     # env_sim.domain_param = dict(d_pole=0, tau_max=10.0)
 
     # Create a fake ground truth target domain
@@ -154,7 +154,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(prior=prior_hparam),
         dict(posterior_nn=posterior_hparam),
         dict(policy=policy_hparam),

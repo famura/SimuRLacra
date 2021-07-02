@@ -52,7 +52,7 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(
+    env_hparam = dict(
         physicsEngine="Bullet",  # Bullet or Vortex
         dt=1 / 50.0,
         max_steps=1200,
@@ -72,8 +72,8 @@ if __name__ == "__main__":
         observeTaskSpaceDiscrepancy=True,
         observeDynamicalSystemGoalDistance=False,
     )
-    env = Planar3LinkTASim(**env_hparams)
-    # env = Planar3LinkIKActivationSim(**env_hparams)
+    env = Planar3LinkTASim(**env_hparam)
+    # env = Planar3LinkIKActivationSim(**env_hparam)
     eub = {
         "GD_DS0": 2.0,
         "GD_DS1": 2.0,
@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

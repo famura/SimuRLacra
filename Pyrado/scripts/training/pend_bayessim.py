@@ -56,8 +56,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=400)
-    env_sim = PendulumSim(**env_hparams)
+    env_hparam = dict(dt=1 / 50.0, max_steps=400)
+    env_sim = PendulumSim(**env_hparam)
     env_sim.domain_param = dict(d_pole=0)
     env_sim.domain_param = dict(tau_max=4.5)
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy_name=policy.name),
         dict(prior=prior_hparam),
         dict(embedding=embedding_hparam, embedding_name=embedding.name),

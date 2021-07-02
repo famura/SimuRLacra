@@ -53,15 +53,15 @@ from pyrado.utils.input_output import print_cbt
 
 def create_bob_setup():
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=500)
-    env_real = BallOnBeamSim(**env_hparams)
+    env_hparam = dict(dt=1 / 100.0, max_steps=500)
+    env_real = BallOnBeamSim(**env_hparam)
     env_real.domain_param = dict(
         # l_beam=1.95,
         # ang_offset=-0.03,
         gravity_const=10.81
     )
 
-    env_sim = BallOnBeamSim(**env_hparams)
+    env_sim = BallOnBeamSim(**env_hparam)
     randomizer = DomainRandomizer(
         # NormalDomainParam(name="beam_length", mean=0, std=1e-6, clip_lo=1.5, clip_up=3.5),
         # UniformDomainParam(name="ang_offset", mean=0, halfspan=1e-6),
@@ -88,13 +88,13 @@ def create_bob_setup():
     trafo_mask = [True, True]
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior, scale_params=True)
 
-    return env_sim, env_real, env_hparams, dp_map, behavior_policy, ddp_policy
+    return env_sim, env_real, env_hparam, dp_map, behavior_policy, ddp_policy
 
 
 def create_qqsu_setup():
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=600)
-    env_real = QQubeSwingUpSim(**env_hparams)
+    env_hparam = dict(dt=1 / 100.0, max_steps=600)
+    env_real = QQubeSwingUpSim(**env_hparam)
     env_real.domain_param = dict(
         mass_rot_pole=0.095 * 0.9,  # 0.095*0.9 = 0.0855
         mass_pend_pole=0.024 * 1.1,  # 0.024*1.1 = 0.0264
@@ -102,7 +102,7 @@ def create_qqsu_setup():
         length_pend_pole=0.129 * 1.1,  # 0.129*1.1 = 0.1419
     )
 
-    env_sim = QQubeSwingUpSim(**env_hparams)
+    env_sim = QQubeSwingUpSim(**env_hparam)
     randomizer = DomainRandomizer(
         NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e-9, clip_lo=1e-3),
         NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e-9, clip_lo=1e-3),
@@ -134,7 +134,7 @@ def create_qqsu_setup():
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior, scale_params=False)
 
-    return env_sim, env_real, env_hparams, dp_map, behavior_policy, ddp_policy
+    return env_sim, env_real, env_hparam, dp_map, behavior_policy, ddp_policy
 
 
 def create_cem_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: DomainDistrParamPolicy) -> [CEM, dict]:
@@ -189,8 +189,8 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Choose an experiment
-    # env_sim, env_real, env_hparams, dp_map, behavior_policy, ddp_policy = create_bob_setup()
-    env_sim, env_real, env_hparams, dp_map, behavior_policy, ddp_policy = create_qqsu_setup()
+    # env_sim, env_real, env_hparam, dp_map, behavior_policy, ddp_policy = create_bob_setup()
+    env_sim, env_real, env_hparam, dp_map, behavior_policy, ddp_policy = create_qqsu_setup()
 
     if args.mode == CEM.name:
         ex_dir = setup_experiment(env_real.name, f"{SysIdViaEpisodicRL.name}-{CEM.name}")
@@ -219,7 +219,7 @@ if __name__ == "__main__":
 
     # Save the environments and the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams),
+        dict(env=env_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
         dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map),
         save_dir=ex_dir,

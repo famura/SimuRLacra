@@ -48,8 +48,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 250.0, max_steps=12 * 250, simple_dynamics=True, long=False, wild_init=False)
-    env = QCartPoleSwingUpSim(**env_hparams)
+    env_hparam = dict(dt=1 / 250.0, max_steps=12 * 250, simple_dynamics=True, long=False, wild_init=False)
+    env = QCartPoleSwingUpSim(**env_hparam)
 
     # Policy
     policy_hparam = dict()
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
