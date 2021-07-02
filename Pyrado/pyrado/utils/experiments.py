@@ -45,7 +45,6 @@ from pyrado.environment_wrappers.domain_randomization import (
     remove_all_dr_wrappers,
 )
 from pyrado.environment_wrappers.utils import inner_env, typed_env
-from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_hyperparameters
 from pyrado.policies.base import Policy
@@ -361,6 +360,8 @@ def cpp_export(
                               This requires the experiment's XML configuration to be exported beforehand.
     :param policy_node_name: name of the control policies node in the XML file, e.g. 'policy' or 'preStrikePolicy'
     """
+    from pyrado.environments.rcspysim.base import RcsSim
+
     if not osp.isdir(save_dir):
         raise pyrado.PathErr(given=save_dir)
     if not isinstance(policy, Policy):
