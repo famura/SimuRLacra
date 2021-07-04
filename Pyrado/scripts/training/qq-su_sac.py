@@ -29,8 +29,6 @@
 """
 Train an agent to solve the Quanser Qube swing-up task using Soft Actor Critic.
 """
-from math import comb
-
 import torch as to
 from torch.optim import lr_scheduler
 
