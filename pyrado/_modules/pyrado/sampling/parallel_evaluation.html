@@ -1,0 +1,489 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.sampling.parallel_evaluation &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.sampling.parallel_evaluation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.sampling.parallel_evaluation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span><span class="p">,</span> <span class="n">remove_all_dr_wrappers</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_ps_init</span><span class="p">,</span>
+    <span class="n">_ps_run_one_domain_param</span><span class="p">,</span>
+    <span class="n">_ps_run_one_init_state</span><span class="p">,</span>
+    <span class="n">_ps_run_one_reset_kwargs_segment</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="n">SamplerPool</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">check_act_equal</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.singular</span> <span class="kn">import</span> <span class="n">SingularStateSpace</span>
+
+
+<div class="viewcode-block" id="eval_domain_params"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">[docs]</a><span class="k">def</span> <span class="nf">eval_domain_params</span><span class="p">(</span>
+    <span class="n">pool</span><span class="p">:</span> <span class="n">SamplerPool</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate a policy on a multidimensional grid of domain parameters.</span>
+
+<span class="sd">    :param pool: parallel sampler</span>
+<span class="sd">    :param env: environment to evaluate in</span>
+<span class="sd">    :param policy: policy to evaluate</span>
+<span class="sd">    :param params: multidimensional grid of domain parameters</span>
+<span class="sd">    :param init_state: initial state of the environment which will be fixed if not set to `None`</span>
+<span class="sd">    :return: list of rollouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Strip all domain randomization wrappers from the environment</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">remove_all_dr_wrappers</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">init_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">init_space</span> <span class="o">=</span> <span class="n">SingularStateSpace</span><span class="p">(</span><span class="n">fixed_state</span><span class="o">=</span><span class="n">init_state</span><span class="p">)</span>
+
+    <span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">policy</span><span class="p">))</span>
+
+    <span class="c1"># Run with progress bar</span>
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rollouts&quot;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Sampling&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pb</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_ps_run_one_domain_param</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">params</span><span class="p">,</span> <span class="n">pb</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="eval_nominal_domain"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_evaluation.eval_nominal_domain">[docs]</a><span class="k">def</span> <span class="nf">eval_nominal_domain</span><span class="p">(</span>
+    <span class="n">pool</span><span class="p">:</span> <span class="n">SamplerPool</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">init_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate a policy using the nominal (set in the given environment) domain parameters.</span>
+
+<span class="sd">    :param pool: parallel sampler</span>
+<span class="sd">    :param env: environment to evaluate in</span>
+<span class="sd">    :param policy: policy to evaluate</span>
+<span class="sd">    :param init_states: initial states of the environment which will be fixed if not set to `None`</span>
+<span class="sd">    :return: list of rollouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Strip all domain randomization wrappers from the environment</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">remove_all_dr_wrappers</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+    <span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">policy</span><span class="p">))</span>
+
+    <span class="c1"># Run with progress bar</span>
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rollouts&quot;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Sampling&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pb</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_ps_run_one_init_state</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">init_states</span><span class="p">,</span> <span class="n">pb</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="eval_randomized_domain"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_evaluation.eval_randomized_domain">[docs]</a><span class="k">def</span> <span class="nf">eval_randomized_domain</span><span class="p">(</span>
+    <span class="n">pool</span><span class="p">:</span> <span class="n">SamplerPool</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">:</span> <span class="n">DomainRandomizer</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">init_states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate a policy in a randomized domain.</span>
+
+<span class="sd">    :param pool: parallel sampler</span>
+<span class="sd">    :param env: environment to evaluate in</span>
+<span class="sd">    :param randomizer: randomizer used to sample random domain instances, inherited from `DomainRandomizer`</span>
+<span class="sd">    :param policy: policy to evaluate</span>
+<span class="sd">    :param init_states: initial states of the environment which will be fixed if not set to `None`</span>
+<span class="sd">    :return: list of rollouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Randomize the environments</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">remove_all_dr_wrappers</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+
+    <span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">policy</span><span class="p">))</span>
+
+    <span class="c1"># Run with progress bar</span>
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;rollouts&quot;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Sampling&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pb</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_ps_run_one_init_state</span><span class="p">,</span> <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">init_states</span><span class="p">,</span> <span class="n">pb</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="eval_domain_params_with_segmentwise_reset"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params_with_segmentwise_reset">[docs]</a><span class="k">def</span> <span class="nf">eval_domain_params_with_segmentwise_reset</span><span class="p">(</span>
+    <span class="n">pool</span><span class="p">:</span> <span class="n">SamplerPool</span><span class="p">,</span>
+    <span class="n">env_sim</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+    <span class="n">segments_real_all</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]],</span>
+    <span class="n">domain_params_ml_all</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span>
+    <span class="n">stop_on_done</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">use_rec</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate a policy for a given set of domain parameters, synchronizing the segments&#39; initial states with the given</span>
+<span class="sd">    target domain segments</span>
+
+<span class="sd">    :param pool: parallel sampler</span>
+<span class="sd">    :param env_sim: environment to evaluate in</span>
+<span class="sd">    :param policy: policy to evaluate</span>
+<span class="sd">    :param segments_real_all: all segments from the target domain rollout</span>
+<span class="sd">    :param domain_params_ml_all: all domain parameters to evaluate over</span>
+<span class="sd">    :param stop_on_done: if `True`, the rollouts are stopped as soon as they hit the state or observation space</span>
+<span class="sd">                             boundaries. This behavior is save, but can lead to short trajectories which are eventually</span>
+<span class="sd">                             padded with zeroes. Chose `False` to ignore the boundaries (dangerous on the real system).</span>
+<span class="sd">    :param use_rec: `True` if pre-recorded actions have been used to generate the rollouts</span>
+<span class="sd">    :return: list of segments of rollouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sample rollouts with the most likely domain parameter sets associated to that observation</span>
+    <span class="n">segments_ml_all</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># all top max likelihood segments for all target domain rollouts</span>
+    <span class="k">for</span> <span class="n">idx_r</span><span class="p">,</span> <span class="p">(</span><span class="n">segments_real</span><span class="p">,</span> <span class="n">domain_params_ml</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+        <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">segments_real_all</span><span class="p">,</span> <span class="n">domain_params_ml_all</span><span class="p">)),</span>
+        <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">segments_real_all</span><span class="p">),</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Sampling&quot;</span><span class="p">,</span>
+        <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+        <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">segments_ml</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># all top max likelihood segments for one target domain rollout</span>
+        <span class="n">cnt_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Iterate over target domain segments</span>
+        <span class="k">for</span> <span class="n">segment_real</span> <span class="ow">in</span> <span class="n">segments_real</span><span class="p">:</span>
+            <span class="c1"># Initialize workers</span>
+            <span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_init</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env_sim</span><span class="p">),</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">policy</span><span class="p">))</span>
+
+            <span class="c1"># Run without progress bar</span>
+            <span class="n">segments_dp</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_map</span><span class="p">(</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                    <span class="n">_ps_run_one_reset_kwargs_segment</span><span class="p">,</span>
+                    <span class="n">init_state</span><span class="o">=</span><span class="n">segment_real</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span>
+                    <span class="n">len_segment</span><span class="o">=</span><span class="n">segment_real</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                    <span class="n">stop_on_done</span><span class="o">=</span><span class="n">stop_on_done</span><span class="p">,</span>
+                    <span class="n">use_rec</span><span class="o">=</span><span class="n">use_rec</span><span class="p">,</span>
+                    <span class="n">idx_r</span><span class="o">=</span><span class="n">idx_r</span><span class="p">,</span>
+                    <span class="n">cnt_step</span><span class="o">=</span><span class="n">cnt_step</span><span class="p">,</span>
+                    <span class="nb">eval</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">domain_params_ml</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">sdp</span> <span class="ow">in</span> <span class="n">segments_dp</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">sdp</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">segment_real</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+                <span class="k">if</span> <span class="n">use_rec</span><span class="p">:</span>
+                    <span class="n">check_act_equal</span><span class="p">(</span><span class="n">segment_real</span><span class="p">,</span> <span class="n">sdp</span><span class="p">,</span> <span class="n">check_applied</span><span class="o">=</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">sdp</span><span class="p">,</span> <span class="s2">&quot;actions_applied&quot;</span><span class="p">))</span>
+
+            <span class="c1"># Increase step counter for next segment, and append all domain parameter segments</span>
+            <span class="n">cnt_step</span> <span class="o">+=</span> <span class="n">segment_real</span><span class="o">.</span><span class="n">length</span>
+            <span class="n">segments_ml</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segments_dp</span><span class="p">)</span>
+
+        <span class="c1"># Append all segments for the current target domain rollout</span>
+        <span class="n">segments_ml_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segments_ml</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">segments_ml_all</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

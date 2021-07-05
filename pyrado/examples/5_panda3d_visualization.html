@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>How to create a visualization &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="environments" href="../environments.html" />
+    <link rel="prev" title="How to create an RcsPySim environment" href="4_creating_rcspysim_environments.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>How to create a visualization</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#part1-creating-a-concrete-subclass-of-pandavis">Part1: Creating a concrete subclass of PandaVis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#implementing-init-method">Implementing __init__-method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementing-update">Implementing update()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#part2-implementing-the-init-anim-method-in-your-environment-class">Part2: Implementing the _init_anim-method in your environment-class</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../exploration.html">exploration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../spaces.html">spaces</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">plotting</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><strong>How to create a visualization</strong></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/examples/5_panda3d_visualization.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="how-to-create-a-visualization">
+<h1><strong>How to create a visualization</strong><a class="headerlink" href="#how-to-create-a-visualization" title="Permalink to this headline">¶</a></h1>
+<p>This file provides a step-by-step example of how to create an Panda3d-animation, based on an SimuRLacra-environment.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pandavis</span> <span class="kn">import</span> <span class="n">PandaVis</span>
+</pre></div>
+</div>
+<p>This process requires two rather separate Processes:</p>
+<p>1.Creating a concrete subclass of PandaVis as a visualization class</p>
+<p>2.Implementing animation-specific methods in your environment-class</p>
+<div class="section" id="part1-creating-a-concrete-subclass-of-pandavis">
+<h2>Part1: Creating a concrete subclass of PandaVis<a class="headerlink" href="#part1-creating-a-concrete-subclass-of-pandavis" title="Permalink to this headline">¶</a></h2>
+<p>Start by creating a new class called &lt;&lt;YourEnvironment&gt;&gt;Vis inheriting from PandaVis, inside pandavis.py (Pyrado/pyrado/environments/pysim/pandavis.py)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">YourEnvironmentVis</span><span class="p">(</span><span class="n">PandaVis</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The following content is extracted from PandaVis.QCartPoleVis</p>
+<div class="section" id="implementing-init-method">
+<h3>Implementing __init__-method<a class="headerlink" href="#implementing-init-method" title="Permalink to this headline">¶</a></h3>
+<p>This method will only be called once, at the very start of the simulation. The parameter “env” represent the environment you want to visualize. The parameter “rendering” specifies if you want to use RenderPipeline as additional renderer (this will be specified as argument –render).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">rendering</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>Beginn implementing the __init__-method by <strong>calling the superconstructor.</strong>
+This takes care of most properties shared by all simulations, such as window-Properties, lighting, antialiasing, backgroundcolor, textproperties
+and providing a handy path-variable as well as default version of the trace. As mentioned above the “rendering” parameter toggles the usage of the RenderPipeline.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rendering</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Continue by <strong>accessing outer calculated parameters</strong>, called environment domain parameters or environment states, by <strong>passing them into local variables</strong>.
+Except for the env-variable itself, most of these are specific to the actual simulation and are either entries of the domain_param-dictionary or of the state-dictionary.
+The name of the local variable should either be equal to the keyword necessary to retrieve its data from the domain_param-dictionary or be named according to their function (such as x)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span>
+<span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;l_pole&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><em>Occasionally</em> there is a need for some values describing properties irrelevant to the calculations, such as the thickness of a bar, or the radius of a ball.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">l_cart</span><span class="p">,</span> <span class="n">h_cart</span> <span class="o">=</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.08</span>
+<span class="n">r_pole</span><span class="p">,</span> <span class="n">r_rail</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.005</span>
+</pre></div>
+</div>
+<p>Now it is necessary to determine a fixed value as a <strong>scaling attribute</strong> to enable a handy use of the camera, concerning zooming, rotation and translation.
+This is due to the cameras unchangeable size. It is recommended to choose a value that’s dependent on the length-properties of a bigger if not the main primitive object. You have to multiply the <strong>scaling attribute</strong> with every position and scaling of your models (not the rotation!).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">l_pole</span>
+</pre></div>
+</div>
+<p>Setting a <strong>window title</strong> is <em>not absolutely necessary</em>, but very much recommended and easily done</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">&quot;Name of your Environment&quot;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">requestProperties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowProperties</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To finish the setup, <strong>setting the point of view</strong> is <em>necessary</em>. We recommend a low negative value on the y-axis in order to see the whole animation</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">cam</span><span class="o">.</span><span class="n">setY</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Optional tweaks</strong> may also be implemented now</p>
+<dl>
+<dt><strong>Placing primitive objects</strong></dt><dd><p>The following section represents the process for each primitive object</p>
+<blockquote>
+<div><p>Start by <strong>loading the correct model/template</strong> for a specific object</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;cylinder_top_blue.egg&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Continuing, there is a number of <strong>properties</strong>, that can be set, by neatly named accessor methods in most cases, such as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setPos</span><span class="p">()</span> <span class="c1"># Position(X, Y, Z)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setScale</span><span class="p">()</span> <span class="c1"># Scale(Sx, Sy, Sz)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setHpr</span><span class="p">()</span> <span class="c1"># Angles(H, P, R)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setColor</span><span class="p">()</span> <span class="c1"># Color (R, G, B)</span>
+</pre></div>
+</div>
+<p>At last, its necessary to <strong>reparent the modified object to the render-instance</strong>. This could also be done earlier, with the primitive object being modified afterwards</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">reparentTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd>
+</dl>
+<p>The last step of the init-method is to add the update-method to the <cite>taskmanager</cite>, in order for it to call it every frame.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">taskMgr</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">,</span> <span class="s2">&quot;update&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="implementing-update">
+<h3>Implementing update()<a class="headerlink" href="#implementing-update" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>The update-methode allows objects to move during the animation.</dt><dd><p>It is originally called every frame, but with this framerate being dependent on your monitors refresh rate,
+it has been modified in order for the animation to run at the same speed on different monitors</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>Similar to the init method, start of by <strong>accessing the environments domain parameters and states</strong>, being calculated in your environment class</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span>
+<span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;l_pole&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>Property-updates</strong> use the same set of methods as mentioned in the placing-paragraph of the init-method</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update position of Cart, Joint and Pole</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">cart</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">joint</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+<span class="c1"># Update rotation of Pole</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">setR</span><span class="p">(</span><span class="o">-</span><span class="n">th</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Since every existing simulation required to only update a small amount of properties, we did not specify a specific order/format for this process.</dt><dd><p>However, it is <em>recommended</em> to describe these updates/changes as concrete/specific as possible, by using the single-parameter-methods of the rather abstract accessor-methods,
+such as setX(), setR(), etc. instead of setPos() or setHpr or even setHprPosScale(), as an attempt to make these easily read- and understandable</p>
+</dd>
+</dl>
+<p>Implementing a <strong>trace</strong>, to visualize the movement-path of an important primitive is a very optional, yet handy feature.
+You only need to calculate the last position of said part of your simulation and pass it into PandaVis.drawTrace(), which is implemented in the superclass</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get position of pole</span>
+<span class="n">pole_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pole</span><span class="o">.</span><span class="n">getPos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">)</span>
+<span class="c1"># Calculate position of new point</span>
+<span class="n">current_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">pole_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span> <span class="n">pole_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+               <span class="n">pole_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">l_pole</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+
+<span class="c1"># Draw line to that point</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">draw_trace</span><span class="p">(</span><span class="n">current_pos</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To illustrate a few important values of your simulation, great for debugging as well ngl, you can print a few of them inside an <strong>TextNode-object</strong>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                theta: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">180</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">                dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="o">.</span><span class="n">_dt</span> <span class="si">:</span><span class="s2">1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">                m_cart: </span><span class="si">{</span><span class="n">m_cart</span> <span class="si">:</span><span class="s2"> 1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">                l_pole: </span><span class="si">{</span><span class="n">l_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">                &quot;&quot;&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally its necessary to release the Task, in order to be callable at the next frame</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">cont</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="part2-implementing-the-init-anim-method-in-your-environment-class">
+<h2>Part2: Implementing the _init_anim-method in your environment-class<a class="headerlink" href="#part2-implementing-the-init-anim-method-in-your-environment-class" title="Permalink to this headline">¶</a></h2>
+<p>This is very convenient, as it only consists of two steps.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>At first it is necessary to import your Vis-class created in Part1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pandavis</span> <span class="kn">import</span> <span class="n">YourEnvironmentVis</span>
+</pre></div>
+</div>
+<p>To finally get your simulation started, simply create an instance of said Vis-class</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">_visualization</span> <span class="o">=</span> <span class="n">YourEnvironmentVis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../environments.html" class="btn btn-neutral float-right" title="environments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="4_creating_rcspysim_environments.html" class="btn btn-neutral float-left" title="How to create an RcsPySim environment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
