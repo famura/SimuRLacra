@@ -71,12 +71,12 @@ if __name__ == "__main__":
     q1 = FNNPolicy(spec=EnvSpec(combined_space, ValueFunctionSpace), **qfnc_param)
     q2 = FNNPolicy(spec=EnvSpec(combined_space, ValueFunctionSpace), **qfnc_param)
 
-    # Subroutine
+    # Algorithm
     algo_hparam = dict(
         max_iter=50,
-        memory_size=1_000_000,
+        memory_size=1000000,
         gamma=0.9995,
-        num_updates_per_step=1_000,
+        num_updates_per_step=1000,
         tau=0.99,
         ent_coeff_init=0.3,
         learn_ent_coeff=True,
