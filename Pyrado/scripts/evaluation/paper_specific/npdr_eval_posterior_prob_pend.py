@@ -51,7 +51,7 @@ from pyrado.utils.ordering import remove_none_from_list
 
 def _load_experiment(ex_dir: pyrado.PathLike):
     # Load the algorithm
-    algo = Algorithm.load_snapshot(ex_dir)
+    algo = pyrado.load("algo.pkl", ex_dir)
     if not isinstance(algo, (NPDR, BayesSim)):
         raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
 

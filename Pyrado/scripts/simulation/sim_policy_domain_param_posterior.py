@@ -76,7 +76,7 @@ if __name__ == "__main__":
     max_steps = env.max_steps if args.max_steps == pyrado.inf else args.max_steps
 
     # Check which algorithm was used in the experiment
-    algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name="algo")
+    algo = pyrado.load("algo.pkl", ex_dir)
     if not isinstance(algo, (NPDR, BayesSim)):
         raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
 

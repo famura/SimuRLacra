@@ -274,6 +274,18 @@ class PDDR(InterruptableAlgorithm):
             # This algorithm instance is not a subroutine of another algorithm
             pyrado.save(self.env_real, "env.pkl", self.save_dir)
 
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        extra["teacher_policies"] = self.teacher_policies
+        extra["teacher_envs"] = self.teacher_envs
+        extra["teacher_expl_strats"] = self.teacher_expl_strats
+        extra["teacher_critics"] = self.teacher_critics
+        extra["teacher_ex_dirs"] = self.teacher_ex_dirs
+
+        return env, policy, extra
+
     def _train_teacher(self, idx: int, snapshot_mode: str = "latest", seed: int = None):
         """
         Wrapper for use of multiprocessing: Trains one teacher.

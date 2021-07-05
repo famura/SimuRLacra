@@ -32,6 +32,7 @@ Continue a training run in the same folder
 import os
 import os.path as osp
 
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.utils.argparser import get_argparser
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     update_matching_keys_recursively(setting_args, hparam_args)
 
     # Load the complete algorithm
-    algo = Algorithm.load_snapshot(ex_dir)
+    algo = pyrado.load("algo.pkl", ex_dir)
 
     # Jeeeha
     algo.train(seed=setting_args.get("seed", None))

@@ -57,12 +57,12 @@ if __name__ == "__main__":
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
-    env_sim = joblib.load(osp.join(ex_dir, "env_sim.pkl"))
+    env_sim = pyrado.load("env_sim.pkl", ex_dir)
     if not typed_env(env_sim, MetaDomainRandWrapper):
         raise pyrado.TypeErr(given_name=env_sim, expected_type=MetaDomainRandWrapper)
     labels_sel_dims = [env_sim.dp_mapping[args.idcs[i]][0] for i in range(len(args.idcs))]
 
-    env_real = joblib.load(osp.join(ex_dir, "env_real.pkl"))
+    env_real = pyrado.load("env_real.pkl", ex_dir)
     if isinstance(inner_env(env_real), SimEnv):
         # Use actual ground truth domain param if sim-2-sim setting
         domain_params = env_real.domain_param

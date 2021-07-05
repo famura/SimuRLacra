@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     # NPDR
     ex_dir_npdr = os.path.join(pyrado.TEMP_DIR, "mg-ik", "npdr_time", "")
-    algo = Algorithm.load_snapshot(ex_dir_npdr)
+    algo = pyrado.load("algo.pkl", ex_dir_npdr)
     if not isinstance(algo, NPDR):
         raise pyrado.TypeErr(given=algo, expected_type=NPDR)
     env_sim = inner_env(pyrado.load("env_sim.pkl", ex_dir_npdr))
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     # Bayessim
     ex_dir_bs = os.path.join(pyrado.TEMP_DIR, "mg-ik", "bayessim_time", "")
-    algo = Algorithm.load_snapshot(ex_dir_bs)
+    algo = pyrado.load("algo.pkl", ex_dir_bs)
     if not isinstance(algo, BayesSim):
         raise pyrado.TypeErr(given=algo, expected_type=BayesSim)
     posterior_bs = algo.load_posterior(ex_dir_bs, idx_iter=0, idx_round=0, obj=None, verbose=True)  # CHOICE

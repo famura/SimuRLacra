@@ -183,7 +183,7 @@ if __name__ == "__main__":
     BayRn.train_argmax_policy(
         ex_dir,
         env_sim,
-        ppo,
+        subrtn,
         num_restarts=500,
         num_samples=1000,
         # policy_param_init=policy.param_values.data,

@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from collections import namedtuple
 from copy import deepcopy
 from typing import List, Optional
 
@@ -93,6 +94,7 @@ from pyrado.sampling.sbi_embeddings import (
 from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI, SimRolloutSamplerForSBI
 from pyrado.sampling.sequences import *
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
+from pyrado.utils.argparser import MockArgs
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
 
@@ -105,7 +107,7 @@ def ex_dir(tmpdir):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.parametrize("env", ["default_qbb"], indirect=True)
 @pytest.mark.parametrize(
     "spota_hparam",
     [
@@ -124,7 +126,49 @@ def ex_dir(tmpdir):
             warmstart_refs=False,
             num_bs_reps=100,
             studentized_ci=False,
-        ),
+        )
+    ],
+)
+def test_spota_hc(ex_dir, env: SimEnv, spota_hparam: dict):
+    pyrado.set_seed(0)
+
+    # Environment and domain randomization
+    randomizer = create_default_randomizer(env)
+    env = DomainRandWrapperBuffer(env, randomizer)
+
+    # Policy and subroutines
+    policy = LinearPolicy(env.spec, feats=FeatureStack(identity_feat))
+
+    subrtn_hparam_common = dict(
+        max_iter=1,
+        num_init_states_per_domain=1,
+        num_domains=1,  # will be overwritten by SPOTA
+        expl_factor=1.1,
+        expl_std_init=0.5,
+        num_workers=1,
+    )
+
+    sr_cand = HCNormal(ex_dir, env, policy, **subrtn_hparam_common)
+    sr_refs = HCNormal(ex_dir, env, deepcopy(policy), **subrtn_hparam_common)
+
+    # Create algorithm and train
+    algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
+    algo.train()
+    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("env", ["default_qbb"], indirect=True)
+@pytest.mark.parametrize(
+    "spota_hparam",
+    [
         dict(
             max_iter=2,
             alpha=0.05,
@@ -142,7 +186,6 @@ def ex_dir(tmpdir):
             studentized_ci=True,
         ),
     ],
-    ids=["config1", "config2"],
 )
 def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     pyrado.set_seed(0)
@@ -161,7 +204,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     subrtn_hparam_common = dict(
         # min_rollouts=0,  # will be overwritten by SPOTA
         min_steps=0,  # will be overwritten by SPOTA
-        max_iter=2,
+        max_iter=1,
         num_epoch=3,
         eps_clip=0.1,
         batch_size=64,
@@ -176,8 +219,82 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     # Create algorithm and train
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
     algo.train()
-
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
+    assert all(algo.policy.param_values == algo.subroutine_cand.policy.param_values)
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
+@pytest.mark.parametrize(
+    "bayrn_hparam",
+    [
+        dict(
+            max_iter=2,
+            acq_fc="UCB",
+            acq_param=dict(beta=0.25),
+            acq_restarts=50,
+            acq_samples=50,
+            num_init_cand=2,
+            warmstart=False,
+            mc_estimator=True,
+            num_eval_rollouts_sim=3,
+            num_eval_rollouts_real=2,  # sim-2-sim
+        ),
+    ],
+)
+def test_bayrn_ppo(ex_dir, env: SimEnv, bayrn_hparam: dict):
+    pyrado.set_seed(0)
+
+    # Environments and domain randomization
+    env_real = deepcopy(env)
+    env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
+    dp_map = create_default_domain_param_map_qq()
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+    env_real.domain_param = dict(mass_pend_pole=0.024 * 1.1, mass_rot_pole=0.095 * 1.1)
+    env_real = wrap_like_other_env(env_real, env_sim)
+
+    # Policy and subroutine
+    policy = FNNPolicy(env.spec, [16, 16], hidden_nonlin=to.tanh)
+    vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+    critic_hparam = dict(gamma=0.998, lamda=0.95, num_epoch=3, batch_size=64, lr=1e-3)
+    critic = GAE(vfcn, **critic_hparam)
+    subrtn_hparam = dict(
+        max_iter=1,
+        min_rollouts=3,
+        num_epoch=2,
+        eps_clip=0.1,
+        batch_size=64,
+        num_workers=1,
+        std_init=0.5,
+        lr=1e-2,
+    )
+    subrtn = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
+
+    # Set the boundaries for the GP
+    dp_nom = inner_env(env_sim).get_nominal_domain_param()
+    ddp_space = BoxSpace(
+        bound_lo=np.array([0.8 * dp_nom["mass_pend_pole"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["mass_pend_pole"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
+    )
+
+    # Create algorithm and train
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam, num_workers=1)
+    algo.train()
+    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
 @pytest.mark.slow
@@ -211,7 +328,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
             num_eval_rollouts_real=2,  # sim-2-sim
         ),
     ],
-    ids=["config1", "config2"],
+    ids=["configUCB", "configEI"],
 )
 def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     pyrado.set_seed(0)
@@ -229,7 +346,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
         max_iter=1,
-        pop_size=8,
+        pop_size=6,
         num_init_states_per_domain=1,
         num_is_samples=4,
         expl_std_init=0.1,
@@ -247,8 +364,14 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     # Create algorithm and train
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam, num_workers=1)
     algo.train()
-
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
 @pytest.mark.parametrize("env", ["default_omo"], ids=["omo"], indirect=True)
@@ -299,6 +422,14 @@ def test_arpl(ex_dir, env: SimEnv):
     algo = ARPL(ex_dir, env, ppo, policy, ppo.expl_strat, **arpl_hparam)
 
     algo.train(snapshot_mode="best")
+    assert algo.curr_iter == algo.max_iter
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
 @pytest.mark.slow
@@ -476,18 +607,20 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
         warmstart=True,
     )
     algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam)
-    algo.train()
 
+    algo.train()
     assert algo.curr_iter == algo.max_iter
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
-@pytest.mark.parametrize(
-    "policy",
-    ["linear_policy"],
-    ids=["lin"],
-    indirect=True,
-)
+@pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [(UDR, {}), (EPOpt, dict(skip_iter=2, epsilon=0.2, gamma=0.9995))],
@@ -547,8 +680,14 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     algo = algo(env, subrtn, **algo_hparam)
 
     algo.train()
-
     assert algo.curr_iter == algo.max_iter
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
@@ -786,6 +925,14 @@ def test_npdr_and_bayessim(
         # Just checking the interface here
         assert algo.curr_iter == algo.max_iter
 
+        # Save and load
+        algo.save_snapshot(meta_info=None)
+        algo_loaded = pyrado.load("algo.pkl", ex_dir)
+        MockArgsSBI = namedtuple("MockArgs", "dir, policy_name, iter, round")
+        args = MockArgsSBI(ex_dir, "policy", 0, num_sbi_rounds - 1)
+        algo_loaded.load_snapshot(args)
+        assert isinstance(algo_loaded, Algorithm)
+
 
 @pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
@@ -845,15 +992,18 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     algo.train(snapshot_mode="latest")
     assert algo.curr_iter == algo.max_iter
 
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
+
 
 @pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq-su"], indirect=True)
 @pytest.mark.parametrize("policy", ["fnn_policy"], ids=["fnn"], indirect=True)
-@pytest.mark.parametrize(
-    "algo_hparam",
-    [dict(max_iter=2, num_teachers=2)],
-    ids=["casual"],
-)
+@pytest.mark.parametrize("algo_hparam", [dict(max_iter=2, num_teachers=2)], ids=["casual"])
 def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
     pyrado.set_seed(0)
 
@@ -890,12 +1040,10 @@ def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
 
     # Save and load
     algo.save_snapshot(meta_info=None)
-    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
     assert isinstance(algo_loaded, Algorithm)
-    policy_loaded = algo_loaded.policy
-
-    # Check
-    assert all(algo.policy.param_values == policy_loaded.param_values)
 
     # Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.
     env, policy, extra = load_experiment(ex_dir)

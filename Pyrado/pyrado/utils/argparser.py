@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import argparse
+from collections import namedtuple
 
 
 def get_argparser() -> argparse.ArgumentParser:
@@ -295,3 +296,7 @@ def get_argparser() -> argparse.ArgumentParser:
     )
 
     return parser
+
+
+# Minimal set of parsed arguments to make Algorithm.load_snapshot() work. Instances are used for testing.
+MockArgs = namedtuple("MockArgs", "dir, policy_name, vfcn_name")

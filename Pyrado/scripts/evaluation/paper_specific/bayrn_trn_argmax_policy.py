@@ -47,8 +47,10 @@ if __name__ == "__main__":
 
     # Load the environment and the policy
     env_sim, policy, kwout = load_experiment(ex_dir, args)
-
-    subrtn = Algorithm.load_snapshot(load_dir=ex_dir, load_name="subrtn")
+    algo = pyrado.load("algo.pkl", ex_dir)
+    if not isinstance(algo, BayRn):
+        raise pyrado.TypeErr(given=algo, expected_type=BayRn)
+    subrtn = algo.subroutine
 
     # Start from previous results policy if desired
     ppi = policy.param_values.data if args.warmstart is not None else None

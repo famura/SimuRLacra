@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
-from typing import Sequence
+from typing import Sequence, Tuple
 
 import numpy as np
 import torch as to
@@ -332,3 +332,13 @@ class SVPG(Algorithm):
                     suffix=meta_info.get("suffix", ""),
                     use_state_dict=True,
                 )
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        for idx, p in enumerate(self.particles):
+            extra[f"particle{idx}"] = pyrado.load(f"particle_{idx}.pt", ex_dir, obj=self.particles[idx], verbose=True)
+
+        return env, policy, extra

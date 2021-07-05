@@ -47,8 +47,12 @@ from tqdm import tqdm
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper, DomainRandWrapperBuffer
-from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environment_wrappers.domain_randomization import (
+    DomainRandWrapper,
+    DomainRandWrapperBuffer,
+    remove_all_dr_wrappers,
+)
+from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
@@ -815,6 +819,39 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        extra = dict()
+
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
+            typed_env(env, DomainRandWrapperBuffer).fill_buffer(10)
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}\nand filled it with 10 random instances.", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "y")
+            env = remove_all_dr_wrappers(env, verbose=True)
+
+        # Policy
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, obj=self.policy, verbose=True)
+
+        # Algorithm specific
+        extra["prior"] = pyrado.load("prior.pt", ex_dir, verbose=True)
+        # By default load the latest posterior (latest iteration and the last round)
+        try:
+            extra["posterior"] = self.load_posterior(
+                ex_dir, parsed_args.iter, parsed_args.round, obj=None, verbose=True
+            )
+            # Load the complete data or the data of the given iteration
+            prefix = "" if parsed_args.iter == -1 else f"iter_{parsed_args.iter}"
+            extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
+        except FileNotFoundError:
+            pass
+
+        return env, policy, extra
 
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance

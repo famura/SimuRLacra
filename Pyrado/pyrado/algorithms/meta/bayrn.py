@@ -28,7 +28,7 @@
 
 import os
 import os.path as osp
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -42,11 +42,13 @@ from tabulate import tabulate
 
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.stopping_criteria.predefined_criteria import CustomStoppingCriterion
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.utils import inner_env, typed_env
+from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
@@ -210,6 +212,10 @@ class BayRn(InterruptableAlgorithm):
         return self._subrtn
 
     @property
+    def policy(self) -> Policy:
+        return self._subrtn.policy
+
+    @property
     def sample_count(self) -> int:
         return self._cnt_samples + self._subrtn.sample_count
 
@@ -241,6 +247,7 @@ class BayRn(InterruptableAlgorithm):
 
         # Train a policy in simulation using the subroutine
         self._subrtn.train(snapshot_mode=self.subrtn_snapshot_mode, meta_info=dict(prefix=prefix))
+        self._subrtn.save_snapshot(meta_info=None)  # overwrites policy.pt (and vfcn.pt ect)
 
         # Return the estimated return of the trained policy in simulation
         avg_ret_sim = self.eval_policy(
@@ -479,9 +486,32 @@ class BayRn(InterruptableAlgorithm):
             # This algorithm instance is not a subroutine of another algorithm
             pyrado.save(self._env_sim, "env_sim.pkl", self._save_dir)
             pyrado.save(self._env_real, "env_real.pkl", self._save_dir)
-            pyrado.save(self.policy, "policy.pt", self.save_dir, use_state_dict=True)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        extra = dict()
+
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if hasattr(env, "randomizer"):
+            last_cand = to.load(osp.join(ex_dir, "candidates.pt"))[-1, :]
+            env.adapt_randomizer(last_cand.numpy())
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
+
+        # Policy
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, obj=self.policy, verbose=True)
+
+        # Algorithm specific
+        if isinstance(self.subroutine, ActorCritic):
+            extra["vfcn"] = pyrado.load(
+                f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self.subroutine.critic.vfcn, verbose=True
+            )
+
+        return env, policy, extra
 
     @staticmethod
     def argmax_posterior_mean(

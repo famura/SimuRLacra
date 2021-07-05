@@ -235,7 +235,7 @@ if __name__ == "__main__":
     data_real = kwout["data_real"]
 
     # Load the algorithm and the required data
-    algo = Algorithm.load_snapshot(ex_dir)
+    algo = pyrado.load("algo.pkl", ex_dir)
     if not isinstance(algo, (NPDR, BayesSim)):
         raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
 

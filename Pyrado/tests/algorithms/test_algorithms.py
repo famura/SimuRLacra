@@ -67,6 +67,7 @@ from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.spaces.box import InfBoxSpace
+from pyrado.utils.argparser import MockArgs
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.functions import noisy_nonlin_fcn
@@ -84,15 +85,7 @@ def ex_dir(tmpdir):
 )
 @pytest.mark.parametrize(
     "policy",
-    [
-        "linear_policy",
-        "fnn_policy",
-        "rnn_policy",
-        "lstm_policy",
-        "gru_policy",
-        "adn_policy",
-    ],
-    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn"],
+    ["linear_policy", "fnn_policy", "lstm_policy", "adn_policy"],
     indirect=True,
 )
 @pytest.mark.parametrize(
@@ -156,17 +149,21 @@ def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam)
     algo.policy.param_values += to.tensor([42.0])
     if isinstance(algo, ActorCritic):
         algo.critic.vfcn.param_values += to.tensor([42.0])
+    elif isinstance(algo, ParameterExploring):
+        algo.best_policy_param = algo.policy.param_values
 
     # Save and load
     algo.save_snapshot(meta_info=None)
-    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
     assert isinstance(algo_loaded, Algorithm)
-    policy_loaded = algo_loaded.policy
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+
     if isinstance(algo, ActorCritic):
         critic_loaded = algo_loaded.critic
 
     # Check
-    assert all(algo.policy.param_values == policy_loaded.param_values)
+    assert all(algo.policy.param_values == algo_loaded.policy.param_values)
     if isinstance(algo, ActorCritic):
         assert all(algo.critic.vfcn.param_values == critic_loaded.vfcn.param_values)
 
@@ -289,7 +286,7 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
+@pytest.mark.parametrize("env", ["default_omo"], ids=["bob"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [
@@ -297,8 +294,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             HCNormal,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 expl_std_init=0.5,
                 expl_factor=1.1,
             ),
@@ -308,7 +305,7 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             dict(
                 max_iter=40,
                 pop_size=200,
-                num_init_states_per_domain=10,
+                num_init_states_per_domain=4,
                 expl_std_init=0.2,
                 lr=1e-2,
                 normalize_update=False,
@@ -318,8 +315,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             NES,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 expl_std_init=0.5,
                 symm_sampling=True,
                 eta_mean=2,
@@ -329,8 +326,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             PoWER,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 num_is_samples=8,
                 expl_std_init=0.5,
             ),
@@ -339,8 +336,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             CEM,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 num_is_samples=8,
                 expl_std_init=0.5,
                 full_cov=False,
@@ -350,17 +347,19 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             REPS,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=100,
+                num_init_states_per_domain=2,
                 eps=1.5,
                 expl_std_init=0.5,
                 use_map=True,
             ),
         ),
     ],
-    ids=["hc_normal", "pepg", "nes", "power", "cem", "reps"],
+    ids=["hc", "pepg", "nes", "power", "cem", "reps"],
 )
 def test_training_parameter_exploring(ex_dir, env: SimEnv, algo, algo_hparam):
+    pyrado.set_seed(0)
+
     # Environment and policy
     env = ActNormWrapper(env)
     policy_hparam = dict(feats=FeatureStack(const_feat, identity_feat))
@@ -395,7 +394,6 @@ def test_training_parameter_exploring(ex_dir, env: SimEnv, algo, algo_hparam):
         "lstm_policy",
         "gru_policy",
     ],
-    ids=["lin", "fnn", "rnn", "lstm", "gru"],
     indirect=True,
 )
 def test_soft_update(env, policy: Policy):

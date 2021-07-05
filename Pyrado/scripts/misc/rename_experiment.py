@@ -64,7 +64,7 @@ if __name__ == "__main__":
         raise pyrado.PathErr(given=args.new_dir)
 
     # Load the old algorithm including the loggers
-    algo = Algorithm.load_snapshot(args.dir)
+    algo = pyrado.load("algo.pkl", args.dir)
 
     # Update all entries that contain information about where the experiment is stored
     algo.save_dir = args.new_dir
