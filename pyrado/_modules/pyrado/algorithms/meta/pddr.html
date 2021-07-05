@@ -499,6 +499,18 @@
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
             <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_real</span><span class="p">,</span> <span class="s2">&quot;env.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="PDDR.load_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="n">Policy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+        <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">)</span>
+
+        <span class="c1"># Algorithm specific</span>
+        <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;teacher_policies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_policies</span>
+        <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;teacher_envs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_envs</span>
+        <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;teacher_expl_strats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_expl_strats</span>
+        <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;teacher_critics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_critics</span>
+        <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;teacher_ex_dirs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">teacher_ex_dirs</span>
+
+        <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
+
     <span class="k">def</span> <span class="nf">_train_teacher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wrapper for use of multiprocessing: Trains one teacher.</span>

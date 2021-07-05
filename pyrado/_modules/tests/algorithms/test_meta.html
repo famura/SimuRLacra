@@ -249,6 +249,7 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
@@ -316,6 +317,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sbi_rollout_sampler</span> <span class="kn">import</span> <span class="n">RolloutSamplerForSBI</span><span class="p">,</span> <span class="n">SimRolloutSamplerForSBI</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.argparser</span> <span class="kn">import</span> <span class="n">MockArgs</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.experiments</span> <span class="kn">import</span> <span class="n">load_experiment</span>
 
@@ -327,8 +329,8 @@
     <span class="k">return</span> <span class="n">tmpdir</span></div>
 
 
-<div class="viewcode-block" id="test_spota_ppo"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_spota_ppo">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="test_spota_hc"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_spota_hc">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;spota_hparam&quot;</span><span class="p">,</span>
     <span class="p">[</span>
@@ -347,7 +349,49 @@
             <span class="n">warmstart_refs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">num_bs_reps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
             <span class="n">studentized_ci</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_spota_hc</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">spota_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Environment and domain randomization</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+
+    <span class="c1"># Policy and subroutines</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="n">FeatureStack</span><span class="p">(</span><span class="n">identity_feat</span><span class="p">))</span>
+
+    <span class="n">subrtn_hparam_common</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_domains</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># will be overwritten by SPOTA</span>
+        <span class="n">expl_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
+        <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">sr_cand</span> <span class="o">=</span> <span class="n">HCNormal</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam_common</span><span class="p">)</span>
+    <span class="n">sr_refs</span> <span class="o">=</span> <span class="n">HCNormal</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">policy</span><span class="p">),</span> <span class="o">**</span><span class="n">subrtn_hparam_common</span><span class="p">)</span>
+
+    <span class="c1"># Create algorithm and train</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">SPOTA</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sr_cand</span><span class="p">,</span> <span class="n">sr_refs</span><span class="p">,</span> <span class="o">**</span><span class="n">spota_hparam</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span>
+
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_spota_ppo"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_spota_ppo">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;spota_hparam&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
         <span class="nb">dict</span><span class="p">(</span>
             <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
@@ -365,7 +409,6 @@
             <span class="n">studentized_ci</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;config1&quot;</span><span class="p">,</span> <span class="s2">&quot;config2&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_spota_ppo</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">spota_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -384,7 +427,7 @@
     <span class="n">subrtn_hparam_common</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="c1"># min_rollouts=0,  # will be overwritten by SPOTA</span>
         <span class="n">min_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># will be overwritten by SPOTA</span>
-        <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">num_epoch</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
         <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
@@ -399,8 +442,82 @@
     <span class="c1"># Create algorithm and train</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SPOTA</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">sr_cand</span><span class="p">,</span> <span class="n">sr_refs</span><span class="p">,</span> <span class="o">**</span><span class="n">spota_hparam</span><span class="p">)</span>
     <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span>
 
-    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span></div>
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">subroutine_cand</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_bayrn_ppo"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_bayrn_ppo">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;bayrn_hparam&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">acq_fc</span><span class="o">=</span><span class="s2">&quot;UCB&quot;</span><span class="p">,</span>
+            <span class="n">acq_param</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span>
+            <span class="n">acq_restarts</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">acq_samples</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+            <span class="n">num_init_cand</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">warmstart</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">mc_estimator</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_sim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_bayrn_ppo</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">bayrn_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Environments and domain randomization</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">create_zero_var_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
+    <span class="n">dp_map</span> <span class="o">=</span> <span class="n">create_default_domain_param_map_qq</span><span class="p">()</span>
+    <span class="n">env_sim</span> <span class="o">=</span> <span class="n">MetaDomainRandWrapper</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">dp_map</span><span class="p">)</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mass_pend_pole</span><span class="o">=</span><span class="mf">0.024</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span> <span class="n">mass_rot_pole</span><span class="o">=</span><span class="mf">0.095</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">)</span>
+    <span class="n">env_real</span> <span class="o">=</span> <span class="n">wrap_like_other_env</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">)</span>
+
+    <span class="c1"># Policy and subroutine</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="n">vfcn</span> <span class="o">=</span> <span class="n">FNN</span><span class="p">(</span><span class="n">input_size</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+    <span class="n">critic_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.998</span><span class="p">,</span> <span class="n">lamda</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">num_epoch</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+    <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">vfcn</span><span class="p">,</span> <span class="o">**</span><span class="n">critic_hparam</span><span class="p">)</span>
+    <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">num_epoch</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">eps_clip</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subrtn</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">)</span>
+
+    <span class="c1"># Set the boundaries for the GP</span>
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">inner_env</span><span class="p">(</span><span class="n">env_sim</span><span class="p">)</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="n">ddp_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span>
+        <span class="n">bound_lo</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">],</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">],</span> <span class="mf">1e-8</span><span class="p">]),</span>
+        <span class="n">bound_up</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">],</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1.2</span> <span class="o">*</span> <span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">],</span> <span class="mf">1e-7</span><span class="p">]),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create algorithm and train</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">BayRn</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">env_real</span><span class="p">,</span> <span class="n">subrtn</span><span class="p">,</span> <span class="n">ddp_space</span><span class="p">,</span> <span class="o">**</span><span class="n">bayrn_hparam</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span>
+
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_bayrn_power"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_bayrn_power">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
@@ -434,7 +551,7 @@
             <span class="n">num_eval_rollouts_real</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># sim-2-sim</span>
         <span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;config1&quot;</span><span class="p">,</span> <span class="s2">&quot;config2&quot;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;configUCB&quot;</span><span class="p">,</span> <span class="s2">&quot;configEI&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_bayrn_power</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">bayrn_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -452,7 +569,7 @@
     <span class="n">policy</span> <span class="o">=</span> <span class="n">QQubeSwingUpAndBalanceCtrl</span><span class="p">(</span><span class="n">env_sim</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">policy_hparam</span><span class="p">)</span>
     <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">pop_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">pop_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
         <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
         <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
@@ -470,8 +587,14 @@
     <span class="c1"># Create algorithm and train</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">BayRn</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">env_real</span><span class="p">,</span> <span class="n">subrtn</span><span class="p">,</span> <span class="n">ddp_space</span><span class="p">,</span> <span class="o">**</span><span class="n">bayrn_hparam</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span>
 
-    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span> <span class="ow">or</span> <span class="n">algo</span><span class="o">.</span><span class="n">stopping_criterion_met</span><span class="p">()</span></div>
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_arpl"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_arpl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_omo&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;omo&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -521,7 +644,15 @@
     <span class="n">ppo</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">ARPL</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">ppo</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">ppo</span><span class="o">.</span><span class="n">expl_strat</span><span class="p">,</span> <span class="o">**</span><span class="n">arpl_hparam</span><span class="p">)</span>
 
-    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span></div>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span>
+
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_sysidasrl_reps"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_sysidasrl_reps">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
@@ -699,18 +830,20 @@
         <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SimOpt</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">,</span> <span class="n">env_real</span><span class="p">,</span> <span class="n">subrtn_policy</span><span class="p">,</span> <span class="n">subrtn_distr</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
-    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 
-    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+    <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span>
+
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_basic_meta"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_basic_meta">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qbb&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qbb&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s2">&quot;policy&quot;</span><span class="p">,</span>
-    <span class="p">[</span><span class="s2">&quot;linear_policy&quot;</span><span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;linear_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;algo, algo_hparam&quot;</span><span class="p">,</span>
     <span class="p">[(</span><span class="n">UDR</span><span class="p">,</span> <span class="p">{}),</span> <span class="p">(</span><span class="n">EPOpt</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">skip_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9995</span><span class="p">))],</span>
@@ -770,8 +903,14 @@
     <span class="n">algo</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">subrtn</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
 
     <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span>
 
-    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_sbi_embedding"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_sbi_embedding">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsu&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1007,7 +1146,15 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">skip</span><span class="p">:</span>
         <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
         <span class="c1"># Just checking the interface here</span>
-        <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+        <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span>
+
+        <span class="c1"># Save and load</span>
+        <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+        <span class="n">MockArgsSBI</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;MockArgs&quot;</span><span class="p">,</span> <span class="s2">&quot;dir, policy_name, iter, round&quot;</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgsSBI</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">num_sbi_rounds</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_sprl"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_sprl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
@@ -1066,17 +1213,20 @@
 
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SPRL</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">PPO</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="o">**</span><span class="n">subrtn_hparam</span><span class="p">),</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
     <span class="n">algo</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span></div>
+    <span class="k">assert</span> <span class="n">algo</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="n">algo</span><span class="o">.</span><span class="n">max_iter</span>
+
+    <span class="c1"># Save and load</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_pddr"><a class="viewcode-back" href="../../../tests.algorithms.html#tests.algorithms.test_meta.test_pddr">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;default_qqsu&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qq-su&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fnn_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fnn&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s2">&quot;algo_hparam&quot;</span><span class="p">,</span>
-    <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_teachers</span><span class="o">=</span><span class="mi">2</span><span class="p">)],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;casual&quot;</span><span class="p">],</span>
-<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;algo_hparam&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_teachers</span><span class="o">=</span><span class="mi">2</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;casual&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_pddr</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
     <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
@@ -1113,12 +1263,10 @@
 
     <span class="c1"># Save and load</span>
     <span class="n">algo</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">Algorithm</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">load_dir</span><span class="o">=</span><span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">algo_loaded</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">MockArgs</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;vfcn&quot;</span><span class="p">)</span>
+    <span class="n">algo_loaded</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo_loaded</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span>
-    <span class="n">policy_loaded</span> <span class="o">=</span> <span class="n">algo_loaded</span><span class="o">.</span><span class="n">policy</span>
-
-    <span class="c1"># Check</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="n">policy_loaded</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
 
     <span class="c1"># Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.</span>
     <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="n">load_experiment</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span>

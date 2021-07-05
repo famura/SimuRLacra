@@ -985,6 +985,8 @@
         <li><a href="sampling.html#pyrado.sampling.sbi_embeddings.RNNEmbedding.dim_output">(RNNEmbedding property)</a>
 </li>
       </ul></li>
+      <li><a href="utils.html#pyrado.utils.argparser.MockArgs.dir">dir (MockArgs property)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.discounted_return">discounted_return() (StepSequence method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.discounted_reverse_cumsum">discounted_reverse_cumsum() (in module pyrado.sampling.step_sequence)</a>
@@ -1987,14 +1989,42 @@
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.load_hyperparameters">load_hyperparameters() (in module pyrado.logger.experiment)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_posterior">load_posterior() (SBIBase static method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.experiments.load_rollouts_from_dir">load_rollouts_from_dir() (in module pyrado.utils.experiments)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">load_snapshot() (Algorithm static method)</a>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.load_snapshot">load_snapshot() (ActorCritic method)</a>
+
+      <ul>
+        <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">(Algorithm method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.load_snapshot">(BayRn method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.load_snapshot">(DQL method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.epopt.EPOpt.load_snapshot">(EPOpt method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_snapshot">(PDDR method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.load_snapshot">(SAC method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_snapshot">(SBIBase method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.load_snapshot">(SimOpt method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.load_snapshot">(SPOTA method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.load_snapshot">(SPRL method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.load_snapshot">(SVPG method)</a>
+</li>
+        <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.load_snapshot">(TSPred method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.udr.UDR.load_snapshot">(UDR method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_teacher_experiment">load_teacher_experiment() (PDDR method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.pddr.PDDR.load_teachers">load_teachers() (PDDR method)</a>
@@ -2114,6 +2144,8 @@
       <li><a href="tests.html#tests.test_rollout_result.mock_data">mock_data() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_observation_normalization.mock_obs_space">mock_obs_space() (in module tests.environment_wrappers.test_observation_normalization)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.argparser.MockArgs">MockArgs (class in pyrado.utils.argparser)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.mock_env.MockEnv">MockEnv (class in tests.environment_wrappers.mock_env)</a>
 </li>
@@ -3157,10 +3189,18 @@
       <li><a href="spaces.html#pyrado.spaces.polar.Polar2DPosVelSpace">Polar2DPosVelSpace (class in pyrado.spaces.polar)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.policy">policy (Algorithm property)</a>
+
+      <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.policy">(BayRn property)</a>
 </li>
+      </ul></li>
       <li><a href="policies.html#pyrado.policies.base.Policy">Policy (class in pyrado.policies.base)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.policy">policy (SPOTA property)</a>
+</li>
       <li><a href="tests.html#tests.conftest.policy">policy() (in module tests.conftest)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.argparser.MockArgs.policy_name">policy_name (MockArgs property)</a>
 </li>
       <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.poly_time.PolySplineTimePolicy">PolySplineTimePolicy (class in pyrado.policies.feed_forward.poly_time)</a>
 </li>
@@ -3781,6 +3821,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.base">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.one_mass_oscillator
 
@@ -3788,8 +3830,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.one_mass_oscillator">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.openai_classical_control
 
@@ -5884,6 +5924,8 @@
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_bayrn_power">test_bayrn_power() (in module tests.algorithms.test_meta)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_bayrn_ppo">test_bayrn_ppo() (in module tests.algorithms.test_meta)</a>
+</li>
       <li><a href="tests.html#tests.test_tasks.test_best_state_final_rew_task">test_best_state_final_rew_task() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_boostrap_methods">test_boostrap_methods() (in module tests.test_sampling)</a>
@@ -6309,6 +6351,8 @@
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_spaces">test_spaces() (in module tests.environment_wrappers.test_observation_partial)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_split_multi">test_split_multi() (in module tests.test_rollout_result)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_spota_hc">test_spota_hc() (in module tests.algorithms.test_meta)</a>
 </li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_spota_ppo">test_spota_ppo() (in module tests.algorithms.test_meta)</a>
 </li>
@@ -6851,6 +6895,8 @@
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.VelocityFilter">VelocityFilter (class in pyrado.environments.quanser.quanser_common)</a>
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.vfcn">vfcn (GAE property)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.argparser.MockArgs.vfcn_name">vfcn_name (MockArgs property)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.RenderMode.video">video (RenderMode property)</a>
 </li>

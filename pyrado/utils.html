@@ -249,6 +249,30 @@
 <h1>utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pyrado.utils.argparser">
 <span id="argparser"></span><h2>argparser<a class="headerlink" href="#module-pyrado.utils.argparser" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.utils.argparser.MockArgs">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vfcn_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyrado.utils.argparser.MockArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.utils.argparser.MockArgs.dir">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dir</span></span><a class="headerlink" href="#pyrado.utils.argparser.MockArgs.dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.utils.argparser.MockArgs.policy_name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">policy_name</span></span><a class="headerlink" href="#pyrado.utils.argparser.MockArgs.policy_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.utils.argparser.MockArgs.vfcn_name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">vfcn_name</span></span><a class="headerlink" href="#pyrado.utils.argparser.MockArgs.vfcn_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="pyrado.utils.argparser.get_argparser">
 <span class="sig-name descname"><span class="pre">get_argparser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">argparse.ArgumentParser</span><a class="reference internal" href="_modules/pyrado/utils/argparser.html#get_argparser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.utils.argparser.get_argparser" title="Permalink to this definition">¶</a></dt>
@@ -1008,7 +1032,7 @@ why entities should be loaded. If no file was found, we fall back to some heuris
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>environment, policy, and optional output (e.g. valuefcn)</p>
+<dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
 </dd>
 </dl>
 </dd></dl>

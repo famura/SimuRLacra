@@ -265,11 +265,11 @@ robotic environments powered by Rcs using either the Bullet or Vortex physics en
 any computer vision aspects. It is all about dynamics-based interaction and (continuous) control. The degree of
 randomization for the environments varies strongly, since it is a lot of work to randomize them properly (including
 testing) and I have to graduate after all ;)</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env_hparams</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">50.</span><span class="p">,</span>
     <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span>
 <span class="p">)</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">BallOnBeamSim</span><span class="p">(</span><span class="o">**</span><span class="n">env_hparams</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">BallOnBeamSim</span><span class="p">(</span><span class="o">**</span><span class="n">env_hparam</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -307,7 +307,7 @@ algorithm has different hyper-parameters. However, they all use the same <cite>r
 <p>Save the hyper-parameters before staring the training in a YAML-file. This step is not strictly necessary, but it helps
 you to later see which hyper-parameters you used, i.e. which setting leads to a successfully trained policy.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">save_dicts_to_yaml</span><span class="p">([</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env_hparams</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env_hparam</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
     <span class="nb">dict</span><span class="p">(</span><span class="n">policy</span><span class="o">=</span><span class="n">policy_hparam</span><span class="p">),</span>
     <span class="nb">dict</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="n">algo_hparam</span><span class="p">,</span> <span class="n">algo_name</span><span class="o">=</span><span class="n">algo</span><span class="o">.</span><span class="n">name</span><span class="p">)],</span>
     <span class="n">ex_dir</span>

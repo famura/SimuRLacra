@@ -260,10 +260,13 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">RolloutSavingWrapper</span><span class="p">,</span> <span class="n">until_thold_exceeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">SelfPacedDomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 
 
 <div class="viewcode-block" id="MultivariateNormalWrapper"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper">[docs]</a><span class="k">class</span> <span class="nc">MultivariateNormalWrapper</span><span class="p">:</span>
@@ -761,6 +764,18 @@
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SPRL.load_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.load_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="n">Policy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+        <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">)</span>
+
+        <span class="c1"># Algorithm specific</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
+            <span class="n">ex_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">,</span> <span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">extra</span><span class="p">[</span><span class="s2">&quot;vfcn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">vfcn_name</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subroutine</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">vfcn</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
 
     <span class="k">def</span> <span class="nf">_compute_expected_performance</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="p">:</span> <span class="n">MultivariateNormalWrapper</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">old_log_prop</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span>

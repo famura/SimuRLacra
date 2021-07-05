@@ -254,6 +254,7 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 
 
 <div class="viewcode-block" id="get_argparser"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.argparser.get_argparser">[docs]</a><span class="k">def</span> <span class="nf">get_argparser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
@@ -522,6 +523,10 @@
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<span class="c1"># Minimal set of parsed arguments to make Algorithm.load_snapshot() work. Instances are used for testing.</span>
+<span class="n">MockArgs</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;MockArgs&quot;</span><span class="p">,</span> <span class="s2">&quot;dir, policy_name, vfcn_name&quot;</span><span class="p">)</span>
 </pre></div>
 
            </div>
