@@ -75,11 +75,11 @@ if __name__ == "__main__":
 
     # Randomizer
     randomizer = DomainRandomizer(
-        UniformDomainParam(name="cup_scale", mean=1.0, halfspan=0.2),
-        NormalDomainParam(name="rope_length", mean=0.3, std=0.005),
-        NormalDomainParam(name="ball_mass", mean=0.021, std=0.001),
-        UniformDomainParam(name="joint_2_damping", mean=0.05, halfspan=0.05),
-        UniformDomainParam(name="joint_2_dryfriction", mean=0.1, halfspan=0.1),
+        NormalDomainParam(name="rope_length", mean=2.9941e-01, std=1.0823e-02, clip_lo=0.27, clip_up=0.33),
+        UniformDomainParam(name="rope_damping", mean=3.0182e-05, halfspan=4.5575e-05, clip_lo=0.0),
+        NormalDomainParam(name="ball_mass", mean=1.8412e-02, std=1.9426e-03, clip_lo=1e-2),
+        UniformDomainParam(name="joint_2_dryfriction", mean=1.9226e-01, halfspan=2.5739e-02, clip_lo=0),
+        UniformDomainParam(name="joint_2_damping", mean=9.4057e-03, halfspan=5.0000e-04, clip_lo=1e-6),
     )
     env = DomainRandWrapperLive(env, randomizer)
 
@@ -91,13 +91,13 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=15,
-        pop_size=100,
-        num_is_samples=10,
-        num_init_states_per_domain=2,
+        pop_size=80,
+        num_is_samples=20,
+        num_init_states_per_domain=1,
         num_domains=10,
         expl_std_init=np.pi / 12,
         expl_std_min=0.02,
-        num_workers=8,
+        num_workers=20,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
