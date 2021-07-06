@@ -522,7 +522,7 @@ class SPRL(Algorithm):
                 constraints=constraints,
                 options={"gtol": 1e-4, "xtol": 1e-6},
                 bounds=bounds,
-                callback=_optimizer_callback,
+                callback=_make_optimizer_callback(dim),
             )
         if result and result.success:
             self._adapt_parameters(result.x)
@@ -591,15 +591,18 @@ class SPRL(Algorithm):
         return x
 
 
-def _optimizer_callback(xk, state: OptimizeResult):
-    row = {
-        "iteration": state.nit,
-        "objective_output": state.fun,
-        "status": state.status,
-        "cg_stop_cond": state.cg_stop_cond,
-    }
-    dist = MultivariateNormalWrapper.from_stacked(2, xk)
-    row["mean"] = dist.mean.tolist()
-    row["cov"] = dist.cov.tolist()
-    optimize_logger.writerow(row)
-    return False
+def _make_optimizer_callback(dim: int):
+    def _optimizer_callback(xk, state: OptimizeResult):
+        row = {
+            "iteration": state.nit,
+            "objective_output": state.fun,
+            "status": state.status,
+            "cg_stop_cond": state.cg_stop_cond,
+        }
+        dist = MultivariateNormalWrapper.from_stacked(dim, xk)
+        row["mean"] = dist.mean.tolist()
+        row["cov"] = dist.cov.tolist()
+        optimize_logger.writerow(row)
+        return False
+
+    return _optimizer_callback
