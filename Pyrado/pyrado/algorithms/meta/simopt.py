@@ -187,7 +187,7 @@ class SimOpt(InterruptableAlgorithm):
         self._subrtn_policy.train(snapshot_mode=self.subrtn_snapshot_mode, meta_info=dict(prefix=prefix))
 
         # Return the estimated return of the trained policy in simulation
-        ros = self.eval_behav_policy(None, self._env_sim, self._subrtn_policy.policy, prefix, self.num_eval_rollouts)
+        ros = SimOpt.eval_behav_policy(None, self._env_sim, self._subrtn_policy.policy, prefix, self.num_eval_rollouts)
         avg_ret_sim = to.mean(to.tensor([r.undiscounted_return() for r in ros]))
         return float(avg_ret_sim)
 
@@ -341,7 +341,7 @@ class SimOpt(InterruptableAlgorithm):
         if self.curr_checkpoint == 1:
             # Evaluate the current policy in the target domain
             policy = pyrado.load("policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}", obj=self.policy)
-            self.eval_behav_policy(
+            SimOpt.eval_behav_policy(
                 self.save_dir, self._env_real, policy, f"iter_{self._curr_iter}", self.num_eval_rollouts, None
             )
 

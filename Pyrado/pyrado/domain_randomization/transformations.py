@@ -89,9 +89,8 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
             domain_param[key] = self.forward(value) if key in self._mask else value
         return domain_param
 
-    @staticmethod
     @abstractmethod
-    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         """
         Map a domain parameter value from the actual domain parameter space to the transformed space.
 
@@ -111,9 +110,8 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
             domain_param[key] = self.inverse(value) if key in self._mask else value
         return domain_param
 
-    @staticmethod
     @abstractmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         """
         Map a domain parameter value from the transformed space to the actual domain parameter space.
 
@@ -148,8 +146,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
 class LogDomainParamTransform(DomainParamTransform):
     """Wrapper to make the domain parameters look like they are in log-space"""
 
-    @staticmethod
-    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.log(value)
         elif isinstance(value, to.Tensor):
@@ -157,8 +154,7 @@ class LogDomainParamTransform(DomainParamTransform):
         else:
             return math.log(value)
 
-    @staticmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.exp(value)
         elif isinstance(value, to.Tensor):
@@ -170,8 +166,7 @@ class LogDomainParamTransform(DomainParamTransform):
 class SqrtDomainParamTransform(DomainParamTransform):
     """Wrapper to make the domain parameters look like they are in sqrt-space"""
 
-    @staticmethod
-    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.sqrt(value)
         elif isinstance(value, to.Tensor):
@@ -179,8 +174,7 @@ class SqrtDomainParamTransform(DomainParamTransform):
         else:
             return math.sqrt(value)
 
-    @staticmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             return np.power(value, 2)
         elif isinstance(value, to.Tensor):

@@ -36,6 +36,7 @@ import torch.nn as nn
 from tqdm import tqdm
 
 import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.value_based import ValueBased
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
@@ -205,11 +206,11 @@ class DQL(ValueBased):
                 expected_q_val = steps.rewards.to(self.policy.device) + not_done * self.gamma * next_v_vals
 
             # Compute the loss, clip the gradients if desired, and do one optimization step
-            loss = self.loss_fcn(q_vals, expected_q_val)
+            loss = DQL.loss_fcn(q_vals, expected_q_val)
             losses[b] = loss.data
             self.optim.zero_grad()
             loss.backward()
-            policy_grad_norm[b] = self.clip_grad(self.expl_strat.policy, self.max_grad_norm)
+            policy_grad_norm[b] = Algorithm.clip_grad(self.expl_strat.policy, self.max_grad_norm)
             self.optim.step()
 
             # Update the qfcn_targ network by copying all weights and biases from the DQN policy

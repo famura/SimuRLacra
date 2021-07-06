@@ -250,7 +250,7 @@ class BayRn(InterruptableAlgorithm):
         self._subrtn.save_snapshot(meta_info=None)  # overwrites policy.pt (and vfcn.pt ect)
 
         # Return the estimated return of the trained policy in simulation
-        avg_ret_sim = self.eval_policy(
+        avg_ret_sim = BayRn.eval_policy(
             None,
             self._env_sim,
             self._subrtn.policy,
@@ -310,7 +310,7 @@ class BayRn(InterruptableAlgorithm):
         # Evaluate learned policies from random candidates on the target environment (real-world) system
         for i in range(num_init_cand):
             policy = pyrado.load("policy.pt", self.save_dir, prefix=f"init_{i}", obj=self.policy)
-            cands_values[i] = self.eval_policy(
+            cands_values[i] = BayRn.eval_policy(
                 self.save_dir,
                 self._env_real,
                 policy,
@@ -458,7 +458,7 @@ class BayRn(InterruptableAlgorithm):
         if self.curr_checkpoint == 2:
             # Evaluate the current policy in the target domain
             policy = pyrado.load("policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}", obj=self.policy)
-            self.curr_cand_value = self.eval_policy(
+            self.curr_cand_value = BayRn.eval_policy(
                 self.save_dir,
                 self._env_real,
                 policy,

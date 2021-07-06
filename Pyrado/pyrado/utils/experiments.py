@@ -36,9 +36,17 @@ import pandas as pd
 import torch as to
 
 import pyrado
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.meta.sbi_base import SBIBase
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.base import Env
+from pyrado.environment_wrappers.domain_randomization import (
+    DomainRandWrapperBuffer,
+    DomainRandWrapperLive,
+    remove_all_dr_wrappers,
+)
+from pyrado.environment_wrappers.utils import inner_env, typed_env
+from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_hyperparameters
 from pyrado.policies.base import Policy
@@ -54,7 +62,6 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_types_equal, is_iterable
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.ordering import natural_sort
 
 
 def load_experiment(
@@ -67,24 +74,176 @@ def load_experiment(
 
     :param ex_dir: experiment's parent directory
     :param args: arguments from the argument parser, pass `None` to fall back to the values from the default argparser
-    :return: environment, policy, and (optional) algorithm-specific output, e.g. value function
+    :return: environment, policy, and optional output (e.g. valuefcn)
     """
     env, policy, extra = None, None, dict()
 
     if args is None:
-        # Fall back to default arguments. By passing [], we ignore the command line arguments.
+        # Fall back to default arguments. By passing [], we ignore the command line arguments
         args = get_argparser().parse_args([])
 
     # Hyper-parameters
     extra["hparams"] = load_hyperparameters(ex_dir)
 
-    # Algorithm, environment, policy, and more
-    algo = pyrado.load("algo.pkl", ex_dir)
-    env, policy, extra = algo.load_snapshot(args)
+    # Algorithm specific
+    algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name="algo")
+
+    if algo.name == "spota":
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
+            typed_env(env, DomainRandWrapperBuffer).fill_buffer(10)
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}\nand filled it with 10 random instances.", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
+        # Policy
+        policy = pyrado.load(algo.subroutine_cand.policy, f"{args.policy_name}.pt", ex_dir, verbose=True)
+        # Extra (value function)
+        if isinstance(algo.subroutine_cand, ActorCritic):
+            extra["vfcn"] = pyrado.load(algo.subroutine_cand.critic.vfcn, f"{args.vfcn_name}.pt", ex_dir, verbose=True)
+
+    elif algo.name == "bayrn":
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if hasattr(env, "randomizer"):
+            last_cand = to.load(osp.join(ex_dir, "candidates.pt"))[-1, :]
+            env.adapt_randomizer(last_cand.numpy())
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Extra (value function)
+        if isinstance(algo.subroutine, ActorCritic):
+            extra["vfcn"] = pyrado.load(f"{args.vfcn_name}.pt", ex_dir, obj=algo.subroutine.critic.vfcn, verbose=True)
+
+    elif algo.name == "simopt":
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            last_cand = to.load(osp.join(ex_dir, "candidates.pt"))[-1, :]
+            env.adapt_randomizer(last_cand.numpy())
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.subroutine_policy.policy, verbose=True)
+        # Extra (domain parameter distribution policy)
+        extra["ddp_policy"] = pyrado.load("ddp_policy.pt", ex_dir, obj=algo.subroutine_distr.policy, verbose=True)
+
+    elif algo.name in ["epopt", "udr"]:
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env, DomainRandWrapperLive):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperLive)
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "y")
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Extra (value function)
+        if isinstance(algo.subroutine, ActorCritic):
+            extra["vfcn"] = pyrado.load(f"{args.vfcn_name}.pt", ex_dir, obj=algo.subroutine.critic.vfcn, verbose=True)
+
+    elif algo.name in ["bayessim", "npdr"]:
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
+            typed_env(env, DomainRandWrapperBuffer).fill_buffer(10)
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}\nand filled it with 10 random instances.", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "y")
+            env = remove_all_dr_wrappers(env, verbose=True)
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Extra (prior, posterior, data)
+        extra["prior"] = pyrado.load("prior.pt", ex_dir, verbose=True)
+        # By default load the latest posterior (latest iteration and the last round)
+        try:
+            extra["posterior"] = SBIBase.load_posterior(ex_dir, args.iter, args.round, obj=None, verbose=True)
+            # Load the complete data or the data of the given iteration
+            prefix = "" if args.iter == -1 else f"iter_{args.iter}"
+            extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
+        except:
+            pass
+
+    elif algo.name in ["a2c", "ppo", "ppo2"]:
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Extra (value function)
+        extra["vfcn"] = pyrado.load(f"{args.vfcn_name}.pt", ex_dir, obj=algo.critic.vfcn, verbose=True)
+
+    elif algo.name in ["hc", "pepg", "power", "cem", "reps", "nes"]:
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+
+    elif algo.name in ["dql", "sac"]:
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Target value functions
+        if algo.name == "dql":
+            extra["qfcn_target"] = pyrado.load("qfcn_target.pt", ex_dir, obj=algo.qfcn_targ, verbose=True)
+        elif algo.name == "sac":
+            extra["qfcn_target1"] = pyrado.load("qfcn_target1.pt", ex_dir, obj=algo.qfcn_targ_1, verbose=True)
+            extra["qfcn_target2"] = pyrado.load("qfcn_target2.pt", ex_dir, obj=algo.qfcn_targ_2, verbose=True)
+        else:
+            raise NotImplementedError
+
+    elif algo.name == "svpg":
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Extra (particles)
+        for idx, p in enumerate(algo.particles):
+            extra[f"particle{idx}"] = pyrado.load(f"particle_{idx}.pt", ex_dir, obj=algo.particles[idx], verbose=True)
+
+    elif algo.name == "tspred":
+        # Dataset
+        extra["dataset"] = to.load(osp.join(ex_dir, "dataset.pt"))
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+
+    elif algo.name == "sprl":
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
+        # Extra (value function)
+        if isinstance(algo._subroutine, ActorCritic):
+            extra["vfcn"] = pyrado.load(f"{args.vfcn_name}.pt", ex_dir, obj=algo._subroutine.critic.vfcn, verbose=True)
+
+    elif algo.name == "pddr":
+        # Environment
+        env = pyrado.load("env.pkl", ex_dir)
+        # Policy
+        policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
+        # Teachers
+        extra["teacher_policies"] = algo.teacher_policies
+        extra["teacher_envs"] = algo.teacher_envs
+        extra["teacher_expl_strats"] = algo.teacher_expl_strats
+        extra["teacher_critics"] = algo.teacher_critics
+        extra["teacher_ex_dirs"] = algo.teacher_ex_dirs
+
+    else:
+        raise pyrado.TypeErr(msg="No matching algorithm name found during loading the experiment!")
 
     # Check if the return types are correct. They can be None, too.
-    if env is not None and not isinstance(env, (Env, EnvWrapper)):
-        raise pyrado.TypeErr(given=env, expected_type=[Env, EnvWrapper])
+    if env is not None and not isinstance(env, (SimEnv, EnvWrapper)):
+        raise pyrado.TypeErr(given=env, expected_type=[SimEnv, EnvWrapper])
     if policy is not None and not isinstance(policy, Policy):
         raise pyrado.TypeErr(given=policy, expected_type=Policy)
     if extra is not None and not isinstance(extra, dict):
@@ -144,7 +303,7 @@ def load_rollouts_from_dir(
     ex_dir: str, key: Optional[str] = "rollout", file_exts: Tuple[str] = ("pt", "pkl")
 ) -> Tuple[List[StepSequence], List[str]]:
     """
-    Crawl through the given directory, sort the files, and load all rollouts, i.e. all files that include the key.
+    Crawl through the given directory and load all rollouts, i.e. all files that include the key.
 
     :param ex_dir: directory, e.g. and experiment folder
     :param key: word or part of a word that needs to the in the name of a file for it to be loaded
@@ -162,7 +321,6 @@ def load_rollouts_from_dir(
     names = []
     for root, dirs, files in os.walk(ex_dir):
         dirs.clear()  # prevents walk() from going into subdirectories
-        natural_sort(files)
         for f in files:
             f_ext = f[f.rfind(".") + 1 :]
             if key in f and f_ext in file_exts:
@@ -202,8 +360,6 @@ def cpp_export(
                               This requires the experiment's XML configuration to be exported beforehand.
     :param policy_node_name: name of the control policies node in the XML file, e.g. 'policy' or 'preStrikePolicy'
     """
-    from pyrado.environments.rcspysim.base import RcsSim
-
     if not osp.isdir(save_dir):
         raise pyrado.PathErr(given=save_dir)
     if not isinstance(policy, Policy):

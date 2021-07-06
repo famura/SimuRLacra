@@ -65,7 +65,7 @@ class TwoDimGaussian(SimEnv, Serializable):
 
         # Initialize the domain parameters and the derived constants
         self._domain_param = self.get_nominal_domain_param()
-        self._mean, self._covariance_matrix = self.calc_constants(self.domain_param)
+        self._mean, self._covariance_matrix = TwoDimGaussian.calc_constants(self.domain_param)
 
         self._init_space = SingularStateSpace(np.zeros(self.state_space.shape))
 
@@ -155,7 +155,7 @@ class TwoDimGaussian(SimEnv, Serializable):
         # Reset the domain parameters
         if domain_param is not None:
             self.domain_param = domain_param
-            self._mean, self._covariance_matrix = self.calc_constants(self.domain_param)
+            self._mean, self._covariance_matrix = TwoDimGaussian.calc_constants(self.domain_param)
 
         self.state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=4).flatten()
 
@@ -191,8 +191,9 @@ class TwoDimGaussian(SimEnv, Serializable):
             if self._curr_step % render_step == 0 and self._curr_step > 0:  # skip the render before the first step
                 print(f"step: {self._curr_step:4d}  |  r_t: {self._curr_rew: 1.3f}  |  s_t+1: {self.state}")
 
-    @staticmethod
-    def log_prob(trajectory, params):
+    # Don't make static for consistency with torch distributions
+    # noinspection PyMethodMayBeStatic
+    def log_prob(self, trajectory, params):
         """
         Very ugly, but can be used to calculate the probability of a rollout in the case that we are interested on
         the exact posterior probability

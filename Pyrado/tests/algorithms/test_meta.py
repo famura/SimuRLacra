@@ -446,7 +446,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
             )
 
         # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
-        ros_real_tr, ros_sim_tr = algo.truncate_rollouts(rollouts_real, rollouts_sim, replicate=False)
+        ros_real_tr, ros_sim_tr = SysIdViaEpisodicRL.truncate_rollouts(rollouts_real, rollouts_sim, replicate=False)
         assert len(ros_real_tr) == len(ros_sim_tr)
         assert all([np.allclose(r.states[0, :], s.states[0, :]) for r, s in zip(ros_real_tr, ros_sim_tr)])
 

@@ -135,8 +135,8 @@ class TimeSeriesDataSet(Dataset):
         self.data_tst_targ = self.data_tst[1:]
 
         # Create sequences
-        self.data_trn_ws = self.cut_to_window_size(self.data_trn, self._window_size)
-        self.data_tst_ws = self.cut_to_window_size(self.data_tst, self._window_size)
+        self.data_trn_ws = TimeSeriesDataSet.cut_to_window_size(self.data_trn, self._window_size)
+        self.data_tst_ws = TimeSeriesDataSet.cut_to_window_size(self.data_tst, self._window_size)
         self.data_trn_seqs = create_sequences(self.data_trn_ws, len_seq=self._window_size + 1)
         self.data_tst_seqs = create_sequences(self.data_tst_ws, len_seq=self._window_size + 1)
 

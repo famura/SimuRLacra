@@ -36,6 +36,7 @@ import torch.nn as nn
 from tqdm import tqdm
 
 import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.value_based import ValueBased
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.utils import typed_env
@@ -300,8 +301,8 @@ class SAC(ValueBased):
             # Update the Q-fcns
             self._optim_qfcns.zero_grad()
             q_loss.backward()
-            qfcn_1_grad_norm[b] = self.clip_grad(self.qfcn_1, None)
-            qfcn_2_grad_norm[b] = self.clip_grad(self.qfcn_2, None)
+            qfcn_1_grad_norm[b] = Algorithm.clip_grad(self.qfcn_1, None)
+            qfcn_2_grad_norm[b] = Algorithm.clip_grad(self.qfcn_2, None)
             self._optim_qfcns.step()
 
             # Compute the policy loss
@@ -316,7 +317,7 @@ class SAC(ValueBased):
             # Update the policy
             self._optim_policy.zero_grad()
             policy_loss.backward()
-            policy_grad_norm[b] = self.clip_grad(self._expl_strat.policy, self.max_grad_norm)
+            policy_grad_norm[b] = Algorithm.clip_grad(self._expl_strat.policy, self.max_grad_norm)
             self._optim_policy.step()
 
             # Soft-update the target networks

@@ -35,6 +35,7 @@ from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
 
 import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.utils import compute_action_statistics, num_iter_from_rollouts
@@ -197,7 +198,7 @@ class PPO(ActorCritic):
                 loss.backward()
 
                 # Clip the gradients if desired
-                policy_grad_norm.append(self.clip_grad(self._expl_strat.policy, self.max_grad_norm))
+                policy_grad_norm.append(Algorithm.clip_grad(self._expl_strat.policy, self.max_grad_norm))
 
                 # Call optimizer
                 self.optim.step()
@@ -437,8 +438,8 @@ class PPO2(ActorCritic):
                 loss.backward()
 
                 # Clip the gradients if desired
-                policy_grad_norm.append(self.clip_grad(self._expl_strat.policy, self.max_grad_norm))
-                vfcn_grad_norm.append(self.clip_grad(self._critic.vfcn, self.max_grad_norm))
+                policy_grad_norm.append(Algorithm.clip_grad(self._expl_strat.policy, self.max_grad_norm))
+                vfcn_grad_norm.append(Algorithm.clip_grad(self._critic.vfcn, self.max_grad_norm))
 
                 # Call optimizer
                 self.optim.step()
