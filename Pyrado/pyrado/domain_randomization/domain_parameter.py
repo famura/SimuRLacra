@@ -353,6 +353,18 @@ class SelfPacedDomainParam(DomainParam):
         """Get union of all hyper-parameters of all domain parameter distributions."""
         return ["target_mean", "target_cov_chol_flat", "context_mean", "context_cov_chol_flat"]
 
+    @staticmethod
+    def make_broadening(
+        name: str, mean: to.Tensor, init_cov_portion: float = 0.001, target_cov_portion: float = 0.1
+    ) -> "SelfPacedDomainParam":
+        return SelfPacedDomainParam(
+            name=name,
+            target_mean=mean,
+            target_cov_chol_flat=target_cov_portion * mean,
+            init_mean=mean,
+            init_cov_chol_flat=init_cov_portion * mean,
+        )
+
     @property
     def target_distr(self) -> MultivariateNormal:
         """Get the target distribution."""
