@@ -385,6 +385,11 @@ class SelfPacedDomainParam(DomainParam):
         """Get the current covariance matrix."""
         return to.diag(self.context_cov_chol_flat ** 2)
 
+    @property
+    def context_cov_chol(self) -> to.Tensor:
+        """Get the Cholesky decomposition of the current covariance matrix."""
+        return to.diag(self.context_cov_chol_flat)
+
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
         """
         Update this domain parameter.

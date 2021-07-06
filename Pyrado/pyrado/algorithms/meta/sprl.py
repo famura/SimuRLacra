@@ -367,6 +367,7 @@ class SPRL(Algorithm):
         for param in self._spl_parameters:
             self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
+            self.logger.add_value(f"cur context cov_chol for {param.name}", param.context_cov_chol.item())
 
         dim = context_mean.shape[0]
 
