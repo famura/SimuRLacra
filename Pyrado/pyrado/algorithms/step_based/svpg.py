@@ -96,7 +96,6 @@ class SVPG(Algorithm):
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
 
-
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy=None, logger=logger)
 
@@ -127,7 +126,14 @@ class SVPG(Algorithm):
                 return self.buffer.get()
 
             def step(self, *args, **kwargs):
-                self.buffer.put((args, kwargs, to.clone(self.particle.policy.param_values), to.clone(self.particle.policy.param_grad)))
+                self.buffer.put(
+                    (
+                        args,
+                        kwargs,
+                        to.clone(self.particle.policy.param_values),
+                        to.clone(self.particle.policy.param_grad),
+                    )
+                )
 
             def zero_grad(self, *args, **kwargs):
                 self.optim.zero_grad(*args, **kwargs)
@@ -148,8 +154,6 @@ class SVPG(Algorithm):
             self.particle_states[i] = self.particle.__getstate__()
             self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
 
-
-
     @property
     def iter_particles(self):
         for i in range(self.num_particles):
@@ -160,9 +164,8 @@ class SVPG(Algorithm):
             self.particle_states[i] = self.particle.__getstate__()
             self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
 
-
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        print('Begin step')
+        print("Begin step")
 
         for i, particle in enumerate(self.iter_particles):
             print(particle.policy.param_values[:5])
@@ -175,7 +178,7 @@ class SVPG(Algorithm):
             particle.step(snapshot_mode="no")
             while not particle.optim.empty():
                 args_i, kwargs_i, params, grads = particle.optim.get_next_step()
-                print(i, '>>>>>',params[:5])
+                print(i, ">>>>>", params[:5])
                 policy_grads[i].append(to.tensor(grads.detach()))
                 parameters[i].append(to.tensor(params.detach()))
                 args[i].append(args_i)

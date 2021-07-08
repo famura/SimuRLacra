@@ -79,9 +79,8 @@ if __name__ == "__main__":
 
     a2c_hparam = dict(
         max_iter=200,
-        min_steps=2*env.max_steps,
+        min_steps=2 * env.max_steps,
         lr=1e-3,
-
     )
 
     # Algorithm
