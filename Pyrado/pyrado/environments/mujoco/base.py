@@ -48,7 +48,6 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
     """
     Base class for MuJoCo environments.
     Uses Serializable to facilitate proper serialization.
-
     .. seealso::
         https://github.com/openai/gym/blob/master/gym/envs/mujoco/mujoco_env.py
     """
@@ -63,7 +62,6 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
     ):
         """
         Constructor
-
         :param model_path: path to the MuJoCo xml model config file
         :param frame_skip: number of simulation frames for which the same action is held, results in a multiplier of
                            the time step size `dt`
@@ -85,7 +83,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             # Specify the time step size explicitly
             with open(self.model_path, mode="r") as file_raw:
                 xml_model_temp = file_raw.read()
-            xml_model_temp = self._adapt_model_file(xml_model_temp, self.domain_param)
+            xml_model_temp = MujocoSimEnv._adapt_model_file(xml_model_temp, self.domain_param)
             # Create a dummy model to extract the solver's time step size
             model_tmp = mujoco_py.load_model_from_xml(xml_model_temp)
             frame_skip = dt / model_tmp.opt.timestep
@@ -188,15 +186,14 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Update task
         self._task = self._create_task(self.task_args)
 
-    def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
+    @staticmethod
+    def _adapt_model_file(xml_model: str, domain_param: dict) -> str:
         """
         Changes the model's XML-file given the current domain parameters before constructing the MuJoCo simulation.
         One use case is for example the cup_scale for the `WAMBallInCupSim` where multiple values in the model's
         XML-file are changed based on one domain parameter.
-
         .. note::
             It is mandatory to call this function in case you modified the mxl config file with tags like `[DP_NAME]`.
-
         :param xml_model: parsed model file
         :param domain_param: copy of the environments domain parameters
         :return: adapted model file where the placeholders are filled with numerical values
@@ -214,15 +211,13 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
     def _mujoco_step(self, act: np.ndarray) -> dict:
         """
         Apply the given action to the MuJoCo simulation. This executes one step of the physics simulation.
-
         :param act: action
-        :return: dict with optional information from MuJoCo
+        :return: `dict` with optional information from MuJoCo
         """
 
     def _create_mujoco_model(self):
         """
         Called to update the MuJoCo model by rewriting and reloading the XML file.
-
         .. note::
             This function is called from the constructor and from the domain parameter setter.
         """
@@ -280,13 +275,15 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         if not init_state[:nq].shape == old_state.qpos.shape:  # check joint positions dimension
             raise pyrado.ShapeErr(given=init_state[:nq], expected_match=old_state.qpos)
         # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
-        if not init_state[nq : 2 * nq].shape == old_state.qvel.shape:  # check joint velocities dimension
-            raise pyrado.ShapeErr(given=init_state[nq : 2 * nq], expected_match=old_state.qvel)
+        if (
+            not init_state[nq : nq + self.init_qvel.size].shape == old_state.qvel.shape
+        ):  # check joint velocities dimension
+            raise pyrado.ShapeErr(given=init_state[nq : nq + self.init_qvel.size], expected_match=old_state.qvel)
         new_state = mujoco_py.MjSimState(
             # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
             old_state.time,
             init_state[:nq],
-            init_state[nq : 2 * nq],
+            init_state[nq : nq + self.init_qvel.size],
             old_state.act,
             old_state.udd_state,
         )

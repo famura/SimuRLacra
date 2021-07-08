@@ -166,6 +166,8 @@ def test_param_grid():
         pytest.param("default_bop5d_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
+        pytest.param("default_humanoid", marks=m_needs_mujoco),
+        pytest.param("default_ant", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
     ],
     ids=[
@@ -183,6 +185,8 @@ def test_param_grid():
         "bop5d",
         "cth",
         "hop",
+        "hum",
+        "ant",
         "wam-bic",
     ],
     indirect=True,

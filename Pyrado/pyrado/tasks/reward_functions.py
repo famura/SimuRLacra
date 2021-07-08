@@ -413,6 +413,161 @@ class ForwardVelocityRewFcn(RewFcn):
         return float(fwd_vel_rew - ctrl_cost)
 
 
+class ForwardVelocityRewFcnAnt(RewFcn):
+    """
+    Reward function for the `AntSim` environment, encouraging to run forward
+    .. note::
+        The OpenAi Gym calculates the velocity via forward differences, while here we get the velocity directly from
+        the simulator.
+    .. seealso::
+        https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py
+    """
+
+    def __init__(
+        self,
+        dt: float,
+        contact_cost_weight: float,
+        ctrl_cost_weight: float,
+        healthy_reward: float,
+        terminate_when_unhealthy: bool,
+        healthy_z_range: (float),
+        contact_force_range: (float),
+    ):
+        """
+        Constructor
+        .. note::
+            The last x position, which is rewarded, is initialized by `reset()`, since the (sampled) initial state is
+            unknown at construction time of the task, i.e. this reward function.
+        :param dt: simulation step size [s]
+        :param idx_fwd: index of the state dimension that marks the forward direction
+        :param fwd_rew_weight: scaling factor for the forward velocity reward
+        :param ctrl_cost_weight: scaling factor for the control cost
+        """
+        self._dt = dt
+        self._idx_x_pos = 0
+        self._idx_z_pos = 2
+        self._idx_cfrc_ext = 29
+        self.last_x_pos = None
+        self.ctrl_cost_weight = ctrl_cost_weight
+        self.contact_cost_weight = contact_cost_weight
+        self.contact_force_range = contact_force_range
+
+        self._healthy_reward = healthy_reward
+        self._terminate_when_unhealthy = terminate_when_unhealthy
+        self._healthy_z_range = healthy_z_range
+
+    def reset(self, init_state, **kwargs):
+        self.last_x_pos = init_state[self._idx_x_pos]
+
+    def contact_forces(self, raw_contact_forces):
+        min_value, max_value = self.contact_force_range
+        contact_forces = np.clip(raw_contact_forces, min_value, max_value)
+        return contact_forces
+
+    @property
+    def is_healthy(self) -> bool:
+        min_z, max_z = self._healthy_z_range
+        is_healthy = np.isfinite(self.state).all() and min_z <= self.state[self._idx_z_pos] <= max_z
+        return is_healthy
+
+    @property
+    def healthy_reward(self):
+        return float(self.is_healthy or self._terminate_when_unhealthy) * self._healthy_reward
+
+    def __call__(self, state: np.ndarray, act: np.ndarray, remaining_steps: int = None) -> float:
+        # Operate on the state and actions
+        self.state = state
+        forward_reward = (self.state[self._idx_x_pos] - self.last_x_pos) / self._dt
+        ctrl_cost = self.ctrl_cost_weight * np.sum(np.square(act))
+        contact_cost = self.contact_cost_weight * np.sum(
+            np.square(self.contact_forces(self.state[self._idx_cfrc_ext :]))
+        )
+        healthy_reward = self.healthy_reward
+
+        self.last_x_pos = self.state[self._idx_x_pos]
+
+        rewards = forward_reward + healthy_reward
+        costs = ctrl_cost + contact_cost
+        return float(rewards - costs)
+
+
+class ForwardVelocityRewFcnHumanoid(RewFcn):
+    """
+    Reward function for the `HumanoidSim` environment, encouraging to run forward
+    .. note::
+        The OpenAi Gym calculates the velocity via forward differences, while here we get the velocity directly from
+        the simulator.
+    .. seealso::
+        https://github.com/openai/gym/blob/master/gym/envs/mujoco/humanoid_v3.py
+    """
+
+    def __init__(
+        self,
+        dt: float,
+        contact_cost_weight: float,
+        ctrl_cost_weight: float,
+        forward_reward_weight: float,
+        healthy_reward: float,
+        terminate_when_unhealthy: bool,
+        healthy_z_range: (float),
+        contact_cost_range: (float),
+    ):
+        """
+        Constructor
+        .. note::
+            The last x position, which is rewarded, is initialized by `reset()`, since the (sampled) initial state is
+            unknown at construction time of the task, i.e. this reward function.
+        :param dt: simulation step size [s]
+        :param idx_fwd: index of the state dimension that marks the forward direction
+        :param fwd_rew_weight: scaling factor for the forward velocity reward
+        :param ctrl_cost_weight: scaling factor for the control cost
+        """
+        self._dt = dt
+        self._idx_x_pos = 0
+        self._idx_z_pos = 2
+        self._idx_cfrc_ext = 294
+        self.last_x_pos = None
+        self._ctrl_cost_weight = ctrl_cost_weight
+        self._forward_reward_weight = forward_reward_weight
+        self._contact_cost_weight = contact_cost_weight
+        self._contact_cost_range = contact_cost_range
+
+        self._healthy_reward = healthy_reward
+        self._terminate_when_unhealthy = terminate_when_unhealthy
+        self._healthy_z_range = healthy_z_range
+
+    def reset(self, init_state, **kwargs):
+        self.last_x_pos = init_state[self._idx_x_pos]
+
+    @property
+    def is_healthy(self) -> bool:
+        min_z, max_z = self._healthy_z_range
+        is_healthy = min_z < self.state[self._idx_z_pos] < max_z
+        return is_healthy
+
+    @property
+    def healthy_reward(self):
+        return float(self.is_healthy or self._terminate_when_unhealthy) * self._healthy_reward
+
+    def __call__(self, state: np.ndarray, act: np.ndarray, remaining_steps: int = None) -> float:
+        # Operate on the state and actions
+        self.state = state
+        forward_reward = self._forward_reward_weight * (self.state[self._idx_x_pos] - self.last_x_pos) / self._dt
+        ctrl_cost = self._ctrl_cost_weight * np.sum(np.square(act))
+        contact_cost = np.clip(
+            self._contact_cost_weight * np.sum(np.square(self.state[self._idx_cfrc_ext :])),
+            self._contact_cost_range[0],
+            self._contact_cost_range[1],
+        )
+        healthy_reward = self.healthy_reward
+
+        self.last_x_pos = self.state[self._idx_x_pos]
+
+        rewards = forward_reward + healthy_reward
+        costs = ctrl_cost + contact_cost
+        return float(rewards - costs)
+
+
 class QCartPoleSwingUpRewFcn(RewFcn):
     """Custom reward function for QCartPoleSwingUpSim."""
 
