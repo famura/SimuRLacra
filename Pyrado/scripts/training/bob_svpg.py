@@ -29,14 +29,19 @@
 """
 Train agents to solve the Ball-on-Beam environment using Stein Variational Policy Gradient.
 """
+from pyrado.logger.step import StepLogger
 import torch as to
 
 import pyrado
+from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.step_based.gae import GAE, ValueFunctionSpace
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
+from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == "__main__":
@@ -71,20 +76,29 @@ if __name__ == "__main__":
         standardize_adv=False,
         max_grad_norm=5.0,
     )
-    particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
+
+    a2c_hparam = dict(
+        max_iter=200,
+        min_steps=2*env.max_steps,
+        lr=1e-3,
+
+    )
 
     # Algorithm
     algo_hparam = dict(
         max_iter=200,
-        min_steps=30 * env.max_steps,
         num_particles=3,
         temperature=1,
-        lr=1e-3,
-        std_init=1.0,
         horizon=50,
-        num_workers=12,
     )
-    algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
+
+    actor = FNNPolicy(spec=env.spec, **actor_hparam)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic = GAE(vfcn, **critic_hparam)
+    particle_logger = StepLogger()
+    particle_example = A2C(ex_dir, env, actor, critic, logger=particle_logger, **a2c_hparam)
+
+    algo = SVPG(ex_dir, env, particle_example, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(

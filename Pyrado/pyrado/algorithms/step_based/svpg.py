@@ -27,15 +27,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
-from typing import Sequence, Tuple
+from queue import Queue
+from typing import List, Sequence, Tuple, Union
 
 import numpy as np
+from pyrado.policies.initialization import init_param
 import torch as to
+from torch import nn
+from tqdm import tqdm
 from scipy.spatial.distance import pdist, squareform
 from torch.distributions.kl import kl_divergence
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.gae import GAE, ValueFunctionSpace
 from pyrado.algorithms.utils import compute_action_statistics
 from pyrado.environments.base import Env
@@ -43,60 +48,10 @@ from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
-
-
-class SVPGParticle(Policy):
-    """
-    An actor-critic particle of type `Policy`.
-    Particles' parameters are considered to be part of the parameter distribution optimized by the SVPG algorithm.
-    """
-
-    def __init__(self, spec: EnvSpec, actor: Policy, critic: GAE, use_cuda: bool = False):
-        """
-        Constructor
-
-        :param spec: specification of the environment the particle should act in
-        :param actor: policy
-        :param critic: advantage function estimator
-        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
-        """
-
-        # Call Policy's constructor
-        super().__init__(spec, use_cuda)
-
-        # Create actor and critic
-        self.actor = actor
-        self.critic = critic
-
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
-        """
-        Initializes the parameters of the actor and critic networks with given values.
-
-        :param init_values: the initial values for the actor and critic networks
-        """
-        self.actor.init_param(init_values, **kwargs)
-        self.critic.vfcn.init_param(init_values, **kwargs)
-
-    def value(self, obs: to.Tensor) -> to.Tensor:
-        """
-        Predict the value of a given observation. Forwards to the critic head.
-
-        :param obs: the observation
-        :return: the predicted value
-        """
-        return self.critic.values(obs)
-
-    def forward(self, obs: to.Tensor) -> to.Tensor:
-        """
-        Get the action given an observation. Forwards to the actor head.
-
-        :param obs: the observation
-        :return: the action
-        """
-        return self.actor(obs)
 
 
 class SVPG(Algorithm):
@@ -113,17 +68,11 @@ class SVPG(Algorithm):
         self,
         save_dir: pyrado.PathLike,
         env: Env,
-        particle_hparam: dict,
+        particle: Algorithm,
         max_iter: int,
         num_particles: int,
         temperature: float,
-        lr: float,
         horizon: int,
-        std_init: float = 1.0,
-        min_rollouts: int = None,
-        min_steps: int = 10000,
-        num_workers: int = 4,
-        serial: bool = True,
         logger: StepLogger = None,
     ):
         """
@@ -146,10 +95,7 @@ class SVPG(Algorithm):
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
-        if not isinstance(particle_hparam, dict):
-            raise pyrado.TypeErr(given=particle_hparam, expected_type=dict)
-        if not all([key in particle_hparam for key in ["actor", "vfcn", "critic"]]):
-            raise AttributeError
+
 
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy=None, logger=logger)
@@ -158,160 +104,123 @@ class SVPG(Algorithm):
         self._env = env
         self.num_particles = num_particles
         self.horizon = horizon
-        self.lr = lr
         self.temperature = temperature
-        self.serial = serial
+        self.particle = particle
 
-        # Prepare placeholders for particles
-        self.particles = [None] * num_particles
-        self.particleSteps = [None] * num_particles
-        self.expl_strats = [None] * num_particles
-        self.optimizers = [None] * num_particles
-        self.fixed_particles = [None] * num_particles
-        self.fixed_expl_strats = [None] * num_particles
-        self.samplers = [None] * num_particles
-        self.count = 0
-        self.update_count = 0
+        class OptimizerHook:
+            def __init__(self, particle):
+                self.optim = particle.optim
+                self.buffer = Queue()
+                self.particle = particle
 
-        # Particle factory
-        actor = FNNPolicy(spec=env.spec, **particle_hparam["actor"])
-        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **particle_hparam["vfcn"])
-        critic = GAE(vfcn, **particle_hparam["critic"])
-        self.register_as_logger_parent(critic)
-        particle = SVPGParticle(env.spec, actor, critic)
+            def real_step(self, *args, **kwargs):
+                self.optim.step(*args, **kwargs)
+
+            def iter_steps(self):
+                while not self.buffer.empty():
+                    yield self.buffer.get()
+
+            def empty(self):
+                return self.buffer.empty()
+
+            def get_next_step(self):
+                return self.buffer.get()
+
+            def step(self, *args, **kwargs):
+                self.buffer.put((args, kwargs, to.clone(self.particle.policy.param_values), to.clone(self.particle.policy.param_grad)))
+
+            def zero_grad(self, *args, **kwargs):
+                self.optim.zero_grad(*args, **kwargs)
+
+        self.optims = []
+        # Store particle states
+        for i in range(self.num_particles):
+            self.optims.append(OptimizerHook(self.particle))
+        self.particle_states = [particle.__getstate__()] * self.num_particles
+        self.particle_policy_states = [particle.policy.param_values] * self.num_particles
+
+        self.particle_steps = [0] * self.num_particles
 
         for i in range(self.num_particles):
-            self.particles[i] = deepcopy(particle)
-            self.particles[i].init_param()
-            self.expl_strats[i] = NormalActNoiseExplStrat(self.particles[i].actor, std_init)
-            self.optimizers[i] = to.optim.Adam(self.expl_strats[i].parameters(), lr=self.lr)
-            self.fixed_particles[i] = deepcopy(self.particles[i])
-            self.fixed_expl_strats[i] = deepcopy(self.expl_strats[i])
-            self.particleSteps[i] = 0
+            self.particle.__setstate__(self.particle_states[i])
+            self.particle.policy.param_values = self.particle_policy_states[i]
+            self.particle.policy.init_param()
+            self.particle_states[i] = self.particle.__getstate__()
+            self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
 
-            if self.serial:
-                self.samplers[i] = ParallelRolloutSampler(
-                    env, self.expl_strats[i], num_workers, min_rollouts=min_rollouts, min_steps=min_steps
-                )
+
+
+    @property
+    def iter_particles(self):
+        for i in range(self.num_particles):
+            self.particle.__setstate__(self.particle_states[i])
+            self.particle.policy.param_values = self.particle_policy_states[i]
+            self.particle.optim = self.optims[i]
+            yield self.particle
+            self.particle_states[i] = self.particle.__getstate__()
+            self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
+
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        # Serial flag must not be set when interacting through step and reset
-        if not self.serial:
-            raise NotImplementedError("Step cannot be called if serial flag is False!")
+        print('Begin step')
 
-        self.count += 1
-        ros_all_particles, rets_all_particles = [], []
-        for i in range(self.num_particles):
-            ros_one_particle = self.samplers[i].sample()
-            # ro_concat = StepSequence.concat(ros_one_particle)
-            # ro_concat.torch(data_type=to.get_default_dtype())
-            ros_all_particles.append(ros_one_particle)
-            rets_all_particles.append(np.array([ro.undiscounted_return() for ro in ros_one_particle]))
-            self.particleSteps[i] = +1
-            if self.horizon != 0 and (self.particleSteps[i] > self.horizon):
-                self.particles[i].init_param()
-                self.particleSteps[i] = 0
+        for i, particle in enumerate(self.iter_particles):
+            print(particle.policy.param_values[:5])
 
-        # Log metrics computed from the old policy (before the update)
-        num_ros_all_prtcls = np.array([len(p) for p in ros_all_particles])
-        avg_len_ros_all_prtcls = np.array([np.mean([ro.length for ro in p]) for p in ros_all_particles])
-        self._cnt_samples += sum([ro.length for p in ros_all_particles for ro in p])
-        avg_rets_all_prtcls = np.array([np.mean(p) for p in rets_all_particles])
-        median_rets_all_prtcls = np.array([np.median(p) for p in rets_all_particles])
-        max_rets_all_prtcls = np.array([np.max(p) for p in rets_all_particles])
-        std_rets_all_prtcls = np.array([np.std(p) for p in rets_all_particles])
-        avg_explstrat_stds = np.array([to.mean(e.noise.std.data).item() for e in self.expl_strats])
-        self.logger.add_value("max return pp", max_rets_all_prtcls, 2)
-        self.logger.add_value("avg return pp", avg_rets_all_prtcls, 2)
-        self.logger.add_value("median return pp", median_rets_all_prtcls, 2)
-        self.logger.add_value("std return pp", std_rets_all_prtcls, 2)
-        self.logger.add_value("avg expl strat stds pp", avg_explstrat_stds, 2)
-        self.logger.add_value("avg rollout len pp", avg_len_ros_all_prtcls, 2)
-        self.logger.add_value("num total samples", self._cnt_samples)
+        parameters = [[]] * self.num_particles
+        policy_grads = [[]] * self.num_particles
+        args = [[]] * self.num_particles
+        kwargs = [[]] * self.num_particles
+        for i, particle in enumerate(self.iter_particles):
+            particle.step(snapshot_mode="no")
+            while not particle.optim.empty():
+                args_i, kwargs_i, params, grads = particle.optim.get_next_step()
+                print(i, '>>>>>',params[:5])
+                policy_grads[i].append(to.tensor(grads.detach()))
+                parameters[i].append(to.tensor(params.detach()))
+                args[i].append(args_i)
+                kwargs[i].append(kwargs_i)
 
-        # Logging for recording (averaged over particles)
-        self.logger.add_value("avg rollout len", np.mean(avg_len_ros_all_prtcls), 4)
-        self.logger.add_value("avg return", np.mean(avg_rets_all_prtcls), 4)
-        self.logger.add_value("median return", np.median(median_rets_all_prtcls), 4)
-        self.logger.add_value("std return", np.mean(std_rets_all_prtcls), 4)
-        self.logger.record_step()  # TODO @Robin necessary?
+        assert all(len(p) == len(parameters[0]) for p in parameters)
 
-        # Save snapshot data
-        self.make_snapshot(snapshot_mode, float(np.mean(avg_rets_all_prtcls)), meta_info)
+        for t_step in tqdm(range(len(parameters[0]))):
+            params = to.stack([parameters[idx][t_step] for idx in range(self.num_particles)])
+            policy_grds = to.stack([policy_grads[idx][t_step] for idx in range(self.num_particles)])
+            Kxx, dx_Kxx = self.kernel(params)
+            grad_theta = (to.mm(Kxx, policy_grds / self.temperature) + dx_Kxx) / self.num_particles
+            for i, particle in enumerate(self.iter_particles):
+                particle.policy.param_values = parameters[i][t_step]
+                particle.policy.param_grad = grad_theta[i]
+                particle.optim.real_step(*args[i][t_step], **kwargs[i][t_step])
 
-        # Update the particles
-        self.update(ros_all_particles)
-
-    def kernel(self, X: to.Tensor) -> (to.Tensor, to.Tensor):
+    def kernel(self, X: to.Tensor) -> Tuple[to.Tensor, to.Tensor]:
         """
         Compute the RBF-kernel and the corresponding derivatives.
 
         :param X: the tensor to compute the kernel from
         :return: the kernel and its derivatives
         """
+        print(X)
         X_np = X.cpu().data.numpy()  # use numpy because torch median is flawed
         pairwise_dists = squareform(pdist(X_np)) ** 2
+        print(pairwise_dists)
+        assert pairwise_dists.shape[0] == self.num_particles
 
         # Median trick
         h = np.median(pairwise_dists)
         h = np.sqrt(0.5 * h / np.log(self.num_particles + 1))
 
         # Compute RBF Kernel
-        Kxx = to.exp(-to.from_numpy(pairwise_dists).to(to.get_default_dtype()) / h ** 2 / 2)
+        kernel = to.exp(-to.from_numpy(pairwise_dists).to(to.get_default_dtype()) / h ** 2 / 2)
 
         # Compute kernel gradient
-        dx_Kxx = -(Kxx).matmul(X)
-        sum_Kxx = Kxx.sum(1)
+        grads = -kernel.matmul(X)
+        kernel_sum = kernel.sum(1)
         for i in range(X.shape[1]):
-            dx_Kxx[:, i] = dx_Kxx[:, i] + X[:, i].matmul(sum_Kxx)
-        dx_Kxx /= h ** 2
+            grads[:, i] = grads[:, i] + X[:, i].matmul(kernel_sum)
+        grads /= h ** 2
 
-        return Kxx, dx_Kxx
-
-    def update(self, rollouts: Sequence[StepSequence]):
-        r"""
-        Train the particles $mu$.
-
-        :param rollouts: rewards collected from the rollout
-        """
-        policy_grads = []
-        parameters = []
-
-        for i in range(self.num_particles):
-            # Get the rollouts associated to the i-th particle
-            concat_ros = StepSequence.concat(rollouts[i])
-            concat_ros.torch(to.get_default_dtype())
-
-            act_stats = compute_action_statistics(concat_ros, self.expl_strats[i])
-            act_stats_fixed = compute_action_statistics(concat_ros, self.fixed_expl_strats[i])
-
-            klds = to.distributions.kl_divergence(act_stats.act_distr, act_stats_fixed.act_distr)
-            entropy = act_stats.act_distr.entropy()
-            log_prob = act_stats.log_probs
-
-            concat_ros.rewards = concat_ros.rewards - (0.1 * klds.mean(1)).view(-1) - 0.1 * entropy.mean(1).view(-1)
-
-            # Update the advantage estimator's parameters and return advantage estimates
-            adv = self.particles[i].critic.update(rollouts[i], use_empirical_returns=True)
-
-            # Estimate policy gradients
-            self.optimizers[i].zero_grad()
-            policy_grad = -to.mean(log_prob * adv.detach())
-            policy_grad.backward()  # step comes later than usual
-
-            # Collect flattened parameter and gradient vectors
-            policy_grads.append(self.expl_strats[i].param_grad)
-            parameters.append(self.expl_strats[i].param_values)
-
-        parameters = to.stack(parameters)
-        policy_grads = to.stack(policy_grads)
-        Kxx, dx_Kxx = self.kernel(parameters)
-        grad_theta = (to.mm(Kxx, policy_grads / self.temperature) + dx_Kxx) / self.num_particles
-
-        for i in range(self.num_particles):
-            self.expl_strats[i].param_grad = grad_theta[i]
-            self.optimizers[i].step()
-        self.update_count += 1
+        return kernel, grads
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
