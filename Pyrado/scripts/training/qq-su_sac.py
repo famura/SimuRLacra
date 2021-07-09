@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=50,
-        memory_size=1000000,
+        memory_size=10000000,
         gamma=0.9995,
         num_updates_per_step=1000,
         tau=0.99,
@@ -86,11 +86,9 @@ if __name__ == "__main__":
         min_steps=30 * env.max_steps,
         batch_size=256,
         lr=5e-4,
-        max_grad_norm=1.5,
+        max_grad_norm=5.0,
         num_workers=8,
         eval_intvl=1,
-        lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.999),
     )
     algo = SAC(ex_dir, env, policy, q1, q2, **algo_hparam)
 
