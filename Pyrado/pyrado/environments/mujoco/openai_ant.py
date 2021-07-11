@@ -172,6 +172,4 @@ class AntSim(MujocoSimEnv, Serializable):
         if self._exclude_current_positions_from_observation:
             position = position[2:]
 
-        observations = np.concatenate((position, rest))
-
-        return observations
+        return np.concatenate((position, rest))

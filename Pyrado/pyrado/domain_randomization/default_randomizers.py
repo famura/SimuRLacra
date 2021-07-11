@@ -724,7 +724,7 @@ def create_default_randomizer_wambic() -> DomainRandomizer:
 
 
 @default_randomizer("pyrado.environments.mujoco.openai_ant", "AntSim")
-def create_default_randomizer_ant(epsilon: float) -> DomainRandomizer:
+def create_default_randomizer_ant(epsilon: float = 0.1) -> DomainRandomizer:
     from pyrado.environments.mujoco.openai_ant import AntSim
 
     dp_nom = AntSim.get_nominal_domain_param()
@@ -773,7 +773,7 @@ def create_default_randomizer_ant(epsilon: float) -> DomainRandomizer:
 
 
 @default_randomizer("pyrado.environments.mujoco.openai_humanoid", "HumanoidSim")
-def create_default_randomizer_humanoid(epsilon: float) -> DomainRandomizer:
+def create_default_randomizer_humanoid(epsilon: float = 0.1) -> DomainRandomizer:
     from pyrado.environments.mujoco.openai_humanoid import HumanoidSim
 
     dp_nom = HumanoidSim.get_nominal_domain_param()

@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import Callable, Sequence, Union
+from typing import Callable, Sequence, Union, Tuple
 
 import numpy as np
 
@@ -416,9 +416,11 @@ class ForwardVelocityRewFcn(RewFcn):
 class ForwardVelocityRewFcnAnt(RewFcn):
     """
     Reward function for the `AntSim` environment, encouraging to run forward
+
     .. note::
         The OpenAi Gym calculates the velocity via forward differences, while here we get the velocity directly from
         the simulator.
+
     .. seealso::
         https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py
     """
@@ -430,14 +432,16 @@ class ForwardVelocityRewFcnAnt(RewFcn):
         ctrl_cost_weight: float,
         healthy_reward: float,
         terminate_when_unhealthy: bool,
-        healthy_z_range: (float),
-        contact_force_range: (float),
+        healthy_z_range: Tuple[float],
+        contact_force_range: Tuple[float],
     ):
         """
         Constructor
+
         .. note::
             The last x position, which is rewarded, is initialized by `reset()`, since the (sampled) initial state is
             unknown at construction time of the task, i.e. this reward function.
+        
         :param dt: simulation step size [s]
         :param idx_fwd: index of the state dimension that marks the forward direction
         :param fwd_rew_weight: scaling factor for the forward velocity reward
@@ -494,9 +498,11 @@ class ForwardVelocityRewFcnAnt(RewFcn):
 class ForwardVelocityRewFcnHumanoid(RewFcn):
     """
     Reward function for the `HumanoidSim` environment, encouraging to run forward
+
     .. note::
         The OpenAi Gym calculates the velocity via forward differences, while here we get the velocity directly from
         the simulator.
+
     .. seealso::
         https://github.com/openai/gym/blob/master/gym/envs/mujoco/humanoid_v3.py
     """
@@ -509,14 +515,16 @@ class ForwardVelocityRewFcnHumanoid(RewFcn):
         forward_reward_weight: float,
         healthy_reward: float,
         terminate_when_unhealthy: bool,
-        healthy_z_range: (float),
-        contact_cost_range: (float),
+        healthy_z_range: Tuple[float],
+        contact_cost_range: Tuple[float],
     ):
         """
         Constructor
+
         .. note::
             The last x position, which is rewarded, is initialized by `reset()`, since the (sampled) initial state is
             unknown at construction time of the task, i.e. this reward function.
+        
         :param dt: simulation step size [s]
         :param idx_fwd: index of the state dimension that marks the forward direction
         :param fwd_rew_weight: scaling factor for the forward velocity reward
