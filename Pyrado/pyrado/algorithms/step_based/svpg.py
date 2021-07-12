@@ -75,24 +75,27 @@ class SVPG(Algorithm):
         horizon: int,
         logger: StepLogger = None,
     ):
-        """
-        Constructor
+        """Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
+        :type save_dir: pyrado.PathLike
         :param env: the environment which the policy operates
-        :param particle_hparam: hyper-parameters for particle template construction
+        :type env: Env
+        :param particle: the particle to populate with different parameters during training
+        :type particle: Algorithm
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_particles: number of distinct particles
-        :param temperature: the temperature of the SVGD determines how jointly the training takes place
-        :param lr: the learning rate for the update of the particles
+        :type max_iter: int
+        :param num_particles: number of SVPG particles
+        :type num_particles: int
+        :param temperature: SVPG temperature
+        :type temperature: float
         :param horizon: horizon for each particle
-        :param std_init: initial standard deviation for the exploration
-        :param min_rollouts: minimum number of rollouts sampled per policy update batch
-        :param min_steps: minimum number of state transitions sampled per policy update batch
-        :param num_workers: number of environments for parallel sampling
-        :param serial: serial mode can be switched off which can be used to partly control the flow of SVPG from outside
-        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        :type horizon: int
+        :param logger: defaults to None
+        :type logger: StepLogger, optional
+        :raises pyrado.TypeErr:
         """
+
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
 
@@ -156,6 +159,10 @@ class SVPG(Algorithm):
 
     @property
     def iter_particles(self):
+        """
+        Iterate particles by sequentially loading and yielding them.
+
+        """
         for i in range(self.num_particles):
             self.particle.__setstate__(self.particle_states[i])
             self.particle.policy.param_values = self.particle_policy_states[i]
@@ -165,8 +172,6 @@ class SVPG(Algorithm):
             self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        print("Begin step")
-
         parameters = [[] for i in range(self.num_particles)]
         policy_grads = [[] for i in range(self.num_particles)]
         kwargs = [[] for i in range(self.num_particles)]
@@ -209,7 +214,6 @@ class SVPG(Algorithm):
         :param X: the tensor to compute the kernel from
         :return: the kernel and its derivatives
         """
-        print(X)
         X_np = X.cpu().data.numpy()  # use numpy because torch median is flawed
         pairwise_dists = squareform(pdist(X_np)) ** 2
         assert pairwise_dists.shape[0] == self.num_particles
@@ -236,11 +240,11 @@ class SVPG(Algorithm):
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             pyrado.save(self._env, "env.pkl", self.save_dir)
-            for idx, p in enumerate(self.particles):
+            for idx, p in enumerate(self.iter_particles):
                 pyrado.save(p, f"particle_{idx}.pt", self.save_dir, use_state_dict=True)
         else:
             # This algorithm instance is a subroutine of another algorithm
-            for idx, p in enumerate(self.particles):
+            for idx, p in enumerate(self.iter_particles):
                 pyrado.save(
                     p,
                     f"particle_{idx}.pt",
@@ -255,7 +259,7 @@ class SVPG(Algorithm):
 
         # Algorithm specific
         ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
-        for idx, p in enumerate(self.particles):
+        for idx, p in enumerate(self.iter_particles):
             extra[f"particle{idx}"] = pyrado.load(f"particle_{idx}.pt", ex_dir, obj=self.particles[idx], verbose=True)
 
         return env, policy, extra
