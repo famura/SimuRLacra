@@ -1,0 +1,597 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>environment_wrappers &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>environment_wrappers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tests.environment_wrappers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="environment-wrappers">
+<h1>environment_wrappers<a class="headerlink" href="#environment-wrappers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-tests.environment_wrappers.mock_env">
+<span id="mock-env"></span><h2>mock_env<a class="headerlink" href="#module-tests.environment_wrappers.mock_env" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockEnv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.sim_base.SimEnv</span></code></a></p>
+<p>A mock version of SimEnv, used in env wrapper tests.
+State, observation, action, and init spaces as well as the task are passed to the constructor.
+The step() method saves the last action into the last_act attribute. The action value is converted to a list to
+ease assertions. step() and reset() return next_obs as observation. If it is None, a random vector is returned.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.act_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.act_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.domain_param">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">domain_param</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.domain_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy dict.
+The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
+(e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
+but there might also be additional parameters that depend on the domain parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.get_nominal_domain_param">
+<span class="sig-name descname"><span class="pre">get_nominal_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.get_nominal_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the nominal a.k.a. default domain parameters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is used to check which domain parameters exist.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.init_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">init_space</span></span><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.init_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the initial state space.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.obs_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.obs_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RenderMode(text=False,</span> <span class="pre">video=False,</span> <span class="pre">render=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize one time step of the simulation.
+The base version prints to console when the state exceeds its boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
+<li><p><strong>render_step</strong> – interval for rendering</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> – set explicit initial state if not None. Must match <cite>init_space</cite> if any.</p></li>
+<li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return obs</dt>
+<dd class="field-even"><p>initial observation of the state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.state_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">state_space</span></span><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.state_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/tests/environment_wrappers/mock_env.html#MockEnv.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform one time step of the simulation or on the real-world device.
+When a terminal condition is met, the reset function is called.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
+</dd>
+<dt class="field-even">Return obs</dt>
+<dd class="field-even"><p>current observation of the environment</p>
+</dd>
+<dt class="field-odd">Return reward</dt>
+<dd class="field-odd"><p>reward depending on the selected reward function</p>
+</dd>
+<dt class="field-even">Return done</dt>
+<dd class="field-even"><p>indicates whether the episode has ended</p>
+</dd>
+<dt class="field-odd">Return env_info</dt>
+<dd class="field-odd"><p>contains diagnostic information about the environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="tests.environment_wrappers.mock_env.MockEnv.task">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the task describing what the agent should do in the environment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_action_delay">
+<span id="test-action-delay"></span><h2>test_action_delay<a class="headerlink" href="#module-tests.environment_wrappers.test_action_delay" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_delay.test_act_delay">
+<span class="sig-name descname"><span class="pre">test_act_delay</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_act_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_act_delay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_delay.test_domain_param">
+<span class="sig-name descname"><span class="pre">test_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_domain_param" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_delay.test_no_delay">
+<span class="sig-name descname"><span class="pre">test_no_delay</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_no_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_no_delay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_delay.test_reset">
+<span class="sig-name descname"><span class="pre">test_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_delay.html#test_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_delay.test_reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_action_discrete">
+<span id="test-action-discrete"></span><h2>test_action_discrete<a class="headerlink" href="#module-tests.environment_wrappers.test_action_discrete" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_discrete.test_action_space_eles">
+<span class="sig-name descname"><span class="pre">test_action_space_eles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_bins</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_discrete.html#test_action_space_eles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_discrete.test_action_space_eles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_discrete.test_five_bins">
+<span class="sig-name descname"><span class="pre">test_five_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_discrete.html#test_five_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_discrete.test_five_bins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_discrete.test_one_bin">
+<span class="sig-name descname"><span class="pre">test_one_bin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_discrete.html#test_one_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_discrete.test_one_bin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_discrete.test_two_bins">
+<span class="sig-name descname"><span class="pre">test_two_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_discrete.html#test_two_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_discrete.test_two_bins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_action_downsampling">
+<span id="test-action-downsampling"></span><h2>test_action_downsampling<a class="headerlink" href="#module-tests.environment_wrappers.test_action_downsampling" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_downsampling.test_act_downsampling">
+<span class="sig-name descname"><span class="pre">test_act_downsampling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_act_downsampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_act_downsampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_downsampling.test_combination_delay_downsampling">
+<span class="sig-name descname"><span class="pre">test_combination_delay_downsampling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_combination_delay_downsampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_combination_delay_downsampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>After delay number of actions, the actions are downsampled by the factor</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_downsampling.test_combination_downsampling_delay">
+<span class="sig-name descname"><span class="pre">test_combination_downsampling_delay</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_combination_downsampling_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_combination_downsampling_delay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_downsampling.test_domain_param">
+<span class="sig-name descname"><span class="pre">test_domain_param</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_domain_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_domain_param" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_downsampling.test_no_downsampling">
+<span class="sig-name descname"><span class="pre">test_no_downsampling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_no_downsampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_no_downsampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_downsampling.test_reset">
+<span class="sig-name descname"><span class="pre">test_reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_downsampling.html#test_reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_downsampling.test_reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_action_noise">
+<span id="test-action-noise"></span><h2>test_action_noise<a class="headerlink" href="#module-tests.environment_wrappers.test_action_noise" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_noise.test_act_noise_simple">
+<span class="sig-name descname"><span class="pre">test_act_noise_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_noise.html#test_act_noise_simple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_noise.test_act_noise_simple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">
+<span class="sig-name descname"><span class="pre">test_order_act_noise_act_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_noise.html#test_order_act_noise_act_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_action_normalization">
+<span id="test-action-normalization"></span><h2>test_action_normalization<a class="headerlink" href="#module-tests.environment_wrappers.test_action_normalization" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_normalization.test_denormalization">
+<span class="sig-name descname"><span class="pre">test_denormalization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_normalization.html#test_denormalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_normalization.test_denormalization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_action_normalization.test_space">
+<span class="sig-name descname"><span class="pre">test_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_action_normalization.html#test_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_action_normalization.test_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_combination">
+<span id="test-combination"></span><h2>test_combination<a class="headerlink" href="#module-tests.environment_wrappers.test_combination" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_combination.test_combination">
+<span class="sig-name descname"><span class="pre">test_combination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_combination.html#test_combination"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_combination.test_combination" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_combination.test_combination_wrappers_domain_params">
+<span class="sig-name descname"><span class="pre">test_combination_wrappers_domain_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_combination.html#test_combination_wrappers_domain_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_combination.test_combination_wrappers_domain_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_combination.test_wrap_like_other_env">
+<span class="sig-name descname"><span class="pre">test_wrap_like_other_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_combination.html#test_wrap_like_other_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_combination.test_wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_domain_param_transformation">
+<span id="test-domain-param-transformation"></span><h2>test_domain_param_transformation<a class="headerlink" href="#module-tests.environment_wrappers.test_domain_param_transformation" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_domain_param_transformation.test_domain_param_transforms">
+<span class="sig-name descname"><span class="pre">test_domain_param_transforms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">trafo_class</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_domain_param_transformation.html#test_domain_param_transforms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_domain_param_transformation.test_domain_param_transforms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_domain_randomization">
+<span id="test-domain-randomization"></span><h2>test_domain_randomization<a class="headerlink" href="#module-tests.environment_wrappers.test_domain_randomization" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob">
+<span class="sig-name descname"><span class="pre">test_dr_wrapper_buffer_bob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_domain_randomization.html#test_dr_wrapper_buffer_bob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">
+<span class="sig-name descname"><span class="pre">test_dr_wrapper_live_bob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_domain_randomization.html#test_dr_wrapper_live_bob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_observation_normalization">
+<span id="test-observation-normalization"></span><h2>test_observation_normalization<a class="headerlink" href="#module-tests.environment_wrappers.test_observation_normalization" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_normalization.mock_obs_space">
+<span class="sig-name descname"><span class="pre">mock_obs_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#mock_obs_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.mock_obs_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_normalization.test_denormalization">
+<span class="sig-name descname"><span class="pre">test_denormalization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_obs_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#test_denormalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.test_denormalization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_normalization.test_space">
+<span class="sig-name descname"><span class="pre">test_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mock_obs_space</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_normalization.html#test_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_normalization.test_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_observation_partial">
+<span id="test-observation-partial"></span><h2>test_observation_partial<a class="headerlink" href="#module-tests.environment_wrappers.test_observation_partial" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_partial.test_mask_from_indices">
+<span class="sig-name descname"><span class="pre">test_mask_from_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_from_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_from_indices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_partial.test_mask_from_labels">
+<span class="sig-name descname"><span class="pre">test_mask_from_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_from_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_from_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_partial.test_mask_invert">
+<span class="sig-name descname"><span class="pre">test_mask_invert</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_mask_invert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_mask_invert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_partial.test_spaces">
+<span class="sig-name descname"><span class="pre">test_spaces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_spaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_spaces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_partial.test_values">
+<span class="sig-name descname"><span class="pre">test_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_partial.html#test_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_partial.test_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers.test_observation_velfilt">
+<span id="test-observation-velfilt"></span><h2>test_observation_velfilt<a class="headerlink" href="#module-tests.environment_wrappers.test_observation_velfilt" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.environment_wrappers.test_observation_velfilt.test_velocity_filter">
+<span class="sig-name descname"><span class="pre">test_velocity_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/environment_wrappers/test_observation_velfilt.html#test_velocity_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.environment_wrappers.test_observation_velfilt.test_velocity_filter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.environment_wrappers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tests.environment_wrappers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
