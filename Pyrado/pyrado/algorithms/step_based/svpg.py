@@ -108,6 +108,7 @@ class SVPG(Algorithm):
         self.horizon = horizon
         self.temperature = temperature
         self.particle = particle
+        self.current_particle = 0
 
         class OptimizerHook:
             def __init__(self, particle):
@@ -156,6 +157,7 @@ class SVPG(Algorithm):
             self.particle.policy.init_param()
             self.particle_states[i] = self.particle.__getstate__()
             self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
+            self.current_particle = i
 
     @property
     def iter_particles(self):
@@ -167,6 +169,7 @@ class SVPG(Algorithm):
             self.particle.__setstate__(self.particle_states[i])
             self.particle.policy.param_values = self.particle_policy_states[i]
             self.particle.optim = self.optims[i]
+            self.current_particle = i
             yield self.particle
             self.particle_states[i] = self.particle.__getstate__()
             self.particle_policy_states[i] = to.clone(self.particle.policy.param_values)
@@ -263,3 +266,12 @@ class SVPG(Algorithm):
             extra[f"particle{idx}"] = pyrado.load(f"particle_{idx}.pt", ex_dir, obj=self.particles[idx], verbose=True)
 
         return env, policy, extra
+
+    def load_particle(self, i):
+        self.particle.__setstate__(self.particle_states[i])
+        self.particle.policy.param_values = self.particle_policy_states[i]
+        self.current_particle = i
+
+    def store_particle(self):
+        self.particle_states[self.current_particle] = self.particle.__getstate__()
+        self.particle_policy_states[self.current_particle] = to.clone(self.particle.policy.param_values)
