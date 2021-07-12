@@ -31,12 +31,11 @@ from queue import Queue
 from typing import List, Sequence, Tuple, Union
 
 import numpy as np
-from pyrado.policies.initialization import init_param
 import torch as to
-from torch import nn
-from tqdm import tqdm
 from scipy.spatial.distance import pdist, squareform
+from torch import nn
 from torch.distributions.kl import kl_divergence
+from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -49,6 +48,7 @@ from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
+from pyrado.policies.initialization import init_param
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
@@ -167,34 +167,40 @@ class SVPG(Algorithm):
     def step(self, snapshot_mode: str, meta_info: dict = None):
         print("Begin step")
 
-        for i, particle in enumerate(self.iter_particles):
-            print(particle.policy.param_values[:5])
-
-        parameters = [[]] * self.num_particles
-        policy_grads = [[]] * self.num_particles
-        args = [[]] * self.num_particles
-        kwargs = [[]] * self.num_particles
+        parameters = [[] for i in range(self.num_particles)]
+        policy_grads = [[] for i in range(self.num_particles)]
+        kwargs = [[] for i in range(self.num_particles)]
+        args = [[] for i in range(self.num_particles)]
         for i, particle in enumerate(self.iter_particles):
             particle.step(snapshot_mode="no")
             while not particle.optim.empty():
                 args_i, kwargs_i, params, grads = particle.optim.get_next_step()
-                print(i, ">>>>>", params[:5])
-                policy_grads[i].append(to.tensor(grads.detach()))
-                parameters[i].append(to.tensor(params.detach()))
+                policy_grads[i].append(grads)
+                parameters[i].append(params)
                 args[i].append(args_i)
                 kwargs[i].append(kwargs_i)
 
-        assert all(len(p) == len(parameters[0]) for p in parameters)
-
-        for t_step in tqdm(range(len(parameters[0]))):
-            params = to.stack([parameters[idx][t_step] for idx in range(self.num_particles)])
-            policy_grds = to.stack([policy_grads[idx][t_step] for idx in range(self.num_particles)])
+        # assert all(len(p) == len(parameters[0]) for p in parameters)
+        average = True
+        if average:
+            params = to.stack([to.stack(parameters[i]).mean(axis=0) for i in range(self.num_particles)])
+            policy_grds = to.stack([to.stack(policy_grads[i]).mean(axis=0) for i in range(self.num_particles)])
             Kxx, dx_Kxx = self.kernel(params)
             grad_theta = (to.mm(Kxx, policy_grds / self.temperature) + dx_Kxx) / self.num_particles
             for i, particle in enumerate(self.iter_particles):
-                particle.policy.param_values = parameters[i][t_step]
+                particle.policy.param_values = params[i]
                 particle.policy.param_grad = grad_theta[i]
-                particle.optim.real_step(*args[i][t_step], **kwargs[i][t_step])
+                particle.optim.real_step(*args[i][0], **kwargs[i][0])
+        else:
+            for t_step in tqdm(range(len(parameters[0]))):
+                params = to.stack([parameters[idx][t_step] for idx in range(self.num_particles)])
+                policy_grds = to.stack([policy_grads[idx][t_step] for idx in range(self.num_particles)])
+                Kxx, dx_Kxx = self.kernel(params)
+                grad_theta = (to.mm(Kxx, policy_grds / self.temperature) + dx_Kxx) / self.num_particles
+                for i, particle in enumerate(self.iter_particles):
+                    particle.policy.param_values = parameters[i][t_step]
+                    particle.policy.param_grad = grad_theta[i]
+                    particle.optim.real_step(*args[i][t_step], **kwargs[i][t_step])
 
     def kernel(self, X: to.Tensor) -> Tuple[to.Tensor, to.Tensor]:
         """
@@ -206,7 +212,6 @@ class SVPG(Algorithm):
         print(X)
         X_np = X.cpu().data.numpy()  # use numpy because torch median is flawed
         pairwise_dists = squareform(pdist(X_np)) ** 2
-        print(pairwise_dists)
         assert pairwise_dists.shape[0] == self.num_particles
 
         # Median trick
