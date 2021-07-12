@@ -67,7 +67,8 @@ class SVPG(Algorithm):
         horizon: int,
         logger: StepLogger = None,
     ):
-        """Constructor
+        """
+        Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
         :type save_dir: pyrado.PathLike
