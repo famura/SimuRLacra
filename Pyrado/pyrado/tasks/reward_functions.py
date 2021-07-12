@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import Callable, Sequence, Union, Tuple
+from typing import Callable, Sequence, Tuple, Union
 
 import numpy as np
 
@@ -441,7 +441,7 @@ class ForwardVelocityRewFcnAnt(RewFcn):
         .. note::
             The last x position, which is rewarded, is initialized by `reset()`, since the (sampled) initial state is
             unknown at construction time of the task, i.e. this reward function.
-        
+
         :param dt: simulation step size [s]
         :param idx_fwd: index of the state dimension that marks the forward direction
         :param fwd_rew_weight: scaling factor for the forward velocity reward
@@ -524,7 +524,7 @@ class ForwardVelocityRewFcnHumanoid(RewFcn):
         .. note::
             The last x position, which is rewarded, is initialized by `reset()`, since the (sampled) initial state is
             unknown at construction time of the task, i.e. this reward function.
-        
+
         :param dt: simulation step size [s]
         :param idx_fwd: index of the state dimension that marks the forward direction
         :param fwd_rew_weight: scaling factor for the forward velocity reward
