@@ -39,19 +39,11 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.step_based.a2c import A2C
-from pyrado.algorithms.step_based.gae import GAE, ValueFunctionSpace
-from pyrado.algorithms.utils import compute_action_statistics
 from pyrado.environments.base import Env
-from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.feed_back.fnn import FNNPolicy
-from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.initialization import init_param
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
-from pyrado.sampling.step_sequence import StepSequence
-from pyrado.utils.data_types import EnvSpec
 
 
 class SVPG(Algorithm):
