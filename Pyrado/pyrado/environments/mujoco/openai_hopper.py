@@ -82,8 +82,8 @@ class HopperSim(MujocoSimEnv, Serializable):
         noise_halfspan = self.domain_param["reset_noise_halfspan"]
         min_init_qpos = self.init_qpos - np.full_like(self.init_qpos, noise_halfspan)
         max_init_qpos = self.init_qpos + np.full_like(self.init_qpos, noise_halfspan)
-        min_init_qvel = self.init_qvel - np.full_like(self.init_qpos, noise_halfspan)
-        max_init_qvel = self.init_qvel + np.full_like(self.init_qpos, noise_halfspan)
+        min_init_qvel = self.init_qvel - np.full_like(self.init_qvel, noise_halfspan)
+        max_init_qvel = self.init_qvel + np.full_like(self.init_qvel, noise_halfspan)
         min_init_state = np.concatenate([min_init_qpos, min_init_qvel]).ravel()
         max_init_state = np.concatenate([max_init_qpos, max_init_qvel]).ravel()
         self._init_space = BoxSpace(min_init_state, max_init_state)

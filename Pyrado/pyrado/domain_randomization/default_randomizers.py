@@ -68,11 +68,10 @@ def default_randomizer(env_module, env_class):
     return register
 
 
-def create_default_randomizer(env: Union[SimEnv, EnvWrapper], randomizer_args: dict() = {}) -> DomainRandomizer:
+def create_default_randomizer(env: Union[SimEnv, EnvWrapper]) -> DomainRandomizer:
     """
     Create the default randomizer depending on the passed environment.
     :param env: (wrapped) environment that should be perturbed
-    :param randomizer_args: paramters for the specific default_randomizer
     :return: default randomizer
     """
     env_type = type(inner_env(env))
@@ -84,7 +83,7 @@ def create_default_randomizer(env: Union[SimEnv, EnvWrapper], randomizer_args: d
         # Try to get it
         dp = DEFAULT_RANDOMIZER_REGISTRY.get((env_module, env_class))
         if dp:
-            return dp(**randomizer_args)
+            return dp()
     else:
         raise pyrado.ValueErr(msg=f"No default randomizer settings for env of type {env_type}!")
 
@@ -724,7 +723,11 @@ def create_default_randomizer_wambic() -> DomainRandomizer:
 
 
 @default_randomizer("pyrado.environments.mujoco.openai_ant", "AntSim")
-def create_default_randomizer_ant(epsilon: float = 0.1) -> DomainRandomizer:
+def create_default_randomizer_ant() -> DomainRandomizer:
+    return create_default_randomizer_ant_epsilon(0.2)
+
+
+def create_default_randomizer_ant_epsilon(epsilon: float) -> DomainRandomizer:
     from pyrado.environments.mujoco.openai_ant import AntSim
 
     dp_nom = AntSim.get_nominal_domain_param()
@@ -773,7 +776,11 @@ def create_default_randomizer_ant(epsilon: float = 0.1) -> DomainRandomizer:
 
 
 @default_randomizer("pyrado.environments.mujoco.openai_humanoid", "HumanoidSim")
-def create_default_randomizer_humanoid(epsilon: float = 0.1) -> DomainRandomizer:
+def create_default_randomizer_humanoid() -> DomainRandomizer:
+    return create_default_randomizer_humanoid_epsilon(0.2)
+
+
+def create_default_randomizer_humanoid_epsilon(epsilon: float) -> DomainRandomizer:
     from pyrado.environments.mujoco.openai_humanoid import HumanoidSim
 
     dp_nom = HumanoidSim.get_nominal_domain_param()
