@@ -131,18 +131,8 @@ class AntSim(MujocoSimEnv, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        if "contact_cost_weight" not in task_args:
-            task_args["contact_cost_weight"] = 5e-4
-        if "ctrl_cost_weight" not in task_args:
-            task_args["ctrl_cost_weight"] = 0.5
-        if "healthy_reward" not in task_args:
-            task_args["healthy_reward"] = 1.0
-        if "terminate_when_unhealthy" not in task_args:
-            task_args["terminate_when_unhealthy"] = True
-        if "healthy_z_range" not in task_args:
-            task_args["healthy_z_range"] = (0.2, 1.0)
         if "contact_force_range" not in task_args:
-            task_args["contact_force_range"] = (-1.0, 1.0)
+            task_args["contact_force_range"] = self._contact_force_range
 
         return GoallessTask(self.spec, ForwardVelocityRewFcnAnt(self._dt, **task_args))
 
@@ -167,9 +157,9 @@ class AntSim(MujocoSimEnv, Serializable):
 
     def observe(self, state: np.ndarray) -> np.ndarray:
         position = state[: self.init_qpos.size].copy()
-        rest = state[self.init_qpos.size :].copy()
+        velAndCfrc = state[self.init_qpos.size :].copy()
 
         if self._exclude_current_positions_from_observation:
             position = position[2:]
 
-        return np.concatenate((position, rest))
+        return np.concatenate((position, velAndCfrc))

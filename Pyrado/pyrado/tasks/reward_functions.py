@@ -428,12 +428,12 @@ class ForwardVelocityRewFcnAnt(RewFcn):
     def __init__(
         self,
         dt: float,
-        contact_cost_weight: float,
-        ctrl_cost_weight: float,
-        healthy_reward: float,
-        terminate_when_unhealthy: bool,
-        healthy_z_range: Tuple[float],
         contact_force_range: Tuple[float],
+        contact_cost_weight: float = 5e-4,
+        ctrl_cost_weight: float = 0.5,
+        healthy_reward: float = 1.0,
+        terminate_when_unhealthy: bool = True,
+        healthy_z_range: Tuple[float] = (0.2, 1.0),
     ):
         """
         Constructor
@@ -510,13 +510,13 @@ class ForwardVelocityRewFcnHumanoid(RewFcn):
     def __init__(
         self,
         dt: float,
-        contact_cost_weight: float,
-        ctrl_cost_weight: float,
-        forward_reward_weight: float,
-        healthy_reward: float,
-        terminate_when_unhealthy: bool,
-        healthy_z_range: Tuple[float],
-        contact_cost_range: Tuple[float],
+        contact_cost_weight: float = 5e-7,
+        ctrl_cost_weight: float = 0.1,
+        forward_reward_weight: float = 1.25,
+        healthy_reward: float = 5.0,
+        terminate_when_unhealthy: bool = True,
+        healthy_z_range: Tuple[float] = (1.0, 2.0),
+        contact_cost_range: Tuple[float] = (-np.inf, 10.0),
     ):
         """
         Constructor

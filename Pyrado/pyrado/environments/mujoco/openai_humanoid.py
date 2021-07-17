@@ -69,7 +69,6 @@ class HumanoidSim(MujocoSimEnv, Serializable):
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
-        self._contact_force_range = (-1.0, 1.0)
         self._exclude_current_positions_from_observation = True
 
         # Call MujocoSimEnv's constructor
@@ -160,21 +159,6 @@ class HumanoidSim(MujocoSimEnv, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        if "contact_cost_weight" not in task_args:
-            task_args["contact_cost_weight"] = 5e-7
-        if "ctrl_cost_weight" not in task_args:
-            task_args["ctrl_cost_weight"] = 0.1
-        if "forward_reward_weight" not in task_args:
-            task_args["forward_reward_weight"] = 1.25
-        if "healthy_reward" not in task_args:
-            task_args["healthy_reward"] = 5.0
-        if "terminate_when_unhealthy" not in task_args:
-            task_args["terminate_when_unhealthy"] = True
-        if "healthy_z_range" not in task_args:
-            task_args["healthy_z_range"] = (1.0, 2.0)
-        if "contact_cost_range" not in task_args:
-            task_args["contact_cost_range"] = (-np.inf, 10.0)
-
         return GoallessTask(self.spec, ForwardVelocityRewFcnHumanoid(self._dt, **task_args))
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
@@ -203,9 +187,9 @@ class HumanoidSim(MujocoSimEnv, Serializable):
 
     def observe(self, state: np.ndarray) -> np.ndarray:
         position = state[: self.init_qpos.size].copy()
-        rest = state[self.init_qpos.size :].copy()
+        stateWithoutPos = state[self.init_qpos.size :].copy()
 
         if self._exclude_current_positions_from_observation:
             position = position[2:]
 
-        return np.concatenate((position, rest))
+        return np.concatenate((position, stateWithoutPos))

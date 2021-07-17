@@ -71,6 +71,7 @@ def default_randomizer(env_module, env_class):
 def create_default_randomizer(env: Union[SimEnv, EnvWrapper]) -> DomainRandomizer:
     """
     Create the default randomizer depending on the passed environment.
+
     :param env: (wrapped) environment that should be perturbed
     :return: default randomizer
     """
