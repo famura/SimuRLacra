@@ -28,7 +28,7 @@
 
 from copy import deepcopy
 from queue import Queue
-from typing import List, Sequence, Tuple, Union
+from typing import Dict, List, Sequence, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -104,25 +104,51 @@ class SVPG(Algorithm):
         self.current_particle = 0
 
         class OptimizerHook:
+            """
+            This class mocks the optimizer interface partially to intercept the gradient updates of svpg.
+            """
+
             def __init__(self, particle):
+                """Constructor
+
+                :param particle: The blueprint algorithm in which the optimizer is replaced by the mocked one.
+                :type particle: Algorithm
+                """
                 self.optim = particle.optim
                 self.buffer = Queue()
                 self.particle = particle
 
             def real_step(self, *args, **kwargs):
+                """Call the original optimizer with given args and kwargs."""
                 self.optim.step(*args, **kwargs)
 
-            def iter_steps(self):
+            def iter_steps(self) -> Tuple[List, Dict, to.Tensor, to.Tensor]:
+                """Generate the steps in the buffer queue.
+
+                :yield: the next step in the queue
+                :rtype: Tuple[List, Dict, to.Tensor, to.Tensor]
+                """
                 while not self.buffer.empty():
                     yield self.buffer.get()
 
-            def empty(self):
+            def empty(self) -> bool:
+                """Check if the buffer is empty.
+
+                :return: buffer is empty
+                :rtype: bool
+                """
                 return self.buffer.empty()
 
-            def get_next_step(self):
+            def get_next_step(self) -> Tuple[List, Dict, to.Tensor, to.Tensor]:
+                """Retrieve the next step from the queue. It contaisn all calls to the wrapped optimizer which have been intercepted.
+
+                :return: Next buffer step
+                :rtype: Tuple[List, Dict, to.Tensor, to.Tensor]
+                """
                 return self.buffer.get()
 
             def step(self, *args, **kwargs):
+                """Store the args of the mocked call in the queue."""
                 self.buffer.put(
                     (
                         args,
