@@ -280,7 +280,7 @@ class RolloutSavingWrapper:
 
     def __getstate__(self):
         """
-        Do not include the saved rollouts in the pickled object (uses lots of memory). This is required so 
+        Do not include the saved rollouts in the pickled object (uses lots of memory). This is required so
         that pickle does not end in an endless recursion.
         """
         return (self.wrapped_sampler,)
