@@ -1,4 +1,4 @@
-# Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+# Copyright (c) 2021, Fabio Muratore, Honda Research Institute Europe GmbH, and
 # Technical University of Darmstadt.
 # All rights reserved.
 #
@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train agents to solve the Ball-on-Beam environment using Stein Variational Policy Gradient.
+Train an agent to solve the One-Mass-Oscillator environment using Stein Variational Policy Gradients.
 """
 import torch as to
 
@@ -37,6 +37,7 @@ from pyrado.algorithms.step_based.gae import GAE, ValueFunctionSpace
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import StepLogger
 from pyrado.policies.feed_back.fnn import FNNPolicy
@@ -49,14 +50,14 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamSim.name, SVPG.name)
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, SVPG.name)
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparam = dict(dt=1 / 100.0, max_steps=500)
-    env = BallOnBeamSim(**env_hparam)
+    env = OneMassOscillatorSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Specification of actor an critic (will be instantiated in SVPG)
