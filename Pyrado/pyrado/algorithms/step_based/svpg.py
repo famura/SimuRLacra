@@ -180,10 +180,7 @@ class SVPG(Algorithm):
 
     @property
     def iter_particles(self):
-        """
-        Iterate particles by sequentially loading and yielding them.
-
-        """
+        """Iterate particles by sequentially loading and yielding them."""
         for i in range(self.num_particles):
             self.particle.__setstate__(self.particle_states[i])
             self.particle.policy.param_values = self.particle_policy_states[i]
@@ -286,11 +283,17 @@ class SVPG(Algorithm):
 
         return env, policy, extra
 
-    def load_particle(self, i):
-        self.particle.__setstate__(self.particle_states[i])
-        self.particle.policy.param_values = self.particle_policy_states[i]
-        self.current_particle = i
+    def load_particle(self, int: idx):
+        """
+        Load a specific particle's state into `self.particle`.
+        
+        :param idx: index of the particle to load
+        """
+        self.particle.__setstate__(self.particle_states[idx])
+        self.particle.policy.param_values = self.particle_policy_states[idx]
+        self.current_particle = idx
 
     def store_particle(self):
+        """Safe the current particle's state."""
         self.particle_states[self.current_particle] = self.particle.__getstate__()
         self.particle_policy_states[self.current_particle] = to.clone(self.particle.policy.param_values)
