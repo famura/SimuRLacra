@@ -286,7 +286,7 @@ class SVPG(Algorithm):
     def load_particle(self, int: idx):
         """
         Load a specific particle's state into `self.particle`.
-        
+
         :param idx: index of the particle to load
         """
         self.particle.__setstate__(self.particle_states[idx])
