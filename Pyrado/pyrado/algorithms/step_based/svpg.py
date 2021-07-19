@@ -26,15 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from copy import deepcopy
 from queue import Queue
-from typing import Dict, List, Sequence, Tuple, Union
+from typing import Dict, List, Tuple
 
 import numpy as np
 import torch as to
 from scipy.spatial.distance import pdist, squareform
-from torch import nn
-from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
 
 import pyrado
@@ -42,8 +39,6 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.initialization import init_param
-from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
 class SVPG(Algorithm):
@@ -71,24 +66,14 @@ class SVPG(Algorithm):
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
-        :type save_dir: pyrado.PathLike
         :param env: the environment which the policy operates
-        :type env: Env
         :param particle: the particle to populate with different parameters during training
-        :type particle: Algorithm
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :type max_iter: int
         :param num_particles: number of SVPG particles
-        :type num_particles: int
         :param temperature: SVPG temperature
-        :type temperature: float
         :param horizon: horizon for each particle
-        :type horizon: int
-        :param logger: defaults to None
-        :type logger: StepLogger, optional
-        :raises pyrado.TypeErr:
+        :param logger: defaults to `None`
         """
-
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
 
@@ -104,15 +89,13 @@ class SVPG(Algorithm):
         self.current_particle = 0
 
         class OptimizerHook:
-            """
-            This class mocks the optimizer interface partially to intercept the gradient updates of svpg.
-            """
+            """This class mocks the optimizer interface partially to intercept the gradient updates of svpg."""
 
             def __init__(self, particle):
-                """Constructor
+                """
+                Constructor
 
-                :param particle: The blueprint algorithm in which the optimizer is replaced by the mocked one.
-                :type particle: Algorithm
+                :param particle: blueprint algorithm in which the optimizer is replaced by the mocked one
                 """
                 self.optim = particle.optim
                 self.buffer = Queue()
@@ -123,27 +106,28 @@ class SVPG(Algorithm):
                 self.optim.step(*args, **kwargs)
 
             def iter_steps(self) -> Tuple[List, Dict, to.Tensor, to.Tensor]:
-                """Generate the steps in the buffer queue.
+                """
+                Generate the steps in the buffer queue.
 
                 :yield: the next step in the queue
-                :rtype: Tuple[List, Dict, to.Tensor, to.Tensor]
                 """
                 while not self.buffer.empty():
                     yield self.buffer.get()
 
             def empty(self) -> bool:
-                """Check if the buffer is empty.
+                """
+                Check if the buffer is empty.
 
                 :return: buffer is empty
-                :rtype: bool
                 """
                 return self.buffer.empty()
 
             def get_next_step(self) -> Tuple[List, Dict, to.Tensor, to.Tensor]:
-                """Retrieve the next step from the queue. It contaisn all calls to the wrapped optimizer which have been intercepted.
+                """
+                Retrieve the next step from the queue. It contains all calls to the wrapped optimizer which have
+                been intercepted.
 
-                :return: Next buffer step
-                :rtype: Tuple[List, Dict, to.Tensor, to.Tensor]
+                :return: next buffer step
                 """
                 return self.buffer.get()
 
@@ -283,7 +267,7 @@ class SVPG(Algorithm):
 
         return env, policy, extra
 
-    def load_particle(self, int: idx):
+    def load_particle(self, idx: int):
         """
         Load a specific particle's state into `self.particle`.
 
