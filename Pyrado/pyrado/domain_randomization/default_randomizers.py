@@ -643,6 +643,11 @@ def create_default_randomizer_wamjsc() -> DomainRandomizer:
 
 @default_randomizer("pyrado.environments.mujoco.wam_jsc", "WAMJointSpaceCtrlSim")
 def create_default_randomizer_wambic() -> DomainRandomizer:
+    """
+    Create the default randomizer for the MuJoCo-based `WAMBallInCupSim`.
+    
+    :return: randomizer based on the nominal domain parameter values
+    """
     from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 
     dp_nom = WAMBallInCupSim.get_nominal_domain_param()
@@ -725,10 +730,21 @@ def create_default_randomizer_wambic() -> DomainRandomizer:
 
 @default_randomizer("pyrado.environments.mujoco.openai_ant", "AntSim")
 def create_default_randomizer_ant() -> DomainRandomizer:
+    """
+    Create the default randomizer for the MuJoCo-based `AntSim`.
+    
+    :return: randomizer based on the nominal domain parameter values
+    """
     return create_default_randomizer_ant_epsilon(0.2)
 
 
 def create_default_randomizer_ant_epsilon(epsilon: float) -> DomainRandomizer:
+    """
+    Create a randomizer for the MuJoCo-based `AntSim` whichs domain parameter ranges are controlled by a 
+    scalar factor.
+    
+    :return: randomizer based on the nominal domain parameter values
+    """
     from pyrado.environments.mujoco.openai_ant import AntSim
 
     dp_nom = AntSim.get_nominal_domain_param()
@@ -778,10 +794,21 @@ def create_default_randomizer_ant_epsilon(epsilon: float) -> DomainRandomizer:
 
 @default_randomizer("pyrado.environments.mujoco.openai_humanoid", "HumanoidSim")
 def create_default_randomizer_humanoid() -> DomainRandomizer:
+    """
+    Create the default randomizer for the MuJoCo-based `HumanoidSim`.
+    
+    :return: randomizer based on the nominal domain parameter values
+    """
     return create_default_randomizer_humanoid_epsilon(0.2)
 
 
 def create_default_randomizer_humanoid_epsilon(epsilon: float) -> DomainRandomizer:
+    """
+    Create a randomizer for the MuJoCo-based `HumanoidSim` whichs domain parameter ranges are controlled by a 
+    scalar factor.
+    
+    :return: randomizer based on the nominal domain parameter values
+    """
     from pyrado.environments.mujoco.openai_humanoid import HumanoidSim
 
     dp_nom = HumanoidSim.get_nominal_domain_param()
