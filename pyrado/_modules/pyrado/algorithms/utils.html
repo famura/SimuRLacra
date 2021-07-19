@@ -504,12 +504,17 @@
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_sampler</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Required so that pickle does not end in an endless recursion&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Do not include the saved rollouts in the pickled object (uses lots of memory). This is required so</span>
+<span class="sd">        that pickle does not end in an endless recursion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_sampler</span><span class="p">,)</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Required so that pickle does not end in an endless recursion&quot;&quot;&quot;</span>
-        <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+        <span class="sd">&quot;&quot;&quot;Unpickles the object. Must be consistent with `__getstate__`.&quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">wrapped_sampler</span><span class="p">,)</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_sampler</span> <span class="o">=</span> <span class="n">wrapped_sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rollouts</span> <span class="o">=</span> <span class="p">[]</span></div>
 </pre></div>
 
            </div>
