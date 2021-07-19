@@ -32,6 +32,7 @@ Script to plot the results from the 2D domain parameter grid evaluations of a si
 import os
 import os.path as osp
 
+import joblib as jl
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -134,7 +135,7 @@ def plot_policy(args, ex_dir):
         if not osp.isfile(pickle_file):
             print(f"{pickle_file} is not a file! Skipping...")
             continue
-        df = pd.read_pickle(pickle_file)
+        df = jl.load(pickle_file)
 
         # Remove constant rows
         df = df.loc[:, df.apply(pd.Series.nunique) != 1]
@@ -160,7 +161,7 @@ if __name__ == "__main__":
 
         g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir) if "policy.pt" in tmp[2]]
     elif g_args.dir is None:
-        g_ex_dirs = [ask_for_experiment(show_hyper_parameters=g_args.show_hyperparameters, max_display=50)]
+        g_ex_dirs = [ask_for_experiment(hparam_list=g_args.show_hparams, max_display=50)]
     else:
         g_ex_dirs = [g_args.dir]
 

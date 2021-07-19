@@ -33,6 +33,7 @@ import os
 import os.path as osp
 from typing import Optional, Tuple
 
+import joblib as jl
 import pandas as pd
 from matplotlib import colors
 from matplotlib import pyplot as plt
@@ -110,7 +111,7 @@ if __name__ == "__main__":
         assert osp.isdir(eval_dir)
 
         # Load the data
-        df = pd.read_pickle(osp.join(eval_dir, "df_sp_grid_nd.pkl"))
+        df = jl.load(osp.join(eval_dir, "df_sp_grid_nd.pkl"))
 
         # Remove constant rows
         # df = df.loc[:, df.apply(pd.Series.nunique) != 1]
