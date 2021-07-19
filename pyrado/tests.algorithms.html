@@ -1,0 +1,566 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>algorithms &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>algorithms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/tests.algorithms.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="algorithms">
+<h1>algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="test-algorithms">
+<h2>test_algorithms<a class="headerlink" href="#test-algorithms" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-tests.algorithms.test_meta">
+<span id="test-meta"></span><h2>test_meta<a class="headerlink" href="#module-tests.algorithms.test_meta" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.ex_dir">
+<span class="sig-name descname"><span class="pre">ex_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmpdir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#ex_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.ex_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_arpl">
+<span class="sig-name descname"><span class="pre">test_arpl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_arpl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_arpl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_basic_meta">
+<span class="sig-name descname"><span class="pre">test_basic_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">algo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algo_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_basic_meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_basic_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_bayrn_power">
+<span class="sig-name descname"><span class="pre">test_bayrn_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bayrn_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_bayrn_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_bayrn_power" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_bayrn_ppo">
+<span class="sig-name descname"><span class="pre">test_bayrn_ppo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bayrn_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_bayrn_ppo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_bayrn_ppo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_npdr_and_bayessim">
+<span class="sig-name descname"><span class="pre">test_npdr_and_bayessim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algo_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_real_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_sbi_rounds</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rec_act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_npdr_and_bayessim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_npdr_and_bayessim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_pddr">
+<span class="sig-name descname"><span class="pre">test_pddr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algo_hparam</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_pddr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_pddr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_sbi_embedding">
+<span class="sig-name descname"><span class="pre">test_sbi_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_segments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_on_done</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_mask_labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_mask_labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_sbi_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_sbi_embedding" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_simopt_cem_ppo">
+<span class="sig-name descname"><span class="pre">test_simopt_cem_ppo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_simopt_cem_ppo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_simopt_cem_ppo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_spota_hc">
+<span class="sig-name descname"><span class="pre">test_spota_hc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spota_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_spota_hc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_spota_hc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_spota_ppo">
+<span class="sig-name descname"><span class="pre">test_spota_ppo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spota_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_spota_ppo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_spota_ppo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_sprl">
+<span class="sig-name descname"><span class="pre">test_sprl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_mean</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_sprl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_sprl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_meta.test_sysidasrl_reps">
+<span class="sig-name descname"><span class="pre">test_sysidasrl_reps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ex_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv"><span class="pre">pyrado.environments.sim_base.SimEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_eval_rollouts</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_meta.html#test_sysidasrl_reps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_meta.test_sysidasrl_reps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-tests.algorithms.test_stopping_criteria">
+<span id="test-stopping-criteria"></span><h2>test_stopping_criteria<a class="headerlink" href="#module-tests.algorithms.test_stopping_criteria" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.ExposingReturnStatisticBasedStoppingCriterion">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ExposingReturnStatisticBasedStoppingCriterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_statistic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatistic</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">ReturnStatistic.median</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lookbacks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#ExposingReturnStatisticBasedStoppingCriterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.ExposingReturnStatisticBasedStoppingCriterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion" title="pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.stopping_criteria.rollout_based_criteria.ReturnStatisticBasedStoppingCriterion</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MockSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_sequences</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler.reinit">
+<span class="sig-name descname"><span class="pre">reinit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler.reinit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</p>
+<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy,
+they will not automatically propagate to all processes. This method exists as a workaround; call it to
+force a reinitialization of environment and policy in all subprocesses.</p>
+<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between
+sampling runs, the sample() method takes care of this on it’s own.</p>
+<p>You can use the env and policy parameters to completely replace the stored environment or policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – new environment to use, or None to keep the old one</p></li>
+<li><p><strong>policy</strong> – new policy to use, or None to keep the old one</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.MockSampler.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#MockSampler.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.MockSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a list of rollouts. This method works exactly as specified in the class description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sampled rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_always">
+<span class="sig-name descname"><span class="pre">test_criterion_always</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_always"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_always" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_combination_and">
+<span class="sig-name descname"><span class="pre">test_criterion_combination_and</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_combination_and"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_combination_and" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_combination_or">
+<span class="sig-name descname"><span class="pre">test_criterion_combination_or</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_combination_or"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_combination_or" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_custom">
+<span class="sig-name descname"><span class="pre">test_criterion_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_met_expected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_custom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_iter_count_equal">
+<span class="sig-name descname"><span class="pre">test_criterion_iter_count_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_iter_count_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_iter_count_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_iter_count_higher">
+<span class="sig-name descname"><span class="pre">test_criterion_iter_count_higher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_iter_count_higher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_iter_count_higher" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_iter_count_lower">
+<span class="sig-name descname"><span class="pre">test_criterion_iter_count_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_iter_count_lower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_iter_count_lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_never">
+<span class="sig-name descname"><span class="pre">test_criterion_never</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_never"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_never" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_return_statistic_based_check_min">
+<span class="sig-name descname"><span class="pre">test_criterion_return_statistic_based_check_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statistic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_return_statistic_based_check_min"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_return_statistic_based_check_min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_equal">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_higher">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_higher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_higher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_higher" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_history_filling">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_history_filling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_history_filling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_history_filling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_lower">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_lower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_none">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_none</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_one">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_constant_one</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_constant_one"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_one" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_zero">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_constant_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_constant_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_constant_zero" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_not_constant">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_not_constant</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_not_constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_not_constant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_random">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_regress_random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_regress_random"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_regress_random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_subset">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_convergence_subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_iter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_convergence_subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_convergence_subset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_equal">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_min_return_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_min_return_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_higher">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_min_return_higher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_min_return_higher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_higher" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_lower">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_min_min_return_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_min_min_return_lower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_min_min_return_lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_no_sampler">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_no_sampler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_no_sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_no_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_wrong_sampler">
+<span class="sig-name descname"><span class="pre">test_criterion_rollout_based_wrong_sampler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_rollout_based_wrong_sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_rollout_based_wrong_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_sample_count_equal">
+<span class="sig-name descname"><span class="pre">test_criterion_sample_count_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_sample_count_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_sample_count_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_sample_count_higher">
+<span class="sig-name descname"><span class="pre">test_criterion_sample_count_higher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_sample_count_higher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_sample_count_higher" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_sample_count_lower">
+<span class="sig-name descname"><span class="pre">test_criterion_sample_count_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_sample_count_lower"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_sample_count_lower" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_default">
+<span class="sig-name descname"><span class="pre">test_criterion_toggleable_init_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_toggleable_init_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_met">
+<span class="sig-name descname"><span class="pre">test_criterion_toggleable_init_met</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_toggleable_init_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_met" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_not_met">
+<span class="sig-name descname"><span class="pre">test_criterion_toggleable_init_not_met</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_toggleable_init_not_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_init_not_met" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_met">
+<span class="sig-name descname"><span class="pre">test_criterion_toggleable_set_on_off_init_met</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_toggleable_set_on_off_init_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_met" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_not_met">
+<span class="sig-name descname"><span class="pre">test_criterion_toggleable_set_on_off_init_not_met</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_criterion_toggleable_set_on_off_init_not_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_criterion_toggleable_set_on_off_init_not_met" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_magic_function_implementation_and">
+<span class="sig-name descname"><span class="pre">test_magic_function_implementation_and</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_magic_function_implementation_and"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_magic_function_implementation_and" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.algorithms.test_stopping_criteria.test_magic_function_implementation_or">
+<span class="sig-name descname"><span class="pre">test_magic_function_implementation_or</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/algorithms/test_stopping_criteria.html#test_magic_function_implementation_or"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tests.algorithms.test_stopping_criteria.test_magic_function_implementation_or" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="test-utils">
+<h2>test_utils<a class="headerlink" href="#test-utils" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-tests.algorithms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tests.algorithms" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

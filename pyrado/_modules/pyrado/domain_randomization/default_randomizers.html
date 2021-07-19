@@ -1,0 +1,1144 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.domain_randomization.default_randomizers &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.domain_randomization.default_randomizers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.domain_randomization.default_randomizers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Storage for default a.k.a. nominal domain parameter values and default randomizers</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">BernoulliDomainParam</span><span class="p">,</span> <span class="n">NormalDomainParam</span><span class="p">,</span> <span class="n">UniformDomainParam</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+
+
+<span class="n">DEFAULT_RANDOMIZER_REGISTRY</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="default_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.default_randomizer">[docs]</a><span class="k">def</span> <span class="nf">default_randomizer</span><span class="p">(</span><span class="n">env_module</span><span class="p">,</span> <span class="n">env_class</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a default randomizer provider for a given environment type.</span>
+<span class="sd">    The environment type is referenced by name to avoid eager loading of all environments when this module is used.</span>
+
+<span class="sd">    :usage:</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        @default_randomizer(&#39;pyrado.environments.xy.my&#39;, &#39;MyEnv&#39;)</span>
+<span class="sd">            def create_default_randomizer_my() -&gt; DomainRandomizer:</span>
+<span class="sd">                &lt;implementation&gt;</span>
+
+<span class="sd">    :param env_module: module in which the env class is defined</span>
+<span class="sd">    :param env_class: environment class name</span>
+<span class="sd">    :return: decorator for default randomizer provider function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="n">DEFAULT_RANDOMIZER_REGISTRY</span><span class="p">[(</span><span class="n">env_module</span><span class="p">,</span> <span class="n">env_class</span><span class="p">)]</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">return</span> <span class="n">register</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer depending on the passed environment.</span>
+
+<span class="sd">    :param env: (wrapped) environment that should be perturbed</span>
+<span class="sd">    :return: default randomizer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
+
+    <span class="c1"># Try all env base types. This is more or less equivalent to isinstance</span>
+    <span class="k">for</span> <span class="n">cand_type</span> <span class="ow">in</span> <span class="n">env_type</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">:</span>
+        <span class="n">env_module</span> <span class="o">=</span> <span class="n">cand_type</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">env_class</span> <span class="o">=</span> <span class="n">cand_type</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="c1"># Try to get it</span>
+        <span class="n">dp</span> <span class="o">=</span> <span class="n">DEFAULT_RANDOMIZER_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">env_module</span><span class="p">,</span> <span class="n">env_class</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">dp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dp</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No default randomizer settings for env of type </span><span class="si">{</span><span class="n">env_type</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_conservative_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_conservative_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_conservative_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default conservative randomizer depending on the passed environment.</span>
+
+<span class="sd">    :param env: environment that should be perturbed</span>
+<span class="sd">    :return: default conservative randomizer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s2">&quot;cov&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s2">&quot;halfspan&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">randomizer</span></div>
+
+
+<div class="viewcode-block" id="create_zero_var_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_zero_var_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the randomizer which always returns the nominal domain parameter values.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The variance will not be completely zero as this would lead to invalid distributions (PyTorch checks)</span>
+
+<span class="sd">    :param env: environment that should be perturbed</span>
+<span class="sd">    :param eps: factor to scale the distributions variance with</span>
+<span class="sd">    :return: randomizer with zero variance for all parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eps</span><span class="p">))</span>
+    <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s2">&quot;cov&quot;</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s2">&quot;halfspan&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eps</span><span class="p">))</span>  <span class="c1"># var(U) = 1/12 halspan**2</span>
+    <span class="k">return</span> <span class="n">randomizer</span></div>
+
+
+<div class="viewcode-block" id="create_empty_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_empty_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_empty_randomizer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an empty randomizer independent of the environment to be filled later (using `add_domain_params`).</span>
+
+<span class="sd">    :return: empty randomizer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="create_example_randomizer_cata"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_example_randomizer_cata">[docs]</a><span class="k">def</span> <span class="nf">create_example_randomizer_cata</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the randomizer for the `CatapultSim` used for the &#39;illustrative example&#39; in F. Muratore et al, 2019, TAMPI.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">BernoulliDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;planet&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val_0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">val_1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">prob_1</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">roundint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># 0 = Mars, 1 = Venus</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_cata"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_cata">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.one_step.catapult&quot;</span><span class="p">,</span> <span class="s2">&quot;CatapultSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_cata</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `CatapultSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.one_step.catapult</span> <span class="kn">import</span> <span class="n">CatapultSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">CatapultSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;stiffness&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;stiffness&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;stiffness&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;elongation&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;elongation&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;elongation&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_bob"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bob">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.ball_on_beam&quot;</span><span class="p">,</span> <span class="s2">&quot;BallOnBeamSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_bob</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `BallOnBeamSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">BallOnBeamSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;beam_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;beam_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;beam_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;beam_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;beam_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;beam_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;beam_thickness&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;beam_thickness&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;beam_thickness&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;friction_coeff&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;friction_coeff&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;friction_coeff&quot;</span><span class="p">],</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mf">0.1</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_omo"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_omo">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.one_mass_oscillator&quot;</span><span class="p">,</span> <span class="s2">&quot;OneMassOscillatorSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_omo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `OneMassOscillatorSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.one_mass_oscillator</span> <span class="kn">import</span> <span class="n">OneMassOscillatorSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">OneMassOscillatorSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;stiffness&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;stiffness&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;stiffness&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;damping&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_pend"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_pend">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.pendulum&quot;</span><span class="p">,</span> <span class="s2">&quot;PendulumSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_pend</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `PendulumSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pendulum</span> <span class="kn">import</span> <span class="n">PendulumSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">PendulumSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pole_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;torque_thold&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;torque_thold&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;torque_thold&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_qbb"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qbb">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.quanser_ball_balancer&quot;</span><span class="p">,</span> <span class="s2">&quot;QBallBalancerSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_qbb</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `QBallBalancerSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">QBallBalancerSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;plate_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;plate_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;plate_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">5e-2</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;arm_radius&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;arm_radius&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;arm_radius&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;load_inertia&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;load_inertia&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;load_inertia&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-6</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-9</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+            <span class="n">clip_up</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+            <span class="n">clip_up</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;voltage_thold_x_pos&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_x_pos&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_x_pos&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;voltage_thold_x_neg&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_x_neg&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_x_neg&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;voltage_thold_y_pos&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_y_pos&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_y_pos&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;voltage_thold_y_neg&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_y_neg&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;voltage_thold_y_neg&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;offset_th_x&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;offset_th_x&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="mf">6.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;offset_th_y&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;offset_th_y&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="mf">6.0</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_qcp"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qcp">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.quanser_cartpole&quot;</span><span class="p">,</span> <span class="s2">&quot;QCartPoleStabSim&quot;</span><span class="p">)</span>
+<span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.quanser_cartpole&quot;</span><span class="p">,</span> <span class="s2">&quot;QCartPoleSwingUpSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_qcp</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `QCartPoleSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">QCartPoleSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">(</span><span class="n">long</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;cart_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cart_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cart_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;rail_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rail_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rail_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pole_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_efficiency&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+            <span class="n">clip_up</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_efficiency&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+            <span class="n">clip_up</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gear_ratio&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_inertia&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-9</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pinion_radius&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pinion_radius&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pinion_radius&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;combined_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;pole_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cart_friction_coeff&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cart_friction_coeff&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cart_friction_coeff&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_qq"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qq">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.quanser_qube&quot;</span><span class="p">,</span> <span class="s2">&quot;QQubeSwingUpSim&quot;</span><span class="p">)</span>
+<span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.pysim.quanser_qube&quot;</span><span class="p">,</span> <span class="s2">&quot;QQubeStabSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_qq</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `QQubeSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">QQubeSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_resistance&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;motor_back_emf&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;damping_rot_pole&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;damping_rot_pole&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;damping_rot_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-9</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-4</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;damping_pend_pole&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;damping_pend_pole&quot;</span><span class="p">],</span>
+            <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;damping_pend_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_uniform_masses_lengths_randomizer_qq"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_uniform_masses_lengths_randomizer_qq">[docs]</a><span class="k">def</span> <span class="nf">create_uniform_masses_lengths_randomizer_qq</span><span class="p">(</span><span class="n">frac_halfspan</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a uniform randomizer that applies to all masses and lengths of the Quanser Qube according to a fraction of their</span>
+<span class="sd">    nominal parameter values</span>
+
+<span class="sd">    :param frac_halfspan: fraction of the nominal parameter value</span>
+<span class="sd">    :return: `DomainRandomizer` with uniformly distributed masses and lengths</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">QQubeSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">frac_halfspan</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">frac_halfspan</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">frac_halfspan</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">frac_halfspan</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_bop"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bop">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.ball_on_plate&quot;</span><span class="p">,</span> <span class="s2">&quot;BallOnPlateSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_bop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `BallOnPlateSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_on_plate</span> <span class="kn">import</span> <span class="n">BallOnPlateSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">BallOnPlateSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_com_x&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_com_x&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.003</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_com_y&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_com_y&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.003</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_com_z&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_com_z&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.003</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_friction_coefficient&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_friction_coefficient&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_friction_coefficient&quot;</span><span class="p">],</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">clip_hi</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_rolling_friction_coefficient&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_rolling_friction_coefficient&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_rolling_friction_coefficient&quot;</span><span class="p">],</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">clip_hi</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="c1"># Vortex only</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_slip&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_slip&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_slip&quot;</span><span class="p">],</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># UniformDomainParam(name=&#39;ball_linearvelocitydamnping&#39;, mean=0., halfspan=1e-4),</span>
+        <span class="c1"># UniformDomainParam(name=&#39;ball_angularvelocitydamnping&#39;, mean=0., halfspan=1e-4)</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_pi"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_pi">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.planar_insert&quot;</span><span class="p">,</span> <span class="s2">&quot;PlanarInsertSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_pi</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `PlanarInsertSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.planar_insert</span> <span class="kn">import</span> <span class="n">PlanarInsertSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">PlanarInsertSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;link1_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link1_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link1_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;link2_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link2_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link2_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;link3_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link3_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link3_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;link4_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link4_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link4_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;link5_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link4_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;link4_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;upperwall_pos_offset_z&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>  <span class="c1"># only increase the gap</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_bs"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bs">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.box_shelving&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxShelvingPosDSSim&quot;</span><span class="p">)</span>
+<span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.box_shelving&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxShelvingVelDSSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_bs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `BoxShelvingSim`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_shelving</span> <span class="kn">import</span> <span class="n">BoxShelvingSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">BoxShelvingSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_width&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_width&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_width&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_friction_coefficient&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_friction_coefficient&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_friction_coefficient&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_bl"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bl">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.box_lifting&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxLiftingPosIKActivationSim&quot;</span><span class="p">)</span>
+<span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.box_lifting&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxLiftingVelIKActivationSim&quot;</span><span class="p">)</span>
+<span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.box_lifting&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxLiftingPosDSSim&quot;</span><span class="p">)</span>
+<span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.rcspysim.box_lifting&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxLiftingVelDSSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_bl</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default randomizer for the `BoxLifting`.</span>
+
+<span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_lifting</span> <span class="kn">import</span> <span class="n">BoxLiftingSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">BoxLiftingSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">5e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_width&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_width&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_width&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">5e-2</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;box_friction_coefficient&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_friction_coefficient&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;box_friction_coefficient&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;basket_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;basket_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;basket_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;basket_friction_coefficient&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;basket_friction_coefficient&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;basket_friction_coefficient&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_wamjsc"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_wamjsc">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.mujoco.wam_bic&quot;</span><span class="p">,</span> <span class="s2">&quot;WAMJointSpaceCtrlSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_wamjsc</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.wam_jsc</span> <span class="kn">import</span> <span class="n">WAMJointSpaceCtrlSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">WAMJointSpaceCtrlSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_randomizer_wambic"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_wambic">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s2">&quot;pyrado.environments.mujoco.wam_jsc&quot;</span><span class="p">,</span> <span class="s2">&quot;WAMJointSpaceCtrlSim&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_default_randomizer_wambic</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.wam_bic</span> <span class="kn">import</span> <span class="n">WAMBallInCupSim</span>
+
+    <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">WAMBallInCupSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">),</span>
+        <span class="c1"># Ball needs to fit into the cup</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.65</span><span class="p">),</span>
+        <span class="c1"># Rope won&#39;t be more than 3cm off</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rope_length&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_length&quot;</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_length&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">30</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.27</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mf">0.33</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">1e-6</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">],</span> <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">,</span>
+            <span class="n">mean</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">],</span>
+            <span class="n">halfspan</span><span class="o">=</span><span class="n">dp_nom</span><span class="p">[</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_lo</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_default_domain_param_map_bob"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_domain_param_map_bob">[docs]</a><span class="k">def</span> <span class="nf">create_default_domain_param_map_bob</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).</span>
+
+<span class="sd">    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain</span>
+<span class="sd">             distribution parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;gravity_const&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_radius&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;beam_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;beam_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;beam_length&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;beam_length&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="c1"># d_beam ignored</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;friction_coeff&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;friction_coeff&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">13</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ang_offset&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="create_default_domain_param_map_omo"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_domain_param_map_omo">[docs]</a><span class="k">def</span> <span class="nf">create_default_domain_param_map_omo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).</span>
+
+<span class="sd">    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain</span>
+<span class="sd">             distribution parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mass&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;stiffness&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;stiffness&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;damping&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="create_default_domain_param_map_pend"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_domain_param_map_pend">[docs]</a><span class="k">def</span> <span class="nf">create_default_domain_param_map_pend</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).</span>
+
+<span class="sd">    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain</span>
+<span class="sd">             distribution parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;torque_thold&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;torque_thold&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="create_default_domain_param_map_qq"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_domain_param_map_qq">[docs]</a><span class="k">def</span> <span class="nf">create_default_domain_param_map_qq</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).</span>
+
+<span class="sd">    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain</span>
+<span class="sd">             distribution parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mass_pend_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mass_rot_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;length_pend_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;length_rot_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;damping_pend_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;damping_pend_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;damping_rot_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;damping_rot_pole&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="create_default_domain_param_map_wambic"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_domain_param_map_wambic">[docs]</a><span class="k">def</span> <span class="nf">create_default_domain_param_map_wambic</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the default mapping from indices to domain parameters (as used in the `BayRn` algorithm).</span>
+
+<span class="sd">    :return: dict where the key is the index and the value is a tuple of domain parameter and the associated domain</span>
+<span class="sd">             distribution parameter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;cup_scale&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_length&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_length&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ball_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">),</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rope_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">13</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">14</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">16</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">17</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">18</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">19</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">20</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">21</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">22</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">23</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">25</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">26</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">27</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">28</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">29</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">30</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">31</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">32</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">33</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+        <span class="mi">34</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+        <span class="mi">35</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">,</span> <span class="s2">&quot;halfspan&quot;</span><span class="p">),</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="create_damping_dryfriction_domain_param_map_wamjsc"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_damping_dryfriction_domain_param_map_wamjsc">[docs]</a><span class="k">def</span> <span class="nf">create_damping_dryfriction_domain_param_map_wamjsc</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a mapping from indices to domain parameters (as used in the `LFI` algorithm).</span>
+
+<span class="sd">    :return: dict where the key is the index and the value is the domain parameter name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;joint_1_damping&quot;</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;joint_2_damping&quot;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;joint_3_damping&quot;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;joint_4_damping&quot;</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;joint_5_damping&quot;</span><span class="p">,</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="s2">&quot;joint_6_damping&quot;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;joint_7_damping&quot;</span><span class="p">,</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="s2">&quot;joint_1_dryfriction&quot;</span><span class="p">,</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="s2">&quot;joint_2_dryfriction&quot;</span><span class="p">,</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;joint_3_dryfriction&quot;</span><span class="p">,</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="s2">&quot;joint_4_dryfriction&quot;</span><span class="p">,</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="s2">&quot;joint_5_dryfriction&quot;</span><span class="p">,</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;joint_6_dryfriction&quot;</span><span class="p">,</span>
+        <span class="mi">13</span><span class="p">:</span> <span class="s2">&quot;joint_7_dryfriction&quot;</span><span class="p">,</span>
+    <span class="p">}</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
