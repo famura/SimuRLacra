@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyrado.algorithms.step_based.svpg &mdash; Pyrado 0.7 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/4_creating_rcspysim_environments.html">How to create an RcsPySim environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/5_panda3d_visualization.html"><strong>How to create a visualization</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.barrett_wam.html">barrett_wam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environment Wrappers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Domain Randomization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.regression.html">regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.stopping_criteria.html">stopping_criteria</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Exploration:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_back.html">feed_back</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.special.html">special</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Spaces:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tasks &amp; Rewards:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Sampling:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plotting:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
+        
+      <li>pyrado.algorithms.step_based.svpg</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.algorithms.step_based.svpg</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">pdist</span><span class="p">,</span> <span class="n">squareform</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+
+
+<div class="viewcode-block" id="SVPG"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG">[docs]</a><span class="k">class</span> <span class="nc">SVPG</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stein Variational Policy Gradient (SVPG)</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        [1] Yang Liu, Prajit Ramachandran, Qiang Liu, Jian Peng, &quot;Stein Variational Policy Gradient&quot;, arXiv, 2017</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;svpg&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+        <span class="n">particle</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
+<span class="sd">        :param env: the environment which the policy operates</span>
+<span class="sd">        :param particle: the particle to populate with different parameters during training</span>
+<span class="sd">        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs</span>
+<span class="sd">        :param num_particles: number of SVPG particles</span>
+<span class="sd">        :param temperature: SVPG temperature</span>
+<span class="sd">        :param horizon: horizon for each particle</span>
+<span class="sd">        :param logger: defaults to `None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Env</span><span class="p">)</span>
+
+        <span class="c1"># Call Algorithm&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+        <span class="c1"># Store the inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="n">num_particles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizon</span> <span class="o">=</span> <span class="n">horizon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle</span> <span class="o">=</span> <span class="n">particle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">class</span> <span class="nc">OptimizerHook</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;This class mocks the optimizer interface partially to intercept the gradient updates of svpg.&quot;&quot;&quot;</span>
+
+            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">particle</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Constructor</span>
+
+<span class="sd">                :param particle: blueprint algorithm in which the optimizer is replaced by the mocked one</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">optim</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">particle</span> <span class="o">=</span> <span class="n">particle</span>
+
+            <span class="k">def</span> <span class="nf">real_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Call the original optimizer with given args and kwargs.&quot;&quot;&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">iter_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+                <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Generate the steps in the buffer queue.</span>
+
+<span class="sd">                :yield: the next step in the queue</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+                    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+                <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Check if the buffer is empty.</span>
+
+<span class="sd">                :return: buffer is empty</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">get_next_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+                <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Retrieve the next step from the queue. It contains all calls to the wrapped optimizer which have</span>
+<span class="sd">                been intercepted.</span>
+
+<span class="sd">                :return: next buffer step</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;Store the args of the mocked call in the queue.&quot;&quot;&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="n">args</span><span class="p">,</span>
+                        <span class="n">kwargs</span><span class="p">,</span>
+                        <span class="n">to</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">),</span>
+                        <span class="n">to</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_grad</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optims</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Store particle states</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OptimizerHook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">particle</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle_steps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">init_param</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span> <span class="o">=</span> <span class="n">i</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">iter_particles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate particles by sequentially loading and yielding them.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optims</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SVPG.step"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)]</span>
+        <span class="n">policy_grads</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)]</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)]</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_particles</span><span class="p">):</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">particle</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+                <span class="n">args_i</span><span class="p">,</span> <span class="n">kwargs_i</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">grads</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">get_next_step</span><span class="p">()</span>
+                <span class="n">policy_grads</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grads</span><span class="p">)</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+                <span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args_i</span><span class="p">)</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kwargs_i</span><span class="p">)</span>
+
+        <span class="c1"># assert all(len(p) == len(parameters[0]) for p in parameters)</span>
+        <span class="n">average</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">average</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)])</span>
+            <span class="n">policy_grds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">policy_grads</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)])</span>
+            <span class="n">Kxx</span><span class="p">,</span> <span class="n">dx_Kxx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">grad_theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">Kxx</span><span class="p">,</span> <span class="n">policy_grds</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span> <span class="o">+</span> <span class="n">dx_Kxx</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_particles</span><span class="p">):</span>
+                <span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_grad</span> <span class="o">=</span> <span class="n">grad_theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">particle</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">real_step</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t_step</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]))):</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">parameters</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">t_step</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)])</span>
+                <span class="n">policy_grds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">policy_grads</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">t_step</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)])</span>
+                <span class="n">Kxx</span><span class="p">,</span> <span class="n">dx_Kxx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+                <span class="n">grad_theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">Kxx</span><span class="p">,</span> <span class="n">policy_grds</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span> <span class="o">+</span> <span class="n">dx_Kxx</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_particles</span><span class="p">):</span>
+                    <span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">t_step</span><span class="p">]</span>
+                    <span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_grad</span> <span class="o">=</span> <span class="n">grad_theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">particle</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">real_step</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">t_step</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">t_step</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SVPG.kernel"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.kernel">[docs]</a>    <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the RBF-kernel and the corresponding derivatives.</span>
+
+<span class="sd">        :param X: the tensor to compute the kernel from</span>
+<span class="sd">        :return: the kernel and its derivatives</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_np</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># use numpy because torch median is flawed</span>
+        <span class="n">pairwise_dists</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">X_np</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="n">pairwise_dists</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span>
+
+        <span class="c1"># Median trick</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">pairwise_dists</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">h</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># Compute RBF Kernel</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">pairwise_dists</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span> <span class="o">/</span> <span class="n">h</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Compute kernel gradient</span>
+        <span class="n">grads</span> <span class="o">=</span> <span class="o">-</span><span class="n">kernel</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">kernel_sum</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">grads</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">grads</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">kernel_sum</span><span class="p">)</span>
+        <span class="n">grads</span> <span class="o">/=</span> <span class="n">h</span> <span class="o">**</span> <span class="mi">2</span>
+
+        <span class="k">return</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">grads</span></div>
+
+<div class="viewcode-block" id="SVPG.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="s2">&quot;env.pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_particles</span><span class="p">):</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;particle_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is a subroutine of another algorithm</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_particles</span><span class="p">):</span>
+                <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                    <span class="n">p</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;particle_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">suffix</span><span class="o">=</span><span class="n">meta_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suffix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">use_state_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SVPG.load_snapshot"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.load_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed_args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Env</span><span class="p">,</span> <span class="n">Policy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+        <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">)</span>
+
+        <span class="c1"># Algorithm specific</span>
+        <span class="n">ex_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">,</span> <span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_particles</span><span class="p">):</span>
+            <span class="n">extra</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;particle</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;particle_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span></div>
+
+<div class="viewcode-block" id="SVPG.load_particle"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.load_particle">[docs]</a>    <span class="k">def</span> <span class="nf">load_particle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a specific particle&#39;s state into `self.particle`.</span>
+
+<span class="sd">        :param idx: index of the particle to load</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span> <span class="o">=</span> <span class="n">idx</span></div>
+
+<div class="viewcode-block" id="SVPG.store_particle"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.store_particle">[docs]</a>    <span class="k">def</span> <span class="nf">store_particle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Safe the current particle&#39;s state.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle_states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle_policy_states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_particle</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

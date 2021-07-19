@@ -129,7 +129,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.gae">gae</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.ppo">ppo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.sac">sac</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#svpg">svpg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.svpg">svpg</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.value_based">value_based</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based">Module contents</a></li>
 </ul>
@@ -843,8 +843,104 @@ Modifies the input argument <cite>target</cite>.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="svpg">
-<h2>svpg<a class="headerlink" href="#svpg" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.algorithms.step_based.svpg">
+<span id="svpg"></span><h2>svpg<a class="headerlink" href="#module-pyrado.algorithms.step_based.svpg" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SVPG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><span class="pre">pyrado.algorithms.base.Algorithm</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_particles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<p>Stein Variational Policy Gradient (SVPG)</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] Yang Liu, Prajit Ramachandran, Qiang Liu, Jian Peng, “Stein Variational Policy Gradient”, arXiv, 2017</p>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.iter_particles">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">iter_particles</span></span><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.iter_particles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate particles by sequentially loading and yielding them.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.kernel">
+<span class="sig-name descname"><span class="pre">kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.kernel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the RBF-kernel and the corresponding derivatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> – the tensor to compute the kernel from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the kernel and its derivatives</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.load_particle">
+<span class="sig-name descname"><span class="pre">load_particle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.load_particle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.load_particle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a specific particle’s state into <cite>self.particle</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> – index of the particle to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.load_snapshot">
+<span class="sig-name descname"><span class="pre">load_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.load_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.load_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the state of an experiment, which is specific to the algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parsed_args</strong> – arguments parsed by the <cite>argparser</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>environment, policy, and (optional) algorithm-specific output, e.g. value function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'svpg'</span></em><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.step_based.svpg.SVPG.store_particle">
+<span class="sig-name descname"><span class="pre">store_particle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/svpg.html#SVPG.store_particle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.step_based.svpg.SVPG.store_particle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safe the current particle’s state.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.algorithms.step_based.value_based">
 <span id="value-based"></span><h2>value_based<a class="headerlink" href="#module-pyrado.algorithms.step_based.value_based" title="Permalink to this headline">¶</a></h2>

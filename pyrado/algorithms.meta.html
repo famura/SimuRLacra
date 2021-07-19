@@ -124,7 +124,7 @@
 <li class="toctree-l1"><a class="reference internal" href="algorithms.episodic.html">episodic</a></li>
 <li class="toctree-l1"><a class="reference internal" href="algorithms.step_based.html">step_based</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">meta</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#adr">adr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.adr">adr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.arpl">arpl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayessim">bayessim</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.meta.bayrn">bayrn</a></li>
@@ -242,8 +242,210 @@
             
   <div class="section" id="meta">
 <h1>meta<a class="headerlink" href="#meta" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="adr">
-<h2>adr<a class="headerlink" href="#adr" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.algorithms.meta.adr">
+<span id="adr"></span><h2>adr<a class="headerlink" href="#module-pyrado.algorithms.meta.adr" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.ADR">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ADR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyrado.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subrtn</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><span class="pre">pyrado.algorithms.base.Algorithm</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_particle_hparam</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_svpg_particles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_discriminator_epoch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_learning_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0003</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_temperature</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_evaluation_steps</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_horizon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_kl_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.03</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_warmup</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svpg_serial</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_trajs_per_config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_step_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomized_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#ADR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<p>Active Domain Randomization (ADR)</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] B. Mehta, M. Diaz, F. Golemo, C.J. Pal, L. Paull, “Active Domain Randomization”, arXiv, 2019</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.ADR.compute_params">
+<span class="sig-name descname"><span class="pre">compute_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_instances</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#ADR.compute_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR.compute_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim_instances</strong> – Physics configurations rollout</p></li>
+<li><p><strong>t</strong> – time step to chose</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>parameters at the time</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.ADR.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">'adr'</span></em><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.ADR.sample_count">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sample_count</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR.sample_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the total number of samples, i.e. steps of a rollout, used for training so far.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.ADR.save_snapshot">
+<span class="sig-name descname"><span class="pre">save_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#ADR.save_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.ADR.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#ADR.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.ADR.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.RewardGenerator">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">RewardGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_spec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec"><span class="pre">pyrado.utils.data_types.EnvSpec</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_multiplier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.003</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger"><span class="pre">pyrado.logger.step.StepLogger</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#RewardGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.RewardGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for generating the discriminator rewards in ADR. Generates a reward using a trained discriminator network.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.RewardGenerator.get_reward">
+<span class="sig-name descname"><span class="pre">get_reward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traj</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#RewardGenerator.get_reward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.RewardGenerator.get_reward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.RewardGenerator.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reference_trajectory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomized_trajectory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epoch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#RewardGenerator.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.RewardGenerator.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">SVPGAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapped_env</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env"><span class="pre">pyrado.environments.base.Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam"><span class="pre">pyrado.domain_randomization.domain_parameter.DomainParam</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_policy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><span class="pre">pyrado.policies.base.Policy</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">discriminator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizon</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rollouts_per_config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Wrapper to encapsulate the domain parameter search as a reinforcement learning problem</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.act_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">act_space</span></span><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.act_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.array_to_dict">
+<span class="sig-name descname"><span class="pre">array_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.array_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.array_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.eval_states">
+<span class="sig-name descname"><span class="pre">eval_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.eval_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.eval_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>states</strong> – the states to evaluate</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>respective rewards and according trajectories</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.lite_step">
+<span class="sig-name descname"><span class="pre">lite_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.lite_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.lite_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a step without the step interface.
+This allows for parallel computation of prior steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>act</strong> – the action to perform</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the observation after the step</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.nominal">
+<span class="sig-name descname"><span class="pre">nominal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.nominal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.nominal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.nominal_dict">
+<span class="sig-name descname"><span class="pre">nominal_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.nominal_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.nominal_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.obs_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">obs_space</span></span><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.obs_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.params">
+<span class="sig-name descname"><span class="pre">params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_param</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment to its initial state and optionally set different domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_state</strong> – set explicit initial state if not None</p></li>
+<li><p><strong>domain_param</strong> – set explicit domain parameters if not None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return obs</dt>
+<dd class="field-even"><p>initial observation of the state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.SVPGAdapter.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">act</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#SVPGAdapter.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.SVPGAdapter.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform one time step of the simulation. When a terminal condition is met, the reset function is called.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
+</dd>
+<dt class="field-even">Return tuple of obs, reward, done, and info</dt>
+<dd class="field-even"><p>obs : current observation of the environment
+reward: reward depending on the selected reward function
+done: indicates whether the episode has ended
+env_info: contains diagnostic information about the environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyrado.algorithms.meta.adr.preprocess_rollout">
+<span class="sig-name descname"><span class="pre">preprocess_rollout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rollout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence"><span class="pre">pyrado.sampling.step_sequence.StepSequence</span></a></span></span><a class="reference internal" href="_modules/pyrado/algorithms/meta/adr.html#preprocess_rollout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.algorithms.meta.adr.preprocess_rollout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts observations and actions from a <cite>StepSequence</cite> and packs them into a PyTorch tensor which can be fed
+through a network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rollout</strong> – a <cite>StepSequence</cite> instance containing a trajectory</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a PyTorch tensor` containing the trajectory</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.algorithms.meta.arpl">
 <span id="arpl"></span><h2>arpl<a class="headerlink" href="#module-pyrado.algorithms.meta.arpl" title="Permalink to this headline">¶</a></h2>

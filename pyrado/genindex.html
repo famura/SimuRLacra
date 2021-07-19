@@ -286,6 +286,8 @@
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.act_space">(SimPyEnv property)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.act_space">(SVPGAdapter property)</a>
+</li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.act_space">(TwoDimGaussian property)</a>
 </li>
       </ul></li>
@@ -359,6 +361,8 @@
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy">ADNPolicy (class in pyrado.policies.recurrent.adn)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR">ADR (class in pyrado.algorithms.meta.adr)</a>
+</li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper">AdversarialDynamicsWrapper (class in pyrado.environment_wrappers.adversarial)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper">AdversarialObservationWrapper (class in pyrado.environment_wrappers.adversarial)</a>
@@ -386,6 +390,8 @@
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.argmax_posterior_mean">argmax_posterior_mean() (BayRn static method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL">ARPL (class in pyrado.algorithms.meta.arpl)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.array_to_dict">array_to_dict() (SVPGAdapter method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.ask_for_experiment">ask_for_experiment() (in module pyrado.logger.experiment)</a>
 </li>
@@ -621,6 +627,8 @@
         <li><a href="tasks.html#pyrado.tasks.base.Task.compute_final_rew">(Task method)</a>
 </li>
       </ul></li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.compute_params">compute_params() (ADR method)</a>
+</li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.nes.NES.compute_utilities">compute_utilities() (NES static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.concat">concat() (StepSequence class method)</a>
@@ -1167,10 +1175,10 @@
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_ddp_policy">eval_ddp_policy() (SimOpt static method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">eval_domain_params() (in module pyrado.sampling.parallel_evaluation)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params_with_segmentwise_reset">eval_domain_params_with_segmentwise_reset() (in module pyrado.sampling.parallel_evaluation)</a>
@@ -1190,6 +1198,8 @@
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.eval_posterior">eval_posterior() (SBIBase static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_randomized_domain">eval_randomized_domain() (in module pyrado.sampling.parallel_evaluation)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.eval_states">eval_states() (SVPGAdapter method)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.base.Policy.evaluate">evaluate() (Policy method)</a>
 
@@ -1211,8 +1221,12 @@
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">(TwoHeadedRNNPolicyBase method)</a>
 </li>
       </ul></li>
-      <li><a href="tests.algorithms.html#tests.algorithms.test_meta.ex_dir">ex_dir() (in module tests.algorithms.test_meta)</a>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.ex_dir">ex_dir() (in module tests.algorithms.test_algorithms)</a>
+
+      <ul>
+        <li><a href="tests.algorithms.html#tests.algorithms.test_meta.ex_dir">(in module tests.algorithms.test_meta)</a>
 </li>
+      </ul></li>
       <li><a href="logger.html#pyrado.logger.experiment.Experiment">Experiment (class in pyrado.logger.experiment)</a>
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.expl_strat">expl_strat (ActorCritic property)</a>
@@ -1567,6 +1581,8 @@
 </li>
       <li><a href="policies.feed_back.html#pyrado.policies.feed_back.fnn.DiscreteActQValPolicy.get_qfcn_output_size">get_qfcn_output_size() (DiscreteActQValPolicy static method)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator.get_reward">get_reward() (RewardGenerator method)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.get_rollout">get_rollout() (StepSequence method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.exceptions.ShapeErr.get_shape_and_name">get_shape_and_name() (ShapeErr static method)</a>
@@ -1877,6 +1893,8 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.ReplayMemory.isempty">isempty (ReplayMemory property)</a>
 </li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.iter_particles">iter_particles (SVPG property)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.iterate_rollouts">iterate_rollouts() (StepSequence method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.iteration">iteration() (IterationTracker method)</a>
@@ -1917,6 +1935,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.kappa">kappa (PotentialBasedPolicy property)</a>
 </li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.kernel">kernel() (SVPG method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.kernel_size">kernel_size (MirrConv1d attribute)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.exceptions.KeyErr">KeyErr</a>
@@ -1955,6 +1975,8 @@
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.list_experiments">list_experiments() (in module pyrado.logger.experiment)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.lite_step">lite_step() (SVPGAdapter method)</a>
+</li>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager">LiveFigureManager (class in pyrado.plotting.live_update)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.saving_loading.load">load() (in module pyrado.utils.saving_loading)</a>
@@ -1964,6 +1986,8 @@
       <li><a href="utils.html#pyrado.utils.experiments.load_experiment">load_experiment() (in module pyrado.utils.experiments)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.load_hyperparameters">load_hyperparameters() (in module pyrado.logger.experiment)</a>
+</li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.load_particle">load_particle() (SVPG method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sbi_base.SBIBase.load_posterior">load_posterior() (SBIBase static method)</a>
 </li>
@@ -1991,6 +2015,8 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.load_snapshot">(SPOTA method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.load_snapshot">(SPRL method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.load_snapshot">(SVPG method)</a>
 </li>
         <li><a href="algorithms.regression.html#pyrado.algorithms.regression.timeseries_prediction.TSPred.load_snapshot">(TSPred method)</a>
 </li>
@@ -2157,6 +2183,8 @@
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta">pyrado.algorithms.meta</a>
 </li>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.adr">pyrado.algorithms.meta.adr</a>
+</li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.arpl">pyrado.algorithms.meta.arpl</a>
 </li>
         <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.bayessim">pyrado.algorithms.meta.bayessim</a>
@@ -2198,6 +2226,8 @@
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.ppo">pyrado.algorithms.step_based.ppo</a>
 </li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.sac">pyrado.algorithms.step_based.sac</a>
+</li>
+        <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.svpg">pyrado.algorithms.step_based.svpg</a>
 </li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.value_based">pyrado.algorithms.step_based.value_based</a>
 </li>
@@ -2537,9 +2567,13 @@
 </li>
         <li><a href="tests.algorithms.html#module-tests.algorithms">tests.algorithms</a>
 </li>
+        <li><a href="tests.algorithms.html#module-tests.algorithms.test_algorithms">tests.algorithms.test_algorithms</a>
+</li>
         <li><a href="tests.algorithms.html#module-tests.algorithms.test_meta">tests.algorithms.test_meta</a>
 </li>
         <li><a href="tests.algorithms.html#module-tests.algorithms.test_stopping_criteria">tests.algorithms.test_stopping_criteria</a>
+</li>
+        <li><a href="tests.algorithms.html#module-tests.algorithms.test_utils">tests.algorithms.test_utils</a>
 </li>
         <li><a href="tests.html#module-tests.conftest">tests.conftest</a>
 </li>
@@ -2622,6 +2656,8 @@
 
       <ul>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.adn.ADNPolicy.name">(ADNPolicy attribute)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.name">(ADR attribute)</a>
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.name">(Algorithm attribute)</a>
 </li>
@@ -2797,6 +2833,8 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.name">(SPRL attribute)</a>
 </li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.name">(SVPG attribute)</a>
+</li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.name">(SysIdViaEpisodicRL attribute)</a>
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.time.TimePolicy.name">(TimePolicy attribute)</a>
@@ -2876,6 +2914,10 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.nominal">nominal (StateAugmentationWrapper property)</a>
 </li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.nominal">nominal() (SVPGAdapter method)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.nominal_dict">nominal_dict() (SVPGAdapter method)</a>
+</li>
       <li><a href="algorithms.regression.html#pyrado.algorithms.regression.nonlin_regression.NonlinRegression">NonlinRegression (class in pyrado.algorithms.regression.nonlin_regression)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat">NormalActNoiseExplStrat (class in pyrado.exploration.stochastic_action)</a>
@@ -2945,6 +2987,8 @@
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.obs_space">(StateAugmentationWrapper property)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.obs_space">(SVPGAdapter property)</a>
+</li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.obs_space">(TwoDimGaussian property)</a>
 </li>
       </ul></li>
@@ -2966,10 +3010,10 @@
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper">ObsNormWrapper (class in pyrado.environment_wrappers.observation_normalization)</a>
 </li>
-      <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_partial.ObsPartialWrapper">ObsPartialWrapper (class in pyrado.environment_wrappers.observation_partial)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_partial.ObsPartialWrapper">ObsPartialWrapper (class in pyrado.environment_wrappers.observation_partial)</a>
+</li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsRunningNormWrapper">ObsRunningNormWrapper (class in pyrado.environment_wrappers.observation_normalization)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_velfilter.ObsVelFiltWrapper">ObsVelFiltWrapper (class in pyrado.environment_wrappers.observation_velfilter)</a>
@@ -3065,6 +3109,8 @@
       <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult">ParameterSamplingResult (class in pyrado.sampling.parameter_exploration_sampler)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSample.params">params (ParameterSample property)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.params">params() (SVPGAdapter method)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.DummyNT.part1">part1 (DummyNT property)</a>
 </li>
@@ -3185,6 +3231,8 @@
       <li><a href="logger.html#pyrado.logger.experiment.Experiment.prefix">prefix (Experiment property)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.step.StepLogger.prefix">prefix() (StepLogger method)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.preprocess_rollout">preprocess_rollout() (in module pyrado.algorithms.meta.adr)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.print_cbt">print_cbt() (in module pyrado.utils.input_output)</a>
 </li>
@@ -3333,6 +3381,13 @@
 </li>
       </ul></li>
       <li>
+    pyrado.algorithms.meta.adr
+
+      <ul>
+        <li><a href="algorithms.meta.html#module-pyrado.algorithms.meta.adr">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.algorithms.meta.arpl
 
       <ul>
@@ -3477,6 +3532,13 @@
 
       <ul>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.sac">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.step_based.svpg
+
+      <ul>
+        <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.svpg">module</a>
 </li>
       </ul></li>
       <li>
@@ -3759,6 +3821,8 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.base">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.one_mass_oscillator
 
@@ -3766,8 +3830,6 @@
         <li><a href="environments.pysim.html#module-pyrado.environments.pysim.one_mass_oscillator">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.pysim.openai_classical_control
 
@@ -4995,6 +5057,8 @@
 </li>
         <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.reset">(StoppingCriterion method)</a>
 </li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.reset">(SVPGAdapter method)</a>
+</li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.reset">(SysIdViaEpisodicRL method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.base.Task.reset">(Task method)</a>
@@ -5074,6 +5138,8 @@
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.rew_fcn">(TaskWrapper property)</a>
 </li>
       </ul></li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator">RewardGenerator (class in pyrado.algorithms.meta.adr)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.rewards">rewards (StepSequence attribute)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.RewFcn">RewFcn (class in pyrado.tasks.reward_functions)</a>
@@ -5178,9 +5244,11 @@
         <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.SelfPacedDomainParam.sample">(SelfPacedDomainParam method)</a>
 </li>
       </ul></li>
-      <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.sample_count">sample_count (Algorithm property)</a>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.sample_count">sample_count (ADR property)</a>
 
       <ul>
+        <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.sample_count">(Algorithm property)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.sample_count">(ARPL property)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.sample_count">(BayRn property)</a>
@@ -5269,6 +5337,8 @@
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.save_snapshot">save_snapshot() (ActorCritic method)</a>
 
       <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.save_snapshot">(ADR method)</a>
+</li>
         <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.save_snapshot">(Algorithm method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.save_snapshot">(ARPL method)</a>
@@ -5296,6 +5366,8 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.spota.SPOTA.save_snapshot">(SPOTA method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.save_snapshot">(SPRL method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.save_snapshot">(SVPG method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.save_snapshot">(SysIdViaEpisodicRL method)</a>
 </li>
@@ -5446,8 +5518,6 @@
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space">Space (class in pyrado.spaces.base)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tasks.html#pyrado.tasks.desired_space.DesSpaceTask.space_des">space_des (DesSpaceTask property)</a>
 
       <ul>
@@ -5460,6 +5530,8 @@
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.space_des">(TaskWrapper property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.html#pyrado.environments.base.Env.spec">spec (Env property)</a>
 </li>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager.spin">spin() (LiveFigureManager method)</a>
@@ -5559,6 +5631,8 @@
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.step">step() (ActorCritic method)</a>
 
       <ul>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.step">(ADR method)</a>
+</li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialDynamicsWrapper.step">(AdversarialDynamicsWrapper method)</a>
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialObservationWrapper.step">(AdversarialObservationWrapper method)</a>
@@ -5618,6 +5692,10 @@
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.step">(SPRL method)</a>
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.step">(StateAugmentationWrapper method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.step">(SVPG method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.step">(SVPGAdapter method)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.step">(SysIdViaEpisodicRL method)</a>
 </li>
@@ -5684,6 +5762,8 @@
 </li>
       <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion">StoppingCriterion (class in pyrado.algorithms.stopping_criteria.stopping_criterion)</a>
 </li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.store_particle">store_particle() (SVPG method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.stride">stride (MirrConv1d attribute)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.SPRL.sub_algorithm">sub_algorithm (SPRL property)</a>
@@ -5743,6 +5823,10 @@
 </li>
       </ul></li>
       <li><a href="algorithms.stopping_criteria.html#pyrado.algorithms.stopping_criteria.stopping_criterion.StoppingCriterion.suppress_next_reset">suppress_next_reset() (StoppingCriterion method)</a>
+</li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG">SVPG (class in pyrado.algorithms.step_based.svpg)</a>
+</li>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter">SVPGAdapter (class in pyrado.algorithms.meta.adr)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_params.SymmParamExplStrat">SymmParamExplStrat (class in pyrado.exploration.stochastic_params)</a>
 </li>
@@ -5820,9 +5904,15 @@
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_discrete.test_action_space_eles">test_action_space_eles() (in module tests.environment_wrappers.test_action_discrete)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_action_statistics">test_action_statistics() (in module tests.algorithms.test_utils)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_actor_critic">test_actor_critic() (in module tests.algorithms.test_algorithms)</a>
+</li>
       <li><a href="tests.html#tests.test_rollout_result.test_add_data">test_add_data() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_additional_required">test_additional_required() (in module tests.test_rollout_result)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_adr_reward_generator">test_adr_reward_generator() (in module tests.algorithms.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_advantage_calculation">test_advantage_calculation() (in module tests.test_rollout_result)</a>
 </li>
@@ -6010,6 +6100,8 @@
 </li>
       <li><a href="tests.html#tests.test_utils.test_gen_ordered_batches">test_gen_ordered_batches() (in module tests.test_utils)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_get_grad_via_torch">test_get_grad_via_torch() (in module tests.algorithms.test_utils)</a>
+</li>
       <li><a href="tests.html#tests.test_utils.test_gss_optimizer_functional">test_gss_optimizer_functional() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_gss_optimizer_identical_bounds">test_gss_optimizer_identical_bounds() (in module tests.test_utils)</a>
@@ -6096,6 +6188,8 @@
 </li>
       <li><a href="tests.html#tests.test_tasks.test_parallel_task_function">test_parallel_task_function() (in module tests.test_tasks)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_param_expl">test_param_expl() (in module tests.algorithms.test_algorithms)</a>
+</li>
       <li><a href="tests.html#tests.test_sampling.test_param_expl_sampler">test_param_expl_sampler() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_param_grid">test_param_grid() (in module tests.test_domain_randomization)</a>
@@ -6152,8 +6246,6 @@
 </li>
       <li><a href="tests.html#tests.test_utils.test_repeat_interleave">test_repeat_interleave() (in module tests.test_utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_rollout_result.test_replay_memory">test_replay_memory() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_rescaling">test_rescaling() (in module tests.test_domain_randomization)</a>
@@ -6166,6 +6258,8 @@
         <li><a href="tests.html#tests.test_environments.test_reset">(in module tests.test_environments)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_tasks.test_rew_fcn_constructor">test_rew_fcn_constructor() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rfb_policy_batch">test_rfb_policy_batch() (in module tests.test_policies)</a>
@@ -6179,6 +6273,8 @@
       <li><a href="tests.html#tests.test_policies.test_rff_policy_batch">test_rff_policy_batch() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rff_policy_serial">test_rff_policy_serial() (in module tests.test_policies)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_rff_regression">test_rff_regression() (in module tests.algorithms.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_rmse">test_rmse() (in module tests.test_utils)</a>
 </li>
@@ -6242,6 +6338,10 @@
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_slice">test_slice() (in module tests.test_rollout_result)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_snapshots_notmeta">test_snapshots_notmeta() (in module tests.algorithms.test_algorithms)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_soft_update">test_soft_update() (in module tests.algorithms.test_algorithms)</a>
+</li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_normalization.test_space">test_space() (in module tests.environment_wrappers.test_action_normalization)</a>
 
       <ul>
@@ -6278,11 +6378,15 @@
 </li>
       <li><a href="tests.html#tests.test_plotting.test_surface">test_surface() (in module tests.test_plotting)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_svpg">test_svpg() (in module tests.algorithms.test_algorithms)</a>
+</li>
       <li><a href="tests.algorithms.html#tests.algorithms.test_meta.test_sysidasrl_reps">test_sysidasrl_reps() (in module tests.algorithms.test_meta)</a>
 </li>
       <li><a href="tests.html#tests.test_step_logger.test_tb_logger_serializer">test_tb_logger_serializer() (in module tests.test_step_logger)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_time_policy_one_step">test_time_policy_one_step() (in module tests.test_policies)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_time_series_prediction">test_time_series_prediction() (in module tests.algorithms.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_to_format">test_to_format() (in module tests.test_sampling)</a>
 </li>
@@ -6290,11 +6394,15 @@
 </li>
       <li><a href="tests.html#tests.test_tasks.test_tracking_task">test_tracking_task() (in module tests.test_tasks)</a>
 </li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_algorithms.test_training_parameter_exploring">test_training_parameter_exploring() (in module tests.algorithms.test_algorithms)</a>
+</li>
       <li><a href="tests.html#tests.test_rollout_result.test_truncate_rollouts">test_truncate_rollouts() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_discrete.test_two_bins">test_two_bins() (in module tests.environment_wrappers.test_action_discrete)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_twoheaded_policy_evaluate_packed_padded_sequences">test_twoheaded_policy_evaluate_packed_padded_sequences() (in module tests.test_policies)</a>
+</li>
+      <li><a href="tests.algorithms.html#tests.algorithms.test_utils.test_until_thold_exceeded">test_until_thold_exceeded() (in module tests.algorithms.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_update_matching_keys_recursively">test_update_matching_keys_recursively() (in module tests.test_utils)</a>
 </li>
@@ -6323,6 +6431,13 @@
 </li>
       </ul></li>
       <li>
+    tests.algorithms.test_algorithms
+
+      <ul>
+        <li><a href="tests.algorithms.html#module-tests.algorithms.test_algorithms">module</a>
+</li>
+      </ul></li>
+      <li>
     tests.algorithms.test_meta
 
       <ul>
@@ -6334,6 +6449,13 @@
 
       <ul>
         <li><a href="tests.algorithms.html#module-tests.algorithms.test_stopping_criteria">module</a>
+</li>
+      </ul></li>
+      <li>
+    tests.algorithms.test_utils
+
+      <ul>
+        <li><a href="tests.algorithms.html#module-tests.algorithms.test_utils">module</a>
 </li>
       </ul></li>
       <li>
@@ -6578,6 +6700,8 @@
 
       <ul>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.train">(EpsGreedyExplStrat method)</a>
+</li>
+        <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator.train">(RewardGenerator method)</a>
 </li>
       </ul></li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.train_argmax_policy">train_argmax_policy() (BayRn static method)</a>
