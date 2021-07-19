@@ -68,7 +68,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
 
     # Load the data
     data_set_name = "oscillation_50Hz_initpos-0.5"
-    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "time_series", f"{data_set_name}.csv"))
+    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "misc", f"{data_set_name}.csv"))
     if data_set_name == "daily_min_temperatures":
         data = to.tensor(data["Temp"].values, dtype=to.get_default_dtype()).view(-1, 1)
     elif data_set_name == "monthly_sunspots":
@@ -94,7 +94,6 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
 
     # Policy
     policy_hparam = dict(
-        dt=0.02 if "oscillation" in data_set_name else 1.0,
         hidden_size=trial.suggest_int("policy_hidden_size", 2, 51),
         obs_layer=None,
         activation_nonlin=fcn_from_str(

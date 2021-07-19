@@ -32,7 +32,7 @@ from typing import Optional
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.barrett_wam import torque_space_wam_4dof, torque_space_wam_7dof
+from pyrado.environments.barrett_wam import TORQUE_SPACE_WAM_4DOF, TORQUE_SPACE_WAM_7DOF
 from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.base import Space
 
@@ -82,7 +82,7 @@ class WAMSim(MujocoSimEnv, ABC, Serializable):
     @property
     def torque_space(self) -> Space:
         """Get the space of joint torques."""
-        return torque_space_wam_7dof if self._num_dof == 7 else torque_space_wam_4dof
+        return TORQUE_SPACE_WAM_7DOF if self._num_dof == 7 else TORQUE_SPACE_WAM_4DOF
 
     @property
     @abstractmethod

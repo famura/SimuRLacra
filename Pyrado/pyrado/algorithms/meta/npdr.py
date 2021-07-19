@@ -29,11 +29,9 @@
 import os.path as osp
 from typing import Optional, Type
 
-import sbi.utils as sbiutils
 import torch as to
 from sbi.inference.base import simulate_for_sbi
 from sbi.inference.snpe import PosteriorEstimator
-from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.algorithms.meta.sbi_base import SBIBase
@@ -77,16 +75,9 @@ class NPDR(SBIBase):
         )
         self.subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
 
-        # Create the algorithm instance used in sbi, e.g. SNPE-B/C or SNLE
-        density_estimator = sbiutils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
-        summary_writer = self.logger.printers[2].writer
-        assert isinstance(summary_writer, SummaryWriter)
-        self._subrtn_sbi = subrtn_sbi_class(
-            prior=self._sbi_prior,
-            density_estimator=density_estimator,
-            device=self.policy.device,
-            summary_writer=summary_writer,
-        )
+        # Create algorithm instance
+        self._subrtn_sbi_class = subrtn_sbi_class
+        self._initialize_subrtn_sbi(subrtn_sbi_class=self._subrtn_sbi_class)
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
@@ -104,7 +95,7 @@ class NPDR(SBIBase):
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(domain_params, prefix="", use_rec_init_states=False)  # overrides policy.pt
+                wrapped_trn_fcn(domain_params, prefix="init", use_rec_init_states=False)  # overrides policy.pt
 
             self.reached_checkpoint()  # setting counter to 0
 
@@ -120,14 +111,21 @@ class NPDR(SBIBase):
                 print_cbt(f"Loaded existing rollout data for iteration {self.curr_iter}.", "w")
 
             else:
-                # If the policy depends on the domain-parameters, reset the policy with the
-                # most likely dp-params from the previous round.
+                # If the policy depends on the domain-parameters, reset the policy with the most likely domain
+                # parameters from the previous round
+                pyrado.load(
+                    "policy.pt",
+                    self._save_dir,
+                    prefix=f"iter_{self._curr_iter - 1}" if self.curr_iter != 0 else "init",
+                    obj=self._policy,
+                )
                 if self.curr_iter != 0:
-                    pyrado.load("policy.pt", self._save_dir, prefix=f"iter_{self._curr_iter - 1}", obj=self._policy)
                     ml_domain_param = pyrado.load(
                         "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter - 1}"
                     )
                     self._policy.reset(**dict(domain_param=ml_domain_param))
+                else:
+                    self._policy.reset(**dict(domain_params=self._env_sim_sbi.get_nominal_domain_param()))
 
                 # Rollout files do not exist yet (usual case)
                 self._curr_data_real, _ = SBIBase.collect_data_real(
@@ -160,6 +158,10 @@ class NPDR(SBIBase):
             self.reached_checkpoint()  # setting counter to 1
 
         if self.curr_checkpoint == 1:
+            # Instantiate the sbi subroutine to retrain from scratch each iteration
+            if self.reset_sbi_routine_each_iter:
+                self._initialize_subrtn_sbi(subrtn_sbi_class=self._subrtn_sbi_class)
+
             # Load the latest proposal, this can be the prior or the amortized posterior of the last iteration
             proposal = self.get_latest_proposal_prev_iter()
 
@@ -242,6 +244,14 @@ class NPDR(SBIBase):
             self.reached_checkpoint()  # setting counter to 3
 
         if self.curr_checkpoint == 3:
+            # Load latest policy. The training function will decide whether the policy is trained from scratch
+            # or the latest one is improved upon.
+            pyrado.load(
+                "policy.pt",
+                self._save_dir,
+                prefix=f"iter_{self._curr_iter - 1}" if self.curr_iter != 0 else "init",
+                obj=self._policy,
+            )
             # Policy optimization
             if self._subrtn_policy is not None:
                 # Train the behavioral policy using the posterior samples obtained before.
@@ -255,7 +265,11 @@ class NPDR(SBIBase):
                 wrapped_trn_fcn(
                     self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}", use_rec_init_states=True
                 )
-
+            else:
+                # Save prefixed policy either way
+                pyrado.save(
+                    self.policy, "policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}", use_state_dict=True
+                )
             self.reached_checkpoint()  # setting counter to 0
 
         # Save snapshot data

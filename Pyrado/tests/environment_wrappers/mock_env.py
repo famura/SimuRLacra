@@ -146,5 +146,5 @@ class MockEnv(SimEnv):
         return obs, rew, self.next_step_done, dict()
 
     def render(self, mode=RenderMode(), render_step=1):
-        # No visualization
+        # No visual
         pass

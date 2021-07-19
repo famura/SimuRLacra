@@ -35,18 +35,18 @@ from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.barrett_wam import (
-    act_space_bic_4dof,
-    act_space_bic_7dof,
-    goal_pos_init_sim_4dof,
-    goal_pos_init_sim_7dof,
-    init_qpos_des_4dof,
-    init_qpos_des_7dof,
-    wam_dgains_4dof,
-    wam_dgains_7dof,
-    wam_pgains_4dof,
-    wam_pgains_7dof,
-    wam_q_limits_lo_7dof,
-    wam_q_limits_up_7dof,
+    ACT_SPACE_BIC_4DOF,
+    ACT_SPACE_BIC_7DOF,
+    GOAL_POS_INIT_SIM_4DOF,
+    GOAL_POS_INIT_SIM_7DOF,
+    INIT_QPOS_DES_4DOF,
+    INIT_QPOS_DES_7DOF,
+    WAM_DGAINS_4DOF,
+    WAM_DGAINS_7DOF,
+    WAM_PGAINS_4DOF,
+    WAM_PGAINS_7DOF,
+    WAM_Q_LIMITS_LO_7DOF,
+    WAM_Q_LIMITS_UP_7DOF,
 )
 from pyrado.environments.mujoco.wam_base import WAMSim
 from pyrado.spaces.base import Space
@@ -118,18 +118,18 @@ class WAMBallInCupSim(WAMSim, Serializable):
         # Initialize num DoF specific variables
         if num_dof == 4:
             graph_file_name = "wam_4dof_bic.xml"
-            self.qpos_des_init = init_qpos_des_4dof
-            self.p_gains = wam_pgains_4dof
-            self.d_gains = wam_dgains_4dof
+            self.qpos_des_init = INIT_QPOS_DES_4DOF
+            self.p_gains = WAM_PGAINS_4DOF
+            self.d_gains = WAM_DGAINS_4DOF
             init_ball_pos = np.array([0.723, 0.0, 1.168])
-            init_cup_goal = goal_pos_init_sim_4dof
+            init_cup_goal = GOAL_POS_INIT_SIM_4DOF
         elif num_dof == 7:
             graph_file_name = "wam_7dof_bic.xml"
-            self.qpos_des_init = init_qpos_des_7dof
-            self.p_gains = wam_pgains_7dof
-            self.d_gains = wam_dgains_7dof
+            self.qpos_des_init = INIT_QPOS_DES_7DOF
+            self.p_gains = WAM_PGAINS_7DOF
+            self.d_gains = WAM_DGAINS_7DOF
             init_ball_pos = np.array([0.828, 0.0, 1.131])
-            init_cup_goal = goal_pos_init_sim_7dof
+            init_cup_goal = GOAL_POS_INIT_SIM_7DOF
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
@@ -186,8 +186,8 @@ class WAMBallInCupSim(WAMSim, Serializable):
         state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
 
         # Ensure that joint limits of the arm are not reached (5 deg safety margin)
-        state_lo[: self._num_dof] = wam_q_limits_lo_7dof[: self._num_dof]
-        state_up[: self._num_dof] = wam_q_limits_up_7dof[: self._num_dof]
+        state_lo[: self._num_dof] = WAM_Q_LIMITS_LO_7DOF[: self._num_dof]
+        state_up[: self._num_dof] = WAM_Q_LIMITS_UP_7DOF[: self._num_dof]
 
         return BoxSpace(state_lo, state_up)
 
@@ -208,7 +208,7 @@ class WAMBallInCupSim(WAMSim, Serializable):
     @property
     def act_space(self) -> Space:
         # Running a PD controller on joint positions and velocities
-        return act_space_bic_7dof if self._num_dof == 7 else act_space_bic_4dof
+        return ACT_SPACE_BIC_7DOF if self._num_dof == 7 else ACT_SPACE_BIC_4DOF
 
     @classmethod
     def get_nominal_domain_param(cls, num_dof: int = 7) -> dict:
@@ -308,7 +308,7 @@ class WAMBallInCupSim(WAMSim, Serializable):
             self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs)),
         )
         # init cup goal position
-        state_des = goal_pos_init_sim_7dof if self._num_dof == 7 else goal_pos_init_sim_4dof
+        state_des = GOAL_POS_INIT_SIM_7DOF if self._num_dof == 7 else GOAL_POS_INIT_SIM_4DOF
         rew_fcn = QuadrErrRewFcn(
             Q=task_args.get("Q_dev", np.diag([2e-1, 1e-6, 5e0])),  # Cartesian distance from init cup position
             R=task_args.get(
@@ -401,7 +401,7 @@ class WAMBallInCupSim(WAMSim, Serializable):
         """
         Check if an undesired collision with the ball occurs.
 
-        :param verbose: print messages on collision
+        :param verbose: if `True`, print messages on collision
         :return: `True` if the ball collides with something else than the central parts of the cup
         """
         for i in range(self.sim.data.ncon):

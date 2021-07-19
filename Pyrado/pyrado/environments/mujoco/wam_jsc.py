@@ -35,14 +35,14 @@ from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.barrett_wam import (
-    act_space_jsc_4dof,
-    act_space_jsc_7dof,
-    init_qpos_des_4dof,
-    init_qpos_des_7dof,
-    wam_dgains_4dof,
-    wam_dgains_7dof,
-    wam_pgains_4dof,
-    wam_pgains_7dof,
+    ACT_SPACE_JSC_4DOF,
+    ACT_SPACE_JSC_7DOF,
+    INIT_QPOS_DES_4DOF,
+    INIT_QPOS_DES_7DOF,
+    WAM_DGAINS_4DOF,
+    WAM_DGAINS_7DOF,
+    WAM_PGAINS_4DOF,
+    WAM_PGAINS_7DOF,
 )
 from pyrado.environments.mujoco.wam_base import WAMSim
 from pyrado.spaces.base import Space
@@ -92,14 +92,14 @@ class WAMJointSpaceCtrlSim(WAMSim, Serializable):
         # Initialize num DoF specific variables
         if num_dof == 4:
             graph_file_name = "wam_4dof_base.xml"
-            self.qpos_des_init = init_qpos_des_4dof
-            self.p_gains = wam_pgains_4dof
-            self.d_gains = wam_dgains_4dof
+            self.qpos_des_init = INIT_QPOS_DES_4DOF
+            self.p_gains = WAM_PGAINS_4DOF
+            self.d_gains = WAM_DGAINS_4DOF
         elif num_dof == 7:
             graph_file_name = "wam_7dof_base.xml"
-            self.qpos_des_init = init_qpos_des_7dof
-            self.p_gains = wam_pgains_7dof
-            self.d_gains = wam_dgains_7dof
+            self.qpos_des_init = INIT_QPOS_DES_7DOF
+            self.p_gains = WAM_PGAINS_7DOF
+            self.d_gains = WAM_DGAINS_7DOF
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
@@ -122,7 +122,7 @@ class WAMJointSpaceCtrlSim(WAMSim, Serializable):
     @property
     def act_space(self) -> Space:
         # Running a PD controller on joint positions and velocities
-        return act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
+        return ACT_SPACE_JSC_7DOF if self._num_dof == 7 else ACT_SPACE_JSC_4DOF
 
     def _create_task(self, task_args: Optional[dict] = None) -> Task:
         state_des = np.concatenate([self.init_qpos, self.init_qvel])

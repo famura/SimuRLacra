@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -39,6 +39,7 @@ from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.base import Env
 from pyrado.environments.quanser.base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
@@ -334,7 +335,7 @@ class SimOpt(InterruptableAlgorithm):
             wrapped_trn_fcn(cand, prefix=f"iter_{self._curr_iter}")
 
             # Save the latest behavioral policy
-            self._subrtn_policy.save_snapshot()
+            self._subrtn_policy.save_snapshot(meta_info=None)  # overwrites policy.pt (and vfcn.pt ect)
             self.reached_checkpoint()  # setting counter to 1
 
         if self.curr_checkpoint == 1:
@@ -343,12 +344,7 @@ class SimOpt(InterruptableAlgorithm):
             self.eval_behav_policy(
                 self.save_dir, self._env_real, policy, f"iter_{self._curr_iter}", self.num_eval_rollouts, None
             )
-            # if self._curr_iter == 0:
-            #     # First iteration, also evaluate the random initialization
-            #     self.cands_values = SimOpt.eval_ddp_policy(
-            #         rollouts_real, self._env_sim, self.num_eval_rollouts, self._subrtn_distr, self._subrtn_policy
-            #     )
-            #     self.cands_values = to.tensor(self.cands_values).unsqueeze(0)
+
             self.reached_checkpoint()  # setting counter to 2
 
         if self.curr_checkpoint == 2:
@@ -379,3 +375,24 @@ class SimOpt(InterruptableAlgorithm):
             pyrado.save(self._env_sim, "env_sim.pkl", self._save_dir)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subrtn!")
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        extra = dict()
+
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            last_cand = pyrado.load("candidates.pt", ex_dir)[-1, :]
+            env.adapt_randomizer(last_cand.detach().numpy())
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "r")
+
+        # Policy
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, obj=self.subroutine_policy.policy, verbose=True)
+
+        # Algorithm specific
+        extra["ddp_policy"] = pyrado.load("ddp_policy.pt", ex_dir, obj=self.subroutine_distr.policy, verbose=True)
+
+        return env, policy, extra

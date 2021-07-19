@@ -28,7 +28,7 @@
 
 import sys
 from copy import deepcopy
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -405,3 +405,13 @@ class SAC(ValueBased):
             pyrado.save(
                 self.qfcn_targ_2, "qfcn_target2.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True
             )
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        extra["qfcn_target1"] = pyrado.load("qfcn_target1.pt", ex_dir, obj=self.qfcn_targ_1, verbose=True)
+        extra["qfcn_target2"] = pyrado.load("qfcn_target2.pt", ex_dir, obj=self.qfcn_targ_2, verbose=True)
+
+        return env, policy, extra

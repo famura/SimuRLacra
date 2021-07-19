@@ -83,36 +83,47 @@ if __name__ == "__main__":
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "Dr", 1: "Dp", 2: "Rm", 3: "km", 4: "Mr", 5: "Mp", 6: "Lr", 7: "Lp", 8: "g", 9: "act_delay"}
+    dp_mapping = {
+        0: "damping_rot_pole",
+        1: "damping_pend_pole",
+        2: "motor_resistance",
+        3: "motor_back_emf",
+        4: "mass_rot_pole",
+        5: "mass_pend_pole",
+        6: "length_rot_pole",
+        7: "length_pend_pole",
+        8: "gravity_const",
+        9: "act_delay",
+    }
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
         low=to.tensor(
             [
-                dp_nom["Dr"] * 0,
-                dp_nom["Dp"] * 0,
-                dp_nom["Rm"] * 0.1,
-                dp_nom["km"] * 0.2,
-                dp_nom["Mr"] * 0.3,
-                dp_nom["Mp"] * 0.3,
-                dp_nom["Lr"] * 0.5,
-                dp_nom["Lp"] * 0.5,
-                dp_nom["g"] * 0.85,
+                dp_nom["damping_rot_pole"] * 0,
+                dp_nom["damping_pend_pole"] * 0,
+                dp_nom["motor_resistance"] * 0.1,
+                dp_nom["motor_back_emf"] * 0.2,
+                dp_nom["mass_rot_pole"] * 0.3,
+                dp_nom["mass_pend_pole"] * 0.3,
+                dp_nom["length_rot_pole"] * 0.5,
+                dp_nom["length_pend_pole"] * 0.5,
+                dp_nom["gravity_const"] * 0.85,
                 0,
             ]
         ),
         high=to.tensor(
             [
-                dp_nom["Dr"] * 5,
-                dp_nom["Dp"] * 50,
-                dp_nom["Rm"] * 1.9,
-                dp_nom["km"] * 1.8,
-                dp_nom["Mr"] * 1.7,
-                dp_nom["Mp"] * 1.7,
-                dp_nom["Lr"] * 1.5,
-                dp_nom["Lp"] * 1.5,
-                dp_nom["g"] * 1.15,
+                dp_nom["damping_rot_pole"] * 5,
+                dp_nom["damping_pend_pole"] * 50,
+                dp_nom["motor_resistance"] * 1.9,
+                dp_nom["motor_back_emf"] * 1.8,
+                dp_nom["mass_rot_pole"] * 1.7,
+                dp_nom["mass_pend_pole"] * 1.7,
+                dp_nom["length_rot_pole"] * 1.5,
+                dp_nom["length_pend_pole"] * 1.5,
+                dp_nom["gravity_const"] * 1.15,
                 5,
             ]
         ),

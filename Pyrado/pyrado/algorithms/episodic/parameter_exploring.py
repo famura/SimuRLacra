@@ -214,7 +214,12 @@ class ParameterExploring(Algorithm):
         best_policy = deepcopy(self._policy)
         best_policy.param_values = self.best_policy_param
 
-        if meta_info is not None:
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of another algorithm
+            pyrado.save(best_policy, "policy.pt", self.save_dir, use_state_dict=True)
+            pyrado.save(self._env, "env.pkl", self.save_dir)
+
+        else:
             # This algorithm instance is a subroutine of another alogrithm
             pyrado.save(
                 best_policy,
@@ -224,8 +229,3 @@ class ParameterExploring(Algorithm):
                 suffix=meta_info.get("suffix", ""),
                 use_state_dict=True,
             )
-
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(best_policy, "policy.pt", self.save_dir, use_state_dict=True)
-            pyrado.save(self._env, "env.pkl", self.save_dir)

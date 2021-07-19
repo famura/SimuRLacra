@@ -51,7 +51,9 @@ from pyrado.utils.input_output import print_cbt
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.set_defaults(animation=True)  # different default value for this script
+    args = parser.parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 
@@ -74,7 +76,7 @@ if __name__ == "__main__":
     max_steps = env.max_steps if args.max_steps == pyrado.inf else args.max_steps
 
     # Check which algorithm was used in the experiment
-    algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name="algo")
+    algo = pyrado.load("algo.pkl", ex_dir)
     if not isinstance(algo, (NPDR, BayesSim)):
         raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
 
@@ -111,30 +113,33 @@ if __name__ == "__main__":
 
     if isinstance(env_real, SimEnv):
         # Replay the ground truth environment
-        ro = rollout(env_real, policy, render_mode=RenderMode(video=args.animation, render=args.render), eval=True)
-        print_cbt(f"Return: {ro.undiscounted_return()} in the ground truth environment", "g", bright=True)
-        # Get one fixed initial state to make them comparable
-        init_state = env_real.init_space.sample_uniform()
-
-    else:
-        # Get one fixed initial state to make them comparable
-        init_state = env.init_space.sample_uniform()
+        done = False
+        while not done:
+            ro = rollout(env_real, policy, render_mode=RenderMode(video=args.animation, render=args.render), eval=True)
+            print_cbt(f"Return: {ro.undiscounted_return()} in the ground truth environment", "g", bright=True)
+            done = input("Repeat rollout? [y / any other] ").lower() != "y"
 
     # Simulate
     normalized_str = "(normalized)" if args.normalize else "(rescaled)"
     for domain_param, prob in zip(domain_params, probs):
-        ro = rollout(
-            env,
-            policy,
-            render_mode=RenderMode(video=args.animation, render=args.render),
-            eval=True,
-            reset_kwargs=dict(domain_param=domain_param, init_state=init_state),
-        )
-        print_cbt(
-            f"Return: {ro.undiscounted_return()} with domain parameters sampled with "
-            f"{normalized_str} probability {prob.numpy()}",
-            "g",
-            bright=True,
-        )
-        prettyprinter.pprint(domain_param)
-        print_cbt(f"", "g", bright=True)
+        done = False
+        while not done:
+            # Get one fixed initial state to make them comparable
+            init_state = env.init_space.sample_uniform()
+
+            ro = rollout(
+                env,
+                policy,
+                render_mode=RenderMode(video=args.animation, render=args.render),
+                eval=True,
+                reset_kwargs=dict(domain_param=domain_param, init_state=init_state),
+            )
+            print_cbt(
+                f"Return: {ro.undiscounted_return()} with domain parameters sampled with "
+                f"{normalized_str} probability {prob.numpy()}",
+                "g",
+                bright=True,
+            )
+            prettyprinter.pprint(domain_param)
+
+            done = input("Repeat rollout? [y / any other] ").lower() != "y"

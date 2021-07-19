@@ -31,6 +31,7 @@ Continue a training run in the same folder
 """
 import os.path as osp
 
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.utils.argparser import get_argparser
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     hparams = load_dict_from_yaml(osp.join(ex_dir, "hyperparams.yaml"))
 
     # Load the complete algorithm
-    algo = Algorithm.load_snapshot(ex_dir)
+    algo = pyrado.load("algo.pkl", ex_dir)
 
     # Jeeeha
     algo.train(seed=hparams.get("seed", None))

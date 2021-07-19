@@ -69,8 +69,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
-    env = QQubeSwingUpSim(**env_hparams)
+    env_hparam = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
+    env = QQubeSwingUpSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Policy
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     )
     env_sprl_params = [
         dict(
-            name="g",
+            name="gravity_const",
             target_mean=to.tensor([9.81]),
             target_cov_chol_flat=to.tensor([1.0]),
             init_mean=to.tensor([9.81]),
@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=algo_hparam, subrtn_name=PPO.name),

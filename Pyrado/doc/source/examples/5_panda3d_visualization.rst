@@ -8,7 +8,6 @@ This file provides a step-by-step example of how to create an Panda3d-animation,
     import pyrado
     from pyrado.environments.pysim.pandavis import PandaVis
 
-
 This process requires two rather separate Processes:
 
 1.Creating a concrete subclass of PandaVis as a visualization class
@@ -43,7 +42,7 @@ and providing a handy path-variable as well as default version of the trace. As 
 
 Continue by **accessing outer calculated parameters**, called environment domain parameters or environment states, by **passing them into local variables**.
 Except for the env-variable itself, most of these are specific to the actual simulation and are either entries of the domain_param-dictionary or of the state-dictionary.
-The name of the local variable should either be equal to the keyword neccessary to retrive its data from the domain_param-dictionary or be named according to their function (such as x)
+The name of the local variable should either be equal to the keyword necessary to retrieve its data from the domain_param-dictionary or be named according to their function (such as x)
 
 .. code-block:: python
 
@@ -51,28 +50,28 @@ The name of the local variable should either be equal to the keyword neccessary 
     x, th, _, _ = self._env.state
     l_pole = float(self._env.domain_param["l_pole"])
 
-*Occasionally* there is a need for some **uncalculated values** describing properties irrelevant to the calculations, such as the thickness of a bar, or the radius of a ball.
+*Occasionally* there is a need for some values describing properties irrelevant to the calculations, such as the thickness of a bar, or the radius of a ball.
 
 .. code-block:: python
 
     l_cart, h_cart = 0.08, 0.08
     r_pole, r_rail = 0.01, 0.005
 
-Now it is neccessary to determine a fixed value as a **scaling attribute** to enable a handy use of the camera, concerning zooming, rotation and translation.
-This is due to the cameras unchangeable size. It is recommended to choose a value thats dependent on the length-properties of a bigger if not the main primitive object. You have to multiply the **scaling attribute** with every position and scaling of your models (not the rotation!).
+Now it is necessary to determine a fixed value as a **scaling attribute** to enable a handy use of the camera, concerning zooming, rotation and translation.
+This is due to the cameras unchangeable size. It is recommended to choose a value that's dependent on the length-properties of a bigger if not the main primitive object. You have to multiply the **scaling attribute** with every position and scaling of your models (not the rotation!).
 
 .. code-block:: python
 
     self._scale = 10 / l_pole
 
-Setting a **window title** is *not absolutely neccessary*, but very much recommended and easily done
+Setting a **window title** is *not absolutely necessary*, but very much recommended and easily done
 
 .. code-block:: python
 
     self.windowProperties.setTitle("Name of your Environment")
     self.win.requestProperties(self.windowProperties)
 
-To finish the setup, **setting the point of view** is *neccessary*. We recommend a low negative value on the y-axis in order to see the whole animation
+To finish the setup, **setting the point of view** is *necessary*. We recommend a low negative value on the y-axis in order to see the whole animation
 
 .. code-block:: python
 
@@ -98,13 +97,13 @@ To finish the setup, **setting the point of view** is *neccessary*. We recommend
             self.pole.setHpr() # Angles(H, P, R)
             self.pole.setColor() # Color (R, G, B)
 
-        At last, its neccessary to **reparent the modified object to the render-instance**. This could also be done earlier, with the primitive object being modified afterwards
+        At last, its necessary to **reparent the modified object to the render-instance**. This could also be done earlier, with the primitive object being modified afterwards
 
         .. code-block:: python
 
            self.pole.reparentTo(self.render)
 
-The last step of the init-method is to add the update-method to the taskmanager, in order for it to call it every frame
+The last step of the init-method is to add the update-method to the `taskmanager`, in order for it to call it every frame.
 
 .. code-block:: python
 
@@ -114,7 +113,7 @@ Implementing update()
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The update-methode allows objects to move during the animation.
-        It is originally called every frame, but with this framerate being dependent on your monitors refreshrate,
+        It is originally called every frame, but with this framerate being dependent on your monitors refresh rate,
         it has been modified in order for the animation to run at the same speed on different monitors
 
 .. code-block:: python
@@ -140,7 +139,7 @@ Similar to the init method, start of by **accessing the environments domain para
     # Update rotation of Pole
     self.pole.setR(-th * 180 / np.pi)
 
-Since every existing simulation required to only update a small amount of properties, we did not specify a spefic order/format for this process.
+Since every existing simulation required to only update a small amount of properties, we did not specify a specific order/format for this process.
         However, it is *recommended* to describe these updates/changes as concrete/specific as possible, by using the single-parameter-methods of the rather abstract accessor-methods,
         such as setX(), setR(), etc. instead of setPos() or setHpr or even setHprPosScale(), as an attempt to make these easily read- and understandable
 
@@ -171,7 +170,7 @@ To illustrate a few important values of your simulation, great for debugging as 
                     """
         )
 
-Finally its neccessary to release the Task, in order to be callable at the next frame
+Finally its necessary to release the Task, in order to be callable at the next frame
 
 .. code-block:: python
 
@@ -185,7 +184,7 @@ This is very convenient, as it only consists of two steps.
 
     def _init_anim(self):
 
-At first it is neccessary to import your Vis-class created in Part1.
+At first it is necessary to import your Vis-class created in Part1.
 
 .. code-block:: python
 
@@ -196,7 +195,3 @@ To finally get your simulation started, simply create an instance of said Vis-cl
 .. code-block:: python
 
     self._visualization = YourEnvironmentVis(self)
-
-
-
-

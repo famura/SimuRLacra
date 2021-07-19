@@ -174,6 +174,10 @@ class ADNPolicy(PotentialBasedPolicy):
     """
     Activation Dynamic Network (ADN)
 
+    .. note::
+        The policy's outputs are a nonlinear function of the potentials. Thus, you have to make sure that the output
+        range of that matches the action space of the environment.
+
     .. seealso::
         [1] T. Luksch, M. Gineger, M. Mühlig, T. Yoshiike, "Adaptive Movement Sequences and Predictive Decisions based
         on Hierarchical Dynamical Systems", IROS, 2012

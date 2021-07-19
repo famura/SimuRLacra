@@ -33,7 +33,7 @@ import torch as to
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
-from pyrado.environments.quanser import max_act_qq
+from pyrado.environments.quanser import MAX_ACT_QQ
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
@@ -54,37 +54,37 @@ class QQubeSim(SimPyEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            g=9.81,  # gravity [m/s**2]
-            Rm=8.4,  # motor resistance [Ohm]
-            km=0.042,  # motor back-emf constant [V*s/rad]
-            Mr=0.095,  # rotary arm mass [kg]
-            Lr=0.085,  # rotary arm length [m]
-            Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
-            Mp=0.024,  # pendulum link mass [kg]
-            Lp=0.129,  # pendulum link length [m]
-            Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
-            V_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
-            V_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
+            gravity_const=9.81,  # gravity [m/s**2]
+            motor_resistance=8.4,  # motor resistance [Ohm]
+            motor_back_emf=0.042,  # motor back-emf constant [V*s/rad]
+            mass_rot_pole=0.095,  # rotary arm mass [kg]
+            length_rot_pole=0.085,  # rotary arm length [m]
+            damping_rot_pole=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
+            mass_pend_pole=0.024,  # pendulum link mass [kg]
+            length_pend_pole=0.129,  # pendulum link length [m]
+            damping_pend_pole=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
+            voltage_thold_neg=0,  # min. voltage required to move the servo in negative the direction [V]
+            voltage_thold_pos=0,  # min. voltage required to move the servo in positive the direction [V]
         )
 
     def _calc_constants(self):
-        Mr = self.domain_param["Mr"]
-        Mp = self.domain_param["Mp"]
-        Lr = self.domain_param["Lr"]
-        Lp = self.domain_param["Lp"]
-        g = self.domain_param["g"]
+        mass_rot_pole = self.domain_param["mass_rot_pole"]
+        mass_pend_pole = self.domain_param["mass_pend_pole"]
+        length_rot_pole = self.domain_param["length_rot_pole"]
+        length_pend_pole = self.domain_param["length_pend_pole"]
+        gravity_const = self.domain_param["gravity_const"]
 
         # Moments of inertia
-        Jr = Mr * Lr ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
-        Jp = Mp * Lp ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
+        Jr = mass_rot_pole * length_rot_pole ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
+        Jp = mass_pend_pole * length_pend_pole ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
 
         # Constants for equations of motion
         self._c = np.zeros(5)
-        self._c[0] = Jr + Mp * Lr ** 2
-        self._c[1] = 0.25 * Mp * Lp ** 2
-        self._c[2] = 0.5 * Mp * Lp * Lr
+        self._c[0] = Jr + mass_pend_pole * length_rot_pole ** 2
+        self._c[1] = 0.25 * mass_pend_pole * length_pend_pole ** 2
+        self._c[2] = 0.5 * mass_pend_pole * length_pend_pole * length_rot_pole
         self._c[3] = Jp + self._c[1]
-        self._c[4] = 0.5 * Mp * Lp * g
+        self._c[4] = 0.5 * mass_pend_pole * length_pend_pole * gravity_const
 
     def _dyn(self, t, x, u):
         r"""
@@ -95,10 +95,10 @@ class QQubeSim(SimPyEnv, Serializable):
         :param u: control command
         :return: time derivative of the state
         """
-        km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
-        Dr = self.domain_param["Dr"]
-        Dp = self.domain_param["Dp"]
+        km = self.domain_param["motor_back_emf"]
+        Rm = self.domain_param["motor_resistance"]
+        Dr = self.domain_param["damping_rot_pole"]
+        Dp = self.domain_param["damping_pend_pole"]
 
         # Decompose state
         th, al, thd, ald = x
@@ -127,7 +127,7 @@ class QQubeSim(SimPyEnv, Serializable):
     def _step_dynamics(self, act: np.ndarray):
         # Apply a voltage dead zone, i.e. below a certain amplitude the system is will not move.
         # This is a very simple model of static friction.
-        if self.domain_param["V_thold_neg"] <= act <= self.domain_param["V_thold_pos"]:
+        if self.domain_param["voltage_thold_neg"] <= act <= self.domain_param["voltage_thold_pos"]:
             act = 0
 
         # Compute the derivative
@@ -191,7 +191,7 @@ class QQubeSwingUpSim(QQubeSim):
         self._init_space = BoxSpace(
             -max_init_state, max_init_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"]
         )
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
+        self._act_space = BoxSpace(-MAX_ACT_QQ, MAX_ACT_QQ, labels=["V"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
@@ -225,7 +225,7 @@ class QQubeStabSim(QQubeSim):
             -max_obs, max_obs, labels=["sin_theta", "cos_theta", "sin_alpha", "cos_alpha", "theta_dot", "alpha_dot"]
         )
         self._init_space = BoxSpace(min_init_state, max_init_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"])
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
+        self._act_space = BoxSpace(-MAX_ACT_QQ, MAX_ACT_QQ, labels=["V"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

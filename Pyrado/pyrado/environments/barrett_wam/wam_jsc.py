@@ -34,12 +34,12 @@ import robcom_python as robcom
 
 import pyrado
 from pyrado.environments.barrett_wam import (
-    act_space_jsc_4dof,
-    act_space_jsc_7dof,
-    wam_q_limits_lo_7dof,
-    wam_q_limits_up_7dof,
-    wam_qd_limits_lo_7dof,
-    wam_qd_limits_up_7dof,
+    ACT_SPACE_JSC_4DOF,
+    ACT_SPACE_JSC_7DOF,
+    WAM_Q_LIMITS_LO_7DOF,
+    WAM_Q_LIMITS_UP_7DOF,
+    WAM_QD_LIMITS_LO_7DOF,
+    WAM_QD_LIMITS_UP_7DOF,
 )
 from pyrado.environments.barrett_wam.wam_base import WAMReal
 from pyrado.spaces import BoxSpace
@@ -88,14 +88,14 @@ class WAMJointSpaceCtrlRealEpisodic(WAMReal):
 
     @property
     def obs_space(self) -> Space:
-        lo = np.concatenate([wam_q_limits_lo_7dof[: self._num_dof], wam_qd_limits_lo_7dof[: self._num_dof]])
-        up = np.concatenate([wam_q_limits_up_7dof[: self._num_dof], wam_qd_limits_up_7dof[: self._num_dof]])
+        lo = np.concatenate([WAM_Q_LIMITS_LO_7DOF[: self._num_dof], WAM_QD_LIMITS_LO_7DOF[: self._num_dof]])
+        up = np.concatenate([WAM_Q_LIMITS_UP_7DOF[: self._num_dof], WAM_QD_LIMITS_UP_7DOF[: self._num_dof]])
         return BoxSpace(bound_lo=lo, bound_up=up)
 
     @property
     def act_space(self) -> Space:
         # Running a PD controller on joint positions and velocities
-        return act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
+        return ACT_SPACE_JSC_7DOF if self._num_dof == 7 else ACT_SPACE_JSC_4DOF
 
     def _create_task(self, task_args: dict) -> Task:
         # Dummy task
@@ -226,8 +226,8 @@ class WAMJointSpaceCtrlRealStepBased(WAMReal):
 
     @property
     def state_space(self) -> Space:
-        lo = np.concatenate([wam_q_limits_lo_7dof[: self._num_dof], wam_qd_limits_lo_7dof[: self._num_dof]])
-        up = np.concatenate([wam_q_limits_up_7dof[: self._num_dof], wam_qd_limits_up_7dof[: self._num_dof]])
+        lo = np.concatenate([WAM_Q_LIMITS_LO_7DOF[: self._num_dof], WAM_QD_LIMITS_LO_7DOF[: self._num_dof]])
+        up = np.concatenate([WAM_Q_LIMITS_UP_7DOF[: self._num_dof], WAM_QD_LIMITS_UP_7DOF[: self._num_dof]])
         return BoxSpace(
             bound_lo=lo,
             bound_up=up,
@@ -241,7 +241,7 @@ class WAMJointSpaceCtrlRealStepBased(WAMReal):
     @property
     def act_space(self) -> Space:
         # Running a PD controller on joint positions and velocities
-        return act_space_jsc_7dof if self._num_dof == 7 else act_space_jsc_4dof
+        return ACT_SPACE_JSC_7DOF if self._num_dof == 7 else ACT_SPACE_JSC_4DOF
 
     def _create_task(self, task_args: dict) -> Task:
         # Dummy task

@@ -35,7 +35,6 @@ set(CORE_SRCS
     ExperimentConfig.cpp
     ECBallInTube.cpp
     ECBallOnPlate.cpp
-    ECBoxFlipping.cpp
     ECBoxLifting.cpp
     ECBoxShelving.cpp
     ECMiniGolf.cpp
@@ -54,7 +53,6 @@ set(CORE_SRCS
     initState/InitStateSetter.cpp
     initState/ISSBallInTube.cpp
     initState/ISSBallOnPlate.cpp
-    initState/ISSBoxFlipping.cpp
     initState/ISSBoxLifting.cpp
     initState/ISSBoxShelving.cpp
     initState/ISSMiniGolf.cpp

@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # Environments
     dt = 0.01
     relativeZdTask = True
-    env_hparams = dict(
+    env_hparam = dict(
         usePhysicsNode=True,
         physicsEngine="Bullet",
         dt=dt,
@@ -70,12 +70,12 @@ if __name__ == "__main__":
         observeForceTorque=False,
         relativeZdTask=relativeZdTask,
     )
-    env = MiniGolfIKSim(**env_hparams)
+    env = MiniGolfIKSim(**env_hparam)
 
     # Set up the policies
     if relativeZdTask:
         policy_hparam = dict(
-            t_end=1.0,
+            t_end=0.6,
             cond_lvl="vel",
             # Zd (rel), Y (rel), Zdist (abs), PHI (abs), THETA (abs)
             cond_final=[
@@ -83,7 +83,7 @@ if __name__ == "__main__":
                 [0.0, 0.0, 0.0, 0.0, 0.0],
             ],
             cond_init=[
-                [-7.0, 0.0, 0.01, math.pi / 2, 0.0],
+                [-100.0, 0.0, 0.01, math.pi / 2, 0.0],
                 [0.0, 0.0, 0.0, 0.0, 0.0],
             ],
             overtime_behavior="hold",
@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam, policy_name=policy.name),
         dict(pre_strike_policy=pre_strike_policy_hparam, pre_strike_policy_name=pre_strike_policy.name),
         save_dir=ex_dir,

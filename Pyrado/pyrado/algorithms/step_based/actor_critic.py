@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import Sequence
+from typing import Sequence, Tuple
 
 import numpy as np
 
@@ -180,14 +180,19 @@ class ActorCritic(Algorithm, ABC):
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             pyrado.save(self._env, "env.pkl", self.save_dir)
-            pyrado.save(self._expl_strat.policy, "policy.pt", self.save_dir, use_state_dict=True)
+            pyrado.save(self._policy, "policy.pt", self.save_dir, use_state_dict=True)
             pyrado.save(self._critic.vfcn, "vfcn.pt", self.save_dir, use_state_dict=True)
 
         else:
             # This algorithm instance is a subroutine of another algorithm
             prefix = meta_info.get("prefix", "")
             suffix = meta_info.get("suffix", "")
-            pyrado.save(
-                self._expl_strat.policy, "policy.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True
-            )
+            pyrado.save(self._policy, "policy.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True)
             pyrado.save(self._critic.vfcn, "vfcn.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True)
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        env = pyrado.load("env.pkl", ex_dir)
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, obj=self.policy)
+        extra = dict(vfcn=pyrado.load(f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self.critic.vfcn, verbose=True))
+        return env, policy, extra

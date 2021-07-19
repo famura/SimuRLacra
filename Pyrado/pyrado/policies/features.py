@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from functools import reduce
-from typing import Callable, Sequence, Tuple, Union
+from typing import Any, Callable, Sequence, Tuple, Union
 from warnings import warn
 
 import numpy as np
@@ -47,7 +47,7 @@ class FeatureStack:
         We only consider 1-dim inputs.
     """
 
-    def __init__(self, *feat_fcns: Sequence[Callable]):
+    def __init__(self, *feat_fcns: Sequence[Callable[[to.Tensor], Any]]):
         """
         Constructor
 

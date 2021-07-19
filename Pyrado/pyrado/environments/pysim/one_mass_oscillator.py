@@ -52,7 +52,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
     name: str = "omo"
 
     def _create_spaces(self):
-        k = self.domain_param["k"]
+        k = self.domain_param["stiffness"]
 
         # Define the spaces
         max_state = np.array([1.0, 10.0])  # pos [m], vel [m/s]
@@ -81,13 +81,15 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            m=1.0, k=30.0, d=0.5  # object's mass [kg]  # spring stiffness constant [N/m]
-        )  # damping constant [Ns/m]
+            mass=1.0,  # object's mass [kg]
+            stiffness=30.0,  # spring stiffness constant [N/m]
+            damping=0.5,  # damping constant [Ns/m]
+        )
 
     def _calc_constants(self):
-        m = self.domain_param["m"]
-        k = self.domain_param["k"]
-        d = self.domain_param["d"]
+        m = self.domain_param["mass"]
+        k = self.domain_param["stiffness"]
+        d = self.domain_param["damping"]
 
         self.omega = np.sqrt(k / m)  # eigen frequency [Hz]
         self.zeta = d / (2.0 * np.sqrt(m * k))  # damping ratio [-]
@@ -101,7 +103,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
             self._omega_res = None  # damping too high, no resonance
 
     def _step_dynamics(self, act: np.ndarray):
-        m = self.domain_param["m"]
+        m = self.domain_param["mass"]
 
         # Linear Dynamics
         A = np.array([[0, 1], [-self.omega ** 2, -2.0 * self.zeta * self.omega]])
@@ -135,11 +137,11 @@ class OneMassOscillatorDyn(Serializable):
         self.B = None
 
     def _calc_constants(self, domain_param: dict):
-        self.omega = to.sqrt(domain_param["k"] / domain_param["m"])
-        self.zeta = domain_param["d"] / (2.0 * to.sqrt(domain_param["m"] * domain_param["k"]))
+        self.omega = to.sqrt(domain_param["stiffness"] / domain_param["mass"])
+        self.zeta = domain_param["damping"] / (2.0 * to.sqrt(domain_param["mass"] * domain_param["stiffness"]))
 
         self.A = to.stack([to.tensor([0.0, 1.0]), to.stack([-self.omega ** 2, -2.0 * self.zeta * self.omega])])
-        self.B = to.stack([to.tensor(0.0), 1.0 / domain_param["m"]]).view(-1, 1)
+        self.B = to.stack([to.tensor(0.0), 1.0 / domain_param["mass"]]).view(-1, 1)
 
     def __call__(self, state: to.Tensor, act: to.Tensor, domain_param: dict) -> to.Tensor:
         """
@@ -166,7 +168,9 @@ class OneMassOscillatorDomainParamEstimator(nn.Module):
     def __init__(self, dt: float, dp_init: dict, num_epoch: int, batch_size: int):
         super().__init__()
 
-        self.dp_est = nn.Parameter(to.tensor([dp_init["m"], dp_init["k"], dp_init["d"]]), requires_grad=True)
+        self.dp_est = nn.Parameter(
+            to.tensor([dp_init["mass"], dp_init["stiffness"], dp_init["damping"]]), requires_grad=True
+        )
         self.dp_fixed = dict(dt=dt)
 
         self.optim = to.optim.Adam(self.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-8, amsgrad=True)

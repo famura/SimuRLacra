@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     # Environment
     dt = 0.01
-    env_hparams = dict(
+    env_hparam = dict(
         physicsEngine="Bullet",
         dt=dt,
         max_steps=int(15 / dt),
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         fixedInitState=True,
         observeForceTorque=False,
     )
-    env = MiniGolfIKSim(**env_hparams)
+    env = MiniGolfIKSim(**env_hparam)
 
     # Policy
     policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),

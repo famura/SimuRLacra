@@ -47,12 +47,12 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     name: str = "bob"
 
     def _create_spaces(self):
-        l_beam = self.domain_param["l_beam"]
-        g = self.domain_param["g"]
+        l_beam = self.domain_param["beam_length"]
+        gravity_const = self.domain_param["gravity_const"]
 
         # Set the bounds for the system's states and actions
         max_state = np.array([l_beam / 2.0, np.pi / 4.0, 10.0, np.pi])
-        max_act = np.array([l_beam / 2.0 * g * 3.0])  # max torque [Nm]; the factor 3.0 is arbitrary
+        max_act = np.array([l_beam / 2.0 * gravity_const * 3.0])  # max torque [Nm]; the factor 3.0 is arbitrary
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
         self._state_space = BoxSpace(-max_state, max_state, labels=["x", "alpha", "x_dot", "alpha_dot"])
@@ -76,22 +76,22 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            g=9.81,  # gravity constant [m/s**2]
-            m_ball=0.5,  # ball mass [kg]
-            r_ball=0.1,  # ball radius [m]
-            m_beam=3.0,  # beam mass [kg]
-            l_beam=2.0,  # beam length [m]
-            d_beam=0.1,  # beam thickness [m]
-            c_frict=0.05,  # viscous friction coefficient [Ns/m]
+            gravity_const=9.81,  # gravity constant [m/s**2]
+            ball_mass=0.5,  # ball mass [kg]
+            ball_radius=0.1,  # ball radius [m]
+            beam_mass=3.0,  # beam mass [kg]
+            beam_length=2.0,  # beam length [m]
+            beam_thickness=0.1,  # beam thickness [m]
+            friction_coeff=0.05,  # viscous friction coefficient [Ns/m]
             ang_offset=0.0,
         )  # constant beam angle offset [rad]
 
     def _calc_constants(self):
-        m_ball = self.domain_param["m_ball"]
-        r_ball = self.domain_param["r_ball"]
-        m_beam = self.domain_param["m_beam"]
-        l_beam = self.domain_param["l_beam"]
-        d_beam = self.domain_param["d_beam"]
+        m_ball = self.domain_param["ball_mass"]
+        r_ball = self.domain_param["ball_radius"]
+        m_beam = self.domain_param["beam_mass"]
+        l_beam = self.domain_param["beam_length"]
+        d_beam = self.domain_param["beam_thickness"]
 
         self.J_ball = 2.0 / 5 * m_ball * r_ball ** 2
         self.J_beam = 1.0 / 12 * m_beam * (l_beam ** 2 + d_beam ** 2)
@@ -108,9 +108,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         )
 
     def _step_dynamics(self, act: np.ndarray):
-        g = self.domain_param["g"]
-        m_ball = self.domain_param["m_ball"]
-        c_frict = self.domain_param["c_frict"]
+        gravity_const = self.domain_param["gravity_const"]
+        m_ball = self.domain_param["ball_mass"]
+        c_frict = self.domain_param["friction_coeff"]
         ang_offset = self.domain_param["ang_offset"]
 
         # Nonlinear dynamics
@@ -121,8 +121,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         zeta_beam = m_ball * x ** 2 + self.J_beam  # depends on the bal position
 
         # EoM solved for the accelerations
-        x_ddot = (-c_frict * x_dot + m_ball * x * a_dot ** 2 - m_ball * g * np.sin(a)) / self.zeta_ball
-        a_ddot = (float(act) - 2.0 * m_ball * x * x_dot * a_dot - m_ball * g * np.cos(a) * x) / zeta_beam
+        x_ddot = (-c_frict * x_dot + m_ball * x * a_dot ** 2 - m_ball * gravity_const * np.sin(a)) / self.zeta_ball
+        a_ddot = (float(act) - 2.0 * m_ball * x * x_dot * a_dot - m_ball * gravity_const * np.cos(a) * x) / zeta_beam
 
         # Integration step (symplectic Euler)
         self.state[2:] += np.array([x_ddot, a_ddot]) * self._dt  # next velocity

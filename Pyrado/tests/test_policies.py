@@ -28,14 +28,33 @@
 
 import os.path as osp
 
+import numpy as np
 import pytest
+import torch as to
 from tests.conftest import m_needs_bullet, m_needs_cuda, m_needs_libtorch, m_needs_mujoco, m_needs_rcs
 from torch import nn as nn
 
 import pyrado
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
-from pyrado.policies.features import *
+from pyrado.policies.features import (
+    FeatureStack,
+    MultFeat,
+    RBFFeat,
+    RFFeat,
+    abs_feat,
+    bell_feat,
+    const_feat,
+    cos_feat,
+    cubic_feat,
+    identity_feat,
+    sig_feat,
+    sign_feat,
+    sin_feat,
+    sincos_feat,
+    sinsin_feat,
+    squared_feat,
+)
 from pyrado.policies.feed_back.dual_rfb import DualRBFLinearPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.playback import PlaybackPolicy

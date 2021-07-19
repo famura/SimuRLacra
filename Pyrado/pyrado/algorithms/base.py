@@ -28,7 +28,7 @@
 
 import os.path as osp
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Union
+from typing import Any, Optional, Tuple, Union
 
 import joblib
 import torch.nn as nn
@@ -37,6 +37,7 @@ import pyrado
 from pyrado import set_seed
 from pyrado.algorithms.stopping_criteria.predefined_criteria import IterCountStoppingCriterion
 from pyrado.algorithms.stopping_criteria.stopping_criterion import StoppingCriterion
+from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.experiment import split_path_custom_common
@@ -344,27 +345,17 @@ class Algorithm(ABC, LoggerAware):
         """
         joblib.dump(self, osp.join(self.save_dir, f"{self._save_name}.pkl"))
 
-    @staticmethod
-    def load_snapshot(load_dir: pyrado.PathLike, load_name: str = "algo"):
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
         """
-        Load an algorithm from file, i.e. unpickle it.
+        Load the state of an experiment, which is specific to the algorithm.
 
-        :param load_dir: experiment directory to load from
-        :param load_name: name of the algorithm's pickle file without the ending
+        :param parsed_args: arguments parsed by the `argparser`
+        :return: environment, policy, and (optional) algorithm-specific output, e.g. value function
         """
-        if not osp.isdir(load_dir):
-            raise pyrado.PathErr(given=load_dir)
-
-        file = osp.join(load_dir, f"{load_name}.pkl")
-        if not osp.isfile(file):
-            raise pyrado.PathErr(given=file)
-
-        algo = joblib.load(file)
-
-        if not isinstance(algo, Algorithm):
-            raise pyrado.TypeErr(given=algo, expected_type=Algorithm)
-
-        return algo
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        env = pyrado.load("env.pkl", ex_dir, verbose=True)
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, obj=self.policy, verbose=True)
+        return env, policy, dict()
 
     @staticmethod
     def clip_grad(module: nn.Module, max_grad_norm: Optional[float]) -> float:

@@ -81,7 +81,7 @@ if __name__ == "__main__":
     policy = IdlePolicy(env.spec)
 
     # Domain parameter mapping and prior, oly use 2 domain parameters here to simplify the plotting later
-    dp_mapping = {0: "k", 1: "d"}
+    dp_mapping = {0: "stiffness", 1: "damping"}
     prior = sbiutils.BoxUniform(low=to.tensor([20.0, 0.0]), high=to.tensor([40.0, 0.3]))
 
     # Create time series embedding
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # Create a fake (random) true distribution
     num_instances_real = 1
-    dp_gt = {"k": 30, "d": 0.1}
+    dp_gt = {"stiffness": 30, "damping": 0.1}
     domain_param_gt = to.tensor([dp_gt[key] for _, key in dp_mapping.items()])
     domain_param_gt = domain_param_gt.repeat((num_instances_real, 1))
     domain_param_gt += domain_param_gt * to.randn(num_instances_real, 2) / 5

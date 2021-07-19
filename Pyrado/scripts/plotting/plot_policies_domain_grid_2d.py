@@ -100,8 +100,8 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "m_ball",
-                "r_ball",
+                "ball_mass",
+                "ball_radius",
                 r"$m_{\mathrm{ball}}$",
                 r"$r_{\mathrm{ball}}$",
                 add_sep_colorbar=True,
@@ -113,9 +113,9 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "g",
-                "r_ball",
-                "$g$",
+                "gravity_const",
+                "ball_radius",
+                "$gravity_const$",
                 r"$r_{\mathrm{ball}}$",
                 add_sep_colorbar=True,
                 norm=accnorm,
@@ -126,8 +126,8 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "J_l",
-                "J_m",
+                "load_inertia",
+                "motor_inertia",
                 "$J_l$",
                 "$J_m$",
                 add_sep_colorbar=True,
@@ -139,8 +139,8 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "eta_g",
-                "eta_m",
+                "gear_efficiency",
+                "motor_efficiency",
                 r"$\eta_g$",
                 r"$\eta_m$",
                 add_sep_colorbar=True,
@@ -152,8 +152,8 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "k_m",
-                "R_m",
+                "motor_back_emf",
+                "motor_resistance",
                 "$k_m$",
                 "$R_m$",
                 add_sep_colorbar=True,
@@ -165,8 +165,8 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "B_eq",
-                "c_frict",
+                "combined_damping",
+                "friction_coeff",
                 r"$B_{\mathrm{eq}}$",
                 r"$c_{\mathrm{frict}}$",
                 add_sep_colorbar=True,
@@ -178,8 +178,8 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "V_thold_x_pos",
-                "V_thold_x_neg",
+                "voltage_thold_x_pos",
+                "voltage_thold_x_neg",
                 r"$V_{\mathrm{thold,x-}}$",
                 r"$V_{\mathrm{thold,x+}}$",
                 add_sep_colorbar=True,
@@ -191,8 +191,8 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "V_thold_y_pos",
-                "V_thold_y_neg",
+                "voltage_thold_y_pos",
+                "voltage_thold_y_neg",
                 r"$V_{\mathrm{thold,y-}}$",
                 r"$V_{\mathrm{thold,y+}}$",
                 add_sep_colorbar=True,
@@ -204,7 +204,7 @@ def _plot(dataframes, save_dirs, save_figure):
 
             _plot_and_save(
                 df,
-                "m_ball",
+                "ball_mass",
                 "act_delay",
                 r"$m_{\mathrm{ball}}$",
                 r"$a_{\mathrm{delay}}$",
@@ -218,8 +218,8 @@ def _plot(dataframes, save_dirs, save_figure):
             """ QQubeSwingUpSim """
             _plot_and_save(
                 df,
-                "Dp",
-                "Dr",
+                "damping_pend_pole",
+                "damping_rot_pole",
                 r"$D_p$",
                 r"$D_r$",
                 add_sep_colorbar=True,
@@ -231,8 +231,8 @@ def _plot(dataframes, save_dirs, save_figure):
             )
             # _plot_and_save(
             #     df,
-            #     "Mr",
-            #     "Mp",
+            #     "mass_rot_pole",
+            #     "mass_pend_pole",
             #     r"$M_r$",
             #     r"$M_p$",
             #     add_sep_colorbar=True,

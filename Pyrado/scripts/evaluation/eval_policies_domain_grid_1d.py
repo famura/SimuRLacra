@@ -72,7 +72,7 @@ if __name__ == "__main__":
         # Create the environment for evaluating
         env = QBallBalancerSim(dt=dt, max_steps=args.max_steps, load_experimental_tholds=True)
 
-        # param_spec['g'] = np.linspace(8.91, 12.91, num=11, endpoint=True)
+        # param_spec['gravity_const'] = np.linspace(8.91, 12.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.001, 0.033, num=11, endpoint=True)
         # param_spec['r_ball'] = np.linspace(0.01, 0.1, num=11, endpoint=True)
         # param_spec['r_arm'] = np.linspace(0.0254*0.3, 0.0254*1.7, num=11, endpoint=True)
@@ -112,8 +112,8 @@ if __name__ == "__main__":
         else:
             env = QCartPoleStabSim(dt=dt, max_steps=args.max_steps)
 
-        # param_spec['g'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
-        param_spec["m_cart"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
+        # param_spec['gravity_const'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
+        param_spec["cart_mass"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
         # param_spec['l_rail'] = np.linspace(0.841*0.7, 0.841*1.3, num=11, endpoint=True)
         # param_spec['eta_m'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
         # param_spec['eta_g'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
@@ -141,15 +141,15 @@ if __name__ == "__main__":
     elif env_name == QQubeSwingUpSim.name:
         env = QQubeSwingUpSim(dt=dt, max_steps=args.max_steps)
 
-        # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
-        # param_spec['Rm'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
-        # param_spec['km'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
-        # param_spec['Mr'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
-        # param_spec['Lr'] = np.linspace(0.085*0.7, 0.085*1.3, num=11, endpoint=True)
-        # param_spec['Dr'] = np.linspace(5e-6*0.2, 5e-6*5, num=11, endpoint=True)  # 5e-6
-        # param_spec['Mp'] = np.linspace(0.024*0.7, 0.024*1.3, num=11, endpoint=True)
-        # param_spec['Lp'] = np.linspace(0.129*0.7, 0.129*1.3, num=11, endpoint=True)
-        # param_spec['Dp'] = np.linspace(1e-6*0.2, 1e-6n*5, num=11, endpoint=True)  # 1e-6
+        # param_spec['gravity_const'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
+        # param_spec['motor_resistance'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
+        # param_spec['motor_back_emf'] = np.linspace(0.042*0.7, 0.042*1.3, num=11, endpoint=True)
+        # param_spec['mass_rot_pole'] = np.linspace(0.095*0.7, 0.095*1.3, num=11, endpoint=True)
+        # param_spec['length_rot_pole'] = np.linspace(0.085*0.7, 0.085*1.3, num=11, endpoint=True)
+        # param_spec['damping_rot_pole'] = np.linspace(5e-6*0.2, 5e-6*5, num=11, endpoint=True)  # 5e-6
+        # param_spec['mass_pend_pole'] = np.linspace(0.024*0.7, 0.024*1.3, num=11, endpoint=True)
+        # param_spec['length_pend_pole'] = np.linspace(0.129*0.7, 0.129*1.3, num=11, endpoint=True)
+        # param_spec['damping_pend_pole'] = np.linspace(1e-6*0.2, 1e-6n*5, num=11, endpoint=True)  # 1e-6
 
         # Get the experiments' directories to load from
         prefixes = [

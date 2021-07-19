@@ -82,23 +82,23 @@ if __name__ == "__main__":
     env_sim = QCartPoleSwingUpSim(**env_sim_hparams)
 
     # Create the ground truth target domain and the behavioral policy
-    env_real = osp.join(pyrado.EVAL_DIR, "qcp-su_ectrl_250Hz_filt")
+    env_real = osp.join(pyrado.EVAL_DIR, f"qcp-su_ectrl_250Hz_{t_end}s_filt")
     policy = QCartPoleSwingUpAndBalanceCtrl(env_sim.spec)  # replaced by the recorded actions if use_rec_act=True
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "V_thold_neg", 1: "V_thold_pos"}
+    dp_mapping = {0: "voltage_thold_neg", 1: "voltage_thold_pos"}
     # dp_mapping = {
-    #     0: "eta_m",
-    #     1: "eta_g",
-    #     2: "B_pole",
-    #     3: "B_eq",
-    #     4: "mu_cart",
-    #     5: "K_g",
-    #     6: "k_m",
-    #     7: "m_pole",
-    #     8: "l_pole",
+    #     0: "motor_efficiency",
+    #     1: "gear_efficiency",
+    #     2: "pole_damping",
+    #     3: "combined_damping",
+    #     4: "cart_friction_coeff",
+    #     5: "gear_ratio",
+    #     6: "motor_back_emf",
+    #     7: "pole_mass",
+    #     8: "pole_length",
     # }
-    # g=9.81,  # gravity constant [m/s**2]
+    # gravity_const=9.81,  # gravity constant [m/s**2]
     # m_cart=0.38,  # mass of the cart [kg]
     # l_rail=0.814,  # length of the rail the cart is running on [m]
     # eta_m=0.9,  # motor efficiency [-], default 1.
@@ -110,8 +110,8 @@ if __name__ == "__main__":
     # k_m=7.67e-3,  # motor torque constant [N*m/A] = back-EMF constant [V*s/rad]
     # B_pole=0.0024,  # viscous coefficient at the pole [N*s]
     # B_eq=5.4,  # equivalent Viscous damping coefficient [N*s/m]
-    # m_pole=m_pole,  # mass of the pole [kg]
-    # l_pole=l_pole,  # half pole length [m]
+    # pole_mass=m_pole,  # mass of the pole [kg]
+    # pole_length=l_pole,  # half pole length [m]
     # mu_cart=0.02,  # Coulomb friction coefficient cart-rail [-]
 
     # Prior and Posterior (normalizing flow)
@@ -122,13 +122,13 @@ if __name__ == "__main__":
         #     [
         #         0.6,
         #         0.6,
-        #         dp_nom["B_pole"] * 0.5,
-        #         dp_nom["B_eq"] * 0.5,
+        #         dp_nom["pole_damping"] * 0.5,
+        #         dp_nom["combined_damping"] * 0.5,
         #         0,
-        #         dp_nom["K_g"] * 0.8,
-        #         dp_nom["k_m"] * 0.8,
-        #         dp_nom["m_pole"] * 0.9,
-        #         dp_nom["l_pole"] * 0.9,
+        #         dp_nom["gear_ratio"] * 0.8,
+        #         dp_nom["motor_back_emf"] * 0.8,
+        #         dp_nom["pole_mass"] * 0.9,
+        #         dp_nom["pole_length"] * 0.9,
         #     ]
         # ),
         high=to.tensor([0.0, 1.0])
@@ -136,13 +136,13 @@ if __name__ == "__main__":
         #     [
         #         1,
         #         1,
-        #         dp_nom["B_pole"] * 1.5,
-        #         dp_nom["B_eq"] * 1.5,
-        #         dp_nom["mu_cart"] * 5,
-        #         dp_nom["K_g"] * 1.2,
-        #         dp_nom["k_m"] * 1.2,
-        #         dp_nom["m_pole"] * 1.1,
-        #         dp_nom["l_pole"] * 1.1,
+        #         dp_nom["pole_damping"] * 1.5,
+        #         dp_nom["combined_damping"] * 1.5,
+        #         dp_nom["cart_friction_coeff"] * 5,
+        #         dp_nom["gear_ratio"] * 1.2,
+        #         dp_nom["motor_back_emf"] * 1.2,
+        #         dp_nom["pole_mass"] * 1.1,
+        #         dp_nom["pole_length"] * 1.1,
         #     ]
         # ),
     )

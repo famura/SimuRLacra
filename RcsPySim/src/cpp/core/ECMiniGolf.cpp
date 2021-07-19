@@ -30,11 +30,10 @@
 
 #include "ExperimentConfig.h"
 #include "action/ActionModelIK.h"
+#include "action/AMJointControlPosition.h"
 #include "initState/ISSMiniGolf.h"
 #include "observation/OMBodyStateLinear.h"
 #include "observation/OMBodyStateAngular.h"
-#include "observation/OMCollisionCost.h"
-#include "observation/OMCollisionCostPrediction.h"
 #include "observation/OMCombined.h"
 #include "observation/OMJointState.h"
 #include "observation/OMForceTorque.h"
@@ -90,7 +89,11 @@ class ECMiniGolf : public ExperimentConfig
         RcsBody* ball = RcsGraph_getBodyByName(graph, "Ball");
         RCHECK(ball);
         
-        if (actionModelType == "ik") {
+        if (actionModelType == "joint_pos") {
+            return new AMJointControlPosition(graph);
+        }
+        
+        else if (actionModelType == "ik") {
             // Create the action model. Every but the x tasks have been fixed tasks originally, but now are constant
             // outputs on the policy. This way, we can use the same policy structure in the pre-strike ControlPolicy
             // on the real robot.
@@ -99,7 +102,7 @@ class ECMiniGolf : public ExperimentConfig
                 if (properties->getPropertyBool("relativeZdTask", true)) {
                     // Driving
                     auto tmpTask = new TaskVelocity1D("Zd", graph, ball, clubTip, nullptr);
-                    tmpTask->resetParameter(Task::Parameters(-10.0, 10.0, 1.0, "Z Velocity [m/s]"));
+                    tmpTask->resetParameter(Task::Parameters(-100.0, 100.0, 1.0, "Z Velocity [m/s]"));
                     amIK->addTask(tmpTask);
                     // Centering
                     amIK->addTask(new TaskPosition1D("Y", graph, ball, clubTip, nullptr));

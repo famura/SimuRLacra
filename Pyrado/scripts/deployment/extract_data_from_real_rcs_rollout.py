@@ -34,7 +34,7 @@ import os.path as osp
 import pandas as pd
 
 import pyrado
-from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim, MiniGolfJointCtrlSim
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.argparser import get_argparser
 
@@ -52,8 +52,10 @@ if __name__ == "__main__":
 
     df = pd.read_csv(args.file)
 
-    if args.env_name is None or args.env_name == MiniGolfIKSim.name:
+    if args.env_name == MiniGolfIKSim.name:
         env = MiniGolfIKSim()
+    elif args.env_name == MiniGolfJointCtrlSim.name:
+        env = MiniGolfJointCtrlSim()
     else:
         raise NotImplementedError
 

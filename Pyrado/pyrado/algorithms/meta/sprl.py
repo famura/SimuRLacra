@@ -35,10 +35,13 @@ from torch.distributions import MultivariateNormal
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.utils import RolloutSavingWrapper, until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
 
 
 class MultivariateNormalWrapper:
@@ -358,8 +361,6 @@ class SPRL(Algorithm):
             self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
 
-        dim = context_mean.shape[0]
-
         # If we are in the first iteration and have a bad performance,
         # we want to completely reset the policy if training is unsuccessful
         reset_policy = False
@@ -538,6 +539,18 @@ class SPRL(Algorithm):
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             self._subroutine.save_snapshot(meta_info)
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        if isinstance(self._subroutine, ActorCritic):
+            ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+            extra["vfcn"] = pyrado.load(
+                f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self._subroutine.critic.vfcn, verbose=True
+            )
+
+        return env, policy, extra
 
     def _compute_expected_performance(
         self, distribution: MultivariateNormalWrapper, context: to.Tensor, old_log_prop: to.Tensor, values: to.Tensor

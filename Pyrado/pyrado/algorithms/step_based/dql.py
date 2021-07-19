@@ -28,7 +28,7 @@
 
 import sys
 from copy import deepcopy
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import torch as to
@@ -40,6 +40,7 @@ from pyrado.algorithms.step_based.value_based import ValueBased
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger
+from pyrado.policies.base import Policy
 from pyrado.policies.feed_back.fnn import DiscreteActQValPolicy
 from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
@@ -274,3 +275,13 @@ class DQL(ValueBased):
                 suffix=meta_info.get("suffix", ""),
                 use_state_dict=True,
             )
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        if self.name == "dql":
+            extra["qfcn_target"] = pyrado.load("qfcn_target.pt", ex_dir, obj=self.qfcn_targ, verbose=True)
+
+        return env, policy, extra

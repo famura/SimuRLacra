@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 import os
 import traceback
+import warnings
 from copy import deepcopy
 from enum import Enum, auto
 from queue import Empty
@@ -110,6 +111,7 @@ class _WorkerInfo:
             name=f"Sampler-Worker-{num}",
         )
         self._process.daemon = True
+
         # Start it
         self._process.start()
 
@@ -121,7 +123,7 @@ class _WorkerInfo:
 
     def invoke_start(self, func, *args, **kwargs):
         if not self._process.is_alive():
-            raise RuntimeError("Worker has terminated")
+            raise RuntimeError("Worker has terminated!")
         if self._pending:
             raise RuntimeError("There is still a pending call waiting for completion.")
         # Send to slave
@@ -181,23 +183,27 @@ class _WorkerInfo:
 
     def stop(self):
         if self._pending:
-            raise RuntimeError("There is still a pending call waiting for completion.")
+            warnings.warn("There is still a pending call waiting for completion.", UserWarning)
+
         # Send stop signal
         self._to_slave.put(_CMD_STOP)
 
         # Wait a bit for the process to die
-        self._process.join(2)
+        self._process.join(1)
+
         # Check if stopped
         if self._process.is_alive():
-            # send SIGTERM in case there was a problem with the graceful stop
+            # Send SIGTERM in case there was a problem with the graceful stop
             self._process.terminate()
             # Wait for the process to die from the SIGTERM
-            self._process.join(2)
+            self._process.join(1)
 
             # Check if stopped
             if self._process.is_alive():
                 # Sigterm didn't work, so break out the big guns with SIGKILL
                 self._process.kill()
+                # Wait for the process to die from the SIGKILL
+                self._process.join(1)
 
 
 def _run_set_seed(G, seed):
@@ -208,7 +214,7 @@ def _run_set_seed(G, seed):
 def _run_collect(
     G, counter, run_counter, lock, n, min_runs, func, args, kwargs
 ) -> List[Tuple[int, List[StepSequence], int]]:
-    """Worker function for run_collect"""
+    """Worker function for `SamplerPool.run_collect()`"""
     result = []
     while True:
         with lock:
@@ -231,6 +237,7 @@ def _run_collect(
 
 
 def _run_map(G, func, argqueue):
+    """Worker function for `SamplerPool.run_map()`"""
     result = []
     while True:
         try:
@@ -261,16 +268,16 @@ class SamplerPool:
         if num_threads < 1:
             raise pyrado.ValueErr(given=num_threads, ge_constraint="1")
 
-        self._n_threads = num_threads
+        self._num_threads = num_threads
         if not ENABLE_SINGLE_WORKER_OPTIMIZATION or num_threads > 1:
             # Create workers
-            self._workers = [_WorkerInfo(i + 1) for i in range(num_threads)]
+            self._workers = [_WorkerInfo(i + 1) for i in range(self._num_threads)]
             self._manager = mp.Manager()
         self._G = GlobalNamespace()
 
     def stop(self):
         """Terminate all workers."""
-        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or self._n_threads > 1:
+        if not ENABLE_SINGLE_WORKER_OPTIMIZATION or self._num_threads > 1:
             for w in self._workers:
                 w.stop()
 
@@ -298,14 +305,16 @@ class SamplerPool:
 
         :param func: the first argument of func will be a worker-local namespace
         """
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             return [func(self._G, *args, **kwargs)]
 
-        # Start invocation
-        for w in self._workers:
-            w.invoke_start(func, *args, **kwargs)
-        # Await results
-        return self._await_result()
+        else:
+            # Start invocation
+            for w in self._workers:
+                w.invoke_start(func, *args, **kwargs)
+
+            # Await results
+            return self._await_result()
 
     def invoke_all_map(self, func, arglist):
         """
@@ -314,9 +323,9 @@ class SamplerPool:
         The first argument of func will be a worker-local namespace.
         The return values are collected into a list.
         """
-        assert self._n_threads == len(arglist)
+        assert self._num_threads == len(arglist)
 
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             return [func(self._G, arglist[0])]
 
         # Start invocation
@@ -340,7 +349,7 @@ class SamplerPool:
             progressbar.total = len(arglist)
 
         # Single thread optimization
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             res = []
             for arg in arglist:
                 res.append(func(self._G, deepcopy(arg)))  # numpy arrays and others are passed by reference
@@ -375,6 +384,7 @@ class SamplerPool:
         # Collect results in one list
         allres = self._await_result()
         result = [item for res in allres for item in res]
+
         # Sort results by index to ensure consistent order with args
         result.sort(key=lambda t: t[0])
         return [item for _, item in result]
@@ -395,20 +405,19 @@ class SamplerPool:
         determinism across different number of workers.
 
         :param n: minimum number of samples to collect
-        :param func: sampler function. Must be pickleable.
+        :param func: sampler function, must be pickleable
         :param args: remaining positional args are passed to the function
-        :param collect_progressbar: tdqm progress bar to use; default None
+        :param collect_progressbar: `tdqm` progress bar to use; default None
         :param min_runs: optionally specify a minimum amount of runs to be executed before returning
         :param kwargs: remaining keyword args are passed to the function
         :return: list of results
         :return: total number of samples
         """
-
         # Set total on progress bar
         if collect_progressbar is not None:
             collect_progressbar.total = n
 
-        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._n_threads == 1:
+        if ENABLE_SINGLE_WORKER_OPTIMIZATION and self._num_threads == 1:
             # Do locally
             result = []
             counter = 0
@@ -432,7 +441,7 @@ class SamplerPool:
         # Start async computation
         self._start(_run_collect, counter, run_counter, lock, n, min_runs, func, args, kwargs)
 
-        # show progress bar
+        # Show progress bar
         if collect_progressbar is not None:
             while self._operation_in_progress():
                 # Retrieve current counter value
@@ -447,6 +456,7 @@ class SamplerPool:
         # Collect results in one list
         allres = self._await_result()
         result = [item for res in allres for item in res]
+
         # Sort results by index to ensure consistent order
         result.sort(key=lambda t: t[0])
         result_filtered = []
@@ -468,7 +478,7 @@ class SamplerPool:
 
         :param seed: seed value for the random number generators
         """
-        self.invoke_all_map(_run_set_seed, [seed + i for i in range(self._n_threads)])
+        self.invoke_all_map(_run_set_seed, [seed + i for i in range(self._num_threads)])
 
     def __reduce__(self):
         # We cannot really pickle this object since it has a lot of hidden state in the worker processes

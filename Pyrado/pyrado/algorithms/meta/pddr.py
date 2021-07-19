@@ -28,7 +28,7 @@
 
 import os
 from copy import deepcopy
-from typing import Any, List, Tuple
+from typing import Any, List, Optional, Tuple
 
 import numpy as np
 import torch as to
@@ -58,20 +58,19 @@ class PDDR(InterruptableAlgorithm):
         save_dir: str,
         env: Env,
         policy: Policy,
-        logger: StepLogger = None,
-        device: str = "cpu",
         lr: float = 5e-4,
         std_init: float = 0.15,
         min_steps: int = 1500,
         num_epochs: int = 10,
         max_iter: int = 500,
         num_teachers: int = 8,
-        num_cpu: int = 3,
-        teacher_extra: dict = None,
-        teacher_policy: Policy = None,
-        teacher_algo: callable = None,
-        teacher_algo_hparam: dict() = None,
-        randomizer: DomainRandomizer = None,
+        teacher_extra: Optional[dict] = None,
+        teacher_policy: Optional[Policy] = None,
+        teacher_algo: Optional[callable] = None,
+        teacher_algo_hparam: Optional[dict] = None,
+        randomizer: Optional[DomainRandomizer] = None,
+        logger: Optional[StepLogger] = None,
+        num_workers: int = 4,
     ):
         """
         Constructor
@@ -79,8 +78,6 @@ class PDDR(InterruptableAlgorithm):
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env: the environment which the policy operates
         :param policy: policy to be updated
-        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
-        :param device: device to use for updating the policy (cpu or gpu)
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                     By default, the learning rate is constant.
         :param std_init: initial standard deviation on the actions for the exploration noise
@@ -88,12 +85,14 @@ class PDDR(InterruptableAlgorithm):
         :param num_epochs: number of epochs (how often we iterate over the same batch)
         :param max_iter: number of iterations (policy updates)
         :param num_teachers: number of teachers that are used for distillation
-        :param num_cpu: number of cpu cores to use
         :param teacher_extra: extra dict from PDDRTeachers algo. If provided, teachers are loaded from there
         :param teacher_policy: policy to be updated (is duplicated for each teacher)
         :param teacher_algo: algorithm class to be used for training the teachers
-        :param teacher_algo_hparam: hyperparams to be used for teacher_algo
-        :param randomizer: randomizer for sampling the teacher domain parameters. If None, the default one for env is used
+        :param teacher_algo_hparam: hyper-params to be used for teacher_algo
+        :param randomizer: randomizer for sampling the teacher domain parameters; if `None`, the environment's default
+                           one is used
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        :param num_workers: number of environments for parallel sampling
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -106,12 +105,11 @@ class PDDR(InterruptableAlgorithm):
         )
 
         # Store the inputs
+        self.env_real = env
         self.min_steps = min_steps
         self.num_epochs = num_epochs
         self.num_teachers = num_teachers
-        self.num_cpu = num_cpu
-        self.device = device
-        self.env_real = env
+        self.num_workers = num_workers
 
         self.teacher_policies = []
         self.teacher_envs = []
@@ -166,7 +164,6 @@ class PDDR(InterruptableAlgorithm):
 
         # Student
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
-        self._policy = self._policy.to(self.device)
         self.optimizer = to.optim.Adam([{"params": self.policy.parameters()}], lr=lr)
 
         # Environments
@@ -174,7 +171,7 @@ class PDDR(InterruptableAlgorithm):
             ParallelRolloutSampler(
                 self.teacher_envs[t],
                 deepcopy(self._expl_strat),
-                num_workers=int(self.num_cpu / self.num_teachers),
+                num_workers=self.num_workers,
                 min_steps=self.min_steps,
             )
             for t in range(self.num_teachers)
@@ -276,6 +273,18 @@ class PDDR(InterruptableAlgorithm):
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             pyrado.save(self.env_real, "env.pkl", self.save_dir)
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        extra["teacher_policies"] = self.teacher_policies
+        extra["teacher_envs"] = self.teacher_envs
+        extra["teacher_expl_strats"] = self.teacher_expl_strats
+        extra["teacher_critics"] = self.teacher_critics
+        extra["teacher_ex_dirs"] = self.teacher_ex_dirs
+
+        return env, policy, extra
 
     def _train_teacher(self, idx: int, snapshot_mode: str = "latest", seed: int = None):
         """

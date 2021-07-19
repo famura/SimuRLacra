@@ -55,9 +55,8 @@ Content
    algorithms.episodic
    algorithms.step_based
    algorithms.meta
-   algorithms.inference
    algorithms.regression
-   algorithms.utils
+   algorithms.stopping_criteria
 
 .. toctree::
    :caption: Exploration:

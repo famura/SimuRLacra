@@ -12,7 +12,7 @@ There are many valid possibilities to deviate from this scheme. However, the fol
     from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
     from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
     from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
-    from pyrado.policies.feed_forward.linear import LinearPolicy
+    from pyrado.policies.feed_back.linear import LinearPolicy
     from pyrado.sampling.rollout import rollout, after_rollout_query
     from pyrado.utils.data_types import RenderMode
     from pyrado.utils.input_output import print_cbt
@@ -49,11 +49,11 @@ testing) and I have to graduate after all ;)
 
 .. code-block:: python
 
-    env_hparams = dict(
+    env_hparam = dict(
         dt=1/50.,
         max_steps=300
     )
-    env = BallOnBeamSim(**env_hparams)
+    env = BallOnBeamSim(**env_hparam)
     env = ActNormWrapper(env)
 
 Set up the policy after the environment since it needs to know the dimensions of the policies observation and action
@@ -97,7 +97,7 @@ you to later see which hyper-parameters you used, i.e. which setting leads to a 
 .. code-block:: python
 
     save_dicts_to_yaml([
-        dict(env=env_hparams, seed=0),
+        dict(env=env_hparam, seed=0),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
