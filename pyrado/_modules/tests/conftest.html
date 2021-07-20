@@ -327,8 +327,10 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">mujoco_py</span>
 
+    <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.openai_ant</span> <span class="kn">import</span> <span class="n">AntSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.openai_half_cheetah</span> <span class="kn">import</span> <span class="n">HalfCheetahSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.openai_hopper</span> <span class="kn">import</span> <span class="n">HopperSim</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.openai_humanoid</span> <span class="kn">import</span> <span class="n">HumanoidSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeStabMjSim</span><span class="p">,</span> <span class="n">QQubeSwingUpMjSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.wam_bic</span> <span class="kn">import</span> <span class="n">WAMBallInCupSim</span>
 
@@ -828,6 +830,16 @@
     <span class="nd">@m_needs_mujoco</span>
     <span class="k">def</span> <span class="nf">default_hop</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">HopperSim</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_hum"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_hum">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_mujoco</span>
+    <span class="k">def</span> <span class="nf">default_hum</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">HumanoidSim</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_ant"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_ant">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_mujoco</span>
+    <span class="k">def</span> <span class="nf">default_ant</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">AntSim</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_wambic"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_wambic">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_mujoco</span>

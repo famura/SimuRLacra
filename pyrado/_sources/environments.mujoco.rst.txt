@@ -14,6 +14,15 @@ base
    :show-inheritance:
 
 
+openai\_ant
+-----------
+
+.. automodule:: pyrado.environments.mujoco.openai_ant
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 openai\_half\_cheetah
 ---------------------
 
@@ -27,6 +36,15 @@ openai\_hopper
 --------------
 
 .. automodule:: pyrado.environments.mujoco.openai_hopper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+openai\_humanoid
+----------------
+
+.. automodule:: pyrado.environments.mujoco.openai_humanoid
    :members:
    :undoc-members:
    :show-inheritance:

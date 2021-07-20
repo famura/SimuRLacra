@@ -643,6 +643,8 @@
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">construct_python_tuple() (AugmentedSafeLoader method)</a>
 </li>
+      <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.contact_forces">contact_forces() (ForwardVelocityRewFcnAnt method)</a>
+</li>
       <li><a href="spaces.html#pyrado.spaces.box.BoxSpace.contains">contains() (BoxSpace method)</a>
 
       <ul>
@@ -677,14 +679,14 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.CosOfOneEleRewFcn">CosOfOneEleRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov">cov (MultivariateNormalWrapper property)</a>
 
       <ul>
         <li><a href="exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise.cov">(NormalParamNoise property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils.html#pyrado.utils.math.cov">cov() (in module pyrado.utils.math)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.cov_chol_flat">cov_chol_flat (MultivariateNormalWrapper property)</a>
@@ -715,6 +717,10 @@
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer">create_default_randomizer() (in module pyrado.domain_randomization.default_randomizers)</a>
 </li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_ant">create_default_randomizer_ant() (in module pyrado.domain_randomization.default_randomizers)</a>
+</li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_ant_epsilon">create_default_randomizer_ant_epsilon() (in module pyrado.domain_randomization.default_randomizers)</a>
+</li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bl">create_default_randomizer_bl() (in module pyrado.domain_randomization.default_randomizers)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bob">create_default_randomizer_bob() (in module pyrado.domain_randomization.default_randomizers)</a>
@@ -724,6 +730,10 @@
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bs">create_default_randomizer_bs() (in module pyrado.domain_randomization.default_randomizers)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_cata">create_default_randomizer_cata() (in module pyrado.domain_randomization.default_randomizers)</a>
+</li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_humanoid">create_default_randomizer_humanoid() (in module pyrado.domain_randomization.default_randomizers)</a>
+</li>
+      <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_humanoid_epsilon">create_default_randomizer_humanoid_epsilon() (in module pyrado.domain_randomization.default_randomizers)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_omo">create_default_randomizer_omo() (in module pyrado.domain_randomization.default_randomizers)</a>
 </li>
@@ -829,6 +839,8 @@
 </li>
       <li><a href="utils.html#pyrado.utils.tensor.deepcopy_or_clone">deepcopy_or_clone() (in module pyrado.utils.tensor)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_ant">default_ant() (DefaultEnvs static method)</a>
+</li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_ds_vel_bt">default_bit_ds_vel_bt() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_ika_pos_bt">default_bit_ika_pos_bt() (DefaultEnvs static method)</a>
@@ -862,6 +874,8 @@
       <li><a href="tests.html#tests.conftest.DefaultPolicies.default_fs">default_fs() (DefaultPolicies static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_hop">default_hop() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_hum">default_hum() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_mg_ik_bt">default_mg_ik_bt() (DefaultEnvs static method)</a>
 </li>
@@ -953,10 +967,10 @@
         <li><a href="exploration.html#pyrado.exploration.uniform_noise.UniformNoise.device">(UniformNoise property)</a>
 </li>
       </ul></li>
-      <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise">DiagNormalNoise (class in pyrado.exploration.normal_noise)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise">DiagNormalNoise (class in pyrado.exploration.normal_noise)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.data_types.dict_arraylike_to_float">dict_arraylike_to_float() (in module pyrado.utils.data_types)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.dict_path_access">dict_path_access() (in module pyrado.utils.data_types)</a>
@@ -1423,6 +1437,10 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcn">ForwardVelocityRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
+      <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt">ForwardVelocityRewFcnAnt (class in pyrado.tasks.reward_functions)</a>
+</li>
+      <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid">ForwardVelocityRewFcnHumanoid (class in pyrado.tasks.reward_functions)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.from_pandas">from_pandas() (StepSequence class method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.sprl.MultivariateNormalWrapper.from_stacked">from_stacked() (MultivariateNormalWrapper static method)</a>
@@ -1667,6 +1685,12 @@
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.hc.HCNormal">HCNormal (class in pyrado.algorithms.episodic.hc)</a>
 </li>
+      <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.healthy_reward">healthy_reward (ForwardVelocityRewFcnAnt property)</a>
+
+      <ul>
+        <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.healthy_reward">(ForwardVelocityRewFcnHumanoid property)</a>
+</li>
+      </ul></li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.LSTMPolicy.hidden_size">hidden_size (LSTMPolicy property)</a>
 
       <ul>
@@ -1801,14 +1825,14 @@
         <li><a href="environments.one_step.html#pyrado.environments.one_step.two_dim_gaussian.TwoDimGaussian.init_space">(TwoDimGaussian property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker.initialized">initialized() (MarkerTracker method)</a>
 
       <ul>
         <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.RigidBodyTracker.initialized">(RigidBodyTracker method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.inner_env">inner_env() (in module pyrado.environment_wrappers.utils)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.TimeSeriesDataPair.inp_seq">inp_seq (TimeSeriesDataPair property)</a>
@@ -1855,6 +1879,12 @@
         <li><a href="tasks.html#pyrado.tasks.base.Task.is_done">(Task method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.is_done">(TaskWrapper method)</a>
+</li>
+      </ul></li>
+      <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.is_healthy">is_healthy (ForwardVelocityRewFcnAnt property)</a>
+
+      <ul>
+        <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.is_healthy">(ForwardVelocityRewFcnHumanoid property)</a>
 </li>
       </ul></li>
       <li><a href="utils.html#pyrado.utils.checks.is_iterable">is_iterable() (in module pyrado.utils.checks)</a>
@@ -4968,6 +4998,10 @@
         <li><a href="tasks.html#pyrado.tasks.endless_flipping.FlippingTask.reset">(FlippingTask method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcn.reset">(ForwardVelocityRewFcn method)</a>
+</li>
+        <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.reset">(ForwardVelocityRewFcnAnt method)</a>
+</li>
+        <li><a href="tasks.html#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.reset">(ForwardVelocityRewFcnHumanoid method)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.reset">(GAE method)</a>
 </li>

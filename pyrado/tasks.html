@@ -1697,6 +1697,77 @@ The default implementation does nothing.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ForwardVelocityRewFcnAnt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_force_range</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_cost_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctrl_cost_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">healthy_reward</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_when_unhealthy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">healthy_z_range</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(0.2,</span> <span class="pre">1.0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/reward_functions.html#ForwardVelocityRewFcnAnt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.reward_functions.RewFcn</span></code></a></p>
+<p>Reward function for the <cite>AntSim</cite> environment, encouraging to run forward</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The OpenAi Gym calculates the velocity via forward differences, while here we get the velocity directly from
+the simulator.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py">https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py</a></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.contact_forces">
+<span class="sig-name descname"><span class="pre">contact_forces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_contact_forces</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/reward_functions.html#ForwardVelocityRewFcnAnt.contact_forces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.contact_forces" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.healthy_reward">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">healthy_reward</span></span><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.healthy_reward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.is_healthy">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_healthy</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.is_healthy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/reward_functions.html#ForwardVelocityRewFcnAnt.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnAnt.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset internal members. This function is called from the <cite>Task.reset()</cite> function.
+The default implementation does nothing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid">
+<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ForwardVelocityRewFcnHumanoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_cost_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5e-07</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctrl_cost_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_reward_weight</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">healthy_reward</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_when_unhealthy</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">healthy_z_range</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(1.0,</span> <span class="pre">2.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_cost_range</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(-</span> <span class="pre">inf,</span> <span class="pre">10.0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/reward_functions.html#ForwardVelocityRewFcnHumanoid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.reward_functions.RewFcn</span></code></a></p>
+<p>Reward function for the <cite>HumanoidSim</cite> environment, encouraging to run forward</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The OpenAi Gym calculates the velocity via forward differences, while here we get the velocity directly from
+the simulator.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://github.com/openai/gym/blob/master/gym/envs/mujoco/humanoid_v3.py">https://github.com/openai/gym/blob/master/gym/envs/mujoco/humanoid_v3.py</a></p>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.healthy_reward">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">healthy_reward</span></span><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.healthy_reward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.is_healthy">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_healthy</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.is_healthy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/reward_functions.html#ForwardVelocityRewFcnHumanoid.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.reward_functions.ForwardVelocityRewFcnHumanoid.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset internal members. This function is called from the <cite>Task.reset()</cite> function.
+The default implementation does nothing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pyrado.tasks.reward_functions.MinusOnePerStepRewFcn">
 <em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">MinusOnePerStepRewFcn</span></span><a class="reference internal" href="_modules/pyrado/tasks/reward_functions.html#MinusOnePerStepRewFcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyrado.tasks.reward_functions.MinusOnePerStepRewFcn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.reward_functions.RewFcn</span></code></a></p>
