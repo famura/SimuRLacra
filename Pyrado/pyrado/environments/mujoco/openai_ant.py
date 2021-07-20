@@ -38,29 +38,24 @@ from pyrado.spaces.base import Space
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.goalless import GoallessTask
-from pyrado.tasks.reward_functions import CompoundRewFcn, ForwardVelocityRewFcn, PlusOnePerStepRewFcn
+from pyrado.tasks.reward_functions import ForwardVelocityRewFcnAnt
 
 
-class HopperSim(MujocoSimEnv, Serializable):
+class AntSim(MujocoSimEnv, Serializable):
     """
-    The Hopper (v3) MuJoCo simulation environment where a planar simplified one-legged robot tries to run forward.
-
-    .. note::
-        In contrast to the OpenAI Gym MoJoCo environments, Pyrado enables the randomization of the hoppers "healthy"
-        state range. Moreover, the state space is constrained to the this part of the state space. Note the in the
-        original environment, the `terminate_when_unhealthy` is `True` by default.
+    The Ant (v3) MuJoCo simulation environment where a four-legged creature walks as fast as possible.
 
     .. seealso::
-        [1] https://github.com/openai/gym/blob/master/gym/envs/mujoco/hopper_v3.py
+        https://github.com/openai/gym/blob/master/gym/envs/mujoco/ant_v3.py
     """
 
-    name: str = "hop"
+    name: str = "ant"
 
     def __init__(
         self,
         frame_skip: int = 5,
         dt: Optional[float] = None,
-        max_steps: int = 1000,
+        max_steps: Optional[int] = 1000,
         task_args: Optional[dict] = None,
     ):
         """
@@ -74,8 +69,11 @@ class HopperSim(MujocoSimEnv, Serializable):
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
+        self._contact_force_range = (-1.0, 1.0)
+        self._exclude_current_positions_from_observation = True
+
         # Call MujocoSimEnv's constructor
-        model_path = osp.join(osp.dirname(__file__), "assets", "openai_hopper.xml")
+        model_path = osp.join(osp.dirname(__file__), "assets", "openai_ant.xml")
         super().__init__(model_path, frame_skip, dt, max_steps, task_args)
 
         # Initial state
@@ -84,68 +82,84 @@ class HopperSim(MujocoSimEnv, Serializable):
         max_init_qpos = self.init_qpos + np.full_like(self.init_qpos, noise_halfspan)
         min_init_qvel = self.init_qvel - np.full_like(self.init_qvel, noise_halfspan)
         max_init_qvel = self.init_qvel + np.full_like(self.init_qvel, noise_halfspan)
-        min_init_state = np.concatenate([min_init_qpos, min_init_qvel]).ravel()
-        max_init_state = np.concatenate([max_init_qpos, max_init_qvel]).ravel()
+
+        cfrc_shape = self.sim.data.cfrc_ext.flat.copy().shape
+        min_init_cfrc = -np.ones(cfrc_shape)
+        max_init_cfrc = np.ones(cfrc_shape)
+        min_init_state = np.concatenate([min_init_qpos, min_init_qvel, min_init_cfrc]).ravel()
+        max_init_state = np.concatenate([max_init_qpos, max_init_qvel, max_init_cfrc]).ravel()
         self._init_space = BoxSpace(min_init_state, max_init_state)
 
-        self.camera_config = dict(trackbodyid=2, distance=3.0, lookat=np.array((0.0, 0.0, 1.15)), elevation=-20.0)
+        self.camera_config = dict(distance=5.0)
 
     @property
     def state_space(self) -> Space:
-        n = self.init_qpos.size + self.init_qvel.size
-        min_state = -self.domain_param["state_bound"] * np.ones(n)
-        min_state[0] = -pyrado.inf  # ignore forward position
-        min_state[1] = self.domain_param["z_lower_bound"]
-        min_state[2] = -self.domain_param["angle_bound"]
-        max_state = self.domain_param["state_bound"] * np.ones(n)
-        max_state[0] = +pyrado.inf  # ignore forward position
-        max_state[2] = self.domain_param["angle_bound"]
-        return BoxSpace(min_state, max_state)
+        state_shape = np.concatenate(
+            [self.sim.data.qpos.flat, self.sim.data.qvel.flat, self.sim.data.cfrc_ext.flat]
+        ).shape
+        return BoxSpace(-pyrado.inf, pyrado.inf, shape=state_shape)
 
     @property
     def obs_space(self) -> Space:
-        obs_space_shape = (self.state_space.shape[0] - 1,)  # ignoring the x position
-        return BoxSpace(-pyrado.inf, pyrado.inf, shape=obs_space_shape)
+        obs_shape = self.observe(self.state_space.bound_up).shape
+        return BoxSpace(-pyrado.inf, pyrado.inf, shape=obs_shape)
 
     @property
     def act_space(self) -> Space:
         act_bounds = self.model.actuator_ctrlrange.copy().T
-        return BoxSpace(*act_bounds, labels=["thigh", "leg", "foot"])
+        return BoxSpace(
+            *act_bounds, labels=["hip_4", "ankle_4", "hip_1", "ankle_1", "hip_2", "ankle_2", "hip_3", "ankle_3"]
+        )
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            state_bound=100.0, z_lower_bound=0.7, angle_bound=0.2, foot_friction_coeff=2.0, reset_noise_halfspan=5e-3
+            reset_noise_halfspan=0.1,
+            init_pos_z=0.75,
+            hip_length=0.2,
+            thigh_length=0.2,
+            tibia_length=0.4,
+            gravity=9.81,
+            sliding_friction=1,
+            torsional_friction=0.5,
+            rolling_friction=0.5,
+            density=5.0,  # scales linearly with the mass
+            wind_x=0,
+            wind_y=0,
+            wind_z=0,
         )
 
     def _create_task(self, task_args: dict) -> Task:
-        if "fwd_rew_weight" not in task_args:
-            task_args["fwd_rew_weight"] = 1.0
-        if "ctrl_cost_weight" not in task_args:
-            task_args["ctrl_cost_weight"] = 1e-3
+        # Define the task including the reward function
+        if "contact_force_range" not in task_args:
+            task_args["contact_force_range"] = self._contact_force_range
 
-        rew_fcn = CompoundRewFcn(
-            [
-                ForwardVelocityRewFcn(self._dt, idx_fwd=0, **task_args),
-                PlusOnePerStepRewFcn(),  # equivalent to the "healthy_reward" in [1]
-            ]
-        )
-        return GoallessTask(self.spec, rew_fcn)
+        return GoallessTask(self.spec, ForwardVelocityRewFcnAnt(self._dt, **task_args))
+
+    @property
+    def contact_forces(self):
+        raw_contact_forces = self.sim.data.cfrc_ext
+        min_value, max_value = self._contact_force_range
+        contact_forces = np.clip(raw_contact_forces, min_value, max_value)
+        return contact_forces
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
         self.sim.data.ctrl[:] = act
         self.sim.step()
 
-        pos = self.sim.data.qpos.copy()
-        vel = self.sim.data.qvel.copy()
-        self.state = np.concatenate([pos, vel])
+        pos = self.sim.data.qpos.flat.copy()
+        vel = self.sim.data.qvel.flat.copy()
+        cfrc_ext = self.contact_forces.flat.copy()
+
+        self.state = np.concatenate([pos, vel, cfrc_ext])
 
         return dict()
 
     def observe(self, state: np.ndarray) -> np.ndarray:
-        # Clip velocity
-        pos = state[: self.model.nq]
-        vel = np.clip(state[self.model.nq :], -10.0, 10.0)
+        position = state[: self.init_qpos.size].copy()
+        velAndCfrc = state[self.init_qpos.size :].copy()
 
-        # Ignore horizontal position to maintain translational invariance
-        return np.concatenate([pos[1:], vel])
+        if self._exclude_current_positions_from_observation:
+            position = position[2:]
+
+        return np.concatenate((position, velAndCfrc))

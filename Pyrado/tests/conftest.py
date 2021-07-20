@@ -104,8 +104,10 @@ except (ImportError, ModuleNotFoundError):
 try:
     import mujoco_py
 
+    from pyrado.environments.mujoco.openai_ant import AntSim
     from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
     from pyrado.environments.mujoco.openai_hopper import HopperSim
+    from pyrado.environments.mujoco.openai_humanoid import HumanoidSim
     from pyrado.environments.mujoco.quanser_qube import QQubeStabMjSim, QQubeSwingUpMjSim
     from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 
@@ -605,6 +607,16 @@ class DefaultEnvs:
     @m_needs_mujoco
     def default_hop():
         return HopperSim()
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_hum():
+        return HumanoidSim()
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_ant():
+        return AntSim()
 
     @staticmethod
     @m_needs_mujoco

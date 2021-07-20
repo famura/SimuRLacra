@@ -216,7 +216,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         Apply the given action to the MuJoCo simulation. This executes one step of the physics simulation.
 
         :param act: action
-        :return: dict with optional information from MuJoCo
+        :return: dictionary with optional information from MuJoCo
         """
 
     def _create_mujoco_model(self):
@@ -276,17 +276,18 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Reset MuJoCo simulation model (only reset the joint configuration)
         self.sim.reset()
         old_state = self.sim.get_state()
-        nq = self.init_qpos.size
+        nq = self.model.nq
+        nv = self.model.nv
         if not init_state[:nq].shape == old_state.qpos.shape:  # check joint positions dimension
             raise pyrado.ShapeErr(given=init_state[:nq], expected_match=old_state.qpos)
         # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
-        if not init_state[nq : 2 * nq].shape == old_state.qvel.shape:  # check joint velocities dimension
-            raise pyrado.ShapeErr(given=init_state[nq : 2 * nq], expected_match=old_state.qvel)
+        if not init_state[nq : nq + nv].shape == old_state.qvel.shape:  # check joint velocities dimension
+            raise pyrado.ShapeErr(given=init_state[nq : nq + nv], expected_match=old_state.qvel)
         new_state = mujoco_py.MjSimState(
             # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
             old_state.time,
             init_state[:nq],
-            init_state[nq : 2 * nq],
+            init_state[nq : nq + nv],
             old_state.act,
             old_state.udd_state,
         )
