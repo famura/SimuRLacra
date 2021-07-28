@@ -219,8 +219,8 @@ class BallOnBeamVis(PandaVis):
         m_beam = self._env.domain_param["beam_mass"]
         l_beam = self._env.domain_param["beam_length"]
         d_beam = self._env.domain_param["beam_thickness"]
-        ang_offset = self._env.domain_param["ang_offset"]
         c_frict = self._env.domain_param["friction_coeff"]
+        ang_offset = self._env.domain_param["ang_offset"]
         x = float(self._env.state[0])  # ball position along the beam axis [m]
         a = float(self._env.state[1])  # angle [rad]
 
@@ -241,14 +241,16 @@ class BallOnBeamVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
+            ball position: {self._env.state[0] :1.2f}
+            beam angle [deg]: {self._env.state[1] * 180 / np.pi : 3.1f}
             dt: {self._env.dt : 1.4f}
             gravity_const: {gravity_const : 1.3f}
-            m_ball: {m_ball: 1.2f}
-            r_ball: {r_ball : 1.3f}
-            m_beam: {m_beam : 1.2f}
-            l_beam: {l_beam : 1.2f}
-            d_beam: {d_beam : 1.2f}
-            c_frict: {c_frict : 1.3f}
+            ball_mass: {m_ball: 1.2f}
+            ball_radius: {r_ball : 1.3f}
+            beam_mass: {m_beam : 1.2f}
+            beam_length: {l_beam : 1.2f}
+            beam_thickness: {d_beam : 1.2f}
+            friction_coeff: {c_frict : 1.3f}
             ang_offset: {ang_offset : 1.3f}
             """
         )
@@ -343,12 +345,12 @@ class OneMassOscillatorVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            mass_x: {np.round(self.mass.getX(), 3)}
-            spring_Sx: {np.round(self.spring.getSx(), 3)}
+            pos: {self._env.state[0] :1.2f}
+            vel: {self._env.state[1] :1.2f}
             dt: {self._env.dt :1.4f}
-            m: {m : 1.3f}
-            k: {k : 2.2f}
-            d: {d : 1.3f}
+            mass: {m : 1.3f}
+            stiffness: {k : 2.2f}
+            damping: {d : 1.3f}
             """
         )
 
@@ -422,17 +424,17 @@ class PendulumVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            dt: {self._env.dt :1.4f}
-            theta: {self._env.state[0] * 180 / np.pi : 2.3f}
+            pole angle [deg]: {self._env.state[0] * 180 / np.pi : 3.1f}
             sin theta: {np.sin(self._env.state[0]) : 1.3f}
             cos theta: {np.cos(self._env.state[0]) : 1.3f}
             theta_dot: {self._env.state[1] * 180 / np.pi : 2.3f}
-            tau: {self._env._curr_act[0] : 1.3f}
+            torque: {self._env._curr_act[0] : 1.3f}
+            dt: {self._env.dt :1.4f}
             gravity_const: {gravity_const : 1.3f}
-            m_pole: {m_pole : 1.3f}
-            l_pole: {l_pole : 1.3f}
-            d_pole: {d_pole : 1.3f}
-            tau_max: {tau_max: 1.3f}
+            pole_mass: {m_pole : 1.3f}
+            pole_length: {l_pole : 1.3f}
+            pole_damping: {d_pole : 1.3f}
+            torque_thold: {tau_max: 1.3f}
             """
         )
 
@@ -520,7 +522,7 @@ class QBallBalancerVis(PandaVis):
         k_m = self._env.domain_param["motor_back_emf"]
         R_m = self._env.domain_param["motor_resistance"]
         B_eq = self._env.domain_param["combined_damping"]
-        c_frict = self._env.domain_param["friction_coeff"]
+        ball_damping = self._env.domain_param["ball_damping"]
         V_thold_x_neg = self._env.domain_param["voltage_thold_x_neg"]
         V_thold_x_pos = self._env.domain_param["voltage_thold_x_pos"]
         V_thold_y_neg = self._env.domain_param["voltage_thold_y_neg"]
@@ -558,22 +560,22 @@ class QBallBalancerVis(PandaVis):
             ball pos: {x : 1.3f}, {y : 1.3f}
             plate angle around x axis: {self._env.plate_angs[1] * 180 / np.pi : 2.2f}
             plate angle around y axis: {self._env.plate_angs[0] * 180 / np.pi : 2.2f}
-            shaft angles: {self._env.state[0] * 180 / np.pi : 2.2f}, {self._env.state[1] * 180 / np.pi : 2.2f}
-            V_: {self._env._curr_act[0] : 1.2f}, V_y : {self._env._curr_act[1] : 1.2f}
+            shaft angles [deg]: {self._env.state[0] * 180 / np.pi : 3.1f}, {self._env.state[1] * 180 / np.pi : 3.1f}
+            V_x: {self._env._curr_act[0] : 1.2f}, V_y : {self._env._curr_act[1] : 1.2f}
             gravity_const: {gravity_const : 1.3f}
-            m_ball: {m_ball : 1.3f}
-            r_ball: {r_ball : 1.3f}
-            r_arm: {r_arm : 1.3f}
-            l_plate: {l_plate : 1.3f}
-            K_g: {K_g : 2.2f}
-            J_m: {J_m : 1.7f}
-            J_l: {J_l : 1.6f}
-            eta_g: {eta_g : 1.3f}
-            eta_m: {eta_m : 1.3f}
-            k_mt: {k_m : 1.3f}
-            R_m: {R_m : 1.3f}
-            B_eq: {B_eq : 1.3f}
-            c_frict: {c_frict : 1.3f}
+            ball_mass: {m_ball : 1.3f}
+            ball_radius: {r_ball : 1.3f}
+            arm_radius: {r_arm : 1.3f}
+            plate_length: {l_plate : 1.3f}
+            gear_ratio: {K_g : 2.2f}
+            motor_inertia: {J_m : 1.7f}
+            load_inertia: {J_l : 1.6f}
+            gear_efficiency: {eta_g : 1.3f}
+            motor_efficiency: {eta_m : 1.3f}
+            motor_back_emf: {k_m : 1.3f}
+            motor_resistance: {R_m : 1.3f}
+            combined_damping: {B_eq : 1.3f}
+            ball_damping: {ball_damping : 1.3f}
             V_thold_x_pos: {V_thold_x_pos : 2.3f}
             V_thold_x_neg: {V_thold_x_neg : 2.3f}
             V_thold_y_pos: {V_thold_y_pos : 2.3f}
@@ -684,23 +686,23 @@ class QCartPoleVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            x: {x : 1.3f}
-            theta: {th * 180 / np.pi : 3.3f}
+            cart position: {x : 1.3f}
+            pole angle [deg]: {th * 180 / np.pi : 3.1f}
             dt: {self._env.dt :1.4f}
             gravity_const: {gravity_const : 1.3f}
-            m_cart: {m_cart : 1.4f}
-            l_rail: {l_rail : 1.3f}
-            l_pole: {l_pole : 1.3f}
-            eta_m: {eta_m : 1.3f}
-            eta_g: {eta_g : 1.3f}
-            K_g: {K_g : 1.3f}
-            J_m: {J_m : 1.8f}
-            r_mp: {r_mp : 1.4f}
-            R_m: {R_m : 1.3f}
-            k_m: {k_m : 1.6f}
-            B_eq: {B_eq : 1.2f}
-            B_pole: {B_pole : 1.3f}
-            m_pole: {m_pole : 1.3f}
+            cart_mass: {m_cart : 1.4f}
+            pole_mass: {m_pole : 1.3f}
+            rail_length: {l_rail : 1.3f}
+            pole_length: {l_pole : 1.3f}
+            motor_efficiency: {eta_m : 1.3f}
+            gear_efficiency: {eta_g : 1.3f}
+            gear_ratio: {K_g : 1.3f}
+            motor_inertia: {J_m : 1.8f}
+            pinion_radius: {r_mp : 1.4f}
+            motor_resistance: {R_m : 1.3f}
+            motor_back_emf: {k_m : 1.6f}
+            combined_damping: {B_eq : 1.2f}
+            pole_damping: {B_pole : 1.3f}
             """
         )
 
@@ -814,8 +816,8 @@ class QQubeVis(PandaVis):
         # Update displayed text
         self.text.setText(
             f"""
-            theta: {self._env.state[0] * 180 / np.pi : 3.1f}
-            alpha: {self._env.state[1] * 180 / np.pi : 3.1f}
+            theta [deg]: {self._env.state[0] * 180 / np.pi : 3.1f}
+            alpha [deg]: {self._env.state[1] * 180 / np.pi : 3.1f}
             dt: {self._env.dt :1.4f}
             gravity_const: {g : 1.3f}
             mass_rot_pole: {Mr : 1.4f}
