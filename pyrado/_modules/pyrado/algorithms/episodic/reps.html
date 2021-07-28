@@ -281,14 +281,14 @@
 <span class="sd">    Episodic variant of Relative Entropy Policy Search (REPS)</span>
 
 <span class="sd">    .. note::</span>
-<span class="sd">        REPS was designed for linear policies.</span>
+<span class="sd">        REPS [1] was designed for linear policies.</span>
 
 <span class="sd">    .. seealso::</span>
 <span class="sd">        [1] J. Peters, K. Mülling, Y. Altuen, &quot;Relative Entropy Policy Search&quot;, AAAI, 2010</span>
 <span class="sd">        [2] A. Abdolmaleki, J.T. Springenberg, J. Degrave, S. Bohez, Y. Tassa, D. Belov, N. Heess, M. Riedmiller,</span>
 <span class="sd">            &quot;Relative Entropy Regularized Policy Iteration&quot;, arXiv, 2018</span>
 <span class="sd">        [3] This implementation is inspired by the work of H. Abdulsamad</span>
-<span class="sd">            https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py</span>
+<span class="sd">            https://github.com/hanyas/reps/blob/master/reps/ereps.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;reps&quot;</span>
@@ -404,7 +404,7 @@
             <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">rets</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Do numerically stabilized exp transform</span>
-            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">clamp</span><span class="p">((</span><span class="n">rets</span> <span class="o">-</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rets</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">700.0</span><span class="p">))</span></div>
+            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">clamp</span><span class="p">((</span><span class="n">rets</span> <span class="o">-</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rets</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">700.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">700.0</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="REPS.dual_evaluation"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.dual_evaluation">[docs]</a>    <span class="k">def</span> <span class="nf">dual_evaluation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">eta</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">rets</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
