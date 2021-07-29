@@ -74,7 +74,10 @@ conda activate pyrado
 conda install -y blas cmake lapack libgcc-ng mkl mkl-include patchelf pip pycairo setuptools -c conda-forge
 pip install -r requirements.txt
 ```
-
+If you want to use the gym wrapper
+```
+pip install gym
+```
 
 ### What do you want to be installed?
 If you just want to have a look at SimuRLacra, or don't care about the Rcs-based robotics part, I recommend going for [Red Velvet](#option-red-velvet). However, if you for example want to export your learned controller to a C++ program runnning on a phsical robot, I recommend [Black Forest](#option-black-forest). Here is an overview of the options:
