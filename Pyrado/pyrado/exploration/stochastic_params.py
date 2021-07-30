@@ -244,3 +244,66 @@ class HyperSphereParamNoise(StochasticParamExplStrat):
 
     def sample_param_set(self, nominal_params: to.Tensor) -> to.Tensor:
         return nominal_params + self._r * sample_from_hyper_sphere_surface(self.param_dim, "normal")
+
+
+class EnergyParamNoise(StochasticParamExplStrat):
+    """
+    Sampling parameters from an energy-based distribution
+
+    .. note::
+        In this case `EnergyParamNoise` is just a proxy for `EnergyNoise` to maintain the structure.
+    """
+
+    def __init__(self, param_dim: int, energy_net: nn.Module, num_iter: int, lr: float, use_cuda: bool = False):
+        """
+        Constructor
+
+        :param param_dim: number of policy parameters
+        :param energy_net: TODO
+        :param num_iter: TODO
+        :param lr: TODO
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
+        """
+        # Call the StochasticParamExplStrat's constructor
+        super().__init__(param_dim)
+
+        self._noise = EnergyNoise(noise_dim=param_dim, energy_net=energy_net, use_cuda=use_cuda)
+
+        self.loss_fcn = nn.MSELoss()
+        self.num_iter = num_iter
+        self.optim = to.optim.Adam(
+            [{"params": self._noise.net.parameters()}],
+            lr=lr,
+            # eps=1e-5,
+        )
+
+    def reset_expl_params(self):
+        """Reset the noise distribution."""
+        self._noise.net.init_param()
+
+    def adapt(self, params: to.Tensor, values: to.Tensor):
+        """
+        Update the noise distribution.
+
+        :param values: estimated returns of the policy particles
+        """
+        for i in range(self.num_iter):
+            self.optim.zero_grad()
+
+            pred = self._noise.log_prob(params)  # batched eval via nn.Module
+            loss = self.loss_fcn(values, pred.squeeze())
+
+            loss.backward()
+            self.optim.step()
+
+    def get_entropy(self, *args, **kwargs):
+        """Get the current entropy of the noise distribution."""
+        return self._noise.get_entropy(*args, **kwargs)
+
+    @property
+    def noise(self) -> [FullNormalNoise, DiagNormalNoise]:
+        """Get the exploration noise."""
+        return self._noise
+
+    def sample_param_set(self, nominal_params: to.Tensor) -> to.Tensor:
+        return self._noise(nominal_params)
