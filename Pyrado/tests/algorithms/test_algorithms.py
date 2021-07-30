@@ -71,6 +71,7 @@ from pyrado.utils.argparser import MockArgs
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.functions import noisy_nonlin_fcn
+from pyrado.utils.math import soft_update_
 
 
 @pytest.fixture
@@ -403,11 +404,11 @@ def test_soft_update(env, policy: Policy):
     source.param_values = to.ones_like(source.param_values)
 
     # Do one soft update
-    SAC.soft_update(target, source, tau=0.8)
+    soft_update_(target, source, tau=0.8)
     assert to.allclose(target.param_values, 0.2 * to.ones_like(target.param_values))
 
     # Do a second soft update to see the exponential decay
-    SAC.soft_update(target, source, tau=0.8)
+    soft_update_(target, source, tau=0.8)
     assert to.allclose(target.param_values, 0.36 * to.ones_like(target.param_values))
 
 

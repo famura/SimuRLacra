@@ -46,6 +46,7 @@ from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.data_processing import standardize
+from pyrado.utils.math import soft_update_
 
 
 class SAC(ValueBased):
@@ -219,22 +220,6 @@ class SAC(ValueBased):
         """Get the detached entropy coefficient."""
         return to.exp(self._log_ent_coeff.detach())
 
-    @staticmethod
-    def soft_update(target: nn.Module, source: nn.Module, tau: float = 0.995):
-        """
-        Moving average update, a.k.a. Polyak update.
-        Modifies the input argument `target`.
-
-        :param target: PyTroch module with parameters to be updated
-        :param source: PyTroch module with parameters to update to
-        :param tau: interpolation factor for averaging, between 0 and 1
-        """
-        if not 0 < tau < 1:
-            raise pyrado.ValueErr(given=tau, g_constraint="0", l_constraint="1")
-
-        for targ_param, src_param in zip(target.parameters(), source.parameters()):
-            targ_param.data = targ_param.data * tau + src_param.data * (1.0 - tau)
-
     def update(self):
         """Update the policy's and Q-functions' parameters on transitions sampled from the replay memory."""
         # Containers for logging
@@ -336,8 +321,8 @@ class SAC(ValueBased):
 
             # Soft-update the target networks
             if (self._curr_iter * self.num_batch_updates + b) % self.target_update_intvl == 0:
-                SAC.soft_update(self.qfcn_targ_1, self.qfcn_1, self.tau)
-                SAC.soft_update(self.qfcn_targ_2, self.qfcn_2, self.tau)
+                soft_update_(self.qfcn_targ_1, self.qfcn_1, self.tau)
+                soft_update_(self.qfcn_targ_2, self.qfcn_2, self.tau)
 
         # Update the learning rate if the schedulers have been specified
         if self._lr_scheduler_policy is not None:
