@@ -109,7 +109,7 @@ class FNN(nn.Module):
         return cp.parameters_to_vector(self.parameters())
 
     @param_values.setter
-    def param_values(self, param):
+    def param_values(self, param: to.Tensor):
         """Set the policy parameters from an 1d array."""
         cp.vector_to_parameters(param, self.parameters())
 

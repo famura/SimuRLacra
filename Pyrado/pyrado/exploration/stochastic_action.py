@@ -150,7 +150,7 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
         )
 
     def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
+        self._noise.reset_expl_params(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
         return self._noise.get_entropy(*args, **kwargs)
@@ -220,7 +220,7 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
         return self._noise(policy_output)
 
     def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
+        self._noise.reset_expl_params(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
         return self._noise.get_entropy(*args, **kwargs)
@@ -289,7 +289,7 @@ class SACExplStrat(StochasticActionExplStrat):
 
     # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
     def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
+        self._noise.reset_expl_params(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
         return self._noise.get_entropy(*args, **kwargs)

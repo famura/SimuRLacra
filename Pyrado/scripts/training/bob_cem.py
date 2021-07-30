@@ -71,6 +71,7 @@ if __name__ == "__main__":
         expl_std_min=0.02,
         extra_expl_std_init=1.0,
         extra_expl_decay_iter=5,
+        soft_update_factor=0.9,
         full_cov=True,
         symm_sampling=False,
         num_workers=8,

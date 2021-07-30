@@ -27,12 +27,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Pendulum environment and Hill Climbing.
+Train an agent to solve the Rosenbrock environment and Hill Climbing.
 """
 import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.pysim.pendulum import PendulumSim
+from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.features import FeatureStack, MultFeat, const_feat, identity_feat, sign_feat, squared_feat
 from pyrado.policies.feed_back.linear import LinearPolicy
@@ -44,35 +43,33 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(PendulumSim.name, f"{HCNormal.name}_{LinearPolicy.name}")
+    ex_dir = setup_experiment(RosenSim.name, f"{HCNormal.name}_{LinearPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparam = dict(dt=1 / 100.0, max_steps=800)
-    env = PendulumSim(**env_hparam)
-    env = ActNormWrapper(env)
+    env = RosenSim()
 
     # Policy
-    policy_hparam = dict(feats=FeatureStack(const_feat, identity_feat, MultFeat((0, 2)), MultFeat((1, 2))))
+    policy_hparam = dict(feats=FeatureStack(const_feat))
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=10,
-        pop_size=10 * policy.num_param,
+        max_iter=100,
+        pop_size=200,
         num_domains=1,
         num_init_states_per_domain=1,
-        expl_factor=1.05,
-        expl_std_init=1.0,
-        num_workers=20,
+        expl_factor=1.1,
+        expl_std_init=0.2,
+        num_workers=1,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparam, seed=args.seed),
+        dict(seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,
