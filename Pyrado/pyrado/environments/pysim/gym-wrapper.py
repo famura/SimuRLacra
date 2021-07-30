@@ -40,7 +40,7 @@ from pyrado.utils.data_types import RenderMode
 
 class PysimGymWrapper(gym.Env):
     """
-    A wrapper for pysim environments exposing an OpenAI gym env.
+    A wrapper for Pyrado environments exposing them as OpenAI gym environments.
     
     Do not instantiate this yourself but rather use `gym.make("SimulacraPySimEnv-v0", env=sim_env)`
     where `sim_env` is your instantiated pysim env.
@@ -72,14 +72,15 @@ class PysimGymWrapper(gym.Env):
 
     @staticmethod
     def conv_space_from_simulacra(space: Space) -> gym.spaces.Space:
-        """Convert a Simulacra space to a gym space
+        """
+        Convert a Pyrado space to a gym space.
 
-        :param space: A simulacra space
-        :raises NotImplementedError: Raised when no conversion is implemented for the space type
-        :return:
+        :param space: Pyrado space to be converted
+        :return: space compatible with OpenAI gym
         """
         if isinstance(space, BoxSpace):
             bounds = space.bounds
             shape = space.shape
             return Box(low=bounds[0].astype(np.float32), high=bounds[1].astype(np.float32), shape=shape)
-        raise NotImplementedError
+        else:
+            raise NotImplementedError
