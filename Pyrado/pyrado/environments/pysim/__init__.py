@@ -31,5 +31,5 @@ try:
 except ImportError:
     pass
 else:
-    # gym is present, registering pysim wrapper
+    # If gym is present, registering pysim wrapper
     register(id="SimulacraPySimEnv-v0", entry_point="pyrado.environments.pysim.gym-wrapper:PysimGymWrapper")
