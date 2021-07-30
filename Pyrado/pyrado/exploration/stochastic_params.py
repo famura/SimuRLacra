@@ -31,10 +31,8 @@ from typing import Sequence
 from warnings import warn
 
 import torch as to
-import torch.nn as nn
 
 import pyrado
-from pyrado.exploration.energy_noise import EnergyNoise
 from pyrado.exploration.normal_noise import DiagNormalNoise, FullNormalNoise
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 

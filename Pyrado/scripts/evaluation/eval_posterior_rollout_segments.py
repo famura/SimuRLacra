@@ -42,7 +42,6 @@ from matplotlib import pyplot as plt
 from tabulate import tabulate
 
 import pyrado
-from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.algorithms.meta.npdr import NPDR
 from pyrado.algorithms.meta.sbi_base import SBIBase

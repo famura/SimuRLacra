@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # Time series embedding
     embedding_hparam = dict(
         downsampling_factor=20,
-        # len_rollouts=env_sim.max_steps,
+        len_rollouts=env_sim.max_steps,
         # recurrent_network_type=nn.RNN,
         # only_last_output=True,
         # hidden_size=20,
