@@ -257,6 +257,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">logsumexp</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
@@ -450,6 +451,36 @@
 <span class="sd">    :return: clipped tensor</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">up_lo</span><span class="p">),</span> <span class="o">-</span><span class="n">up_lo</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="soft_update"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.soft_update">[docs]</a><span class="k">def</span> <span class="nf">soft_update</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.995</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Moving average update, a.k.a. Polyak update.</span>
+
+<span class="sd">    :param target: PyTroch tensor with the next / target values</span>
+<span class="sd">    :param source: PyTroch module with the current / source values</span>
+<span class="sd">    :param tau: interpolation factor for averaging, between 0 and 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">tau</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">target</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">+</span> <span class="n">source</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">tau</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="soft_update_"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.soft_update_">[docs]</a><span class="k">def</span> <span class="nf">soft_update_</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.995</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Moving average update, a.k.a. Polyak update.</span>
+<span class="sd">    Modifies the input argument `target`.</span>
+
+<span class="sd">    :param target: PyTroch module with parameters to be updated</span>
+<span class="sd">    :param source: PyTroch module with parameters to update to</span>
+<span class="sd">    :param tau: interpolation factor for averaging, between 0 and 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">tau</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">targ_param</span><span class="p">,</span> <span class="n">src_param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">source</span><span class="o">.</span><span class="n">parameters</span><span class="p">()):</span>
+        <span class="n">targ_param</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">targ_param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">+</span> <span class="n">src_param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">tau</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="numerical_differentiation_coeffs"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.math.numerical_differentiation_coeffs">[docs]</a><span class="k">def</span> <span class="nf">numerical_differentiation_coeffs</span><span class="p">(</span>
