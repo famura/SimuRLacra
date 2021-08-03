@@ -26,6 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from typing import List, Optional, Tuple
+
 import gym
 import gym.spaces
 import numpy as np
@@ -42,14 +44,14 @@ class PysimGymWrapper(gym.Env):
     """
     A wrapper for pysim environments exposing a gym env.
     Do not instantiate this yourself but rather use `gym.make()` like this
-    
+
     .. code-block:: python
 
         sim_env = QQubeSwingUpSim(**env_hparams)
         gym.make("SimulacraPySimEnv-v0", env=sim_env)
     """
 
-    metadata = {"render.modes": ["human"]} # supported render modes: currently only human
+    metadata = {"render.modes": ["human"]}  # supported render modes: currently only human
 
     def __init__(self, env: SimPyEnv):
         """
@@ -66,9 +68,9 @@ class PysimGymWrapper(gym.Env):
 
     def step(self, act: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
         """
-        Run one timestep of the environment's dynamics. When end of episode is reached, you are responsible for calling 
+        Run one timestep of the environment's dynamics. When end of episode is reached, you are responsible for calling
         `reset()` to reset this environment's state.
-        
+
         :param act: action provided by the agent
         :return: observation: agent's current observation of the environment
                  reward: reward returned by the environment
@@ -80,17 +82,17 @@ class PysimGymWrapper(gym.Env):
     def reset(self) -> np.ndarray:
         """
         Resets the environment to an initial state and returns an initial observation.
-        
+
         .. note::
-            This function does not reset the environment's random number generator(s); random variables in the 
-            environment's state are sampled independently between multiple calls to `reset()`. In other words, each call 
+            This function does not reset the environment's random number generator(s); random variables in the
+            environment's state are sampled independently between multiple calls to `reset()`. In other words, each call
             of `reset()` yields an environment suitable for a new episode, independent of previous episodes.
 
         :return: the initial observation
         """
         return self._wrapped_env.reset()
 
-    def render(self, mode: str="human"):
+    def render(self, mode: str = "human"):
         """
         Renders the environment.
         The set of supported modes varies per environment (some environments do not support rendering).
@@ -115,12 +117,12 @@ class PysimGymWrapper(gym.Env):
         """
         self._wrapped_env.close()
 
-    def seed(self, seed: Optional[int]=None) -> Optional[List[int]]:
+    def seed(self, seed: Optional[int] = None) -> Optional[List[int]]:
         """
         Sets the seed for this env's random number generator(s).
 
-        :return: list of seeds used in this environments's random number generators. The first value in the list 
-                 should be the "main" seed, or the value which a reproducer should pass to `seed`. Often, the main 
+        :return: list of seeds used in this environments's random number generators. The first value in the list
+                 should be the "main" seed, or the value which a reproducer should pass to `seed`. Often, the main
                  seed equals the provided `seed`, but this won't be true if `seed=None`, for example.
         """
         pyrado.set_seed(seed)
