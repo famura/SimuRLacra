@@ -43,7 +43,7 @@ from pyrado.utils.data_types import RenderMode
 class PysimGymWrapper(gym.Env):
     """
     A wrapper for pysim environments exposing a gym env.
-    Do not instantiate this yourself but rather use `gym.make()` like this
+    Do not instantiate this yourself but rather use `gym.make()` like this:
 
     .. code-block:: python
 
@@ -58,18 +58,18 @@ class PysimGymWrapper(gym.Env):
         Initialize the environment. You are not supposed to call this function directly, but use
         `gym.make("SimulacraPySimEnv-v0", env=sim_env)` where `sim_env` is your Pyrado environment.
 
-        :param env: wrapped Pyrado environment
+        :param env: Pyrado environment to wrap
         """
         self._wrapped_env = env
 
         # Translate environment parameters
-        self.action_space = self.conv_space_from_simulacra(self._wrapped_env.act_space)
-        self.observation_space = self.conv_space_from_simulacra(self._wrapped_env.obs_space)
+        self.action_space = self.conv_space_from_pyrado(self._wrapped_env.act_space)
+        self.observation_space = self.conv_space_from_pyrado(self._wrapped_env.obs_space)
 
     def step(self, act: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
         """
-        Run one timestep of the environment's dynamics. When end of episode is reached, you are responsible for calling
-        `reset()` to reset this environment's state.
+        Run one timestep of the environment's dynamics. When the end of episode is reached, you are responsible for
+        calling `reset()` to reset this environment's state.
 
         :param act: action provided by the agent
         :return: observation: agent's current observation of the environment
@@ -128,11 +128,11 @@ class PysimGymWrapper(gym.Env):
         pyrado.set_seed(seed)
 
     @staticmethod
-    def conv_space_from_simulacra(space: Space) -> gym.spaces.Space:
+    def conv_space_from_pyrado(space: Space) -> gym.spaces.Space:
         """
-        Convert a Simulacra space to a gym space
+        Convert a Pyrado space to a gym space
 
-        :param space: A simulacra space
+        :param space: A Pyrado space
         :return:
         """
         if isinstance(space, BoxSpace):
