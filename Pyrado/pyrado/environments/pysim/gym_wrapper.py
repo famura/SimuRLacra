@@ -51,7 +51,7 @@ class PysimGymWrapper(gym.Env):
         gym.make("SimulacraPySimEnv-v0", env=sim_env)
     """
 
-    metadata = {"render.modes": ["human"]}  # supported render modes: currently only human
+    metadata = {"render.modes": ["human"]}  # currently only human is supported
 
     def __init__(self, env: SimPyEnv):
         """
@@ -97,14 +97,11 @@ class PysimGymWrapper(gym.Env):
         Renders the environment.
         The set of supported modes varies per environment (some environments do not support rendering).
         By convention, if mode is:
-        - human: render to the current display or terminal and
-          return nothing. Usually for human consumption.
-        - rgb_array: Return an numpy.ndarray with shape (x, y, 3),
-          representing RGB values for an x-by-y pixel image, suitable
-          for turning into a video.
-        - ansi: Return a string (str) or StringIO.StringIO containing a
-          terminal-style text representation. The text can include newlines
-          and ANSI escape sequences (e.g. for colors).
+        human: render to the current display or terminal and return nothing. Usually for human consumption.
+        rgb_array: return an numpy.ndarray with shape (x, y, 3), representing RGB values for an x-by-y pixel image,
+                   suitable for turning into a video.
+        ansi: return a string (str) or StringIO.StringIO containing a terminal-style text representation.
+              The text can include newlines and ANSI escape sequences (e.g. for colors).
 
         :param mode: the mode to render with (currently ignored until other modes besides human are implemented)
         """
@@ -130,10 +127,10 @@ class PysimGymWrapper(gym.Env):
     @staticmethod
     def conv_space_from_pyrado(space: Space) -> gym.spaces.Space:
         """
-        Convert a Pyrado space to a gym space
+        Convert a Pyrado space to a gym space.
 
-        :param space: A Pyrado space
-        :return:
+        :param space: Pyrado space to convert
+        :return: OpenAI gym space
         """
         if isinstance(space, BoxSpace):
             bounds = space.bounds
