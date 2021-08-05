@@ -6,6 +6,7 @@ ignore:
   - "Pyrado/pyrado/environments/barrett_wam"
   - "Pyrado/pyrado/environments/mujoco"
   - "Pyrado/pyrado/environments/quanser"
+  - "Pyrado/pyrado/environments/gym_wrapper"
   - "Pyrado/scripts"
   - "RcsPySim/doc"
   - "RcsPySim/config"

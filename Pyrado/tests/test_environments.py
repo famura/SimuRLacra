@@ -300,6 +300,24 @@ def test_mujoco_animations(env):
 
 
 @pytest.mark.parametrize(
+    "env",
+    [
+        "default_qqsu",
+    ],
+    indirect=True,
+)
+def test_gym_wrapper(env):
+    gym = pytest.importorskip("gym")
+
+    gym_env = gym.make("SimulacraPySimEnv-v0", env=env)
+    gym_env.reset()
+    act = gym_env.action_space.sample()
+    out = gym_env.step(act)
+    for el in out:
+        assert el is not None
+
+
+@pytest.mark.parametrize(
     "servo_ang", [np.r_[np.linspace(-np.pi / 2.1, np.pi / 2.1), np.linspace(np.pi / 2.1, -np.pi / 2.1)]]
 )
 def test_qbb_kin(servo_ang):
