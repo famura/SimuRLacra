@@ -522,6 +522,24 @@
     <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">&lt;=</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span></div>
 
 
+<div class="viewcode-block" id="test_gym_wrapper"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_gym_wrapper">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;default_qqsu&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_gym_wrapper</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="n">gym</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">importorskip</span><span class="p">(</span><span class="s2">&quot;gym&quot;</span><span class="p">)</span>
+
+    <span class="n">gym_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;SimulacraPySimEnv-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">gym_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">act</span> <span class="o">=</span> <span class="n">gym_env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">gym_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">el</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
 <div class="viewcode-block" id="test_qbb_kin"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_qbb_kin">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;servo_ang&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.1</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.1</span><span class="p">)]]</span>
 <span class="p">)</span>

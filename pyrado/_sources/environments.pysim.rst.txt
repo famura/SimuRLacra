@@ -23,6 +23,15 @@ base
    :show-inheritance:
 
 
+gym\_wrapper
+------------
+
+.. automodule:: pyrado.environments.pysim.gym_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 one\_mass\_oscillator
 ---------------------
 
