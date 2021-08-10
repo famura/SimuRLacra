@@ -40,8 +40,10 @@ import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import RolloutSavingWrapper, until_thold_exceeded
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
+from pyrado.sampling.step_sequence import StepSequence
 
 
 class MultivariateNormalWrapper:
@@ -388,14 +390,17 @@ class SPRL(Algorithm):
             target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
         )
 
+        def get_domain_param_value(ro: StepSequence, param_name: str) -> np.ndarray:
+            domain_param_dict = ro.rollout_info["domain_param"]
+            untransformed_param_name = param_name + DomainParamTransform.UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX
+            if untransformed_param_name in domain_param_dict:
+                return domain_param_dict[untransformed_param_name]
+            return domain_param_dict[param_name]
+
         rollouts_all = self._subroutine.sampler.rollouts
         contexts = to.tensor(
             [
-                [
-                    to.from_numpy(ro.rollout_info["domain_param"][param.name])
-                    for rollouts in rollouts_all
-                    for ro in rollouts
-                ]
+                [to.from_numpy(get_domain_param_value(ro, param.name)) for rollouts in rollouts_all for ro in rollouts]
                 for param in self._spl_parameters
             ],
             requires_grad=True,

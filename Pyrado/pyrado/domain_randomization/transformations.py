@@ -49,6 +49,8 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
     transformed space, here the log-space, without telling them.
     """
 
+    UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX: str = "_untransformed"
+
     def __init__(self, wrapped_env: Union[SimEnv, EnvWrapper], mask: Union[List[str], Tuple[str]]):
         """
         Constructor
@@ -85,8 +87,11 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
         :param domain_param: domain parameter set in the original space
         :return: domain parameter set in the transformed space
         """
-        for key, value in domain_param.items():
-            domain_param[key] = self.forward(value) if key in self._mask else value
+        # Consume the generator as it throws an error otherwise as the size of the dictionary changes while iterating.
+        for key, value in list(domain_param.items()):
+            if key in self._mask:
+                domain_param[key] = self.forward(value)
+                domain_param[key + DomainParamTransform.UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX] = value
         return domain_param
 
     @staticmethod
@@ -107,8 +112,11 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
         :param domain_param: domain parameter set in the transformed space
         :return: domain parameter set in the original space
         """
-        for key, value in domain_param.items():
-            domain_param[key] = self.inverse(value) if key in self._mask else value
+        # Consume the generator as it throws an error otherwise as the size of the dictionary changes while iterating.
+        for key, value in list(domain_param.items()):
+            if key in self._mask:
+                domain_param[key] = self.inverse(value)
+                domain_param[key + DomainParamTransform.UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX] = value
         return domain_param
 
     @staticmethod
@@ -151,7 +159,8 @@ class LogDomainParamTransform(DomainParamTransform):
     @staticmethod
     def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
-            return np.log(value)
+            # If value is scalar, i.e., a zero-dimensional value, np.log returns a float instead of an array.
+            return np.asarray(np.log(value), dtype=value.dtype)
         elif isinstance(value, to.Tensor):
             return to.log(value)
         else:
@@ -160,7 +169,8 @@ class LogDomainParamTransform(DomainParamTransform):
     @staticmethod
     def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
-            return np.exp(value)
+            # If value is scalar, i.e., a zero-dimensional value, np.exp returns a float instead of an array.
+            return np.asarray(np.exp(value), dtype=value.dtype)
         elif isinstance(value, to.Tensor):
             return to.exp(value)
         else:
@@ -173,7 +183,8 @@ class SqrtDomainParamTransform(DomainParamTransform):
     @staticmethod
     def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
-            return np.sqrt(value)
+            # If value is scalar, i.e., a zero-dimensional value, np.sqrt returns a float instead of an array.
+            return np.asarray(np.sqrt(value), dtype=value.dtype)
         elif isinstance(value, to.Tensor):
             return to.sqrt(value)
         else:
@@ -182,7 +193,8 @@ class SqrtDomainParamTransform(DomainParamTransform):
     @staticmethod
     def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
-            return np.power(value, 2)
+            # If value is scalar, i.e., a zero-dimensional value, np.power returns a float instead of an array.
+            return np.asarray(np.power(value, 2), dtype=value.dtype)
         elif isinstance(value, to.Tensor):
             return to.pow(value, 2)
         else:
