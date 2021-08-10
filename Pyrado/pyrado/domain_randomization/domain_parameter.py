@@ -360,9 +360,9 @@ class SelfPacedDomainParam(DomainParam):
         return SelfPacedDomainParam(
             name=name,
             target_mean=mean,
-            target_cov_chol_flat=target_cov_portion * mean,
+            target_cov_chol_flat=target_cov_portion * mean.abs(),
             init_mean=mean,
-            init_cov_chol_flat=init_cov_portion * mean,
+            init_cov_chol_flat=init_cov_portion * mean.abs(),
         )
 
     @property
