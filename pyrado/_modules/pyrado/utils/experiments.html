@@ -263,6 +263,7 @@
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
@@ -307,7 +308,7 @@
 
     <span class="c1"># Algorithm, environment, policy, and more</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;algo.pkl&quot;</span><span class="p">,</span> <span class="n">ex_dir</span><span class="p">)</span>
-    <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="n">Algorithm</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
     <span class="c1"># Check if the return types are correct. They can be None, too.</span>
     <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">(</span><span class="n">Env</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">)):</span>

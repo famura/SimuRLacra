@@ -475,7 +475,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># overwrites policy.pt (and vfcn.pt ect)</span>
 
         <span class="c1"># Return the estimated return of the trained policy in simulation</span>
-        <span class="n">avg_ret_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
+        <span class="n">avg_ret_sim</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
             <span class="kc">None</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
@@ -535,7 +535,7 @@
         <span class="c1"># Evaluate learned policies from random candidates on the target environment (real-world) system</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_init_cand</span><span class="p">):</span>
             <span class="n">policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;init_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">)</span>
-            <span class="n">cands_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
+            <span class="n">cands_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span>
                 <span class="n">policy</span><span class="p">,</span>
@@ -683,7 +683,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_checkpoint</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="c1"># Evaluate the current policy in the target domain</span>
             <span class="n">policy</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;policy.pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">curr_cand_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">curr_cand_value</span> <span class="o">=</span> <span class="n">BayRn</span><span class="o">.</span><span class="n">eval_policy</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span>
                 <span class="n">policy</span><span class="p">,</span>
