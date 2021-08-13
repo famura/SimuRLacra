@@ -76,8 +76,7 @@ class DomainParam:
                 return False
         return True
 
-    @staticmethod
-    def get_field_names() -> List[str]:
+    def get_field_names(self) -> List[str]:
         """Get union of all hyper-parameters of all domain parameter distributions."""
         return ["name", "clip_lo", "clip_up", "roundint"]
 
@@ -144,8 +143,7 @@ class UniformDomainParam(DomainParam):
         self.halfspan = halfspan
         self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan, validate_args=True)
 
-    @staticmethod
-    def get_field_names() -> List[str]:
+    def get_field_names(self) -> List[str]:
         return ["name", "mean", "halfspan", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
@@ -181,8 +179,7 @@ class NormalDomainParam(DomainParam):
         self.std = std
         self.distr = Normal(self.mean, self.std, validate_args=True)
 
-    @staticmethod
-    def get_field_names() -> List[str]:
+    def get_field_names(self) -> List[str]:
         return ["name", "mean", "std", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
@@ -219,8 +216,7 @@ class MultivariateNormalDomainParam(DomainParam):
             raise pyrado.ShapeErr(msg="The covariance needs to be given as a matrix!")
         self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)
 
-    @staticmethod
-    def get_field_names() -> List[str]:
+    def get_field_names(self) -> List[str]:
         return ["name", "mean", "cov", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
@@ -261,8 +257,7 @@ class BernoulliDomainParam(DomainParam):
         self.mean = val_0 * (1 - prob_1) + val_1 * prob_1
         self.distr = Bernoulli(self.prob_1, validate_args=True)
 
-    @staticmethod
-    def get_field_names() -> List[str]:
+    def get_field_names(self) -> List[str]:
         return ["name", "mean", "val_0", "val_1", "prob_1", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
@@ -348,8 +343,7 @@ class SelfPacedDomainParam(DomainParam):
         self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
         self._context_distr = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
 
-    @staticmethod
-    def get_field_names() -> Sequence[str]:
+    def get_field_names(self) -> Sequence[str]:
         """Get union of all hyper-parameters of all domain parameter distributions."""
         return ["target_mean", "target_cov_chol_flat", "context_mean", "context_cov_chol_flat"]
 

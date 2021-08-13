@@ -63,8 +63,8 @@ class PysimGymWrapper(gym.Env):
         self._wrapped_env = env
 
         # Translate environment parameters
-        self.action_space = self.conv_space_from_pyrado(self._wrapped_env.act_space)
-        self.observation_space = self.conv_space_from_pyrado(self._wrapped_env.obs_space)
+        self.action_space = PysimGymWrapper.conv_space_from_pyrado(self._wrapped_env.act_space)
+        self.observation_space = PysimGymWrapper.conv_space_from_pyrado(self._wrapped_env.obs_space)
 
     def step(self, act: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
         """

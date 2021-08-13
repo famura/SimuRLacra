@@ -36,6 +36,7 @@ import pandas as pd
 import torch as to
 
 import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
@@ -80,7 +81,7 @@ def load_experiment(
 
     # Algorithm, environment, policy, and more
     algo = pyrado.load("algo.pkl", ex_dir)
-    env, policy, extra = algo.load_snapshot(args)
+    env, policy, extra = Algorithm.load_snapshot(args)
 
     # Check if the return types are correct. They can be None, too.
     if env is not None and not isinstance(env, (Env, EnvWrapper)):

@@ -769,7 +769,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, len(self.dp_mapping)))
 
         # Insert the domain parameters into the wrapped environment's buffer
-        self.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
+        SBIBase.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
 
         # Set the initial state spaces of the simulation environment to match the observed initial states
         if use_rec_init_states:
@@ -801,7 +801,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # Return the estimated return of the trained policy in simulation
         assert len(self._env_sim_trn.buffer) == self.num_eval_samples
         self._env_sim_trn.ring_idx = 0  # don't reset the buffer to eval on the same domains as trained
-        avg_ret_sim = self.eval_policy(
+        avg_ret_sim = SBIBase.eval_policy(
             None, self._env_sim_trn, self._subrtn_policy.policy, prefix, self.num_eval_samples
         )
         return float(avg_ret_sim)
@@ -842,7 +842,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         extra["prior"] = pyrado.load("prior.pt", ex_dir, verbose=True)
         # By default load the latest posterior (latest iteration and the last round)
         try:
-            extra["posterior"] = self.load_posterior(
+            extra["posterior"] = SBIBase.load_posterior(
                 ex_dir, parsed_args.iter, parsed_args.round, obj=None, verbose=True
             )
             # Load the complete data or the data of the given iteration

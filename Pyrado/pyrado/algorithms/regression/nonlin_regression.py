@@ -190,7 +190,7 @@ class NonlinRegression(Algorithm):
             loss_trn.backward()
 
             # Clip the gradients if desired
-            self.clip_grad(self._policy, self.max_grad_norm)
+            Algorithm.clip_grad(self._policy, self.max_grad_norm)
 
             # call the optimizer
             self.optim.step()

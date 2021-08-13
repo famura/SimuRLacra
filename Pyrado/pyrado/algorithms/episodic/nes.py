@@ -124,7 +124,7 @@ class NES(ParameterExploring):
         # Utility coefficients (ignored for transform_returns = False)
         # Use pop_size + 1 since we are also considering the current policy
         eta_std = eta_std if eta_std is not None else (3 + np.log(policy.num_param)) / np.sqrt(self.pop_size + 1) / 5.0
-        self.eta_mean_util, self.eta_std_util = self.compute_utilities(self.pop_size + 1, eta_mean, eta_std)
+        self.eta_mean_util, self.eta_std_util = NES.compute_utilities(self.pop_size + 1, eta_mean, eta_std)
 
         # Learning rates [2]
         # Use pop_size + 1 since we are also considering the current policy

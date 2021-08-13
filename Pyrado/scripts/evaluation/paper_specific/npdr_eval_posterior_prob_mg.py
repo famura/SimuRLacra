@@ -62,7 +62,7 @@ if __name__ == "__main__":
         raise pyrado.TypeErr(given=algo, expected_type=NPDR)
     env_sim = inner_env(pyrado.load("env_sim.pkl", ex_dir_npdr))
     prior_npdr = pyrado.load("prior.pt", ex_dir_npdr)
-    posterior_npdr = algo.load_posterior(ex_dir_npdr, idx_iter=0, idx_round=6, obj=None, verbose=True)  # CHOICE
+    posterior_npdr = SBIBase.load_posterior(ex_dir_npdr, idx_iter=0, idx_round=6, obj=None, verbose=True)  # CHOICE
     data_real_npdr = pyrado.load(f"data_real.pt", ex_dir_npdr, prefix="iter_0", verbose=True)  # CHOICE
     domain_params_npdr, log_probs = SBIBase.eval_posterior(
         posterior_npdr,
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     algo = pyrado.load("algo.pkl", ex_dir_bs)
     if not isinstance(algo, BayesSim):
         raise pyrado.TypeErr(given=algo, expected_type=BayesSim)
-    posterior_bs = algo.load_posterior(ex_dir_bs, idx_iter=0, idx_round=0, obj=None, verbose=True)  # CHOICE
+    posterior_bs = SBIBase.load_posterior(ex_dir_bs, idx_iter=0, idx_round=0, obj=None, verbose=True)  # CHOICE
     data_real_bs = pyrado.load(f"data_real.pt", ex_dir_bs, prefix="iter_0", verbose=True)
     domain_params_bs, log_probs = SBIBase.eval_posterior(
         posterior_bs,
