@@ -28,7 +28,7 @@
 
 import sys
 from copy import deepcopy
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
 import torch as to
@@ -36,6 +36,7 @@ import torch.nn as nn
 from tqdm import tqdm
 
 import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.value_based import ValueBased
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.utils import typed_env
@@ -46,6 +47,7 @@ from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.data_processing import standardize
+from pyrado.utils.math import soft_update_
 
 
 class SAC(ValueBased):
@@ -201,6 +203,8 @@ class SAC(ValueBased):
         if lr_scheduler is not None:
             self._lr_scheduler_policy = lr_scheduler(self._optim_policy, **lr_scheduler_hparam)
             self._lr_scheduler_qfcns = lr_scheduler(self._optim_qfcns, **lr_scheduler_hparam)
+        else:
+            self._lr_scheduler_policy = self._lr_scheduler_qfcns = None
 
     @property
     def sampler(self) -> ParallelRolloutSampler:
@@ -216,22 +220,6 @@ class SAC(ValueBased):
     def ent_coeff(self) -> to.Tensor:
         """Get the detached entropy coefficient."""
         return to.exp(self._log_ent_coeff.detach())
-
-    @staticmethod
-    def soft_update(target: nn.Module, source: nn.Module, tau: float = 0.995):
-        """
-        Moving average update, a.k.a. Polyak update.
-        Modifies the input argument `target`.
-
-        :param target: PyTroch module with parameters to be updated
-        :param source: PyTroch module with parameters to update to
-        :param tau: interpolation factor for averaging, between 0 and 1
-        """
-        if not 0 < tau < 1:
-            raise pyrado.ValueErr(given=tau, g_constraint="0", l_constraint="1")
-
-        for targ_param, src_param in zip(target.parameters(), source.parameters()):
-            targ_param.data = targ_param.data * tau + src_param.data * (1.0 - tau)
 
     def update(self):
         """Update the policy's and Q-functions' parameters on transitions sampled from the replay memory."""
@@ -313,8 +301,8 @@ class SAC(ValueBased):
             # Update the Q-fcns
             self._optim_qfcns.zero_grad()
             q_loss.backward()
-            qfcn_1_grad_norm[b] = self.clip_grad(self.qfcn_1, None)
-            qfcn_2_grad_norm[b] = self.clip_grad(self.qfcn_2, None)
+            qfcn_1_grad_norm[b] = Algorithm.clip_grad(self.qfcn_1, None)
+            qfcn_2_grad_norm[b] = Algorithm.clip_grad(self.qfcn_2, None)
             self._optim_qfcns.step()
 
             # Compute the policy loss
@@ -329,13 +317,13 @@ class SAC(ValueBased):
             # Update the policy
             self._optim_policy.zero_grad()
             policy_loss.backward()
-            policy_grad_norm[b] = self.clip_grad(self._expl_strat.policy, self.max_grad_norm)
+            policy_grad_norm[b] = Algorithm.clip_grad(self._expl_strat.policy, self.max_grad_norm)
             self._optim_policy.step()
 
             # Soft-update the target networks
             if (self._curr_iter * self.num_batch_updates + b) % self.target_update_intvl == 0:
-                SAC.soft_update(self.qfcn_targ_1, self.qfcn_1, self.tau)
-                SAC.soft_update(self.qfcn_targ_2, self.qfcn_2, self.tau)
+                soft_update_(self.qfcn_targ_1, self.qfcn_1, self.tau)
+                soft_update_(self.qfcn_targ_2, self.qfcn_2, self.tau)
 
         # Update the learning rate if the schedulers have been specified
         if self._lr_scheduler_policy is not None:
@@ -405,3 +393,13 @@ class SAC(ValueBased):
             pyrado.save(
                 self.qfcn_targ_2, "qfcn_target2.pt", self.save_dir, prefix=prefix, suffix=suffix, use_state_dict=True
             )
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        extra["qfcn_target1"] = pyrado.load("qfcn_target1.pt", ex_dir, obj=self.qfcn_targ_1, verbose=True)
+        extra["qfcn_target2"] = pyrado.load("qfcn_target2.pt", ex_dir, obj=self.qfcn_targ_2, verbose=True)
+
+        return env, policy, extra

@@ -56,14 +56,14 @@ class REPS(ParameterExploring):
     Episodic variant of Relative Entropy Policy Search (REPS)
 
     .. note::
-        REPS was designed for linear policies.
+        REPS [1] was designed for linear policies.
 
     .. seealso::
         [1] J. Peters, K. Mülling, Y. Altuen, "Relative Entropy Policy Search", AAAI, 2010
         [2] A. Abdolmaleki, J.T. Springenberg, J. Degrave, S. Bohez, Y. Tassa, D. Belov, N. Heess, M. Riedmiller,
             "Relative Entropy Regularized Policy Iteration", arXiv, 2018
         [3] This implementation is inspired by the work of H. Abdulsamad
-            https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py
+            https://github.com/hanyas/reps/blob/master/reps/ereps.py
     """
 
     name: Optional[str] = "reps"
@@ -179,7 +179,7 @@ class REPS(ParameterExploring):
             return to.softmax(rets / self.eta, dim=0)
         else:
             # Do numerically stabilized exp transform
-            return to.exp(to.clamp((rets - to.max(rets)) / self.eta, min=-700.0))
+            return to.exp(to.clamp((rets - to.max(rets)) / self.eta, min=-700.0, max=700.0))
 
     def dual_evaluation(
         self, eta: Union[to.Tensor, np.ndarray], rets: Union[to.Tensor, np.ndarray]

@@ -26,20 +26,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from collections import namedtuple
 from copy import deepcopy
-from typing import List
+from typing import List, Optional
 
 import pytest
 import sbi.utils as sbiutils
+import torch as to
 import torch.nn as nn
 from sbi.inference import SNPE_C
 
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
 from pyrado.algorithms.meta.arpl import ARPL
+from pyrado.algorithms.meta.bayessim import BayesSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
 from pyrado.algorithms.meta.npdr import NPDR
@@ -73,7 +78,7 @@ from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
-from pyrado.policies.features import *
+from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.feed_back.fnn import FNN, FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
@@ -86,9 +91,10 @@ from pyrado.sampling.sbi_embeddings import (
     LastStepEmbedding,
     RNNEmbedding,
 )
-from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI
+from pyrado.sampling.sbi_rollout_sampler import RolloutSamplerForSBI, SimRolloutSamplerForSBI
 from pyrado.sampling.sequences import *
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
+from pyrado.utils.argparser import MockArgs
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
 
@@ -100,8 +106,8 @@ def ex_dir(tmpdir):
     return tmpdir
 
 
-@pytest.mark.longtime
-@pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
+@pytest.mark.slow
+@pytest.mark.parametrize("env", ["default_qbb"], indirect=True)
 @pytest.mark.parametrize(
     "spota_hparam",
     [
@@ -120,7 +126,49 @@ def ex_dir(tmpdir):
             warmstart_refs=False,
             num_bs_reps=100,
             studentized_ci=False,
-        ),
+        )
+    ],
+)
+def test_spota_hc(ex_dir, env: SimEnv, spota_hparam: dict):
+    pyrado.set_seed(0)
+
+    # Environment and domain randomization
+    randomizer = create_default_randomizer(env)
+    env = DomainRandWrapperBuffer(env, randomizer)
+
+    # Policy and subroutines
+    policy = LinearPolicy(env.spec, feats=FeatureStack(identity_feat))
+
+    subrtn_hparam_common = dict(
+        max_iter=1,
+        num_init_states_per_domain=1,
+        num_domains=1,  # will be overwritten by SPOTA
+        expl_factor=1.1,
+        expl_std_init=0.5,
+        num_workers=1,
+    )
+
+    sr_cand = HCNormal(ex_dir, env, policy, **subrtn_hparam_common)
+    sr_refs = HCNormal(ex_dir, env, deepcopy(policy), **subrtn_hparam_common)
+
+    # Create algorithm and train
+    algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
+    algo.train()
+    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("env", ["default_qbb"], indirect=True)
+@pytest.mark.parametrize(
+    "spota_hparam",
+    [
         dict(
             max_iter=2,
             alpha=0.05,
@@ -138,7 +186,6 @@ def ex_dir(tmpdir):
             studentized_ci=True,
         ),
     ],
-    ids=["config1", "config2"],
 )
 def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     pyrado.set_seed(0)
@@ -157,7 +204,7 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     subrtn_hparam_common = dict(
         # min_rollouts=0,  # will be overwritten by SPOTA
         min_steps=0,  # will be overwritten by SPOTA
-        max_iter=2,
+        max_iter=1,
         num_epoch=3,
         eps_clip=0.1,
         batch_size=64,
@@ -172,11 +219,18 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
     # Create algorithm and train
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
     algo.train()
-
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
 
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
+    assert all(algo.policy.param_values == algo.subroutine_cand.policy.param_values)
 
-@pytest.mark.longtime
+
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "bayrn_hparam",
@@ -192,7 +246,73 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
             mc_estimator=True,
             num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
-            num_workers=1,
+        ),
+    ],
+)
+def test_bayrn_ppo(ex_dir, env: SimEnv, bayrn_hparam: dict):
+    pyrado.set_seed(0)
+
+    # Environments and domain randomization
+    env_real = deepcopy(env)
+    env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
+    dp_map = create_default_domain_param_map_qq()
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+    env_real.domain_param = dict(mass_pend_pole=0.024 * 1.1, mass_rot_pole=0.095 * 1.1)
+    env_real = wrap_like_other_env(env_real, env_sim)
+
+    # Policy and subroutine
+    policy = FNNPolicy(env.spec, [16, 16], hidden_nonlin=to.tanh)
+    vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+    critic_hparam = dict(gamma=0.998, lamda=0.95, num_epoch=3, batch_size=64, lr=1e-3)
+    critic = GAE(vfcn, **critic_hparam)
+    subrtn_hparam = dict(
+        max_iter=1,
+        min_rollouts=3,
+        num_epoch=2,
+        eps_clip=0.1,
+        batch_size=64,
+        num_workers=1,
+        std_init=0.5,
+        lr=1e-2,
+    )
+    subrtn = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
+
+    # Set the boundaries for the GP
+    dp_nom = inner_env(env_sim).get_nominal_domain_param()
+    ddp_space = BoxSpace(
+        bound_lo=np.array([0.8 * dp_nom["mass_pend_pole"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["mass_pend_pole"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
+    )
+
+    # Create algorithm and train
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam, num_workers=1)
+    algo.train()
+    assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
+@pytest.mark.parametrize(
+    "bayrn_hparam",
+    [
+        dict(
+            max_iter=2,
+            acq_fc="UCB",
+            acq_param=dict(beta=0.25),
+            acq_restarts=50,
+            acq_samples=50,
+            num_init_cand=2,
+            warmstart=False,
+            mc_estimator=True,
+            num_eval_rollouts_sim=3,
+            num_eval_rollouts_real=2,  # sim-2-sim
         ),
         dict(
             max_iter=2,
@@ -206,10 +326,9 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam: dict):
             thold_succ_subrtn=50.0,
             num_eval_rollouts_sim=3,
             num_eval_rollouts_real=2,  # sim-2-sim
-            num_workers=1,
         ),
     ],
-    ids=["config1", "config2"],
+    ids=["configUCB", "configEI"],
 )
 def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     pyrado.set_seed(0)
@@ -219,7 +338,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
     dp_map = create_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
-    env_real.domain_param = dict(Mp=0.024 * 1.1, Mr=0.095 * 1.1)
+    env_real.domain_param = dict(mass_pend_pole=0.024 * 1.1, mass_rot_pole=0.095 * 1.1)
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy and subroutine
@@ -227,26 +346,32 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam: dict):
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
         max_iter=1,
-        pop_size=8,
+        pop_size=6,
         num_init_states_per_domain=1,
         num_is_samples=4,
         expl_std_init=0.1,
-        num_workers=bayrn_hparam["num_workers"],  # dual use
+        num_workers=1,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
     # Set the boundaries for the GP
     dp_nom = inner_env(env_sim).get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-8, 0.8 * dp_nom["Mr"], 1e-8]),
-        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-7, 1.2 * dp_nom["Mr"], 1e-7]),
+        bound_lo=np.array([0.8 * dp_nom["mass_pend_pole"], 1e-8, 0.8 * dp_nom["mass_rot_pole"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["mass_pend_pole"], 1e-7, 1.2 * dp_nom["mass_rot_pole"], 1e-7]),
     )
 
     # Create algorithm and train
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam, num_workers=1)
     algo.train()
-
     assert algo.curr_iter == algo.max_iter or algo.stopping_criterion_met()
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
 @pytest.mark.parametrize("env", ["default_omo"], ids=["omo"], indirect=True)
@@ -297,9 +422,17 @@ def test_arpl(ex_dir, env: SimEnv):
     algo = ARPL(ex_dir, env, ppo, policy, ppo.expl_strat, **arpl_hparam)
 
     algo.train(snapshot_mode="best")
+    assert algo.curr_iter == algo.max_iter
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env, num_eval_rollouts", [("default_bob", 5)], ids=["bob"], indirect=["env"])
 def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     pyrado.set_seed(0)
@@ -313,7 +446,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
             )
 
         # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
-        ros_real_tr, ros_sim_tr = algo.truncate_rollouts(rollouts_real, rollouts_sim, replicate=False)
+        ros_real_tr, ros_sim_tr = SysIdViaEpisodicRL.truncate_rollouts(rollouts_real, rollouts_sim, replicate=False)
         assert len(ros_real_tr) == len(ros_sim_tr)
         assert all([np.allclose(r.states[0, :], s.states[0, :]) for r, s in zip(ros_real_tr, ros_sim_tr)])
 
@@ -357,7 +490,6 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     algo_hparam = dict(
         metric=None, obs_dim_weight=np.ones(env_sim.obs_space.shape), num_rollouts_per_distr=5, num_workers=1
     )
-
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
 
     rollouts_real_tst = []
@@ -383,7 +515,7 @@ def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts: int):
     assert loss_post <= loss_pre  # don't have to be better every step
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     pyrado.set_seed(0)
@@ -393,21 +525,21 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     env_real = ActNormWrapper(env_real)
     env_sim = ActNormWrapper(env)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lr", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        0: ("Mr", "mean"),
-        1: ("Mr", "std"),
-        2: ("Mp", "mean"),
-        3: ("Mp", "std"),
-        4: ("Lr", "mean"),
-        5: ("Lr", "std"),
-        6: ("Lp", "mean"),
-        7: ("Lp", "std"),
+        0: ("mass_rot_pole", "mean"),
+        1: ("mass_rot_pole", "std"),
+        2: ("mass_pend_pole", "mean"),
+        3: ("mass_pend_pole", "std"),
+        4: ("length_rot_pole", "mean"),
+        5: ("length_rot_pole", "std"),
+        6: ("length_pend_pole", "mean"),
+        7: ("length_pend_pole", "std"),
     }
     trafo_mask = [True] * 8
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
@@ -441,10 +573,10 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
     subrtn_policy = PPO(ex_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
 
     prior = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / 10),
-        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
-        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / 10),
-        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
+        NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / 10),
+        NormalDomainParam(name="mass_pend_pole", mean=0.024, std=0.024 / 10),
+        NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / 10),
+        NormalDomainParam(name="length_pend_pole", mean=0.129, std=0.129 / 10),
     )
     ddp_policy_hparam = dict(mapping=dp_map, trafo_mask=trafo_mask, scale_params=True)
     ddp_policy = DomainDistrParamPolicy(prior=prior, **ddp_policy_hparam)
@@ -475,18 +607,20 @@ def test_simopt_cem_ppo(ex_dir, env: SimEnv):
         warmstart=True,
     )
     algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam)
-    algo.train()
 
+    algo.train()
     assert algo.curr_iter == algo.max_iter
+
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
 
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
-@pytest.mark.parametrize(
-    "policy",
-    ["linear_policy"],
-    ids=["lin"],
-    indirect=True,
-)
+@pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [(UDR, {}), (EPOpt, dict(skip_iter=2, epsilon=0.2, gamma=0.9995))],
@@ -534,23 +668,28 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
 
     subrtn_hparam = dict(
         max_iter=3,
-        min_steps=env.max_steps,
-        num_workers=1,
+        min_rollouts=5,
         num_epoch=2,
         eps_clip=0.1,
         batch_size=64,
         std_init=0.8,
         lr=2e-4,
+        num_workers=1,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
     algo = algo(env, subrtn, **algo_hparam)
 
     algo.train()
-
     assert algo.curr_iter == algo.max_iter
 
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
-@pytest.mark.longtime
+
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
 @pytest.mark.parametrize(
     "embedding_name",
@@ -564,58 +703,33 @@ def test_basic_meta(ex_dir, policy, env: SimEnv, algo, algo_hparam: dict):
     ],
     ids=["laststep", "allsteps", "deltasteps", "bayessim", "dtw", "rnn"],
 )
+@pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
+@pytest.mark.parametrize("stop_on_done", [True, False], ids=["stop", "dontstop"])
 @pytest.mark.parametrize(
     "state_mask_labels, act_mask_labels",
-    [
-        (None, None),
-        (
-            ["alpha", "theta"],
-            [
-                "V",
-            ],
-        ),
-    ],
+    [(None, None), (["alpha", "theta"], ["V"])],
     ids=["alldims", "seldims"],
 )
-@pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
-@pytest.mark.parametrize("num_real_rollouts", [2], ids=["2ros"])
-@pytest.mark.parametrize("num_sbi_rounds", [1, 2], ids=["1round", "2rounds"])
-@pytest.mark.parametrize("use_rec_act", [True, False], ids=["userecact", "dontuserecact"])
-def test_npdr_no_policy_optimization(
+def test_sbi_embedding(
     ex_dir,
     env: SimEnv,
     embedding_name: str,
-    state_mask_labels: Union[None, List[str]],
-    act_mask_labels: Union[None, List[str]],
     num_segments: int,
     len_segments: int,
-    num_real_rollouts: int,
-    num_sbi_rounds: int,
-    use_rec_act: bool,
+    stop_on_done: bool,
+    state_mask_labels: Optional[List[str]],
+    act_mask_labels: Optional[List[str]],
 ):
     pyrado.set_seed(0)
 
-    # Create a fake ground truth target domain
-    env_real = deepcopy(env)
-    dp_nom = env.get_nominal_domain_param()
-    env_real.domain_param = dict(Rm=dp_nom["Rm"] * 1.2, km=dp_nom["km"] * 0.8)
-
     # Reduce the number of steps to make this test run faster
-    env.max_steps = 40
-    env_real.max_steps = 40
+    env.max_steps = 80
 
     # Policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {1: "Rm", 2: "km"}
-
-    # Prior
-    prior_hparam = dict(
-        low=to.tensor([dp_nom["Rm"] * 0.5, dp_nom["km"] * 0.5]),
-        high=to.tensor([dp_nom["Rm"] * 1.5, dp_nom["km"] * 1.5]),
-    )
-    prior = sbiutils.BoxUniform(**prior_hparam)
+    dp_mapping = {1: "mass_pend_pole", 2: "length_pend_pole"}
 
     # Time series embedding
     if embedding_name == LastStepEmbedding.name:
@@ -674,8 +788,87 @@ def test_npdr_no_policy_optimization(
     else:
         raise NotImplementedError
 
+    sampler = SimRolloutSamplerForSBI(
+        env,
+        policy,
+        dp_mapping,
+        embedding,
+        num_segments,
+        len_segments,
+        stop_on_done,
+        rollouts_real=None,
+        use_rec_act=False,
+    )
+
+    # Test with 7 domain parameter sets
+    data_sim = sampler(to.abs(to.randn(7, 2)))
+    assert data_sim.shape == (7, embedding.dim_output)
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("algo_name", [NPDR.name, BayesSim.name], ids=["NPDR", "Bayessim"])
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qqsu"], indirect=True)
+@pytest.mark.parametrize("num_segments, len_segments", [(4, None), (None, 13)], ids=["numsegs4", "lensegs13"])
+@pytest.mark.parametrize("num_real_rollouts", [1, 2], ids=["1ro", "2ros"])
+@pytest.mark.parametrize("num_sbi_rounds", [1, 2], ids=["1round", "2rounds"])
+@pytest.mark.parametrize("use_rec_act", [True, False], ids=["userecact", "dontuserecact"])
+def test_npdr_and_bayessim(
+    ex_dir,
+    algo_name: str,
+    env: SimEnv,
+    num_segments: int,
+    len_segments: int,
+    num_real_rollouts: int,
+    num_sbi_rounds: int,
+    use_rec_act: bool,
+):
+    pyrado.set_seed(0)
+
+    # Create a fake ground truth target domain
+    env_real = deepcopy(env)
+    dp_nom = env.get_nominal_domain_param()
+    env_real.domain_param = dict(
+        mass_pend_pole=dp_nom["mass_pend_pole"] * 1.2, length_pend_pole=dp_nom["length_pend_pole"] * 0.8
+    )
+
+    # Reduce the number of steps to make this test run faster
+    env.max_steps = 40
+    env_real.max_steps = 40
+
+    # Policy
+    policy = QQubeSwingUpAndBalanceCtrl(env.spec)
+
+    # Define a mapping: index - domain parameter
+    dp_mapping = {1: "mass_pend_pole", 2: "length_pend_pole"}
+
+    # Prior
+    prior_hparam = dict(
+        low=to.tensor([dp_nom["mass_pend_pole"] * 0.5, dp_nom["length_pend_pole"] * 0.5]),
+        high=to.tensor([dp_nom["mass_pend_pole"] * 1.5, dp_nom["length_pend_pole"] * 1.5]),
+    )
+    prior = sbiutils.BoxUniform(**prior_hparam)
+
+    # Time series embedding
+    embedding = BayesSimEmbedding(
+        env.spec,
+        RolloutSamplerForSBI.get_dim_data(env.spec),
+        downsampling_factor=3,
+    )
+
     # Posterior (normalizing flow)
     posterior_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=20, num_transforms=3)
+
+    # Policy optimization subroutine
+    subrtn_policy_hparam = dict(
+        max_iter=1,
+        pop_size=2,
+        num_init_states_per_domain=1,
+        num_domains=2,
+        expl_std_init=0.1,
+        expl_factor=1.1,
+        num_workers=1,
+    )
+    subrtn_policy = HCNormal(ex_dir, env, policy, **subrtn_policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -690,28 +883,58 @@ def test_npdr_no_policy_optimization(
         len_segments=len_segments,
         use_rec_act=use_rec_act,
         stop_on_done=True,
-        posterior_hparam=posterior_hparam,
         subrtn_sbi_training_hparam=dict(max_num_epochs=1),  # only train for 1 iteration
         # subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=True, mcmc_parameters=dict(warmup_steps=20)),
         num_workers=1,
     )
-    algo = NPDR(
-        ex_dir,
-        env,
-        env_real,
-        policy,
-        dp_mapping,
-        prior,
-        embedding,
-        subrtn_sbi_class=SNPE_C,
-        **algo_hparam,
-    )
+    skip = False
+    if algo_name == NPDR.name:
+        algo = NPDR(
+            save_dir=ex_dir,
+            env_sim=env,
+            env_real=env_real,
+            policy=policy,
+            dp_mapping=dp_mapping,
+            prior=prior,
+            embedding=embedding,
+            subrtn_sbi_class=SNPE_C,
+            posterior_hparam=posterior_hparam,
+            subrtn_policy=subrtn_policy,
+            **algo_hparam,
+        )
+    elif algo_name == BayesSim.name:
+        # We are not checking multi-round SNPE-A since it has known issues
+        if algo_hparam["num_sbi_rounds"] > 1:
+            skip = True
+        algo = BayesSim(
+            save_dir=ex_dir,
+            env_sim=env,
+            env_real=env_real,
+            policy=policy,
+            dp_mapping=dp_mapping,
+            embedding=embedding,
+            prior=prior,
+            subrtn_policy=subrtn_policy,
+            **algo_hparam,
+        )
+    else:
+        raise NotImplementedError
 
-    algo.train()
-    assert algo.curr_iter == algo.max_iter
+    if not skip:
+        algo.train()
+        # Just checking the interface here
+        assert algo.curr_iter == algo.max_iter
+
+        # Save and load
+        algo.save_snapshot(meta_info=None)
+        algo_loaded = pyrado.load("algo.pkl", ex_dir)
+        MockArgsSBI = namedtuple("MockArgs", "dir, policy_name, iter, round")
+        args = MockArgsSBI(ex_dir, "policy", 0, num_sbi_rounds - 1)
+        algo_loaded.load_snapshot(args)
+        assert isinstance(algo_loaded, Algorithm)
 
 
-@pytest.mark.longtime
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], indirect=True)
 @pytest.mark.parametrize("optimize_mean", [False, True])
 def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
@@ -720,7 +943,7 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     env = ActNormWrapper(env)
     env_sprl_params = [
         dict(
-            name="g",
+            name="gravity_const",
             target_mean=to.tensor([9.81]),
             target_cov_chol_flat=to.tensor([1.0]),
             init_mean=to.tensor([9.81]),
@@ -769,15 +992,18 @@ def test_sprl(ex_dir, env: SimEnv, optimize_mean: bool):
     algo.train(snapshot_mode="latest")
     assert algo.curr_iter == algo.max_iter
 
+    # Save and load
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+    assert isinstance(algo_loaded, Algorithm)
 
-@pytest.mark.longtime
+
+@pytest.mark.slow
 @pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq-su"], indirect=True)
 @pytest.mark.parametrize("policy", ["fnn_policy"], ids=["fnn"], indirect=True)
-@pytest.mark.parametrize(
-    "algo_hparam",
-    [dict(max_iter=2, num_teachers=2)],
-    ids=["casual"],
-)
+@pytest.mark.parametrize("algo_hparam", [dict(max_iter=2, num_teachers=2)], ids=["casual"])
 def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
     pyrado.set_seed(0)
 
@@ -797,13 +1023,13 @@ def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
     algo_hparam = dict(
         max_iter=2,
         min_steps=env.max_steps,
-        num_cpu=2,
         std_init=0.15,
         num_epochs=10,
         num_teachers=2,
         teacher_policy=teacher_policy,
         teacher_algo=teacher_algo,
         teacher_algo_hparam=teacher_algo_hparam,
+        num_workers=1,
     )
 
     algo = PDDR(ex_dir, env, policy, **algo_hparam)
@@ -814,12 +1040,10 @@ def test_pddr(ex_dir, env: SimEnv, policy, algo_hparam):
 
     # Save and load
     algo.save_snapshot(meta_info=None)
-    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
     assert isinstance(algo_loaded, Algorithm)
-    policy_loaded = algo_loaded.policy
-
-    # Check
-    assert all(algo.policy.param_values == policy_loaded.param_values)
 
     # Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.
     env, policy, extra = load_experiment(ex_dir)

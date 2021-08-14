@@ -98,5 +98,5 @@ if __name__ == "__main__":
     plt.show()
 
     # Save the data
-    np.save(osp.join(pyrado.PERMA_DIR, "time_series", "omo_traj_gt.npy"), data_gt)
-    np.save(osp.join(pyrado.PERMA_DIR, "time_series", "omo_traj_n.npy"), data_n)
+    np.save(osp.join(pyrado.PERMA_DIR, "misc", "omo_traj_gt.npy"), data_gt)
+    np.save(osp.join(pyrado.PERMA_DIR, "misc", "omo_traj_n.npy"), data_n)

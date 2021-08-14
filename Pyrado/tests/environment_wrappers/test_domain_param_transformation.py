@@ -67,8 +67,6 @@ from pyrado.environments.sim_base import SimEnv
         pytest.param("default_bs_ds_pos_vx", marks=m_needs_vortex),
         pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
         pytest.param("default_bit_ds_vel_bt", marks=m_needs_bullet),
-        pytest.param("default_bf_ika_bt", marks=m_needs_bullet),
-        pytest.param("default_bf_ds_vel_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
         pytest.param("default_hop", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),

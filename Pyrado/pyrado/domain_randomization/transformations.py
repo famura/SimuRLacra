@@ -94,9 +94,8 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
                 domain_param[key + DomainParamTransform.UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX] = value
         return domain_param
 
-    @staticmethod
     @abstractmethod
-    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         """
         Map a domain parameter value from the actual domain parameter space to the transformed space.
 
@@ -119,9 +118,8 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
                 domain_param[key + DomainParamTransform.UNTRANSFORMED_DOMAIN_PARAMETER_SUFFIX] = value
         return domain_param
 
-    @staticmethod
     @abstractmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         """
         Map a domain parameter value from the transformed space to the actual domain parameter space.
 
@@ -156,8 +154,7 @@ class DomainParamTransform(EnvWrapper, ABC, Serializable):
 class LogDomainParamTransform(DomainParamTransform):
     """Wrapper to make the domain parameters look like they are in log-space"""
 
-    @staticmethod
-    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             # If value is scalar, i.e., a zero-dimensional value, np.log returns a float instead of an array.
             return np.asarray(np.log(value), dtype=value.dtype)
@@ -166,8 +163,7 @@ class LogDomainParamTransform(DomainParamTransform):
         else:
             return math.log(value)
 
-    @staticmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             # If value is scalar, i.e., a zero-dimensional value, np.exp returns a float instead of an array.
             return np.asarray(np.exp(value), dtype=value.dtype)
@@ -180,8 +176,7 @@ class LogDomainParamTransform(DomainParamTransform):
 class SqrtDomainParamTransform(DomainParamTransform):
     """Wrapper to make the domain parameters look like they are in sqrt-space"""
 
-    @staticmethod
-    def forward(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def forward(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             # If value is scalar, i.e., a zero-dimensional value, np.sqrt returns a float instead of an array.
             return np.asarray(np.sqrt(value), dtype=value.dtype)
@@ -190,8 +185,7 @@ class SqrtDomainParamTransform(DomainParamTransform):
         else:
             return math.sqrt(value)
 
-    @staticmethod
-    def inverse(value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
+    def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         if isinstance(value, np.ndarray):
             # If value is scalar, i.e., a zero-dimensional value, np.power returns a float instead of an array.
             return np.asarray(np.power(value, 2), dtype=value.dtype)

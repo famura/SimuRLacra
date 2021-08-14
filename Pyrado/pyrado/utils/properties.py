@@ -33,7 +33,9 @@ class cached_property:
     """
     Decorator that turns a function into a cached property.
     When the property is first accessed, the function is called to compute the value. Later calls use the cached value.
-    .. note:: Requires a `__dict__` field, so it won't work on named tuples.
+
+    .. note::
+        Requires a `__dict__` field, so it won't work on named tuples.
     """
 
     def __init__(self, func):

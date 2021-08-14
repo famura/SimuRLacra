@@ -160,7 +160,7 @@ if __name__ == "__main__":
 
     _plot_and_save(
         df,
-        "m_ball",
+        "ball_mass",
         r"$m_b~[\mathrm{kg}]$",
         nom_dp_value=0.005,
         show_legend=False,
@@ -168,25 +168,25 @@ if __name__ == "__main__":
         save_dir=eval_dir,
     )
 
-    _plot_and_save(df, "r_ball", "r$r_b$~[\mathrm{m}]", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "ball_radius", "r$r_b$~[\mathrm{m}]", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "r_arm", r"$r_{\mathrm{arm}}~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "arm_radius", r"$r_{\mathrm{arm}}~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "l_plate", r"$l_{\mathrm{plate}~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "plate_length", r"$l_{\mathrm{plate}~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "J_l", r"$J_l~[\mathrm{kg m}^2]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "load_inertia", r"$J_l~[\mathrm{kg m}^2]$", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "J_m", r"$J_m~[\mathrm{kg m}^2]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "motor_inertia", r"$J_m~[\mathrm{kg m}^2]$", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "K_g", "$K_g~[--]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "gear_ratio", "$K_g~[--]$", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "eta_g", r"$\eta_g~[--]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "gear_efficiency", r"$\eta_g~[--]$", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "eta_m", r"$\eta_m~[--]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "motor_efficiency", r"$\eta_m~[--]$", save_figure=args.save, save_dir=eval_dir)
 
     _plot_and_save(
         df,
-        "R_m",
+        "motor_resistance",
         r"$R_m~[\Omega]$",
         nom_dp_value=2.6,
         show_legend=False,  # QCP
@@ -194,29 +194,29 @@ if __name__ == "__main__":
         save_dir=eval_dir,
     )
 
-    _plot_and_save(df, "k_m", r"$k_m~[\mathrm{Nm/A}]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "motor_back_emf", r"$k_m~[\mathrm{Nm/A}]$", save_figure=args.save, save_dir=eval_dir)
 
     # _plot_and_save(df, 'B_eq', r'$B_{\mathrm{eq}}$',
     #                save_figure=args.save, save_dir=eval_dir)
 
     _plot_and_save(
-        df, "c_frict", r"$c_v~[\mathrm{Ns/m}]$", nom_dp_value=0.025, save_figure=args.save, save_dir=eval_dir
+        df, "friction_coeff", r"$c_v~[\mathrm{Ns/m}]$", nom_dp_value=0.025, save_figure=args.save, save_dir=eval_dir
     )
 
     _plot_and_save(
-        df, "V_thold_x_pos", r"$V_{\mathrm{thold,x+}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
+        df, "voltage_thold_x_pos", r"$V_{\mathrm{thold,x+}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
     )
 
     _plot_and_save(
-        df, "V_thold_x_neg", r"$V_{\mathrm{thold,x-}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
+        df, "voltage_thold_x_neg", r"$V_{\mathrm{thold,x-}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
     )
 
     _plot_and_save(
-        df, "V_thold_y_pos", r"$V_{\mathrm{thold,y+}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
+        df, "voltage_thold_y_pos", r"$V_{\mathrm{thold,y+}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
     )
 
     _plot_and_save(
-        df, "V_thold_y_neg", r"$V_{\mathrm{thold,y-}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
+        df, "voltage_thold_y_neg", r"$V_{\mathrm{thold,y-}}~[\mathrm{V}]$", save_figure=args.save, save_dir=eval_dir
     )
 
     _plot_and_save(
@@ -237,37 +237,58 @@ if __name__ == "__main__":
 
     """ QQubeSim """
 
-    _plot_and_save(df, "Rm", r"$R_m~[\Omega]$", nom_dp_value=8.4, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "motor_resistance", r"$R_m~[\Omega]$", nom_dp_value=8.4, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "km", r"$k_m~[\mathrm{Nm/A}]$", nom_dp_value=0.042, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "motor_back_emf", r"$k_m~[\mathrm{Nm/A}]$", nom_dp_value=0.042, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Mr", r"$m_r~[\mathrm{kg}]$", nom_dp_value=0.095, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "mass_rot_pole", r"$m_r~[\mathrm{kg}]$", nom_dp_value=0.095, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Lr", r"$l_r~[\mathrm{m}]$", nom_dp_value=0.085, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "length_rot_pole", r"$l_r~[\mathrm{m}]$", nom_dp_value=0.085, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Dr", r"$l_r~[\mathrm{Nms/rad}]$", nom_dp_value=5e-6, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "damping_rot_pole", r"$l_r~[\mathrm{Nms/rad}]$", nom_dp_value=5e-6, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Mp", r"$m_p~[\mathrm{kg}]$", nom_dp_value=0.024, save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "mass_pend_pole", r"$m_p~[\mathrm{kg}]$", nom_dp_value=0.024, save_figure=args.save, save_dir=eval_dir
+    )
 
-    _plot_and_save(df, "Lp", r"$l_p~[\mathrm{m}]$", nom_dp_value=0.129, save_figure=args.save, save_dir=eval_dir)
-
-    _plot_and_save(df, "Dp", r"$l_p~[\mathrm{Nms/rad}]$", nom_dp_value=1e-6, save_figure=args.save, save_dir=eval_dir)
-
-    """ QCartPoleSim """
-
-    _plot_and_save(df, "m_cart", r"$m_c~[\mathrm{kg}]$", save_figure=args.save, save_dir=eval_dir)
-
-    _plot_and_save(df, "m_pole", r"$m_p~[\mathrm{kg}]$", save_figure=args.save, save_dir=eval_dir)
-
-    _plot_and_save(df, "l_cart", r"$l_c~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
-
-    _plot_and_save(df, "l_pole", r"$l_p~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
-
-    _plot_and_save(df, "l_rail", r"$l_{\mathrm{rail}}~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(
+        df, "length_pend_pole", r"$l_p~[\mathrm{m}]$", nom_dp_value=0.129, save_figure=args.save, save_dir=eval_dir
+    )
 
     _plot_and_save(
         df,
-        "r_mp",
+        "damping_pend_pole",
+        r"$l_p~[\mathrm{Nms/rad}]$",
+        nom_dp_value=1e-6,
+        save_figure=args.save,
+        save_dir=eval_dir,
+    )
+
+    """ QCartPoleSim """
+
+    _plot_and_save(df, "cart_mass", r"$m_c~[\mathrm{kg}]$", save_figure=args.save, save_dir=eval_dir)
+
+    _plot_and_save(df, "pole_mass", r"$m_p~[\mathrm{kg}]$", save_figure=args.save, save_dir=eval_dir)
+
+    _plot_and_save(df, "l_cart", r"$l_c~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
+
+    _plot_and_save(df, "pole_length", r"$l_p~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
+
+    _plot_and_save(df, "rail_length", r"$l_{\mathrm{rail}}~[\mathrm{m}]$", save_figure=args.save, save_dir=eval_dir)
+
+    _plot_and_save(
+        df,
+        "pinion_radius",
         r"$r_{\mathrm{mp}}~[\mathrm{m}]$",
         nom_dp_value=6.35e-3,
         show_legend=False,
@@ -279,8 +300,8 @@ if __name__ == "__main__":
     # B_pole = 0.0024,  # viscous coefficient at the pole [N*s]
     # B_eq = 5.4,  # equivalent Viscous damping coefficient [N*s/m]
 
-    _plot_and_save(df, "B_pole", r"$B_p~[\mathrm{Ns}]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "pole_damping", r"$B_p~[\mathrm{Ns}]$", save_figure=args.save, save_dir=eval_dir)
 
-    _plot_and_save(df, "B_eq", r"$B_{eq}~[\mathrm{Ns/m}]$", save_figure=args.save, save_dir=eval_dir)
+    _plot_and_save(df, "combined_damping", r"$B_{eq}~[\mathrm{Ns/m}]$", save_figure=args.save, save_dir=eval_dir)
 
     plt.show()

@@ -161,6 +161,8 @@ class RosenSim(SimEnv, Serializable):
         # Render using pyplot
         if mode.video:
             from matplotlib import pyplot as plt
+            from matplotlib.patches import Circle
+            from mpl_toolkits.mplot3d import art3d
 
             from pyrado.plotting.surface import draw_surface
 
@@ -170,13 +172,17 @@ class RosenSim(SimEnv, Serializable):
                 # Plot Rosenbrock function once if not already plotted
                 x = np.linspace(-2, 2, 20, True)
                 y = np.linspace(-1, 3, 20, True)
-                self._anim["fig"] = draw_surface(x, y, rosenbrock, "x", "y", "z")
+                self._anim["fig"] = draw_surface(x, y, rosenbrock, "x", "y", "z", plot_kwargs=dict(cmap="viridis"))
 
             self._anim["trace_x"].append(self.state[0])
             self._anim["trace_y"].append(self.state[1])
             self._anim["trace_z"].append(rosenbrock(self.state))
 
             ax = self._anim["fig"].gca()
-            ax.scatter(self._anim["trace_x"], self._anim["trace_y"], self._anim["trace_z"], s=8, c="w")
+
+            for x, y, z in zip(self._anim["trace_x"], self._anim["trace_y"], self._anim["trace_z"]):
+                p = Circle((x, y), 0.02, ec="w", fc="none")
+                ax.add_patch(p)
+                art3d.pathpatch_2d_to_3d(p, z=z, zdir="z")
 
             plt.draw()

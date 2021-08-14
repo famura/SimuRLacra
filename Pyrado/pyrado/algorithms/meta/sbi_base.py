@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import os
 import sys
 from abc import ABC, abstractmethod
-from copy import deepcopy
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Type, Union
 
 import numpy as np
@@ -47,8 +47,12 @@ from tqdm import tqdm
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper, DomainRandWrapperBuffer
-from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environment_wrappers.domain_randomization import (
+    DomainRandWrapper,
+    DomainRandWrapperBuffer,
+    remove_all_dr_wrappers,
+)
+from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
@@ -98,6 +102,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
         stop_on_done: bool = True,
         use_rec_act: bool = True,
         num_sbi_rounds: int = 1,
+        reset_sbi_routine_each_iter: bool = False,
+        reset_proposal_each_iter: bool = False,
         num_eval_samples: Optional[int] = None,
         posterior_hparam: Optional[dict] = None,
         subrtn_sbi_training_hparam: Optional[dict] = None,
@@ -143,6 +149,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
         :param use_rec_act: if `True` the recorded actions form the target domain are used to generate the rollout
                             during simulation (feed-forward). If `False` there policy is used to generate (potentially)
                             state-dependent actions (feed-back).
+        :param reset_sbi_routine_each_iter: if `True` the sbi subroutine instance is recreated every iteration.
+                                            Use this flag to train the posterior each iteration from scratch.
         :param num_sbi_rounds: set to an integer > 1 to use multi-round sbi. This way the posteriors (saved as
                                `..._round_NUMBER...` will be tailored to the data of that round, where `NUMBER`
                                counts up each round (modulo `num_real_rollouts`). If `num_sbi_rounds` = 1, the posterior
@@ -198,7 +206,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         )
 
         self._env_sim_sbi = env_sim  # will be randomized explicitly by sbi
-        self._env_sim_trn = DomainRandWrapperBuffer(deepcopy(env_sim), randomizer=None, selection="cyclic")
+        self._env_sim_trn = DomainRandWrapperBuffer(copy.deepcopy(env_sim), randomizer=None, selection="cyclic")
         self._env_real = env_real
         self.dp_mapping = dp_mapping
         self._embedding = embedding
@@ -208,10 +216,13 @@ class SBIBase(InterruptableAlgorithm, ABC):
         self.len_segments = len_segments
         self.stop_on_done = stop_on_done
         self.use_rec_act = use_rec_act
+        self.reset_sbi_routine_each_iter = reset_sbi_routine_each_iter
+        self.reset_proposal_each_iter = reset_proposal_each_iter
         self.num_sbi_rounds = num_sbi_rounds
         self.num_eval_samples = num_eval_samples or 10 * 2 ** len(dp_mapping)
         self.simulation_batch_size = simulation_batch_size
         self.normalize_posterior = normalize_posterior
+        self._subrtn_sbi = None
         self.subrtn_sbi_training_hparam = subrtn_sbi_training_hparam or dict()
         self.posterior_hparam = posterior_hparam or dict()
         self.thold_succ_subrtn = float(thold_succ_subrtn)
@@ -246,7 +257,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         pyrado.save(self._env_real, "env_real.pkl", self._save_dir)
         pyrado.save(embedding, "embedding.pt", self._save_dir)
         pyrado.save(prior, "prior.pt", self._save_dir)
-        pyrado.save(policy, "policy_init.pt", self._save_dir, use_state_dict=True)
+        pyrado.save(policy, "init_policy.pt", self._save_dir, use_state_dict=True)
 
     @property
     def subroutine_policy(self) -> Algorithm:
@@ -291,13 +302,39 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
+    def _initialize_subrtn_sbi(self, subrtn_sbi_class: Type[NeuralInference], **kwargs):
+        """
+        Creates the SBI subroutine instance. This method is called in the constructor of NPDR or if you wish to
+        retrain the posterior from scratch each iteration.
+
+        :param subrtn_sbi_class: get the SBI class which you want to train with. If `None`, the class is inferred from
+                                 `self._subrtn_sbi`.
+        :param kwargs: e.g. `num_components` for BayesSim
+        """
+        if not issubclass(subrtn_sbi_class, NeuralInference):
+            raise pyrado.TypeErr(
+                msg=f"The given subrtn_sbi_class must be a subclass of NeuralInference, but is {subrtn_sbi_class}!"
+            )
+
+        # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE (untested)
+        density_estimator = sbiutils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
+        summary_writer = self.logger.printers[2].writer
+        assert isinstance(summary_writer, SummaryWriter)
+        self._subrtn_sbi = subrtn_sbi_class(
+            prior=self._sbi_prior,
+            density_estimator=density_estimator,
+            device=self.policy.device,
+            summary_writer=summary_writer,
+            **kwargs,
+        )
+
     def get_latest_proposal_prev_iter(self) -> Union[sbiutils.BoxUniform, DirectPosterior]:
         """
         Get either the prior or the conditioned posterior from the (last round of) previous iteration.
 
         :return: proposal for simulating with sbi
         """
-        if self._curr_iter == 0:
+        if self._curr_iter == 0 or (hasattr(self, "reset_proposal_each_iter") and self.reset_proposal_each_iter):
             proposal = self._sbi_prior
         else:
             prefix = f"iter_{self._curr_iter - 1}_round_{self.num_sbi_rounds - 1}"
@@ -509,7 +546,14 @@ class SBIBase(InterruptableAlgorithm, ABC):
             mcmc_method="slice_np_vectorized",
             mcmc_parameters=dict(warmup_steps=50, num_chains=100, init_strategy="sir"),  # default: slice_np, 20
         )
-        subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam or dict()])
+        if subrtn_sbi_sampling_hparam is None:
+            subrtn_sbi_sampling_hparam = dict()
+        elif isinstance(subrtn_sbi_sampling_hparam, dict):
+            subrtn_sbi_sampling_hparam = merge_dicts([default_sampling_hparam, subrtn_sbi_sampling_hparam])
+        else:
+            raise pyrado.TypeErr(given=subrtn_sbi_sampling_hparam, expected_type=dict)
+
+        # Sample domain parameters from the posterior
         domain_params = to.stack(
             [posterior.sample((num_samples,), x=x_o, **subrtn_sbi_sampling_hparam) for x_o in data_real],
             dim=0,
@@ -576,6 +620,8 @@ class SBIBase(InterruptableAlgorithm, ABC):
         """
         if not isinstance(num_ml_samples, int) or num_ml_samples < 1:
             raise pyrado.ValueErr(given=num_ml_samples, g_constraint="0 (int)")
+        if num_eval_samples < num_ml_samples:
+            raise pyrado.ValueErr(given=num_ml_samples, le_constraint=num_eval_samples)
 
         # Evaluate the posterior
         domain_params, log_probs = SBIBase.eval_posterior(
@@ -723,7 +769,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
             raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, len(self.dp_mapping)))
 
         # Insert the domain parameters into the wrapped environment's buffer
-        self.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
+        SBIBase.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
 
         # Set the initial state spaces of the simulation environment to match the observed initial states
         if use_rec_init_states:
@@ -755,7 +801,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
         # Return the estimated return of the trained policy in simulation
         assert len(self._env_sim_trn.buffer) == self.num_eval_samples
         self._env_sim_trn.ring_idx = 0  # don't reset the buffer to eval on the same domains as trained
-        avg_ret_sim = self.eval_policy(
+        avg_ret_sim = SBIBase.eval_policy(
             None, self._env_sim_trn, self._subrtn_policy.policy, prefix, self.num_eval_samples
         )
         return float(avg_ret_sim)
@@ -774,6 +820,39 @@ class SBIBase(InterruptableAlgorithm, ABC):
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
 
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        extra = dict()
+
+        # Environment
+        env = pyrado.load("env_sim.pkl", ex_dir)
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
+            typed_env(env, DomainRandWrapperBuffer).fill_buffer(10)
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}\nand filled it with 10 random instances.", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "y")
+            env = remove_all_dr_wrappers(env, verbose=True)
+
+        # Policy
+        policy = pyrado.load(f"{parsed_args.policy_name}.pt", ex_dir, obj=self.policy, verbose=True)
+
+        # Algorithm specific
+        extra["prior"] = pyrado.load("prior.pt", ex_dir, verbose=True)
+        # By default load the latest posterior (latest iteration and the last round)
+        try:
+            extra["posterior"] = SBIBase.load_posterior(
+                ex_dir, parsed_args.iter, parsed_args.round, obj=None, verbose=True
+            )
+            # Load the complete data or the data of the given iteration
+            prefix = "" if parsed_args.iter == -1 else f"iter_{parsed_args.iter}"
+            extra["data_real"] = pyrado.load(f"data_real.pt", ex_dir, prefix=prefix, verbose=True)
+        except FileNotFoundError:
+            pass
+
+        return env, policy, extra
+
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance
         tmp_sbi_simulator = self.__dict__.pop("_sbi_simulator")
@@ -786,7 +865,7 @@ class SBIBase(InterruptableAlgorithm, ABC):
 
         # Call Algorithm's __getstate__() without the unpickleable sbi-related members.
         # Make a deepcopy of the state dict such that we can return the pickleable version and insert the sbi variables.
-        state_dict_copy = deepcopy(super().__getstate__())
+        state_dict_copy = copy.deepcopy(super().__getstate__())
 
         # Inset them back to the current state dict
         self.__dict__["_sbi_simulator"] = tmp_sbi_simulator

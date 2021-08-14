@@ -27,16 +27,16 @@ __Pros__
 * __Deterministic parallel sampling.__ The sampling is deterministic when conditioned on the seed.
 * __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
 * __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
-* __Tested integration of [BoTorch](https://botorch.org/), and [Optuna](https://optuna.org/)__.
+* __Tested integration of [BoTorch](https://botorch.org/), [Optuna](https://optuna.org/)__, and [sbi](https://github.com/mackelab/sbi).
 * __Detailed [documentation](https://famura.github.io/SimuRLacra/)__.
 
 __Cons__  
 * __No vision-based environments/tasks.__ In principle there is nothing stopping you from integrating computer vision into SimuRLacra. However, I assume there are better suited frameworks out there.
 * __Without bells and whistles.__ The implementations (especially the algorithms) do not focus on performance. After all, this framework was created to understand and prototype things. However, improvement suggestions are always welcome.
 * __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
-* __Unfinished GPU-support.__ At the moment the porting of the policies is implemented but not fully tested. The GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
+* __Moderate GPU-support.__ All policies can run on a GPU. However, the GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
 
-SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4, 1.7 (deprecated) and 1.8.
+SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4, 1.7 (deprecated) and 1.8 (recommended).
 The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
 
 
@@ -74,7 +74,10 @@ conda activate pyrado
 conda install -y blas cmake lapack libgcc-ng mkl mkl-include patchelf pip pycairo setuptools -c conda-forge
 pip install -r requirements.txt
 ```
-
+If you want to use the gym wrapper
+```
+pip install gym
+```
 
 ### What do you want to be installed?
 If you just want to have a look at SimuRLacra, or don't care about the Rcs-based robotics part, I recommend going for [Red Velvet](#option-red-velvet). However, if you for example want to export your learned controller to a C++ program runnning on a phsical robot, I recommend [Black Forest](#option-black-forest). Here is an overview of the options:
@@ -94,31 +97,38 @@ In all cases you will download Rcs, eigen3, pybind11, catch2, and mujoco-py, int
 
 
 ### Option Red Velvet
-Run (the setup script calls `git submodule init` and `git submodule update`)
+Make sure the correct anaconda environment is activated `conda activate pyrado`
+
+Choose one
+* For CUDA ≥ 11 (for RTX 3000 Series or Newer):
+    ```
+    pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+    ```
+* For CUDA < 11:
+    ```
+    pip install torch==1.8.1
+    ```
+* Without CUDA:
+    ```
+    pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+    ```
+Run the setup script (which initializes and updates the git submodules)
 ```
-conda activate pyrado
-# For CUDA ≥ 11 (for RTX 3000 Series or Newer):
-# pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
-# For CUDA < 11:
-# pip install torch==1.8.1
-# Without CUDA:
-# pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
-python setup_deps.py wo_rcs_wo_pytorch -j8
-# or if running headless, e.g., on a computation cluster
-# python setup_deps.py wo_rcs_wo_pytorch -j8 --headless
+python setup_deps.py wo_rcs_wo_pytorch -j8  # use --headless option when on a cluster
 ```
-In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
+In case this process crashes, please check the [Troubleshooting](#troubleshooting) section below.
+If everything went as expected, you are done and can optionally look at the [Checking](#checking) section.
 
 
 ### Option Malakoff
-Run (the setup script calls `git submodule init` and `git submodule update`)
+Make sure the correct anaconda environment is activated `conda activate pyrado`
+
+Run the setup script (which initializes and updates the git submodules)
 ```
-conda activate pyrado
-python setup_deps.py wo_rcs_w_pytorch -j8
-# or if running headless, e.g., on a computation cluster
-# python setup_deps.py wo_rcs_w_pytorch -j8 --headless
+python setup_deps.py wo_rcs_w_pytorch -j8  # use --headless option when on a cluster
 ```
-In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
+In case this process crashes, please check the [Troubleshooting](#troubleshooting) section below.
+If everything went as expected, you are done and can optionally look at the [Checking](#checking) section.
 
 
 ### Option Sacher
@@ -131,20 +141,27 @@ This command will install `g++-4.8`, `libqwt-qt5-dev`, `libbullet-dev`, `libfree
 In case you have no sudo rights, but want to use all the Rcs-dependent environments, you can try installing the libraries via anaconda. For references, see the comments behind `required_packages` in `setup_deps.py`.  
 If you can't install the libraries, you can still use the Python part of this framework called Pyrado, but no environments in the `rcspysim` folder.
 
-Run (the setup script calls `git submodule init` and `git submodule update`)
+Make sure the correct anaconda environment is activated `conda activate pyrado`
+
+Choose one
+* For CUDA ≥ 11 (for RTX 3000 Series or Newer):
+    ```
+    pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+    ```
+* For CUDA < 11:
+    ```
+    pip install torch==1.8.1
+    ```
+* Without CUDA:
+    ```
+    pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+    ```
+Run the setup script (which initializes and updates the git submodules)
 ```
-conda activate pyrado
-# For CUDA ≥ 11 (for RTX 3000 Series or Newer):
-# pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
-# For CUDA < 11:
-# pip install torch==1.8.1
-# Without CUDA:
-# pip install torch==1.8.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
-python setup_deps.py w_rcs_wo_pytorch -j8
-# or if running headless, e.g., on a computation cluster
-# python setup_deps.py w_rcs_wo_pytorch -j8 --headless
+python setup_deps.py w_rcs_wo_pytorch -j8  # use --headless option when on a cluster
 ```
-In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
+In case this process crashes, please check the [Troubleshooting](#troubleshooting) section below.
+If everything went as expected, you are done and can optionally look at the [Checking](#checking) section.
 
 
 ### Option Black Forest
@@ -157,14 +174,14 @@ This command will install `g++-4.8`, `libqwt-qt5-dev`, `libbullet-dev`, `libfree
 In case you have no sudo rights, but want to use all the Rcs-dependent environments, you can try installing the libraries via anaconda. For references, see the comments behind `required_packages` in `setup_deps.py`.  
 If you can't install the libraries, you can still use the Python part of this framework called Pyrado, but no environments in the `rcspysim` folder.
 
-Run (the setup script calls `git submodule init` and `git submodule update`)
+Make sure the correct anaconda environment is activated `conda activate pyrado`
+
+Run the setup script (which initializes and updates the git submodules)
 ```
-conda activate pyrado
-python setup_deps.py w_rcs_w_pytorch -j8
-# or if running headless, e.g., on a computation cluster
-# python setup_deps.py w_rcs_w_pytorch -j8 --headless
+python setup_deps.py w_rcs_w_pytorch -j8  # use --headless option when on a cluster
 ```
-In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
+In case this process crashes, please check the [Troubleshooting](#troubleshooting) section below.
+If everything went as expected, you are done and can optionally look at the [Checking](#checking) section.
 
 
 ### SL & Robcom
@@ -208,7 +225,7 @@ Now execute
 run_docker.sh
 ```
 which opens a shell in the docker with the pyrado virtual env activated.
-The command in `run_docker.sh` uses cuda supprort. If you do not want to use cuda remove the `--gpus` option.
+The command in `run_docker.sh` uses cuda support. If you do not want to use cuda remove the `--gpus` option.
 
 It will build the pyrado image. And configure a script to run the docker container with GUI support.
 You can also connect the image with IDEs such as PyCharm to develop directly in the docker container.
@@ -308,43 +325,37 @@ Due to the multiprocessing, it is possible that PDB (the Python Debugger) hangs 
 
 ## Troubleshooting
 
+### No module named `_rcsenv`
+This error message is thrown when you try to load a `RcsPySim` environment without it being properly set up.
+There are multiple reasons how this could have happened.
+For example you are switching between different Options (see above), or the cmake options are not correct, or sth more nasty.
+In the most cases, this error can be solved by removing the complete content within `Rcs/build` and the `RcsPySim/build`, and then re-run the instructions of your chosen option.
+
 ### Undefined reference to `inflateValidate`
 Depending on the libraries install on your machine, you might receive the linker error `undefined reference to inflateValidate@ZLIB_1.2.9` while building Rcs or RcsPySim.
 In otder to solve this error, link the z library to the necessary targets by editing the `PATH_TO/SimuRLacra/Rcs/bin/CMakeLists.txt` replacing
 ```
 TARGET_LINK_LIBRARIES(Rcs RcsCore RcsGui RcsGraphics RcsPhysics)
-```
-by
-```
-TARGET_LINK_LIBRARIES(Rcs RcsCore RcsGui RcsGraphics RcsPhysics z)
-```
-and
-```
 TARGET_LINK_LIBRARIES(TestGeometry RcsCore RcsGui RcsGraphics RcsPhysics)
 ```
 by
 ```
+TARGET_LINK_LIBRARIES(Rcs RcsCore RcsGui RcsGraphics RcsPhysics z)
 TARGET_LINK_LIBRARIES(TestGeometry RcsCore RcsGui RcsGraphics RcsPhysics z)
 ```
 The same goes for `PATH_TO/SimuRLacra/Rcs/examples/CMakeLists.txt` where you replace
 ```
 TARGET_LINK_LIBRARIES(ExampleForwardKinematics RcsCore RcsGui RcsGraphics)
-```
-by
-```
-TARGET_LINK_LIBRARIES(ExampleForwardKinematics RcsCore RcsGui RcsGraphics z)
-```
-and 
-```
 TARGET_LINK_LIBRARIES(ExampleKinetics RcsCore RcsGui RcsGraphics RcsPhysics)
 ```
 by
 ```
+TARGET_LINK_LIBRARIES(ExampleForwardKinematics RcsCore RcsGui RcsGraphics z)
 TARGET_LINK_LIBRARIES(ExampleKinetics RcsCore RcsGui RcsGraphics RcsPhysics z)
 ```
 
 ### Python debugger stuck at evaluating expression
-By default, the sampling (on CPU) in Pyrado is parallelized using PyTorch's multiprocessing module. Thus, your debuggner will not be connected to the right process. Rerun your script with `num_sampler_envs=1` passed as a parameter to the algorithm, that will then contruct a sampler wich only uses one process.
+By default, the sampling (on CPU) in Pyrado is parallelized using PyTorch's multiprocessing module. Thus, your debugger will not be connected to the right process. Rerun your script with `num_sampler_envs=1` passed as a parameter to the algorithm, that will then construct a sampler which only uses one process.
 
 ### Qt5 and Vortex (`libpng15.so`)
 If you are using Vortex, which itself has a Qt5-based GUI, RcsPySim may look for the wrong `libpng` version. Make sure that if finds the same one as Rcs (`libpng16.so`) and __not__ the one from Vortex (`libpng15.so`). You can investigate this using the `ldd` (or `lddtree` if installed) command on the generated RcsPySim executables.
@@ -375,7 +386,7 @@ Install it from
 When you export the anaconda environment, the yml-file will contain the line `init-args-serializer==1.0`. This will cause an error when creating a new anaconda environment from this yml-file. To fix this, replace the line with `git+https://github.com/Xfel/init-args-serializer.git@master`.
 
 ### PyTorch version
-You run a script and get `ImportError: cannot import name 'export'`? Check if your PyTorch version is >= 1.2. If not, update via
+You run a script and get `ImportError: cannot import name 'export'`? Check if your PyTorch version is >= 1.8. If not, update via
 ```
 cd PATH_TO/SimuRLacra
 python setup_deps.py pytorch -j12
@@ -415,7 +426,7 @@ ccmake .  # set the option, configure (2x), and generate
 ### PyTorch compilation is too slow or uses too many CPUs
 The Pytorch setup script (thirdParty/pytorch/setup.py) determines the number of cpus to compile automatically. It can be overridden by setting the environment variable MAX_JOBS:
 ```
-export MAX_JOBS=1
+export MAX_JOBS=1  # or another small number
 ```
 Please use your shell syntax accordingly (the above example is for bash).
 
@@ -452,6 +463,12 @@ conda activate pyrado
 conda remove scipy --force
 pip install scipy==1.5.2
 ```
+
+### Clion complains about a non-empty build directory
+Delete the `build` folder and reload the CMakeProject (right cklick on the CMakeLists.txt). Now build the project again with Clion.
+
+### Clion does not find the 
+Go to the settings and look for the `Buld, Execution, Deployment -> Toolchains` tab. Veryfy that your cmake version is supported. If now down/upgrade, and reload the CMakeProject.
 
 ### ImageMagick error from moviepy
 Check for the ImageMagick policy file. ImageMagick does not have the proper permission set. You can edit the policy file (requires sudo rights)

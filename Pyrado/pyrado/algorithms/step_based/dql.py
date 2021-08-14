@@ -28,7 +28,7 @@
 
 import sys
 from copy import deepcopy
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import torch as to
@@ -36,10 +36,12 @@ import torch.nn as nn
 from tqdm import tqdm
 
 import pyrado
+from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.value_based import ValueBased
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger
+from pyrado.policies.base import Policy
 from pyrado.policies.feed_back.fnn import DiscreteActQValPolicy
 from pyrado.sampling.cvar_sampler import CVaRSampler
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
@@ -204,11 +206,11 @@ class DQL(ValueBased):
                 expected_q_val = steps.rewards.to(self.policy.device) + not_done * self.gamma * next_v_vals
 
             # Compute the loss, clip the gradients if desired, and do one optimization step
-            loss = self.loss_fcn(q_vals, expected_q_val)
+            loss = DQL.loss_fcn(q_vals, expected_q_val)
             losses[b] = loss.data
             self.optim.zero_grad()
             loss.backward()
-            policy_grad_norm[b] = self.clip_grad(self.expl_strat.policy, self.max_grad_norm)
+            policy_grad_norm[b] = Algorithm.clip_grad(self.expl_strat.policy, self.max_grad_norm)
             self.optim.step()
 
             # Update the qfcn_targ network by copying all weights and biases from the DQN policy
@@ -274,3 +276,13 @@ class DQL(ValueBased):
                 suffix=meta_info.get("suffix", ""),
                 use_state_dict=True,
             )
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+
+        # Algorithm specific
+        ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+        if self.name == "dql":
+            extra["qfcn_target"] = pyrado.load("qfcn_target.pt", ex_dir, obj=self.qfcn_targ, verbose=True)
+
+        return env, policy, extra

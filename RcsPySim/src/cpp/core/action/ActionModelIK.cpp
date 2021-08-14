@@ -264,6 +264,11 @@ RcsGraph* ActionModelIK::getDesiredGraph() const
     return desiredGraph;
 }
 
+void ActionModelIK::setDesiredGraph(RcsGraph* newGraph)
+{
+    desiredGraph = newGraph;
+}
+
 void ActionModelIK::setupCollisionModel(const RcsCollisionMdl* modelToCopy)
 {
     // Copy collision model for desired graph
@@ -281,7 +286,7 @@ void ActionModelIK::addFixedTask(Task* task, MatNd* value)
         // Not the first time, append (copies the value MatNd)
         MatNd_appendRows(fixedTasksValues, value);
     }
-    else{
+    else {
         // The first time, copy
         fixedTasksValues = MatNd_clone(value);
     }
@@ -300,7 +305,7 @@ unsigned int ActionModelIK::getNumActiveTasks() const
  */
 unsigned int AMIKGeneric::getDim() const
 {
-    return (unsigned int)  controller->getTaskDim() - dimFixedTasks;
+    return (unsigned int) controller->getTaskDim() - dimFixedTasks;
 }
 
 void AMIKGeneric::getMinMax(double* min, double* max) const
@@ -333,9 +338,10 @@ std::vector<std::string> AMIKGeneric::getNames() const
 void AMIKGeneric::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* action, double dt)
 {
     MatNd* augmentedAction = MatNd_clone(action);
-    if (fixedTasksValues)
+    if (fixedTasksValues) {
         // Augment the action with the fixed values
         MatNd_appendRows(augmentedAction, fixedTasksValues);
+    }
     
     // Copy the ExperimentConfig graph which has been updated by the physics simulation into the desired graph
     RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, nullptr);
@@ -348,9 +354,10 @@ void AMIKGeneric::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, c
 void AMIKGeneric::getStableAction(MatNd* action) const
 {
     MatNd* augmentedAction = MatNd_clone(action);
-    if (fixedTasksValues)
+    if (fixedTasksValues) {
         // Augment the action with the fixed values
         MatNd_appendRows(augmentedAction, fixedTasksValues);
+    }
     
     controller->computeX(augmentedAction);
     

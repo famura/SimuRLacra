@@ -72,7 +72,7 @@ class TimePolicy(Policy):
         self._t_curr = 0.0
 
     def forward(self, obs: Optional[to.Tensor] = None) -> to.Tensor:
-        act = to.tensor(self._fcn_of_time(self._t_curr), dtype=to.get_default_dtype(), device=self.device)
+        act = to.as_tensor(self._fcn_of_time(self._t_curr), dtype=to.get_default_dtype(), device=self.device)
         self._t_curr += self._dt
         return to.atleast_1d(act)
 

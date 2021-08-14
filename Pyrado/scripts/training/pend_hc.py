@@ -50,14 +50,12 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 100.0, max_steps=800)
-    env = PendulumSim(**env_hparams)
+    env_hparam = dict(dt=1 / 100.0, max_steps=800)
+    env = PendulumSim(**env_hparam)
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(
-        feats=FeatureStack(const_feat, identity_feat, sign_feat, squared_feat, MultFeat((0, 2)), MultFeat((1, 2)))
-    )
+    policy_hparam = dict(feats=FeatureStack(const_feat, identity_feat, MultFeat((0, 2)), MultFeat((1, 2))))
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
@@ -68,13 +66,13 @@ if __name__ == "__main__":
         num_init_states_per_domain=1,
         expl_factor=1.05,
         expl_std_init=1.0,
-        num_workers=8,
+        num_workers=20,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),
         save_dir=ex_dir,

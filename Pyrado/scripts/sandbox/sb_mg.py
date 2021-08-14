@@ -38,11 +38,12 @@ import pyrado
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim, MiniGolfJointCtrlSim
 from pyrado.policies.features import FeatureStack, const_feat
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.feed_forward.dummy import IdlePolicy
 from pyrado.policies.feed_forward.poly_time import PolySplineTimePolicy
+from pyrado.policies.special.environment_specific import create_mg_joint_pos_policy
 from pyrado.sampling.rollout import after_rollout_query, rollout
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
@@ -88,7 +89,7 @@ def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLi
     # Set up policy
     if relativeZdTask:
         policy_hparam = dict(
-            t_end=1.0,
+            t_end=0.6,
             cond_lvl="vel",
             # Zd (rel), Y (rel), Zdist (abs), PHI (abs), THETA (abs)
             cond_final=[
@@ -96,12 +97,11 @@ def create_pst_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLi
                 [0.0, 0.0, 0.0, 0.0, 0.0],
             ],
             cond_init=[
-                [-7.0, 0.0, 0.01, math.pi / 2, 0.0],
+                [-100.0, 0.0, 0.01, math.pi / 2, 0.0],
                 [0.0, 0.0, 0.0, 0.0, 0.0],
             ],
             overtime_behavior="hold",
         )
-
     else:
         policy_hparam = dict(
             t_end=3.0,
@@ -143,14 +143,34 @@ def create_lin_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLi
     return env, policy
 
 
+def create_time_setup(physicsEngine: str, dt: float, max_steps: int, checkJointLimits: bool):
+    # Set up environment
+    env = MiniGolfJointCtrlSim(
+        usePhysicsNode=True,
+        physicsEngine=physicsEngine,
+        dt=dt,
+        max_steps=max_steps,
+        checkJointLimits=checkJointLimits,
+        fixedInitState=True,
+        collisionAvoidanceIK=False,
+        graphFileName="gMiniGolf_gt.xml",
+        physicsConfigFile="pMiniGolf_gt.xml",
+    )
+
+    # Set up policy
+    policy = create_mg_joint_pos_policy(env, t_strike_end=0.5)
+
+    return env, policy
+
+
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "pst"  # idle, pst, or lin
+    setup_type = "pst"  # idle, pst, lin,  or time
     physicsEngine = "Bullet"  # Bullet or Vortex
     dt = 1 / 100.0
-    max_steps = int(13 / dt)
+    max_steps = int(8 / dt)
     checkJointLimits = True
-    randomize = True
+    randomize = False
 
     if setup_type == "idle":
         env, policy = create_idle_setup(physicsEngine, dt, max_steps, checkJointLimits)
@@ -158,14 +178,23 @@ if __name__ == "__main__":
         env, policy = create_pst_setup(physicsEngine, dt, max_steps, checkJointLimits)
     elif setup_type == "lin":
         env, policy = create_lin_setup(physicsEngine, dt, max_steps, checkJointLimits)
+    elif setup_type == "time":
+        env, policy = create_time_setup(physicsEngine, dt, max_steps, checkJointLimits)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="idle, pst, or lin")
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="idle, pst, lin, or time")
 
     if randomize:
         dp_nom = env.get_nominal_domain_param()
         randomizer = DomainRandomizer(
-            UniformDomainParam(name="ball_radius", mean=dp_nom["ball_radius"], halfspan=dp_nom["ball_radius"] / 5),
-            UniformDomainParam(name="ball_mass", mean=dp_nom["ball_mass"], halfspan=dp_nom["ball_mass"] / 5),
+            UniformDomainParam(
+                name="ball_restitution",
+                mean=dp_nom["ball_restitution"],
+                halfspan=dp_nom["ball_restitution"],
+            ),
+            UniformDomainParam(
+                name="ball_radius", mean=dp_nom["ball_radius"], halfspan=dp_nom["ball_radius"] / 5, clip_lo=5e-3
+            ),
+            UniformDomainParam(name="ball_mass", mean=dp_nom["ball_mass"], halfspan=dp_nom["ball_mass"] / 2, clip_lo=0),
             UniformDomainParam(name="club_mass", mean=dp_nom["club_mass"], halfspan=dp_nom["club_mass"] / 5),
             UniformDomainParam(
                 name="ball_friction_coefficient",
@@ -189,12 +218,12 @@ if __name__ == "__main__":
             UniformDomainParam(
                 name="ground_slip", mean=dp_nom["ground_slip"], halfspan=dp_nom["ground_slip"] / 2, clip_lo=0
             ),
-            UniformDomainParam(name="obstacleleft_pos_offset_x", mean=0, halfspan=0.01),
-            UniformDomainParam(name="obstacleleft_pos_offset_y", mean=-0.1, halfspan=0.01),
-            UniformDomainParam(name="obstacleleft_rot_offset_c", mean=15 / 180 * math.pi, halfspan=1 / 180 * math.pi),
-            UniformDomainParam(name="obstacleright_pos_offset_x", mean=0, halfspan=0.01),
-            UniformDomainParam(name="obstacleright_pos_offset_y", mean=0.1, halfspan=0.01),
-            UniformDomainParam(name="obstacleright_rot_offset_c", mean=-15 / 180 * math.pi, halfspan=1 / 180 * math.pi),
+            UniformDomainParam(name="obstacleleft_pos_offset_x", mean=0, halfspan=0.03),
+            UniformDomainParam(name="obstacleleft_pos_offset_y", mean=0, halfspan=0.03),
+            UniformDomainParam(name="obstacleleft_rot_offset_c", mean=0 / 180 * math.pi, halfspan=5 / 180 * math.pi),
+            UniformDomainParam(name="obstacleright_pos_offset_x", mean=0, halfspan=0.03),
+            UniformDomainParam(name="obstacleright_pos_offset_y", mean=0, halfspan=0.03),
+            UniformDomainParam(name="obstacleright_rot_offset_c", mean=0 / 180 * math.pi, halfspan=5 / 180 * math.pi),
         )
         env = DomainRandWrapperLive(env, randomizer)
 

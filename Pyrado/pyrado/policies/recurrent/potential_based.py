@@ -82,8 +82,8 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
         self._hidden_size = spec.act_space.flat_dim if hidden_size is None else hidden_size
         self.num_recurrent_layers = 1
         self._potentials_max = 100.0  # clip potentials symmetrically at a very large value (for debugging)
-        self._stimuli_external = to.zeros(self.hidden_size)
-        self._stimuli_internal = to.zeros(self.hidden_size)
+        self._stimuli_external = to.zeros(self.hidden_size, dtype=to.get_default_dtype())
+        self._stimuli_internal = to.zeros(self.hidden_size, dtype=to.get_default_dtype())
 
         # Create common layers
         self.resting_level = nn.Parameter(to.zeros(self.hidden_size), requires_grad=True)
@@ -95,9 +95,9 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
             self._potentials_init = nn.Parameter(to.randn(self.hidden_size), requires_grad=True)
         else:
             if activation_nonlin is to.sigmoid:
-                self._potentials_init = -7.0 * to.ones(self.hidden_size)
+                self._potentials_init = -7.0 * to.ones(self.hidden_size, dtype=to.get_default_dtype())
             else:
-                self._potentials_init = to.zeros(self.hidden_size)
+                self._potentials_init = to.zeros(self.hidden_size, dtype=to.get_default_dtype())
 
         # Potential dynamics's time constant
         self.tau_learnable = tau_learnable

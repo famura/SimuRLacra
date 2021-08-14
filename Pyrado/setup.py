@@ -35,8 +35,8 @@ setup(
     name="pyrado",
     version=VERSION,
     description="A framework for reinforcement learning with domain randomization",
-    author="Fabio Muratore & Felix Treede & Robin Menzenbach",
-    author_email="muratore@ias.tu-darmstadt.de",
+    author="Fabio Muratore & Felix Treede & Robin Menzenbach & Christian Eilers & Fabian Damken & Heiko Carrasco & Julien Brosseit & Benedikt Hahner",
+    author_email="fabio.muratore@famura.net",
     license="BSD 3-clause",
     # Specify empty py_modules to exclude pkgConfig.py
     py_modules=[],

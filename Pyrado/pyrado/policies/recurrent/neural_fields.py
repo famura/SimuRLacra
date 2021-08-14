@@ -45,6 +45,10 @@ class NFPolicy(PotentialBasedPolicy):
     """
     Neural Fields (NF)
 
+    .. note::
+        The policy's outputs are a nonlinear function of the potentials. Thus, you have to make sure that the output
+        range of that matches the action space of the environment.
+
     .. seealso::
         [1] S.-I. Amari "Dynamics of Pattern Formation in Lateral-Inhibition Type Neural Fields",
         Biological Cybernetics, 1977
@@ -101,8 +105,8 @@ class NFPolicy(PotentialBasedPolicy):
                 "y",
             )
             conv_kernel_size = conv_kernel_size + 1
-        if conv_padding_mode not in ["circular", "reflected", "zeros"]:
-            raise pyrado.ValueErr(given=conv_padding_mode, eq_constraint="circular, reflected, or zeros")
+        if conv_padding_mode not in ["circular", "reflect", "zeros"]:
+            raise pyrado.ValueErr(given=conv_padding_mode, eq_constraint="circular, reflect, or zeros")
         if not callable(activation_nonlin):
             raise pyrado.TypeErr(given=activation_nonlin, expected_type=Callable)
 
@@ -125,10 +129,11 @@ class NFPolicy(PotentialBasedPolicy):
 
         # Create custom NFPolicy layers
         self.mirrored_conv_weights = mirrored_conv_weights
-        padding = (
-            conv_kernel_size // 2 if conv_padding_mode != "circular" else conv_kernel_size - 1
-        )  # 1 means no padding
-        conv1d_class = MirrConv1d if mirrored_conv_weights else nn.Conv1d
+        if conv_padding_mode == "circular" and self.mirrored_conv_weights:  # 1 means no padding
+            padding = conv_kernel_size - 1  # using custom MirrConv1d
+        else:
+            padding = conv_kernel_size // 2
+        conv1d_class = MirrConv1d if self.mirrored_conv_weights else nn.Conv1d
         self.conv_layer = conv1d_class(
             in_channels=1,  # treat potentials as a time series of values (convolutions is over the "time" axis)
             out_channels=conv_out_channels,
@@ -211,7 +216,7 @@ class NFPolicy(PotentialBasedPolicy):
         self._stimuli_internal = self.conv_layer(activations_prev.view(b, 1, self._hidden_size))
         self._stimuli_internal = to.sum(
             self._stimuli_internal, dim=1
-        )  # TODO do multiple out channels makes sense if just summed up?
+        )  # TODO do multiple out channels makes sense here?
         self._stimuli_internal = self._stimuli_internal.squeeze()
 
         # Combine the different output channels of the convolution

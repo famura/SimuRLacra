@@ -27,10 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from copy import deepcopy
+from typing import Callable
 
+import numpy as np
 import pytest
+import torch as to
+from tests.conftest import m_needs_cuda
 from tests.environment_wrappers.mock_env import MockEnv
 
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.episodic.hc import HCHyper, HCNormal
@@ -54,18 +59,19 @@ from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
-from pyrado.policies.features import *
+from pyrado.policies.features import FeatureStack, RFFeat, const_feat, identity_feat
 from pyrado.policies.feed_back.fnn import FNN, DiscreteActQValPolicy, FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
 from pyrado.policies.recurrent.rnn import RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
-from pyrado.sampling.sequences import *
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.spaces.box import InfBoxSpace
+from pyrado.utils.argparser import MockArgs
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.functions import noisy_nonlin_fcn
+from pyrado.utils.math import soft_update_
 
 
 @pytest.fixture
@@ -80,15 +86,7 @@ def ex_dir(tmpdir):
 )
 @pytest.mark.parametrize(
     "policy",
-    [
-        "linear_policy",
-        "fnn_policy",
-        "rnn_policy",
-        "lstm_policy",
-        "gru_policy",
-        "adn_policy",
-    ],
-    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn"],
+    ["linear_policy", "fnn_policy", "lstm_policy", "adn_policy"],
     indirect=True,
 )
 @pytest.mark.parametrize(
@@ -152,17 +150,21 @@ def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam)
     algo.policy.param_values += to.tensor([42.0])
     if isinstance(algo, ActorCritic):
         algo.critic.vfcn.param_values += to.tensor([42.0])
+    elif isinstance(algo, ParameterExploring):
+        algo.best_policy_param = algo.policy.param_values
 
     # Save and load
     algo.save_snapshot(meta_info=None)
-    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir)
+    algo_loaded = pyrado.load("algo.pkl", ex_dir)
     assert isinstance(algo_loaded, Algorithm)
-    policy_loaded = algo_loaded.policy
+    args = MockArgs(ex_dir, "policy", "vfcn")
+    algo_loaded.load_snapshot(args)
+
     if isinstance(algo, ActorCritic):
         critic_loaded = algo_loaded.critic
 
     # Check
-    assert all(algo.policy.param_values == policy_loaded.param_values)
+    assert all(algo.policy.param_values == algo_loaded.policy.param_values)
     if isinstance(algo, ActorCritic):
         assert all(algo.critic.vfcn.param_values == critic_loaded.vfcn.param_values)
 
@@ -226,34 +228,21 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
 
 
 @pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
-@pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
+@pytest.mark.parametrize("policy", ["idle_policy"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
-    [
-        (A2C, dict()),
-        (PPO, dict()),
-        (PPO2, dict()),
-    ],
+    [(A2C, dict()), (PPO, dict()), (PPO2, dict())],
     ids=["a2c", "ppo", "ppo2"],
 )
 @pytest.mark.parametrize(
     "vfcn_type",
-    [
-        "fnn-plain",
-        "fnn",
-        "rnn",
-    ],
+    ["fnn-plain", FNNPolicy.name, RNNPolicy.name],
     ids=["vf_fnn_plain", "vf_fnn", "vf_rnn"],
 )
-@pytest.mark.parametrize(
-    "use_cuda",
-    [
-        False,
-        # pytest.param(True, marks=m_needs_cuda)  # TODO @Robin CUDA error when using RNN. Looks like not set back to tranining mode at one point, but I didn't find if it is so
-    ],
-    # ids=['cpu', 'cuda']
-)
+@pytest.mark.parametrize("use_cuda", [False, pytest.param(True, marks=m_needs_cuda)], ids=["cpu", "cuda"])
 def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vfcn_type, use_cuda):
+    pyrado.set_seed(0)
+
     if use_cuda:
         policy._device = "cuda"
         policy = policy.to(device="cuda")
@@ -267,12 +256,14 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             hidden_nonlin=to.tanh,
             use_cuda=use_cuda,
         )
-    else:
+    elif vfcn_type == FNNPolicy.name:
         vf_spec = EnvSpec(env.obs_space, ValueFunctionSpace)
-        if vfcn_type == "fnn":
-            vfcn = FNNPolicy(vf_spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=use_cuda)
-        else:
-            vfcn = RNNPolicy(vf_spec, hidden_size=16, num_recurrent_layers=1, use_cuda=use_cuda)
+        vfcn = FNNPolicy(vf_spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=use_cuda)
+    elif vfcn_type == RNNPolicy.name:
+        vf_spec = EnvSpec(env.obs_space, ValueFunctionSpace)
+        vfcn = RNNPolicy(vf_spec, hidden_size=16, num_recurrent_layers=1, use_cuda=use_cuda)
+    else:
+        raise NotImplementedError
 
     # Create critic
     critic_hparam = dict(
@@ -295,8 +286,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.longtime
-@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
+@pytest.mark.slow
+@pytest.mark.parametrize("env", ["default_omo"], ids=["bob"], indirect=True)
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [
@@ -304,8 +295,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             HCNormal,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 expl_std_init=0.5,
                 expl_factor=1.1,
             ),
@@ -315,7 +306,7 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             dict(
                 max_iter=40,
                 pop_size=200,
-                num_init_states_per_domain=10,
+                num_init_states_per_domain=4,
                 expl_std_init=0.2,
                 lr=1e-2,
                 normalize_update=False,
@@ -325,8 +316,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             NES,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 expl_std_init=0.5,
                 symm_sampling=True,
                 eta_mean=2,
@@ -336,8 +327,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             PoWER,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 num_is_samples=8,
                 expl_std_init=0.5,
             ),
@@ -346,8 +337,8 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             CEM,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=20,
+                num_init_states_per_domain=2,
                 num_is_samples=8,
                 expl_std_init=0.5,
                 full_cov=False,
@@ -357,17 +348,19 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
             REPS,
             dict(
                 max_iter=5,
-                pop_size=50,
-                num_init_states_per_domain=4,
+                pop_size=100,
+                num_init_states_per_domain=2,
                 eps=1.5,
                 expl_std_init=0.5,
                 use_map=True,
             ),
         ),
     ],
-    ids=["hc_normal", "pepg", "nes", "power", "cem", "reps"],
+    ids=["hc", "pepg", "nes", "power", "cem", "reps"],
 )
 def test_training_parameter_exploring(ex_dir, env: SimEnv, algo, algo_hparam):
+    pyrado.set_seed(0)
+
     # Environment and policy
     env = ActNormWrapper(env)
     policy_hparam = dict(feats=FeatureStack(const_feat, identity_feat))
@@ -402,7 +395,6 @@ def test_training_parameter_exploring(ex_dir, env: SimEnv, algo, algo_hparam):
         "lstm_policy",
         "gru_policy",
     ],
-    ids=["lin", "fnn", "rnn", "lstm", "gru"],
     indirect=True,
 )
 def test_soft_update(env, policy: Policy):
@@ -412,15 +404,15 @@ def test_soft_update(env, policy: Policy):
     source.param_values = to.ones_like(source.param_values)
 
     # Do one soft update
-    SAC.soft_update(target, source, tau=0.8)
+    soft_update_(target, source, tau=0.8)
     assert to.allclose(target.param_values, 0.2 * to.ones_like(target.param_values))
 
     # Do a second soft update to see the exponential decay
-    SAC.soft_update(target, source, tau=0.8)
+    soft_update_(target, source, tau=0.8)
     assert to.allclose(target.param_values, 0.36 * to.ones_like(target.param_values))
 
 
-@pytest.mark.visualization
+@pytest.mark.visual
 @pytest.mark.parametrize("num_feat_per_dim", [1000], ids=[1000])
 @pytest.mark.parametrize("loss_fcn", [to.nn.MSELoss()], ids=["mse"])
 @pytest.mark.parametrize("algo_hparam", [dict(max_iter=50, max_iter_no_improvement=5)], ids=["casual"])

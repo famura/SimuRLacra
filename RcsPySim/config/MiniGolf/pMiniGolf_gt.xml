@@ -1,0 +1,108 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<content>
+
+  <vortex_parameters integrator_dt="0.002"
+                     body_linear_damping="0.00001"
+                     body_angular_damping="0.00001"
+                     joint_lock_stiffness="100000.0"
+                     joint_lock_damping="5000000.0"
+  />
+
+  <bullet_parameters use_ground_plane="false"
+                     use_mclp_solver="false"
+                     body_linear_damping="0.0"
+                     body_angular_damping="0.0"
+                     convex_hull_vertex_limit="140"
+                     jointed_body_linear_damping="0"
+                     jointed_body_angular_damping="0"
+  />
+
+  <!-- Definition of available materials (in addition to "default") -->
+  <!-- ==================================================================== -->
+  <!-- Possible friction models are "Box", "ScaledBox", and "ScaledBoxFast" -->
+  <!-- Here is what you can set: -->
+  <!--
+  <material name="default"
+            friction_model="ScaledBox"
+            friction_coefficient="0.8"
+            static_friction_scale="1.5"
+            slip="0.01"
+            integrated_slip_displacement="true"  actually its set to neural
+            compliance="0.0"
+            damping="0.0"
+            restitution_threshold="0.0"
+            adhesive_force="0.0"
+  />
+  -->
+
+  <material name="default"
+            friction_model="ScaledBox"
+            friction_coefficient="0.8"
+            rolling_friction_coefficient="0.0"
+            static_friction_scale="1.0"
+            slip="0.0001"
+            integrated_slip_displacement="true"
+            compliance="0"
+            restitution="1.0"
+  /> <!-- NOTE: the default restitution is usually 0. Here we can use the default material directly since it is the only one interacting with the ball. -->
+  <material name="ball_mat"
+            friction_model="ScaledBox"
+            friction_coefficient="0.4198"
+            rolling_friction_coefficient="0.000005"
+            static_friction_scale="1.0"
+            slip="0.001"
+            integrated_slip_displacement="true"
+            compliance="0.00001"
+            restitution="0.1376"
+  />
+  <material name="ground_mat"
+            friction_model="ScaledBox"
+            friction_coefficient="0.2127"
+            rolling_friction_coefficient="0.0"
+            static_friction_scale="1.0"
+            slip="0.0001"
+            integrated_slip_displacement="true"
+            compliance="0.00001"
+            restitution="0"
+  />
+  <material name="hole_mat"
+            friction_model="ScaledBox"
+            friction_coefficient="10.0"
+            rolling_friction_coefficient="10.0"
+            static_friction_scale="10.0"
+            slip="0.0"
+            integrated_slip_displacement="true"
+            compliance="0.1"
+            restitution="0"
+  />
+
+</content>

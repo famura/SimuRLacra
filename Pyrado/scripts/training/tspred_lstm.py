@@ -77,7 +77,7 @@ if __name__ == "__main__":
         actions = to.from_numpy(data.actions).to(dtype=to.get_default_dtype())
         data = to.cat([states[:-1], actions], dim=1)  # truncate final state
     else:
-        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "time_series", f"{data_set_name}.csv"))
+        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "misc", f"{data_set_name}.csv"))
         if data_set_name == "daily_min_temperatures":
             data = to.tensor(data["Temp"].values, dtype=to.get_default_dtype()).view(-1, 1)
         elif data_set_name == "monthly_sunspots":

@@ -275,10 +275,10 @@ def draw_posterior_1d(
     # Annotate
     if transposed:
         ax.set_ylabel(f"${dp_mapping[dim]}$" if x_label == "" else x_label)
-        ax.set_xlabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
+        ax.set_xlabel(rf"log $p({dp_mapping[dim]} | x^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
     else:
         ax.set_xlabel(f"${dp_mapping[dim]}$" if x_label == "" else x_label)
-        ax.set_ylabel(rf"log $p({dp_mapping[dim]} | \tau^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
+        ax.set_ylabel(rf"log $p({dp_mapping[dim]} | x^{{obs}}_{{1:{num_iter}}})$" if y_label == "" else y_label)
     ax.set_aspect(1.0 / ax.get_data_ratio(), adjustable="box")
 
     return plt.gcf()
@@ -568,7 +568,7 @@ def draw_posterior_scatter_2d(
     legend_labels: Optional[List[str]] = None,
     show_legend: bool = True,
     color_palette=sns.color_palette(),
-    alpha: float = 0.3,
+    alpha: float = 0.25,
     use_kde: bool = False,
     scatter_kwargs: Optional[dict] = None,
     kde_kwargs: Optional[dict] = None,
@@ -643,7 +643,7 @@ def draw_posterior_scatter_2d(
         color_palette.insert(len(dp_samples) - 1, (0, 0, 0))
 
     # Initialize plotting args and update them with custom args
-    scatter_args = merge_dicts([dict(s=20), scatter_kwargs or dict()])
+    scatter_args = merge_dicts([dict(s=8), scatter_kwargs or dict()])
     kde_args = merge_dicts([dict(fill=True), kde_kwargs or dict()])
     legend_args = dict(
         loc="upper center",
@@ -934,7 +934,7 @@ def draw_posterior_pairwise_scatter(
     legend_labels: Optional[List[str]] = None,
     prob_label: Optional[str] = "",
     color_palette=sns.color_palette(),
-    alpha: float = 0.3,
+    alpha: Union[int, float, List[Union[int, float]]] = 0.25,
     use_kde: bool = False,
     custom_scatter_args: Optional[dict] = None,
     custom_histplot_args: Optional[dict] = None,
@@ -961,8 +961,9 @@ def draw_posterior_pairwise_scatter(
     :param legend_labels: list of strings to set the legend labels, pass `None` to not use a legend
     :param prob_label: string to set the label for the probability axis in the marginal plots,
                        pass `""` to use default labels or pass `None` to use no labels
-    :param color_palette: colorpalette for plotting the different distribution samples
-    :param alpha: transparency level for the scatter and histogram plots except ground truth and nominal parameters
+    :param color_palette: color palette for plotting the different distribution samples
+    :param alpha: transparency level for the scatter and histogram plots except ground truth and nominal parameters.
+                  Can be a singe value which is then set for all data sets, or a list with values for each data set.
     :param use_kde: set to True to plot samples with KDE (currently only for pair axes)
     :param custom_scatter_args: dict with additional settings for seaborn.scatterplot
     :param custom_histplot_args: dict with additional settings for seaborn.histplot
@@ -1001,16 +1002,26 @@ def draw_posterior_pairwise_scatter(
             raise pyrado.ShapeErr(given=legend_labels, expected_match=dp_samples)
 
     if prob_label == "":
-        prob_label = "sample counts (KDE)" if use_kde else "sample counts"
+        prob_label = "counts (KDE)" if use_kde else "counts"
     elif prob_label is None:
         pass
     else:
         prob_label = f"${prob_label}$"
 
+    # Transparency
+    if isinstance(alpha, list):
+        alphas = alpha
+        if len(alphas) != len(dp_samples):
+            raise pyrado.ShapeErr(given=alphas, expected_match=dp_samples)
+    elif isinstance(alpha, (int, float)):
+        alphas = [alpha] * len(dp_samples)
+    else:
+        raise pyrado.TypeErr(given=alpha, expected_type=(int, float, list))
+
     # Initialize plotting args and update them with custom args
-    scatter_args = dict(s=20)
+    scatter_args = dict(s=8)
     scatter_args.update(custom_scatter_args or dict())
-    histplot_args = dict(element="step", bins=30)
+    histplot_args = dict(element="step", bins=20)
     histplot_args.update(custom_histplot_args or dict())
     line_args = dict(lw=2)
     line_args.update(custom_line_args or dict())
@@ -1020,12 +1031,12 @@ def draw_posterior_pairwise_scatter(
 
     # Get the nominal domain parameters
     if isinstance(env_sim, (SimEnv, EnvWrapper)):
-        dp_nom = env_sim.get_nominal_domain_param()
+        dp_nom = env_sim.domain_param  # also gets the wrapper's domain parameters
+        dp_nom.update(env_sim.get_nominal_domain_param())
         dp_nom = to.tensor([dp_nom[v] for v in dp_mapping.values()])
         dp_samples.append(to.atleast_2d(dp_nom))
         if legend_labels is not None:
-            legend_labels.append("nom")
-        color_palette.insert(len(dp_samples) - 1, sns.color_palette()[0])
+            legend_labels.append("nominal")
 
     # Reconstruct ground truth domain parameters if they exist
     dp_gt = None
@@ -1071,10 +1082,10 @@ def draw_posterior_pairwise_scatter(
         axs[i, j].yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
 
     # Define transparency values
-    alphas = []
     for idx_obs in range(len(dp_samples)):
         # There is only one sample for the nominal and the ground truth domain parameters, make it opaque
-        alphas.append(1.0 if len(dp_samples[idx_obs]) == 1 else alpha)
+        if len(dp_samples[idx_obs]):
+            alphas.append(1.0)
 
     # Adjust the data for the transformed domain parameters
     for idx_obs in range(len(dp_samples)):
@@ -1133,7 +1144,7 @@ def draw_posterior_pairwise_scatter(
             ub = prior.mean + 3 * to.sqrt(prior.variance)
             axis_limits = to.stack([lb, ub], dim=0).numpy()
         else:
-            raise pyrado.TypeErr(given=prior, expected_type=(BoxUniform, MultivariateNormal))
+            raise pyrado.TypeErr(given=prior, expected_type=(sbiutils.BoxUniform, MultivariateNormal))
     elif axis_limits is None:
         axis_limits_min = np.min(to.cat(dp_samples).numpy(), axis=0)
         axis_limits_max = np.max(to.cat(dp_samples).numpy(), axis=0)
@@ -1240,10 +1251,17 @@ def draw_posterior_pairwise_scatter(
             ax_leg = axs[0, plot_shape[1] - 1]
             ax_leg.set_visible(True)
             ax_leg.axis("off")
-            ax_leg.legend(handles=legend_elements, loc="center")
+            ax_leg.legend(handles=legend_elements, loc="lower left", bbox_to_anchor=(-0.2, -0.2, 1.0, 1.0))
         elif marginal_layout == "inside":
-            fig = plt.gcf()
-            fig.legend(handles=legend_elements, loc=(0.5, 1), ncol=len(legend_elements))
+            ax_leg = axs[0, 0]
+            ax_leg.legend(
+                ncol=len(legend_elements),
+                handles=legend_elements,
+                bbox_to_anchor=(0.0, 1.02, len(dp_mapping), 0.102),
+                loc="lower left",
+                mode="expand",
+                borderaxespad=0.0,
+            )
 
     return plt.gcf()
 
@@ -1271,15 +1289,13 @@ def _set_labels_pair_axes_(
             axs[i, j].set_yticklabels([])
 
     if marginal_layout == "inside":
-        # Show the ticklabels only for left and lower axes,
+        # Show the ticklabels only for left and lower axes
         if i == plot_shape[0] - 1:
-            axs[i, j].set_xlabel(f"${labels[dim_x]}$", **label_args)
+            axs[i, j].set_xlabel(f"{labels[dim_x]}", **label_args)
         else:
             axs[i, j].set_xticklabels([])
         if j == 0:
-            axs[i, j].set_ylabel(f"${labels[dim_y]}$", **label_args)
-        elif j == 1 and i == 0:
-            pass  # print ticks but no label for first pair y-axis in the first row
+            axs[i, j].set_ylabel(f"{labels[dim_y]}", **label_args)
         else:
             axs[i, j].set_yticklabels([])
 
@@ -1303,7 +1319,7 @@ def _set_labels_marginal_axes_(
     if marginal_layout == "outside":
         if i == 0:  # top row of axes
             axs[i, j].xaxis.set_label_position("top")  # set labels on top
-            axs[i, j].set_xlabel(f"${labels[dim]}$", **label_args)
+            axs[i, j].set_xlabel(f"{labels[dim]}", **label_args)
             axs[i, j].set_ylabel(prob_label if j == 0 else "", **label_args)
             axs[i, j].xaxis.tick_top()  # set ticks on top
             axs[i, j].set_xticklabels([])
@@ -1312,7 +1328,7 @@ def _set_labels_marginal_axes_(
 
         if j == plot_shape[1] - 1:  # most right column of axes
             axs[i, j].yaxis.set_label_position("right")  # set labels to the right
-            axs[i, j].set_ylabel(f"${labels[dim]}$", **label_args)
+            axs[i, j].set_ylabel(f"{labels[dim]}", **label_args)
             axs[i, j].set_xlabel(prob_label if i == plot_shape[1] - 1 else "", **label_args)
             axs[i, j].yaxis.tick_right()  # set ticks to the right
             axs[i, j].set_yticklabels([])
@@ -1320,7 +1336,9 @@ def _set_labels_marginal_axes_(
                 axs[i, j].set_xticklabels([])
 
     elif marginal_layout == "inside":
-        axs[i, j].set_xlabel(f"${labels[dim]}$" if i == plot_shape[0] - 1 else "", **label_args)
-        axs[i, j].set_ylabel(prob_label if j == 0 else "", **label_args)
+        axs[i, j].set_xlabel(f"{labels[dim]}" if i == plot_shape[0] - 1 else "", **label_args)
+        axs[i, j].set_ylabel(f"{labels[dim]}" if i == 0 else "", **label_args)  # former: prob_label
         if i != plot_shape[0] - 1:
             axs[i, j].set_xticklabels([])
+        if i != 0:
+            axs[i, j].set_yticklabels([])

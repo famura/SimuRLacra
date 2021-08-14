@@ -54,7 +54,7 @@ project = "Pyrado"
 version = ".".join(VERSION.split("."))  # short version
 release = VERSION  # full version including tags
 copyright = "2020"
-author = "Fabio Muratore & Felix Treede & Robin Menzenbach & Chrisitan Eilers"
+author = "Fabio Muratore & Felix Treede & Robin Menzenbach & Christian Eilers & Fabian Damken & Heiko Carrasco & Julien Brosseit & Benedikt Hahner"
 
 # ---------------------
 # General configuration

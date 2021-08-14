@@ -30,6 +30,7 @@ from typing import Tuple, Union
 
 import numpy as np
 import torch as to
+import torch.nn as nn
 from scipy.special import logsumexp
 
 import pyrado
@@ -159,7 +160,7 @@ def explained_var(y_mdl: Union[np.ndarray, to.Tensor], y_obs: Union[np.ndarray, 
 
 def logmeanexp(x: Union[to.Tensor, np.ndarray], dim: int = 0) -> Union[to.Tensor, np.ndarray]:
     r"""
-    Numerically stable way to compute :math:`\log \left( \frac{1}{N} \sum_{i=1}^N \exp(x) \right)
+    Numerically stable way to compute $\log \left( \frac{1}{N} \sum_{i=1}^N \exp(x) \right)$
 
     :param x: input tensor
     :param dim: dimension to compute the logmeanexp` along
@@ -175,7 +176,7 @@ def logmeanexp(x: Union[to.Tensor, np.ndarray], dim: int = 0) -> Union[to.Tensor
 
 def cosine_similarity(x: to.Tensor, y: to.Tensor) -> to.Tensor:
     r"""
-    Compute the cosine similarity between two tensors :math:`D_\text{cos}(x,y) = \frac{x^T y}{|x| \cdot |y|}`.
+    Compute the cosine similarity between two tensors $D_\text{cos}(x,y) = \frac{x^T y}{|x| \cdot |y|}$.
 
     :param x: input tensor
     :param y: input tensor
@@ -223,6 +224,36 @@ def clamp_symm(inp: to.Tensor, up_lo: to.Tensor) -> to.Tensor:
     :return: clipped tensor
     """
     return to.max(to.min(inp.clone(), up_lo), -up_lo)
+
+
+def soft_update(target: to.Tensor, source: to.Tensor, tau: float = 0.995):
+    """
+    Moving average update, a.k.a. Polyak update.
+
+    :param target: PyTroch tensor with the next / target values
+    :param source: PyTroch module with the current / source values
+    :param tau: interpolation factor for averaging, between 0 and 1
+    """
+    if not 0 <= tau <= 1:
+        raise pyrado.ValueErr(given=tau, ge_constraint="0", le_constraint="1")
+
+    return target * tau + source * (1.0 - tau)
+
+
+def soft_update_(target: nn.Module, source: nn.Module, tau: float = 0.995):
+    """
+    Moving average update, a.k.a. Polyak update.
+    Modifies the input argument `target`.
+
+    :param target: PyTroch module with parameters to be updated
+    :param source: PyTroch module with parameters to update to
+    :param tau: interpolation factor for averaging, between 0 and 1
+    """
+    if not 0 <= tau <= 1:
+        raise pyrado.ValueErr(given=tau, ge_constraint="0", le_constraint="1")
+
+    for targ_param, src_param in zip(target.parameters(), source.parameters()):
+        targ_param.data = targ_param.data * tau + src_param.data * (1.0 - tau)
 
 
 def numerical_differentiation_coeffs(

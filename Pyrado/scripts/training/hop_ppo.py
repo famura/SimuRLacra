@@ -54,16 +54,9 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict()
-    env = HopperSim(**env_hparams)
+    env_hparam = dict()
+    env = HopperSim(**env_hparam)
     env = ActNormWrapper(env)
-
-    # # Simple Randomizer
-    # dp_nom = HopperSim.get_nominal_domain_param()
-    # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name='total_mass', mean=dp_nom['total_mass'], std=dp_nom['total_mass']/10, clip_lo=1e-3)
-    # )
-    # env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
     policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
@@ -98,7 +91,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name),

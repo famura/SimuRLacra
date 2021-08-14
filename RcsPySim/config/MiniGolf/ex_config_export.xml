@@ -1,4 +1,4 @@
-<Experiment actionModelType="ik" checkJointLimits="True" collisionAvoidanceIK="False" dt="0.01" envType="MiniGolf" extraConfigDir="/home/muratore/Software/SimuRLacra/RcsPySim/src/python/rcsenv/config/MiniGolf" fixedInitState="True" graphFileName="gMiniGolf.xml" observeForceTorque="False" physicsConfigFile="pMiniGolf.xml" physicsEngine="Bullet" positionTasks="True" usePhysicsNode="True">
+<Experiment actionModelType="ik" checkJointLimits="True" collisionAvoidanceIK="False" dt="0.01" envType="MiniGolf" extraConfigDir="/home/muratore/Software/SimuRLacra/RcsPySim/src/python/rcsenv/config/MiniGolf" fixedInitState="True" graphFileName="gMiniGolf.xml" observeForceTorque="False" physicsConfigFile="pMiniGolf.xml" physicsEngine="Bullet" positionTasks="True" relativeZdTask="True" usePhysicsNode="True">
   <collisionConfig predCollHorizon="20" threshold="0.05">
     <pairs body1="Club" body2="Ground" />
   </collisionConfig>

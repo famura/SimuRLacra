@@ -57,24 +57,7 @@ from pyrado.utils.ordering import remove_none_from_list
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = get_argparser()
-
-    parser.add_argument(
-        "--save_format",
-        nargs="+",
-        type=str,
-        default=["pdf", "pgf", "png"],
-        help="select file format for plot saving, without commas (e.g., 'pdf png')",
-    )
-
-    parser.add_argument(
-        "--console",
-        action="store_true",
-        default=False,
-        help="set flag to not run plt.show. Make sure that the --save flag is set",
-    )
-
-    args = parser.parse_args()
+    args = get_argparser().parse_args()
     plt.rc("text", usetex=args.use_tex)
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
@@ -83,7 +66,7 @@ if __name__ == "__main__":
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the algorithm
-    algo = Algorithm.load_snapshot(ex_dir)
+    algo = pyrado.load("algo.pkl", ex_dir)
     if not isinstance(algo, (NPDR, BayesSim)):
         raise pyrado.TypeErr(given=algo, expected_type=(NPDR, BayesSim))
 
@@ -280,8 +263,8 @@ if __name__ == "__main__":
             rnd = f"_round_{args.round}" if args.round != -1 else ""
             fig.savefig(
                 os.path.join(ex_dir, "plots", f"posterior_prob_iter_{args.iter}{rnd}_{args.mode}.{fmt}"),
-                dpi=500,
+                dpi=150,
             )
 
-    if not args.console:
+    if args.verbose:
         plt.show()

@@ -121,14 +121,14 @@ class SysIdViaEpisodicRL(Algorithm):
         self.std_obs_filt = std_obs_filt
         if metric is None or metric == "None":
             self.metric = partial(
-                self.weighted_l1_l2_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight
+                SysIdViaEpisodicRL.weighted_l1_l2_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight
             )
         else:
             self.metric = metric
 
         # Get and optionally clip the observation bounds of the environment
         elb, eub = subrtn.env.obs_space.bound_lo, subrtn.env.obs_space.bound_up
-        elb, eub = self.override_obs_bounds(elb, eub, subrtn.env.obs_space.labels)
+        elb, eub = SysIdViaEpisodicRL.override_obs_bounds(elb, eub, subrtn.env.obs_space.labels)
         self.obs_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
 
         # Create the sampler used to execute the same policy as on the real system in the meta-randomized env
@@ -179,7 +179,6 @@ class SysIdViaEpisodicRL(Algorithm):
             sampled_domain_params = self._subrtn.env.randomizer.get_params()
 
             # Sample the rollouts
-            self.behavior_sampler.set_seed(self.base_seed)
             rollouts_sim = self.behavior_sampler.sample(init_states_real, sampled_domain_params, eval=True)
 
             # Iterate over simulated rollout with the same initial state
@@ -187,7 +186,7 @@ class SysIdViaEpisodicRL(Algorithm):
                 gen_ordered_batch_idcs(self.num_rollouts_per_distr, len(rollouts_sim), sorted=True)
             ):
                 # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
-                ros_real_tr, ros_sim_tr = self.truncate_rollouts(
+                ros_real_tr, ros_sim_tr = SysIdViaEpisodicRL.truncate_rollouts(
                     [rollouts_real[idx_real]], rollouts_sim[slice(idcs_sim[0], idcs_sim[-1] + 1)]
                 )
 

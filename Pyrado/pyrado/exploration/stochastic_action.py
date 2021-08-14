@@ -150,7 +150,7 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
         )
 
     def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
+        self._noise.reset_expl_params(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
         return self._noise.get_entropy(*args, **kwargs)
@@ -220,7 +220,7 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
         return self._noise(policy_output)
 
     def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
+        self._noise.reset_expl_params(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
         return self._noise.get_entropy(*args, **kwargs)
@@ -289,7 +289,7 @@ class SACExplStrat(StochasticActionExplStrat):
 
     # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
     def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
+        self._noise.reset_expl_params(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
         return self._noise.get_entropy(*args, **kwargs)
@@ -322,7 +322,7 @@ class SACExplStrat(StochasticActionExplStrat):
         u = act_noise_distr.rsample()
         act_expl = to.tanh(u)  # is in [-1, 1], this is why we always use an ActNormWrapper for SAC
         log_prob = act_noise_distr.log_prob(u)
-        log_prob = self._enforce_act_expl_bounds(log_prob, act_expl)
+        log_prob = SACExplStrat._enforce_act_expl_bounds(log_prob, act_expl)
 
         # Return the action and the log of the exploration std, given the current observation
         if self.policy.is_recurrent:

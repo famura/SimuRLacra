@@ -62,8 +62,8 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1 / 500.0, max_steps=2500)
-    env = QBallBalancerSim(**env_hparams)
+    env_hparam = dict(dt=1 / 500.0, max_steps=2500)
+    env = QBallBalancerSim(**env_hparam)
     env = GaussianObsNoiseWrapper(
         env,
         noise_std=[
@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),

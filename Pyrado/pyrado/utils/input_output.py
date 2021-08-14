@@ -123,7 +123,6 @@ def select_query(
     :param footer: string to print above the query
     :return: interactive query for selecting an experiment
     """
-
     # Truncate if needed
     print(header)
     if max_display is not None and len(items) > max_display:

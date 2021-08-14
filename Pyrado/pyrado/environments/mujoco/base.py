@@ -85,7 +85,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             # Specify the time step size explicitly
             with open(self.model_path, mode="r") as file_raw:
                 xml_model_temp = file_raw.read()
-            xml_model_temp = MujocoSimEnv._adapt_model_file(xml_model_temp, self.domain_param)
+            xml_model_temp = self._adapt_model_file(xml_model_temp, self.domain_param)
             # Create a dummy model to extract the solver's time step size
             model_tmp = mujoco_py.load_model_from_xml(xml_model_temp)
             frame_skip = dt / model_tmp.opt.timestep
@@ -188,8 +188,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Update task
         self._task = self._create_task(self.task_args)
 
-    @staticmethod
-    def _adapt_model_file(xml_model: str, domain_param: dict) -> str:
+    def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
         """
         Changes the model's XML-file given the current domain parameters before constructing the MuJoCo simulation.
         One use case is for example the cup_scale for the `WAMBallInCupSim` where multiple values in the model's
@@ -217,7 +216,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         Apply the given action to the MuJoCo simulation. This executes one step of the physics simulation.
 
         :param act: action
-        :return: dict with optional information from MuJoCo
+        :return: dictionary with optional information from MuJoCo
         """
 
     def _create_mujoco_model(self):
@@ -277,17 +276,18 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         # Reset MuJoCo simulation model (only reset the joint configuration)
         self.sim.reset()
         old_state = self.sim.get_state()
-        nq = self.init_qpos.size
+        nq = self.model.nq
+        nv = self.model.nv
         if not init_state[:nq].shape == old_state.qpos.shape:  # check joint positions dimension
             raise pyrado.ShapeErr(given=init_state[:nq], expected_match=old_state.qpos)
         # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
-        if not init_state[nq : 2 * nq].shape == old_state.qvel.shape:  # check joint velocities dimension
-            raise pyrado.ShapeErr(given=init_state[nq : 2 * nq], expected_match=old_state.qvel)
+        if not init_state[nq : nq + nv].shape == old_state.qvel.shape:  # check joint velocities dimension
+            raise pyrado.ShapeErr(given=init_state[nq : nq + nv], expected_match=old_state.qvel)
         new_state = mujoco_py.MjSimState(
             # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
             old_state.time,
             init_state[:nq],
-            init_state[nq : 2 * nq],
+            init_state[nq : nq + nv],
             old_state.act,
             old_state.udd_state,
         )

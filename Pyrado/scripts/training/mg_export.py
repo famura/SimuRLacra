@@ -58,7 +58,8 @@ if __name__ == "__main__":
 
     # Environments
     dt = 0.01
-    env_hparams = dict(
+    relativeZdTask = True
+    env_hparam = dict(
         usePhysicsNode=True,
         physicsEngine="Bullet",
         dt=dt,
@@ -67,37 +68,44 @@ if __name__ == "__main__":
         fixedInitState=True,
         collisionAvoidanceIK=False,
         observeForceTorque=False,
+        relativeZdTask=relativeZdTask,
     )
-    env = MiniGolfIKSim(**env_hparams)
+    env = MiniGolfIKSim(**env_hparam)
 
     # Set up the policies
-    # dp_nom = env.get_nominal_domain_param()
-    policy_hparam = dict(
-        t_end=6.0,
-        cond_lvl="vel",
-        # X (abs), Y (rel), Z (abs), A (abs), C (abs)
-        # cond_final=[[0.5, 0.0, 0.04, -0.876], [0.5, 0.0, 0.0, 0.0]],
-        # cond_init=[[0.1, 0.0, 0.04, -0.876], [0.0, 0.0, 0.0, 0.0]],
-        # # Zd (rel), X (rel), Y (rel), PHI (abs), THETA (abs)
-        # cond_final=[
-        #     [0.0, 0.0, 0.0, math.pi / 2, 0.0],
-        #     [0.0, 0.0, 0.0, 0.0, 0.0],
-        # ],
-        # cond_init=[
-        #     [-0.2, 0.0, 0.0, math.pi / 2, 0.0],
-        #     [0.0, 0.0, 0.0, 0.0, 0.0],
-        # ],
-        # Zd (rel), Y (rel2), Zdist (abs), PHI (abs), THETA (abs)
-        cond_final=[
-            [0.0, 0.0, 0.01, math.pi / 2, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.0],
-        ],
-        cond_init=[
-            [-7.0, 0.0, 0.01, math.pi / 2, 0.0],
-            [0.0, 0.0, 0.0, 0.0, 0.0],
-        ],
-        overtime_behavior="hold",
-    )
+    if relativeZdTask:
+        policy_hparam = dict(
+            t_end=0.6,
+            cond_lvl="vel",
+            # Zd (rel), Y (rel), Zdist (abs), PHI (abs), THETA (abs)
+            cond_final=[
+                [0.0, 0.0, 0.01, math.pi / 2, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            cond_init=[
+                [-100.0, 0.0, 0.01, math.pi / 2, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            overtime_behavior="hold",
+        )
+    else:
+        policy_hparam = dict(
+            t_end=3.0,
+            cond_lvl="vel",
+            # X (abs), Y (rel), Z (abs), A (abs), C (abs)
+            # cond_final=[[0.5, 0.0, 0.04, -0.876], [0.5, 0.0, 0.0, 0.0]],
+            # cond_init=[[0.1, 0.0, 0.04, -0.876], [0.0, 0.0, 0.0, 0.0]],
+            # X (abs), Y (rel), Zdist (abs), PHI (abs), THETA (abs)
+            cond_final=[
+                [0.9, 0.0, 0.005, math.pi / 2, 0.0],  # math.pi / 2 - 0.4
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            cond_init=[
+                [0.3, 0.0, 0.01, math.pi / 2, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ],
+            overtime_behavior="hold",
+        )
     policy = PolySplineTimePolicy(env.spec, dt, **policy_hparam)
     pre_strike_policy_hparam = dict(feats=FeatureStack(const_feat))
     pre_strike_policy = LinearPolicy(env.spec, **pre_strike_policy_hparam)
@@ -116,7 +124,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(policy=policy_hparam, policy_name=policy.name),
         dict(pre_strike_policy=pre_strike_policy_hparam, pre_strike_policy_name=pre_strike_policy.name),
         save_dir=ex_dir,

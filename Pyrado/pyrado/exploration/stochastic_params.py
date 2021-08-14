@@ -38,7 +38,7 @@ from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 
 
 class StochasticParamExplStrat(ABC):
-    """Exploration strategy which samples policy parameters from a distribution."""
+    """Exploration strategy which samples policy parameters from a distribution"""
 
     def __init__(self, param_dim: int):
         """
@@ -54,7 +54,7 @@ class StochasticParamExplStrat(ABC):
         Sample one set of policy parameters from the current distribution.
 
         :param nominal_params: parameter set (1-dim tensor) to sample around
-        :return: sampled parmeter set (1-dim tensor)
+        :return: sampled parameter set (1-dim tensor)
         """
         raise NotImplementedError
 
@@ -133,7 +133,7 @@ class SymmParamExplStrat(StochasticParamExplStrat):
 
 
 class NormalParamNoise(StochasticParamExplStrat):
-    """Sample parameters from a normal distribution."""
+    """Sampling parameters from a normal distribution"""
 
     def __init__(
         self,
@@ -167,10 +167,10 @@ class NormalParamNoise(StochasticParamExplStrat):
             )
 
     def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
+        self._noise.reset_expl_params(*args, **kwargs)
 
     def adapt(self, *args, **kwargs):
-        return self._noise.adapt(*args, **kwargs)
+        self._noise.adapt(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
         return self._noise.get_entropy(*args, **kwargs)
@@ -210,7 +210,7 @@ class NormalParamNoise(StochasticParamExplStrat):
 
 
 class HyperSphereParamNoise(StochasticParamExplStrat):
-    """Sample parameters from a normal distribution."""
+    """Sampling parameters from a normal distribution"""
 
     def __init__(self, param_dim: int, expl_r_init: float = 1.0):
         """

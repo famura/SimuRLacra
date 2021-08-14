@@ -51,13 +51,15 @@ from pyrado.utils.ordering import natural_sort
 
 if __name__ == "__main__":
     # Parse command line arguments
-    args = get_argparser().parse_args()
+    parser = get_argparser()
+    parser.set_defaults(animation=True)  # different default value for this script
+    args = parser.parse_args()
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment(hparam_list=args.show_hparams) if args.dir is None else args.dir
 
     # Load the environment randomizer
-    env_sim = joblib.load(osp.join(ex_dir, "env_sim.pkl"))
+    env_sim = pyrado.load("env_sim.pkl", ex_dir)
     hparam = load_dict_from_yaml(osp.join(ex_dir, "hyperparams.yaml"))
 
     # Override the time step size if specified

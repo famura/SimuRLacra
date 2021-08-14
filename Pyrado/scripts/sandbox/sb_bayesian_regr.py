@@ -54,9 +54,9 @@ def model(states, actions, observations, prior):
         iteration. In this case a `range` or `pyro.markov` should be used instead.
     """
     # Priors (also defines the support)
-    m = pyro.sample("m", distr.Normal(prior["m"], prior["m"] / 6.0))
-    k = pyro.sample("k", distr.Normal(prior["k"], prior["k"] / 6.0))
-    d = pyro.sample("d", distr.Normal(prior["d"], prior["d"] / 4.0))
+    m = pyro.sample("mass", distr.Normal(prior["mass"], prior["mass"] / 6.0))
+    k = pyro.sample("stiffness", distr.Normal(prior["stiffness"], prior["stiffness"] / 6.0))
+    d = pyro.sample("damping", distr.Normal(prior["damping"], prior["damping"] / 4.0))
     sigma = pyro.sample("sigma", distr.Normal(5.0, 0.5))  # obs noise scale; these params seem to have no effect
 
     # Create a model for learning the domain parameters
@@ -81,17 +81,17 @@ def guide(states, actions, observations, prior):
     .. note::
         The guide must not contain `pyro.sample` statements with the `obs` argument.
     """
-    m_loc = pyro.param("m_loc", to.tensor(prior["m"]), constraint=constraints.positive)
-    m_scale = pyro.param("m_scale", to.tensor(prior["m"] / 6.0), constraint=constraints.positive)
-    k_loc = pyro.param("k_loc", to.tensor(prior["k"]), constraint=constraints.positive)
-    k_scale = pyro.param("k_scale", to.tensor(prior["k"] / 6.0), constraint=constraints.positive)
-    d_loc = pyro.param("d_loc", to.tensor(prior["d"]), constraint=constraints.positive)
-    d_scale = pyro.param("d_scale", to.tensor(prior["d"] / 6.0), constraint=constraints.positive)
+    m_loc = pyro.param("mass_loc", to.tensor(prior["mass"]), constraint=constraints.positive)
+    m_scale = pyro.param("mass_scale", to.tensor(prior["mass"] / 6.0), constraint=constraints.positive)
+    k_loc = pyro.param("stiffness_loc", to.tensor(prior["stiffness"]), constraint=constraints.positive)
+    k_scale = pyro.param("stiffness_scale", to.tensor(prior["stiffness"] / 6.0), constraint=constraints.positive)
+    d_loc = pyro.param("damping_loc", to.tensor(prior["damping"]), constraint=constraints.positive)
+    d_scale = pyro.param("damping_scale", to.tensor(prior["damping"] / 6.0), constraint=constraints.positive)
     sigma_loc = pyro.param("sigma_loc", to.tensor(1.0), constraint=constraints.positive)
 
-    pyro.sample("m", distr.Normal(m_loc, m_scale))
-    pyro.sample("k", distr.Normal(k_loc, k_scale))
-    pyro.sample("d", distr.Normal(d_loc, d_scale))
+    pyro.sample("mass", distr.Normal(m_loc, m_scale))
+    pyro.sample("stiffness", distr.Normal(k_loc, k_scale))
+    pyro.sample("damping", distr.Normal(d_loc, d_scale))
     pyro.sample("sigma", distr.Normal(sigma_loc, to.tensor(0.001)))  # scale is a sensitive parameter; < 1e-3
 
 
@@ -116,12 +116,12 @@ def train(svi, rollouts, prior, num_epoch=2000):
         # The args of step are forwarded to the model and the guide
         elbo_hist.append(svi.step(states_cat, actions_cat, targets_cat, prior))
 
-        m_loc_hist.append(pyro.param("m_loc").item())
-        m_scale_hist.append(pyro.param("m_scale").item())
-        k_loc_hist.append(pyro.param("k_loc").item())
-        k_scale_hist.append(pyro.param("k_scale").item())
-        d_loc_hist.append(pyro.param("d_loc").item())
-        d_scale_hist.append(pyro.param("d_scale").item())
+        m_loc_hist.append(pyro.param("mass_loc").item())
+        m_scale_hist.append(pyro.param("mass_scale").item())
+        k_loc_hist.append(pyro.param("stiffness_loc").item())
+        k_scale_hist.append(pyro.param("stiffness_scale").item())
+        d_loc_hist.append(pyro.param("damping_loc").item())
+        d_scale_hist.append(pyro.param("damping_scale").item())
         sigma_hist.append(pyro.param("sigma_loc").item())
 
     for name, value in pyro.get_param_store().items():
@@ -134,15 +134,15 @@ def train(svi, rollouts, prior, num_epoch=2000):
     axs[0, 0].set_ylabel("ELBO loss")
 
     axs[0, 1].plot(m_loc_hist)
-    axs[0, 1].plot([0, num_epoch], [dp_gt["m"], dp_gt["m"]], c="k")
+    axs[0, 1].plot([0, num_epoch], [dp_gt["mass"], dp_gt["mass"]], c="k")
     axs[0, 1].set_ylabel("m loc")
 
     axs[1, 0].plot(k_loc_hist)
-    axs[1, 0].plot([0, num_epoch], [dp_gt["k"], dp_gt["k"]], c="k")
+    axs[1, 0].plot([0, num_epoch], [dp_gt["stiffness"], dp_gt["stiffness"]], c="k")
     axs[1, 0].set_ylabel("k loc")
 
     axs[1, 1].plot(d_loc_hist)
-    axs[1, 1].plot([0, num_epoch], [dp_gt["d"], dp_gt["d"]], c="k")
+    axs[1, 1].plot([0, num_epoch], [dp_gt["damping"], dp_gt["damping"]], c="k")
     axs[1, 1].set_ylabel("d loc")
 
     axs[2, 0].plot(m_scale_hist)

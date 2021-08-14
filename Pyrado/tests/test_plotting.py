@@ -271,14 +271,14 @@ def test_pair_plot(
     # Fix the init state
     env.init_space = SingularStateSpace(env.init_space.sample_uniform())
     env_real = deepcopy(env)
-    env_real.domain_param = {"m": 0.8, "k": 35, "d": 0.7}
+    env_real.domain_param = {"mass": 0.8, "stiffness": 35, "d": 0.7}
 
     # Optionally transformed domain parameters for inference
     if use_trafo:
-        env = SqrtDomainParamTransform(env, mask=["k"])
+        env = SqrtDomainParamTransform(env, mask=["stiffness"])
 
     # Domain parameter mapping and prior
-    dp_mapping = {0: "m", 1: "k", 2: "d"}
+    dp_mapping = {0: "mass", 1: "stiffness", 2: "d"}
     prior = sbiutils.BoxUniform(low=to.tensor([0.5, 20, 0.2]), high=to.tensor([1.5, 40, 0.8]))
 
     # Learn a likelihood from the simulator
@@ -357,14 +357,14 @@ def test_pair_plot_scatter(
     # Fix the init state
     env.init_space = SingularStateSpace(env.init_space.sample_uniform())
     env_real = deepcopy(env)
-    env_real.domain_param = {"m": 0.8, "k": 15, "d": 0.7}
+    env_real.domain_param = {"mass": 0.8, "stiffness": 15, "d": 0.7}
 
     # Optionally transformed domain parameters for inference
     if use_trafo:
-        env = LogDomainParamTransform(env, mask=["k"])
+        env = LogDomainParamTransform(env, mask=["stiffness"])
 
     # Domain parameter mapping and prior
-    dp_mapping = {0: "m", 1: "k", 2: "d"}
+    dp_mapping = {0: "mass", 1: "stiffness", 2: "d"}
     k_low = np.log(10) if use_trafo else 10
     k_up = np.log(20) if use_trafo else 20
     prior = sbiutils.BoxUniform(low=to.tensor([0.5, k_low, 0.2]), high=to.tensor([1.5, k_up, 0.8]))

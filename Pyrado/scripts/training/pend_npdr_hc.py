@@ -53,29 +53,28 @@ if __name__ == "__main__":
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(PendulumSim.name, f"{NPDR.name}-{HCNormal.name}_{LinearPolicy.name}")
-    num_workers = 8
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=400)
-    env_sim = PendulumSim(**env_hparams)
+    env_hparam = dict(dt=1 / 50.0, max_steps=400)
+    env_sim = PendulumSim(**env_hparam)
     # env_sim.domain_param = dict(d_pole=0, tau_max=10.0)
 
     # Create a fake ground truth target domain
     num_real_rollouts = 1
     env_real = deepcopy(env_sim)
-    env_real.domain_param = dict(m_pole=1 / 1.2 ** 2, l_pole=1.2)
+    env_real.domain_param = dict(pole_mass=1 / 1.2 ** 2, pole_length=1.2)
 
     # Define a mapping: index - domain parameter
-    dp_mapping = {0: "m_pole", 1: "l_pole"}
+    dp_mapping = {0: "pole_mass", 1: "pole_length"}
 
     # Prior
     dp_nom = env_sim.get_nominal_domain_param()
     prior_hparam = dict(
-        low=to.tensor([dp_nom["m_pole"] * 0.3, dp_nom["l_pole"] * 0.3]),
-        high=to.tensor([dp_nom["m_pole"] * 1.7, dp_nom["l_pole"] * 1.7]),
+        low=to.tensor([dp_nom["pole_mass"] * 0.3, dp_nom["pole_length"] * 0.3]),
+        high=to.tensor([dp_nom["pole_mass"] * 1.7, dp_nom["pole_length"] * 1.7]),
     )
     prior = sbiutils.BoxUniform(**prior_hparam)
 
@@ -108,7 +107,7 @@ if __name__ == "__main__":
         num_init_states_per_domain=1,
         expl_factor=1.05,
         expl_std_init=1.0,
-        num_workers=num_workers,
+        num_workers=args.num_workers,
     )
     subrtn_policy = HCNormal(ex_dir, env_sim, policy, **subrtn_policy_hparam)
 
@@ -116,7 +115,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=5,
         num_real_rollouts=num_real_rollouts,
-        num_sim_per_round=300,
+        num_sim_per_round=200,
         num_sbi_rounds=3,
         simulation_batch_size=10,
         normalize_posterior=False,
@@ -138,7 +137,7 @@ if __name__ == "__main__":
             # max_num_epochs=5,  # only use for debugging
         ),
         subrtn_sbi_sampling_hparam=dict(sample_with_mcmc=False),
-        num_workers=num_workers,
+        num_workers=args.num_workers,
     )
     algo = NPDR(
         ex_dir,
@@ -155,7 +154,7 @@ if __name__ == "__main__":
 
     # Save the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(prior=prior_hparam),
         dict(posterior_nn=posterior_hparam),
         dict(policy=policy_hparam),

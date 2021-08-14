@@ -52,7 +52,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeStabSim, QQubeSwingUpSim
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeSwingUpReal
-from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim
+from pyrado.environments.rcspysim.mini_golf import MiniGolfIKSim, MiniGolfJointCtrlSim
 from pyrado.policies.features import *
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.policies.feed_back.linear import LinearPolicy
@@ -64,14 +64,10 @@ from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.policies.recurrent.rnn import GRUPolicy, LSTMPolicy, RNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHeadedLSTMPolicy, TwoHeadedRNNPolicy
-
-# Set default torch dtype globally to avoid inconsistent errors depending on the test run order
 from pyrado.spaces import BoxSpace
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.functions import skyline
 
-
-torch.set_default_dtype(to.float32)
 
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
@@ -79,14 +75,12 @@ try:
 
     from pyrado.environments.rcspysim.ball_in_tube import BallInTubePosIKActivationSim, BallInTubeVelDSSim
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
-    from pyrado.environments.rcspysim.box_flipping import BoxFlippingIKActivationSim, BoxFlippingVelDSSim
     from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim, BoxLiftingVelDSSim
     from pyrado.environments.rcspysim.box_shelving import BoxShelvingPosDSSim, BoxShelvingVelDSSim
     from pyrado.environments.rcspysim.mp_blending import MPBlendingSim
     from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
     from pyrado.environments.rcspysim.planar_insert import PlanarInsertIKActivationSim, PlanarInsertTASim
     from pyrado.environments.rcspysim.quanser_qube import QQubeRcsSim
-    from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
     m_needs_vortex = pytest.mark.skipif(
         not rcsenv.supportsPhysicsEngine("Vortex"), reason="Vortex physics engine is not supported in this setup."
@@ -110,8 +104,11 @@ except (ImportError, ModuleNotFoundError):
 try:
     import mujoco_py
 
+    from pyrado.environments.mujoco.openai_ant import AntSim
     from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
     from pyrado.environments.mujoco.openai_hopper import HopperSim
+    from pyrado.environments.mujoco.openai_humanoid import HumanoidSim
+    from pyrado.environments.mujoco.quanser_qube import QQubeStabMjSim, QQubeSwingUpMjSim
     from pyrado.environments.mujoco.wam_bic import WAMBallInCupSim
 
     m_needs_mujoco = pytest.mark.skipif(False, reason="mujoco-py can be imported.")
@@ -124,6 +121,9 @@ m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason="CUDA is no
 
 # Set multiprocessing start method to spawn for tests
 mp.set_start_method("spawn", force=True)
+
+# Set default torch dtype globally to avoid inconsistent errors depending on the test run order
+torch.set_default_dtype(to.float32)
 
 
 # --------------------
@@ -191,6 +191,16 @@ class DefaultEnvs:
     @staticmethod
     def default_qqsu():
         return QQubeSwingUpSim(dt=0.004, max_steps=4000)
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_qqst_mj():
+        return QQubeStabMjSim(dt=0.01, max_steps=500)
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_qqsu_mj():
+        return QQubeSwingUpMjSim(dt=0.004, max_steps=4000)
 
     @staticmethod
     @m_needs_bullet
@@ -563,63 +573,24 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bf_ds_vel_bt():
-        return BoxFlippingVelDSSim(
-            physicsEngine="Bullet",
-            graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
+    def default_mg_ik_bt():
+        return MiniGolfIKSim(
             dt=1 / 100.0,
-            max_steps=2000,
-            fixed_init_state=True,
-            ref_frame="table",
-            tasks_left=None,
-            tasks_right=None,
-            collisionConfig={"file": "collisionModel.xml"},
-            taskCombinationMethod="sum",
+            max_steps=800,
             checkJointLimits=True,
-            collisionAvoidanceIK=True,
-            observeVelocities=True,
-            observeForceTorque=True,
-            observeCollisionCost=True,
-            observePredictedCollisionCost=False,  # True causes a crash
-            observeManipulabilityIndex=True,
-            observeTaskSpaceDiscrepancy=True,
-            observeDynamicalSystemDiscrepancy=True,
-            observeDynamicalSystemGoalDistance=True,
-        )
-
-    @staticmethod
-    @m_needs_vortex
-    def default_bf_ika_bt():
-        return BoxFlippingIKActivationSim(
-            physicsEngine="Bullet",
-            graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
-            dt=1 / 100.0,
-            max_steps=2000,
-            fixed_init_state=True,
-            ref_frame="table",
-            tasks_left=None,
-            tasks_right=None,
-            collisionConfig={"file": "collisionModel.xml"},
-            taskCombinationMethod="sum",
-            checkJointLimits=True,
-            collisionAvoidanceIK=True,
-            observeVelocities=True,
-            observeForceTorque=True,
-            observeCollisionCost=True,
-            observePredictedCollisionCost=False,  # True causes a crash
-            observeManipulabilityIndex=True,
-            observeTaskSpaceDiscrepancy=True,
+            fixedInitState=True,
+            observeForceTorque=False,
         )
 
     @staticmethod
     @m_needs_bullet
-    def default_mg_ik_bt():
-        return MiniGolfIKSim(
+    def default_mg_jnt_bt():
+        return MiniGolfJointCtrlSim(
             dt=1 / 100.0,
-            max_steps=1500,
+            max_steps=800,
             checkJointLimits=True,
             fixedInitState=True,
-            observeForceTorque=True,
+            observeForceTorque=False,
         )
 
     @staticmethod
@@ -636,6 +607,16 @@ class DefaultEnvs:
     @m_needs_mujoco
     def default_hop():
         return HopperSim()
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_hum():
+        return HumanoidSim()
+
+    @staticmethod
+    @m_needs_mujoco
+    def default_ant():
+        return AntSim()
 
     @staticmethod
     @m_needs_mujoco

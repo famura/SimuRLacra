@@ -29,16 +29,14 @@
 import os.path as osp
 from typing import Optional
 
-import sbi.utils as sbiutils
 import torch as to
 from sbi.inference import SNPE_A
 from sbi.inference.base import simulate_for_sbi
-from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.algorithms.meta.sbi_base import SBIBase
 from pyrado.algorithms.utils import until_thold_exceeded
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, RNNEmbedding
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.utils.input_output import print_cbt
 
 
@@ -60,8 +58,8 @@ class BayesSim(SBIBase):
             density estimation.", NIPS, 2016
     """
 
-    name = "bayessim"
-    iteration_key = "bayessim_iteration"
+    name: str = "bayessim"
+    iteration_key: str = "bayessim_iteration"
 
     def __init__(
         self,
@@ -100,11 +98,6 @@ class BayesSim(SBIBase):
             # called again. This is possible because their controller is kept fixed, but its internal model updates.
             kwargs["subrtn_policy"].max_iter = 1
 
-            if not isinstance(kwargs["embedding"], (BayesSimEmbedding, RNNEmbedding)):
-                raise pyrado.TypeErr(
-                    msg="The embedding for online BayesSim must be of type BayesSimEmbedding or RNNEmbedding!"
-                )
-
         if component_perturbation <= 0:
             raise pyrado.ValueErr(given=component_perturbation, g_constraint="0")
 
@@ -121,20 +114,10 @@ class BayesSim(SBIBase):
         # Set the sampling parameters used by the sbi subroutine
         self.subrtn_sbi_sampling_hparam = subrtn_sbi_sampling_hparam or dict()
 
-        # Create the algorithm instance used in sbi, i.e. SNPE-A  which as a few specialities has a
-        density_estimator = sbiutils.posterior_nn(**self.posterior_hparam)  # embedding for nflows is always nn.Identity
-        summary_writer = self.logger.printers[2].writer
-        assert isinstance(summary_writer, SummaryWriter)
-        self._subrtn_sbi = SNPE_A(
-            prior=self._sbi_prior,
-            density_estimator=density_estimator,
-            device=self.policy.device,
-            num_components=num_components,
-            summary_writer=summary_writer,
-        )
-
-        # Custom to SNPE-A
-        self._component_perturbation = float(component_perturbation)
+        # Create the algorithm instance used in sbi, i.e. SNPE-A which has a few specialities
+        self._num_components = num_components
+        self._component_perturbation = float(component_perturbation)  # custom to SNPE-A
+        self._initialize_subrtn_sbi(subrtn_sbi_class=SNPE_A, num_components=self._num_components)
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
@@ -152,7 +135,7 @@ class BayesSim(SBIBase):
                 wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
                     self.train_policy_sim
                 )
-                wrapped_trn_fcn(domain_params, prefix="", use_rec_init_states=False)  # overrides policy.pt
+                wrapped_trn_fcn(domain_params, prefix="init", use_rec_init_states=False)  # overrides policy.pt
 
             self.reached_checkpoint()  # setting counter to 0
 
@@ -170,8 +153,13 @@ class BayesSim(SBIBase):
             else:
                 # If the policy depends on the domain-parameters, reset the policy with the
                 # most likely dp-params from the previous round.
+                pyrado.load(
+                    "policy.pt",
+                    self._save_dir,
+                    prefix=f"iter_{self._curr_iter - 1}" if self.curr_iter != 0 else "init",
+                    obj=self._policy,
+                )
                 if self.curr_iter != 0:
-                    pyrado.load("policy.pt", self._save_dir, prefix=f"iter_{self._curr_iter - 1}", obj=self._policy)
                     ml_domain_param = pyrado.load(
                         "ml_domain_param.pkl", self.save_dir, prefix=f"iter_{self._curr_iter - 1}"
                     )
@@ -208,8 +196,12 @@ class BayesSim(SBIBase):
             self.reached_checkpoint()  # setting counter to 1
 
         if self.curr_checkpoint == 1:
-            # Load the latest proposal, this can be the prior or the amortized posterior of the last iteration
-            proposal = self.get_latest_proposal_prev_iter()
+            # Instantiate the sbi subroutine to retrain from scratch each iteration
+            if self.reset_sbi_routine_each_iter:
+                self._initialize_subrtn_sbi(subrtn_sbi_class=SNPE_A, num_components=self._num_components)
+
+            # Initialize the proposal with the prior
+            proposal = self._sbi_prior
 
             # Multi-round sbi
             for idx_r in range(self.num_sbi_rounds):
@@ -296,6 +288,12 @@ class BayesSim(SBIBase):
         if self.curr_checkpoint == 3:
             # Policy optimization
             if self._subrtn_policy is not None:
+                pyrado.load(
+                    "policy.pt",
+                    self._save_dir,
+                    prefix=f"iter_{self._curr_iter - 1}" if self.curr_iter != 0 else "init",
+                    obj=self._policy,
+                )
                 # Train the behavioral policy using the posterior samples obtained before.
                 # Repeat the training if the resulting policy did not exceed the success threshold.
                 print_cbt(
@@ -306,6 +304,11 @@ class BayesSim(SBIBase):
                 )
                 wrapped_trn_fcn(
                     self._curr_domain_param_eval.squeeze(0), prefix=f"iter_{self._curr_iter}", use_rec_init_states=True
+                )
+            else:
+                # save prefixed policy either way
+                pyrado.save(
+                    self.policy, "policy.pt", self.save_dir, prefix=f"iter_{self._curr_iter}", use_state_dict=True
                 )
 
             self.reached_checkpoint()  # setting counter to 0

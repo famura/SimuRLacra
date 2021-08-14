@@ -189,7 +189,7 @@ class Planar3LinkSim(RcsSim, Serializable):
 class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
     """Planar 3-link robot controlled by directly setting the joint angles"""
 
-    name: str = "p3l-jt"
+    name: str = "p3l-jnt"
 
     def __init__(self, task_args: dict = None, **kwargs):
         """
@@ -221,7 +221,7 @@ class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
         :param task_args: arguments for the task construction
         :param kwargs: keyword arguments forwarded to `RcsSim`
                        positionTasks: bool = True,
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeForceTorque: bool = True,
@@ -262,7 +262,7 @@ class Planar3LinkTASim(Planar3LinkSim, Serializable):
         :param position_mps: if `True` use movement primitives specified on position-level, if `False` velocity-level
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
-                       checkJointLimits: bool = False,
+                       checkJointLimits: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = True,
                        observeForceTorque: bool = True,

@@ -64,28 +64,28 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=600)
-    env_real = QQubeSwingUpReal(**env_hparams)
+    env_hparam = dict(dt=1 / 100.0, max_steps=600)
+    env_real = QQubeSwingUpReal(**env_hparam)
     env_real = ActNormWrapper(env_real)
 
-    env_sim = QQubeSwingUpSim(**env_hparams)
+    env_sim = QQubeSwingUpSim(**env_hparam)
     env_sim = ActNormWrapper(env_sim)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lr", mean=0.0, std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="mass_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_rot_pole", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="length_pend_pole", mean=0.0, std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        0: ("Mr", "mean"),
-        1: ("Mr", "std"),
-        2: ("Mp", "mean"),
-        3: ("Mp", "std"),
-        4: ("Lr", "mean"),
-        5: ("Lr", "std"),
-        6: ("Lp", "mean"),
-        7: ("Lp", "std"),
+        0: ("mass_rot_pole", "mean"),
+        1: ("mass_rot_pole", "std"),
+        2: ("mass_pend_pole", "mean"),
+        3: ("mass_pend_pole", "std"),
+        4: ("length_rot_pole", "mean"),
+        5: ("length_rot_pole", "std"),
+        6: ("length_pend_pole", "mean"),
+        7: ("length_pend_pole", "std"),
     }
     trafo_mask = [True] * 8
     # trafo_mask = [False, True, False, True, False, True, False, True]
@@ -124,10 +124,10 @@ if __name__ == "__main__":
     subrtn_policy = PPO(ex_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
 
     prior = DomainRandomizer(
-        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / 10),
-        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
-        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / 10),
-        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
+        NormalDomainParam(name="mass_rot_pole", mean=0.095, std=0.095 / 10),
+        NormalDomainParam(name="mass_pend_pole", mean=0.024, std=0.024 / 10),
+        NormalDomainParam(name="length_rot_pole", mean=0.085, std=0.085 / 10),
+        NormalDomainParam(name="length_pend_pole", mean=0.129, std=0.129 / 10),
     )
     ddp_policy_hparam = dict(mapping=dp_map, trafo_mask=trafo_mask, scale_params=True)
     ddp_policy = DomainDistrParamPolicy(prior=prior, **ddp_policy_hparam)
@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     # Save the environments and the hyper-parameters
     save_dicts_to_yaml(
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparam, seed=args.seed),
         dict(behav_policy=behav_policy_hparam),
         dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(ddp_policy=ddp_policy_hparam, ddp_policy_name=ddp_policy.name),

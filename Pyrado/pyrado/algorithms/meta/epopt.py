@@ -27,15 +27,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
+from typing import Tuple
 
 import joblib
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper, DomainRandWrapperLive
 from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
 from pyrado.sampling.cvar_sampler import CVaRSampler
+from pyrado.utils.input_output import print_cbt
 
 
 class EPOpt(Algorithm):
@@ -102,7 +107,7 @@ class EPOpt(Algorithm):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Activate the CVaR mechanism after skip_iter iterations
-        if self.curr_iter == self.skip_iter:
+        if self._curr_iter == self.skip_iter:
             self._subrtn.sampler.epsilon = self.epsilon
 
         # Call subroutine
@@ -116,12 +121,29 @@ class EPOpt(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            if self.curr_iter == self.skip_iter - 1:
-                # Save the last snapshot before applying the CVaR
-                self._subrtn.save_snapshot(meta_info=dict(prefix=f"iter_{self.skip_iter - 1}"))
-            else:
-                self._subrtn.save_snapshot(meta_info=None)
+        if self._curr_iter == self.skip_iter - 1:
+            # Save the last snapshot before applying the CVaR
+            self._subrtn.save_snapshot(meta_info=dict(prefix=f"iter_{self.skip_iter - 1}"))
         else:
-            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
+            self._subrtn.save_snapshot(meta_info=None)
+
+    def load_snapshot(self, parsed_args) -> Tuple[Env, Policy, dict]:
+        env, policy, extra = super().load_snapshot(parsed_args)
+        extra = dict()
+
+        # Environment
+        if getattr(env, "randomizer", None) is not None:
+            if not isinstance(env, DomainRandWrapperLive):
+                raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperLive)
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
+        else:
+            print_cbt("Loaded environment has no randomizer, or it is None.", "y")
+
+        # Algorithm specific
+        if isinstance(self.subroutine, ActorCritic):
+            ex_dir = self._save_dir or getattr(parsed_args, "dir", None)
+            extra["vfcn"] = pyrado.load(
+                f"{parsed_args.vfcn_name}.pt", ex_dir, obj=self.subroutine.critic.vfcn, verbose=True
+            )
+
+        return env, policy, extra
