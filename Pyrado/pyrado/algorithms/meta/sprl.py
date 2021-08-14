@@ -293,7 +293,7 @@ class SPRL(Algorithm):
         kl_constraints_ub: float,
         max_iter: int,
         performance_lower_bound: float,
-        std_lower_bound: float = 0.2,
+        var_lower_bound: Optional[float] = 0.04,
         kl_threshold: float = 0.1,
         optimize_mean: bool = True,
         optimize_cov: bool = True,
@@ -309,8 +309,8 @@ class SPRL(Algorithm):
         :param max_iter: Maximal iterations for the SPRL algorithm (not for the subroutine)
         :param performance_lower_bound: lower bound for the performance SPRL tries to stay above
                                         during distribution updates
-        :param std_lower_bound: clipping value for the standard deviation,necessary when using
-                                         very small target variances
+        :param var_lower_bound: clipping value for the variance,necessary when using very small target variances; prefer
+                                a log-transformation instead
         :param kl_threshold: threshold for the KL-divergence until which std_lower_bound is enforced
         :param optimize_mean: whether the mean should be changed or considered fixed
         :param optimize_cov: whether the (co-)variance should be changed or considered fixed
@@ -340,7 +340,7 @@ class SPRL(Algorithm):
 
         # Properties for the variance bound and kl constraint
         self._kl_constraints_ub = kl_constraints_ub
-        self._std_lower_bound = std_lower_bound
+        self._var_lower_bound = var_lower_bound
         self._kl_threshold = kl_threshold
 
         # Properties of the performance constraint
@@ -499,17 +499,26 @@ class SPRL(Algorithm):
             # keep_feasible=True,
         )
 
-        # Optionally clip the bounds of the new variance
+        # Clip the bounds of the new variance either if the applied covariance transformation does not ensure
+        # non-negativity or when the KL threshold has been crossed.
         bounds = None
         x0, _, x0_cov_indices = previous_distribution.get_stacked(return_mean_cov_indices=True)
+        if self._cov_transformation.ensures_non_negativity():
+            lower_bound = -np.inf * np.ones_like(x0)
+            lower_bound_is_inf = True
+        else:
+            lower_bound = np.zeros_like(x0)
+            lower_bound_is_inf = False
         if self._kl_threshold != -np.inf and (self._kl_threshold < kl_divergence):
-            lower_bound = np.ones_like(x0) * -np.inf
-            if x0_cov_indices is not None:
-                lower_bound[x0_cov_indices] = self._std_lower_bound
+            if x0_cov_indices is not None and self._var_lower_bound is not None:
+                # Further clip the x values if a standard deviation lower bound was set.
+                lower_bound[x0_cov_indices] = self._cov_transformation.forward(self._var_lower_bound)
+                lower_bound_is_inf = False
+        if not lower_bound_is_inf:
+            # Only set the bounds if the lower bound is not negative infinity. Makes it easier for the optimizer.
             upper_bound = np.ones_like(x0) * np.inf
-            # bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
             bounds = Bounds(lb=lower_bound, ub=upper_bound)
-            x0 = np.clip(x0, lower_bound, upper_bound)
+            x0 = np.clip(x0, bounds.lb, bounds.ub)
 
         objective_fn: Optional[Callable[..., Tuple[np.array, np.array]]] = None
         result = None

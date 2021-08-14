@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
 import math
 from abc import ABC, abstractmethod
 from typing import Union
@@ -50,7 +51,7 @@ class BijectiveTransformation(ABC):
         :param value: value in the original space
         :return: value in the transformed space
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
@@ -60,7 +61,15 @@ class BijectiveTransformation(ABC):
         :param value: value in the transformed space
         :return: value in the original space
         """
-        raise NotImplementedError
+        raise NotImplementedError()
+
+    @abstractmethod
+    def ensures_non_negativity(self) -> bool:
+        """
+        Whether this transformations ensures non-negativity, i.e., whether :py:meth:`.inverse` only returns non-negative
+        values.
+        """
+        raise NotImplementedError()
 
 
 class LogTransformation(BijectiveTransformation):
@@ -84,6 +93,9 @@ class LogTransformation(BijectiveTransformation):
         else:
             return math.exp(value)
 
+    def ensures_non_negativity(self) -> bool:
+        return True
+
 
 class SqrtTransformation(BijectiveTransformation):
     """Transformation to make the values look like they are in sqrt-space. This is not actually bijective!"""
@@ -106,6 +118,9 @@ class SqrtTransformation(BijectiveTransformation):
         else:
             return math.pow(value, 2)
 
+    def ensures_non_negativity(self) -> bool:
+        return True
+
 
 class IdentityTransformation(BijectiveTransformation):
     """Transformation that does nothing."""
@@ -115,3 +130,6 @@ class IdentityTransformation(BijectiveTransformation):
 
     def inverse(self, value: Union[int, float, np.ndarray, to.Tensor]) -> Union[int, float, np.ndarray, to.Tensor]:
         return value
+
+    def ensures_non_negativity(self) -> bool:
+        return False
