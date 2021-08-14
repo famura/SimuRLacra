@@ -349,7 +349,7 @@ class SPRL(Algorithm):
         self._max_subrtn_retries = max_subrtn_retries
 
         self._spl_parameters = []
-        self._cov_transformation: BijectiveTransformation
+        self._cov_transformation = None
         for param in env.randomizer.domain_params:
             if isinstance(param, SelfPacedDomainParam):
                 self._spl_parameters.append(param)

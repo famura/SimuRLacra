@@ -337,9 +337,9 @@ class SelfPacedDomainParam(DomainParam):
 
         self.cov_transformation = cov_transformation
         self.target_mean = target_mean.double()
-        self.target_cov_flat_transformed = self.cov_transformation.forward(target_cov_flat)
+        self.target_cov_flat_transformed = self.cov_transformation.forward(target_cov_flat.double())
         self.context_mean = init_mean.double()
-        self.context_cov_flat_transformed = self.cov_transformation.forward(init_cov_flat)
+        self.context_cov_flat_transformed = self.cov_transformation.forward(init_cov_flat.double())
 
         self.dim = target_mean.shape[0]
 
@@ -348,7 +348,7 @@ class SelfPacedDomainParam(DomainParam):
 
     def get_field_names(self) -> Sequence[str]:
         """Get union of all hyper-parameters of all domain parameter distributions."""
-        return ["target_mean", "target_cov_chol_flat", "context_mean", "context_cov_chol_flat"]
+        return ["target_mean", "target_cov_flat_transformed", "context_mean", "context_cov_flat_transformed"]
 
     @staticmethod
     def make_broadening(
