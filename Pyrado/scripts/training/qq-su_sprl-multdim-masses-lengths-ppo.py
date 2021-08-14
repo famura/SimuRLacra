@@ -39,7 +39,7 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.domain_randomization.transformations import LogDomainParamTransform
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
@@ -47,6 +47,7 @@ from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.bijective_transformation import LogTransformation
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -119,7 +120,7 @@ if __name__ == "__main__":
         dict(name="Lr", mean=to.tensor([0.085]).log()),
         dict(name="Lp", mean=to.tensor([0.129]).log()),
     ]
-    env = LogDomainParamTransform(env, [p["name"] for p in env_sprl_params])
+    env = DomainParamTransform(env, [p["name"] for p in env_sprl_params], LogTransformation())
     env = DomainRandWrapperLive(
         env, randomizer=DomainRandomizer(*[SelfPacedDomainParam.make_broadening(**p) for p in env_sprl_params])
     )

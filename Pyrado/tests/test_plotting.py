@@ -39,7 +39,7 @@ from sbi.inference import SNPE, simulate_for_sbi
 from sbi.utils.user_input_checks import prepare_for_sbi
 
 from pyrado.algorithms.meta.sbi_base import SBIBase
-from pyrado.domain_randomization.transformations import LogDomainParamTransform, SqrtDomainParamTransform
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environments.sim_base import SimEnv
 from pyrado.plotting.categorical import draw_categorical
 from pyrado.plotting.curve import draw_curve_from_data, draw_dts
@@ -59,6 +59,7 @@ from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sbi_embeddings import Embedding
 from pyrado.spaces.singular import SingularStateSpace
+from pyrado.utils.bijective_transformation import LogTransformation, SqrtTransformation
 from pyrado.utils.functions import rosenbrock
 
 
@@ -275,7 +276,7 @@ def test_pair_plot(
 
     # Optionally transformed domain parameters for inference
     if use_trafo:
-        env = SqrtDomainParamTransform(env, mask=["stiffness"])
+        env = DomainParamTransform(env, mask=["stiffness"], transformation=SqrtTransformation())
 
     # Domain parameter mapping and prior
     dp_mapping = {0: "mass", 1: "stiffness", 2: "d"}
@@ -361,7 +362,7 @@ def test_pair_plot_scatter(
 
     # Optionally transformed domain parameters for inference
     if use_trafo:
-        env = LogDomainParamTransform(env, mask=["stiffness"])
+        env = DomainParamTransform(env, mask=["stiffness"], transformation=LogTransformation())
 
     # Domain parameter mapping and prior
     dp_mapping = {0: "mass", 1: "stiffness", 2: "d"}

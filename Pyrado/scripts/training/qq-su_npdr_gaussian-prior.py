@@ -33,18 +33,19 @@ import os.path as osp
 
 import torch as to
 from sbi.inference import SNPE_C
-from torch.distributions import MultivariateNormal, Normal
+from torch.distributions import MultivariateNormal
 
 import pyrado
 from pyrado.algorithms.meta.npdr import NPDR
-from pyrado.domain_randomization.transformations import SqrtDomainParamTransform
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.policies.feed_forward.time import TimePolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.sampling.sbi_embeddings import BayesSimEmbedding, DeltaStepsEmbedding, RNNEmbedding
+from pyrado.sampling.sbi_embeddings import BayesSimEmbedding
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.bijective_transformation import SqrtTransformation
 from pyrado.utils.sbi import create_embedding
 
 
@@ -111,7 +112,7 @@ if __name__ == "__main__":
     }
 
     # Transform the domain parameter space
-    env_sim = SqrtDomainParamTransform(env_sim, [dp_name for dp_name in dp_mapping.values()])
+    env_sim = DomainParamTransform(env_sim, [dp_name for dp_name in dp_mapping.values()], SqrtTransformation())
 
     # Prior and Posterior (normalizing flow)
     dp_nom = env_sim.get_nominal_domain_param()

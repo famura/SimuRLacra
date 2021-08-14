@@ -33,14 +33,11 @@ import pytest
 from tests.conftest import VORTEX_ONLY_DOMAIN_PARAM_LIST, m_needs_bullet, m_needs_mujoco, m_needs_vortex
 
 import pyrado
-from pyrado.domain_randomization.transformations import (
-    DomainParamTransform,
-    LogDomainParamTransform,
-    SqrtDomainParamTransform,
-)
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.pysim.base import SimPyEnv
 from pyrado.environments.sim_base import SimEnv
+from pyrado.utils.bijective_transformation import LogTransformation, SqrtTransformation
 
 
 @pytest.mark.wrapper
@@ -73,7 +70,7 @@ from pyrado.environments.sim_base import SimEnv
     ],
     indirect=True,
 )
-@pytest.mark.parametrize("trafo_class", [LogDomainParamTransform, SqrtDomainParamTransform], ids=["log", "sqrt"])
+@pytest.mark.parametrize("trafo_class", [LogTransformation, SqrtTransformation], ids=["log", "sqrt"])
 def test_domain_param_transforms(env: SimEnv, trafo_class: Type):
     pyrado.set_seed(0)
 
@@ -93,8 +90,7 @@ def test_domain_param_transforms(env: SimEnv, trafo_class: Type):
         offset += 1
 
     mask = (sel_dp_change,)
-    wenv = trafo_class(env, mask)
-    assert isinstance(wenv, DomainParamTransform)
+    wenv = DomainParamTransform(env, mask, trafo_class())
 
     # Check 5 random values
     for _ in range(5):
