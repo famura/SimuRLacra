@@ -321,10 +321,6 @@ class SPRL(Algorithm):
             raise pyrado.TypeErr(given_name="subroutine", given=subroutine, expected_type=Algorithm)
         if not hasattr(subroutine, "sampler"):
             raise AttributeError("The subroutine must have a sampler attribute!")
-        if not isinstance(subroutine.sampler, RolloutSavingWrapper):
-            raise pyrado.TypeErr(
-                given_name="subroutine.sampler", given=type(subroutine.sampler), expected_type=RolloutSavingWrapper
-            )
         if not typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(given_name="env", given=env, expected_type=DomainRandWrapper)
 
