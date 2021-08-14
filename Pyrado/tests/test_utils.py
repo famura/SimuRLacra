@@ -28,6 +28,7 @@
 
 import copy
 import functools
+import math
 import os.path as osp
 from math import ceil
 from typing import Union
@@ -47,6 +48,7 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.utils import gen_ordered_batch_idcs, gen_ordered_batches, gen_shuffled_batch_idcs
 from pyrado.spaces import BoxSpace
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
+from pyrado.utils.bijective_transformation import IdentityTransformation, LogTransformation, SqrtTransformation
 from pyrado.utils.checks import (
     check_all_equal,
     check_all_lengths_equal,
@@ -798,3 +800,28 @@ def test_update_matching_keys_recursively(base, updater):
     assert base["a"] == updater["a"]
     assert np.all(base["b"] == updater["b"])
     assert base["c"]["c1"] == updater["c"]["c1"]
+
+
+@pytest.mark.parametrize(
+    ("transformation", "value", "transformed_value"),
+    [
+        (LogTransformation(), math.e, 1),
+        (LogTransformation(), 0.001, math.log(0.001)),
+        (SqrtTransformation(), 4, 2),
+        (SqrtTransformation(), 1, 1),
+        (SqrtTransformation(), 0, 0),
+        (IdentityTransformation(), 5, 5),
+        (IdentityTransformation(), 0, 0),
+    ],
+)
+def test_transformations(transformation, value, transformed_value):
+    assert pytest.approx(transformed_value, transformation.forward(value))
+    assert pytest.approx(value, transformation.forward(transformed_value))
+    assert transformation.forward(np.array(value)).shape == np.array(value).shape
+    assert transformation.forward(np.ones(5, 5)).shape == (5, 5)
+    assert transformation.forward(to.tensor(value)).shape == to.tensor(value).shape
+    assert transformation.forward(to.ones(5, 5)).shape == (5, 5)
+    assert transformation.inverse(np.array(value)).shape == np.array(value).shape
+    assert transformation.inverse(np.ones(5, 5)).shape == (5, 5)
+    assert transformation.inverse(to.tensor(value)).shape == to.tensor(value).shape
+    assert transformation.inverse(to.ones(5, 5)).shape == (5, 5)

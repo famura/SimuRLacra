@@ -33,7 +33,7 @@ import pytest
 
 import pyrado
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
-from pyrado.domain_randomization.transformations import LogDomainParamTransform
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
@@ -44,10 +44,10 @@ from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrappe
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper, ObsRunningNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environment_wrappers.utils import inner_env, remove_env, typed_env
-from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environments.sim_base import SimEnv
-from pyrado.policies.feed_forward.dummy import DummyPolicy, IdlePolicy
+from pyrado.policies.feed_forward.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
+from pyrado.utils.bijective_transformation import LogTransformation
 from pyrado.utils.data_types import RenderMode
 
 
@@ -58,7 +58,7 @@ def test_combination_wrappers_domain_params(env: SimEnv):
     env_do = GaussianObsNoiseWrapper(
         env_d, noise_std=2 * np.ones(env_d.obs_space.shape), noise_mean=3 * np.ones(env_d.obs_space.shape)
     )
-    env_dot = LogDomainParamTransform(env_do, mask=list(env_do.supported_domain_param))
+    env_dot = DomainParamTransform(env_do, mask=list(env_do.supported_domain_param), transformation=LogTransformation())
 
     assert env_dot.domain_param["downsampling"] == 5
     assert np.all(env_dot.domain_param["obs_noise_std"] == 2 * np.ones(env_d.obs_space.shape))

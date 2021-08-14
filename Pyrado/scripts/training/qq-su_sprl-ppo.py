@@ -115,9 +115,9 @@ if __name__ == "__main__":
         dict(
             name="gravity_const",
             target_mean=to.tensor([9.81]),
-            target_cov_chol_flat=to.tensor([1.0]),
+            target_cov_flat=to.tensor([1.0]),
             init_mean=to.tensor([9.81]),
-            init_cov_chol_flat=to.tensor([0.05]),
+            init_cov_flat=to.tensor([0.05]),
         )
     ]
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
