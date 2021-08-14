@@ -44,9 +44,9 @@ from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
+from pyrado.sampling.step_sequence import StepSequence
 
 
 class MultivariateNormalWrapper:
