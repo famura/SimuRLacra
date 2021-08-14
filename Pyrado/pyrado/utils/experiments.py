@@ -81,7 +81,7 @@ def load_experiment(
 
     # Algorithm, environment, policy, and more
     algo = pyrado.load("algo.pkl", ex_dir)
-    env, policy, extra = Algorithm.load_snapshot(args)
+    env, policy, extra = algo.load_snapshot(args)
 
     # Check if the return types are correct. They can be None, too.
     if env is not None and not isinstance(env, (Env, EnvWrapper)):
