@@ -513,7 +513,7 @@ class SPRL(Algorithm):
         if not lower_bound_is_inf:
             # Only set the bounds if the lower bound is not negative infinity. Makes it easier for the optimizer.
             upper_bound = np.ones_like(x0) * np.inf
-            bounds = Bounds(lb=lower_bound, ub=upper_bound)
+            bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
             x0 = np.clip(x0, bounds.lb, bounds.ub)
 
         objective_fn: Optional[Callable[..., Tuple[np.array, np.array]]] = None
