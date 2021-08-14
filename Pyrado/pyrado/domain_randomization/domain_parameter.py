@@ -35,6 +35,7 @@ from torch.distributions.normal import Normal
 from torch.distributions.uniform import Uniform
 
 import pyrado
+from pyrado.utils.bijective_transformation import BijectiveTransformation, IdentityTransformation
 from pyrado.utils.input_output import print_cbt
 
 
@@ -311,32 +312,34 @@ class SelfPacedDomainParam(DomainParam):
         self,
         name: str,
         target_mean: to.Tensor,
-        target_cov_chol_flat: to.Tensor,
+        target_cov_flat: to.Tensor,
         init_mean: to.Tensor,
-        init_cov_chol_flat: to.Tensor,
+        init_cov_flat: to.Tensor,
+        cov_transformation: BijectiveTransformation,
     ):
         """
         Constructor.
 
         :param name: name of the parameter
         :param target_mean: target means of the contextual distribution
-        :target_cov_chol_flat: target standard deviations of the contextual distribution; equivalent to the diagonal entries of
-                               the Cholesky distribution of a diagonal covariance matrix
+        :target_cov_flat: target standard deviations of the contextual distribution
         :init_mean: initial mean of the contextual distribution
-        :init_cov_chol_flat: initial standard deviations of the contextual distribution
+        :init_cov_flat: initial standard deviations of the contextual distribution
+        :cov_transformation: transformation applied to the covariance for training
         """
 
         if not (target_mean.shape == init_mean.shape):
             raise pyrado.ShapeErr(msg="Target and init mean should have same shape!")
-        if not (target_cov_chol_flat.shape == init_cov_chol_flat.shape):
+        if not (target_cov_flat.shape == init_cov_flat.shape):
             raise pyrado.ShapeErr(msg="Target and init standard deviations should have same shape!")
 
         super().__init__(name=name)
 
+        self.cov_transformation = cov_transformation
         self.target_mean = target_mean.double()
-        self.target_cov_chol_flat = target_cov_chol_flat.double()
+        self.target_cov_flat_transformed = self.cov_transformation.forward(target_cov_flat)
         self.context_mean = init_mean.double()
-        self.context_cov_chol_flat = init_cov_chol_flat.double()
+        self.context_cov_flat_transformed = self.cov_transformation.forward(init_cov_flat)
 
         self.dim = target_mean.shape[0]
 
@@ -349,14 +352,19 @@ class SelfPacedDomainParam(DomainParam):
 
     @staticmethod
     def make_broadening(
-        name: str, mean: to.Tensor, init_cov_portion: float = 0.001, target_cov_portion: float = 0.1
+        name: str,
+        mean: to.Tensor,
+        init_cov_portion: float = 0.001,
+        target_cov_portion: float = 0.1,
+        cov_transformation: BijectiveTransformation = IdentityTransformation(),
     ) -> "SelfPacedDomainParam":
         return SelfPacedDomainParam(
             name=name,
             target_mean=mean,
-            target_cov_chol_flat=target_cov_portion * mean.abs(),
+            target_cov_flat=target_cov_portion * mean.abs(),
             init_mean=mean,
-            init_cov_chol_flat=init_cov_portion * mean.abs(),
+            init_cov_flat=init_cov_portion * mean.abs(),
+            cov_transformation=cov_transformation,
         )
 
     @property
@@ -372,17 +380,12 @@ class SelfPacedDomainParam(DomainParam):
     @property
     def target_cov(self) -> to.Tensor:
         """Get the target covariance matrix."""
-        return to.diag(self.target_cov_chol_flat ** 2)
+        return to.diag(self.cov_transformation.inverse(self.target_cov_flat_transformed))
 
     @property
     def context_cov(self) -> to.Tensor:
         """Get the current covariance matrix."""
-        return to.diag(self.context_cov_chol_flat ** 2)
-
-    @property
-    def context_cov_chol(self) -> to.Tensor:
-        """Get the Cholesky decomposition of the current covariance matrix."""
-        return to.diag(self.context_cov_chol_flat)
+        return to.diag(self.cov_transformation.inverse(self.context_cov_flat_transformed))
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
         """
@@ -396,7 +399,7 @@ class SelfPacedDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distributions, otherwise the changes will have no effect
-        if domain_distr_param in ["target_mean", "target_cov_chol_flat"]:
+        if domain_distr_param in ["target_mean", "target_cov_flat_transformed"]:
             try:
                 self._target_distr = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
             except ValueError as err:
@@ -405,7 +408,7 @@ class SelfPacedDomainParam(DomainParam):
                     f"target_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.target_mean}\ncov = {self.target_cov}"
                 )
                 raise err
-        if domain_distr_param in ["context_mean", "context_cov_chol_flat"]:
+        if domain_distr_param in ["context_mean", "context_cov_flat_transformed"]:
             try:
                 self._context_distr = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
             except ValueError as err:

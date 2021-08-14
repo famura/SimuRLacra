@@ -47,6 +47,7 @@ from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.utils.bijective_transformation import BijectiveTransformation
 
 
 class MultivariateNormalWrapper:
@@ -56,19 +57,23 @@ class MultivariateNormalWrapper:
     i.e. a vector that can be used as the target variable.
     """
 
-    def __init__(self, mean: to.Tensor, cov_chol_flat: to.Tensor):
+    def __init__(self, mean: to.Tensor, cov_flat_transformed: to.Tensor, cov_transformation: BijectiveTransformation):
         """
         Constructor.
 
         :param mean: mean of the distribution; shape `(k,)`
-        :param cov_chol_flat: standard deviations of the distribution; shape `(k,)`
+        :param cov_flat_transformed: transformed variances of the distribution; shape `(k,)`
+        :param cov_transformation: transformation that was applied to the flat variances; used for inverse transform
         """
         self._mean = mean.clone().detach().requires_grad_(True)
-        self._cov_chol_flat = cov_chol_flat.clone().detach().requires_grad_(True)
+        self._cov_flat_transformed = cov_flat_transformed.clone().detach().requires_grad_(True)
+        self._cov_transformation = cov_transformation
         self.distribution = MultivariateNormal(self.mean, self.cov)
 
     @staticmethod
-    def from_stacked(dim: int, stacked: np.ndarray) -> "MultivariateNormalWrapper":
+    def from_stacked(
+        dim: int, stacked: np.ndarray, cov_transformation: BijectiveTransformation
+    ) -> "MultivariateNormalWrapper":
         r"""
         Creates an instance of this class from the given stacked numpy array as generated e.g. by
         `MultivariateNormalWrapper.get_stacked(self)`.
@@ -76,20 +81,22 @@ class MultivariateNormalWrapper:
         :param dim: dimensionality `k` of the random variable
         :param stacked: array containing the mean and standard deviations of shape `(2 * k,)`, where the first `k`
                         entries are the mean and the last `k` entries are the standard deviations
+        :param cov_transformation: transformation that was applied to the flat variances; used for inverse transform
         :return: a `MultivariateNormalWrapper` with the given mean/cov.
         """
         if not (len(stacked.shape) == 1):
             raise pyrado.ValueErr(msg="Stacked has invalid shape! Must be 1-dimensional.")
         if not (stacked.shape[0] == 2 * dim):
             raise pyrado.ValueErr(
-                msg="Stacked has invalid size!"
-                "Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
+                msg="Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance diag)."
             )
 
         mean = stacked[:dim]
-        cov_chol_flat = stacked[dim:]
+        cov_flat_transformed = stacked[dim:]
 
-        return MultivariateNormalWrapper(to.tensor(mean).double(), to.tensor(cov_chol_flat).double())
+        return MultivariateNormalWrapper(
+            to.tensor(mean).double(), to.tensor(cov_flat_transformed).double(), cov_transformation
+        )
 
     @property
     def dim(self):
@@ -113,37 +120,34 @@ class MultivariateNormalWrapper:
     @property
     def cov(self):
         """Get the covariance matrix, shape `(k, k)`."""
-        return (self._cov_chol_flat ** 2).diag()
+        return (self._cov_transformation.inverse(self._cov_flat_transformed)).diag()
 
     @property
-    def cov_chol_flat(self):
-        """
-        Get the standard deviations, i.e. the diagonal entries of the Cholesky decomposition of the covariance matrix,
-        shape `(k,)`.
-        """
-        return self._cov_chol_flat
+    def cov_flat_transformed(self):
+        """Get the transformed variances; shape `(k,)`."""
+        return self._cov_flat_transformed
 
-    @cov_chol_flat.setter
-    def cov_chol_flat(self, cov_chol_flat: to.Tensor):
+    @cov_flat_transformed.setter
+    def cov_flat_transformed(self, cov_flat_transformed: to.Tensor):
         """Set the standard deviations, shape `(k,)`."""
-        if not (cov_chol_flat.shape == self.cov_chol_flat.shape):
-            raise pyrado.ShapeErr(given_name="cov_chol_flat", expected_match=self.cov_chol_flat.shape)
+        if not (cov_flat_transformed.shape == self.cov_flat_transformed.shape):
+            raise pyrado.ShapeErr(given_name="cov_flat_transformed", expected_match=self.cov_flat_transformed.shape)
 
-        self._cov_chol_flat = cov_chol_flat
+        self._cov_flat_transformed = cov_flat_transformed
         self._update_distribution()
 
     def parameters(self) -> Generator[to.Tensor, None, None]:
-        """Get the parameters (mean and standard deviations) of this distribution."""
+        """Get the parameters (mean and transformed covariance) of this distribution."""
         yield self.mean
-        yield self.cov_chol_flat
+        yield self.cov_flat_transformed
 
     def get_stacked(self) -> np.ndarray:
         """
-        Get the numpy representations of the mean and standard deviations stacked on top of each other.
+        Get the numpy representations of the mean and transformed covariance stacked on top of each other.
 
-        :return: stacked mean and standard deviations; shape `(k,)`
+        :return: stacked mean and transformed covariance; shape `(k,)`
         """
-        return np.concatenate([self.mean.detach().numpy(), self.cov_chol_flat.detach().numpy()])
+        return np.concatenate([self.mean.detach().numpy(), self.cov_flat_transformed.detach().numpy()])
 
     def _update_distribution(self):
         """Update `self.distribution` according to the current mean and covariance."""
@@ -157,23 +161,31 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
     other fixed.
     """
 
-    def __init__(self, mean: to.Tensor, cov_chol_flat: to.Tensor, mean_is_parameter: bool, cov_is_parameter: bool):
+    def __init__(
+        self,
+        mean: to.Tensor,
+        cov_flat_transformed: to.Tensor,
+        cov_transformation: BijectiveTransformation,
+        mean_is_parameter: bool,
+        cov_is_parameter: bool,
+    ):
         """
         Constructor.
 
         :param mean: mean of the distribution; shape `(k,)`
-        :param cov_chol_flat: standard deviations of the distribution; shape `(k,)`
+        :param cov_flat_transformed: transformed variances of the distribution; shape `(k,)`
+        :param cov_transformation: transformation that was applied to the flat variances; used for inverse transform
         :param mean_is_parameter: if `True`, the mean is treated as a parameter and returned from `get_stacked`
                                   and similar methods.
         :param cov_is_parameter: if `True`, the covariance is treated as a parameter and returned from `get_stacked`
                                  and similar methods.
         """
-        super().__init__(mean, cov_chol_flat)
+        super().__init__(mean, cov_flat_transformed, cov_transformation)
 
         self._mean_is_parameter = mean_is_parameter
         self._cov_is_parameter = cov_is_parameter
 
-    def from_stacked(self, stacked: np.ndarray) -> "ParameterAgnosticMultivariateNormalWrapper":
+    def from_stacked_values(self, stacked: np.ndarray) -> "ParameterAgnosticMultivariateNormalWrapper":
         """
         Builds a new `ParameterAgnosticMultivariateNormalWrapper` from the given stacked values. In contrast to
         `MultivariateNormalWrapper.from_stacked(dim, stacked)`, this does not require a dimensionality as it is an
@@ -198,26 +210,27 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
 
         if self._mean_is_parameter and self._cov_is_parameter:
             mean = stacked[: self.dim]
-            cov_chol_flat = stacked[self.dim :]
+            transformed_cov_flat = stacked[self.dim :]
         elif self._mean_is_parameter and not self._cov_is_parameter:
             mean = stacked[: self.dim]
-            cov_chol_flat = self.cov_chol_flat
+            transformed_cov_flat = self.cov_flat_transformed
         elif not self._mean_is_parameter and self._cov_is_parameter:
             mean = self.mean
-            cov_chol_flat = stacked
+            transformed_cov_flat = stacked
         else:
             mean = self.mean
-            cov_chol_flat = self.cov_chol_flat
+            transformed_cov_flat = self.cov_flat_transformed
 
         if type(mean) == np.ndarray:
             mean = to.tensor(mean).double()
 
-        if type(cov_chol_flat) == np.ndarray:
-            cov_chol_flat = to.tensor(cov_chol_flat).double()
+        if type(transformed_cov_flat) == np.ndarray:
+            transformed_cov_flat = to.tensor(transformed_cov_flat).double()
 
         return ParameterAgnosticMultivariateNormalWrapper(
             mean=mean,
-            cov_chol_flat=cov_chol_flat,
+            cov_flat_transformed=transformed_cov_flat,
+            cov_transformation=self._cov_transformation,
             mean_is_parameter=self._mean_is_parameter,
             cov_is_parameter=self._cov_is_parameter,
         )
@@ -227,7 +240,7 @@ class ParameterAgnosticMultivariateNormalWrapper(MultivariateNormalWrapper):
         if self._mean_is_parameter:
             yield self.mean
         if self._cov_is_parameter:
-            yield self.cov_chol_flat
+            yield self.cov_flat_transformed
 
     def get_stacked(
         self, return_mean_cov_indices: bool = False
@@ -339,9 +352,19 @@ class SPRL(Algorithm):
 
         self._max_subrtn_retries = max_subrtn_retries
 
-        self._spl_parameters = [
-            param for param in env.randomizer.domain_params if isinstance(param, SelfPacedDomainParam)
-        ]
+        self._spl_parameters = []
+        self._cov_transformation: BijectiveTransformation
+        for param in env.randomizer.domain_params:
+            if isinstance(param, SelfPacedDomainParam):
+                self._spl_parameters.append(param)
+                if self._cov_transformation is not None and type(self._cov_transformation) != type(
+                    param.cov_transformation
+                ):
+                    raise pyrado.ValueErr(
+                        msg="All SelfPacedDomainParams should have the same covariance transformation!"
+                    )
+                # Just copy the instance as transformations are immutable.
+                self._cov_transformation = param.cov_transformation
 
         # evaluation multidim
         header = ["iteration", "objective_output", "status", "cg_stop_cond", "mean", "cov"]
@@ -368,15 +391,21 @@ class SPRL(Algorithm):
         self.save_snapshot()
 
         context_mean = to.cat([spl_param.context_mean for spl_param in self._spl_parameters]).double()
-        context_cov_chol = to.cat([spl_param.context_cov_chol_flat for spl_param in self._spl_parameters]).double()
+        context_cov_flat_transformed = to.cat(
+            [spl_param.context_cov_flat_transformed for spl_param in self._spl_parameters]
+        ).double()
 
         target_mean = to.cat([spl_param.target_mean for spl_param in self._spl_parameters]).double()
-        target_cov_chol = to.cat([spl_param.target_cov_chol_flat for spl_param in self._spl_parameters]).double()
+        target_cov_flat_transformed = to.cat(
+            [spl_param.target_cov_flat_transformed for spl_param in self._spl_parameters]
+        ).double()
 
         for param in self._spl_parameters:
             self.logger.add_value(f"cur context mean for {param.name}", param.context_mean.item())
             self.logger.add_value(f"cur context cov for {param.name}", param.context_cov.item())
-            self.logger.add_value(f"cur context cov_chol for {param.name}", param.context_cov_chol.item())
+            self.logger.add_value(
+                f"cur context cov_transformed for {param.name}", param.context_cov_flat_transformed.item()
+            )
 
         dim = context_mean.shape[0]
 
@@ -391,10 +420,14 @@ class SPRL(Algorithm):
 
         # Update distribution
         previous_distribution = ParameterAgnosticMultivariateNormalWrapper(
-            context_mean, context_cov_chol, self._optimize_mean, self._optimize_cov
+            context_mean,
+            context_cov_flat_transformed,
+            self._cov_transformation,
+            self._optimize_mean,
+            self._optimize_cov,
         )
         target_distribution = ParameterAgnosticMultivariateNormalWrapper(
-            target_mean, target_cov_chol, self._optimize_mean, self._optimize_cov
+            target_mean, target_cov_flat_transformed, self._cov_transformation, self._optimize_mean, self._optimize_cov
         )
 
         def get_domain_param_value(ro: StepSequence, param_name: str) -> np.ndarray:
@@ -422,7 +455,7 @@ class SPRL(Algorithm):
 
         def kl_constraint_fn(x):
             """Compute the constraint for the KL-divergence between current and proposed distribution."""
-            distribution = previous_distribution.from_stacked(x)
+            distribution = previous_distribution.from_stacked_values(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
             )
@@ -430,7 +463,7 @@ class SPRL(Algorithm):
 
         def kl_constraint_fn_prime(x):
             """Compute the derivative for the KL-constraint (used for scipy optimizer)."""
-            distribution = previous_distribution.from_stacked(x)
+            distribution = previous_distribution.from_stacked_values(x)
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
             )
@@ -447,13 +480,13 @@ class SPRL(Algorithm):
 
         def performance_constraint_fn(x):
             """Compute the constraint for the expected performance under the proposed distribution."""
-            distribution = previous_distribution.from_stacked(x)
+            distribution = previous_distribution.from_stacked_values(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             return performance.detach().numpy()
 
         def performance_constraint_fn_prime(x):
             """Compute the derivative for the performance-constraint (used for scipy optimizer)."""
-            distribution = previous_distribution.from_stacked(x)
+            distribution = previous_distribution.from_stacked_values(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
             grads = to.autograd.grad(performance, list(distribution.parameters()))
             return np.concatenate([g.detach().numpy() for g in grads])
@@ -493,7 +526,7 @@ class SPRL(Algorithm):
                 """Optimization objective before the minimum specified performance was reached.
                 Tries to find the minimum kl divergence between the current and the update distribution, which
                 still satisfies the minimum update constraint and the performance constraint."""
-                distribution = previous_distribution.from_stacked(x)
+                distribution = previous_distribution.from_stacked_values(x)
                 kl_divergence = to.distributions.kl_divergence(
                     distribution.distribution, target_distribution.distribution
                 )
@@ -515,7 +548,7 @@ class SPRL(Algorithm):
             def objective(x):
                 """Optimization objective when the minimum specified performance was reached.
                 Tries to maximizes performance while still satisfying the minimum kl update constraint."""
-                distribution = previous_distribution.from_stacked(x)
+                distribution = previous_distribution.from_stacked_values(x)
                 performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
                 grads = to.autograd.grad(performance, list(distribution.parameters()))
 
@@ -535,7 +568,7 @@ class SPRL(Algorithm):
                 constraints=constraints,
                 options={"gtol": 1e-4, "xtol": 1e-6},
                 bounds=bounds,
-                callback=_make_optimizer_callback(dim),
+                callback=self._make_optimizer_callback(dim),
             )
         if result and result.success:
             self._adapt_parameters(result.x)
@@ -592,9 +625,9 @@ class SPRL(Algorithm):
                 param.adapt("context_mean", to.tensor(result[i : i + param.dim]))
             if self._optimize_cov and self._optimize_mean:
                 pointer = i + param.dim * len(self._spl_parameters)
-                param.adapt("context_cov_chol_flat", to.tensor(result[pointer : pointer + param.dim]))
+                param.adapt("context_cov_flat_transformed", to.tensor(result[pointer : pointer + param.dim]))
             elif self._optimize_cov:
-                param.adapt("context_cov_chol_flat", to.tensor(result[i : i + param.dim]))
+                param.adapt("context_cov_flat_transformed", to.tensor(result[i : i + param.dim]))
 
     def _train_subroutine_and_evaluate_perf(
         self, snapshot_mode: str, meta_info: dict = None, reset_policy: bool = False, **kwargs
@@ -619,19 +652,18 @@ class SPRL(Algorithm):
         # noinspection PyTypeChecker
         return self._subroutine.sampler
 
+    def _make_optimizer_callback(self, dim: int):
+        def _optimizer_callback(xk, state: OptimizeResult):
+            row = {
+                "iteration": state.nit,
+                "objective_output": state.fun,
+                "status": state.status,
+                "cg_stop_cond": state.cg_stop_cond,
+            }
+            dist = MultivariateNormalWrapper.from_stacked(dim, xk, self._cov_transformation)
+            row["mean"] = dist.mean.tolist()
+            row["cov"] = dist.cov.tolist()
+            optimize_logger.writerow(row)
+            return False
 
-def _make_optimizer_callback(dim: int):
-    def _optimizer_callback(xk, state: OptimizeResult):
-        row = {
-            "iteration": state.nit,
-            "objective_output": state.fun,
-            "status": state.status,
-            "cg_stop_cond": state.cg_stop_cond,
-        }
-        dist = MultivariateNormalWrapper.from_stacked(dim, xk)
-        row["mean"] = dist.mean.tolist()
-        row["cov"] = dist.cov.tolist()
-        optimize_logger.writerow(row)
-        return False
-
-    return _optimizer_callback
+        return _optimizer_callback
