@@ -305,11 +305,15 @@ class SPRL(Algorithm):
                                    training attempt of the subroutine should be reattempted
         """
         if not isinstance(subroutine, Algorithm):
-            raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
+            raise pyrado.TypeErr(given_name="subroutine", given=subroutine, expected_type=Algorithm)
         if not hasattr(subroutine, "sampler"):
             raise AttributeError("The subroutine must have a sampler attribute!")
+        if not isinstance(subroutine.sampler, RolloutSavingWrapper):
+            raise pyrado.TypeErr(
+                given_name="subroutine.sampler", given=type(subroutine.sampler), expected_type=RolloutSavingWrapper
+            )
         if not typed_env(env, DomainRandWrapper):
-            raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
+            raise pyrado.TypeErr(given_name="env", given=env, expected_type=DomainRandWrapper)
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
@@ -400,7 +404,7 @@ class SPRL(Algorithm):
                 return domain_param_dict[untransformed_param_name]
             return domain_param_dict[param_name]
 
-        rollouts_all = self._subroutine.sampler.rollouts
+        rollouts_all = self._get_sampler().rollouts
         contexts = to.tensor(
             [
                 [to.from_numpy(get_domain_param_value(ro, param.name)) for rollouts in rollouts_all for ro in rollouts]
@@ -430,7 +434,7 @@ class SPRL(Algorithm):
             kl_divergence = to.distributions.kl_divergence(
                 previous_distribution.distribution, distribution.distribution
             )
-            grads = to.autograd.grad(kl_divergence, distribution.parameters())
+            grads = to.autograd.grad(kl_divergence, list(distribution.parameters()))
             return np.concatenate([g.detach().numpy() for g in grads])
 
         kl_constraint = NonlinearConstraint(
@@ -451,7 +455,7 @@ class SPRL(Algorithm):
             """Compute the derivative for the performance-constraint (used for scipy optimizer)."""
             distribution = previous_distribution.from_stacked(x)
             performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
-            grads = to.autograd.grad(performance, distribution.parameters())
+            grads = to.autograd.grad(performance, list(distribution.parameters()))
             return np.concatenate([g.detach().numpy() for g in grads])
 
         performance_constraint = NonlinearConstraint(
@@ -493,7 +497,7 @@ class SPRL(Algorithm):
                 kl_divergence = to.distributions.kl_divergence(
                     distribution.distribution, target_distribution.distribution
                 )
-                grads = to.autograd.grad(kl_divergence, distribution.parameters())
+                grads = to.autograd.grad(kl_divergence, list(distribution.parameters()))
 
                 return (
                     kl_divergence.detach().numpy(),
@@ -513,7 +517,7 @@ class SPRL(Algorithm):
                 Tries to maximizes performance while still satisfying the minimum kl update constraint."""
                 distribution = previous_distribution.from_stacked(x)
                 performance = self._compute_expected_performance(distribution, contexts, contexts_old_log_prob, values)
-                grads = to.autograd.grad(performance, distribution.parameters())
+                grads = to.autograd.grad(performance, list(distribution.parameters()))
 
                 return (
                     -performance.detach().numpy(),
@@ -551,10 +555,10 @@ class SPRL(Algorithm):
     def reset(self, seed: int = None):
         # Forward to subroutine
         self._subroutine.reset(seed)
-        self._subroutine.sampler.reset_rollouts()
+        self._get_sampler().reset_rollouts()
 
     def save_snapshot(self, meta_info: dict = None):
-        self._subroutine.sampler.reset_rollouts()
+        self._get_sampler().reset_rollouts()
         super().save_snapshot(meta_info)
 
         if meta_info is None:
@@ -607,9 +611,13 @@ class SPRL(Algorithm):
         self._subroutine.reset()
 
         self._subroutine.train(snapshot_mode, None, meta_info)
-        rollouts_all = self._subroutine.sampler.rollouts
-        x = np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]])
-        return x
+        rollouts_all = self._get_sampler().rollouts
+        return np.median([[ro.undiscounted_return() for rollouts in rollouts_all for ro in rollouts]]).item()
+
+    def _get_sampler(self) -> RolloutSavingWrapper:
+        # It is checked in the constructor that the sampler is a RolloutSavingWrapper.
+        # noinspection PyTypeChecker
+        return self._subroutine.sampler
 
 
 def _make_optimizer_callback(dim: int):
