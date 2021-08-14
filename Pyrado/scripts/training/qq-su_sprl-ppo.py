@@ -45,6 +45,7 @@ from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.policies.feed_back.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.bijective_transformation import IdentityTransformation, LogTransformation, SqrtTransformation
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -55,18 +56,28 @@ if __name__ == "__main__":
     parser.set_defaults(max_steps=600)
     parser.add_argument("--ppo_iterations", default=150, type=int)
     parser.add_argument("--sprl_iterations", default=50, type=int)
-    parser.add_argument("--cov_only", action="store_true")
+    parser.add_argument("--cov_transform", default="identity", choices=["identity", "sqrt", "log"])
     args = parser.parse_args()
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.max_steps}ROLen_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
+        f"{args.frequency}Hz_{args.cov_transform}CovTransform_{args.max_steps}ROLen_{args.ppo_iterations}PPOIter_{args.sprl_iterations}_seed_{args.seed}",
     )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
+
+    # Covariance transformation.
+    if args.cov_transform == "identity":
+        cov_transformation = IdentityTransformation()
+    elif args.cov_transform == "sqrt":
+        cov_transformation = SqrtTransformation()
+    elif args.cov_transform == "log":
+        cov_transformation = LogTransformation()
+    else:
+        raise pyrado.ValueErr(msg=f"{args.cov_transform!r} is not a valid covariance transformation")
 
     # Environment
     env_hparam = dict(dt=1 / float(args.frequency), max_steps=args.max_steps)
@@ -117,7 +128,8 @@ if __name__ == "__main__":
             target_mean=to.tensor([9.81]),
             target_cov_flat=to.tensor([1.0]),
             init_mean=to.tensor([9.81]),
-            init_cov_flat=to.tensor([0.05]),
+            init_cov_flat=to.tensor([0.0025]),
+            cov_transformation=cov_transformation,
         )
     ]
     env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
