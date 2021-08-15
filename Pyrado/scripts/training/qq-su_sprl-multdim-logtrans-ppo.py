@@ -39,6 +39,7 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.domain_parameter import SelfPacedDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.domain_randomization.transformations import DomainParamTransform
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     ex_dir = setup_experiment(
         QQubeSwingUpSim.name,
         f"{PPO.name}_{FNNPolicy.name}",
-        f"{args.frequency}Hz_{args.cov_transform}CovTransform_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
+        f"{args.frequency}Hz_{args.cov_transform}CovTransform_LogDomainParam_{args.ppo_iterations}PPOIter_{args.sprl_iterations}SPRLIter_cov_only{args.cov_only}_seed_{args.seed}",
     )
 
     # Set seed if desired
@@ -125,24 +126,13 @@ if __name__ == "__main__":
         lr_scheduler_hparam=dict(gamma=0.999),
     )
     env_sprl_params = [
-        dict(
-            name="damping_rot_pole",
-            target_mean=to.tensor([5e-6]),
-            target_cov_flat=to.tensor([2.5e-5]),
-            init_mean=to.tensor([5e-6]),
-            init_cov_flat=to.tensor([2.5e-8]),
-            cov_transformation=cov_transformation,
-        ),
-        dict(
-            name="damping_pend_pole",
-            target_mean=to.tensor([1e-6]),
-            target_cov_flat=to.tensor([5e-6]),
-            init_mean=to.tensor([1e-6]),
-            init_cov_flat=to.tensor([5e-9]),
-            cov_transformation=cov_transformation,
-        ),
+        dict(name="damping_rot_pole", mean=to.tensor([5e-6]).log()),
+        dict(name="damping_pend_pole", mean=to.tensor([1e-6]).log()),
     ]
-    env = DomainRandWrapperLive(env, randomizer=DomainRandomizer(*[SelfPacedDomainParam(**p) for p in env_sprl_params]))
+    env = DomainParamTransform(env, [p["name"] for p in env_sprl_params], LogTransformation())
+    env = DomainRandWrapperLive(
+        env, randomizer=DomainRandomizer(*[SelfPacedDomainParam.make_broadening(**p) for p in env_sprl_params])
+    )
 
     sprl_hparam = dict(
         kl_constraints_ub=8000,
