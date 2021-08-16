@@ -239,76 +239,76 @@ directory, containing at least an Rcs graph file called <cite>gHelloMichael.xml<
 which can be found in <cite>PATH_TO/SimuRLacra/RcsPySim/src/cpp/core</cite>. The subclass, let’s call it <cite>ECHelloMichael</cite>, only
 needs a .cpp file. It is highly recommended to check out the existing ExperimentConfig files for inspiration. Here is a
 basic template:</p>
-<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ExperimentConfig.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;action/THE_ACTION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;action/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;initState/THE_INIT_SPACE_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;observation/THE_OBSERVATION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;observation/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;physics/PhysicsParameterManager.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;physics/PPD_PARAMETER_TO_RANDOMIZE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;physics/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;physics/ForceDisturber.h&quot;</span><span class="cp"></span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ExperimentConfig.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;action/THE_ACTION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;action/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;initState/THE_INIT_SPACE_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;observation/THE_OBSERVATION_MODEL_YOU_WANT.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;observation/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/PhysicsParameterManager.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/PPD_PARAMETER_TO_RANDOMIZE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/COULD_BE_MULTIPLE.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;physics/ForceDisturber.h&quot;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&lt;Rcs_INCLUDES_YOU_NEED.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Rcs_INCLUDES_YOU_NEED.h&gt;</span><span class="cp"></span>
 
 <span class="cp">#ifdef GRAPHICS_AVAILABLE</span>
-<span class="cp">#include</span> <span class="cpf">&lt;RcsViewer.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;RcsViewer.h&gt;</span><span class="cp"></span>
 <span class="cp">#endif</span>
 
-<span class="cp">#include</span> <span class="cpf">&lt;OTHER_LIBS&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;OTHER_LIBS&gt;</span><span class="cp"></span>
 
-<span class="k">namespace</span> <span class="nn">Rcs</span>
-<span class="p">{</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Rcs</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 
-<span class="k">class</span> <span class="nc">ECHelloMichael</span> <span class="o">:</span> <span class="k">public</span> <span class="n">ExperimentConfig</span>
-<span class="p">{</span>
+<span class="k">class</span> <span class="nc">ECHelloMichael</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExperimentConfig</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
 
-<span class="k">protected</span><span class="o">:</span>
-    <span class="k">virtual</span> <span class="n">ActionModel</span><span class="o">*</span> <span class="n">createActionModel</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c1">// TODO Create an action model.</span>
-    <span class="p">}</span>
+<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ActionModel</span><span class="o">*</span><span class="w"> </span><span class="n">createActionModel</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// TODO Create an action model.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="k">virtual</span> <span class="n">ObservationModel</span><span class="o">*</span> <span class="n">createObservationModel</span><span class="p">(){</span>
-    <span class="c1">// TODO Create an observation model.</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ObservationModel</span><span class="o">*</span><span class="w"> </span><span class="n">createObservationModel</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// TODO Create an observation model.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">populatePhysicsParameters</span><span class="p">(</span><span class="n">PhysicsParameterManager</span><span class="o">*</span> <span class="n">manager</span><span class="p">){</span>
-    <span class="c1">// TODO (OPTIONAL) Add domain parameters for randomization.</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">populatePhysicsParameters</span><span class="p">(</span><span class="n">PhysicsParameterManager</span><span class="o">*</span><span class="w"> </span><span class="n">manager</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// TODO (OPTIONAL) Add domain parameters for randomization.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span>
-    <span class="k">virtual</span> <span class="n">InitStateSetter</span><span class="o">*</span> <span class="n">createInitStateSetter</span><span class="p">(){</span>
-    <span class="c1">// TODO Create an initial state space model.</span>
-    <span class="p">}</span>
+<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">InitStateSetter</span><span class="o">*</span><span class="w"> </span><span class="n">createInitStateSetter</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// TODO Create an initial state space model.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="k">virtual</span> <span class="n">ForceDisturber</span><span class="o">*</span> <span class="n">createForceDisturber</span><span class="p">(){</span>
-    <span class="c1">// TODO (OPTIONAL) Create force a disturber that hinders your agent.</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ForceDisturber</span><span class="o">*</span><span class="w"> </span><span class="n">createForceDisturber</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// TODO (OPTIONAL) Create force a disturber that hinders your agent.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">initViewer</span><span class="p">(</span><span class="n">Rcs</span><span class="o">::</span><span class="n">Viewer</span><span class="o">*</span> <span class="n">viewer</span><span class="p">){</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">initViewer</span><span class="p">(</span><span class="n">Rcs</span><span class="o">::</span><span class="n">Viewer</span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span><span class="p">){</span><span class="w"></span>
 <span class="cp">#ifdef GRAPHICS_AVAILABLE</span>
-    <span class="c1">// TODO (OPTIONAL) Initialize the viewer.</span>
+<span class="w">    </span><span class="c1">// TODO (OPTIONAL) Initialize the viewer.</span>
 <span class="cp">#endif</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="kt">void</span>
-    <span class="n">getHUDText</span><span class="p">(</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span> <span class="n">linesOut</span><span class="p">,</span>
-        <span class="kt">double</span> <span class="n">currentTime</span><span class="p">,</span>
-        <span class="k">const</span> <span class="n">MatNd</span><span class="o">*</span> <span class="n">obs</span><span class="p">,</span>
-        <span class="k">const</span> <span class="n">MatNd</span><span class="o">*</span> <span class="n">currentAction</span><span class="p">,</span>
-        <span class="n">PhysicsBase</span><span class="o">*</span> <span class="n">simulator</span><span class="p">,</span>
-        <span class="n">PhysicsParameterManager</span><span class="o">*</span> <span class="n">physicsManager</span><span class="p">,</span>
-        <span class="n">ForceDisturber</span><span class="o">*</span> <span class="n">forceDisturber</span><span class="p">)</span> <span class="k">override</span><span class="p">{</span>
-    <span class="c1">// TODO (OPTIONAL) Set the text for the HUD of the viewer.</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"></span>
+<span class="w">    </span><span class="n">getHUDText</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">linesOut</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">currentTime</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MatNd</span><span class="o">*</span><span class="w"> </span><span class="n">obs</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">MatNd</span><span class="o">*</span><span class="w"> </span><span class="n">currentAction</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">PhysicsBase</span><span class="o">*</span><span class="w"> </span><span class="n">simulator</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">PhysicsParameterManager</span><span class="o">*</span><span class="w"> </span><span class="n">physicsManager</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">ForceDisturber</span><span class="o">*</span><span class="w"> </span><span class="n">forceDisturber</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// TODO (OPTIONAL) Set the text for the HUD of the viewer.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="p">};</span>
+<span class="p">};</span><span class="w"></span>
 
-<span class="k">static</span> <span class="n">ExperimentConfigRegistration</span><span class="o">&lt;</span><span class="n">ECHelloMichael</span><span class="o">&gt;</span> <span class="n">RegHelloMichael</span><span class="p">(</span><span class="s">&quot;HelloMichael&quot;</span><span class="p">);</span>
+<span class="k">static</span><span class="w"> </span><span class="n">ExperimentConfigRegistration</span><span class="o">&lt;</span><span class="n">ECHelloMichael</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RegHelloMichael</span><span class="p">(</span><span class="s">&quot;HelloMichael&quot;</span><span class="p">);</span><span class="w"></span>
 
-<span class="p">}</span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>An important part of every simulation is the initial state. Therefore, we create an initial state setter in
