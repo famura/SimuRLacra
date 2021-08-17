@@ -49,6 +49,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
 from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml
 from pyrado.sampling.parallel_evaluation import eval_domain_params
+from pyrado.sampling.parallel_rollout_sampler import NO_SEED_PASSED
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import dict_arraylike_to_float
@@ -120,13 +121,14 @@ def evaluate_policy(args, ex_dir):
     # Create sampler
     pool = SamplerPool(args.num_workers)
     if args.seed is not None:
-        pool.set_seed(args.seed)
         print_cbt(f"Set the random number generators' seed to {args.seed}.", "w")
+        seed = args.seed
     else:
         print_cbt("No seed was set", "y")
+        seed = NO_SEED_PASSED
 
     # Sample rollouts
-    ros = eval_domain_params(pool, env, policy, param_list, init_state)
+    ros = eval_domain_params(pool, env, policy, param_list, init_state, seed=seed)
 
     # Compute metrics
     lod = []
@@ -181,7 +183,7 @@ if __name__ == "__main__":
         g_ex_dirs = [tmp[0] for tmp in os.walk(g_args.dir, followlinks=True) if "policy.pt" in tmp[2]]
 
     elif g_args.dir is None:
-        g_ex_dirs = [ask_for_experiment(hparam_list=g_args.show_hyperparameters, max_display=50)]
+        g_ex_dirs = [ask_for_experiment(hparam_list=g_args.show_hparams, max_display=50)]
 
     else:
         g_ex_dirs = [g_args.dir]

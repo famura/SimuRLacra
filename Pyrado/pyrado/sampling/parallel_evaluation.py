@@ -67,6 +67,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_rollout_sampler import (
+    NO_SEED_PASSED,
     _ps_init,
     _ps_run_one_domain_param,
     _ps_run_one_init_state,
@@ -78,7 +79,12 @@ from pyrado.spaces.singular import SingularStateSpace
 
 
 def eval_domain_params(
-    pool: SamplerPool, env: SimEnv, policy: Policy, params: List[Dict], init_state: Optional[np.ndarray] = None
+    pool: SamplerPool,
+    env: SimEnv,
+    policy: Policy,
+    params: List[Dict],
+    init_state: Optional[np.ndarray] = None,
+    seed: int = NO_SEED_PASSED,
 ) -> List[StepSequence]:
     """
     Evaluate a policy on a multidimensional grid of domain parameters.
@@ -99,7 +105,8 @@ def eval_domain_params(
 
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
-        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True), params, pb)
+        # we set the sub seed to zero since every run will have its personal sub sub seed
+        return pool.run_map(functools.partial(_ps_run_one_domain_param, eval=True, seed=seed, sub_seed=0), params, pb)
 
 
 def eval_nominal_domain(

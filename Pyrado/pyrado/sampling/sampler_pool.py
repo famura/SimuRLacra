@@ -244,7 +244,7 @@ def _run_map(G, func, argqueue):
             index, arg = argqueue.get(block=False)
         except Empty:
             break
-        result.append((index, func(G, arg)))
+        result.append((index, func(G, (index, arg))))
     return result
 
 
