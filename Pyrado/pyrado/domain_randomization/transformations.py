@@ -66,7 +66,7 @@ class DomainParamTransform(EnvWrapper, Serializable):
         if not isinstance(wrapped_env, (SimEnv, EnvWrapper)):
             raise pyrado.TypeErr(given=wrapped_env, expected_type=(SimEnv, EnvWrapper))
         if not isinstance(mask, (list, tuple)):
-            raise pyrado.TypeErr(given=wrapped_env, expected_type=(list, tuple))
+            raise pyrado.TypeErr(given=mask, expected_type=(list, tuple))
 
         Serializable._init(self, locals())
 
