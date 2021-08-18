@@ -166,8 +166,8 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
             self._log_K_pd_init = to.log(
                 to.tensor([41.0, 200.0, 55.0, 16.0])
             )  # former: [+41.8, 173.4, +46.1, 16.2], [34.1, 118.0, 43.4, 18.1]
-            self._log_k_e_init = to.log(to.tensor(40.588629412818705))  # former: 17.0  # former: 24.5, 36.5, 19.5
-            self._log_k_p_init = to.log(to.tensor(3.3650026417213748))  # former: 8.0  # former: 4.0, 8.5, 2.25
+            self._log_k_e_init = to.log(to.tensor(40.588629412818705))  # former: 17.0
+            self._log_k_p_init = to.log(to.tensor(3.3650026417213748))  # former: 8.0
 
         # Define parameters
         self._log_u_max = nn.Parameter(to.empty_like(self._log_u_max_init), requires_grad=True)
