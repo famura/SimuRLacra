@@ -127,7 +127,6 @@ if __name__ == "__main__":
         performance_lower_bound=400,
         kl_threshold=-np.inf,
         max_iter=args.sprl_iterations,
-        optimize_mean=not args.cov_only,
         max_subrtn_retries=1,
     )
     algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
