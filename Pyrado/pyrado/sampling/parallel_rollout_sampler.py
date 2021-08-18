@@ -48,7 +48,7 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.box import InfBoxSpace
 
 
-NO_SEED_PASSED = object()
+NO_SEED = object()
 
 
 def _ps_init(G, env, policy):
@@ -191,7 +191,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         min_rollouts: int = None,
         min_steps: int = None,
         show_progress_bar: bool = True,
-        seed: int = NO_SEED_PASSED,
+        seed: int = NO_SEED,
     ):
         """
         Constructor
@@ -219,7 +219,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         # Create parallel pool. We use one thread per env because it's easier.
         self.pool = SamplerPool(num_workers)
 
-        if seed is NO_SEED_PASSED:
+        if seed is NO_SEED:
             seed = pyrado.get_base_seed()
         self._seed = seed
         # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when
