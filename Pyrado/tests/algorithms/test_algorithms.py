@@ -207,26 +207,6 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     assert algo.curr_iter == algo.max_iter
 
 
-@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
-@pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
-@pytest.mark.parametrize("actor_hparam", [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=["casual"])
-@pytest.mark.parametrize("vfcn_hparam", [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=["casual"])
-@pytest.mark.parametrize(
-    "critic_hparam", [dict(gamma=0.995, lamda=1.0, num_epoch=1, lr=1e-4, standardize_adv=False)], ids=["casual"]
-)
-@pytest.mark.parametrize(
-    "algo_hparam",
-    [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50, num_workers=1)],
-    ids=["casual"],
-)
-def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hparam, algo_hparam):
-    # Create algorithm and train
-    particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
-    algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
-    algo.train()
-    assert algo.curr_iter == algo.max_iter
-
-
 @pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize("policy", ["idle_policy"], indirect=True)
 @pytest.mark.parametrize(

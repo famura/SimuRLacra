@@ -116,21 +116,38 @@ def test_adr_reward_generator(env):
         env_spec=random_env.spec,
         batch_size=256,
         reward_multiplier=1,
-        lr=5e-3,
+        lr=5e-4,
     )
     policy = FNNPolicy(reference_env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
-    dr = create_default_randomizer_omo()
-    dr.randomize(num_samples=1)
-    random_env.domain_param = dr.get_params(fmt="dict", dtype="numpy")
+    domain_randomizer = create_default_randomizer_omo()
+    domain_randomizer.randomize(num_samples=1)
+    random_env.domain_param = domain_randomizer.get_params(fmt="dict", dtype="numpy")
     reference_sampler = ParallelRolloutSampler(reference_env, policy, num_workers=1, min_steps=1000)
     random_sampler = ParallelRolloutSampler(random_env, policy, num_workers=1, min_steps=1000)
 
     losses = []
-    for i in range(200):
+    for _ in range(200):
         reference_traj = StepSequence.concat(reference_sampler.sample())
         random_traj = StepSequence.concat(random_sampler.sample())
-        losses.append(reward_generator.train(reference_traj, random_traj, 10))
-    assert losses[len(losses) - 1] < losses[0]
+        losses.append(reward_generator.train(reference_traj, random_traj, 30))
+    assert losses[-1] < losses[0]
+
+    # Scores for random trajectories should be high
+    reward_reference = reward_generator.get_reward(StepSequence.concat(reference_sampler.sample()))
+    reward_random = reward_generator.get_reward(StepSequence.concat(random_sampler.sample()))
+    assert to.abs(reward_reference - reward_random) > 1
+
+
+@pytest.mark.parametrize("env", ["default_omo"], indirect=True)
+def test_adr_reward_generator_save_load(env, tmp_path):
+    reward_generator = RewardGenerator(
+        env_spec=env.spec,
+        batch_size=256,
+        reward_multiplier=1,
+        lr=5e-4,
+    )
+    pyrado.save(reward_generator, "reward_generator.pt", tmp_path)
+    pyrado.load("reward_generator.pt", tmp_path)
 
 
 @pytest.mark.parametrize("thold", [0.5], ids=["0.5"])

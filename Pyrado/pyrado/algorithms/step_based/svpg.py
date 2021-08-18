@@ -32,13 +32,19 @@ from typing import Dict, List, Tuple
 import numpy as np
 import torch as to
 from scipy.spatial.distance import pdist, squareform
+from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.policies.feed_back.fnn import FNNPolicy
+from pyrado.spaces import ValueFunctionSpace
+from pyrado.utils.data_types import EnvSpec
 
 
 class SVPG(Algorithm):
@@ -66,6 +72,7 @@ class SVPG(Algorithm):
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
+        :type save_dir: pyrado.PathLike
         :param env: the environment which the policy operates
         :param particle: the particle to populate with different parameters during training
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
@@ -74,6 +81,7 @@ class SVPG(Algorithm):
         :param horizon: horizon for each particle
         :param logger: defaults to `None`
         """
+
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
 
@@ -189,26 +197,14 @@ class SVPG(Algorithm):
                 kwargs[i].append(kwargs_i)
 
         # assert all(len(p) == len(parameters[0]) for p in parameters)
-        average = True
-        if average:
-            params = to.stack([to.stack(parameters[i]).mean(axis=0) for i in range(self.num_particles)])
-            policy_grds = to.stack([to.stack(policy_grads[i]).mean(axis=0) for i in range(self.num_particles)])
-            Kxx, dx_Kxx = self.kernel(params)
-            grad_theta = (to.mm(Kxx, policy_grds / self.temperature) + dx_Kxx) / self.num_particles
-            for i, particle in enumerate(self.iter_particles):
-                particle.policy.param_values = params[i]
-                particle.policy.param_grad = grad_theta[i]
-                particle.optim.real_step(*args[i][0], **kwargs[i][0])
-        else:
-            for t_step in tqdm(range(len(parameters[0]))):
-                params = to.stack([parameters[idx][t_step] for idx in range(self.num_particles)])
-                policy_grds = to.stack([policy_grads[idx][t_step] for idx in range(self.num_particles)])
-                Kxx, dx_Kxx = self.kernel(params)
-                grad_theta = (to.mm(Kxx, policy_grds / self.temperature) + dx_Kxx) / self.num_particles
-                for i, particle in enumerate(self.iter_particles):
-                    particle.policy.param_values = parameters[i][t_step]
-                    particle.policy.param_grad = grad_theta[i]
-                    particle.optim.real_step(*args[i][t_step], **kwargs[i][t_step])
+        params = to.stack([to.stack(parameters[i]).mean(axis=0) for i in range(self.num_particles)])
+        policy_grds = to.stack([to.stack(policy_grads[i]).mean(axis=0) for i in range(self.num_particles)])
+        Kxx, dx_Kxx = self.kernel(params)
+        grad_theta = (to.mm(Kxx, policy_grds / self.temperature) + dx_Kxx) / self.num_particles
+        for i, particle in enumerate(self.iter_particles):
+            particle.policy.param_values = params[i]
+            particle.policy.param_grad = grad_theta[i]
+            particle.optim.real_step(*args[i][0], **kwargs[i][0])
 
     def kernel(self, X: to.Tensor) -> Tuple[to.Tensor, to.Tensor]:
         """
@@ -238,8 +234,6 @@ class SVPG(Algorithm):
         return kernel, grads
 
     def save_snapshot(self, meta_info: dict = None):
-        super().save_snapshot(meta_info)
-
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             pyrado.save(self._env, "env.pkl", self.save_dir)
@@ -281,3 +275,26 @@ class SVPG(Algorithm):
         """Safe the current particle's state."""
         self.particle_states[self.current_particle] = self.particle.__getstate__()
         self.particle_policy_states[self.current_particle] = to.clone(self.particle.policy.param_values)
+
+
+# class SVPGHyperparams(TypedDict):
+#    algo: Dict
+#    actor: Dict
+#    vfcn: Dict
+#    critic: Dict
+#    particle: Dict
+
+SVPGHyperparams = Dict
+
+
+class SVPGBuilder:
+    def __init__(self, ex_dir, env: Env, hyperparams: SVPGHyperparams) -> None:
+        actor = FNNPolicy(spec=env.spec, **hyperparams["actor"])
+        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **hyperparams["vfcn"])
+        critic = GAE(vfcn, **hyperparams["critic"])
+        particle_logger = StepLogger()
+        particle_example = A2C(ex_dir, env, actor, critic, logger=particle_logger, **hyperparams["particle"])
+
+        self.svpg = SVPG(ex_dir, env, particle_example, **hyperparams["algo"])
+
+        self.svpg.save_name = "subrtn_svpg"
