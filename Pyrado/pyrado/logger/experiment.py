@@ -95,7 +95,13 @@ class Experiment:
                 exp_id += "_slurm-" + slurm_id
         else:
             # Try to parse extra_info from exp id
-            sd = exp_id.split("--", 1)
+            if "--" in exp_id:
+                sd = exp_id.split("--", 1)
+            elif "_slurm" in exp_id:
+                sd = exp_id.split("_slurm", 1)
+                sd[1] = "_slurm" + sd[1]
+            else:
+                sd = [exp_id]
             if len(sd) == 1:
                 time_str = sd[0]
             else:
@@ -298,7 +304,7 @@ def create_experiment_formatter(
                 if not first:
                     result += ","
                 if param == "env.dt":
-                    result += f" env.dt=1/{1/value}"
+                    result += f" env.dt=1/{1 / value}"
                 else:
                     result += f" {param}={value}"
                 first = False
