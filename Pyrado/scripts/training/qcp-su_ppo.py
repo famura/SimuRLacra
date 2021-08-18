@@ -63,7 +63,13 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparam = dict(dt=1 / 100.0, max_steps=600)
+    env_hparam = dict(
+        dt=1 / 100.0,
+        max_steps=600,
+        long=False,
+        simple_dynamics=False,
+        wild_init=False,
+    )
     env = QCartPoleSwingUpSim(**env_hparam)
     # env = ObsVelFiltWrapper(env, idcs_pos=["theta", "alpha"], idcs_vel=["theta_dot", "alpha_dot"])
     env = ActNormWrapper(env)
