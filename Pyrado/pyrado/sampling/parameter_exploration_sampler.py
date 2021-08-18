@@ -56,7 +56,7 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.properties import cached_property
 
 
-NO_SEED_PASSED = object()
+NO_SEED = object()
 
 
 class ParameterSample(NamedTuple):
@@ -200,7 +200,7 @@ class ParameterExplorationSampler(Serializable):
         # Create parallel pool. We use one thread per environment because it's easier.
         self.pool = SamplerPool(num_workers)
 
-        if seed is NO_SEED_PASSED:
+        if seed is NO_SEED:
             seed = pyrado.get_base_seed()
         self._seed = seed
         # Initialize with -1 such that we start with the 0-th sample. Incrementing after sampling may cause issues when

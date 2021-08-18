@@ -67,7 +67,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_rollout_sampler import (
-    NO_SEED_PASSED,
+    NO_SEED,
     _ps_init,
     _ps_run_one_domain_param,
     _ps_run_one_init_state,
@@ -84,7 +84,7 @@ def eval_domain_params(
     policy: Policy,
     params: List[Dict],
     init_state: Optional[np.ndarray] = None,
-    seed: int = NO_SEED_PASSED,
+    seed: int = NO_SEED,
 ) -> List[StepSequence]:
     """
     Evaluate a policy on a multidimensional grid of domain parameters.

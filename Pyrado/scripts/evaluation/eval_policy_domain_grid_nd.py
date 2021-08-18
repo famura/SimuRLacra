@@ -49,7 +49,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
 from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml
 from pyrado.sampling.parallel_evaluation import eval_domain_params
-from pyrado.sampling.parallel_rollout_sampler import NO_SEED_PASSED
+from pyrado.sampling.parallel_rollout_sampler import NO_SEED
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import dict_arraylike_to_float
@@ -125,7 +125,7 @@ def evaluate_policy(args, ex_dir):
         seed = args.seed
     else:
         print_cbt("No seed was set", "y")
-        seed = NO_SEED_PASSED
+        seed = NO_SEED
 
     # Sample rollouts
     ros = eval_domain_params(pool, env, policy, param_list, init_state, seed=seed)
