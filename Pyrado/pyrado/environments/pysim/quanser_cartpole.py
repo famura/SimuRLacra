@@ -39,7 +39,7 @@ from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.final_reward import FinalRewMode, FinalRewTask
-from pyrado.tasks.reward_functions import QuadrErrRewFcn
+from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, QuadrErrRewFcn
 
 
 class QCartPoleSim(SimPyEnv, Serializable):
@@ -341,10 +341,5 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
         Q = task_args.get("Q", np.diag([3e-1, 5e-1, 5e-3, 1e-3]))
         R = task_args.get("R", np.diag([1e-3]))
-        rew_fcn = QuadrErrRewFcn(Q, R)
 
-        return FinalRewTask(
-            RadiallySymmDesStateTask(self.spec, state_des, rew_fcn, idcs=[1]),
-            mode=FinalRewMode(always_negative=True),
-            factor=1e4,
-        )
+        return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
