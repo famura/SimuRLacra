@@ -46,6 +46,13 @@ from pyrado.utils.input_output import print_cbt
 
 
 def train_and_eval(trial: optuna.Trial):
+    """
+    Objective function for the Optuna `Study` to maximize.
+
+    :param trial: Optuna Trial object for hyper-parameter optimization
+    :return: objective function value
+    """
+
     dt = 0.004
 
     # Set up environment and policy (swing-up works reliably if is sampling frequency is >= 400 Hz)
