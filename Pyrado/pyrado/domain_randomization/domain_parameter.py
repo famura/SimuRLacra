@@ -35,7 +35,7 @@ from torch.distributions.normal import Normal
 from torch.distributions.uniform import Uniform
 
 import pyrado
-from pyrado.utils.bijective_transformation import BijectiveTransformation, IdentityTransformation
+from pyrado.utils.bijective_transformation import BijectiveTransformation, SqrtTransformation
 from pyrado.utils.input_output import print_cbt
 
 
@@ -356,7 +356,7 @@ class SelfPacedDomainParam(DomainParam):
         mean: to.Tensor,
         init_cov_portion: float = 0.001,
         target_cov_portion: float = 0.1,
-        cov_transformation: BijectiveTransformation = IdentityTransformation(),
+        cov_transformation: BijectiveTransformation = SqrtTransformation(),
     ) -> "SelfPacedDomainParam":
         return SelfPacedDomainParam(
             name=name,
